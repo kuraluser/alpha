@@ -377,6 +377,7 @@ message LoadablePlanStowageDetails {
   string temperature = 13;
   int64 id = 14;
   string colorCode = 15;
+  bool isCommingle = 16;
 }
 
 
@@ -406,6 +407,9 @@ message LoadableQuantityCommingleCargoDetails {
 	 int32 loadingOrder = 23;
 	 int64 tankId = 24;
 	 string fillingRatio = 25;
+	 string correctedUllage = 26; 
+ 	 string rdgUllage = 27;
+     string correctionFactor = 28;
 }
 
 message LoadableQuantityCargoDetails {

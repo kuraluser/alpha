@@ -1371,8 +1371,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
       List<LoadableStudyPortRotation> entityList =
-          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
-              loadableStudyOpt.get(), true);
+          this.loadableStudyPortRotationRepository
+              .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
+                  loadableStudyOpt.get(), true);
       for (LoadableStudyPortRotation entity : entityList) {
         replyBuilder.addPorts(
             this.createPortDetail(
@@ -3124,6 +3125,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableQuantityCommingleCargoDetailsList.get(i).getTankId());
       loadablePlanCommingleDetails.setFillingRatio(
           loadableQuantityCommingleCargoDetailsList.get(i).getFillingRatio());
+      loadablePlanCommingleDetails.setCorrectionFactor(
+          loadableQuantityCommingleCargoDetailsList.get(i).getCorrectionFactor());
+      loadablePlanCommingleDetails.setCorrectedUllage(
+          loadableQuantityCommingleCargoDetailsList.get(i).getCorrectedUllage());
+      loadablePlanCommingleDetails.setRdgUllage(
+          loadableQuantityCommingleCargoDetailsList.get(i).getRdgUllage());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
     }
   }
@@ -3531,6 +3538,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
 
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
+
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+          Optional.ofNullable(lpcd.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(lpcd.getGrade()).ifPresent(builder::setCargoAbbreviation);
+          Optional.ofNullable(lpcd.getApi()).ifPresent(builder::setApi);
+          Optional.ofNullable(lpcd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
+          Optional.ofNullable(lpcd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+          Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(builder::setFillingRatio);
+
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllage);
+          Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
+          Optional.ofNullable(lpcd.getTankId()).ifPresent(builder::setTankId);
+          Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemperature);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setWeight);
+          builder.setIsCommingle(true);
+          loadablePatternBuilder.addLoadablePlanStowageDetails(builder);
         });
   }
 
@@ -6320,6 +6344,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
+
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              stowageBuilder =
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+          Optional.ofNullable(lpcd.getId()).ifPresent(stowageBuilder::setId);
+          Optional.ofNullable(lpcd.getGrade()).ifPresent(stowageBuilder::setCargoAbbreviation);
+          Optional.ofNullable(lpcd.getApi()).ifPresent(stowageBuilder::setApi);
+          Optional.ofNullable(lpcd.getCorrectedUllage())
+              .ifPresent(stowageBuilder::setCorrectedUllage);
+          Optional.ofNullable(lpcd.getCorrectionFactor())
+              .ifPresent(stowageBuilder::setCorrectionFactor);
+          Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(stowageBuilder::setFillingRatio);
+
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(stowageBuilder::setRdgUllage);
+          Optional.ofNullable(lpcd.getTankName()).ifPresent(stowageBuilder::setTankName);
+          Optional.ofNullable(lpcd.getTankId()).ifPresent(stowageBuilder::setTankId);
+          Optional.ofNullable(lpcd.getTemperature()).ifPresent(stowageBuilder::setTemperature);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);
+          stowageBuilder.setIsCommingle(true);
+          replyBuilder.addLoadablePlanStowageDetails(stowageBuilder);
         });
   }
 
@@ -6350,6 +6394,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
+          builder.setIsCommingle(false);
           replyBuilder.addLoadablePlanStowageDetails(builder);
         });
   }
@@ -7695,79 +7740,77 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         // fetch the confirmed loadable study for active voyages
 
-          Stream<LoadableStudy> loadableStudyStream =
-              Optional.ofNullable(entity.getLoadableStudies())
-                  .map(Collection::stream)
-                  .orElseGet(Stream::empty);
-          Optional<LoadableStudy> loadableStudy =
-              loadableStudyStream
-                  .filter(
-                      loadableStudyElement ->
-                          (loadableStudyElement.getLoadableStudyStatus() != null
-                              && STATUS_CONFIRMED.equalsIgnoreCase(
-                                  loadableStudyElement.getLoadableStudyStatus().getName())))
-                  .findFirst();
-          if (loadableStudy.isPresent()) {
+        Stream<LoadableStudy> loadableStudyStream =
+            Optional.ofNullable(entity.getLoadableStudies())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty);
+        Optional<LoadableStudy> loadableStudy =
+            loadableStudyStream
+                .filter(
+                    loadableStudyElement ->
+                        (loadableStudyElement.getLoadableStudyStatus() != null
+                            && STATUS_CONFIRMED.equalsIgnoreCase(
+                                loadableStudyElement.getLoadableStudyStatus().getName())))
+                .findFirst();
+        if (loadableStudy.isPresent()) {
 
-            detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
-            List<Long> loadingPorts =
-                this.loadableStudyPortRotationRepository.getLoadingPorts(loadableStudy.get())
-                    .stream()
-                    .distinct()
-                    .collect(Collectors.toList());
+          detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
+          List<Long> loadingPorts =
+              this.loadableStudyPortRotationRepository.getLoadingPorts(loadableStudy.get()).stream()
+                  .distinct()
+                  .collect(Collectors.toList());
 
-            portReply.getPortsList().stream()
-                .filter(port -> loadingPorts.contains(port.getId()))
-                .forEach(
-                    loadingPort -> {
-                      LoadingPortDetail.Builder loadingPortDetail = LoadingPortDetail.newBuilder();
-                      loadingPortDetail.setName(loadingPort.getName());
-                      loadingPortDetail.setPortId(loadingPort.getId());
-                      detailbuilder.addLoadingPorts(loadingPortDetail);
-                    });
+          portReply.getPortsList().stream()
+              .filter(port -> loadingPorts.contains(port.getId()))
+              .forEach(
+                  loadingPort -> {
+                    LoadingPortDetail.Builder loadingPortDetail = LoadingPortDetail.newBuilder();
+                    loadingPortDetail.setName(loadingPort.getName());
+                    loadingPortDetail.setPortId(loadingPort.getId());
+                    detailbuilder.addLoadingPorts(loadingPortDetail);
+                  });
 
-            List<Long> dischargingPorts =
-                this.loadableStudyPortRotationRepository.getDischarigingPorts(loadableStudy.get())
-                    .stream()
-                    .distinct()
-                    .collect(Collectors.toList());
+          List<Long> dischargingPorts =
+              this.loadableStudyPortRotationRepository.getDischarigingPorts(loadableStudy.get())
+                  .stream()
+                  .distinct()
+                  .collect(Collectors.toList());
 
-            portReply.getPortsList().stream()
-                .filter(port -> dischargingPorts.contains(port.getId()))
-                .forEach(
-                    dischargingPort -> {
-                      DischargingPortDetail.Builder dischargingPortDetail =
-                          DischargingPortDetail.newBuilder();
-                      dischargingPortDetail.setName(dischargingPort.getName());
-                      dischargingPortDetail.setPortId(dischargingPort.getId());
-                      detailbuilder.addDischargingPorts(dischargingPortDetail);
-                    });
+          portReply.getPortsList().stream()
+              .filter(port -> dischargingPorts.contains(port.getId()))
+              .forEach(
+                  dischargingPort -> {
+                    DischargingPortDetail.Builder dischargingPortDetail =
+                        DischargingPortDetail.newBuilder();
+                    dischargingPortDetail.setName(dischargingPort.getName());
+                    dischargingPortDetail.setPortId(dischargingPort.getId());
+                    detailbuilder.addDischargingPorts(dischargingPortDetail);
+                  });
 
-            List<CargoNomination> cargoList =
-                this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
-                    loadableStudy.get().getId(), true);
+          List<CargoNomination> cargoList =
+              this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+                  loadableStudy.get().getId(), true);
 
-            List<Long> cargos =
-                cargoList.stream()
-                    .map(CargoNomination::getCargoXId)
-                    .distinct()
-                    .collect(Collectors.toList());
+          List<Long> cargos =
+              cargoList.stream()
+                  .map(CargoNomination::getCargoXId)
+                  .distinct()
+                  .collect(Collectors.toList());
 
-            List<CargoDetail> cargoes =
-                cargoReply.getCargosList().stream()
-                    .filter(cargo -> cargos.contains(cargo.getId()))
-                    .collect(Collectors.toList());
-            cargoes.forEach(
-                cargo -> {
-                  CargoDetails.Builder cargoDetails = CargoDetails.newBuilder();
-                  cargoDetails.setName(cargo.getCrudeType());
-                  cargoDetails.setCargoId(cargo.getId());
-                  detailbuilder.addCargos(cargoDetails);
-                });
+          List<CargoDetail> cargoes =
+              cargoReply.getCargosList().stream()
+                  .filter(cargo -> cargos.contains(cargo.getId()))
+                  .collect(Collectors.toList());
+          cargoes.forEach(
+              cargo -> {
+                CargoDetails.Builder cargoDetails = CargoDetails.newBuilder();
+                cargoDetails.setName(cargo.getCrudeType());
+                cargoDetails.setCargoId(cargo.getId());
+                detailbuilder.addCargos(cargoDetails);
+              });
 
-            detailbuilder.setCharterer(loadableStudy.get().getCharterer());
-          }
-        
+          detailbuilder.setCharterer(loadableStudy.get().getCharterer());
+        }
 
         builder.addVoyages(detailbuilder.build());
       }

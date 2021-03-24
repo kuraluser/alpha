@@ -37,4 +37,7 @@ public class LoadablePlanStowageDetails {
   private String colorCode;
   private String quantityMT; // by ALGO
   private Long cargoNominationId;
+
+  @JsonInclude(Include.NON_NULL)
+  private Boolean isCommingle;
 }
