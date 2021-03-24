@@ -45,4 +45,6 @@ public class CargoNomination {
   private BigDecimal temperature;
 
   private Long segregationId;
+
+  private Boolean isCargoNominationComplete;
 }

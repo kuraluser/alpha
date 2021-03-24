@@ -430,7 +430,7 @@ public class LoadableStudyService {
       dto.setIsPortsComplete(grpcReply.getIsPortsComplete());
       dto.setIsOhqComplete(grpcReply.getIsOhqComplete());
       dto.setIsObqComplete(grpcReply.getIsObqComplete());
-
+      dto.setIsDischargingPortComplete(grpcReply.getIsDischargingPortComplete());
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -480,6 +480,7 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getIsPortsComplete()).ifPresent(builder::setIsPortsComplete);
     Optional.ofNullable(request.getIsOhqComplete()).ifPresent(builder::setIsOhqComplete);
     Optional.ofNullable(request.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
+    Optional.ofNullable(request.getIsDischargingPortComplete()).ifPresent(builder::setIsDischargingPortComplete);
     for (MultipartFile file : files) {
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
@@ -772,6 +773,11 @@ public class LoadableStudyService {
             temperature -> cargoNominationDetailbuilder.setTempEst(String.valueOf(temperature)));
     Optional.ofNullable(request.getSegregationId())
         .ifPresent(cargoNominationDetailbuilder::setSegregationId);
+    Optional.ofNullable(request.getIsCargoNominationComplete())
+        .ifPresent(
+            isCargoNominationComplete ->
+                cargoNominationDetailbuilder.setIsCargoNominationComplete(
+                    isCargoNominationComplete));
     builder.setCargoNominationDetail(cargoNominationDetailbuilder);
     CargoNominationRequest cargoNominationRequest = builder.build();
     CargoNominationReply cargoNominationReply =
@@ -1063,6 +1069,8 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setEtaActual(valueOf(request.getEtaActual())));
     Optional.ofNullable(request.getEtdActual())
         .ifPresent(item -> builder.setEtdActual(valueOf(request.getEtdActual())));
+    Optional.ofNullable(request.getIsPortsComplete())
+        .ifPresent(item -> builder.setIsPortsComplete(item));
     return builder.build();
   }
 
@@ -1262,6 +1270,12 @@ public class LoadableStudyService {
     }
     Optional.ofNullable(request.getDischargingCargoId())
         .ifPresent(portRotationRequestBuilder::setDischargingCargoId);
+
+    Optional.ofNullable(request.getIsDischargingPortComplete())
+        .ifPresent(
+            isDischargingPortComplete ->
+                portRotationRequestBuilder.setIsDischargingPortsComplete(
+                    request.getIsDischargingPortComplete()));
 
     PortRotationReply grpcReply = this.saveDischargingPorts(portRotationRequestBuilder.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
@@ -2316,6 +2330,8 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getColorCode()).ifPresent(builder::setColorCode);
     Optional.ofNullable(request.getAbbreviation()).ifPresent(builder::setAbbreviation);
     Optional.ofNullable(request.getLoadOnTop()).ifPresent(item -> builder.setLoadOnTop(item));
+    Optional.ofNullable(request.getIsObqComplete())
+        .ifPresent(item -> builder.setIsObqComplete(item));
     return builder.build();
   }
 
@@ -4362,7 +4378,11 @@ public class LoadableStudyService {
       voyageList.add(voyage);
     }
 
-    response.setVoyages(voyageList);
+    // sort list
+    if (null != sortBy) {
+    	voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
+    }
+    
     Pageable pageRequest = PageRequest.of(page, pageSize);
 
     int total = voyageList.size();
@@ -4377,14 +4397,8 @@ public class LoadableStudyService {
 
     final Page<Voyage> pages = new PageImpl<>(output, pageRequest, total);
 
-    // sort list
-    List<Voyage> sortedList = pages.toList();
-    if (null != sortBy) {
-      sortedList = this.getSortedList(pages.toList(), orderBy, sortBy.toLowerCase());
-    }
-
     response.setTotalElements(pages.getTotalElements());
-    response.setVoyages(sortedList);
+    response.setVoyages(pages.toList());
 
     return response;
   }

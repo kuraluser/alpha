@@ -51,4 +51,6 @@ public class OnBoardQuantity {
   private BigDecimal api;
 
   private Boolean loadOnTop;
+
+  private Boolean isObqComplete;
 }

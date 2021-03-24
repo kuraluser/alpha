@@ -12,4 +12,6 @@ public class DischargingPortRequest {
   private List<Long> portIds;
 
   private Long dischargingCargoId;
+
+  private Boolean isDischargingPortComplete;
 }

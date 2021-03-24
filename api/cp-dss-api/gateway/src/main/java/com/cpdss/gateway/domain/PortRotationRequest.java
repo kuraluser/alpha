@@ -11,4 +11,5 @@ public class PortRotationRequest {
 
   private Long loadableStudyId;
   private List<PortRotation> portList;
+  private Boolean isPortsComplete;
 }

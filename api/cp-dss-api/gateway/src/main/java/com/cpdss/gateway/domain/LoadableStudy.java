@@ -1,13 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.math.BigDecimal;
-import java.util.List;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+
 import lombok.Data;
 
 /**
@@ -75,4 +78,6 @@ public class LoadableStudy {
   private Boolean isOhqComplete;
 
   private Boolean isObqComplete;
+  
+  private Boolean isDischargingPortComplete;
 }

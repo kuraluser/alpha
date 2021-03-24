@@ -48,4 +48,6 @@ public class PortRotation {
   private String layCanTo;
 
   private Long portOrder;
+
+  private Boolean isPortsComplete;
 }
