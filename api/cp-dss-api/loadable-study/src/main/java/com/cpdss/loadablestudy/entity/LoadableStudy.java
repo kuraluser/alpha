@@ -98,4 +98,16 @@ public class LoadableStudy extends EntityDoc {
   void prePersist() {
     this.isActive = true;
   }
+
+  @Column(name = "is_cargonomination_complete")
+  private Boolean isCargoNominationComplete;
+
+  @Column(name = "is_ports_complete")
+  private Boolean isPortsComplete;
+
+  @Column(name = "is_ohq_complete")
+  private Boolean isOhqComplete;
+
+  @Column(name = "is_obq_complete")
+  private Boolean isObqComplete;
 }

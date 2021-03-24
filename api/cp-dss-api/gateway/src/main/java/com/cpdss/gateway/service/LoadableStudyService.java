@@ -426,6 +426,11 @@ public class LoadableStudyService {
           0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
       dto.setCreatedFromId(grpcReply.getCreatedFromId());
       dto.setLoadOnTop(grpcReply.getLoadOnTop());
+      dto.setIsCargoNominationComplete(grpcReply.getIsCargoNominationComplete());
+      dto.setIsPortsComplete(grpcReply.getIsPortsComplete());
+      dto.setIsOhqComplete(grpcReply.getIsOhqComplete());
+      dto.setIsObqComplete(grpcReply.getIsObqComplete());
+
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -470,6 +475,11 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
     Optional.ofNullable(request.getId()).ifPresent(builder::setId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
+    Optional.ofNullable(request.getIsCargoNominationComplete())
+        .ifPresent(builder::setIsCargoNominationComplete);
+    Optional.ofNullable(request.getIsPortsComplete()).ifPresent(builder::setIsPortsComplete);
+    Optional.ofNullable(request.getIsOhqComplete()).ifPresent(builder::setIsOhqComplete);
+    Optional.ofNullable(request.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
     for (MultipartFile file : files) {
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
