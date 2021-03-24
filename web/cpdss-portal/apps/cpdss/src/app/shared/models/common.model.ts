@@ -294,3 +294,26 @@ export interface ICargo {
     responseStatus: IResponse;
     confirmed: boolean;
 }
+
+/**
+ * Interface for time zone API response
+ *
+ * @export
+ * @interface ITimeZoneResponse
+ */
+export interface ITimeZoneResponse {
+    responseStatus: IResponseStatus;
+    timezones: ITimeZone[];
+}
+
+/**
+ * Interface for list time zones
+ *
+ * @export
+ * @interface ITimeZone
+ */
+export interface ITimeZone {
+    id: number;
+    timezone: string;
+    offsetValue: string;
+}
