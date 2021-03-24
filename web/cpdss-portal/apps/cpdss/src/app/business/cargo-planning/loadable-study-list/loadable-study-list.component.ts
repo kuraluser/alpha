@@ -67,13 +67,18 @@ export class LoadableStudyListComponent implements OnInit {
 
   }
   /**
-   * Take the user to particular loadable study
-   */
+  * Take the user to particular loadable study
+  */
   onRowSelect(event: IDataTableEvent) {
     if (event?.field !== 'actions') {
       this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
     } else {
-      this.callNewLoadableStudyPopup(true, event.data)
+      if (![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(event?.data?.statusId)) {
+        this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+      } else {
+        this.callNewLoadableStudyPopup(true, event.data)
+      }
+
     }
   }
 
@@ -86,7 +91,7 @@ export class LoadableStudyListComponent implements OnInit {
       this.loadableStudyList = null;
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       const loadableStudyList = result.loadableStudies.map(loadableStudy => {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true: false;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true : false;
         return loadableStudy;
       });
       loadableStudyList?.length ? this.loadableStudyList = [...loadableStudyList] : this.loadableStudyList = [];
@@ -120,10 +125,10 @@ export class LoadableStudyListComponent implements OnInit {
   }
 
   /**
-   * called when name is clicked
-   */
+  * called when name is clicked
+  */
   columnClick(event: IDataTableEvent) {
-    if (event?.field === 'actions') {
+    if (event?.field === 'actions' && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(event?.data?.statusId)) {
       this.callNewLoadableStudyPopup(true, event.data)
     } else {
       this.onRowSelect(event);

@@ -3,8 +3,11 @@
     [minY]="70" [closable]="false">
     <form [formGroup]="newLoadableStudyFormGroup" id="fg_newLoadableStudy" (submit)="saveLoadableStudy()">
         <div class="container-fluid">
+            <div class="row" *ngIf="savedloadableDetails && isLoadlineChanged()">
+                <div class="col"> <p class="text-danger" >{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p></div>
+            </div>
             <div class="row">
-                <p class="text-danger text-center" *ngIf="savedloadableDetails && isLoadlineChanged()">{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p>
+               
                 <div class="col-sm-6">
                     <div class="row form-group">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
