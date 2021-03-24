@@ -1801,6 +1801,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         detailbuilder.setId(entity.getId());
         detailbuilder.setVoyageNumber(entity.getVoyageNo());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        Optional.ofNullable(entity.getActualEndDate())
+            .ifPresent(
+                actualEndDate -> detailbuilder.setActualEndDate(formatter.format(actualEndDate)));
+        Optional.ofNullable(entity.getActualStartDate())
+            .ifPresent(
+                actualStartDate ->
+                    detailbuilder.setActualStartDate(formatter.format(actualStartDate)));
         Optional.ofNullable(entity.getVoyageStartDate())
             .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
         Optional.ofNullable(entity.getVoyageEndDate())

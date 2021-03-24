@@ -49,9 +49,11 @@ public class Voyage {
   private LocalDate plannedEndDate;
 
   @JsonFormat(pattern = "dd-MM-yyyy")
+  @JsonInclude(JsonInclude.Include.ALWAYS)
   private LocalDate actualStartDate;
 
   @JsonFormat(pattern = "dd-MM-yyyy")
+  @JsonInclude(JsonInclude.Include.ALWAYS)
   private LocalDate actualEndDate;
 
   private Long statusId;
