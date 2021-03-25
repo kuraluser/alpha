@@ -99,16 +99,46 @@ export class VoyageStatusComponent implements OnInit {
    */
   async getVoyageInfo(vesselId: number) {
     const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
-    const voyage = voyages.filter(voyageActive => (voyageActive?.status === 'Active'));
-    this.voyageInfo = voyage;
-    this.selectedVoyage = voyage[0];
+    this.voyageInfo = this.getSelectedVoyages(voyages);
     const alertForVoyageEnd = localStorage.getItem('alertForVoyageEnd');
     if(alertForVoyageEnd !== 'true'){
       this.alertForEnd()
     }
-
   }
 
+  /**
+   * Get list of active and closed voyages
+   *
+   * @param {Voyage[]} voyages
+   * @returns {Voyage[]}
+   * @memberof VoyageStatusComponent
+   */
+  getSelectedVoyages(voyages: Voyage[]): Voyage[] {
+    this.selectedVoyage = voyages?.find(voyage => voyage?.statusId === VOYAGE_STATUS.ACTIVE);
+    const latestClosedVoyages = [...voyages?.filter(voyage => voyage?.statusId === VOYAGE_STATUS.CLOSE)]?.sort((a,b) => this.convertToDate(b.actualStartDate).getTime() - this.convertToDate(a.actualStartDate).getTime())?.slice(0, this.selectedVoyage ? 9 : 10);
+    return [this.selectedVoyage, ...latestClosedVoyages];
+  }
+
+  /**
+  * Convert to date time(dd-mm-yyyy hh:mm)
+  *
+  * @memberof VoyageStatusComponent
+  */
+  convertToDate(value): Date {
+    if (value) {
+      const arr = value.toString().split(' ')
+      const dateArr = arr[0]?.split('-');
+      if (arr[1]) {
+        const timeArr = arr[1].split(':')
+        if (dateArr.length > 2 && timeArr.length > 1) {
+          return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]), Number(timeArr[0]), Number(timeArr[1]));
+        }
+      } else {
+        return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]))
+      }
+    }
+    return null
+  }
 
   /**
    * Get voyage status details
