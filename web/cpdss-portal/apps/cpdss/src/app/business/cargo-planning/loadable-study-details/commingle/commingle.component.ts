@@ -134,10 +134,11 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.patchValue({
         purpose: this.purposeOfCommingle[0]
       });
-      this.cargoNominationsCargo = this.commingleData.cargoNominations?.map(itm => ({
-        ...this.cargos.find((item) => (item.id === itm.cargoId) && item),
-        ...itm
-      }));
+      this.cargoNominationsCargo = this.commingleData.cargoNominations?.map((itm,index) => {
+        itm.loadingPorts = this.loadableStudyDetailsApiService.cargoNominations[index].loadingPorts.value
+        return {...this.cargos.find((item) => (item.id === itm.cargoId) && item),
+        ...itm}
+      });
       this.cargoNominationsCargo1 = this.cargoNominationsCargo;
       this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
@@ -610,9 +611,12 @@ export class CommingleComponent implements OnInit {
     }
     const api1 = Number(row.cargo1.value.api)
     const api2 = Number(row.cargo2.value.api)
+    const rd1 = 141.5/(131.5+api1)
+    const rd2 = 141.5/(131.5+api2)
     const per1 = Number(row.cargo1pct.value)
     const per2 = Number(row.cargo2pct.value)
-    const netApi = (api1 * per1 + api2 * per2)/100;
+    const netRd = (rd1 * per1 + rd2 * per2)/100
+    const netApi =  (141.5/netRd)-131.5
     row.cargo1.value.loadingPorts.forEach(port => {
       port.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(port.quantity, unitFrom, unitTo, netApi)
     });
