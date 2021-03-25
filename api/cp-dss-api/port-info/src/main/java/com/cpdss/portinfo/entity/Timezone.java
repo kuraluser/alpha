@@ -28,7 +28,7 @@ public class Timezone extends EntityDoc {
 
   @Column(name = "region")
   private String region;
-  
+
   // bi-directional many-to-one association to PortInfo
   @OneToMany(mappedBy = "timezone")
   private List<PortInfo> portInfos;

@@ -245,8 +245,10 @@ public class LoadableStudyService {
             .setVoyageNo(voyage.getVoyageNo())
             .setStartDate(!StringUtils.isEmpty(voyage.getStartDate()) ? voyage.getStartDate() : "")
             .setEndDate(!StringUtils.isEmpty(voyage.getEndDate()) ? voyage.getEndDate() : "")
-            .setStartTimezoneId(voyage.getStartTimezoneId() != null ? voyage.getStartTimezoneId().intValue() : 0)
-            .setEndTimezoneId(voyage.getEndTimezoneId() != null ? voyage.getEndTimezoneId().intValue() : 0)
+            .setStartTimezoneId(
+                voyage.getStartTimezoneId() != null ? voyage.getStartTimezoneId().intValue() : 0)
+            .setEndTimezoneId(
+                voyage.getEndTimezoneId() != null ? voyage.getEndTimezoneId().intValue() : 0)
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
@@ -481,7 +483,8 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getIsPortsComplete()).ifPresent(builder::setIsPortsComplete);
     Optional.ofNullable(request.getIsOhqComplete()).ifPresent(builder::setIsOhqComplete);
     Optional.ofNullable(request.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
-    Optional.ofNullable(request.getIsDischargingPortComplete()).ifPresent(builder::setIsDischargingPortComplete);
+    Optional.ofNullable(request.getIsDischargingPortComplete())
+        .ifPresent(builder::setIsDischargingPortComplete);
     for (MultipartFile file : files) {
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
@@ -4381,9 +4384,9 @@ public class LoadableStudyService {
 
     // sort list
     if (null != sortBy) {
-    	voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
+      voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
     }
-    
+
     Pageable pageRequest = PageRequest.of(page, pageSize);
 
     int total = voyageList.size();

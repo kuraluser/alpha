@@ -66,7 +66,7 @@ public class Voyage extends EntityDoc {
 
   @Column(name = "start_timezone_xid")
   private Long startTimezoneId;
-  
+
   @Column(name = "end_timezone_xid")
   private Long endTimezoneId;
 }
