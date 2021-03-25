@@ -36,7 +36,11 @@
               translate}}</label>
             <div class="col-md-4">
               <p-calendar appendTo="body" inputId="start_date" formControlName="start_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)" #startDateTime [minDate]="date">
+                #startDateTime [minDate]="date" showTime="true" [hideOnDateTimeSelect]="false">
+                <p-footer>
+                  <button class="btn btn-main" (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                      | translate}}</button>
+                </p-footer>
               </p-calendar>
             </div>
             <cpdss-portal-validation-error *ngIf="fieldError('start_date')" [errors]="fieldError('start_date')"
@@ -59,7 +63,11 @@
               translate}}</label>
             <div class="col-md-4">
               <p-calendar appendTo="body" inputId="end_date" formControlName="end_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)" #endDateTime [minDate]="date">
+                #endDateTime [minDate]="date" showTime="true" [hideOnDateTimeSelect]="false">
+                <p-footer>
+                  <button class="btn btn-main" (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                      | translate}}</button>
+                </p-footer>
               </p-calendar>
             </div>
             <cpdss-portal-validation-error *ngIf="fieldError('end_date')" [errors]="fieldError('end_date')"
@@ -67,7 +75,7 @@
             </cpdss-portal-validation-error>
             <div class="col-md-4">
               <p-dropdown [(ngModel)]="endDateTimeZone" id="new_voyage_end_date_time_zone"
-                styleClass=" ml-20" appendTo="body" formControlName="selectEndDateTimeZone"
+                styleClass="dropdown-w-180 ml-20" appendTo="body" formControlName="selectEndDateTimeZone"
                 [options]="globalTimeZones" optionLabel="timezone"
                 placeholder="{{'VOYAGE_POP_UP_END_DATE_TIME_ZONE_PLACEHOLDER'|translate}}" filter="true"
                 resetFilterOnHide="true" focusTrap>

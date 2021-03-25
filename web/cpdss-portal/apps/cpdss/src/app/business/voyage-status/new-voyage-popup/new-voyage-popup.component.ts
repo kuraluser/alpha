@@ -72,6 +72,8 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
     this.newVoyageModel.startDate = this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.start_date, this.startDateTimeZone.offsetValue);
     this.newVoyageModel.endDate = this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.end_date, this.endDateTimeZone.offsetValue);
+    this.newVoyageModel.startTimezoneId = this.startDateTimeZone.id;
+    this.newVoyageModel.endTimezoneId = this.endDateTimeZone.id;
     this.saveNewVoyage();
     this.isLoading = false;
   }
@@ -149,13 +151,14 @@ export class NewVoyagePopupComponent implements OnInit {
    * Method to update form on date time select,
    * To set conditional validators for start & end date time zones
    */
-  onDateSelect(event) {
+  onDateSelect(elemRef: any) {
     this.newVoyageForm.controls.start_date.updateValueAndValidity();
     this.newVoyageForm.controls.end_date.updateValueAndValidity();
     this.newVoyageForm.get('selectStartDateTimeZone').setValidators(this.newVoyageForm.value.start_date ? [Validators.required] : null);
     this.newVoyageForm.controls.selectStartDateTimeZone.updateValueAndValidity();
     this.newVoyageForm.get('selectEndDateTimeZone').setValidators(this.newVoyageForm.value.end_date ? [Validators.required] : null);
     this.newVoyageForm.controls.selectEndDateTimeZone.updateValueAndValidity();
+    elemRef.hideOverlay();
   }
 
   /**

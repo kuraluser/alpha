@@ -9,6 +9,8 @@ export class NewVoyageModel {
     public chiefOfficerId!: number;
     public startDate!: string;
     public endDate!: string;
+    public startTimezoneId!: number;
+    public endTimezoneId!: number;
 }
 
 /**

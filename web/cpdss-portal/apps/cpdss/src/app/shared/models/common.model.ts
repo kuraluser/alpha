@@ -317,3 +317,14 @@ export interface ITimeZone {
     timezone: string;
     offsetValue: string;
 }
+
+/**
+ * Interface for enable time format options
+ *
+ * @export
+ * @interface IDateTimeFormatOptions
+ */
+export interface IDateTimeFormatOptions {
+    isTime?: boolean;
+    isTimeSeconds?: boolean;
+}
