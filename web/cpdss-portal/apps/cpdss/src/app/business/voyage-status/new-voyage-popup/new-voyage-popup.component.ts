@@ -54,8 +54,8 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageModel.captainId = this.vesselDetails?.captainId;
     this.newVoyageModel.chiefOfficerId = this.vesselDetails?.chiefOfficerId;
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
-    this.newVoyageModel.startDate = this.formatDateTime(this.newVoyageForm.value.start_date);
-    this.newVoyageModel.endDate = this.formatDateTime(this.newVoyageForm.value.end_date);
+    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.formatDateTime(this.newVoyageForm.value.start_date) : '';
+    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.formatDateTime(this.newVoyageForm.value.end_date) : '';
     this.saveNewVoyage();
     this.isLoading = false;
   }
