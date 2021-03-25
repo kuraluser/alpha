@@ -114,6 +114,9 @@ service LoadableStudyService {
 	
 	rpc GetSynopticalPortDataByPortId (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
+
+	rpc GetSynopticDataByLoadableStudyId (SynopticalTableRequest) returns (SynopticalTableReply){
+	}
 	
 	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
 	}
