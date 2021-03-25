@@ -480,7 +480,8 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getIsPortsComplete()).ifPresent(builder::setIsPortsComplete);
     Optional.ofNullable(request.getIsOhqComplete()).ifPresent(builder::setIsOhqComplete);
     Optional.ofNullable(request.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
-    Optional.ofNullable(request.getIsDischargingPortComplete()).ifPresent(builder::setIsDischargingPortComplete);
+    Optional.ofNullable(request.getIsDischargingPortComplete())
+        .ifPresent(builder::setIsDischargingPortComplete);
     for (MultipartFile file : files) {
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
@@ -1451,6 +1452,15 @@ public class LoadableStudyService {
     loadablePatternResponse.setLoadablePatterns(new ArrayList<LoadablePattern>());
     loadablePatternResponse.setTankLists(
         createGroupWiseTankList(loadablePatternReply.getTanksList()));
+    // DSS-2016
+    // loadablePatternResponse.setTankLists(createGroupWiseTankList(grpcReply.getTanksList()));
+    loadablePatternResponse.setFrontBallastTanks(
+        createGroupWiseTankList(loadablePatternReply.getBallastFrontTanksList()));
+    loadablePatternResponse.setCenterBallastTanks(
+        createGroupWiseTankList(loadablePatternReply.getBallastCenterTanksList()));
+    loadablePatternResponse.setRearBallastTanks(
+        createGroupWiseTankList(loadablePatternReply.getBallastRearTanksList()));
+
     loadablePatternReply
         .getLoadablePatternList()
         .forEach(
@@ -4380,9 +4390,9 @@ public class LoadableStudyService {
 
     // sort list
     if (null != sortBy) {
-    	voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
+      voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
     }
-    
+
     Pageable pageRequest = PageRequest.of(page, pageSize);
 
     int total = voyageList.size();

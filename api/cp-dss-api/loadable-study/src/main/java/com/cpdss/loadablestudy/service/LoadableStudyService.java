@@ -163,6 +163,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -3415,15 +3416,35 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePatternBuilder.addAllLoadablePlanStowageDetails(
                   replyBuilder.getLoadablePlanStowageDetailsList());
 
+              List<LoadablePlanQuantity> loadablePlanQuantities =
+                  loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              LoadablePlanBuilder.buildLoadablePlanQuantity(
+                  loadablePlanQuantities, loadablePatternBuilder);
+
+              List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+                  loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              LoadablePlanBuilder.buildLoadablePlanCommingleDetails(
+                  loadablePlanCommingleDetails, loadablePatternBuilder);
+
               builder.addLoadablePattern(loadablePatternBuilder);
               loadablePatternBuilder.clearLoadablePlanStowageDetails();
             });
-        VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
+        // VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
+        VesselReply vesselReply =
+            this.getTanks(loadableStudy.get().getVesselXId(), CARGO_BALLAST_TANK_CATEGORIES);
         if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
           builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
         } else {
           builder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
           builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+          buildBallastTankLayout(
+              vesselReply.getVesselTanksList().stream()
+                  .filter(
+                      tankList -> BALLAST_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+                  .collect(Collectors.toList()),
+              builder);
         }
       }
     } catch (Exception e) {
@@ -3438,6 +3459,37 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Ballast Tank category builder
+   *
+   * @param vesselTankDetails - List<VesselTankDetail>
+   * @param replyBuilder - LoadablePatternReply.Builder
+   */
+  private void buildBallastTankLayout(
+      List<VesselTankDetail> vesselTankDetails, LoadablePatternReply.Builder replyBuilder) {
+
+    List<VesselTankDetail> frontBallastTanks = new ArrayList<>();
+    List<VesselTankDetail> centerBallestTanks = new ArrayList<>();
+    List<VesselTankDetail> rearBallastTanks = new ArrayList<>();
+    frontBallastTanks.addAll(
+        vesselTankDetails.stream()
+            .filter(tank -> BALLAST_FRONT_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+    centerBallestTanks.addAll(
+        vesselTankDetails.stream()
+            .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+
+    rearBallastTanks.addAll(
+        vesselTankDetails.stream()
+            .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+
+    replyBuilder.addAllBallastFrontTanks(this.groupTanks(frontBallastTanks));
+    replyBuilder.addAllBallastCenterTanks(this.groupTanks(centerBallestTanks));
+    replyBuilder.addAllBallastRearTanks(this.groupTanks(rearBallastTanks));
   }
 
   /**

@@ -13,4 +13,8 @@ public class LoadablePatternResponse {
   private List<LoadablePattern> loadablePatterns;
   private String loadablePatternCreatedDate;
   private String loadableStudyName;
+
+  private List<List<VesselTank>> frontBallastTanks;
+  private List<List<VesselTank>> centerBallastTanks;
+  private List<List<VesselTank>> rearBallastTanks;
 }
