@@ -19,6 +19,7 @@ import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.ship.ShipJwtService;
+import com.cpdss.gateway.security.ship.ShipUserContext;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -36,6 +37,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -101,9 +103,17 @@ public class UserService {
     String authorizationToken = headers.getFirst(HttpHeaders.AUTHORIZATION);
     // if (authorizationToken != null) {
     // AccessToken token = parseKeycloakToken(authorizationToken);
-    Users usersEntity =
-        this.usersRepository.findByKeycloakIdAndIsActive(
-            "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
+    Users usersEntity = null;
+    if (this.isShip()) {
+      Long userId =
+          ((ShipUserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+              .getUserId();
+      usersEntity = this.usersRepository.findByIdAndIsActive(userId, true);
+    } else {
+      usersEntity =
+          this.usersRepository.findByKeycloakIdAndIsActive(
+              "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
+    }
     if (usersEntity == null) {
       throw new GenericServiceException(
           "Invalid user in request token",
