@@ -27,7 +27,7 @@ export class CargoHistoryTransformationService {
       return [
         {
           field: 'slNo',
-          header: '#',
+          header: 'SL No',
           fieldType: DATATABLE_FIELD_TYPE.SLNO,
           fieldHeaderClass: 'column-sl',
           fieldClass: 'sl'
