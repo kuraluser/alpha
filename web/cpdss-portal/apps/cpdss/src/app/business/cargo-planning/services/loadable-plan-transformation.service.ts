@@ -262,7 +262,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.correctionFactor = cargoTankDetail.correctionFactor;
     _cargoTankDetail.api = cargoTankDetail.api;
     _cargoTankDetail.temperature = cargoTankDetail.temperature;
-    _cargoTankDetail.colorCode = cargoTankDetail.colorCode;
+    _cargoTankDetail.colorCode = cargoTankDetail.isCommingle ? AppConfigurationService.settings.commingleColor : cargoTankDetail.colorCode;
     _cargoTankDetail.observedM3 = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.KL, 'weight');
     _cargoTankDetail.observedBarrels = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.OBSBBLS, 'weight');
     _cargoTankDetail.observedBarrelsAt60 = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.BBLS, 'weight');

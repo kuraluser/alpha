@@ -33,6 +33,7 @@ export class VoyageListTransformationService {
       {
         field: 'voyageNo',
         header: 'VOYAGE NO',
+        fieldHeaderClass: 'column-voyageNo',
         filter: true,
         filterPlaceholder: 'SEARCH_VOYAGE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -45,6 +46,7 @@ export class VoyageListTransformationService {
       {
         field: 'charterer',
         header: 'CHARTER',
+        fieldHeaderClass: 'column-charterer',
         filter: true,
         filterPlaceholder: 'SEARCH_CHARTER',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -57,6 +59,7 @@ export class VoyageListTransformationService {
       {
         field: 'plannedStartDate',
         header: 'PLANNED START DATE',
+        fieldHeaderClass: 'column-plannedStartDate',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -69,6 +72,7 @@ export class VoyageListTransformationService {
       {
         field: 'plannedEndDate',
         header: 'PLANNED END DATE',
+        fieldHeaderClass: 'column-plannedEndDate',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -81,6 +85,7 @@ export class VoyageListTransformationService {
       {
         field: 'actualStartDate',
         header: 'ACTUAL START DATE',
+        fieldHeaderClass: 'column-actualStartDate',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -93,6 +98,7 @@ export class VoyageListTransformationService {
       {
         field: 'actualEndDate',
         header: 'ACTUAL END DATE',
+        fieldHeaderClass: 'column-actualEndDate',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -105,6 +111,7 @@ export class VoyageListTransformationService {
       {
         field: 'loading',
         header: 'LOADING PORTS',
+        fieldHeaderClass: 'column-loading',
         filter: true,
         filterPlaceholder: 'SEARCH_LOADING_PORT',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -115,6 +122,7 @@ export class VoyageListTransformationService {
       {
         field: 'discharging',
         header: 'DISCHARGE PORTS',
+        fieldHeaderClass: 'column-discharging',
         filter: true,
         filterPlaceholder: 'SEARCH_DISCHARGE_PORT',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -125,6 +133,7 @@ export class VoyageListTransformationService {
       {
         field: 'cargo',
         header: 'CARGO LOADED',
+        fieldHeaderClass: 'column-cargo',
         filter: true,
         filterPlaceholder: 'SEARCH_CARGO_LOADED',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -135,6 +144,7 @@ export class VoyageListTransformationService {
       {
         field: 'status',
         header: 'STATUS',
+        fieldHeaderClass: 'column-status',
         filter: true,
         filterPlaceholder: 'SEARCH_STATUS',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -149,8 +159,8 @@ export class VoyageListTransformationService {
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.BUTTON,
         buttons: [
-          ...(permissionStart && permissionStart.view ? [{type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , icons: '' , class: '' , label: 'Start'}] : []),
-          ...(permissionStop && permissionStop.view ? [{type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' , icons: '' , class: '' , label: 'Stop'}] : []),
+          ...(permissionStart && permissionStart.view ? [{type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , icons: 'voyage-start' , class: '' , label: 'Start'}] : []),
+          ...(permissionStop && permissionStop.view ? [{type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' , icons: 'voyage-end' , class: '' , label: 'Stop'}] : []),
         ]
       }
     ]
