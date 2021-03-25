@@ -27,7 +27,7 @@ import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/co
 export class LoadableStudyListComponent implements OnInit {
   loadableStudyList: LoadableStudy[];
   voyages: Voyage[];
-  selectedVoyage: Voyage;
+  _selectedVoyage: Voyage;
   selectedLoadableStudy: LoadableStudy;
   loading = true;
   cols: IDataTableColumn[];
@@ -43,6 +43,17 @@ export class LoadableStudyListComponent implements OnInit {
   addLSBtnPermissionContext: IPermissionContext;
   VOYAGE_STATUS = VOYAGE_STATUS;
 
+  get selectedVoyage(): Voyage{
+    return this._selectedVoyage;
+  }
+
+  set selectedVoyage(voyage: Voyage){
+    this._selectedVoyage = voyage;
+    localStorage.setItem("voyageId",voyage?.id.toString())
+    localStorage.removeItem("loadableStudyId")
+    localStorage.removeItem("loadablePatternId")
+  }
+
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService, private router: Router,
     private translateService: TranslateService, private activatedRoute: ActivatedRoute,
@@ -56,6 +67,7 @@ export class LoadableStudyListComponent implements OnInit {
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
       this.vesselDetails = res[0] ?? <IVessel>{};
+      localStorage.setItem("vesselId",this.vesselDetails?.id.toString())
       this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
       this.ngxSpinnerService.hide();
       this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);

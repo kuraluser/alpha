@@ -27,7 +27,7 @@ export class VoyageStatusComponent implements OnInit {
   vesselInfo: IVessel;
   displayEditPortPopup: boolean;
   voyageInfo: Voyage[];
-  selectedVoyage: Voyage;
+  _selectedVoyage: Voyage;
   voyageDistance: number;
   bunkerConditions: IBunkerConditions;
   cargoConditions: ICargoConditions[];
@@ -36,6 +36,17 @@ export class VoyageStatusComponent implements OnInit {
   voyageStatusResponse: IVoyageStatus;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit') ?? AppConfigurationService.settings.baseUnit;
   VOYAGE_STATUS = VOYAGE_STATUS;
+
+  get selectedVoyage(): Voyage{
+    return this._selectedVoyage;
+  }
+
+  set selectedVoyage(voyage: Voyage){
+    this._selectedVoyage = voyage;
+    localStorage.setItem("voyageId",voyage.id.toString())
+    localStorage.removeItem("loadableStudyId")
+    localStorage.removeItem("loadablePatternId")
+  }
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
@@ -62,6 +73,7 @@ export class VoyageStatusComponent implements OnInit {
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
     if (this.vesselInfo?.id) {
+      localStorage.setItem("vesselId",this.vesselInfo?.id.toString())
       this.getVoyageInfo(this.vesselInfo?.id);
     }
   }

@@ -121,6 +121,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.vesselId = Number(params.get('vesselId'));
         this.voyageId = Number(params.get('voyageId'));
         this.loadableStudyId = Number(params.get('loadableStudyId'));
+        localStorage.setItem("vesselId", this.vesselId.toString())
+        localStorage.setItem("voyageId", this.voyageId.toString())
+        localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
+        localStorage.removeItem("loadablePatternId")
         this.loadableStudies = null;
         this.loadableQuantityNew = '0';
         this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
@@ -552,7 +556,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async cargoNominationUpdate(event) {
     this.showCommingleButton = event.value;
     // Show alert if total quantity exceeds loadable quantity
-    if(event.error){
+    if (event.error) {
       const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
       if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
         this.messageService.clear();
@@ -648,16 +652,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     catch (errorResponse) {
-      const translationKeys = await this.translateService.get(['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL','CARGO_NOMINATION_PORT_SELECTION_ERROR','LOADABLE_STUDY_DISCHARGE_PORT_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR']).toPromise();
+      const translationKeys = await this.translateService.get(['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL', 'CARGO_NOMINATION_PORT_SELECTION_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR']).toPromise();
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_ERROR'], detail: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR'], life: 10000 });
       } else {
-        if(errorResponse.error.errorCode === 'ERR-RICO-107') {
+        if (errorResponse.error.errorCode === 'ERR-RICO-107') {
           this.messageService.add({ severity: 'error', summary: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR'], detail: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL'] });
           const dischargingPorts = [...this.dischargingPorts];
           dischargingPorts.splice(dischargingPorts.length - 1, 1);
           this.dischargingPorts = [...dischargingPorts];
-         }
+        }
       }
     }
 

@@ -95,6 +95,10 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
+      localStorage.setItem("vesselId", this.vesselId.toString())
+      localStorage.setItem("voyageId", this.voyageId.toString())
+      localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
+      localStorage.removeItem("loadablePatternId")
       if (this.isViewPattern) {
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       }
@@ -316,9 +320,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
 * @memberof LoadablePatternHistoryComponent
 */
   patternHistory() {
-    if(!this.isViewPattern){
+    if (!this.isViewPattern) {
       this.router.navigate([`/business/cargo-planning/loadable-pattern-history/0/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
-    }else{
+    } else {
       this.openSidePane = !this.openSidePane
     }
   }
@@ -329,17 +333,17 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @param {IStabilityParameter} stabilityParameters
    * @memberof LoadablePatternHistoryComponent
    */
-  viewStability(stabilityParameters : IStabilityParameter){
+  viewStability(stabilityParameters: IStabilityParameter) {
     this.stabilityParameters = stabilityParameters ? [stabilityParameters] : [];
     this.showStability = true;
   }
 
-   /**
-   * set visibility of stability popup (show/hide)
-   *
-   * @param {*} event
-   * @memberof LoadablePatternHistoryComponent
-   */
+  /**
+  * set visibility of stability popup (show/hide)
+  *
+  * @param {*} event
+  * @memberof LoadablePatternHistoryComponent
+  */
   setStabilityPopupVisibility(emittedValue) {
     this.showStability = emittedValue;
   }

@@ -1,5 +1,5 @@
 <form style="height: 100%;">
-    <p-table *ngIf="synopticalService.synopticalRecords.length; else empty" [columns]="synopticalService.synopticalRecords" [value]="cols" dataKey="header"
+    <p-table *ngIf="synopticalService.synopticalRecords?.length; else empty" [columns]="synopticalService.synopticalRecords" [value]="cols" dataKey="header"
         id="synoptic-table" [expandedRowKeys]="expandedRows" styleClass="body-header-row-span-table" [scrollable]="true"
         scrollHeight="flex">
         <ng-template pTemplate="colgroup" let-columns>

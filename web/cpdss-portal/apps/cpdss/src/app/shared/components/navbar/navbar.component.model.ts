@@ -8,6 +8,10 @@ export interface IMenuItem {
     subMenu: ISubMenu[];
     permissionMapping: string;
     isSubMenuOpen: boolean;
+    addVesselId?: boolean;
+    addVoyageId?: boolean;
+    addLoadableStudyId?: boolean;
+    addLoadablePatternId?: boolean;
 }
 /**
  * Interface for submenu
