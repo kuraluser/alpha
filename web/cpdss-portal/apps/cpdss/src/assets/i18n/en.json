@@ -468,6 +468,7 @@
 	"LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH": "Maximum allowed character length is 100",
 	"DATA_TABLE_OK_BUTTON_LABEL": "OK",
 	"DATA_TABLE_CLEAR_BUTTON_LABEL": "Clear",
+	"DATA_TABLE_SERIAL_NUMBER_LABEL": "SL No",
 	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank.",
 	"GENERATE_LOADABLE_PATTERN_INFO": "Info",
 	"GENERATE_LOADABLE_PATTERN_PROCESSING": "Generate pattern processing",
