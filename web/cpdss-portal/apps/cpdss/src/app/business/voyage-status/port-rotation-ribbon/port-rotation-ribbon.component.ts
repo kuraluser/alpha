@@ -41,6 +41,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.loadableStudyId = value.confirmedLoadableStudyId;
     this.getPortRotationRibbonData();
   }
+ @Input() isDeletable = false;
+
   @Output() portDetails = new EventEmitter<IVoyageDetails>();
 
   voyageId: number;

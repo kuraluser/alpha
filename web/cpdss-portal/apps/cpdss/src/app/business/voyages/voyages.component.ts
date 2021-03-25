@@ -9,10 +9,6 @@ import { switchMap } from 'rxjs/operators';
 import { IVessel } from '../core/models/vessel-details.model';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ConfirmationAlertService } from '../../shared/components/confirmation-alert/confirmation-alert.service';
-import { MessageService } from 'primeng/api';
-import { TranslateService } from '@ngx-translate/core';
-import { first } from 'rxjs/operators';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { IPermission } from '../../shared/models/user-profile.model';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
@@ -38,10 +34,12 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   vesselDetails: IVessel;
   vesselId: number;
   filterDates: Date[];
-  isStartVoyage = false;
-  startVoyageId: number;
+  showDatePopup = false;
+  selectedVoyageId: number;
   permissionStart: IPermission;
   permissionStop: IPermission;
+  defaultDate: Date;
+  isStart: boolean;
 
   public loading: boolean;
   public totalRecords: number;
@@ -57,9 +55,6 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     private voyageListApiService: VoyageListApiService,
     private vesselsApiService: VesselsApiService,
     private ngxSpinnerService: NgxSpinnerService,
-    private confirmationAlertService: ConfirmationAlertService,
-    private messageService: MessageService,
-    private translateService: TranslateService,
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
@@ -124,7 +119,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
           voyage.isStop = voyage.status === 'Active' ? true : false;
           return voyage;
         });
-      }else{
+      } else {
         this.voyageList = [];
       }
     }
@@ -146,8 +141,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       sortBy: event.sort.sortField,
       orderBy: event.sort.sortOrder,
     };
-    this.loading = true;
-    this.getVoyageLists$.next();
+    this.reloadVoyageHistory();
   }
 
 
@@ -160,9 +154,19 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   onDateRangeSelect(event) {
     if (this.filterDates[0] && this.filterDates[1]) {
       this.dateRangeFilter.hideOverlay();
-      this.loading = true;
-      this.getVoyageLists$.next();
+      this.reloadVoyageHistory();
     }
+  }
+
+  /**
+  * method for reset global date range filter
+  *
+  * @param {*} event
+  * @memberof VoyagesComponent
+  */
+  resetDateFilter(event) {
+    this.filterDates = null;
+    this.reloadVoyageHistory();
   }
 
   /**
@@ -172,7 +176,10 @@ export class VoyagesComponent implements OnInit, OnDestroy {
  * @memberof VoyagesComponent
  */
   setPopupVisibility(emittedValue) {
-    this.isStartVoyage = emittedValue;
+    this.showDatePopup = emittedValue?.showPopup;
+    if (emittedValue?.refresh) {
+      this.reloadVoyageHistory();
+    }
   }
 
   /**
@@ -182,30 +189,28 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   * @memberof VoyagesComponent
   */
   async onButtonClick(event) {
+    let dateArr;
     if (event.field === 'isStart') {
-      this.startVoyageId = event?.data?.id;
-      this.isStartVoyage = true;
+      this.isStart = true;
+      dateArr = event?.data?.actualStartDate ? event?.data?.actualStartDate?.split('-') : event?.data?.plannedStartDate?.split('-');
     } else if (event.field === 'isStop') {
-      const today = new Date();
-      const translationKeys = await this.translateService.get(['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS']).toPromise();
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_SUMMARY', detail: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_DETAILS', data: { confirmLabel: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_CONFIRM_LABEL', rejectLabel: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_REJECTION_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-        if (response) {
-
-          this.ngxSpinnerService.show();
-          try {
-            const result = await this.voyageListApiService.endVoyage(this.vesselId, event?.data?.id, this.voyageListTransformationService.formatDateTime(today, true)).toPromise();
-            if (result.responseStatus.status === '200') {
-              this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP'] });
-            }
-          } catch (error) {
-          }
-          this.ngxSpinnerService.hide();
-        }
-      });
-
+      this.isStart = false;
+      dateArr = event?.data?.actualEndDate ? event?.data?.actualEndDate?.split('-') : event?.data?.plannedEndDate?.split('-');
     }
+    this.defaultDate = dateArr.length ? new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0])) : new Date();
+    this.selectedVoyageId = event?.data?.id;
+    this.showDatePopup = true;
+  }
 
+  /**
+  * reloade voyage history data
+  *
+  * @param {*} event
+  * @memberof VoyagesComponent
+  */
+  reloadVoyageHistory() {
+    this.loading = true;
+    this.getVoyageLists$.next();
   }
 
 }

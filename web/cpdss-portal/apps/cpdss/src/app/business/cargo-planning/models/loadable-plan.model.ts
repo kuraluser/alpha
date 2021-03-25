@@ -148,6 +148,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     temperature: number;
     colorCode: string;
     fullCapacityCubm: string;
+    isCommingle?: boolean;
 }
 
 /**

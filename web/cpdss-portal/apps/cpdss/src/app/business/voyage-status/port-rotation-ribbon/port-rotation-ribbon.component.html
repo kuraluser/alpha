@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
 
-                                <div class="pr-15 ml-auto" *ngIf="voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port.isFutureDate"> <a type="button"
+                                <div class="pr-15 ml-auto" *ngIf="isDeletable && voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port.isFutureDate"> <a type="button"
                                         class="delete-icon "
                                         id="port_rotation_ribbon_delete__{{portList.indexOf(port)}}"
                                         (click)="deleteRow(port)"></a></div>

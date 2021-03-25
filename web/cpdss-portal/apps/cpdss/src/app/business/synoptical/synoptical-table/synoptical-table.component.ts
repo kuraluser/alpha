@@ -109,7 +109,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
     this.synopticalService.showActions = false;
-    this.synopticalService.destroy()
   }
 
   /**

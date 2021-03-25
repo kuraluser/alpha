@@ -60,6 +60,8 @@ export class Voyage {
     public endDate?: string;
     public noOfDays?: number;
     statusId?: VOYAGE_STATUS;
+    actualStartDate?: string; 
+    actualEndDate?: string; 
 }
 
 /**

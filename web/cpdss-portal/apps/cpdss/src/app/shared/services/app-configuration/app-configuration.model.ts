@@ -12,5 +12,6 @@ export interface IAppConfiguration {
     passwordMinLength?: number;
     processingTimeout?: number;
     tokenMinValidity?: number;
+    commingleColor?: string;
 }
 

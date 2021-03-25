@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { LoadablePattern, LoadableStudy } from '../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../../cargo-planning/services/loadable-study-list-api.service';
-import { LOADABLE_STUDY_STATUS, Voyage} from '../../core/models/common.model';
+import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS_LABEL } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
@@ -27,7 +27,6 @@ export class SynopticalService {
   selectedLoadablePattern: LoadablePattern;
   vesselId: number;
   voyageId: number;
-  isVoyageIdSelected = false;
   onInitCompleted = new BehaviorSubject(false);
   onInitCompleted$: Observable<boolean> = this.onInitCompleted.asObservable()
   save = new Subject();
@@ -50,6 +49,10 @@ export class SynopticalService {
 
   // Init function to intialize data
   async init() {
+    localStorage.removeItem("vesselId")
+    localStorage.removeItem("voyageId")
+    localStorage.removeItem("loadableStudyId")
+    localStorage.removeItem("loadablePatternId")
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     if (!this.vesselInfo) {
       this.vesselInfo = res[0] ?? <IVessel>{};
@@ -62,22 +65,13 @@ export class SynopticalService {
     this.onInitCompleted.next(true)
   }
 
-  // Destroy function to clear data
-  async destroy() {
-    this.selectedLoadableStudy = null;
-    this.loadableStudyId = null;
-    this.selectedLoadablePattern = null;
-    this.loadablePatternId = null;
-    this.selectedVoyage = null;
-    this.setSelectedVoyage();
-  }
+
 
   // Method to set selected voyages
   async setSelectedVoyage() {
-    this.voyageId = Number(this.route.snapshot.params?.voyageId)
-    if (this.selectedVoyage) {
-      this.voyageId = this.selectedVoyage.id;
-    } else if (this.voyages && this.voyageId) {
+    const voyageId = Number(this.route.snapshot.params?.voyageId)
+    if (this.voyages && voyageId && this.voyageId !== voyageId) {
+      this.voyageId = voyageId;
       this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
       await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
     }
@@ -85,27 +79,31 @@ export class SynopticalService {
 
   // Method to set selected loadable study
   setSelectedLoadableStudy() {
-    this.selectedLoadableStudy = this.loadableStudyList.find(loadableStudy => loadableStudy.id === this.loadableStudyId);
-    this.getLoadablePatterns();
+    if (this.selectedVoyage.status !== VOYAGE_STATUS_LABEL.ACTIVE) {
+      this.selectedLoadableStudy = this.loadableStudyList.find(loadableStudy => loadableStudy.id === this.loadableStudyId);
+      this.getLoadablePatterns();
+    }
   }
 
   /**
  * Get loadable study list for selected voyage
  */
   async getLoadableStudyInfo(vesselId: number, voyageId: number) {
-    if (this.selectedVoyage.id !== 0) {
-      this.isVoyageIdSelected = true;
+    if (this.selectedVoyage?.id !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
-      this.loadableStudyList = result.loadableStudies;
-      this.loadableStudyId = Number(this.route.snapshot.params?.loadableStudyId)
-      if (this.selectedLoadableStudy) {
-        this.loadableStudyId = this.selectedLoadableStudy.id;
-      } else if (this.loadableStudyId) {
-        this.setSelectedLoadableStudy();
+      if (this.selectedVoyage.status === VOYAGE_STATUS_LABEL.ACTIVE) {
+        this.selectedLoadableStudy = result.loadableStudies.find(ls => ls.status === "Confirmed")
+        this.loadableStudyList = [this.selectedLoadableStudy]
+        this.getLoadablePatterns()
+      } else {
+        this.loadableStudyList = result.loadableStudies;
+        this.loadableStudyId = Number(this.route.snapshot.params?.loadableStudyId)
+        if (this.selectedLoadableStudy) {
+          this.loadableStudyId = this.selectedLoadableStudy.id;
+        } else if (this.loadableStudyId) {
+          this.setSelectedLoadableStudy();
+        }
       }
-    }
-    else {
-      this.isVoyageIdSelected = false;
     }
   }
 
@@ -114,7 +112,7 @@ export class SynopticalService {
   */
   async getLoadablePatterns() {
     const result = await this.loadableStudyListApiService.getLoadablePatterns(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
-    if(this.selectedLoadableStudy.status === "Confirmed"){
+    if (this.selectedLoadableStudy.status === "Confirmed") {
       this.selectedLoadablePattern = result.loadablePatterns.find(pattern => pattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED)
       this.loadablePatternsList = [this.selectedLoadablePattern]
       this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id + '/' + this.selectedLoadablePattern.loadablePatternId)
