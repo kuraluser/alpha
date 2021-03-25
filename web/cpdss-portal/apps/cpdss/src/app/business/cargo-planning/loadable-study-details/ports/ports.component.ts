@@ -372,20 +372,14 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.updateValidityAndEditMode(index, 'etd');
     }
     if (event.field === 'etd') {
-      this.updateValidityAndEditMode(index, 'eta');
-      if (index + 1 < this.portsLists.length) {
-        this.updateValidityAndEditMode(index + 1, 'eta')
-      }
-      if (index + 2 < this.portsLists.length) {
-        this.updateValidityAndEditMode(index + 2, 'eta')
+      for (let i = 0; i < this.portsLists.length; i++) {
+        this.updateValidityAndEditMode(i, 'eta')
       }
     }
     if (event.field === 'eta') {
-      this.updateValidityAndEditMode(index, 'etd');
-      if (index > 0)
-        this.updateValidityAndEditMode(index - 1, 'etd');
-      if (index - 1 > 0)
-        this.updateValidityAndEditMode(index - 2, 'etd');
+      for (let i = 0; i < this.portsLists.length; i++) {
+        this.updateValidityAndEditMode(i, 'etd')
+      }
     }
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, rowIndex) => {
@@ -399,12 +393,14 @@ export class PortsComponent implements OnInit, OnDestroy {
       }
       if (row.valid && !event.data?.isAdd && row.touched) {
         event.data.processing = true;
-        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
-        if (res) {
-          row.markAsUntouched();
-          for (const key in this.portsLists[rowIndex]) {
-            if (this.portsLists[rowIndex].hasOwnProperty(key) && this.portsLists[rowIndex][key].hasOwnProperty('_isEditMode')) {
-              this.portsLists[rowIndex][key].isEditMode = false;
+        if (this.portsLists[rowIndex]?.id !== 0) {
+          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+          if (res) {
+            row.markAsUntouched();
+            for (const key in this.portsLists[rowIndex]) {
+              if (this.portsLists[rowIndex].hasOwnProperty(key) && this.portsLists[rowIndex][key].hasOwnProperty('_isEditMode')) {
+                this.portsLists[rowIndex][key].isEditMode = false;
+              }
             }
           }
         }
