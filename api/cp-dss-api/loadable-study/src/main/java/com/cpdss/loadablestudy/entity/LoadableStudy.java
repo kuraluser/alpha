@@ -110,4 +110,7 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "is_obq_complete")
   private Boolean isObqComplete;
+
+  @Column(name = "is_discharge_ports_complete")
+  private Boolean isDischargePortsComplete;
 }

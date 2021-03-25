@@ -75,4 +75,6 @@ public class LoadableStudy {
   private Boolean isOhqComplete;
 
   private Boolean isObqComplete;
+
+  private Boolean isDischargingPortComplete;
 }

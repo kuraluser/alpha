@@ -487,7 +487,8 @@ message VoyageRequest {
 	int32 pageSize = 9;
 	string fromStartDate=10;
 	string toStartDate=11;
-	int32 timezoneId = 12;
+	int32 startTimezoneId = 12;
+	int32 endTimezoneId = 13;
 }
 
 message VoyageReply {
@@ -605,6 +606,7 @@ message LoadableStudyDetail{
 	bool isPortsComplete=25;
 	bool isOhqComplete=26;
 	bool isObqComplete=27;
+	bool isDischargingPortComplete=28;
 }
 
 message LoadableStudyReply{
@@ -638,6 +640,8 @@ message CargoNominationDetail {
 	string apiEst = 11;
 	string tempEst = 12;
 	int64 segregationId = 13;
+	bool isCargoNominationComplete=14;
+	
 }
 
 message CargoNominationRequest {
@@ -662,7 +666,9 @@ message PortRotationRequest{
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
 	repeated PortRotationDetail portRotationDetails = 6;
-	int64 dischargingCargoId=7;
+	int64 dischargingCargoId=7;	
+    bool isDischargingPortsComplete=8;
+	
 }
 
 message PortRotationDetail{
@@ -683,6 +689,8 @@ message PortRotationDetail{
 	string layCanTo=15;
 	int64 loadableStudyId=16;
 	int64 portOrder=17;
+	bool isPortsComplete=18;
+	
 }
 
 message Operation{
@@ -742,6 +750,7 @@ message OnHandQuantityDetail{
 	string colorCode = 14;
 	string fuelTypeShortName = 15;
 	string density=16;
+	bool isOhqComplete=17;
 }
 
 message TankDetail{
@@ -799,6 +808,8 @@ message OnBoardQuantityDetail{
 	string abbreviation = 13;
 	string density=14;
 	bool loadOnTop = 15;
+    bool isObqComplete=17;
+	
 }
 
 message OnBoardQuantityReply{

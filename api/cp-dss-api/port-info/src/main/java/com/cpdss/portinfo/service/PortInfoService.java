@@ -209,7 +209,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
         com.cpdss.common.generated.PortInfo.Timezone.Builder timezone =
             com.cpdss.common.generated.PortInfo.Timezone.newBuilder();
         timezone.setId(tz.getId());
-        timezone.setTimezone(tz.getTimezone());
+        timezone.setTimezone(tz.getTimezone() + " " + tz.getRegion());
         timezone.setOffsetValue(tz.getOffsetValue());
         replyBuilder.addTimezones(timezone);
       }
