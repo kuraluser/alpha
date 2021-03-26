@@ -28,11 +28,12 @@ import { FocusTrapModule } from 'primeng/focustrap';
 import { tokenAuthCPDSSInitializer } from "../app/shared/utils/token-auth.cpdss.init";
 
 let providers: any = [
-  {
+  // TODO: To be removed after testing
+  /* {
     provide: APP_INITIALIZER,
     useFactory: (appConfigService: AppConfigurationService) => () => appConfigService.load(),
     deps: [AppConfigurationService, ActivatedRoute], multi: true
-  },
+  }, */
   { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
   { provide: ErrorHandler, useClass: GlobalErrorHandler },
 ];

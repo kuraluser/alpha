@@ -190,9 +190,6 @@ export class CargoNominationDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            cargoNominations: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }
@@ -297,7 +294,8 @@ export enum LOADABLE_STUDY_DETAILS_TABS {
  * @interface IOHQPort
  */
 export interface IOHQPort {
-    portId: number;
+    id: number; // port rotation id
+    portId: number; // port master id
 }
 
 /**
@@ -352,7 +350,7 @@ export interface IPortOHQTankDetail {
     departureQuantity: number;
     arrivalVolume: number;
     departureVolume: number;
-    portId: number;
+    portRotationId: number;
     storeKey: number;
     vesselId: number;
     voyageId: number;
@@ -381,7 +379,7 @@ export interface IPortOHQTankDetailValueObject {
     departureQuantity: ValueObject<number>;
     arrivalVolume: number;
     departureVolume: number;
-    portId: number;
+    portRotationId: number;
     storeKey: number;
     colorCode: string;
     quantity: number;
@@ -456,9 +454,6 @@ export class OHQDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            ohq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }
@@ -475,9 +470,6 @@ export class PortsDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            ports: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }
@@ -633,9 +625,6 @@ export class OBQDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            obq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }

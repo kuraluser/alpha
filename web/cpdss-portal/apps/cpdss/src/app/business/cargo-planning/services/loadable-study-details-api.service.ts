@@ -185,7 +185,7 @@ export class LoadableStudyDetailsApiService {
      * @memberof LoadableStudyDetailsApiService
      */
     getPortOHQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number): Observable<IPortOHQResponse> {
-        return this.commonApiService.get<IPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${portId}/on-hand-quantities`);
+        return this.commonApiService.get<IPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/port-rotation/${portId}/on-hand-quantities`);
     }
 
     /**

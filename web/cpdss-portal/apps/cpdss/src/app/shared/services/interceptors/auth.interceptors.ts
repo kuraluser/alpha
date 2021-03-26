@@ -27,6 +27,10 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         const token: string = SecurityService.getAuthToken();
 
         if (token) {
+            // Set token in indexed db
+            SecurityService.initPropertiesDB(token);
+
+            // Add token to request header
             request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });
         }
         if (localStorage.getItem('realm')) {
@@ -39,7 +43,9 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         keycloakInstance?.updateToken(AppConfigurationService.settings?.tokenMinValidity ?? 180).then((refreshed) => {
             if (refreshed) {
                 SecurityService.setAuthToken(keycloakInstance.token);
-                SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
+                navigator.serviceWorker.ready.then(() => {
+                    SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
+                });
             }
         });
         
@@ -50,9 +56,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
                     const refreshedToken = event.headers.get('token');
                     if (environment.name !== 'shore' && refreshedToken) {
                         SecurityService.setAuthToken(refreshedToken)
-                        navigator.serviceWorker.ready.then(() => {
-                            SecurityService.setPropertiesDB(refreshedToken, 'token');
-                        });
+                        SecurityService.initPropertiesDB(refreshedToken);
                     }
                 }
                 return event;

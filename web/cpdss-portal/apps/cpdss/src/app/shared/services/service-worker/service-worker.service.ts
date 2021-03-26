@@ -84,6 +84,7 @@ export class ServiceWorkerService {
             }).catch((err) => {
               console.error("Could not delete database");
             }).finally(() => {
+              console.error("Service worker Reload");
               this.ngxSpinnerService.hide();
               document.location.reload();
             });

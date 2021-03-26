@@ -66,12 +66,6 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                 if (!isLoggedIn) {
                     window.location.href = logoutUrl;
                 } else {
-                    //TODO: Handling scenario when user manually cleares service worker and indexed db
-                    /* const token = localStorage.getItem('token');
-                    const isPropertyExist = await SecurityService.getPropertiesDB('token');
-                    if(token && !isPropertyExist) {
-                        SecurityService.initPropertiesDB(token);
-                    } */
 
                     //If token expired
                     keycloak.keycloakEvents$.subscribe(async (response: KeycloakEvent) => {
@@ -80,7 +74,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                                 const refreshed = await keycloakInstance.updateToken(300);
                                 if (refreshed) {
                                     SecurityService.setAuthToken(keycloakInstance.token);
-                                    SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
+                                    SecurityService.initPropertiesDB(keycloakInstance.token);
                                     return keycloakInstance.token;
                                 } else {
                                     window.location.href = logoutUrl;
