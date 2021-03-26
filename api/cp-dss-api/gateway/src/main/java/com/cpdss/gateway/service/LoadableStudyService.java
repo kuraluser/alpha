@@ -1946,7 +1946,8 @@ public class LoadableStudyService {
       List<CargoNomination> cargoNominationList = new ArrayList<>();
       List<CargoNominationDetail> cargoNominationDetailsFiltered =
           reply.getCargoNominationsList().stream()
-              .filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
+              //filter removed to allow duplicate cargonomiation DSS-2088
+              //.filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
               .collect(Collectors.toList());
       cargoNominationDetailsFiltered.forEach(
           cargoNominationDetail -> {
