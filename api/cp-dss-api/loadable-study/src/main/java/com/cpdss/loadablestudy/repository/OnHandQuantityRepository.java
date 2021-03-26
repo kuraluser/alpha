@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,6 +25,15 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
    */
   public List<OnHandQuantity> findByLoadableStudyAndPortXIdAndIsActive(
       LoadableStudy loadableStudy, Long portXId, boolean isActive);
+
+  /**
+   * @param loadableStudy
+   * @param portRotation
+   * @param isActive
+   * @return
+   */
+  public List<OnHandQuantity> findByLoadableStudyAndPortRotationAndIsActive(
+      LoadableStudy loadableStudy, LoadableStudyPortRotation portRotation, boolean isActive);
 
   /**
    * Find entity by id

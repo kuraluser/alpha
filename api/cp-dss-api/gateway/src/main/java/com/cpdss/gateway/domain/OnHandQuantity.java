@@ -53,4 +53,6 @@ public class OnHandQuantity {
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal density;
+
+  private Long portRotationId;
 }
