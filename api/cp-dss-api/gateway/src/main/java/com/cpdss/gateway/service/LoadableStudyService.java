@@ -1423,8 +1423,8 @@ public class LoadableStudyService {
    * @param first
    * @return LoadablePatternResponse
    */
-  public LoadablePatternResponse getLoadablePatterns(Long loadableStudiesId, String correlationId)
-      throws GenericServiceException {
+  public LoadablePatternResponse getLoadablePatterns(
+      Long loadableStudiesId, Long vesselId, String correlationId) throws GenericServiceException {
     LoadablePatternRequest loadablePatternRequest =
         LoadablePatternRequest.newBuilder().setLoadableStudyId(loadableStudiesId).build();
     LoadablePatternReply loadablePatternReply = this.getLoadablePattern(loadablePatternRequest);
@@ -1435,7 +1435,8 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(
               Integer.valueOf(loadablePatternReply.getResponseStatus().getCode())));
     }
-    return this.buildLoadablePatternResponse(loadablePatternReply, correlationId);
+    return this.buildLoadablePatternResponse(
+        loadableStudiesId, loadablePatternReply, vesselId, correlationId);
   }
 
   /**
@@ -1444,7 +1445,10 @@ public class LoadableStudyService {
    * @return LoadablePatternResponse
    */
   private LoadablePatternResponse buildLoadablePatternResponse(
-      LoadablePatternReply loadablePatternReply, String correlationId) {
+      Long loadableStudiesId,
+      LoadablePatternReply loadablePatternReply,
+      Long vesselId,
+      String correlationId) {
     LoadablePatternResponse loadablePatternResponse = new LoadablePatternResponse();
     loadablePatternResponse.setLoadableStudyName(loadablePatternReply.getLoadableStudyName());
     loadablePatternResponse.setLoadablePatternCreatedDate(
@@ -1460,12 +1464,14 @@ public class LoadableStudyService {
         createGroupWiseTankList(loadablePatternReply.getBallastCenterTanksList()));
     loadablePatternResponse.setRearBallastTanks(
         createGroupWiseTankList(loadablePatternReply.getBallastRearTanksList()));
+    LocalDateTime startTime = LocalDateTime.now();
 
     loadablePatternReply
         .getLoadablePatternList()
         .forEach(
             loadablePattern -> {
               LoadablePattern loadablePatternDto = new LoadablePattern();
+
               loadablePatternDto.setLoadablePatternId(loadablePattern.getLoadablePatternId());
               loadablePatternDto.setConstraints(buildLoadableStudyConstraints(loadablePattern));
               loadablePatternDto.setStabilityParameters(
@@ -1532,7 +1538,18 @@ public class LoadableStudyService {
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
                       });
-
+              // DSS-2016
+              try {
+                buildSynopticTableForPlans(
+                    loadablePatternDto,
+                    loadableStudiesId,
+                    vesselId,
+                    loadablePattern.getLoadablePatternId());
+                buildLoadableStudyQuantity(loadablePatternDto, loadablePattern);
+                buildLoadableStudyCommingleCargoDetails(loadablePatternDto, loadablePattern);
+              } catch (GenericServiceException e) {
+                e.printStackTrace();
+              }
               loadablePatternDto.setLoadablePlanStowageDetails(
                   buildLoadableStudyStowageDetails(loadablePattern));
               loadablePatternDto.setCaseNumber(loadablePattern.getCaseNumber());
@@ -1540,7 +1557,156 @@ public class LoadableStudyService {
             });
     loadablePatternResponse.setResponseStatus(
         new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    long diff = ChronoUnit.SECONDS.between(startTime, LocalDateTime.now());
+    log.info("Loadable patterns time (sec) taken - {}", diff);
     return loadablePatternResponse;
+  }
+
+  private void buildLoadableStudyQuantity(
+      LoadablePattern response,
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern grpcReply) {
+    response.setLoadableQuantityCargoDetails(
+        new ArrayList<com.cpdss.gateway.domain.LoadableQuantityCargoDetails>());
+    grpcReply
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            lqcd -> {
+              com.cpdss.gateway.domain.LoadableQuantityCargoDetails cargoDetails =
+                  new com.cpdss.gateway.domain.LoadableQuantityCargoDetails();
+              cargoDetails.setDifferenceColor(lqcd.getDifferenceColor());
+              cargoDetails.setDifferencePercentage(lqcd.getDifferencePercentage());
+              cargoDetails.setEstimatedAPI(lqcd.getEstimatedAPI());
+              cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
+              cargoDetails.setGrade(lqcd.getGrade());
+              cargoDetails.setId(lqcd.getId());
+              cargoDetails.setLoadableBbls60f(lqcd.getLoadableBbls60F());
+              cargoDetails.setLoadableBblsdbs(lqcd.getLoadableBblsdbs());
+              cargoDetails.setLoadableKL(lqcd.getLoadableKL());
+              cargoDetails.setLoadableLT(lqcd.getLoadableLT());
+              cargoDetails.setLoadableMT(lqcd.getLoadableMT());
+              cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+              cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+              cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
+              cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
+              cargoDetails.setCargoId(lqcd.getCargoId());
+              cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              response.getLoadableQuantityCargoDetails().add(cargoDetails);
+            });
+  }
+
+  private void buildLoadableStudyCommingleCargoDetails(
+      LoadablePattern response,
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern grpcReply) {
+    response.setLoadableQuantityCommingleCargoDetails(
+        new ArrayList<LoadableQuantityCommingleCargoDetails>());
+    grpcReply
+        .getLoadableQuantityCommingleCargoDetailsList()
+        .forEach(
+            lqccd -> {
+              LoadableQuantityCommingleCargoDetails details =
+                  new LoadableQuantityCommingleCargoDetails();
+              details.setId(lqccd.getId());
+              details.setApi(lqccd.getApi());
+              details.setCargo1Abbreviation(lqccd.getCargo1Abbreviation());
+              details.setCargo1Bbls60f(lqccd.getCargo1Bbls60F());
+              details.setCargo1Bblsdbs(lqccd.getCargo1Bblsdbs());
+              details.setCargo1KL(lqccd.getCargo1KL());
+              details.setCargo1LT(lqccd.getCargo1LT());
+              details.setCargo1MT(lqccd.getCargo1MT());
+              details.setCargo1Percentage(lqccd.getCargo1Percentage());
+              details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
+              details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
+              details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
+              details.setCargo2KL(lqccd.getCargo2KL());
+              details.setCargo2LT(lqccd.getCargo2LT());
+              details.setCargo2MT(lqccd.getCargo2MT());
+              details.setCargo2Percentage(lqccd.getCargo2Percentage());
+              details.setGrade(lqccd.getGrade());
+              details.setQuantity(lqccd.getQuantity());
+              details.setTankName(lqccd.getTankName());
+              details.setTemp(lqccd.getTemp());
+              response.getLoadableQuantityCommingleCargoDetails().add(details);
+            });
+  }
+
+  /**
+   * @param vesselId
+   * @param loadableStudyId
+   * @param loadablePatternId
+   * @return SynopticalTableResponse - Single data 'operation type' (DEP) will return from LS
+   * @throws GenericServiceException
+   */
+  public SynopticalTableResponse getSingleSynopticDataByLSId(
+      Long vesselId, Long loadableStudyId, Long loadablePatternId) throws GenericServiceException {
+    SynopticalTableResponse synopticalTableResponse = new SynopticalTableResponse();
+    // Build response with response status
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    synopticalTableResponse.setResponseStatus(commonSuccessResponse);
+    // Retrieve synoptical table for the loadable study
+    SynopticalTableRequest synopticalTableRequest =
+        SynopticalTableRequest.newBuilder()
+            .setLoadableStudyId(loadableStudyId)
+            .setVesselId(vesselId)
+            .setLoadablePatternId(loadablePatternId)
+            .build();
+    SynopticalTableReply synopticalTableReply =
+        this.loadableStudyServiceBlockingStub.getSynopticDataByLoadableStudyId(
+            synopticalTableRequest);
+    if (SUCCESS.equalsIgnoreCase(synopticalTableReply.getResponseStatus().getStatus())) {
+      buildSynopticalTableResponse(synopticalTableResponse, synopticalTableReply);
+    } else {
+      throw new GenericServiceException(
+          "Error calling getSynopticalTable service",
+          synopticalTableReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(synopticalTableReply.getResponseStatus().getCode())));
+    }
+    return synopticalTableResponse;
+  }
+
+  private void buildSynopticTableForPlans(
+      LoadablePattern response, Long loadableStudyId, Long vesselId, Long loadablePatternId)
+      throws GenericServiceException {
+
+    SynopticalTableResponse synopticalTableResponse =
+        getSingleSynopticDataByLSId(vesselId, loadableStudyId, loadablePatternId);
+    if (!synopticalTableResponse
+        .getResponseStatus()
+        .getStatus()
+        .equals(String.valueOf(HttpStatus.OK.value()))) {
+      throw new GenericServiceException(
+          "Failed to get synoptical table data",
+          String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()),
+          HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    }
+    if (!synopticalTableResponse.getSynopticalRecords().isEmpty()) {
+      synopticalTableResponse.getSynopticalRecords().stream()
+          .limit(1)
+          .forEach(
+              str -> {
+                LoadablePlanSynopticalRecord synopticalRecord = new LoadablePlanSynopticalRecord();
+                synopticalRecord.setId(str.getId());
+                synopticalRecord.setDisplacementPlanned(str.getDisplacementPlanned());
+                synopticalRecord.setEtaEtdPlanned(str.getEtaEtdPlanned());
+                synopticalRecord.setOperationType(str.getOperationType());
+                synopticalRecord.setOthersPlanned(str.getOthersPlanned());
+                synopticalRecord.setPlannedDOTotal(str.getPlannedDOTotal());
+                synopticalRecord.setPlannedFOTotal(str.getPlannedFOTotal());
+                synopticalRecord.setPlannedFWTotal(str.getPlannedFWTotal());
+                synopticalRecord.setPortId(str.getPortId());
+                synopticalRecord.setPortName(str.getPortName());
+                synopticalRecord.setSpecificGravity(str.getSpecificGravity());
+                synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
+                synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
+                synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
+                synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+                synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
+                synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
+                synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
+                response.setLoadablePlanSynopticRecord(synopticalRecord);
+              });
+    }
   }
 
   /**
@@ -3260,8 +3426,10 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     buildLoadableStudyDetails(response, grpcReply);
+
     buildLoadableStudyQuantity(response, grpcReply);
     buildloadableStudyCommingleCargoDetails(response, grpcReply);
+
     buildLoadableStudyStowageDetails(response, grpcReply);
     response.setTankLists(createGroupWiseTankList(grpcReply.getTanksList()));
     response.setFrontBallastTanks(createGroupWiseTankList(grpcReply.getBallastFrontTanksList()));

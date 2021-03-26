@@ -3199,7 +3199,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return Long
    */
   private Long getLastPort(LoadableStudy loadableStudy, CargoOperation loading) {
-    return loadableStudyPortRotationRepository.findLastPort(loadableStudy, loading, true);
+    Object[] ob = getLastPortRotationData(loadableStudy, loading, true);
+    return (long) ob[0];
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loading
+   * @return Long - id
+   */
+  private Long getLastPortRotationId(LoadableStudy loadableStudy, CargoOperation loading) {
+    Object[] ob = getLastPortRotationData(loadableStudy, loading, true);
+    return (long) ob[1];
+  }
+
+  private Object[] getLastPortRotationData(
+      LoadableStudy loadableStudy, CargoOperation loading, boolean status) {
+    Object ob = loadableStudyPortRotationRepository.findLastPort(loadableStudy, loading, status);
+    Object[] obA = (Object[]) ob;
+    return obA;
   }
 
   /**
@@ -8416,6 +8434,62 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           "Save not allowed for active voyage",
           CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
           HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Fetch Single Synoptic Data with DEP condition,
+   *
+   * @param request - LoadableStudy Id, LoadablePattern Id required
+   * @param responseObserver - SynopticalTableReply with One SynopticalTable Data
+   */
+  @Override
+  public void getSynopticDataByLoadableStudyId(
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+          responseObserver) {
+
+    SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
+    log.info(
+        "Synoptic DEP data for loadable study {}, loadable pattern {}",
+        request.getLoadableStudyId(),
+        request.getLoadablePatternId());
+    try {
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      CargoOperation cOp = this.cargoOperationRepository.getOne(LOADING_OPERATION_ID);
+      Long portRotationId = this.getLastPortRotationId(loadableStudy.get(), cOp);
+      LoadableStudyPortRotation lsPr = loadableStudyPortRotationRepository.getOne(portRotationId);
+      Pageable pageable = PageRequest.of(0, 10);
+      Page<SynopticalTable> synData =
+          synopticalTableRepository.findByloadableStudyPortRotation(lsPr, pageable);
+      Optional<SynopticalTable> synopticDEP =
+          synData.stream()
+              .filter(var1 -> (var1.getIsActive() && var1.getOperationType().equals("DEP")))
+              .findFirst();
+      log.info(
+          "Synoptic Table data id {}, for port rotation id {}",
+          synopticDEP.get().getId(),
+          lsPr.getId());
+      VesselReply vesselReply = this.getSynopticalTableVesselData(request, loadableStudy.get());
+      List<VesselTankDetail> sortedTankList = new ArrayList<>(vesselReply.getVesselTanksList());
+      buildSynopticalTableReply(
+          request,
+          Arrays.asList(synopticDEP.get()),
+          this.getSynopticalTablePortDetails(Arrays.asList(synopticDEP.get())),
+          this.getSynopticalTablePortRotations(loadableStudy.get()),
+          loadableStudy.get(),
+          sortedTankList,
+          vesselReply.getVesselLoadableQuantityDetails(),
+          replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (Exception e) {
+      log.error("Exception while fetch Synoptic data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
     }
   }
 }

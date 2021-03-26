@@ -1300,7 +1300,7 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testGetLoadablePatterns() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString()))
+    Mockito.when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.getLoadablePattern(any(LoadablePatternRequest.class)))
         .thenReturn(
@@ -1309,7 +1309,7 @@ class LoadableStudyServiceTest {
                 .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
                 .build());
     LoadablePatternResponse response =
-        this.loadableStudyService.getLoadablePatterns(1L, CORRELATION_ID_HEADER_VALUE);
+        this.loadableStudyService.getLoadablePatterns(1L, anyLong(), CORRELATION_ID_HEADER_VALUE);
     assertAll(
         () ->
             assertEquals(
@@ -1346,7 +1346,7 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testGetLoadablePatternsGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString()))
+    Mockito.when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.getLoadablePattern(any(LoadablePatternRequest.class)))
         .thenReturn(
@@ -1361,7 +1361,9 @@ class LoadableStudyServiceTest {
     final GenericServiceException ex =
         assertThrows(
             GenericServiceException.class,
-            () -> this.loadableStudyService.getLoadablePatterns(1L, CORRELATION_ID_HEADER_VALUE));
+            () ->
+                this.loadableStudyService.getLoadablePatterns(
+                    1L, anyLong(), CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
