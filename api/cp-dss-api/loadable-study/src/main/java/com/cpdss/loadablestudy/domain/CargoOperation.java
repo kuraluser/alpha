@@ -10,7 +10,7 @@ public enum CargoOperation {
   BUNKERING(3L, "Bunkering"),
   TRANSIT(4L, "Transit"),
   STS_LOADING(5L, "STS Loading"),
-  STS_DISCHARGING(5L, "STS Discharging");
+  STS_DISCHARGING(6L, "STS Discharging");
 
   private Long id;
   private String operation;

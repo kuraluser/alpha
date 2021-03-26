@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -18,4 +18,6 @@ public class CargoHistoryResponse {
   private List<CargoHistory> monthlyHistory;
 
   private List<CargoHistory> cargoHistory;
+
+  private Long totalElements = 0l;
 }

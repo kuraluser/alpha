@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated;
 
 public final class VesselInfo {
@@ -8,6 +8,587 @@ public final class VesselInfo {
 
   public static void registerAllExtensions(com.google.protobuf.ExtensionRegistry registry) {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
+  }
+
+  public interface VesselRequestWithPagingOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:VesselRequestWithPaging)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 offset = 1;</code>
+     *
+     * @return The offset.
+     */
+    long getOffset();
+
+    /**
+     * <code>int64 limit = 2;</code>
+     *
+     * @return The limit.
+     */
+    long getLimit();
+  }
+  /** Protobuf type {@code VesselRequestWithPaging} */
+  public static final class VesselRequestWithPaging extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:VesselRequestWithPaging)
+      VesselRequestWithPagingOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use VesselRequestWithPaging.newBuilder() to construct.
+    private VesselRequestWithPaging(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private VesselRequestWithPaging() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new VesselRequestWithPaging();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private VesselRequestWithPaging(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                offset_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                limit_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselRequestWithPaging_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselRequestWithPaging_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging.class,
+              com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging.Builder.class);
+    }
+
+    public static final int OFFSET_FIELD_NUMBER = 1;
+    private long offset_;
+    /**
+     * <code>int64 offset = 1;</code>
+     *
+     * @return The offset.
+     */
+    public long getOffset() {
+      return offset_;
+    }
+
+    public static final int LIMIT_FIELD_NUMBER = 2;
+    private long limit_;
+    /**
+     * <code>int64 limit = 2;</code>
+     *
+     * @return The limit.
+     */
+    public long getLimit() {
+      return limit_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (offset_ != 0L) {
+        output.writeInt64(1, offset_);
+      }
+      if (limit_ != 0L) {
+        output.writeInt64(2, limit_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (offset_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, offset_);
+      }
+      if (limit_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, limit_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging other =
+          (com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging) obj;
+
+      if (getOffset() != other.getOffset()) return false;
+      if (getLimit() != other.getLimit()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + OFFSET_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getOffset());
+      hash = (37 * hash) + LIMIT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLimit());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code VesselRequestWithPaging} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:VesselRequestWithPaging)
+        com.cpdss.common.generated.VesselInfo.VesselRequestWithPagingOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselRequestWithPaging_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselRequestWithPaging_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging.class,
+                com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        offset_ = 0L;
+
+        limit_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselRequestWithPaging_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging build() {
+        com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging buildPartial() {
+        com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging result =
+            new com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging(this);
+        result.offset_ = offset_;
+        result.limit_ = limit_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging other) {
+        if (other
+            == com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging.getDefaultInstance())
+          return this;
+        if (other.getOffset() != 0L) {
+          setOffset(other.getOffset());
+        }
+        if (other.getLimit() != 0L) {
+          setLimit(other.getLimit());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long offset_;
+      /**
+       * <code>int64 offset = 1;</code>
+       *
+       * @return The offset.
+       */
+      public long getOffset() {
+        return offset_;
+      }
+      /**
+       * <code>int64 offset = 1;</code>
+       *
+       * @param value The offset to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOffset(long value) {
+
+        offset_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 offset = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearOffset() {
+
+        offset_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long limit_;
+      /**
+       * <code>int64 limit = 2;</code>
+       *
+       * @return The limit.
+       */
+      public long getLimit() {
+        return limit_;
+      }
+      /**
+       * <code>int64 limit = 2;</code>
+       *
+       * @param value The limit to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLimit(long value) {
+
+        limit_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 limit = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLimit() {
+
+        limit_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:VesselRequestWithPaging)
+    }
+
+    // @@protoc_insertion_point(class_scope:VesselRequestWithPaging)
+    private static final com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VesselRequestWithPaging> PARSER =
+        new com.google.protobuf.AbstractParser<VesselRequestWithPaging>() {
+          @java.lang.Override
+          public VesselRequestWithPaging parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new VesselRequestWithPaging(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<VesselRequestWithPaging> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VesselRequestWithPaging> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
   }
 
   public interface VesselRequestOrBuilder
@@ -38697,6 +39278,10 @@ public final class VesselInfo {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_VesselRequestWithPaging_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VesselRequestWithPaging_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VesselRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_VesselRequest_fieldAccessorTable;
@@ -38789,141 +39374,144 @@ public final class VesselInfo {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\021vessel_info.proto\032\014common.proto\"\202\001\n\rVe"
-          + "sselRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vessel"
-          + "Id\030\002 \001(\003\022\036\n\026vesselDraftConditionId\030\003 \001(\003"
-          + "\022\024\n\014draftExtreme\030\004 \001(\t\022\026\n\016tankCategories"
-          + "\030\005 \003(\003\">\n\016LoadLineDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004"
-          + "name\030\002 \001(\t\022\022\n\ndraftMarks\030\003 \003(\t\"\374\006\n\014Vesse"
-          + "lDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\021\n\tcap"
-          + "tainId\030\003 \001(\003\022\026\n\016cheifOfficerId\030\004 \001(\003\022\021\n\t"
-          + "imoNumber\030\005 \001(\t\022\014\n\004flag\030\006 \001(\t\022\021\n\tcharter"
-          + "er\030\007 \001(\t\022\"\n\tloadLines\030\010 \003(\0132\017.LoadLineDe"
-          + "tail\022\014\n\004code\030\t \001(\t\022\026\n\016portOfRegistry\030\n \001"
-          + "(\t\022\017\n\007builder\030\013 \001(\t\022\026\n\016officialNumber\030\014 "
-          + "\001(\t\022\024\n\014signalLetter\030\r \001(\t\022\030\n\020navigationA"
-          + "reaId\030\016 \001(\003\022\022\n\ntypeOfShip\030\017 \001(\t\022\026\n\016regis"
-          + "terLength\030\020 \001(\t\022\025\n\rlengthOverall\030\021 \001(\t\022#"
-          + "\n\033lengthBetweenPerpendiculars\030\022 \001(\t\022\025\n\rb"
-          + "readthMolded\030\023 \001(\t\022\023\n\013depthMolded\030\024 \001(\t\022"
-          + "\031\n\021designedLoaddraft\030\025 \001(\t\022\033\n\023draftFullL"
-          + "oadSummer\030\026 \001(\t\022)\n!thicknessOfUpperDeckS"
-          + "tringerPlate\030\027 \001(\t\022\034\n\024thicknessOfKeelpla"
-          + "te\030\030 \001(\t\022\022\n\ndeadweight\030\031 \001(\t\022\023\n\013lightwei"
-          + "ght\030\032 \001(\t\022\013\n\003lcg\030\033 \001(\t\022\030\n\020keelToMastHeig"
-          + "ht\030\034 \001(\t\022\032\n\022deadweightConstant\030\035 \001(\t\022\033\n\023"
-          + "provisionalConstant\030\036 \001(\t\022\035\n\025deadweightC"
-          + "onstantLcg\030\037 \001(\t\022\036\n\026provisionalConstantL"
-          + "cg\030  \001(\t\022\024\n\014grossTonnage\030! \001(\t\022\022\n\nnetTon"
-          + "nage\030\" \001(\t\022\035\n\025deadweightConstantTcg\030# \001("
-          + "\t\022\024\n\014frameSpace3l\030$ \001(\t\022\024\n\014frameSpace7l\030"
-          + "% \001(\t\"\247\001\n\035VesselLoadableQuantityDetails\022"
-          + "#\n\033displacmentDraftRestriction\030\001 \001(\t\022\031\n\021"
-          + "vesselLightWeight\030\002 \001(\t\022\020\n\010constant\030\003 \001("
-          + "\t\022\013\n\003tpc\030\004 \001(\t\022\013\n\003dwt\030\005 \001(\t\022\032\n\022draftCond"
-          + "itionName\030\006 \001(\t\"\274\004\n\020VesselTankDetail\022\016\n\006"
-          + "tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020"
-          + "tankCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t"
-          + "\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNumber"
-          + "To\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fillCapac"
-          + "ityCubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\nisSlop"
-          + "Tank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010height"
-          + "To\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\021\n\ttankGroup"
-          + "\030\016 \001(\005\022\013\n\003lcg\030\017 \001(\t\022\013\n\003vcg\030\020 \001(\t\022\013\n\003tcg\030"
-          + "\021 \001(\t\022\025\n\rcoatingTypeId\030\022 \001(\003\022\022\n\ntankType"
-          + "Id\030\023 \001(\003\022\030\n\020fullCapacityCubm\030\024 \001(\t\022\022\n\nco"
-          + "lourCode\030\025 \001(\t\022\035\n\025tankCategoryShortName\030"
-          + "\026 \001(\t\022\024\n\014showInOhqObq\030\027 \001(\010\022\030\n\020tankDispl"
-          + "ayOrder\030\030 \001(\005\022\034\n\024tankPositionCategory\030\031 "
-          + "\001(\t\022\031\n\021isLoadicatorUsing\030\032 \001(\010\"\327\001\n\013Vesse"
-          + "lReply\022\020\n\010vesselId\030\001 \001(\003\022&\n\013vesselTanks\030"
-          + "\002 \003(\0132\021.VesselTankDetail\022\'\n\016responseStat"
-          + "us\030\003 \001(\0132\017.ResponseStatus\022\036\n\007vessels\030\004 \003"
-          + "(\0132\r.VesselDetail\022E\n\035vesselLoadableQuant"
-          + "ityDetails\030\005 \001(\0132\036.VesselLoadableQuantit"
-          + "yDetails\"%\n\021VesselAlgoRequest\022\020\n\010vesselI"
-          + "d\030\001 \001(\003\"\212\003\n\017VesselAlgoReply\022#\n\014vesselDet"
-          + "ail\030\001 \001(\0132\r.VesselDetail\0223\n\024vesselDraftC"
-          + "ondition\030\002 \003(\0132\025.VesselDraftCondition\022+\n"
-          + "\020vesselTankDetail\030\003 \003(\0132\021.VesselTankDeta"
-          + "il\022)\n\017hydrostaticData\030\004 \003(\0132\020.Hydrostati"
-          + "cData\022%\n\rvesselTankTCG\030\005 \003(\0132\016.VesselTan"
-          + "kTCG\022\031\n\007bMAndSF\030\006 \001(\0132\010.BMAndSF\022\'\n\016respo"
-          + "nseStatus\030\007 \001(\0132\017.ResponseStatus\022%\n\rulla"
-          + "geDetails\030\010 \003(\0132\016.UllageDetails\0223\n\024ullag"
-          + "eTrimCorrection\030\t \003(\0132\025.UllageTrimCorrec"
-          + "tion\"r\n\rUllageDetails\022\n\n\002id\030\001 \001(\003\022\016\n\006tan"
-          + "kId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\034\n\024evenKe"
-          + "elCapacityCubm\030\004 \001(\t\022\022\n\nsoundDepth\030\005 \001(\t"
-          + "\"\236\001\n\024VesselDraftCondition\022\n\n\002id\030\001 \001(\003\022\030\n"
-          + "\020draftConditionId\030\002 \001(\003\022\r\n\005depth\030\003 \001(\t\022\021"
-          + "\n\tfreeboard\030\004 \001(\t\022\024\n\014draftExtreme\030\005 \001(\t\022"
-          + "\024\n\014displacement\030\006 \001(\t\022\022\n\ndeadWeight\030\007 \001("
-          + "\t\"\253\001\n\017HydrostaticData\022\n\n\002id\030\001 \001(\003\022\014\n\004tri"
-          + "m\030\002 \001(\t\022\r\n\005draft\030\003 \001(\t\022\024\n\014displacement\030\004"
-          + " \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 "
-          + "\001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n \001"
-          + "(\t\022\013\n\003tpc\030\013 \001(\t\"J\n\rVesselTankTCG\022\n\n\002id\030\001"
-          + " \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022\013"
-          + "\n\003tcg\030\004 \001(\t\"\316\002\n\007BMAndSF\022%\n\rbendingMoment"
-          + "\030\001 \003(\0132\016.BendingMoment\022%\n\rshearingForce\030"
-          + "\002 \003(\0132\016.ShearingForce\022+\n\020calculationShee"
-          + "t\030\003 \003(\0132\021.CalculationSheet\022=\n\031calculatio"
-          + "nSheetTankGroup\030\004 \003(\0132\032.CalculationSheet"
-          + "TankGroup\0227\n\026minMaxValuesForBMAndSf\030\005 \003("
-          + "\0132\027.MinMaxValuesForBMAndSf\022%\n\rstationVal"
-          + "ues\030\006 \003(\0132\016.StationValues\022)\n\017InnerBulkHe"
-          + "adSF\030\007 \003(\0132\020.InnerBulkHeadSF\"\207\001\n\rBending"
-          + "Moment\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022"
-          + "\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n"
-          + "\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorrection"
-          + "\030\006 \001(\t\"\207\001\n\rShearingForce\022\n\n\002id\030\001 \001(\003\022\023\n\013"
+      "\n\021vessel_info.proto\032\014common.proto\"8\n\027Ves"
+          + "selRequestWithPaging\022\016\n\006offset\030\001 \001(\003\022\r\n\005"
+          + "limit\030\002 \001(\003\"\202\001\n\rVesselRequest\022\021\n\tcompany"
+          + "Id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\036\n\026vesselDraf"
+          + "tConditionId\030\003 \001(\003\022\024\n\014draftExtreme\030\004 \001(\t"
+          + "\022\026\n\016tankCategories\030\005 \003(\003\">\n\016LoadLineDeta"
+          + "il\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\022\n\ndraftMar"
+          + "ks\030\003 \003(\t\"\374\006\n\014VesselDetail\022\n\n\002id\030\001 \001(\003\022\014\n"
+          + "\004name\030\002 \001(\t\022\021\n\tcaptainId\030\003 \001(\003\022\026\n\016cheifO"
+          + "fficerId\030\004 \001(\003\022\021\n\timoNumber\030\005 \001(\t\022\014\n\004fla"
+          + "g\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\"\n\tloadLines\030"
+          + "\010 \003(\0132\017.LoadLineDetail\022\014\n\004code\030\t \001(\t\022\026\n\016"
+          + "portOfRegistry\030\n \001(\t\022\017\n\007builder\030\013 \001(\t\022\026\n"
+          + "\016officialNumber\030\014 \001(\t\022\024\n\014signalLetter\030\r "
+          + "\001(\t\022\030\n\020navigationAreaId\030\016 \001(\003\022\022\n\ntypeOfS"
+          + "hip\030\017 \001(\t\022\026\n\016registerLength\030\020 \001(\t\022\025\n\rlen"
+          + "gthOverall\030\021 \001(\t\022#\n\033lengthBetweenPerpend"
+          + "iculars\030\022 \001(\t\022\025\n\rbreadthMolded\030\023 \001(\t\022\023\n\013"
+          + "depthMolded\030\024 \001(\t\022\031\n\021designedLoaddraft\030\025"
+          + " \001(\t\022\033\n\023draftFullLoadSummer\030\026 \001(\t\022)\n!thi"
+          + "cknessOfUpperDeckStringerPlate\030\027 \001(\t\022\034\n\024"
+          + "thicknessOfKeelplate\030\030 \001(\t\022\022\n\ndeadweight"
+          + "\030\031 \001(\t\022\023\n\013lightweight\030\032 \001(\t\022\013\n\003lcg\030\033 \001(\t"
+          + "\022\030\n\020keelToMastHeight\030\034 \001(\t\022\032\n\022deadweight"
+          + "Constant\030\035 \001(\t\022\033\n\023provisionalConstant\030\036 "
+          + "\001(\t\022\035\n\025deadweightConstantLcg\030\037 \001(\t\022\036\n\026pr"
+          + "ovisionalConstantLcg\030  \001(\t\022\024\n\014grossTonna"
+          + "ge\030! \001(\t\022\022\n\nnetTonnage\030\" \001(\t\022\035\n\025deadweig"
+          + "htConstantTcg\030# \001(\t\022\024\n\014frameSpace3l\030$ \001("
+          + "\t\022\024\n\014frameSpace7l\030% \001(\t\"\247\001\n\035VesselLoadab"
+          + "leQuantityDetails\022#\n\033displacmentDraftRes"
+          + "triction\030\001 \001(\t\022\031\n\021vesselLightWeight\030\002 \001("
+          + "\t\022\020\n\010constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\022\013\n\003dwt\030"
+          + "\005 \001(\t\022\032\n\022draftConditionName\030\006 \001(\t\"\274\004\n\020Ve"
+          + "sselTankDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCa"
+          + "tegoryId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t"
+          + "\022\020\n\010tankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 "
+          + "\001(\t\022\025\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030"
+          + "\007 \001(\t\022\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007densi"
+          + "ty\030\t \001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFr"
+          + "om\030\013 \001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030"
+          + "\r \001(\005\022\021\n\ttankGroup\030\016 \001(\005\022\013\n\003lcg\030\017 \001(\t\022\013\n"
+          + "\003vcg\030\020 \001(\t\022\013\n\003tcg\030\021 \001(\t\022\025\n\rcoatingTypeId"
+          + "\030\022 \001(\003\022\022\n\ntankTypeId\030\023 \001(\003\022\030\n\020fullCapaci"
+          + "tyCubm\030\024 \001(\t\022\022\n\ncolourCode\030\025 \001(\t\022\035\n\025tank"
+          + "CategoryShortName\030\026 \001(\t\022\024\n\014showInOhqObq\030"
+          + "\027 \001(\010\022\030\n\020tankDisplayOrder\030\030 \001(\005\022\034\n\024tankP"
+          + "ositionCategory\030\031 \001(\t\022\031\n\021isLoadicatorUsi"
+          + "ng\030\032 \001(\010\"\327\001\n\013VesselReply\022\020\n\010vesselId\030\001 \001"
+          + "(\003\022&\n\013vesselTanks\030\002 \003(\0132\021.VesselTankDeta"
+          + "il\022\'\n\016responseStatus\030\003 \001(\0132\017.ResponseSta"
+          + "tus\022\036\n\007vessels\030\004 \003(\0132\r.VesselDetail\022E\n\035v"
+          + "esselLoadableQuantityDetails\030\005 \001(\0132\036.Ves"
+          + "selLoadableQuantityDetails\"%\n\021VesselAlgo"
+          + "Request\022\020\n\010vesselId\030\001 \001(\003\"\212\003\n\017VesselAlgo"
+          + "Reply\022#\n\014vesselDetail\030\001 \001(\0132\r.VesselDeta"
+          + "il\0223\n\024vesselDraftCondition\030\002 \003(\0132\025.Vesse"
+          + "lDraftCondition\022+\n\020vesselTankDetail\030\003 \003("
+          + "\0132\021.VesselTankDetail\022)\n\017hydrostaticData\030"
+          + "\004 \003(\0132\020.HydrostaticData\022%\n\rvesselTankTCG"
+          + "\030\005 \003(\0132\016.VesselTankTCG\022\031\n\007bMAndSF\030\006 \001(\0132"
+          + "\010.BMAndSF\022\'\n\016responseStatus\030\007 \001(\0132\017.Resp"
+          + "onseStatus\022%\n\rullageDetails\030\010 \003(\0132\016.Ulla"
+          + "geDetails\0223\n\024ullageTrimCorrection\030\t \003(\0132"
+          + "\025.UllageTrimCorrection\"r\n\rUllageDetails\022"
+          + "\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDep"
+          + "th\030\003 \001(\t\022\034\n\024evenKeelCapacityCubm\030\004 \001(\t\022\022"
+          + "\n\nsoundDepth\030\005 \001(\t\"\236\001\n\024VesselDraftCondit"
+          + "ion\022\n\n\002id\030\001 \001(\003\022\030\n\020draftConditionId\030\002 \001("
+          + "\003\022\r\n\005depth\030\003 \001(\t\022\021\n\tfreeboard\030\004 \001(\t\022\024\n\014d"
+          + "raftExtreme\030\005 \001(\t\022\024\n\014displacement\030\006 \001(\t\022"
+          + "\022\n\ndeadWeight\030\007 \001(\t\"\253\001\n\017HydrostaticData\022"
+          + "\n\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 \001(\t\022\r\n\005draft\030\003 \001(\t"
+          + "\022\024\n\014displacement\030\004 \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n\003l"
+          + "cf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003lk"
+          + "m\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030\013 \001(\t\"J\n\rVes"
+          + "selTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020"
+          + "\n\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001(\t\"\316\002\n\007BMAndS"
+          + "F\022%\n\rbendingMoment\030\001 \003(\0132\016.BendingMoment"
+          + "\022%\n\rshearingForce\030\002 \003(\0132\016.ShearingForce\022"
+          + "+\n\020calculationSheet\030\003 \003(\0132\021.CalculationS"
+          + "heet\022=\n\031calculationSheetTankGroup\030\004 \003(\0132"
+          + "\032.CalculationSheetTankGroup\0227\n\026minMaxVal"
+          + "uesForBMAndSf\030\005 \003(\0132\027.MinMaxValuesForBMA"
+          + "ndSf\022%\n\rstationValues\030\006 \003(\0132\016.StationVal"
+          + "ues\022)\n\017InnerBulkHeadSF\030\007 \003(\0132\020.InnerBulk"
+          + "HeadSF\"\207\001\n\rBendingMoment\022\n\n\002id\030\001 \001(\003\022\023\n\013"
           + "frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\t"
           + "baseValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005 \001(\t"
-          + "\022\026\n\016trimCorrection\030\006 \001(\t\"c\n\020CalculationS"
-          + "heet\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006t"
-          + "ankId\030\003 \001(\003\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030"
-          + "\005 \001(\t\"\\\n\031CalculationSheetTankGroup\022\n\n\002id"
-          + "\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023"
-          + "\n\013frameNumber\030\004 \001(\t\"u\n\026MinMaxValuesForBM"
-          + "AndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r"
-          + "\n\005minBm\030\003 \001(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 "
-          + "\001(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013"
-          + "stationFrom\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017"
-          + "frameNumberFrom\030\003 \001(\t\022\025\n\rframeNumberTo\030\004"
-          + " \001(\t\022\020\n\010distance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017I"
-          + "nnerBulkHeadSF\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tf"
-          + "oreAlpha\030\002 \001(\t\022\035\n\025foreCenterCargoTankId\030"
-          + "\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n\017foreWingTankIds"
-          + "\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022\030\n\020foreBallastTan"
-          + "ks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorrec"
-          + "tion\030\t \001(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxAll"
-          + "owence\030\013 \001(\t\022\030\n\020foreMinAllowence\030\014 \001(\t\022\n"
-          + "\n\002id\030\r \001(\003\022\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftCente"
-          + "rCargoTankId\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aft"
-          + "WingTankIds\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftB"
-          + "allastTanks\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftB"
-          + "WCorrection\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftM"
-          + "axFlAllowence\030\027 \001(\t\022\031\n\021aftMinFlAllowence"
-          + "\030\030 \001(\t\"\200\002\n\024UllageTrimCorrection\022\n\n\002id\030\001 "
-          + "\001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t"
-          + "\022\016\n\006trimM1\030\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006trim"
-          + "M3\030\006 \001(\t\022\016\n\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t"
-          + "\022\r\n\005trim0\030\t \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2\030"
-          + "\013 \001(\t\022\r\n\005trim3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005t"
-          + "rim5\030\016 \001(\t\022\r\n\005trim6\030\017 \001(\t2\263\003\n\021VesselInfo"
-          + "Service\0228\n\026GetAllVesselsByCompany\022\016.Vess"
-          + "elRequest\032\014.VesselReply\"\000\0226\n\024GetVesselDe"
-          + "tailsById\022\016.VesselRequest\032\014.VesselReply\""
-          + "\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014.Ve"
-          + "sselReply\"\000\0225\n\023GetVesselCargoTanks\022\016.Ves"
-          + "selRequest\032\014.VesselReply\"\000\022A\n\027GetVesselD"
-          + "etailsForAlgo\022\022.VesselAlgoRequest\032\020.Vess"
-          + "elAlgoReply\"\000\022C\n!GetVesselDetailForSynop"
-          + "ticalTable\022\016.VesselRequest\032\014.VesselReply"
-          + "\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Vessel"
-          + "Request\032\014.VesselReply\"\000B\036\n\032com.cpdss.com"
-          + "mon.generatedP\000b\006proto3"
+          + "\022\026\n\016trimCorrection\030\006 \001(\t\"\207\001\n\rShearingFor"
+          + "ce\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tb"
+          + "aseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017dra"
+          + "ftCorrection\030\005 \001(\t\022\026\n\016trimCorrection\030\006 \001"
+          + "(\t\"c\n\020CalculationSheet\022\n\n\002id\030\001 \001(\003\022\021\n\tta"
+          + "nkGroup\030\002 \001(\005\022\016\n\006tankId\030\003 \001(\003\022\023\n\013weightR"
+          + "atio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n\031CalculationSh"
+          + "eetTankGroup\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 "
+          + "\001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumber\030\004 \001(\t\"u\n"
+          + "\026MinMaxValuesForBMAndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013f"
+          + "rameNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001(\t\022\r\n\005maxBm"
+          + "\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n"
+          + "\rStationValues\022\023\n\013stationFrom\030\001 \001(\t\022\021\n\ts"
+          + "tationTo\030\002 \001(\t\022\027\n\017frameNumberFrom\030\003 \001(\t\022"
+          + "\025\n\rframeNumberTo\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t"
+          + "\022\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHeadSF\022\023\n\013fram"
+          + "eNumber\030\001 \001(\t\022\021\n\tforeAlpha\030\002 \001(\t\022\035\n\025fore"
+          + "CenterCargoTankId\030\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022"
+          + "\027\n\017foreWingTankIds\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t"
+          + "\022\030\n\020foreBallastTanks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001"
+          + "(\t\022\030\n\020foreBWCorrection\030\t \001(\t\022\016\n\006foreC4\030\n"
+          + " \001(\t\022\030\n\020foreMaxAllowence\030\013 \001(\t\022\030\n\020foreMi"
+          + "nAllowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022\020\n\010aftAlpha"
+          + "\030\016 \001(\t\022\034\n\024aftCenterCargoTankId\030\017 \001(\003\022\r\n\005"
+          + "aftC1\030\020 \001(\t\022\026\n\016aftWingTankIds\030\021 \001(\t\022\r\n\005a"
+          + "ftC2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023 \001(\t\022\r\n\005a"
+          + "ftC3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025 \001(\t\022\r\n\005a"
+          + "ftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence\030\027 \001(\t\022\031\n"
+          + "\021aftMinFlAllowence\030\030 \001(\t\"\200\002\n\024UllageTrimC"
+          + "orrection\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n"
+          + "\013ullageDepth\030\003 \001(\t\022\016\n\006trimM1\030\004 \001(\t\022\016\n\006tr"
+          + "imM2\030\005 \001(\t\022\016\n\006trimM3\030\006 \001(\t\022\016\n\006trimM4\030\007 \001"
+          + "(\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n\005trim0\030\t \001(\t\022\r\n\005tri"
+          + "m1\030\n \001(\t\022\r\n\005trim2\030\013 \001(\t\022\r\n\005trim3\030\014 \001(\t\022\r"
+          + "\n\005trim4\030\r \001(\t\022\r\n\005trim5\030\016 \001(\t\022\r\n\005trim6\030\017 "
+          + "\001(\t2\366\003\n\021VesselInfoService\0228\n\026GetAllVesse"
+          + "lsByCompany\022\016.VesselRequest\032\014.VesselRepl"
+          + "y\"\000\0226\n\024GetVesselDetailsById\022\016.VesselRequ"
+          + "est\032\014.VesselReply\"\000\0220\n\016GetVesselTanks\022\016."
+          + "VesselRequest\032\014.VesselReply\"\000\0225\n\023GetVess"
+          + "elCargoTanks\022\016.VesselRequest\032\014.VesselRep"
+          + "ly\"\000\022A\n\027GetVesselDetailsForAlgo\022\022.Vessel"
+          + "AlgoRequest\032\020.VesselAlgoReply\"\000\022C\n!GetVe"
+          + "sselDetailForSynopticalTable\022\016.VesselReq"
+          + "uest\032\014.VesselReply\"\000\022;\n\031GetVesselDetailB"
+          + "yVesselId\022\016.VesselRequest\032\014.VesselReply\""
+          + "\000\022A\n\025GetVesselInfoByPaging\022\030.VesselReque"
+          + "stWithPaging\032\014.VesselReply\"\000B\036\n\032com.cpds"
+          + "s.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -38931,21 +39519,28 @@ public final class VesselInfo {
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
             });
-    internal_static_VesselRequest_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_VesselRequestWithPaging_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_VesselRequestWithPaging_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_VesselRequestWithPaging_descriptor,
+            new java.lang.String[] {
+              "Offset", "Limit",
+            });
+    internal_static_VesselRequest_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_VesselRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "VesselDraftConditionId", "DraftExtreme", "TankCategories",
             });
-    internal_static_LoadLineDetail_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_LoadLineDetail_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_LoadLineDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadLineDetail_descriptor,
             new java.lang.String[] {
               "Id", "Name", "DraftMarks",
             });
-    internal_static_VesselDetail_descriptor = getDescriptor().getMessageTypes().get(2);
+    internal_static_VesselDetail_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_VesselDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselDetail_descriptor,
@@ -38989,7 +39584,7 @@ public final class VesselInfo {
               "FrameSpace7L",
             });
     internal_static_VesselLoadableQuantityDetails_descriptor =
-        getDescriptor().getMessageTypes().get(3);
+        getDescriptor().getMessageTypes().get(4);
     internal_static_VesselLoadableQuantityDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselLoadableQuantityDetails_descriptor,
@@ -39001,7 +39596,7 @@ public final class VesselInfo {
               "Dwt",
               "DraftConditionName",
             });
-    internal_static_VesselTankDetail_descriptor = getDescriptor().getMessageTypes().get(4);
+    internal_static_VesselTankDetail_descriptor = getDescriptor().getMessageTypes().get(5);
     internal_static_VesselTankDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselTankDetail_descriptor,
@@ -39033,7 +39628,7 @@ public final class VesselInfo {
               "TankPositionCategory",
               "IsLoadicatorUsing",
             });
-    internal_static_VesselReply_descriptor = getDescriptor().getMessageTypes().get(5);
+    internal_static_VesselReply_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_VesselReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselReply_descriptor,
@@ -39044,14 +39639,14 @@ public final class VesselInfo {
               "Vessels",
               "VesselLoadableQuantityDetails",
             });
-    internal_static_VesselAlgoRequest_descriptor = getDescriptor().getMessageTypes().get(6);
+    internal_static_VesselAlgoRequest_descriptor = getDescriptor().getMessageTypes().get(7);
     internal_static_VesselAlgoRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselAlgoRequest_descriptor,
             new java.lang.String[] {
               "VesselId",
             });
-    internal_static_VesselAlgoReply_descriptor = getDescriptor().getMessageTypes().get(7);
+    internal_static_VesselAlgoReply_descriptor = getDescriptor().getMessageTypes().get(8);
     internal_static_VesselAlgoReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselAlgoReply_descriptor,
@@ -39066,14 +39661,14 @@ public final class VesselInfo {
               "UllageDetails",
               "UllageTrimCorrection",
             });
-    internal_static_UllageDetails_descriptor = getDescriptor().getMessageTypes().get(8);
+    internal_static_UllageDetails_descriptor = getDescriptor().getMessageTypes().get(9);
     internal_static_UllageDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_UllageDetails_descriptor,
             new java.lang.String[] {
               "Id", "TankId", "UllageDepth", "EvenKeelCapacityCubm", "SoundDepth",
             });
-    internal_static_VesselDraftCondition_descriptor = getDescriptor().getMessageTypes().get(9);
+    internal_static_VesselDraftCondition_descriptor = getDescriptor().getMessageTypes().get(10);
     internal_static_VesselDraftCondition_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselDraftCondition_descriptor,
@@ -39086,7 +39681,7 @@ public final class VesselInfo {
               "Displacement",
               "DeadWeight",
             });
-    internal_static_HydrostaticData_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_HydrostaticData_descriptor = getDescriptor().getMessageTypes().get(11);
     internal_static_HydrostaticData_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_HydrostaticData_descriptor,
@@ -39103,14 +39698,14 @@ public final class VesselInfo {
               "Mtc",
               "Tpc",
             });
-    internal_static_VesselTankTCG_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_VesselTankTCG_descriptor = getDescriptor().getMessageTypes().get(12);
     internal_static_VesselTankTCG_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselTankTCG_descriptor,
             new java.lang.String[] {
               "Id", "TankId", "Capacity", "Tcg",
             });
-    internal_static_BMAndSF_descriptor = getDescriptor().getMessageTypes().get(12);
+    internal_static_BMAndSF_descriptor = getDescriptor().getMessageTypes().get(13);
     internal_static_BMAndSF_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_BMAndSF_descriptor,
@@ -39123,21 +39718,21 @@ public final class VesselInfo {
               "StationValues",
               "InnerBulkHeadSF",
             });
-    internal_static_BendingMoment_descriptor = getDescriptor().getMessageTypes().get(13);
+    internal_static_BendingMoment_descriptor = getDescriptor().getMessageTypes().get(14);
     internal_static_BendingMoment_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_BendingMoment_descriptor,
             new java.lang.String[] {
               "Id", "FrameNumber", "BaseDraft", "BaseValue", "DraftCorrection", "TrimCorrection",
             });
-    internal_static_ShearingForce_descriptor = getDescriptor().getMessageTypes().get(14);
+    internal_static_ShearingForce_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_ShearingForce_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ShearingForce_descriptor,
             new java.lang.String[] {
               "Id", "FrameNumber", "BaseDraft", "BaseValue", "DraftCorrection", "TrimCorrection",
             });
-    internal_static_CalculationSheet_descriptor = getDescriptor().getMessageTypes().get(15);
+    internal_static_CalculationSheet_descriptor = getDescriptor().getMessageTypes().get(16);
     internal_static_CalculationSheet_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CalculationSheet_descriptor,
@@ -39145,28 +39740,28 @@ public final class VesselInfo {
               "Id", "TankGroup", "TankId", "WeightRatio", "Lcg",
             });
     internal_static_CalculationSheetTankGroup_descriptor =
-        getDescriptor().getMessageTypes().get(16);
+        getDescriptor().getMessageTypes().get(17);
     internal_static_CalculationSheetTankGroup_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CalculationSheetTankGroup_descriptor,
             new java.lang.String[] {
               "Id", "TankGroup", "Lcg", "FrameNumber",
             });
-    internal_static_MinMaxValuesForBMAndSf_descriptor = getDescriptor().getMessageTypes().get(17);
+    internal_static_MinMaxValuesForBMAndSf_descriptor = getDescriptor().getMessageTypes().get(18);
     internal_static_MinMaxValuesForBMAndSf_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_MinMaxValuesForBMAndSf_descriptor,
             new java.lang.String[] {
               "Id", "FrameNumber", "MinBm", "MaxBm", "MinSf", "MaxSf",
             });
-    internal_static_StationValues_descriptor = getDescriptor().getMessageTypes().get(18);
+    internal_static_StationValues_descriptor = getDescriptor().getMessageTypes().get(19);
     internal_static_StationValues_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_StationValues_descriptor,
             new java.lang.String[] {
               "StationFrom", "StationTo", "FrameNumberFrom", "FrameNumberTo", "Distance", "Id",
             });
-    internal_static_InnerBulkHeadSF_descriptor = getDescriptor().getMessageTypes().get(19);
+    internal_static_InnerBulkHeadSF_descriptor = getDescriptor().getMessageTypes().get(20);
     internal_static_InnerBulkHeadSF_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_InnerBulkHeadSF_descriptor,
@@ -39196,7 +39791,7 @@ public final class VesselInfo {
               "AftMaxFlAllowence",
               "AftMinFlAllowence",
             });
-    internal_static_UllageTrimCorrection_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_UllageTrimCorrection_descriptor = getDescriptor().getMessageTypes().get(21);
     internal_static_UllageTrimCorrection_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_UllageTrimCorrection_descriptor,

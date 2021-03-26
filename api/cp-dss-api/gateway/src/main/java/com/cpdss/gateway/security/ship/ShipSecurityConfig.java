@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.security.ship;
 
 import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
@@ -39,7 +39,13 @@ public class ShipSecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired private AuthenticationFailureHandler failureHandler;
 
   private static final List<String> permitAllEndpointList =
-      Arrays.asList("/api/ship/authenticate", "/actuator/health");
+      Arrays.asList(
+          "/api/ship/authenticate",
+          "/actuator/health",
+          "/api/cloud/vessel-details/*",
+          "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status",
+          "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns");
+
   public static final String AUTHORIZATION_HEADER = "authorization";
 
   @Bean

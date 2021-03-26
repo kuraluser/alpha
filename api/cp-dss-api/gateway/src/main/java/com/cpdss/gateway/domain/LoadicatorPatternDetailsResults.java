@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class LoadicatorPatternDetailsResults {
   private Long loadablePatternId;
-  private List<LodicatorResultDetails> lodicatorResultDetails;
+  private List<LoadicatorResultDetails> loadicatorResultDetails;
 }

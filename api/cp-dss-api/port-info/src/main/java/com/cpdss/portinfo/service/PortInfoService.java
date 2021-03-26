@@ -19,6 +19,7 @@ import com.cpdss.portinfo.repository.CargoPortMappingRepository;
 import com.cpdss.portinfo.repository.PortInfoRepository;
 import com.cpdss.portinfo.repository.TimezoneRepository;
 import io.grpc.stub.StreamObserver;
+import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
@@ -208,7 +209,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
         com.cpdss.common.generated.PortInfo.Timezone.Builder timezone =
             com.cpdss.common.generated.PortInfo.Timezone.newBuilder();
         timezone.setId(tz.getId());
-        timezone.setTimezone(tz.getTimezone());
+        timezone.setTimezone(tz.getTimezone() + " " + tz.getRegion());
         timezone.setOffsetValue(tz.getOffsetValue());
         replyBuilder.addTimezones(timezone);
       }
@@ -222,6 +223,47 @@ public class PortInfoService extends PortInfoServiceImplBase {
       replyBuilder.setResponseStatus(responseStatus);
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Request object have Page Number and Offset Value
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getPortInfoByPaging(
+      com.cpdss.common.generated.PortInfo.PortRequestWithPaging request,
+      StreamObserver<PortReply> responseObserver) {
+
+    PortReply.Builder builder = PortReply.newBuilder();
+    try {
+      List<Object[]> objectArray = portRepository.findPortsIdAndNames();
+      objectArray.forEach(
+          var1 -> {
+            PortDetail.Builder reply = PortDetail.newBuilder();
+            if (var1[0] != null) { // First param Id
+              BigInteger val = (BigInteger) var1[0];
+              reply.setId(val.longValue());
+            }
+            if (var1[1] != null) { // Second param Name
+              reply.setName((String) var1[1]);
+            }
+            builder.addPorts(reply);
+          });
+      log.info("Port Name and Id returned with list size {}", objectArray.size());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      builder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getCargoInfoByPage method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }

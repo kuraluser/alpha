@@ -1,12 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 
 /** @Author jerin.g */
 @Data
 public class LoadableQuantityCommingleCargoDetails {
+  @JsonInclude(Include.NON_NULL)
   private Long id;
+
   private String grade;
   private String tankName;
   private String quantity;
@@ -16,17 +20,43 @@ public class LoadableQuantityCommingleCargoDetails {
   private String cargo2Abbreviation;
   private String cargo1Percentage;
   private String cargo2Percentage;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo1Bblsdbs;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo2Bblsdbs;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo1Bbls60f;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo2Bbls60f;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo1LT;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo2LT;
+
   private String cargo1MT;
+
   private String cargo2MT;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo1KL;
+
+  @JsonInclude(Include.NON_NULL)
   private String cargo2KL;
+
   private String orderedQuantity;
   private Integer priority;
   private Integer loadingOrder;
+  private Long cargoNominationId;
+
+  private Long tankId;
+  private String fillingRatio;
+  private String correctedUllage; // ullage(M)
+  private String rdgUllage;
+  private String correctionFactor;
 }

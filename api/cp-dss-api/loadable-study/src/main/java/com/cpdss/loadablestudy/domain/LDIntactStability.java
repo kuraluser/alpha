@@ -29,4 +29,5 @@ public class LDIntactStability {
   private String errorDetails;
   private String messageText;
   private Long portId;
+  private Long synioticalId;
 }

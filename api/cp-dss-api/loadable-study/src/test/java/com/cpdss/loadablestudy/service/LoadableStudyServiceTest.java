@@ -24,6 +24,7 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LDIntactStability;
 import com.cpdss.common.generated.LoadableStudy.LDStrength;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
@@ -91,6 +92,8 @@ import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
+import com.cpdss.loadablestudy.entity.JsonData;
+import com.cpdss.loadablestudy.entity.JsonType;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
@@ -113,12 +116,15 @@ import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.JsonDataRepository;
+import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
@@ -173,6 +179,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -239,6 +247,10 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @MockBean private VoyageStatusRepository voyageStatusRepository;
+  @MockBean private ApiTempHistoryRepository apiTempHistoryRepository;
+
+  @MockBean private JsonDataRepository jsonDataRepository;
+  @MockBean private JsonTypeRepository jsonTypeRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
@@ -1201,9 +1213,16 @@ class LoadableStudyServiceTest {
 
   @ParameterizedTest
   @ValueSource(longs = {0, 1})
-  void testSaveLoadableStudyPortRotation(Long id) {
-    when(this.loadableStudyRepository.findById(anyLong()))
-        .thenReturn(Optional.of(new LoadableStudy()));
+  void testSaveLoadableStudyPortRotation(Long id)
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    VoyageStatus status = new VoyageStatus();
+    status.setId(2L);
+    voyage.setVoyageStatus(status);
+    LoadableStudy loadableStudy = this.createLoadableStudyEntity(voyage);
+
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
     LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
     entity.setId(1L);
     when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
@@ -1219,6 +1238,57 @@ class LoadableStudyServiceTest {
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationClosedVoyage()
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    VoyageStatus status = new VoyageStatus();
+    status.setId(2L);
+    voyage.setVoyageStatus(status);
+    LoadableStudy loadableStudy = this.createLoadableStudyEntity(voyage);
+
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationPatternGenerated()
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    VoyageStatus status = new VoyageStatus();
+    status.setId(1L);
+    voyage.setVoyageStatus(status);
+    LoadableStudyStatus lsStatus = new LoadableStudyStatus();
+    lsStatus.setId(3L);
+    LoadableStudy loadableStudy = this.createLoadableStudyEntity(voyage);
+    loadableStudy.setLoadableStudyStatus(lsStatus);
+
+    LoadablePattern pattern = new LoadablePattern();
+    pattern.setId(1L);
+    List<LoadablePattern> patterns = new ArrayList<LoadablePattern>();
+    patterns.add(pattern);
+
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
+    when(this.loadablePatternRepository.findLoadablePatterns(anyLong(), any(), anyBoolean()))
+        .thenReturn(patterns);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 
   @Test
@@ -1358,6 +1428,26 @@ class LoadableStudyServiceTest {
   void testDeleteLoadableStudyInvalidLoadableStudy() {
     LoadableStudy entity = new LoadableStudy();
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
+    this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeleteLoadableStudyPatternGeneratedCase() {
+    LoadableStudy entity = new LoadableStudy();
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    LoadablePattern pattern = new LoadablePattern();
+    pattern.setId(1L);
+    List<LoadablePattern> patternList = new ArrayList<LoadablePattern>();
+    patternList.add(pattern);
+    when(this.loadablePatternRepository.findLoadablePatterns(anyLong(), any(), anyBoolean()))
+        .thenReturn(patternList);
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
     this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
@@ -3830,7 +3920,7 @@ class LoadableStudyServiceTest {
     when(this.onBoardQuantityRepository.saveAll(any(List.class))).thenReturn(obqEntities);
     List<LoadablePatternCargoDetails> cargoList = this.createLoadablePatternCargoDetails();
     when(this.loadablePatternCargoDetailsRepository
-            .findByLoadablePatternIdAndPortIdAndOperationTypeAndIsActive(
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
                 anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenReturn(cargoList);
     when(this.loadablePatternCargoDetailsRepository.saveAll(any(List.class))).thenReturn(cargoList);
@@ -3844,7 +3934,7 @@ class LoadableStudyServiceTest {
             any(LoadableStudy.class), anyBoolean()))
         .thenReturn(Arrays.asList(ID_TEST_VALUE));
     when(this.loadablePlanStowageBallastDetailsRepository
-            .findByLoadablePatternIdAndPortXIdAndOperationTypeAndIsActive(
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
                 anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenReturn(this.createBallastEntities());
   }
@@ -4600,5 +4690,87 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     SaveVoyageStatusReply response = results.get(0);
     assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveJson() {
+    JsonRequest request =
+        JsonRequest.newBuilder().setJsonTypeId(1L).setReferenceId(10L).setJson("{}").build();
+    JsonType jsonType = new JsonType();
+    jsonType.setId(1L);
+    JsonData jsonData = new JsonData();
+    jsonData.setReferenceXId(10L);
+    jsonData.setJsonTypeXId(jsonType);
+    jsonData.setJsonData("{}");
+    StreamRecorder<StatusReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(this.jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(jsonType));
+
+    Mockito.when(this.jsonDataRepository.save(any(JsonData.class))).thenReturn(jsonData);
+
+    loadableStudyService.saveJson(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<StatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    StatusReply response = results.get(0);
+    assertEquals(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(), response);
+  }
+
+  @Test
+  public void testSaveJsonWithInvalidType() {
+    JsonRequest request =
+        JsonRequest.newBuilder().setJsonTypeId(1L).setReferenceId(10L).setJson("{}").build();
+    JsonType jsonType = new JsonType();
+    jsonType.setId(1L);
+    JsonData jsonData = new JsonData();
+    jsonData.setReferenceXId(10L);
+    jsonData.setJsonTypeXId(jsonType);
+    jsonData.setJsonData("{}");
+    StreamRecorder<StatusReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(this.jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+
+    Mockito.when(this.jsonDataRepository.save(any(JsonData.class))).thenReturn(jsonData);
+
+    loadableStudyService.saveJson(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<StatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    StatusReply response = results.get(0);
+    assertEquals(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(), response);
+  }
+
+  @Test
+  public void testSaveJsonWithException() {
+    JsonRequest request =
+        JsonRequest.newBuilder().setJsonTypeId(1L).setReferenceId(10L).setJson("{}").build();
+    JsonType jsonType = new JsonType();
+    jsonType.setId(1L);
+    JsonData jsonData = new JsonData();
+    jsonData.setReferenceXId(10L);
+    jsonData.setJsonTypeXId(jsonType);
+    jsonData.setJsonData("{}");
+    StreamRecorder<StatusReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(this.jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(new DataRetrievalFailureException("Cannot retrieve JSON type."));
+
+    Mockito.when(this.jsonDataRepository.save(any(JsonData.class)))
+        .thenThrow(new DataAccessException("Cannot save JSON") {});
+
+    loadableStudyService.saveJson(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<StatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    StatusReply response = results.get(0);
+    assertEquals(
+        StatusReply.newBuilder()
+            .setStatus(FAILED)
+            .setMessage(FAILED)
+            .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+            .build(),
+        response);
   }
 }

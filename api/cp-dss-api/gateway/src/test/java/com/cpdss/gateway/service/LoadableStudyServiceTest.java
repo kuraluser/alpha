@@ -84,8 +84,8 @@ import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadicatorPatternDetailsResults;
+import com.cpdss.gateway.domain.LoadicatorResultDetails;
 import com.cpdss.gateway.domain.LoadicatorResultsRequest;
-import com.cpdss.gateway.domain.LodicatorResultDetails;
 import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
@@ -93,6 +93,7 @@ import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.SaveCommentResponse;
+import com.cpdss.gateway.domain.StabilityParameter;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
@@ -1440,14 +1441,14 @@ class LoadableStudyServiceTest {
     LoadicatorPatternDetailsResults detailsResults = new LoadicatorPatternDetailsResults();
     patternDetailsResults.add(detailsResults);
     detailsResults.setLoadablePatternId(1L);
-    detailsResults.setLodicatorResultDetails(createLodicatorResultDetails());
+    detailsResults.setLoadicatorResultDetails(createLodicatorResultDetails());
     return patternDetailsResults;
   }
 
   /** @return List<LodicatorResultDetails> */
-  private List<LodicatorResultDetails> createLodicatorResultDetails() {
-    List<LodicatorResultDetails> details = new ArrayList<LodicatorResultDetails>();
-    LodicatorResultDetails lodicatorResultDetails = new LodicatorResultDetails();
+  private List<LoadicatorResultDetails> createLodicatorResultDetails() {
+    List<LoadicatorResultDetails> details = new ArrayList<LoadicatorResultDetails>();
+    LoadicatorResultDetails lodicatorResultDetails = new LoadicatorResultDetails();
     lodicatorResultDetails.setBlindSector(LOADICATOR_DATA);
     lodicatorResultDetails.setCalculatedDraftAftPlanned(LOADICATOR_DATA);
     lodicatorResultDetails.setCalculatedDraftFwdPlanned(LOADICATOR_DATA);
@@ -1573,6 +1574,9 @@ class LoadableStudyServiceTest {
             this.loadableStudyService.saveLoadablePatterns(
                 any(LoadablePlanRequest.class), anyLong(), anyString()))
         .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.saveJson(anyLong(), anyLong(), anyString()))
+        .thenReturn(StatusReply.newBuilder().setStatus(SUCCESS).setCode(SUCCESS).build());
+
     Mockito.when(
             this.loadableStudyService.saveLoadablePatterns(
                 any(
@@ -1601,6 +1605,8 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testSaveLoadablePatternDetails() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.saveJson(anyLong(), anyLong(), anyString()))
+        .thenReturn(StatusReply.newBuilder().setStatus(SUCCESS).setCode(SUCCESS).build());
     Mockito.when(
             this.loadableStudyService.saveLoadablePatterns(
                 any(LoadablePlanRequest.class), anyLong(), anyString()))
@@ -1629,6 +1635,7 @@ class LoadableStudyServiceTest {
   /** @return LoadablePlanRequest */
   private LoadablePlanRequest createAlgoPatternResponse() {
     LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();
+    loadablePlanRequest.setProcessId("ID");
     loadablePlanRequest.setLoadablePlanDetails(createLoadablePlanDetails());
     return loadablePlanRequest;
   }
@@ -1639,8 +1646,15 @@ class LoadableStudyServiceTest {
     LoadablePlanDetails planDetails = new LoadablePlanDetails();
     planDetails.setLoadablePlanPortWiseDetails(createLoadablePlanPortWiseDetails());
     planDetails.setCaseNumber(1);
+    planDetails.setStabilityParameters(createStabilityParameters());
     loadablePlanDetails.add(planDetails);
     return loadablePlanDetails;
+  }
+
+  /** @return StabilityParameter */
+  private StabilityParameter createStabilityParameters() {
+    StabilityParameter stabilityParameter = new StabilityParameter();
+    return stabilityParameter;
   }
 
   /** @return List<LoadablePlanPortWiseDetails> */

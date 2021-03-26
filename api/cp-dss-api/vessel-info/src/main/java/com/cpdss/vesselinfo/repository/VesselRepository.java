@@ -35,4 +35,9 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + "from Vessel V "
           + "WHERE V.id = ?1 AND V.isActive = ?2")
   public VesselInfo findVesselDetailsByVesselId(Long id, Boolean isActive);
+
+  String FIND_ID_AND_NAME = "select vs.id, vs.name from vessel vs";
+
+  @Query(value = FIND_ID_AND_NAME, nativeQuery = true)
+  List<Object[]> findVesselIdAndNames();
 }

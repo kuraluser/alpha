@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.portinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
@@ -25,6 +25,9 @@ public class Timezone extends EntityDoc {
 
   @Column(name = "timezone")
   private String timezone;
+
+  @Column(name = "region")
+  private String region;
 
   // bi-directional many-to-one association to PortInfo
   @OneToMany(mappedBy = "timezone")

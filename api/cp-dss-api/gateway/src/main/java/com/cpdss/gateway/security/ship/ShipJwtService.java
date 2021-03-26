@@ -5,6 +5,9 @@ import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
 import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.gateway.custom.Constants.SHIP_TOKEN_SUBJECT;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.entity.Users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,8 +20,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -30,9 +32,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
+@Log4j2
 public class ShipJwtService {
-
-  private static final Logger logger = LogManager.getLogger(ShipJwtService.class);
 
   public static final String USER_ID_CLAIM = "USER_ID";
 
@@ -47,6 +48,7 @@ public class ShipJwtService {
    *
    * @param signingKey
    * @return the jwt claims
+   * @throws GenericServiceException
    * @throws ExpiredJwtException
    * @throws UnsupportedJwtException
    * @throws MalformedJwtException
@@ -54,24 +56,19 @@ public class ShipJwtService {
    * @throws ExpiredJwtException
    * @throws IllegalArgumentException
    */
-  public Jws<Claims> parseClaims(String token) {
+  public Jws<Claims> parseClaims(String token) throws GenericServiceException {
     try {
       return Jwts.parser().setSigningKey(tokenSigningKey.getBytes()).parseClaimsJws(token);
-    } catch (ExpiredJwtException eje) {
-      logger.warn("Request to parse expired JWT {}, {}", token, eje);
-      throw eje;
-    } catch (UnsupportedJwtException uje) {
-      logger.warn("Request to parse unsupported JWT {}, {}", token, uje);
-      throw uje;
-    } catch (MalformedJwtException mje) {
-      logger.warn("Request to parse invalid JWT {}, {}", token, mje);
-      throw mje;
-    } catch (SignatureException se) {
-      logger.warn("Request to parse JWT with invalid signature {}, {}", token, se);
-      throw se;
-    } catch (IllegalArgumentException iae) {
-      logger.warn("Request to parse empty or null JWT {}, {}", token, iae);
-      throw iae;
+    } catch (ExpiredJwtException
+        | UnsupportedJwtException
+        | MalformedJwtException
+        | SignatureException
+        | IllegalArgumentException e) {
+      log.warn("Failed to parse the token {}, {}", token, e);
+      throw new GenericServiceException(
+          "Failed to parse the token",
+          CommonErrorCodes.E_HTTP_INVALID_TOKEN,
+          HttpStatusCode.UNAUTHORIZED);
     }
   }
 

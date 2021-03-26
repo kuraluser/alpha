@@ -5,6 +5,8 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +21,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CargoData extends EntityDoc {
 
-  @Column(name = "stowageplan_id")
-  private Long stowagePlanId;
+  @ManyToOne
+  @JoinColumn(name = "stowageplan_id")
+  private StowagePlan stowagePlan;
 
   @Column(name = "cargo_id")
   private Long cargoId;

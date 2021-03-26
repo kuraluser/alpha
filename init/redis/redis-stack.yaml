@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+  redis-master:
+    image: "bitnami/redis"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_AOF_ENABLED=no
+    deploy:
+      mode: replicated
+      replicas: 1
+  redis-replica:
+    image: "bitnami/redis"
+    environment:
+      - REDIS_REPLICATION_MODE=replica
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_AOF_ENABLED=no
+    deploy:
+      mode: replicated
+      replicas: 2
+  redis-sentinel:
+    image: "bitnami/redis-sentinel"
+    environment:
+      - REDIS_MASTER_SET=mymaster
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
+    deploy:
+      mode: replicated
+      replicas: 3
+
+networks:
+  default:
+    external: true
+    name: cpdss-network

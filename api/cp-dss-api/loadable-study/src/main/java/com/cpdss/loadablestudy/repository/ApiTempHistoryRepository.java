@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
@@ -7,10 +7,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 /** Api-Temp history repository */
-public interface ApiTempHistoryRepository extends CommonCrudRepository<ApiTempHistory, Long> {
+public interface ApiTempHistoryRepository
+    extends CommonCrudRepository<ApiTempHistory, Long>, JpaSpecificationExecutor<ApiTempHistory> {
 
   @Query(
       "FROM ApiTempHistory ath WHERE "
@@ -19,6 +21,6 @@ public interface ApiTempHistoryRepository extends CommonCrudRepository<ApiTempHi
   public List<com.cpdss.loadablestudy.entity.ApiTempHistory> findApiTempHistoryWithYearAfter(
       Long cargoId, Integer year);
 
-  Page<com.cpdss.loadablestudy.entity.ApiTempHistory> findAllByLoadedDateBetween(
+  Page<ApiTempHistory> findAllByLoadedDateBetween(
       Pageable pageable, LocalDateTime fromDate, LocalDateTime toDate);
 }

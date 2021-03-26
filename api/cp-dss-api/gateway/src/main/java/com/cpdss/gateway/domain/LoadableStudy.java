@@ -67,4 +67,14 @@ public class LoadableStudy {
   private Boolean loadOnTop;
 
   private String loadableStudyStatusLastModifiedTime;
+
+  private Boolean isCargoNominationComplete;
+
+  private Boolean isPortsComplete;
+
+  private Boolean isOhqComplete;
+
+  private Boolean isObqComplete;
+
+  private Boolean isDischargingPortComplete;
 }

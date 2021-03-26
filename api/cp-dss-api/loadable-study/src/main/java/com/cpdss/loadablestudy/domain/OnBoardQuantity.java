@@ -12,4 +12,6 @@ public class OnBoardQuantity {
   private Long cargoId;
   private String volume; // volumeInM3
   private String plannedArrivalWeight;
+  private String api;
+  private String colorCode;
 }

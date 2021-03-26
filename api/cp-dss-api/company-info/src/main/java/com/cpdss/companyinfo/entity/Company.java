@@ -55,6 +55,9 @@ public class Company extends EntityDoc {
   @Column(name = "company_logo", length = 200)
   private String companyLogo;
 
+  @Column(name = "company_favorite_icon", length = 200)
+  private String companyFavicon;
+
   @OneToMany(mappedBy = "company")
   private Set<Carousals> carousals;
 }

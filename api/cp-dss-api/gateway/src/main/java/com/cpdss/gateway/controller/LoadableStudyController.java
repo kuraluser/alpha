@@ -527,6 +527,9 @@ public class LoadableStudyController {
     try {
       log.info("deleteCargoNomination: {}", getClientIp());
       response = loadableStudyService.deleteCargoNomination(id, headers);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when deleting CargoNomination", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in deleteCargoNomination ", e);
       throw new CommonRestException(
@@ -1157,7 +1160,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-    	log.info("updateLoadableStudyStatus with process id - " , request.getProcessId());
+      log.info("updateLoadableStudyStatus with process id - ", request.getProcessId());
       return this.loadableStudyService.saveAlgoLoadableStudyStatus(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -1376,8 +1379,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-    	 log.info(
-    	          "getLoadableStudyStatus with process id " , loadablePlanRequest.getProcessId());
+      log.info("getLoadableStudyStatus with process id ", loadablePlanRequest.getProcessId());
       return this.loadableStudyService.getLoadableStudyStatus(
           loadableStudyId,
           loadablePlanRequest.getProcessId(),
@@ -1662,9 +1664,11 @@ public class LoadableStudyController {
           sortBy);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when listing voyages", e);
+      e.printStackTrace();
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when listing voyages", e);
+      e.getMessage();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
@@ -1741,13 +1745,17 @@ public class LoadableStudyController {
   }
 
   /**
-   * Get cargo history
+   * Get Cargo History API, with Filter and Sort
    *
-   * @param vesselId
-   * @param loadableStudyId
-   * @param
    * @param headers
-   * @return
+   * @param page
+   * @param pageSize
+   * @param sortBy
+   * @param orderBy
+   * @param startDate
+   * @param endDate
+   * @param params
+   * @return CargoHistoryResponse
    * @throws CommonRestException
    */
   @GetMapping(value = "/cargo-history", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1755,14 +1763,14 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
-      @RequestParam(required = false, defaultValue = "year")
+      @RequestParam(required = false, defaultValue = "loadedYear")
           @Pattern(
-              regexp = "vesselName|loadingPort|grade|year",
+              regexp = "vesselName|loadingPortName|grade|loadedYear",
               message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           String sortBy,
       @RequestParam(required = false, defaultValue = "desc") String orderBy,
-      @RequestParam(required = false) String fromStartDate,
-      @RequestParam(required = false) String toStartDate,
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate,
       @RequestParam Map<String, String> params)
       throws CommonRestException {
     try {
@@ -1771,14 +1779,25 @@ public class LoadableStudyController {
       // Filter allowed filter params
       List<String> filterKeys =
           Arrays.asList(
-              "vesselName", "loadingPort", "grade", "year", "month", "date", "api", "temp");
+              "vesselName",
+              "loadingPortName",
+              "grade",
+              "loadedYear",
+              "loadedMonth",
+              "loadedDay",
+              "api",
+              "temperature",
+              "startDate",
+              "endDate");
       Map<String, String> filterParams =
           params.entrySet().stream()
               .filter(e -> filterKeys.contains(e.getKey()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+      if (sortBy.equalsIgnoreCase("loadedYear")) {
+        sortBy = "year"; // db column name is 'year'
+      }
       return this.loadableStudyCargoService.getAllCargoHistory(
-          filterParams, page, pageSize, sortBy, orderBy, fromStartDate, toStartDate);
+          filterParams, page, pageSize, sortBy, orderBy, startDate, endDate);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException getAllCargoHistory", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

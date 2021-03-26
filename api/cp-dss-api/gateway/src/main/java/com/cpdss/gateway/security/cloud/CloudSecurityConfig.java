@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.security.cloud;
 
 import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
@@ -35,7 +35,12 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_CLOUD)
 public class CloudSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
-  private static final List<String> permitAllEndpointList = Arrays.asList("/actuator/health");
+  private static final List<String> permitAllEndpointList =
+      Arrays.asList(
+          "/actuator/health",
+          "/api/cloud/vessel-details/*",
+          "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status",
+          "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns");
 
   /** Registers the KeycloakAuthenticationProvider with the authentication manager. */
   @Autowired
