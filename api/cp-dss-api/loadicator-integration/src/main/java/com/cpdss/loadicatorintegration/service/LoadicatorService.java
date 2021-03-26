@@ -89,15 +89,17 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         }
         stowagePlanList.add(entity);
       }
+
       this.stowagePlanRepository.saveAll(stowagePlanList);
       if (this.getStatus(stowagePlanList)) {
+
+        LoadicatorDataRequest loadableStudyrequest = this.sendLoadicatorData(stowagePlanList);
+
+        this.getLoadicatorDatas(loadableStudyrequest);
+
         replyBuilder
             .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
             .build();
-
-        LoadicatorDataRequest.Builder loadableStudyrequest =
-            this.sendLoadicatorData(stowagePlanList);
-        this.loadableStudyService.getLoadicatorData(loadableStudyrequest.build());
       }
     } catch (Exception e) {
       log.error("Error saving stowage plan", e);
@@ -111,6 +113,10 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  public LoadicatorDataReply getLoadicatorDatas(LoadicatorDataRequest loadableStudyrequest) {
+    return this.loadableStudyService.getLoadicatorData(loadableStudyrequest);
   }
 
   private Set<CargoData> buildCargoDataSet(
@@ -294,7 +300,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
    * @param stowagePlanList
    * @return
    */
-  public LoadicatorDataRequest.Builder sendLoadicatorData(List<StowagePlan> stowagePlanList) {
+  public LoadicatorDataRequest sendLoadicatorData(List<StowagePlan> stowagePlanList) {
     LoadicatorDataRequest.Builder request = LoadicatorDataRequest.newBuilder();
     if (null != stowagePlanList) {
       Map<Long, List<StowagePlan>> stowagePlanMap = this.buildStowagePlanMap(stowagePlanList);
@@ -312,7 +318,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     request.setProcessId(stowagePlanList != null ? stowagePlanList.get(0).getProcessId() : "");
     request.setLoadableStudyId(
         stowagePlanList != null ? stowagePlanList.get(0).getBookingListId() : 0);
-    return request;
+    return request.build();
   }
 
   private void buildLoadicatorIntactStabilityData(
