@@ -263,6 +263,11 @@ async function runSwarmService(cb) {
     networkName['Target'] = dockerNetworkName;
     networks.push(networkName);
   }
+  
+  //Adding Swarmpit network
+  let networkName = {};
+  networkName['Target'] = "swarmpit_net";
+  networks.push(networkName)
 
   //Adding ports for publishing
   let portConfigArray = [];
