@@ -4108,6 +4108,7 @@ public class LoadableStudyService {
             .setVesselId(vesselId)
             .setLoadableStudyId(loadableStudyId)
             .setPortId(portId)
+            .setPortRotationId(voyageStatusRequest.getPortRotationId())
             .build();
     OnHandQuantityReply onHandQtyReply = this.getOnHandQuantity(ohqRequest);
     if (!SUCCESS.equals(onHandQtyReply.getResponseStatus().getStatus())) {
