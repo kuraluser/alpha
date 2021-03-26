@@ -6,11 +6,13 @@ import { Router } from '@angular/router';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { NewVoyageModel } from '../models/new-voyage.model';
 import { VoyageApiService } from '../services/voyage-api.service';
+import { TimeZoneTransformationService } from './../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { dateCompareValidator } from '../directive/validator/date-compare-validator.directive'
 import { specialCharacterValidator } from '../../core/directives/special-character-validator.directive';
+import { ITimeZone } from '../../../shared/models/common.model';
 
 /**
  * Component for new voyage popup
@@ -32,9 +34,13 @@ export class NewVoyagePopupComponent implements OnInit {
   isExisting = false;
   errorMessages: any;
   date:Date;
+  globalTimeZones: ITimeZone[];
+  startDateTimeZone: ITimeZone;
+  endDateTimeZone: ITimeZone;
 
   constructor(private fb: FormBuilder, private router: Router,
     private voyageApiService: VoyageApiService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService) { }
@@ -43,6 +49,16 @@ export class NewVoyagePopupComponent implements OnInit {
     this.date = new Date();
     this.errorMessages = this.voyageApiService.setValidationErrorMessage();
     this.getVesselInfo();
+    this.getTimeZoneList();
+  }
+
+  /**
+   * function to get time zone list
+   *
+   * @memberof NewVoyagePopupComponent
+   */
+  async getTimeZoneList() {
+    this.globalTimeZones = await this.timeZoneTransformationService.getTimeZoneList().toPromise();
   }
 
   /**
@@ -54,8 +70,10 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageModel.captainId = this.vesselDetails?.captainId;
     this.newVoyageModel.chiefOfficerId = this.vesselDetails?.chiefOfficerId;
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
-    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.formatDateTime(this.newVoyageForm.value.start_date) : '';
-    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.formatDateTime(this.newVoyageForm.value.end_date) : '';
+    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.start_date, this.startDateTimeZone.offsetValue) : '';
+    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.end_date, this.endDateTimeZone.offsetValue) : '';
+    this.newVoyageModel.startTimezoneId = this.newVoyageForm.value.start_date ? this.startDateTimeZone.id : null;
+    this.newVoyageModel.endTimezoneId = this.newVoyageForm.value.end_date ? this.endDateTimeZone.id : null;
     this.saveNewVoyage();
     this.isLoading = false;
   }
@@ -100,7 +118,9 @@ export class NewVoyagePopupComponent implements OnInit {
       'chiefOfficer': [this.vesselDetails?.chiefOfficerName],
       'voyageNo': this.fb.control(null, [Validators.required, specialCharacterValidator, Validators.maxLength(10)]),
       'start_date': this.fb.control(null, [dateCompareValidator('end_date', '<')]),
-      "end_date": this.fb.control(null, [dateCompareValidator('start_date', '>')])
+      'end_date': this.fb.control(null, [dateCompareValidator('start_date', '>')]),
+      'selectStartDateTimeZone': this.fb.control(null),
+      'selectEndDateTimeZone': this.fb.control(null)
     });
     this.showPopUp = true;
     this.isLoading = false;
@@ -118,7 +138,6 @@ export class NewVoyagePopupComponent implements OnInit {
       this.newVoyageForm.controls.voyageNo.markAsTouched({ onlySelf: true });
       this.newVoyageForm.markAllAsTouched();
     }
-
   }
 
   /**
@@ -129,39 +148,17 @@ export class NewVoyagePopupComponent implements OnInit {
   }
 
   /**
-   * Method to update form on date time select
+   * Method to update form on date time select,
+   * To set conditional validators for start & end date time zones
    */
-  onDateSelect(event) {
+  onDateSelect(elemRef: any) {
     this.newVoyageForm.controls.start_date.updateValueAndValidity();
     this.newVoyageForm.controls.end_date.updateValueAndValidity();
-  }
-
-  /**
-  * Format date time(dd-mm-yyyy hh:mm)
-  */
-  formatDateTime(date) {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-
-    if (month < 10) {
-      month = '0' + month;
-    }
-
-    if (day < 10) {
-      day = '0' + day;
-    }
-
-    if (hour < 10) {
-      hour = '0' + hour;
-    }
-
-    if (minute < 10) {
-      minute = '0' + minute;
-    }
-
-    return day + '-' + month + '-' + date.getFullYear() + ' ' + hour + ':' + minute;
+    this.newVoyageForm.get('selectStartDateTimeZone').setValidators(this.newVoyageForm.value.start_date ? [Validators.required] : null);
+    this.newVoyageForm.controls.selectStartDateTimeZone.updateValueAndValidity();
+    this.newVoyageForm.get('selectEndDateTimeZone').setValidators(this.newVoyageForm.value.end_date ? [Validators.required] : null);
+    this.newVoyageForm.controls.selectEndDateTimeZone.updateValueAndValidity();
+    elemRef.hideOverlay();
   }
 
   /**
