@@ -1096,6 +1096,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 vesselDetailBuilder.setDeadweightConstantTcg(
                     String.valueOf(deadweightConstantTcg)));
 
+    Optional.ofNullable(vessel.getHasLoadicator())
+        .ifPresent(hasLoadicator -> vesselDetailBuilder.setHasLoadicator(hasLoadicator));
+
     return vesselDetailBuilder.build();
   }
 
