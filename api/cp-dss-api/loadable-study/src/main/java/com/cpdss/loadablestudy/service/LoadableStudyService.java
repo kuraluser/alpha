@@ -27,6 +27,7 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
@@ -118,6 +119,9 @@ import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.JsonData;
+import com.cpdss.loadablestudy.entity.JsonType;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
@@ -139,6 +143,8 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.JsonDataRepository;
+import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
@@ -278,6 +284,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @Autowired private ApiTempHistoryRepository apiTempHistoryRepository;
+
+  @Autowired private JsonDataRepository jsonDataRepository;
+  @Autowired private JsonTypeRepository jsonTypeRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -424,6 +433,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @GrpcClient("loadicatorService")
   private LoadicatorServiceBlockingStub loadicatorService;
 
+  private static final Long LOADABLE_STUDY_REQUEST = 1L;
+
   /**
    * method for save voyage
    *
@@ -467,7 +478,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? LocalDateTime.from(
                     DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
                 : null);
-        voyage.setTimezoneId((long) request.getTimezoneId());
+        voyage.setStartTimezoneId((long) request.getStartTimezoneId());
+        voyage.setEndTimezoneId((long) request.getEndTimezoneId());
         voyage = voyageRepository.save(voyage);
         // when Db save is complete we return to client a success message
         reply =
@@ -4050,6 +4062,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         objectMapper.writeValue(
             new File("json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
             loadableStudy);
+
+        this.saveJsonToDatabase(
+            request.getLoadableStudyId(),
+            LOADABLE_STUDY_REQUEST,
+            objectMapper.writeValueAsString(loadableStudy));
 
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
@@ -8410,6 +8427,46 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           "Cannot update planned values for plan generated loadable study",
           CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
           HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /** Save JSON to database */
+  @Override
+  public void saveJson(JsonRequest request, StreamObserver<StatusReply> responseObserver) {
+    StatusReply.Builder replyBuilder = StatusReply.newBuilder();
+    try {
+      this.saveJsonToDatabase(request.getReferenceId(), request.getJsonTypeId(), request.getJson());
+      replyBuilder = StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS);
+    } catch (Exception e) {
+      log.error("Exception occured while trying to save JSON to database.", e);
+      replyBuilder =
+          StatusReply.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param referenceId
+   * @param jsonTypeId
+   * @param json
+   */
+  public void saveJsonToDatabase(Long referenceId, Long jsonTypeId, String json) {
+    Optional<JsonType> jsonTypeOpt = jsonTypeRepository.findByIdAndIsActive(jsonTypeId, true);
+
+    if (jsonTypeOpt.isPresent()) {
+      JsonData jsonData = new JsonData();
+      jsonData.setReferenceXId(referenceId);
+      jsonData.setJsonTypeXId(jsonTypeOpt.get());
+      jsonData.setJsonData(json);
+      jsonDataRepository.save(jsonData);
+      log.info(String.format("Saved %s JSON in database.", jsonTypeOpt.get().getTypeName()));
+    } else {
+      log.error("Cannot find JSON type in database.");
     }
   }
 

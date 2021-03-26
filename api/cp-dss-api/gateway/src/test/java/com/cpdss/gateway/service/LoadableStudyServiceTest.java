@@ -93,6 +93,7 @@ import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.SaveCommentResponse;
+import com.cpdss.gateway.domain.StabilityParameter;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
@@ -1575,6 +1576,9 @@ class LoadableStudyServiceTest {
             this.loadableStudyService.saveLoadablePatterns(
                 any(LoadablePlanRequest.class), anyLong(), anyString()))
         .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.saveJson(anyLong(), anyLong(), anyString()))
+        .thenReturn(StatusReply.newBuilder().setStatus(SUCCESS).setCode(SUCCESS).build());
+
     Mockito.when(
             this.loadableStudyService.saveLoadablePatterns(
                 any(
@@ -1603,6 +1607,8 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testSaveLoadablePatternDetails() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.saveJson(anyLong(), anyLong(), anyString()))
+        .thenReturn(StatusReply.newBuilder().setStatus(SUCCESS).setCode(SUCCESS).build());
     Mockito.when(
             this.loadableStudyService.saveLoadablePatterns(
                 any(LoadablePlanRequest.class), anyLong(), anyString()))
@@ -1631,6 +1637,7 @@ class LoadableStudyServiceTest {
   /** @return LoadablePlanRequest */
   private LoadablePlanRequest createAlgoPatternResponse() {
     LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();
+    loadablePlanRequest.setProcessId("ID");
     loadablePlanRequest.setLoadablePlanDetails(createLoadablePlanDetails());
     return loadablePlanRequest;
   }
@@ -1641,8 +1648,15 @@ class LoadableStudyServiceTest {
     LoadablePlanDetails planDetails = new LoadablePlanDetails();
     planDetails.setLoadablePlanPortWiseDetails(createLoadablePlanPortWiseDetails());
     planDetails.setCaseNumber(1);
+    planDetails.setStabilityParameters(createStabilityParameters());
     loadablePlanDetails.add(planDetails);
     return loadablePlanDetails;
+  }
+
+  /** @return StabilityParameter */
+  private StabilityParameter createStabilityParameters() {
+    StabilityParameter stabilityParameter = new StabilityParameter();
+    return stabilityParameter;
   }
 
   /** @return List<LoadablePlanPortWiseDetails> */

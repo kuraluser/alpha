@@ -1853,59 +1853,6 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
-      getGetSynopticDataByLoadableStudyIdMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetSynopticDataByLoadableStudyId",
-      requestType = com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class,
-      responseType = com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
-      getGetSynopticDataByLoadableStudyIdMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
-        getGetSynopticDataByLoadableStudyIdMethod;
-    if ((getGetSynopticDataByLoadableStudyIdMethod =
-            LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod)
-        == null) {
-      synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getGetSynopticDataByLoadableStudyIdMethod =
-                LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod =
-              getGetSynopticDataByLoadableStudyIdMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-                          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "GetSynopticDataByLoadableStudyId"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier(
-                              "GetSynopticDataByLoadableStudyId"))
-                      .build();
-        }
-      }
-    }
-    return getGetSynopticDataByLoadableStudyIdMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest,
           com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>
       getGetLoadableStudyStatusMethod;
@@ -2497,6 +2444,53 @@ public final class LoadableStudyServiceGrpc {
     return getGetAllCargoHistoryMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.JsonRequest,
+          com.cpdss.common.generated.LoadableStudy.StatusReply>
+      getSaveJsonMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveJson",
+      requestType = com.cpdss.common.generated.LoadableStudy.JsonRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.StatusReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.JsonRequest,
+          com.cpdss.common.generated.LoadableStudy.StatusReply>
+      getSaveJsonMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.JsonRequest,
+            com.cpdss.common.generated.LoadableStudy.StatusReply>
+        getSaveJsonMethod;
+    if ((getSaveJsonMethod = LoadableStudyServiceGrpc.getSaveJsonMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveJsonMethod = LoadableStudyServiceGrpc.getSaveJsonMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveJsonMethod =
+              getSaveJsonMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.JsonRequest,
+                          com.cpdss.common.generated.LoadableStudy.StatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveJson"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.JsonRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.StatusReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveJson"))
+                      .build();
+        }
+      }
+    }
+    return getSaveJsonMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -2834,14 +2828,6 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public void getSynopticDataByLoadableStudyId(
-        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getGetSynopticDataByLoadableStudyIdMethod(), responseObserver);
-    }
-
-    /** */
     public void getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<
@@ -2938,6 +2924,14 @@ public final class LoadableStudyServiceGrpc {
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>
             responseObserver) {
       asyncUnimplementedUnaryCall(getGetAllCargoHistoryMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveJsonMethod(), responseObserver);
     }
 
     @java.lang.Override
@@ -3198,13 +3192,6 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                       this, METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID)))
           .addMethod(
-              getGetSynopticDataByLoadableStudyIdMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
-                      this, METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID)))
-          .addMethod(
               getGetLoadableStudyStatusMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
@@ -3288,6 +3275,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest,
                       com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>(
                       this, METHODID_GET_ALL_CARGO_HISTORY)))
+          .addMethod(
+              getSaveJsonMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.JsonRequest,
+                      com.cpdss.common.generated.LoadableStudy.StatusReply>(
+                      this, METHODID_SAVE_JSON)))
           .build();
     }
   }
@@ -3703,17 +3697,6 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public void getSynopticDataByLoadableStudyId(
-        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
     public void getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<
@@ -3844,6 +3827,15 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetAllCargoHistoryMethod(), getCallOptions()),
           request,
           responseObserver);
+    }
+
+    /** */
+    public void saveJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -4119,14 +4111,6 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
-        getSynopticDataByLoadableStudyId(
-            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions(), request);
-    }
-
-    /** */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
       return blockingUnaryCall(
@@ -4205,6 +4189,12 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetAllCargoHistoryMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.StatusReply saveJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
+      return blockingUnaryCall(getChannel(), getSaveJsonMethod(), getCallOptions(), request);
     }
   }
 
@@ -4543,16 +4533,6 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
-        getSynopticDataByLoadableStudyId(
-            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>
         getLoadableStudyStatus(
             com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
@@ -4652,6 +4632,13 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetAllCargoHistoryMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.StatusReply>
+        saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
+      return futureUnaryCall(getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -4690,19 +4677,19 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_SYNOPTICAL_TABLE = 33;
   private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 34;
   private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 35;
-  private static final int METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID = 36;
-  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 37;
-  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 38;
-  private static final int METHODID_RECALCULATE_VOLUME = 39;
-  private static final int METHODID_CONFIRM_PLAN_STATUS = 40;
-  private static final int METHODID_CONFIRM_PLAN = 41;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 42;
-  private static final int METHODID_SAVE_COMMENT = 43;
-  private static final int METHODID_SAVE_LOAD_ON_TOP = 44;
-  private static final int METHODID_GET_VOYAGES = 45;
-  private static final int METHODID_SAVE_VOYAGE_STATUS = 46;
-  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 47;
-  private static final int METHODID_GET_ALL_CARGO_HISTORY = 48;
+  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 36;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 37;
+  private static final int METHODID_RECALCULATE_VOLUME = 38;
+  private static final int METHODID_CONFIRM_PLAN_STATUS = 39;
+  private static final int METHODID_CONFIRM_PLAN = 40;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 41;
+  private static final int METHODID_SAVE_COMMENT = 42;
+  private static final int METHODID_SAVE_LOAD_ON_TOP = 43;
+  private static final int METHODID_GET_VOYAGES = 44;
+  private static final int METHODID_SAVE_VOYAGE_STATUS = 45;
+  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 46;
+  private static final int METHODID_GET_ALL_CARGO_HISTORY = 47;
+  private static final int METHODID_SAVE_JSON = 48;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4971,13 +4958,6 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
                   responseObserver);
           break;
-        case METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID:
-          serviceImpl.getSynopticDataByLoadableStudyId(
-              (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
-                  responseObserver);
-          break;
         case METHODID_GET_LOADABLE_STUDY_STATUS:
           serviceImpl.getLoadableStudyStatus(
               (com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest) request,
@@ -5060,6 +5040,12 @@ public final class LoadableStudyServiceGrpc {
               (com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_JSON:
+          serviceImpl.saveJson(
+              (com.cpdss.common.generated.LoadableStudy.JsonRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>)
                   responseObserver);
           break;
         default:
@@ -5162,7 +5148,6 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetSynopticalTableMethod())
                       .addMethod(getGetSynopticalDataByPortIdMethod())
                       .addMethod(getGetSynopticalPortDataByPortIdMethod())
-                      .addMethod(getGetSynopticDataByLoadableStudyIdMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getRecalculateVolumeMethod())
@@ -5175,6 +5160,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveVoyageStatusMethod())
                       .addMethod(getGetCargoApiTempHistoryMethod())
                       .addMethod(getGetAllCargoHistoryMethod())
+                      .addMethod(getSaveJsonMethod())
                       .build();
         }
       }

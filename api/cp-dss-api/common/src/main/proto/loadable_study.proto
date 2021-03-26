@@ -153,6 +153,9 @@ service LoadableStudyService {
 	
 	rpc GetAllCargoHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
 	}
+	
+	rpc SaveJson (JsonRequest) returns (StatusReply) {
+	}
 }
 
 message RecalculateVolumeRequest {
@@ -490,7 +493,8 @@ message VoyageRequest {
 	int32 pageSize = 9;
 	string fromStartDate=10;
 	string toStartDate=11;
-	int32 timezoneId = 12;
+	int32 startTimezoneId = 12;
+	int32 endTimezoneId = 13;
 }
 
 message VoyageReply {
@@ -1120,4 +1124,10 @@ message CargoHistoryDetail {
 	int32 loadedDay = 7;
 	string api = 8;
 	string temperature = 9;
+}
+
+message JsonRequest {
+	int64 referenceId = 1;
+	int64 jsonTypeId = 2;
+	string json = 3;
 }

@@ -24,6 +24,7 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LDIntactStability;
 import com.cpdss.common.generated.LoadableStudy.LDStrength;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
@@ -91,6 +92,8 @@ import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
+import com.cpdss.loadablestudy.entity.JsonData;
+import com.cpdss.loadablestudy.entity.JsonType;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
@@ -120,6 +123,8 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.JsonDataRepository;
+import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
@@ -174,6 +179,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -241,6 +248,9 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @MockBean private VoyageStatusRepository voyageStatusRepository;
   @MockBean private ApiTempHistoryRepository apiTempHistoryRepository;
+
+  @MockBean private JsonDataRepository jsonDataRepository;
+  @MockBean private JsonTypeRepository jsonTypeRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
@@ -4680,5 +4690,87 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     SaveVoyageStatusReply response = results.get(0);
     assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveJson() {
+    JsonRequest request =
+        JsonRequest.newBuilder().setJsonTypeId(1L).setReferenceId(10L).setJson("{}").build();
+    JsonType jsonType = new JsonType();
+    jsonType.setId(1L);
+    JsonData jsonData = new JsonData();
+    jsonData.setReferenceXId(10L);
+    jsonData.setJsonTypeXId(jsonType);
+    jsonData.setJsonData("{}");
+    StreamRecorder<StatusReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(this.jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(jsonType));
+
+    Mockito.when(this.jsonDataRepository.save(any(JsonData.class))).thenReturn(jsonData);
+
+    loadableStudyService.saveJson(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<StatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    StatusReply response = results.get(0);
+    assertEquals(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(), response);
+  }
+
+  @Test
+  public void testSaveJsonWithInvalidType() {
+    JsonRequest request =
+        JsonRequest.newBuilder().setJsonTypeId(1L).setReferenceId(10L).setJson("{}").build();
+    JsonType jsonType = new JsonType();
+    jsonType.setId(1L);
+    JsonData jsonData = new JsonData();
+    jsonData.setReferenceXId(10L);
+    jsonData.setJsonTypeXId(jsonType);
+    jsonData.setJsonData("{}");
+    StreamRecorder<StatusReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(this.jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+
+    Mockito.when(this.jsonDataRepository.save(any(JsonData.class))).thenReturn(jsonData);
+
+    loadableStudyService.saveJson(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<StatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    StatusReply response = results.get(0);
+    assertEquals(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(), response);
+  }
+
+  @Test
+  public void testSaveJsonWithException() {
+    JsonRequest request =
+        JsonRequest.newBuilder().setJsonTypeId(1L).setReferenceId(10L).setJson("{}").build();
+    JsonType jsonType = new JsonType();
+    jsonType.setId(1L);
+    JsonData jsonData = new JsonData();
+    jsonData.setReferenceXId(10L);
+    jsonData.setJsonTypeXId(jsonType);
+    jsonData.setJsonData("{}");
+    StreamRecorder<StatusReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(this.jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(new DataRetrievalFailureException("Cannot retrieve JSON type."));
+
+    Mockito.when(this.jsonDataRepository.save(any(JsonData.class)))
+        .thenThrow(new DataAccessException("Cannot save JSON") {});
+
+    loadableStudyService.saveJson(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<StatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    StatusReply response = results.get(0);
+    assertEquals(
+        StatusReply.newBuilder()
+            .setStatus(FAILED)
+            .setMessage(FAILED)
+            .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+            .build(),
+        response);
   }
 }

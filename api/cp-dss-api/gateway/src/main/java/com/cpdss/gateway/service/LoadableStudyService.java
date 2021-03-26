@@ -23,6 +23,7 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
@@ -67,6 +68,7 @@ import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -220,6 +222,8 @@ public class LoadableStudyService {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
+  private static final Long LOADABLE_STUDY_RESPONSE = 2L;
+
   @Autowired private UsersRepository usersRepository;
 
   /**
@@ -245,7 +249,10 @@ public class LoadableStudyService {
             .setVoyageNo(voyage.getVoyageNo())
             .setStartDate(!StringUtils.isEmpty(voyage.getStartDate()) ? voyage.getStartDate() : "")
             .setEndDate(!StringUtils.isEmpty(voyage.getEndDate()) ? voyage.getEndDate() : "")
-            .setTimezoneId(voyage.getTimezoneId() != null ? voyage.getTimezoneId().intValue() : 0)
+            .setStartTimezoneId(
+                voyage.getStartTimezoneId() != null ? voyage.getStartTimezoneId().intValue() : 0)
+            .setEndTimezoneId(
+                voyage.getEndTimezoneId() != null ? voyage.getEndTimezoneId().intValue() : 0)
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
@@ -3164,6 +3171,14 @@ public class LoadableStudyService {
       objectMapper.writeValue(
           new File(this.rootFolder + "/json/loadableStudyResult_" + loadableStudiesId + ".json"),
           loadablePlanRequest);
+      StatusReply reply =
+          this.saveJson(
+              loadableStudiesId,
+              LOADABLE_STUDY_RESPONSE,
+              objectMapper.writeValueAsString(loadablePlanRequest));
+      if (!SUCCESS.equals(reply.getStatus())) {
+        log.error("Error occured  in gateway while writing JSON to database.");
+      }
     } catch (IOException e) {
       log.error("Error in json writing ", e);
     }
@@ -3402,6 +3417,20 @@ public class LoadableStudyService {
   public AlgoReply saveLoadablePatterns(
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     return this.loadableStudyServiceBlockingStub.saveLoadablePatterns(request.build());
+  }
+
+  /**
+   * @param request
+   * @return StatusReply
+   */
+  public StatusReply saveJson(Long referenceId, Long jsonTypeId, String json) {
+    JsonRequest jsonRequest =
+        JsonRequest.newBuilder()
+            .setReferenceId(referenceId)
+            .setJsonTypeId(jsonTypeId)
+            .setJson(json)
+            .build();
+    return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
   }
 
   /**
