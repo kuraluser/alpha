@@ -127,7 +127,7 @@ export class VoyageStatusComponent implements OnInit {
    */
   getSelectedVoyages(voyages: Voyage[]): Voyage[] {
     this.selectedVoyage = voyages?.find(voyage => voyage?.statusId === VOYAGE_STATUS.ACTIVE);
-    const latestClosedVoyages = [...voyages?.filter(voyage => voyage?.statusId === VOYAGE_STATUS.CLOSE)]?.sort((a,b) => this.convertToDate(b.actualStartDate).getTime() - this.convertToDate(a.actualStartDate).getTime())?.slice(0, this.selectedVoyage ? 9 : 10);
+    const latestClosedVoyages = [...voyages?.filter(voyage => voyage?.statusId === VOYAGE_STATUS.CLOSE)]?.sort((a,b) => this.convertToDate(b?.actualStartDate)?.getTime() - this.convertToDate(a?.actualStartDate)?.getTime())?.slice(0, this.selectedVoyage ? 9 : 10);
     return [this.selectedVoyage, ...latestClosedVoyages];
   }
 

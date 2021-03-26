@@ -177,7 +177,9 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     this.ports = await this.loadableStudyDetailsApiService.getPorts().toPromise();
     const result = await this.loadableStudyDetailsApiService.getOHQPortRotation(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     if (result?.portList) {
-      this.ohqPorts = result?.portList?.map((ohqPort) => this.ports?.find((port) => port.id === ohqPort.portId));
+      this.ohqPorts = result?.portList?.map((ohqPort) => {
+        return {...this.ports?.find((port) => port.id === ohqPort.portId), id: ohqPort?.id, portId: ohqPort?.portId};
+      });
       this.selectedPort = this.ohqPorts[0];
       await this.getPortOHQDetails(this.selectedPort?.id);
       const hasPendingUpdates = await this.checkForPendingUpdates();
@@ -200,15 +202,15 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   /**
    * Method for fetching ohq details of selected port
    *
-   * @param {number} portId
+   * @param {number} portRotationId
    * @memberof OnHandQuantityComponent
    */
-  async getPortOHQDetails(portId: number) {
-    const result = await this.loadableStudyDetailsApiService.getPortOHQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
+  async getPortOHQDetails(portRotationId: number) {
+    const result = await this.loadableStudyDetailsApiService.getPortOHQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portRotationId).toPromise();
     const selectedPortOHQTankDetails = result?.onHandQuantities ?? [];
     this.listData.fuelTypes = [...new Map(selectedPortOHQTankDetails.map(item => [item['fuelTypeId'], { id: item?.fuelTypeId, name: item?.fuelTypeName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
     const _selectedPortOHQTankDetails = selectedPortOHQTankDetails?.map((ohqTankDetail) => {
-      ohqTankDetail.portId = portId;
+      ohqTankDetail.portRotationId = portRotationId;
       [...result?.tanks, ...result?.rearTanks].forEach(group => group.find(tank => {
         if (tank.id === ohqTankDetail.tankId) {
           ohqTankDetail.fullCapacityCubm = Number(tank.fullCapacityCubm);

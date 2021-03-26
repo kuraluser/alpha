@@ -132,6 +132,13 @@ export class CPDSSDB extends Dexie {
     properties!: Dexie.Table<any>;
     constructor() {
         super('CPDSS');
+        this.version(1).stores({
+            cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            properties: ""
+        });
     }
 }
 
@@ -147,9 +154,6 @@ export class PropertiesDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            properties: ''
-        });
     }
 
 }

@@ -34,11 +34,6 @@ export function tokenAuthCPDSSInitializer(http: HttpClient, appConfig: AppConfig
                         localStorage.setItem('token', token);
                     } else if (localStorage.getItem('token') !== undefined && localStorage.getItem('token') !== 'undefined' && localStorage.getItem('token') !== '' && localStorage.getItem('token') !== null) {
                         token = localStorage.getItem('token');
-                        //TODO: Handling scenario when user manually cleares service worker and indexed db
-                        /* const isPropertyExist = await SecurityService.getPropertiesDB('token');
-                        if(token && !isPropertyExist) {
-                            SecurityService.initPropertiesDB(token);
-                        } */
                     }
                     let favicon = arr[3].split('=')[1];
                     if (favicon) {

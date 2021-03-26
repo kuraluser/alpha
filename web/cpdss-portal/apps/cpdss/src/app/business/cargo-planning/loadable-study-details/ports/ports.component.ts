@@ -17,6 +17,7 @@ import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-val
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { first } from 'rxjs/operators';
 
 
 /**
@@ -78,6 +79,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   // private fields
   private _portsLists: IPortsValueObject[];
   private _loadableStudy: LoadableStudy;
+  private portsListSaved: IPortsValueObject[];
 
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -133,6 +135,10 @@ export class PortsComponent implements OnInit, OnDestroy {
         }
       }, 500);
     }
+    this.portsListSaved = [];
+    this.portsLists.forEach(row => {
+      this.portsListSaved.push(JSON.parse(JSON.stringify(row)))
+    })
     this.ngxSpinnerService.hide();
   }
 
@@ -321,6 +327,32 @@ export class PortsComponent implements OnInit, OnDestroy {
    */
   async onEditComplete(event: IPortsEvent) {
     const index = event.index;
+    const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
+    if ((event.field === 'port' || event.field === 'operation') && !event.data?.isAdd && !this.portsListSaved[index]['isAdd']) {
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORT_CHANGE_CONFIRM_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORT_CHANGE_CONFIRM_LABEL', rejectLabel: 'PORT_CHANGE_REJECT_LABEL' } });
+      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
+        if (response) {
+          this.portsListSaved[index] = JSON.parse(JSON.stringify(this.portsLists[index]))
+          this.portsListSaved[index]['isAdd'] = true;
+          this.updatePortsDetails(event)
+        } else {
+          this.portsLists[valueIndex][event.field].value = this.portsListSaved[valueIndex][event.field]['_value'];
+          this.updateField(event.index, event.field, this.portsListSaved[valueIndex][event.field]['_value']);
+        }
+      });
+    } else {
+      this.updatePortsDetails(event)
+    }
+  }
+
+  /**
+   * Method to handle ports data on update
+   *
+   * @param {IPortsEvent} event
+   * @memberof PortsComponent
+   */
+  updatePortsDetails(event: IPortsEvent) {
+    const index = event.index;
     const form = this.row(index);
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (event.field === 'port') {
@@ -408,6 +440,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     });
     this.portsLists = [...this.portsLists];
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
+
   }
 
   /**
@@ -493,7 +526,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   */
   async onDeleteRow(event: IPortsEvent) {
     if (event?.data?.isDelete) {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
       const subscription = this.confirmationAlertService.confirmAlert$
         .subscribe(async (response) => {
           if (response) {

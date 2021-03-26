@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { PropertiesDB } from '../../models/common.model';
+import { CPDSSDB } from '../../models/common.model';
 import { IUserProfile } from "../../models/user-profile.model";
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 
@@ -20,7 +20,7 @@ export class SecurityService {
   private static _TOKEN: string;
   private static _USER: IUserProfile;
   private static _LOGGED_IN = false;
-  private static propertiesDB = new PropertiesDB()
+  private static cpdssDB = new CPDSSDB();
 
   constructor() { }
 
@@ -37,12 +37,12 @@ export class SecurityService {
 
   // getting properties in indexed db
   static async getPropertiesDB(key: string) {
-    return await this.propertiesDB?.properties?.get(key)
+    return await SecurityService.cpdssDB?.properties?.get(key)
   }
 
   // setting properties in indexed db
   static setPropertiesDB(value: string, key: string) {
-    this.propertiesDB.properties.add(value, key)
+    SecurityService.cpdssDB?.properties.add(value, key)
   }
 
   // setting logged-in user details
@@ -78,7 +78,7 @@ export class SecurityService {
     SecurityService._USER = null;
     SecurityService._LOGGED_IN = false;
     window.localStorage.clear();
-    this.propertiesDB.properties.clear();
+    SecurityService.cpdssDB?.properties?.clear();
   }
 
   /**
