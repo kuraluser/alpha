@@ -89,6 +89,7 @@ message VesselDetail {
   string deadweightConstantTcg = 35;
   string frameSpace3l = 36;
   string frameSpace7l = 37;
+  bool hasLoadicator = 38;
 }
 
 message VesselLoadableQuantityDetails {
