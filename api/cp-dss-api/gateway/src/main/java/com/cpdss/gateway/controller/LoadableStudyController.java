@@ -893,12 +893,13 @@ public class LoadableStudyController {
    */
   @GetMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities")
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/port-rotation/{portRotationId}/on-hand-quantities")
   public OnHandQuantityResponse getOnHandQuantity(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -906,7 +907,11 @@ public class LoadableStudyController {
       // TODO
       final Long companyId = 1L;
       return this.loadableStudyService.getOnHandQuantity(
-          companyId, vesselId, loadableStudyId, portId, headers.getFirst(CORRELATION_ID_HEADER));
+          companyId,
+          vesselId,
+          loadableStudyId,
+          portRotationId,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching on hand quantities", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -924,20 +929,21 @@ public class LoadableStudyController {
   @PostMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}"
-              + "/ports/{portId}/on-hand-quantities/{id}",
+              + "/port-rotation/{portRotationId}/on-hand-quantities/{id}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public OnHandQuantityResponse saveOnHandQuantity(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long id,
       @RequestBody @Valid OnHandQuantity request,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       request.setId(id);
-      request.setPortId(portId);
+      request.setPortRotationId(portRotationId);
       request.setLoadableStudyId(loadableStudyId);
       return this.loadableStudyService.saveOnHandQuantity(
           request, headers.getFirst(CORRELATION_ID_HEADER));
@@ -1763,9 +1769,9 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
-      @RequestParam(required = false, defaultValue = "year")
+      @RequestParam(required = false, defaultValue = "loadedYear")
           @Pattern(
-              regexp = "vesselName|loadingPort|grade|year",
+              regexp = "vesselName|loadingPortName|grade|loadedYear",
               message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           String sortBy,
       @RequestParam(required = false, defaultValue = "desc") String orderBy,
@@ -1780,11 +1786,11 @@ public class LoadableStudyController {
       List<String> filterKeys =
           Arrays.asList(
               "vesselName",
-              "loadingPort",
+              "loadingPortName",
               "grade",
-              "year",
-              "month",
-              "date",
+              "loadedYear",
+              "loadedMonth",
+              "loadedDay",
               "api",
               "temperature",
               "startDate",
@@ -1793,7 +1799,9 @@ public class LoadableStudyController {
           params.entrySet().stream()
               .filter(e -> filterKeys.contains(e.getKey()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+      if (sortBy.equalsIgnoreCase("loadedYear")) {
+        sortBy = "year"; // db column name is 'year'
+      }
       return this.loadableStudyCargoService.getAllCargoHistory(
           filterParams, page, pageSize, sortBy, orderBy, startDate, endDate);
     } catch (GenericServiceException e) {

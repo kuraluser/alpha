@@ -9,4 +9,6 @@ public interface LoadicatorIntactStabilityRepository
     extends CommonCrudRepository<IntactStability, Long> {
 
   List<IntactStability> findByStowagePlanIdIn(List<Long> stowagePlanIds);
+
+  public IntactStability findByStowagePlanId(Long id);
 }

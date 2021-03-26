@@ -39,7 +39,6 @@ public class LoadableQuantityCommingleCargoDetails {
   @JsonInclude(Include.NON_NULL)
   private String cargo2LT;
 
-  @JsonInclude(Include.NON_NULL)
   private String cargo1MT;
 
   private String cargo2MT;
@@ -54,4 +53,10 @@ public class LoadableQuantityCommingleCargoDetails {
   private Integer priority;
   private Integer loadingOrder;
   private Long cargoNominationId;
+
+  private Long tankId;
+  private String fillingRatio;
+  private String correctedUllage; // ullage(M)
+  private String rdgUllage;
+  private String correctionFactor;
 }

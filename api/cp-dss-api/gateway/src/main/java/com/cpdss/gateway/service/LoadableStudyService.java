@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service;
 
 import static java.lang.String.valueOf;
+import static java.util.stream.Collectors.*;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -22,6 +23,7 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
@@ -66,6 +68,7 @@ import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -157,16 +160,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
@@ -228,6 +222,8 @@ public class LoadableStudyService {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
+  private static final Long LOADABLE_STUDY_RESPONSE = 2L;
+
   @Autowired private UsersRepository usersRepository;
 
   /**
@@ -253,7 +249,10 @@ public class LoadableStudyService {
             .setVoyageNo(voyage.getVoyageNo())
             .setStartDate(!StringUtils.isEmpty(voyage.getStartDate()) ? voyage.getStartDate() : "")
             .setEndDate(!StringUtils.isEmpty(voyage.getEndDate()) ? voyage.getEndDate() : "")
-            .setTimezoneId(voyage.getTimezoneId() != null ? voyage.getTimezoneId().intValue() : 0)
+            .setStartTimezoneId(
+                voyage.getStartTimezoneId() != null ? voyage.getStartTimezoneId().intValue() : 0)
+            .setEndTimezoneId(
+                voyage.getEndTimezoneId() != null ? voyage.getEndTimezoneId().intValue() : 0)
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
@@ -434,6 +433,11 @@ public class LoadableStudyService {
           0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
       dto.setCreatedFromId(grpcReply.getCreatedFromId());
       dto.setLoadOnTop(grpcReply.getLoadOnTop());
+      dto.setIsCargoNominationComplete(grpcReply.getIsCargoNominationComplete());
+      dto.setIsPortsComplete(grpcReply.getIsPortsComplete());
+      dto.setIsOhqComplete(grpcReply.getIsOhqComplete());
+      dto.setIsObqComplete(grpcReply.getIsObqComplete());
+      dto.setIsDischargingPortComplete(grpcReply.getIsDischargingPortComplete());
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -478,6 +482,13 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
     Optional.ofNullable(request.getId()).ifPresent(builder::setId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
+    Optional.ofNullable(request.getIsCargoNominationComplete())
+        .ifPresent(builder::setIsCargoNominationComplete);
+    Optional.ofNullable(request.getIsPortsComplete()).ifPresent(builder::setIsPortsComplete);
+    Optional.ofNullable(request.getIsOhqComplete()).ifPresent(builder::setIsOhqComplete);
+    Optional.ofNullable(request.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
+    Optional.ofNullable(request.getIsDischargingPortComplete())
+        .ifPresent(builder::setIsDischargingPortComplete);
     for (MultipartFile file : files) {
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
@@ -770,6 +781,11 @@ public class LoadableStudyService {
             temperature -> cargoNominationDetailbuilder.setTempEst(String.valueOf(temperature)));
     Optional.ofNullable(request.getSegregationId())
         .ifPresent(cargoNominationDetailbuilder::setSegregationId);
+    Optional.ofNullable(request.getIsCargoNominationComplete())
+        .ifPresent(
+            isCargoNominationComplete ->
+                cargoNominationDetailbuilder.setIsCargoNominationComplete(
+                    isCargoNominationComplete));
     builder.setCargoNominationDetail(cargoNominationDetailbuilder);
     CargoNominationRequest cargoNominationRequest = builder.build();
     CargoNominationReply cargoNominationReply =
@@ -952,7 +968,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save loadable study - ports",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     PortRotationResponse response = new PortRotationResponse();
     response.setResponseStatus(
@@ -1060,6 +1077,8 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setEtaActual(valueOf(request.getEtaActual())));
     Optional.ofNullable(request.getEtdActual())
         .ifPresent(item -> builder.setEtdActual(valueOf(request.getEtdActual())));
+    Optional.ofNullable(request.getIsPortsComplete())
+        .ifPresent(item -> builder.setIsPortsComplete(item));
     return builder.build();
   }
 
@@ -1260,6 +1279,12 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getDischargingCargoId())
         .ifPresent(portRotationRequestBuilder::setDischargingCargoId);
 
+    Optional.ofNullable(request.getIsDischargingPortComplete())
+        .ifPresent(
+            isDischargingPortComplete ->
+                portRotationRequestBuilder.setIsDischargingPortsComplete(
+                    request.getIsDischargingPortComplete()));
+
     PortRotationReply grpcReply = this.saveDischargingPorts(portRotationRequestBuilder.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -1344,9 +1369,10 @@ public class LoadableStudyService {
     portRotationReply
         .getPortsList()
         .forEach(
-            portList -> {
+            port -> {
               PortRotation portRotation = new PortRotation();
-              portRotation.setPortId(portList.getPortId());
+              portRotation.setPortId(port.getPortId());
+              portRotation.setId(port.getId());
               response.getPortList().add(portRotation);
             });
     response.setResponseStatus(
@@ -1568,6 +1594,7 @@ public class LoadableStudyService {
               details.setQuantityMT(lpsdl.getWeight());
               details.setColorCode(lpsdl.getColorCode());
               details.setFillingRatio(lpsdl.getFillingRatio());
+              details.setIsCommingle(lpsdl.getIsCommingle());
               loadablePlanStowageDetails.add(details);
             });
     return loadablePlanStowageDetails;
@@ -1595,7 +1622,7 @@ public class LoadableStudyService {
       final Long companyId,
       final Long vesselId,
       final Long loadableStudyId,
-      final Long portId,
+      final Long portRotationId,
       String correlationId)
       throws GenericServiceException {
     OnHandQuantityRequest request =
@@ -1603,7 +1630,7 @@ public class LoadableStudyService {
             .setCompanyId(companyId)
             .setVesselId(vesselId)
             .setLoadableStudyId(loadableStudyId)
-            .setPortId(portId)
+            .setPortRotationId(portRotationId)
             .build();
     OnHandQuantityReply grpcReply = this.getOnHandQuantity(request);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
@@ -1633,6 +1660,8 @@ public class LoadableStudyService {
       onHandQuantity.setFuelTypeId(detail.getFuelTypeId());
       onHandQuantity.setFuelTypeName(detail.getFuelType());
       onHandQuantity.setFuelTypeShortName(detail.getFuelTypeShortName());
+      onHandQuantity.setPortRotationId(detail.getPortRotationId());
+      onHandQuantity.setPortId(detail.getPortId());
       onHandQuantity.setArrivalQuantity(
           isEmpty(detail.getArrivalQuantity())
               ? BigDecimal.ZERO
@@ -1744,8 +1773,9 @@ public class LoadableStudyService {
     OnHandQuantityDetail.Builder builder = OnHandQuantityDetail.newBuilder();
     builder.setId(request.getId());
     builder.setLoadableStudyId(request.getLoadableStudyId());
-    builder.setPortId(request.getPortId());
+    builder.setPortRotationId(request.getPortRotationId());
     builder.setTankId(request.getTankId());
+    builder.setPortRotationId(request.getPortRotationId());
     builder.setFuelTypeId(request.getFuelTypeId());
     Optional.ofNullable(request.getArrivalQuantity())
         .ifPresent(item -> builder.setArrivalQuantity(valueOf(item)));
@@ -2156,13 +2186,15 @@ public class LoadableStudyService {
     AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     AlgoReply reply = this.generateLoadablePatterns(request);
+
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "failed to call algo",
           reply.getResponseStatus().getCode(),
           reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
               ? HttpStatusCode.SERVICE_UNAVAILABLE
-              : HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+              : HttpStatusCode.valueOf(
+                  Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
     }
     algoPatternResponse.setProcessId(reply.getProcesssId());
     algoPatternResponse.setResponseStatus(
@@ -2310,6 +2342,8 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getColorCode()).ifPresent(builder::setColorCode);
     Optional.ofNullable(request.getAbbreviation()).ifPresent(builder::setAbbreviation);
     Optional.ofNullable(request.getLoadOnTop()).ifPresent(item -> builder.setLoadOnTop(item));
+    Optional.ofNullable(request.getIsObqComplete())
+        .ifPresent(item -> builder.setIsObqComplete(item));
     return builder.build();
   }
 
@@ -2966,6 +3000,14 @@ public class LoadableStudyService {
       objectMapper.writeValue(
           new File(this.rootFolder + "/json/loadableStudyResult_" + loadableStudiesId + ".json"),
           loadablePlanRequest);
+      StatusReply reply =
+          this.saveJson(
+              loadableStudiesId,
+              LOADABLE_STUDY_RESPONSE,
+              objectMapper.writeValueAsString(loadablePlanRequest));
+      if (!SUCCESS.equals(reply.getStatus())) {
+        log.error("Error occured  in gateway while writing JSON to database.");
+      }
     } catch (IOException e) {
       log.error("Error in json writing ", e);
     }
@@ -3189,6 +3231,11 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getOrderedQuantity()).ifPresent(builder::setOrderedMT);
     Optional.ofNullable(lqccd.getPriority()).ifPresent(builder::setPriority);
     Optional.ofNullable(lqccd.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
+    Optional.ofNullable(lqccd.getTankId()).ifPresent(builder::setTankId);
+    Optional.ofNullable(lqccd.getFillingRatio()).ifPresent(builder::setFillingRatio);
+    Optional.ofNullable(lqccd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
+    Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+    Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -3199,6 +3246,20 @@ public class LoadableStudyService {
   public AlgoReply saveLoadablePatterns(
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     return this.loadableStudyServiceBlockingStub.saveLoadablePatterns(request.build());
+  }
+
+  /**
+   * @param request
+   * @return StatusReply
+   */
+  public StatusReply saveJson(Long referenceId, Long jsonTypeId, String json) {
+    JsonRequest jsonRequest =
+        JsonRequest.newBuilder()
+            .setReferenceId(referenceId)
+            .setJsonTypeId(jsonTypeId)
+            .setJson(json)
+            .build();
+    return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
   }
 
   /**
@@ -3418,6 +3479,7 @@ public class LoadableStudyService {
               loadablePlanStowageDetails.setWeight(lpsd.getWeight());
               loadablePlanStowageDetails.setId(lpsd.getId());
               loadablePlanStowageDetails.setColorCode(lpsd.getColorCode());
+              loadablePlanStowageDetails.setIsCommingle(lpsd.getIsCommingle());
               response.getLoadablePlanStowageDetails().add(loadablePlanStowageDetails);
             });
   }
@@ -4046,6 +4108,7 @@ public class LoadableStudyService {
             .setVesselId(vesselId)
             .setLoadableStudyId(loadableStudyId)
             .setPortId(portId)
+            .setPortRotationId(voyageStatusRequest.getPortRotationId())
             .build();
     OnHandQuantityReply onHandQtyReply = this.getOnHandQuantity(ohqRequest);
     if (!SUCCESS.equals(onHandQtyReply.getResponseStatus().getStatus())) {
@@ -4206,7 +4269,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save LoadOnTop",
           reply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
     }
     SaveCommentResponse response = new SaveCommentResponse();
     response.setResponseStatus(
@@ -4315,33 +4378,46 @@ public class LoadableStudyService {
       LocalDateTime actualStartDate = null;
       LocalDateTime actualEndDate = null;
 
-      if (!detail.getActualStartDate().isEmpty() && !detail.getActualEndDate().isEmpty()) {
+      if (!detail.getActualStartDate().isEmpty()) {
         actualStartDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualStartDate()));
+
+        voyage.setActualStartDate(actualStartDate.toLocalDate());
+      }
+
+      if (!detail.getActualEndDate().isEmpty()) {
+
         actualEndDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualEndDate()));
 
-        voyage.setActualEndDate(actualStartDate.toLocalDate());
-        voyage.setActualStartDate(actualEndDate.toLocalDate());
+        voyage.setActualEndDate(actualEndDate.toLocalDate());
       }
 
-      if (!detail.getStartDate().isEmpty() && !detail.getEndDate().isEmpty()) {
+      if (!detail.getStartDate().isEmpty()) {
         plannedStartDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getStartDate()));
+
+        voyage.setPlannedStartDate(plannedStartDate.toLocalDate());
+      }
+
+      if (!detail.getEndDate().isEmpty()) {
         plannedEndDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getEndDate()));
-        voyage.setPlannedStartDate(plannedStartDate.toLocalDate());
         voyage.setPlannedEndDate(plannedEndDate.toLocalDate());
       }
 
       voyageList.add(voyage);
     }
 
-    response.setVoyages(voyageList);
+    // sort list
+    if (null != sortBy) {
+      voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
+    }
+
     Pageable pageRequest = PageRequest.of(page, pageSize);
 
     int total = voyageList.size();
@@ -4356,14 +4432,8 @@ public class LoadableStudyService {
 
     final Page<Voyage> pages = new PageImpl<>(output, pageRequest, total);
 
-    // sort list
-
-    if (null != sortBy) {
-      voyageList = this.getSortedList(pages.toList(), orderBy, sortBy.toLowerCase());
-    }
-
     response.setTotalElements(pages.getTotalElements());
-    response.setVoyages(voyageList);
+    response.setVoyages(pages.toList());
 
     return response;
   }
@@ -4742,11 +4812,13 @@ public class LoadableStudyService {
                 cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
                 cargoHistory.setApi(
                     (cargoHistoryDetail.getApi() != null
+                            && cargoHistoryDetail.getApi().length() > 0
                             && !cargoHistoryDetail.getApi().trim().isEmpty())
                         ? new BigDecimal(cargoHistoryDetail.getApi())
                         : new BigDecimal("0"));
                 cargoHistory.setTemperature(
                     (cargoHistoryDetail.getTemperature() != null
+                            && cargoHistoryDetail.getTemperature().length() > 0
                             && !cargoHistoryDetail.getTemperature().trim().isEmpty())
                         ? new BigDecimal(cargoHistoryDetail.getTemperature())
                         : new BigDecimal("0"));
@@ -4756,6 +4828,7 @@ public class LoadableStudyService {
       List<CargoHistory> portHistoryList =
           cargoHistoryList.stream().limit(5L).collect(Collectors.toList());
       cargoHistoryResponse.setPortHistory(portHistoryList);
+      /*
       // Monthly history - group by loaded year and latest loaded date
       Map<Integer, Optional<CargoHistoryDetail>> monthlyHistoryMap =
           reply.getCargoHistoryList().stream()
@@ -4768,14 +4841,41 @@ public class LoadableStudyService {
                                   LocalDateTime.from(
                                       DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
                                           .parse(ch.getLoadedDate()))))));
-      if (!CollectionUtils.isEmpty(monthlyHistoryMap.values())) {
-        List<CargoHistoryDetail> monthlyHistoryList =
-            monthlyHistoryMap.values().stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+      */
+
+      // 1. Group By Year (last five year) -> year, list of cargo history object
+      // 2. Sort key(list) by month and filter. (it is sorted by date, from db query)
+      Map<Integer, List<CargoHistoryDetail>> filteredMap =
+          reply.getCargoHistoryList().stream()
+              .collect(
+                  groupingBy(
+                      CargoHistoryDetail::getLoadedYear,
+                      mapping(
+                          Function.identity(),
+                          collectingAndThen(
+                              toList(),
+                              e ->
+                                  e.stream()
+                                      .sorted(
+                                          Comparator.comparingInt(
+                                              CargoHistoryDetail::getLoadedMonth))
+                                      .filter(distinctByKey(CargoHistoryDetail::getLoadedMonth))
+                                      .collect(toList())))));
+      filteredMap
+          .entrySet()
+          .forEach(
+              ch -> {
+                log.info(
+                    "Cargo history, api-temp: grouping info, cargo - {} year - {}, history size - {}",
+                    request.getCargoId(),
+                    ch.getKey(),
+                    ch.getValue().size());
+              });
+      if (!CollectionUtils.isEmpty(filteredMap.values())) {
+        List<CargoHistoryDetail> filteredList =
+            filteredMap.values().stream().flatMap(Collection::stream).collect(toList());
         List<CargoHistory> monthlyCargoHistory = new ArrayList<CargoHistory>();
-        monthlyHistoryList.forEach(
+        filteredList.forEach(
             cargoHistoryDetail -> {
               if (request != null
                   && !CollectionUtils.isEmpty(request.getLoadingPortIds())
@@ -4784,12 +4884,14 @@ public class LoadableStudyService {
                 cargoHistory.setLoadingPortId(cargoHistoryDetail.getLoadingPortId());
                 cargoHistory.setLoadedYear(cargoHistoryDetail.getLoadedYear());
                 cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
+                cargoHistory.setLoadedDay(cargoHistoryDetail.getLoadedDay());
                 cargoHistory.setApi(
-                    cargoHistoryDetail.getApi() != null
+                    cargoHistoryDetail.getApi() != null && cargoHistoryDetail.getApi().length() > 0
                         ? new BigDecimal(cargoHistoryDetail.getApi())
                         : new BigDecimal("0"));
                 cargoHistory.setTemperature(
                     cargoHistoryDetail.getTemperature() != null
+                            && cargoHistoryDetail.getTemperature().length() > 0
                         ? new BigDecimal(cargoHistoryDetail.getTemperature())
                         : new BigDecimal("0"));
                 monthlyCargoHistory.add(cargoHistory);

@@ -150,6 +150,9 @@ service LoadableStudyService {
 	
 	rpc GetAllCargoHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
 	}
+	
+	rpc SaveJson (JsonRequest) returns (StatusReply) {
+	}
 }
 
 message RecalculateVolumeRequest {
@@ -226,7 +229,7 @@ message LDtrim {
    string messageText = 20;
    int64 portId = 21;
    int64 stowagePlanId = 22;
-   
+   int64 synopticalId = 23;
 }
 
 message LDStrength{
@@ -254,7 +257,7 @@ message LDStrength{
    string messageText = 22;
    int64 portId = 23;
    int64 stowagePlanId = 24;
-   
+   int64 synopticalId = 25;
 }
 
 message LDIntactStability {
@@ -282,6 +285,7 @@ message LDIntactStability {
    string messageText = 22;
    int64 portId = 23;
    int64 stowagePlanId = 24;
+   int64 synopticalId = 25;
 }
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
@@ -376,6 +380,7 @@ message LoadablePlanStowageDetails {
   string temperature = 13;
   int64 id = 14;
   string colorCode = 15;
+  bool isCommingle = 16;
 }
 
 
@@ -404,6 +409,10 @@ message LoadableQuantityCommingleCargoDetails {
 	 int32 priority = 22;
 	 int32 loadingOrder = 23;
 	 int64 tankId = 24;
+	 string fillingRatio = 25;
+	 string correctedUllage = 26; 
+ 	 string rdgUllage = 27;
+     string correctionFactor = 28;
 }
 
 message LoadableQuantityCargoDetails {
@@ -481,7 +490,8 @@ message VoyageRequest {
 	int32 pageSize = 9;
 	string fromStartDate=10;
 	string toStartDate=11;
-	int32 timezoneId = 12;
+	int32 startTimezoneId = 12;
+	int32 endTimezoneId = 13;
 }
 
 message VoyageReply {
@@ -595,6 +605,11 @@ message LoadableStudyDetail{
 	repeated int64 deletedAttachments = 21;
 	bool loadOnTop=22;
 	string loadableStudyStatusLastModifiedTime = 23;
+	bool isCargoNominationComplete=24;
+	bool isPortsComplete=25;
+	bool isOhqComplete=26;
+	bool isObqComplete=27;
+	bool isDischargingPortComplete=28;
 }
 
 message LoadableStudyReply{
@@ -628,6 +643,8 @@ message CargoNominationDetail {
 	string apiEst = 11;
 	string tempEst = 12;
 	int64 segregationId = 13;
+	bool isCargoNominationComplete=14;
+	
 }
 
 message CargoNominationRequest {
@@ -652,7 +669,9 @@ message PortRotationRequest{
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
 	repeated PortRotationDetail portRotationDetails = 6;
-	int64 dischargingCargoId=7;
+	int64 dischargingCargoId=7;	
+    bool isDischargingPortsComplete=8;
+	
 }
 
 message PortRotationDetail{
@@ -673,6 +692,8 @@ message PortRotationDetail{
 	string layCanTo=15;
 	int64 loadableStudyId=16;
 	int64 portOrder=17;
+	bool isPortsComplete=18;
+	
 }
 
 message Operation{
@@ -713,6 +734,7 @@ message OnHandQuantityRequest{
 	int64 vesselId = 2;
 	int64 loadableStudyId = 3;
 	int64 portId = 4;
+	int64 portRotationId = 5;
 }
 
 message OnHandQuantityDetail{
@@ -732,6 +754,8 @@ message OnHandQuantityDetail{
 	string colorCode = 14;
 	string fuelTypeShortName = 15;
 	string density=16;
+	bool isOhqComplete=17;
+	int64 portRotationId = 18;
 }
 
 message TankDetail{
@@ -771,6 +795,7 @@ message OnBoardQuantityRequest{
 	int64 loadableStudyId = 3;
 	int64 portId = 4;
 	int64 voyageId = 5;
+	int64 portRotationId = 6;
 }
 
 message OnBoardQuantityDetail{
@@ -789,6 +814,8 @@ message OnBoardQuantityDetail{
 	string abbreviation = 13;
 	string density=14;
 	bool loadOnTop = 15;
+    bool isObqComplete=17;
+	
 }
 
 message OnBoardQuantityReply{
@@ -959,6 +986,7 @@ message SynopticalOhqRecord{
 	string fuelType = 6;
 	string density = 7;
 	string capacity = 8;
+	int64 portRotationId = 9;
 }
 
 message SynopticalBallastRecord{
@@ -1061,7 +1089,7 @@ message SaveVoyageStatusReply {
 message CargoHistoryRequest {
 	int64 cargoId = 1;
 	repeated int64 portIds = 2;
-	map<string, FilterIds> filterParams = 3;
+	map<string, FilterSpecification> filterParams = 3;
 	int32 page = 4;
 	int32 pageSize = 5;
 	string sortBy = 6;
@@ -1070,9 +1098,10 @@ message CargoHistoryRequest {
 	string toStartDate=9;
 }
 
-message FilterIds{
+message FilterSpecification{
 	repeated int64 ids = 1;
 	repeated string values = 2;
+	string operation = 3;
 }
 
 message CargoHistoryReply {
@@ -1091,4 +1120,10 @@ message CargoHistoryDetail {
 	int32 loadedDay = 7;
 	string api = 8;
 	string temperature = 9;
+}
+
+message JsonRequest {
+	int64 referenceId = 1;
+	int64 jsonTypeId = 2;
+	string json = 3;
 }

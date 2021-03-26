@@ -52,6 +52,19 @@ public interface LoadableStudyPortRotationRepository
       final LoadableStudy loadableStudy, final boolean isActive);
 
   /**
+   * Get active port rotation for discharging ports against a loadable study order by operation type
+   * and port order
+   *
+   * @param loadableStudy
+   * @param isActive
+   * @return List<LoadableStudyPortRotation>
+   */
+  @Query(
+      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2 ORDER BY LSPR.operation.id, LSPR.portOrder")
+  public List<LoadableStudyPortRotation> findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
+      final LoadableStudy loadableStudy, final boolean isActive);
+
+  /**
    * @param loadableStudyId
    * @param isActive
    * @return List<LoadableStudyPortRotation>
@@ -112,4 +125,6 @@ public interface LoadableStudyPortRotationRepository
 
   public LoadableStudyPortRotation findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
       LoadableStudy loadableStudy, boolean isActive);
+
+  public LoadableStudyPortRotation findByIdAndIsActive(Long id, boolean isActive);
 }

@@ -17,6 +17,7 @@ import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -47,6 +48,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepositor
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import io.grpc.internal.testing.StreamRecorder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,12 +110,11 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @MockBean private SynopticalTableRepository synopticalTableRepository;
   @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
-
   @MockBean private CargoNominationValveSegregationRepository valveSegregationRepository;
-
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
-
   @MockBean private OnHandQuantityRepository onHandQuantityRepository;
+  @MockBean private ApiTempHistoryRepository apiTempHistoryRepository;
+  @MockBean private VoyageStatusRepository voyageStatusRepository;
 
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;

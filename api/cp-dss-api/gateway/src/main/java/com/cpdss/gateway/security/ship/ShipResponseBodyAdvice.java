@@ -6,9 +6,11 @@ import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
 import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.gateway.custom.Constants.SHIP_TOKEN_SUBJECT;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.MethodParameter;
@@ -29,6 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @ControllerAdvice
 @SuppressWarnings("rawtypes")
 @ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
+@Log4j2
 public class ShipResponseBodyAdvice implements ResponseBodyAdvice {
 
   private static final String UPDATED_TOKEN_HEADER = "token";
@@ -61,11 +64,15 @@ public class ShipResponseBodyAdvice implements ResponseBodyAdvice {
     if (response instanceof ServletServerHttpResponse && null != token) {
       ServletServerHttpResponse res = (ServletServerHttpResponse) (response);
       if (HttpStatus.OK.value() == res.getServletResponse().getStatus()) {
-        Jws<Claims> claims = this.shipJwtService.parseClaims(token.replace("Bearer", ""));
-        res.getHeaders()
-            .set(
-                UPDATED_TOKEN_HEADER,
-                this.shipJwtService.generateToken(claims.getBody(), SHIP_TOKEN_SUBJECT));
+        try {
+          Jws<Claims> claims = this.shipJwtService.parseClaims(token.replace("Bearer", ""));
+          res.getHeaders()
+              .set(
+                  UPDATED_TOKEN_HEADER,
+                  this.shipJwtService.generateToken(claims.getBody(), SHIP_TOKEN_SUBJECT));
+        } catch (GenericServiceException e) {
+          log.error("Error parsing token", e);
+        }
       }
     }
     return body;

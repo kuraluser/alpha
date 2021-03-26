@@ -14,21 +14,21 @@ public interface StowagePlanRepository extends CommonCrudRepository<StowagePlan,
   List<StowagePlan> findByIdIn(List<Long> idList);
 
   @Query(
-      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId) "
+      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId, sp.synopticalId) "
           + "from StowagePlan sp "
           + "join LoadicatorTrim lt on lt.stowagePlanId = sp.id where sp.id =?1 ")
   public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPortForTrim(
       Long stowagePlanId);
 
   @Query(
-      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId) "
+      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId, sp.synopticalId) "
           + "from StowagePlan sp "
           + "join LoadicatorStrength ls on ls.stowagePlanId = sp.id where sp.id =?1 ")
   public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPortForStrength(
       Long stowagePlanId);
 
   @Query(
-      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId) "
+      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId, sp.synopticalId) "
           + "from StowagePlan sp "
           + "join IntactStability s on s.stowagePlanId = sp.id where sp.id =?1 ")
   public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPortForStability(
