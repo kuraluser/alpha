@@ -129,9 +129,33 @@ export class CPDSSDB extends Dexie {
     ports!: Dexie.Table<any, number>;
     ohq!: Dexie.Table<any, number>;
     obq!: Dexie.Table<any, number>;
+    properties!: Dexie.Table<any>;
     constructor() {
         super('CPDSS');
+        this.version(1).stores({
+            cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            properties: ""
+        });
     }
+}
+
+/**
+ * Class for Properties Dexie db
+ *
+ * @export
+ * @class PropertiesDB
+ * @extends {CPDSSDB}
+ */
+export class PropertiesDB extends CPDSSDB {
+    properties!: Dexie.Table<any>;
+
+    constructor() {
+        super();
+    }
+
 }
 
 /**
@@ -273,4 +297,38 @@ export interface ICargo {
  export interface IConfirmStatusResponse {
     responseStatus: IResponse;
     confirmed: boolean;
+}
+
+/**
+ * Interface for time zone API response
+ *
+ * @export
+ * @interface ITimeZoneResponse
+ */
+export interface ITimeZoneResponse {
+    responseStatus: IResponseStatus;
+    timezones: ITimeZone[];
+}
+
+/**
+ * Interface for list time zones
+ *
+ * @export
+ * @interface ITimeZone
+ */
+export interface ITimeZone {
+    id: number;
+    timezone: string;
+    offsetValue: string;
+}
+
+/**
+ * Interface for enable time format options
+ *
+ * @export
+ * @interface IDateTimeFormatOptions
+ */
+export interface IDateTimeFormatOptions {
+    isTime?: boolean;
+    isTimeSeconds?: boolean;
 }

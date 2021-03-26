@@ -3,8 +3,11 @@
     [minY]="70" [closable]="false">
     <form [formGroup]="newLoadableStudyFormGroup" id="fg_newLoadableStudy" (submit)="saveLoadableStudy()">
         <div class="container-fluid">
+            <div class="row" *ngIf="savedloadableDetails && isLoadlineChanged()">
+                <div class="col"> <p class="text-danger" >{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p></div>
+            </div>
             <div class="row">
-                <p class="text-danger text-center" *ngIf="savedloadableDetails && isLoadlineChanged()">{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p>
+               
                 <div class="col-sm-6">
                     <div class="row form-group">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
@@ -12,7 +15,7 @@
                         <div class="col dropdowm-medium">
                             <p-dropdown styleClass="form-control" [options]="loadableStudyList" [tooltipPosition]="'top'" [tooltip]="getControlLabel('duplicateExisting')?.name?.length > 13 ? getControlLabel('duplicateExisting')?.name: ''"
                                 id="ddl_duplicateExisting" formControlName="duplicateExisting" optionLabel="name"
-                                (onChange)="onDuplicateExisting($event)"
+                                (onChange)="onDuplicateExisting($event)" resetFilterOnHide="true"
                                 placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [disabled]="isEdit" focusTrap>
                             </p-dropdown>
                         </div>
@@ -59,7 +62,7 @@
                             <div class="upload-file">
                                 {{'NEW_LOADABLE_STUDY_POPUP_ATTACH_BUTTON' | translate}}
                                 <input type="file" name="fl_attachMail" #fileUpload
-                                    accept="image/jpeg,image/jpg,image/png,application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,.eml"
+                                    accept="image/jpeg,image/jpg,image/png,application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,.eml,.msg"
                                     formControlName="attachMail" (change)="selectFilesToUpload()"
                                     title="No file selected" multiple focusTrap/>
 
@@ -73,8 +76,8 @@
                         <div class="col col-form-label"></div>
                         <div class="col">
                             <ol class="pl-10">
-                                <li *ngFor="let file of uploadedFiles; let i = index" [pTooltip]="file?.name ? file?.name : file?.fileName">
-                                    <a (click)="openFile(i, file?.id)" class="file-name">{{file?.name ? file?.name : file.fileName}}</a>
+                                <li *ngFor="let file of uploadedFiles; let i = index" >
+                                    <a (click)="openFile(i, file?.id)" class="file-name" [pTooltip]="file?.name ? file?.name : file?.fileName">{{file?.name ? file?.name : file.fileName}}</a>
                                     <span class="pi pi-times text-secondary font-x-small ml-5 pointer" (click)="removeFile(i, file?.id)"></span>
                                 </li>
                             </ol>
@@ -106,7 +109,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_LOADLINE' | translate}}</div>
                         <div class="col">
                             <p-dropdown styleClass="form-control" [options]="loadlineLists" id="ddl_loadLine"
-                                formControlName="loadLine" optionLabel="name" (onChange)="onloadLineChange()"
+                                formControlName="loadLine" optionLabel="name" (onChange)="onloadLineChange()" resetFilterOnHide="true"
                                 placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
                             </p-dropdown>
                         </div>
@@ -116,7 +119,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_MARK' | translate}}</div>
                         <div class="col">
                             <p-dropdown styleClass="form-control" [options]="draftMarkList" id="ddl_draftMark"
-                                formControlName="draftMark" optionLabel="name"
+                                formControlName="draftMark" optionLabel="name" resetFilterOnHide="true"
                                 focusTrap>
                             </p-dropdown>
                         </div>

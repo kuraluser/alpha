@@ -8,10 +8,10 @@
                 {{ 'LOADABLE_STUDY_LIST' | translate }}</h5>
             <span class="ml-20 mr-10">
                 {{ 'LOADABLE_STUDY_LIST_VOYAGE_NO'  | translate }}</span>
-            <p-dropdown #dd styleClass="dropdown-w-100" [options]="voyages" [(ngModel)]="selectedVoyage"
+            <p-dropdown #dd styleClass="dropdown-w-180" [options]="voyages" [(ngModel)]="selectedVoyage"
                 optionLabel="voyageNo" [filter]="true" (click)="clearFilter(dd)"
                 placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
-                (onChange)="showLoadableStudyList()">
+                (onChange)="showLoadableStudyList()" resetFilterOnHide="true">
                 <ng-template pTemplate="selectedItem">
                     <div *ngIf="selectedVoyage">
                         <div>{{selectedVoyage.voyageNo}}</div>
@@ -25,7 +25,6 @@
             </p-dropdown>
             <span class="pl-15 text-danger" *ngIf="!isVoyageIdSelected"> {{'NO_VOYAGE_NO_SELECTED' | translate }}
             </span>
-
         </div>
         
         <div class="text-right pr-15" *ngIf="this.selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE && this.selectedVoyage?.statusId !== VOYAGE_STATUS.ACTIVE">

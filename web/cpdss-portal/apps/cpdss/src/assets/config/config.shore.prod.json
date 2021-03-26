@@ -5,5 +5,7 @@
     "redirectPath": ":3000",
     "clientId": "frontend",
     "baseUnit": "MT",
-    "volumeBaseUnit": "KL"
+    "volumeBaseUnit": "KL",
+    "processingTimeout": 600000,
+    "commingleColor": "#7114d9"
 }

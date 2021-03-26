@@ -11,6 +11,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { CalendarModule } from 'primeng/calendar';
 import { NumberDirectiveModule } from '../../directives/number-directive/number-directive.module';
 import { PaginatorModule } from 'primeng/paginator';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Module for DataTable
@@ -31,7 +32,8 @@ import { PaginatorModule } from 'primeng/paginator';
     SplitButtonModule,
     CalendarModule,
     PaginatorModule,
-    NumberDirectiveModule
+    NumberDirectiveModule,
+    TooltipModule
   ],
   exports: [DatatableComponent],
   providers: [DecimalPipe]

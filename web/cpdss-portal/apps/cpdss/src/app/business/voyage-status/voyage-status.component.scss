@@ -3,6 +3,7 @@
     max-width: 270px;
     min-width: 270px;
     height: calc(100vh - 355px);
+    padding-top: 73px;
 }
 
 .sidebar-right-landing{
@@ -11,6 +12,7 @@
     min-width: 280px;
     &.tank-parameters-right{
         height: calc(100vh - 355px);
+        padding-top: 73px;
     }
 }
 
@@ -18,4 +20,10 @@
     width: 215px;
     min-width: 215px;
     max-width: 215px;
+}
+
+@media  (max-width:1400px){
+    .sidebar-landing, .tank-parameters-right{
+        padding-top: 7px!important;
+    }
 }

@@ -12,26 +12,28 @@ export function portEtaEtdValidator(key: string, index: number): ValidatorFn {
       if (formArray && formArray.length) {
         let firstValue: Date, secondValue: Date, error;
         if (key === 'eta' && index > 0) {
-          if(typeof formArray[index-1].etd === 'undefined' && index > 1){
-            firstValue = formArray[index - 2].etd;
-          } else {
-            firstValue = formArray[index - 1].etd;
+          for (let i = index - 1; i >= 0; i--) {
+            if (formArray[i].etd) {
+              firstValue = formArray[i].etd;
+              break;
+            }
           }
           secondValue = control.value;
           error = { etaFailed: true };
         }
-        if (key === 'etd' && index < formArray.length - 1) {
-          if(typeof formArray[index+1].eta === 'undefined' && index < formArray.length - 2){
-            secondValue = formArray[index + 2].eta;
-          } else {
-            secondValue = formArray[index + 1].eta;
+        if (key === 'etd' && index < formArray.length) {
+          for (let j = index + 1; j < formArray.length; j++) {
+            if (formArray[j].eta) {
+              secondValue = formArray[j].eta;
+              break;
+            }
           }
           firstValue = control.value;
           error = { etdFailed: true };
         }
         if (firstValue && secondValue && error) {
-          firstValue.setSeconds(0,0)
-          secondValue.setSeconds(0,0)
+          firstValue.setSeconds(0, 0)
+          secondValue.setSeconds(0, 0)
           if (secondValue <= firstValue) {
             return error;
           }

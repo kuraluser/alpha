@@ -18,8 +18,10 @@
 
             </div>
             <div class="ml-auto pr-15">
-                <button class="btn btn-main" id="confirm_plan" [disabled]="isConfirmed" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |
-                translate}}</button>
+                <button class="btn btn-main" id="confirm_plan" [disabled]="!confirmPlanPermission" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">
+                    <span class="pi pi-check check-rounded" *ngIf="loadableStudyStatus"></span>
+                    {{loadableStudyStatus ? ('LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |translate) : ('LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |translate)}}
+                </button>
                 <a><img src="../../../../assets/images/themes/dark/download-arrow.png" alt="" class="ml-20"></a>
                 <a><img src="../../../../assets/images/themes/dark/print-icon.png" alt="" class="ml-20 mr-30"></a>
                 <button class="btn btn-main" id="btn_callNewLoadableStudyPopup" (click)="backToLoadableStudy()">{{'LOADABLE_PLAN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
@@ -34,7 +36,7 @@
             </cpdss-portal-loadable-quantity>
         </div>
         <div>
-            <cpdss-portal-stowage *ngIf="selectedVoyage && loadableStudy" [cargoTanks]="cargoTanks" [rearBallastTanks]="rearBallastTanks"
+            <cpdss-portal-stowage *ngIf="selectedVoyage && loadableStudy" [loadableStudyStatus]="loadableStudyStatus" [cargoTanks]="cargoTanks" [rearBallastTanks]="rearBallastTanks"
                 [centerBallastTanks]="centerBallastTanks" [frontBallastTanks]="frontBallastTanks"
                 [cargoTankDetails]="cargoTankDetails" [ballastDetails]="loadablePlanBallastDetails"
                 [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"

@@ -65,8 +65,8 @@ export class ShipLandingTanksComponent implements OnInit {
   readonly tankType = TANKTYPE;
 
   cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation' };
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight' };
-  ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity' };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity', weightUnit: AppConfigurationService.settings.baseUnit };
   
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _shipLandingTanks: IVoyageStatus;
@@ -107,8 +107,8 @@ export class ShipLandingTanksComponent implements OnInit {
     const mode = this.selectedPortDetails?.operationType === 'ARR' ? OHQ_MODE.ARRIVAL : OHQ_MODE.DEPARTURE;
     this.cargoQuantities = this.shipLandingTanks?.cargoQuantities ?? [];
     this.ballastQuantities = this.shipLandingTanks?.ballastQuantities ?? [];
-    this.bunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerTanks, this.shipLandingTanks?.bunkerQuantities, mode, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.rearBunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerRearTanks, this.shipLandingTanks?.bunkerQuantities, mode, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.bunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerTanks, this.shipLandingTanks?.bunkerQuantities, mode);
+    this.rearBunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerRearTanks, this.shipLandingTanks?.bunkerQuantities, mode);
     this.cargoTanks = this.voyageStatusTransformationService.formatCargoTanks(this.shipLandingTanks?.cargoTanks, this.shipLandingTanks?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.rearBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastRearTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.centerBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastCenterTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);

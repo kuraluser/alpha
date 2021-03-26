@@ -1,10 +1,12 @@
 {
     "apiUrl" : "",
-    "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
+    "keycloakUrl": "",
     "path": "",
-    "redirectPath": ":9002",
+    "redirectPath": ":3001",
     "clientId": "frontend",
     "baseUnit": "MT",
     "volumeBaseUnit": "KL",
-    "passwordMinLength": "8"
+    "passwordMinLength": "8",
+    "processingTimeout": 600000,
+    "commingleColor": "#7114d9"
 }

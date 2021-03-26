@@ -1,19 +1,27 @@
 import { Component, OnInit } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
+
 import { NgxSpinnerService } from 'ngx-spinner';
+
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails, IBallastStowageDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
-import { DecimalPipe } from '@angular/common';
+
 import { ICargoResponseModel, ICargo } from '../../../shared/models/common.model';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
-import { switchMap } from 'rxjs/operators';
+
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Component class of loadable plan
@@ -82,7 +90,8 @@ export class LoadablePlanComponent implements OnInit {
   public date: string;
   public caseNumber: string;
   public cargos: ICargo[];
-  public isConfirmed: boolean;
+  public confirmPlanPermission: boolean;
+  public loadableStudyStatus: boolean;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -99,7 +108,10 @@ export class LoadablePlanComponent implements OnInit {
     private _decimalPipe: DecimalPipe,
     private confirmationAlertService: ConfirmationAlertService,
     private voyageService: VoyageService,
-    private loadableStudyListApiService: LoadableStudyListApiService
+    private loadableStudyListApiService: LoadableStudyListApiService,
+    private permissionsService: PermissionsService,
+    private messageService: MessageService,
+    private translateService: TranslateService
   ) { }
 
   /**
@@ -108,18 +120,35 @@ export class LoadablePlanComponent implements OnInit {
     * @memberof LoadablePlanComponent
   */
   ngOnInit(): void {
+    this.getPagePermission();
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
       this.loadablePatternId = Number(params.get('loadablePatternId'))
+      localStorage.setItem("vesselId",this.vesselId.toString())
+      localStorage.setItem("voyageId",this.voyageId.toString())
+      localStorage.setItem("loadableStudyId",this.loadableStudyId.toString())
+      localStorage.setItem("loadablePatternId",this.loadablePatternId.toString())
       this.getCargos()
       this.getVesselInfo();
       this.initSubsciptions();
-	  this.getVoyages(this.vesselId, this.voyageId);
-      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);    });
-    
+      this.getVoyages(this.vesselId, this.voyageId);
+      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    });
+
   }
+
+  /**
+* Get page permission
+*
+* @memberof AdminComponent
+*/
+  getPagePermission() {
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePlanComponent']);
+    this.confirmPlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['ConfirmLoadablePlan'], false).view;
+  }
+
 
   /**
     * Initialise all subscription in this page
@@ -130,9 +159,9 @@ export class LoadablePlanComponent implements OnInit {
     this.loadablePlanTransformationService.savedComments$.pipe(switchMap(() => {
       return this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();;
     })).subscribe((loadablePlanRes) => {
-       if(loadablePlanRes.responseStatus.status === '200') {
+      if (loadablePlanRes.responseStatus.status === '200') {
         this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
-       }
+      }
     })
   }
 
@@ -237,6 +266,7 @@ export class LoadablePlanComponent implements OnInit {
     this.voyageNumber = loadablePlanRes.voyageNumber;
     this.date = loadablePlanRes.date;
     this.caseNumber = loadablePlanRes.caseNumber;
+    loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
     this.ngxSpinnerService.hide();
   }
 
@@ -300,6 +330,9 @@ export class LoadablePlanComponent implements OnInit {
    * @memberof LoadablePlanComponent
   */
   async confirmPlan() {
+    if (this.loadableStudyStatus) {
+      return;
+    }
     this.ngxSpinnerService.show();
     const result = await this.loadablePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
     this.ngxSpinnerService.hide();
@@ -312,9 +345,16 @@ export class LoadablePlanComponent implements OnInit {
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
       if (response) {
-        const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
-        if (confirmResult.responseStatus.status === '200') {
-          this.isConfirmed = true;
+        const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
+        try {
+          const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+          if (confirmResult.responseStatus.status === '200') {
+            this.loadableStudyStatus = true;
+          }
+        } catch (errorResponse) {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
+          }
         }
       }
     })

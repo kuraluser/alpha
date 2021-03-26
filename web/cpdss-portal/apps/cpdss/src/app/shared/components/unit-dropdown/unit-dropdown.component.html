@@ -1,3 +1,3 @@
 <label *ngIf="showLabel">UNIT</label>
 <p-dropdown id="unit_dropdown" [options]="unitOptions" [(ngModel)]="selectedUnit"
-    (onChange)="onUnitChange($event)" optionLabel="value" optionValue="value"></p-dropdown>
+    (onChange)="onUnitChange($event)" optionLabel="value" optionValue="value" resetFilterOnHide="true"></p-dropdown>

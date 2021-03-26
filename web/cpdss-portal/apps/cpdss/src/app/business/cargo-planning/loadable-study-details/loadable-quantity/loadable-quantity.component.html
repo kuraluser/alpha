@@ -21,7 +21,7 @@
                             <p-dropdown #dd id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true"
                                 [options]="ports" formControlName="portName" optionLabel="name" (click)="clearFilter(dd)"
                                 placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}"
-                                [readonly]="!isEditable">
+                                [readonly]="!isEditable" resetFilterOnHide="true">
                             </p-dropdown>
                         </div>
                         <div class="col error-column">

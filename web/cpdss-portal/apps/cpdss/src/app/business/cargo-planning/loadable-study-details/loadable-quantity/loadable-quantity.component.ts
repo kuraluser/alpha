@@ -299,17 +299,21 @@ export class LoadableQuantityComponent implements OnInit {
         }
       }
       this.loadableQuantityId ? this.loadableQuantity['loadableStudyId'] = this.selectedLoadableStudy.id: null; 
-      const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_SUCCESS', 'LOADABLE_QUANTITY_SAVED_SUCCESSFULLY','LOADABLE_QUANTITY_UPDATE_SUCCESS','LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY']).toPromise();
-      const result = await this.loadableQuantityApiService.saveLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id, this.loadableQuantity).toPromise();
-      this.newLoadableQuantity.emit(this.loadableQuantity.totalQuantity);
-      if (result.responseStatus.status === "200") {
-        if(this.loadableQuantityId) {
-          this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY'] });
-        } else {
-          this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_SAVED_SUCCESSFULLY'] });
+      const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_SUCCESS', 'LOADABLE_QUANTITY_SAVED_SUCCESSFULLY','LOADABLE_QUANTITY_UPDATE_SUCCESS','LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY', 'LOADABLE_QUANTITY_SAVE_ERROR', 'LOADABLE_QUANTITY_SAVE_STATUS_ERROR']).toPromise();
+      try {
+        const result = await this.loadableQuantityApiService.saveLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id, this.loadableQuantity).toPromise();
+        this.newLoadableQuantity.emit(this.loadableQuantity.totalQuantity);
+        if (result.responseStatus.status === "200") {
+          if (this.loadableQuantityId) {
+            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY'] });
+          } else {
+            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_SAVED_SUCCESSFULLY'] });
+          }
         }
-        
-
+      } catch (errorResponse) {
+        if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_QUANTITY_SAVE_ERROR'], detail: translationKeys['LOADABLE_QUANTITY_SAVE_STATUS_ERROR'], life: 10000 });
+        }
       }
       this.ngxSpinnerService.hide();
       this.cancel();

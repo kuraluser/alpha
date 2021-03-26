@@ -1,10 +1,14 @@
+<p-toast></p-toast>
 <div class="bg-wrapper">
-    <div class="login-bg-left"></div>
+    <owl-carousel-o [options]="customOptions">
+        <ng-template *ngFor="let carousel of carousels" carouselSlide><img [src]="carousel"></ng-template>  
+      </owl-carousel-o>
+    <!-- <div class="login-bg-left"></div> -->
     <div>
         <form [formGroup]="loginForm" id="ship_login" (ngSubmit)="onSubmit()" *ngIf="loginForm">
             <div class="login-wrapper">
                 <div class="login-inner-wrapper">
-                    <div class="login-logo"><img src="../../assets/images/logo.png"><span class="cpdss"></span></div>
+                    <div class="login-logo"><img [src]="logo"><span class="cpdss"></span></div>
                     <div class="login-form">
                         <div class=" text-uppercase text-lead secondary-text">Registered Users</div>
                         <div class="login-textfield-wrapper"><input type="text" formControlName="userName"
@@ -13,20 +17,17 @@
                                     <div *ngIf="login.userName?.touched && login.userName?.errors && login.userName.errors?.required">{{'LOGIN_SHIP_USERNAME_REQUIRED' | translate }}</div>
                                 </div>
                         </div>
-                        <div class=""><input type="text" class="form-control form-control-sm login-textfield password"
+                        <div class=""><input type="password" class="form-control form-control-sm login-textfield password"
                                 placeholder="Password" formControlName="password" minlength="8" id="password">
                             <div class="text-danger">
-                                <div *ngIf="login.userName?.touched && login.userName?.errors && login.userName.errors?.required">{{'LOGIN_SHIP_PASSWORD_REQUIRED' | translate }}</div>
-                                <div *ngIf="login.userName?.touched && login.password?.errors && login.password.errors?.pattern">{{'LOGIN_SHIP_PASSWORD_PATTERN' | translate}}</div>
-                                <div *ngIf="login.userName?.touched && login.password?.errors && login.password.errors?.minlength">{{'LOGIN_SHIP_PASSWORD_MINLEGTH' | translate }}</div>
+                                <div *ngIf="login.password?.touched && login.password?.errors && login.password.errors?.required">{{'LOGIN_SHIP_PASSWORD_REQUIRED' | translate }}</div>
+                                <div *ngIf="login.password?.touched && login.password?.errors && login.password.errors?.pattern">{{'LOGIN_SHIP_PASSWORD_PATTERN' | translate}}</div>
+                                <div *ngIf="login.password?.touched && login.password?.errors && login.password.errors?.minlength">{{'LOGIN_SHIP_PASSWORD_MINLEGTH' | translate }}</div>
                             </div>
                         </div>
                         <div class="text-right">
                             <button type="submit" class="login-btn btn" id="ship_login">{{ 'SIGN_IN' | translate
                                 }}</button>
-                        </div>
-                        <div class="col text-right"><a href="" class="text-uppercase secondary-text">Forgot
-                                Password?</a>
                         </div>
                     </div>
                     <div class="validation-wrapper"></div>

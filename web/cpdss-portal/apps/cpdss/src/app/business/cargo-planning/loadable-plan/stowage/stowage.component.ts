@@ -6,6 +6,7 @@ import { IBallastStowageDetails, IBallastTank, ICargoTank, ITankOptions, LOADABL
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { ICargoTankDetailValueObject } from '../../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
+import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 
 /**
@@ -37,6 +38,15 @@ export class StowageComponent implements OnInit {
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
     this.isEditable = ![LOADABLE_STUDY_STATUS.PLAN_CONFIRMED].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId);
+  }
+
+  @Input()
+  get loadableStudyStatus(): boolean {
+    return this._loadableStudyStatus;
+  }
+
+  set loadableStudyStatus(value: boolean) {
+    this._loadableStudyStatus = value;
   }
 
   @Input() loadablePatternId: number;
@@ -104,8 +114,9 @@ export class StowageComponent implements OnInit {
   selectedTab = TANKTYPE.CARGO;
   showGrid = false;
   cargoGridColumns: any[];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showWeight: true, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrels', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: AppConfigurationService.settings.baseUnit, ullageField: 'correctedUllage', ullageUnit: 'CM', showTooltip: true, commodityNameField: 'cargoAbbreviation', showDensity: true, densityField: 'api' };
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showWeight: true, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrelsAt60', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: AppConfigurationService.settings.baseUnit, ullageField: 'correctedUllage', ullageUnit: 'CM', showTooltip: true, commodityNameField: 'cargoAbbreviation', showDensity: true, densityField: 'api' };
   ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM', showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
+  isPermissionAvaliable: boolean;
   isEditable: boolean
 
   private _cargoTanks: ICargoTank[][];
@@ -116,10 +127,15 @@ export class StowageComponent implements OnInit {
   private _ballastDetails: IBallastStowageDetails[];
   private _openSaveStowagePopup = false;
   private _loadableStudy: LoadableStudy;
+  private _loadableStudyStatus: boolean;
 
-  constructor(private loadablePlanTransformationService: LoadablePlanTransformationService, private fb: FormBuilder) { }
+  constructor(
+    private loadablePlanTransformationService: LoadablePlanTransformationService, 
+    private fb: FormBuilder,
+    private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
+    this.isPermissionAvaliable = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['EditStowage'], false).view;
     this.cargoGridColumns = this.loadablePlanTransformationService.getCargoDatatableColumns();
   }
 

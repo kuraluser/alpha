@@ -140,7 +140,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId:VOYAGE_STATUS): IDataTableColumn[] {
+  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -334,13 +334,13 @@ export class LoadableStudyDetailsTransformationService {
         }
       }
     ];
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.add) {
-        actions.push(DATATABLE_ACTION.DUPLICATE);
+      if (permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
+        actions.push(DATATABLE_ACTION.DUPLICATE);
       }
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -411,9 +411,9 @@ export class LoadableStudyDetailsTransformationService {
       }
     ]
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -461,7 +461,7 @@ export class LoadableStudyDetailsTransformationService {
    * @return {*}  {IMonths[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getMonthList(): IMonths[]{
+  getMonthList(): IMonths[] {
     return [
       {
         id: 1,
@@ -578,21 +578,22 @@ export class LoadableStudyDetailsTransformationService {
         field: 'statusId',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_STATUS',
         fieldType: DATATABLE_FIELD_TYPE.ICON,
-        fieldValueIcon: 'icon-status'
+        fieldValueIcon: 'icon-status',
+        showTooltip: true,
+        fieldValue: 'status'
       }
     ];
-
-    if(permission && [VOYAGE_STATUS.ACTIVE, VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
 
-      if(permission?.edit) {
+      if (permission?.edit) {
         actions.push(DATATABLE_ACTION.EDIT);
       }
 
-      if(permission?.add) {
+      if (permission?.add) {
         actions.push(DATATABLE_ACTION.DUPLICATE);
       }
 
@@ -654,10 +655,10 @@ export class LoadableStudyDetailsTransformationService {
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
-        header: 'SL',
+        header: 'PORT_ORDER',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: false,
-        fieldHeaderClass: 'column-sl',
+        fieldHeaderClass: 'column-portOrder',
         fieldClass: 'sl'
       },
       {
@@ -819,12 +820,12 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.add) {
+      if (permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
       }
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -1009,7 +1010,7 @@ export class LoadableStudyDetailsTransformationService {
   getOHQTankDetailsAsValueObject(ohqTankDetail: IPortOHQTankDetail, isNewValue = true): IPortOHQTankDetailValueObject {
     const _ohqTankDetail = <IPortOHQTankDetailValueObject>{};
     _ohqTankDetail.id = ohqTankDetail?.id;
-    _ohqTankDetail.portId = ohqTankDetail?.portId;
+    _ohqTankDetail.portRotationId = ohqTankDetail?.portRotationId;
     _ohqTankDetail.fuelTypeName = ohqTankDetail?.fuelTypeName;
     _ohqTankDetail.fuelTypeId = ohqTankDetail?.fuelTypeId;
     _ohqTankDetail.tankId = ohqTankDetail?.tankId;
@@ -1019,6 +1020,8 @@ export class LoadableStudyDetailsTransformationService {
     _ohqTankDetail.density = new ValueObject<number>(ohqTankDetail.density, true, isNewValue);
     _ohqTankDetail.arrivalQuantity = new ValueObject<number>(ohqTankDetail.arrivalQuantity, true, isNewValue);
     _ohqTankDetail.departureQuantity = new ValueObject<number>(ohqTankDetail.departureQuantity, true, isNewValue);
+    _ohqTankDetail.arrivalVolume = ohqTankDetail?.arrivalVolume;
+    _ohqTankDetail.departureVolume = ohqTankDetail?.departureVolume;
 
     return _ohqTankDetail;
   }
@@ -1072,6 +1075,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo1',
         header: 'COMMINGLE_CARGO1',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        fieldComponentClass: 'index-9',
         listName: 'cargoNominationsCargo1',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER',
@@ -1095,6 +1099,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo1IdPct',
         header: 'COMMINGLE_CARGO_PERCENTAGE',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        fieldComponentClass: 'index-9',
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
@@ -1109,6 +1114,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo2',
         header: 'COMMINGLE_CARGO2',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        fieldComponentClass: 'index-9',
         listName: 'cargoNominationsCargo2',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER',
@@ -1131,6 +1137,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo2IdPct',
         header: 'COMMINGLE_CARGO_PERCENTAGE',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        fieldComponentClass: 'index-9',
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
@@ -1157,9 +1164,9 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {

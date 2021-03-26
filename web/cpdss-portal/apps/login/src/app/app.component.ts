@@ -14,8 +14,17 @@ export class AppComponent {
 
   constructor(private translateService: TranslateService, private themeService: ThemeService) {
     this.initLanguageTranslator();
+    this.setFavicon();
   }
 
+  /**
+   * dynamically changes favicon
+   */
+  setFavicon(){
+    const favicon = localStorage.getItem('favicon');
+    const dynamicFavicon = document.getElementById('loginfavicon');
+    dynamicFavicon.setAttribute('href', favicon);
+  }
    /**
    * Change theme on button click
    */

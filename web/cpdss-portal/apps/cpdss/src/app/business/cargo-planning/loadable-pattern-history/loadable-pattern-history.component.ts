@@ -14,6 +14,8 @@ import { PermissionsService } from '../../../shared/services/permissions/permiss
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Component class of pattern history screen
@@ -75,7 +77,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
     private loadablePatternApiService: LoadablePatternHistoryApiService,
     private permissionsService: PermissionsService,
     private quantityPipe: QuantityPipe,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationAlertService: ConfirmationAlertService,
+    private messageService: MessageService,
+    private translateService: TranslateService) { }
 
   /**
    * Component lifecycle ngOnit
@@ -91,6 +95,10 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
+      localStorage.setItem("vesselId", this.vesselId.toString())
+      localStorage.setItem("voyageId", this.voyageId.toString())
+      localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
+      localStorage.removeItem("loadablePatternId")
       if (this.isViewPattern) {
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       }
@@ -281,9 +289,16 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
       if (response) {
-        const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
-        if (confirmResult.responseStatus.status === '200') {
-          this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+        const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
+        try {
+          const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
+          if (confirmResult.responseStatus.status === '200') {
+            this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+          }
+        } catch (errorResponse) {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
+          }
         }
       }
     })
@@ -305,9 +320,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
 * @memberof LoadablePatternHistoryComponent
 */
   patternHistory() {
-    if(!this.isViewPattern){
+    if (!this.isViewPattern) {
       this.router.navigate([`/business/cargo-planning/loadable-pattern-history/0/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
-    }else{
+    } else {
       this.openSidePane = !this.openSidePane
     }
   }
@@ -318,17 +333,17 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @param {IStabilityParameter} stabilityParameters
    * @memberof LoadablePatternHistoryComponent
    */
-  viewStability(stabilityParameters : IStabilityParameter){
+  viewStability(stabilityParameters: IStabilityParameter) {
     this.stabilityParameters = stabilityParameters ? [stabilityParameters] : [];
     this.showStability = true;
   }
 
-   /**
-   * set visibility of stability popup (show/hide)
-   *
-   * @param {*} event
-   * @memberof LoadablePatternHistoryComponent
-   */
+  /**
+  * set visibility of stability popup (show/hide)
+  *
+  * @param {*} event
+  * @memberof LoadablePatternHistoryComponent
+  */
   setStabilityPopupVisibility(emittedValue) {
     this.showStability = emittedValue;
   }

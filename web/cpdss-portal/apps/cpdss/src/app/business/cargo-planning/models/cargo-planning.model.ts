@@ -190,9 +190,6 @@ export class CargoNominationDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            cargoNominations: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }
@@ -297,7 +294,8 @@ export enum LOADABLE_STUDY_DETAILS_TABS {
  * @interface IOHQPort
  */
 export interface IOHQPort {
-    portId: number;
+    id: number; // port rotation id
+    portId: number; // port master id
 }
 
 /**
@@ -352,7 +350,7 @@ export interface IPortOHQTankDetail {
     departureQuantity: number;
     arrivalVolume: number;
     departureVolume: number;
-    portId: number;
+    portRotationId: number;
     storeKey: number;
     vesselId: number;
     voyageId: number;
@@ -381,7 +379,7 @@ export interface IPortOHQTankDetailValueObject {
     departureQuantity: ValueObject<number>;
     arrivalVolume: number;
     departureVolume: number;
-    portId: number;
+    portRotationId: number;
     storeKey: number;
     colorCode: string;
     quantity: number;
@@ -456,9 +454,6 @@ export class OHQDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            ohq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }
@@ -475,9 +470,6 @@ export class PortsDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            ports: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }
@@ -633,9 +625,6 @@ export class OBQDB extends CPDSSDB {
 
     constructor() {
         super();
-        this.version(1).stores({
-            obq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
-        });
     }
 
 }
@@ -685,7 +674,7 @@ export interface IApiTempHistoryRequest {
  */
 export interface ICargoApiTempHistoryResponse {
     responseStatus: IResponseStatus;
-    portHistory: IApiTempHistory[];
+    portHistory: IApiTempPortHistory[];
     monthlyHistory: IApiTempMonthWiseHistory[];
 }
 
@@ -693,9 +682,9 @@ export interface ICargoApiTempHistoryResponse {
  * Interface for get Api,Temperature port history
  *
  * @export
- * @interface IApiTempHistory
+ * @interface IApiTempPortHistory
  */
-export interface IApiTempHistory {
+export interface IApiTempPortHistory {
     cargoId: number;
     loadingPortId: number;
     loadedDate: string;
@@ -729,6 +718,41 @@ export interface IMonths {
 }
 
 /**
+ * Interface for cargo-history table state changes
+ *
+ * @export
+ * @interface ICargoHistoryDataStateChange
+ */
+export interface ICargoHistoryDataStateChange {
+    pageSize: number;
+    page: number;
+    sortBy: string;
+    orderBy: string;
+    vesselName: string;
+    loadingPortName: string;
+    grade: string;
+    loadedYear: number;
+    loadedMonth: number;
+    loadedDay: number;
+    api: number;
+    temperature: number;
+    startDate: string;
+    endDate: string;
+}
+
+/**
+ * interface for cargo-history table API
+ *
+ * @export
+ * @interface ICargoHistoryResponse
+ */
+export interface ICargoHistoryResponse {
+    responseStatus: IResponseStatus;
+    cargoHistory: ICargoHistoryDetails[];
+    totalElements: number;
+}
+
+/**
  * Interface for Cargo-history table details
  *
  * @export
@@ -736,11 +760,11 @@ export interface IMonths {
  */
 export interface ICargoHistoryDetails {
     vesselName: string;
-    loadingPort: string;
+    loadingPortName: string;
     grade: string;
-    year: number;
-    month: number;
-    date: number;
+    loadedYear: number;
+    loadedMonth: number;
+    loadedDay: number;
     api: number;
     temperature: number;
-  }
+}
