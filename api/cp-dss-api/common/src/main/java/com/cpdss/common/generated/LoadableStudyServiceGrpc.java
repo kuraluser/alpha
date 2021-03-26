@@ -2444,6 +2444,53 @@ public final class LoadableStudyServiceGrpc {
     return getGetAllCargoHistoryMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.JsonRequest,
+          com.cpdss.common.generated.LoadableStudy.StatusReply>
+      getSaveJsonMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveJson",
+      requestType = com.cpdss.common.generated.LoadableStudy.JsonRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.StatusReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.JsonRequest,
+          com.cpdss.common.generated.LoadableStudy.StatusReply>
+      getSaveJsonMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.JsonRequest,
+            com.cpdss.common.generated.LoadableStudy.StatusReply>
+        getSaveJsonMethod;
+    if ((getSaveJsonMethod = LoadableStudyServiceGrpc.getSaveJsonMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveJsonMethod = LoadableStudyServiceGrpc.getSaveJsonMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveJsonMethod =
+              getSaveJsonMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.JsonRequest,
+                          com.cpdss.common.generated.LoadableStudy.StatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveJson"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.JsonRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.StatusReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveJson"))
+                      .build();
+        }
+      }
+    }
+    return getSaveJsonMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -2879,6 +2926,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetAllCargoHistoryMethod(), responseObserver);
     }
 
+    /** */
+    public void saveJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveJsonMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -3220,6 +3275,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest,
                       com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>(
                       this, METHODID_GET_ALL_CARGO_HISTORY)))
+          .addMethod(
+              getSaveJsonMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.JsonRequest,
+                      com.cpdss.common.generated.LoadableStudy.StatusReply>(
+                      this, METHODID_SAVE_JSON)))
           .build();
     }
   }
@@ -3766,6 +3828,15 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /** */
@@ -4118,6 +4189,12 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetAllCargoHistoryMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.StatusReply saveJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
+      return blockingUnaryCall(getChannel(), getSaveJsonMethod(), getCallOptions(), request);
     }
   }
 
@@ -4555,6 +4632,13 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetAllCargoHistoryMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.StatusReply>
+        saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
+      return futureUnaryCall(getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -4605,6 +4689,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_VOYAGE_STATUS = 45;
   private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 46;
   private static final int METHODID_GET_ALL_CARGO_HISTORY = 47;
+  private static final int METHODID_SAVE_JSON = 48;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4957,6 +5042,12 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_JSON:
+          serviceImpl.saveJson(
+              (com.cpdss.common.generated.LoadableStudy.JsonRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -5069,6 +5160,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveVoyageStatusMethod())
                       .addMethod(getGetCargoApiTempHistoryMethod())
                       .addMethod(getGetAllCargoHistoryMethod())
+                      .addMethod(getSaveJsonMethod())
                       .build();
         }
       }
