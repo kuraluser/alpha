@@ -3473,17 +3473,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePatternBuilder.addAllLoadablePlanStowageDetails(
                   replyBuilder.getLoadablePlanStowageDetailsList());
 
+              // <--DSS-2016-->
               List<LoadablePlanQuantity> loadablePlanQuantities =
                   loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
               LoadablePlanBuilder.buildLoadablePlanQuantity(
                   loadablePlanQuantities, loadablePatternBuilder);
-
               List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
                   loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
               LoadablePlanBuilder.buildLoadablePlanCommingleDetails(
                   loadablePlanCommingleDetails, loadablePatternBuilder);
+              List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
+                  loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              LoadablePlanBuilder.buildBallastGridDetails(
+                  loadablePlanBallastDetails, loadablePatternBuilder);
+              // <--DSS-2016!-->
 
               builder.addLoadablePattern(loadablePatternBuilder);
               loadablePatternBuilder.clearLoadablePlanStowageDetails();
@@ -3517,7 +3523,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-
   /**
    * Ballast Tank category builder
    *

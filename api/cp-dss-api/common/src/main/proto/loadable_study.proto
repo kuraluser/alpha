@@ -863,6 +863,7 @@ message LoadablePattern {
 	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 8;
 	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 9;
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 10;
+	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 11;
 }
 
 message LoadablePatternCargoDetails {

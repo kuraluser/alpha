@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.service.builder;
 
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import java.util.List;
@@ -111,6 +112,32 @@ public class LoadablePlanBuilder {
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);
           stowageBuilder.setIsCommingle(true);
           replyBuilder.addLoadablePlanStowageDetails(stowageBuilder);
+        });
+  }
+
+  public static void buildBallastGridDetails(
+      List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder) {
+    loadablePlanBallastDetails.forEach(
+        lpbd -> {
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.Builder builder =
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.newBuilder();
+          Optional.ofNullable(lpbd.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(lpbd.getCorrectedLevel()).ifPresent(builder::setCorrectedLevel);
+          Optional.ofNullable(lpbd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+          Optional.ofNullable(lpbd.getCubicMeter()).ifPresent(builder::setCubicMeter);
+          Optional.ofNullable(lpbd.getInertia()).ifPresent(builder::setInertia);
+          Optional.ofNullable(lpbd.getLcg()).ifPresent(builder::setLcg);
+          Optional.ofNullable(lpbd.getMetricTon()).ifPresent(builder::setMetricTon);
+          Optional.ofNullable(lpbd.getPercentage()).ifPresent(builder::setPercentage);
+          Optional.ofNullable(lpbd.getRdgLevel()).ifPresent(builder::setRdgLevel);
+          Optional.ofNullable(lpbd.getSg()).ifPresent(builder::setSg);
+          Optional.ofNullable(lpbd.getTankId()).ifPresent(builder::setTankId);
+          Optional.ofNullable(lpbd.getTcg()).ifPresent(builder::setTcg);
+          Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
+          Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
+          Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
+          replyBuilder.addLoadablePlanBallastDetails(builder);
         });
   }
 }

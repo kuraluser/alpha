@@ -1853,6 +1853,59 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+      getGetSynopticDataByLoadableStudyIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetSynopticDataByLoadableStudyId",
+      requestType = com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+      getGetSynopticDataByLoadableStudyIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+        getGetSynopticDataByLoadableStudyIdMethod;
+    if ((getGetSynopticDataByLoadableStudyIdMethod =
+            LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetSynopticDataByLoadableStudyIdMethod =
+                LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod =
+              getGetSynopticDataByLoadableStudyIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+                          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetSynopticDataByLoadableStudyId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetSynopticDataByLoadableStudyId"))
+                      .build();
+        }
+      }
+    }
+    return getGetSynopticDataByLoadableStudyIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest,
           com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>
       getGetLoadableStudyStatusMethod;
@@ -2828,6 +2881,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getSynopticDataByLoadableStudyId(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetSynopticDataByLoadableStudyIdMethod(), responseObserver);
+    }
+
+    /** */
     public void getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<
@@ -3191,6 +3252,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                       this, METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID)))
+          .addMethod(
+              getGetSynopticDataByLoadableStudyIdMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
+                      this, METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID)))
           .addMethod(
               getGetLoadableStudyStatusMethod(),
               asyncUnaryCall(
@@ -3697,6 +3765,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getSynopticDataByLoadableStudyId(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<
@@ -4108,6 +4187,14 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetSynopticalPortDataByPortIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+        getSynopticDataByLoadableStudyId(
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -4533,6 +4620,16 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+        getSynopticDataByLoadableStudyId(
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>
         getLoadableStudyStatus(
             com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
@@ -4677,19 +4774,20 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_SYNOPTICAL_TABLE = 33;
   private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 34;
   private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 35;
-  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 36;
-  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 37;
-  private static final int METHODID_RECALCULATE_VOLUME = 38;
-  private static final int METHODID_CONFIRM_PLAN_STATUS = 39;
-  private static final int METHODID_CONFIRM_PLAN = 40;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 41;
-  private static final int METHODID_SAVE_COMMENT = 42;
-  private static final int METHODID_SAVE_LOAD_ON_TOP = 43;
-  private static final int METHODID_GET_VOYAGES = 44;
-  private static final int METHODID_SAVE_VOYAGE_STATUS = 45;
-  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 46;
-  private static final int METHODID_GET_ALL_CARGO_HISTORY = 47;
-  private static final int METHODID_SAVE_JSON = 48;
+  private static final int METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID = 36;
+  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 37;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 38;
+  private static final int METHODID_RECALCULATE_VOLUME = 39;
+  private static final int METHODID_CONFIRM_PLAN_STATUS = 40;
+  private static final int METHODID_CONFIRM_PLAN = 41;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 42;
+  private static final int METHODID_SAVE_COMMENT = 43;
+  private static final int METHODID_SAVE_LOAD_ON_TOP = 44;
+  private static final int METHODID_GET_VOYAGES = 45;
+  private static final int METHODID_SAVE_VOYAGE_STATUS = 46;
+  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 47;
+  private static final int METHODID_GET_ALL_CARGO_HISTORY = 48;
+  private static final int METHODID_SAVE_JSON = 49;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4958,6 +5056,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
                   responseObserver);
           break;
+        case METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID:
+          serviceImpl.getSynopticDataByLoadableStudyId(
+              (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
+                  responseObserver);
+          break;
         case METHODID_GET_LOADABLE_STUDY_STATUS:
           serviceImpl.getLoadableStudyStatus(
               (com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest) request,
@@ -5148,6 +5253,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetSynopticalTableMethod())
                       .addMethod(getGetSynopticalDataByPortIdMethod())
                       .addMethod(getGetSynopticalPortDataByPortIdMethod())
+                      .addMethod(getGetSynopticDataByLoadableStudyIdMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getRecalculateVolumeMethod())

@@ -1555,6 +1555,7 @@ public class LoadableStudyService {
                     loadablePattern.getLoadablePatternId());
                 buildLoadableStudyQuantity(loadablePatternDto, loadablePattern);
                 buildLoadableStudyCommingleCargoDetails(loadablePatternDto, loadablePattern);
+                buildLoadableStudyBallastDetails(loadablePatternDto, loadablePattern);
               } catch (GenericServiceException e) {
                 e.printStackTrace();
               }
@@ -1568,6 +1569,34 @@ public class LoadableStudyService {
     long diff = ChronoUnit.SECONDS.between(startTime, LocalDateTime.now());
     log.info("Loadable patterns time (sec) taken - {}", diff);
     return loadablePatternResponse;
+  }
+
+  private void buildLoadableStudyBallastDetails(
+      LoadablePattern response,
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern grpcReply) {
+    response.setLoadablePlanBallastDetails(new ArrayList<LoadablePlanBallastDetails>());
+    grpcReply
+        .getLoadablePlanBallastDetailsList()
+        .forEach(
+            lpbd -> {
+              LoadablePlanBallastDetails details = new LoadablePlanBallastDetails();
+              details.setId(lpbd.getId());
+              details.setCorrectedLevel(lpbd.getCorrectedLevel());
+              details.setCorrectionFactor(lpbd.getCorrectionFactor());
+              details.setCubicMeter(lpbd.getCubicMeter());
+              details.setInertia(lpbd.getInertia());
+              details.setLcg(lpbd.getLcg());
+              details.setMetricTon(lpbd.getMetricTon());
+              details.setPercentage(lpbd.getPercentage());
+              details.setRdgLevel(lpbd.getRdgLevel());
+              details.setSg(lpbd.getSg());
+              details.setTankId(lpbd.getTankId());
+              details.setTcg(lpbd.getTcg());
+              details.setVcg(lpbd.getVcg());
+              details.setTankName(lpbd.getTankName());
+              details.setColorCode(lpbd.getColorCode());
+              response.getLoadablePlanBallastDetails().add(details);
+            });
   }
 
   private void buildLoadableStudyQuantity(

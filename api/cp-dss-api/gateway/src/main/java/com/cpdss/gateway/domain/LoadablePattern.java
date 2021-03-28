@@ -17,5 +17,6 @@ public class LoadablePattern {
 
   private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
   private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
+  private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
   private LoadablePlanSynopticalRecord loadablePlanSynopticRecord;
 }
