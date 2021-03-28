@@ -2316,7 +2316,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     PortRotationReply.Builder portRotationReplyBuilder = PortRotationReply.newBuilder();
     try {
       Optional<LoadableStudy> loadableStudy =
-          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
 
       if (!loadableStudy.isPresent()) {
         log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
@@ -2326,8 +2326,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
-        List<Long> portIds = this.getPortRoationPortIds(loadableStudy.get());
-        if (portIds.isEmpty()) {
+        List<LoadableStudyPortRotation> ports =
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+                loadableStudy.get(), true);
+        if (ports.isEmpty()) {
           log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
           portRotationReplyBuilder.setResponseStatus(
               ResponseStatus.newBuilder()
@@ -2335,14 +2337,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .setMessage(INVALID_LOADABLE_STUDY_ID)
                   .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
         } else {
-
-          portIds.forEach(
-              portId -> {
+          ports.forEach(
+              port -> {
                 PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
-                builder.setPortId(portId);
+                builder.setPortId(port.getPortXId());
+                builder.setId(port.getId());
                 portRotationReplyBuilder.addPorts(builder);
               });
-
           portRotationReplyBuilder
               .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
               .build();
@@ -2449,6 +2450,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
+      LoadableStudyPortRotation portRotation =
+          this.loadableStudyPortRotationRepository.findByIdAndIsActive(
+              request.getPortRotationId(), true);
+      if (null == portRotation) {
+        throw new GenericServiceException(
+            "Port rotation does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       Voyage previousVoyage =
           this.voyageRepository
               .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
@@ -2458,16 +2469,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       VesselReply vesselReply = this.getOhqTanks(request);
       List<OnHandQuantity> onHandQuantities =
-          this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
-              loadableStudyOpt.get(), request.getPortId(), true);
+          this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+              loadableStudyOpt.get(), portRotation, true);
       Optional<LoadableStudy> confirmedLoadableStudyOpt =
           this.loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
               previousVoyage, CONFIRMED_STATUS_ID, true);
-      List<OnHandQuantity> onHandQuantityList = null;
+      List<OnHandQuantity> onHandQuantityList = new ArrayList<>();
       if (confirmedLoadableStudyOpt.isPresent()) {
-        onHandQuantityList =
-            this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                confirmedLoadableStudyOpt.get(), request.getPortId(), true);
+        /*onHandQuantityList =
+        this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+            confirmedLoadableStudyOpt.get(), request.getPortId(), true);*/
       }
 
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
@@ -2482,6 +2493,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         detailBuilder.setTankId(tankDetail.getTankId());
         detailBuilder.setTankName(tankDetail.getShortName());
         detailBuilder.setColorCode(tankDetail.getColourCode());
+        detailBuilder.setPortRotationId(portRotation.getId());
+        detailBuilder.setPortId(portRotation.getPortXId());
         Optional<OnHandQuantity> qtyOpt =
             onHandQuantities.stream()
                 .filter(
@@ -2506,6 +2519,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
           Optional.ofNullable(qty.getDensity())
               .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
+          Optional.ofNullable(qty.getPortRotation())
+              .ifPresent(item -> detailBuilder.setPortRotationId(item.getId()));
+          Optional.ofNullable(qty.getPortRotation())
+              .ifPresent(item -> detailBuilder.setPortId(item.getPortXId()));
         } else {
           if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
             Optional<OnHandQuantity> ohqQtyOpt =
@@ -2692,7 +2709,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
 
       } else {
-        entity = new OnHandQuantity();
         Optional<LoadableStudy> loadableStudyOpt =
             this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
         if (!loadableStudyOpt.isPresent()) {
@@ -2701,8 +2717,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
+        LoadableStudyPortRotation portRotation =
+            this.loadableStudyPortRotationRepository.findByIdAndIsActive(
+                request.getPortRotationId(), true);
+        if (null == portRotation) {
+          throw new GenericServiceException(
+              "Port rotation does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        entity = new OnHandQuantity();
         entity.setLoadableStudy(loadableStudyOpt.get());
-        entity.setPortXId(request.getPortId());
+        entity.setPortRotation(portRotation);
+        entity.setPortXId(portRotation.getPortXId());
       }
       this.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
@@ -5114,8 +5141,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableStudy loadableStudy, SynopticalTable entity, SynopticalRecord record)
       throws GenericServiceException {
     List<OnHandQuantity> ohqEntities =
-        this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
-            loadableStudy, record.getPortId(), true);
+        this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            loadableStudy, entity.getLoadableStudyPortRotation(), true);
     List<OnHandQuantity> toBeSavedList = new ArrayList<>();
 
     for (SynopticalOhqRecord ohqRecord : record.getOhqList()) {
@@ -5134,6 +5161,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         ohqEntity.setPortXId(record.getPortId());
         ohqEntity.setFuelTypeXId(ohqRecord.getFuelTypeId());
         ohqEntity.setLoadableStudy(loadableStudy);
+        ohqEntity.setPortRotation(entity.getLoadableStudyPortRotation());
         ohqEntity.setIsActive(true);
       }
       this.validateSaveSynopticalOhqData(ohqEntity, entity, ohqRecord, loadableStudy);
@@ -5873,7 +5901,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<VesselTankDetail> sortedTankList) {
     List<OnHandQuantity> portSpecificEntities =
         ohqEntities.stream()
-            .filter(entity -> entity.getPortXId().equals(synopticalEntity.getPortXid()))
+            .filter(
+                entity ->
+                    null != entity.getPortRotation()
+                        && entity
+                            .getPortRotation()
+                            .getId()
+                            .equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
             .collect(Collectors.toList());
     for (VesselTankDetail tank : sortedTankList) {
       if (!OHQ_TANK_CATEGORIES.contains(tank.getTankCategoryId()) || !tank.getShowInOhqObq()) {
@@ -5885,6 +5919,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ohqBuilder.setFuelTypeId(tank.getTankCategoryId());
       ohqBuilder.setFuelType(tank.getTankCategoryShortName());
       ohqBuilder.setCapacity(tank.getFullCapacityCubm());
+      ohqBuilder.setPortRotationId(synopticalEntity.getLoadableStudyPortRotation().getId());
       Optional<OnHandQuantity> ohqOpt =
           portSpecificEntities.stream()
               .filter(ohq -> ohq.getTankXId().equals(tank.getTankId()))
@@ -6094,6 +6129,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(lwTideTo -> builder.setLwTideTo(String.valueOf(lwTideTo)));
     Optional.ofNullable(synopticalEntity.getLwTideTimeTo())
         .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(timeFormatter.format(lwTideTimeTo)));
+    Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation())
+        .ifPresent(portRotation -> builder.setPortRotationId(portRotation.getId()));
     if (null != synopticalEntity.getEtaActual()) {
       builder.setEtaEtdActual(formatter.format(synopticalEntity.getEtaActual()));
     } else if (null != synopticalEntity.getEtdActual()) {

@@ -1,6 +1,6 @@
-<div *ngIf="portRotationForm" [formGroup]="portRotationForm" class="row pt-10">
+<div *ngIf="portRotationForm && portCarousel?.length" [formGroup]="portRotationForm" class="row pt-10">
     <div formArrayName="portsData" class="col pl-0 pr-0" *ngIf="portList">
-        <p-carousel [value]="portList" [numVisible]="4" [numScroll]="1" [responsiveOptions]="responsiveOptions">
+        <p-carousel [value]="portCarousel" [numVisible]="numVisible" [numScroll]="1" >
             <ng-template let-port pTemplate="item">
                 <div class="container-fluid " formGroupName="{{portList.indexOf(port)}}">
                     <div class="row">
@@ -15,10 +15,12 @@
                                     <div class="card-border"></div>
                                 </div>
                                 <div class="mr-10" *ngIf="port.type !== 'Arrival'" (click)="editPort($event, port, 'distance')">
-                                    <div class="distance-port" *ngIf="!port?.isDistanceEditable" [hidden]="portList.indexOf(port) === (portList?.length -1)">
+                                    <div class="distance-port" *ngIf="!port?.isDistanceEditable" [ngClass]="{'last-port': portList.indexOf(port) === (portList?.length -1)}">
                                         <div *ngIf="port?.currentPort" class="ship-location"></div>
-                                        {{getControlLabel(port,'distance')}}
-                                        {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+                                        <ng-container *ngIf="portList.indexOf(port) !== (portList?.length -1)">
+                                            {{getControlLabel(port,'distance')}}
+                                            {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+                                        </ng-container>
                                     </div>
                                     <div class="relative pr-15" *ngIf="port?.isDistanceEditable">
                                         <input class="form-control" type="number" name="distance"
@@ -31,7 +33,7 @@
                                     </div>
                                 </div>
 
-                                <div class="pr-15 ml-auto" *ngIf="voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port.isFutureDate"> <a type="button"
+                                <div class="pr-15 ml-auto" *ngIf="isDeletable && voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port.isFutureDate"> <a type="button"
                                         class="delete-icon "
                                         id="port_rotation_ribbon_delete__{{portList.indexOf(port)}}"
                                         (click)="deleteRow(port)"></a></div>
@@ -84,7 +86,10 @@
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="time" [timeOnly]="true"
                                         id="eta_time_{{portList.indexOf(port)}}"
-                                        (onBlur)="onBlur($event, port, 'time')">
+                                        (onBlur)="onBlur($event, port, 'time')" #portRibbonTime>
+                                        <p-footer>
+                                            <button class="btn btn-default" (click)="portRibbonTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
+                                        </p-footer>
                                     </p-calendar>
                                     <cpdss-portal-validation-error
                                         [errors]="fieldError(portList.indexOf(port), 'time' )"

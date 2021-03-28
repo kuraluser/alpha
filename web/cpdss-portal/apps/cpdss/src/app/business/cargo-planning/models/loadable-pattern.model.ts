@@ -50,7 +50,6 @@ export interface ILoadablePatternCargoDetail extends ILoadableCargo {
     loadingOrder: number;
     api: number;
     difference?: number;
-    tankName?: string;
 }
 
 /**
@@ -76,6 +75,7 @@ export interface ILoadablePlanStowageDetails extends ILoadableCargo {
     temperature: number;
     colorCode: string;
     quantityMT: string;
+    isCommingle?: boolean;
 }
 
 /**

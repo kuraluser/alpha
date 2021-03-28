@@ -125,4 +125,6 @@ public interface LoadableStudyPortRotationRepository
 
   public LoadableStudyPortRotation findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
       LoadableStudy loadableStudy, boolean isActive);
+
+  public LoadableStudyPortRotation findByIdAndIsActive(Long id, boolean isActive);
 }

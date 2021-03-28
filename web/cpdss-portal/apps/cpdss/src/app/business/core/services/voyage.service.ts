@@ -7,7 +7,7 @@ import { IVoyageResponse, Voyage } from '../models/common.model';
 @Injectable()
 export class VoyageService {
   private _voyages: Voyage[];
-
+  
   constructor(private commonApiService: CommonApiService) { }
 
   /**

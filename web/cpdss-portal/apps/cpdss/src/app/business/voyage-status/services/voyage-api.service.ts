@@ -28,8 +28,8 @@ export class VoyageApiService {
     return {
       voyageNo: {
         'required': 'VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR',
-        'pattern': 'NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED',
-        'maxlength': 'NEW_VOYAGE_POPUP_CHARACTER_LIMIT'
+        'maxlength': 'NEW_VOYAGE_POPUP_CHARACTER_LIMIT',
+        'specialCharacter': 'NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED'
       },
       start_date: {
         'required': 'VOYAGE_POPUP_START_DATE_REQUIRED_ERROR',
@@ -38,6 +38,12 @@ export class VoyageApiService {
       end_date: {
         'required': 'VOYAGE_POPUP_END_DATE_REQUIRED_ERROR',
         'failedCompare': 'VOYAGE_POPUP_END_DATE_COMPARE_ERROR'
+      },
+      selectStartDateTimeZone: {
+        'required': 'VOYAGE_POPUP_START_DATE_TIME_ZONE_REQUIRED_ERROR',
+      },
+      selectEndDateTimeZone: {
+        'required': 'VOYAGE_POPUP_END_DATE_TIME_ZONE_REQUIRED_ERROR'
       }
     }
   }

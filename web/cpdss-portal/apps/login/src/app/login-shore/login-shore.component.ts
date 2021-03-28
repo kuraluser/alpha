@@ -35,13 +35,17 @@ export class LoginShoreComponent implements OnInit {
   settings: IAppConfiguration;
   realm = '';
   logo = '';
+  carousels = [];
+  favicon = ''; 
 
   constructor(private kcService: KeycloakService, private appConfig: AppConfigurationService) { }
 
   ngOnInit(): void {
     this.settings = AppConfigurationService.settings;
     this.logo = localStorage.getItem('logo');
+    this.favicon = localStorage.getItem('favicon');
     this.createIdpInput();
+    this.carousels = localStorage.getItem('carousel') ? JSON.parse(localStorage.getItem('carousel')) : [];
   }
 
   // to bind input buttons dynamically from api response with identity-provider enabled
@@ -56,8 +60,9 @@ export class LoginShoreComponent implements OnInit {
   // common login function for all identity-providers
   login(idp) {
     const logoUrl = localStorage.getItem('logo');
+    const faviconUrl = localStorage.getItem('favicon'); 
     this.kcService.login({
-      redirectUri: window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + this.realm + '&logoUrl=' + logoUrl,
+      redirectUri: window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + this.realm + '&logoUrl=' + logoUrl + '&faviconUrl=' + faviconUrl,
       idpHint: idp
     });
   }

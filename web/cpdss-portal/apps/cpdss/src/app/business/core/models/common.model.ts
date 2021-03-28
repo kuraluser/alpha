@@ -58,7 +58,10 @@ export class Voyage {
     public confirmedLoadableStudyId?: number;
     public startDate?: string;
     public endDate?: string;
+    public noOfDays?: number;
     statusId?: VOYAGE_STATUS;
+    actualStartDate?: string; 
+    actualEndDate?: string; 
 }
 
 /**

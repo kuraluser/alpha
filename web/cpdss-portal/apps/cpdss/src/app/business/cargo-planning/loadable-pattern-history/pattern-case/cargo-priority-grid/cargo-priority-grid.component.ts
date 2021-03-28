@@ -24,11 +24,11 @@ export class CargoPriorityGridComponent implements OnInit {
 
   set loadablePatternCargoDetails(loadablePatternCargoDetails: ILoadablePatternCargoDetail[]) {
     if (loadablePatternCargoDetails) {
-      this._loadablePatternCargoDetails = loadablePatternCargoDetails.sort((a, b) => (a.loadingOrder > b.loadingOrder) ? 1 : -1);
-      this.totalQuantity = this.loadablePatternCargoDetails.reduce(function (a, b) {
+      this._loadablePatternCargoDetails = loadablePatternCargoDetails.sort((a, b) => (a.loadingOrder >= b.loadingOrder) ? 1 : -1);
+      this.totalQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
         return Number(a) + Number(b?.quantity);
       }, 0);
-      this.totalDifference = this.loadablePatternCargoDetails.reduce(function (a, b) {
+      this.totalDifference = loadablePatternCargoDetails.reduce(function (a, b) {
         return Number(a) + Number(b?.quantity - b?.orderedQuantity);
       }, 0);
     }

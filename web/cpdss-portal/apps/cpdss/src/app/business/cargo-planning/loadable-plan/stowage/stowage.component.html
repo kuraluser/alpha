@@ -39,7 +39,7 @@
         <div *ngIf="showGrid" class="row mb-15">
             <div class="col" *ngIf="selectedTab === tankType.CARGO">
                 <div class="text-right mb-10" *ngIf="isEditable">
-                    <button class="btn btn-main" *ngIf="!editMode" id="editmode_toggle_button"
+                    <button class="btn btn-main" [hidden]="loadableStudyStatus" *ngIf="!editMode" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable"
                         (click)="changeGridToEditMode()">{{'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL'| translate}}
                     </button>
                     <button class="btn btn-main" *ngIf="editMode" id="editmode_toggle_button"

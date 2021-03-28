@@ -737,6 +737,7 @@ message OnHandQuantityRequest{
 	int64 vesselId = 2;
 	int64 loadableStudyId = 3;
 	int64 portId = 4;
+	int64 portRotationId = 5;
 }
 
 message OnHandQuantityDetail{
@@ -757,6 +758,7 @@ message OnHandQuantityDetail{
 	string fuelTypeShortName = 15;
 	string density=16;
 	bool isOhqComplete=17;
+	int64 portRotationId = 18;
 }
 
 message TankDetail{
@@ -796,6 +798,7 @@ message OnBoardQuantityRequest{
 	int64 loadableStudyId = 3;
 	int64 portId = 4;
 	int64 voyageId = 5;
+	int64 portRotationId = 6;
 }
 
 message OnBoardQuantityDetail{
@@ -991,6 +994,7 @@ message SynopticalOhqRecord{
 	string fuelType = 6;
 	string density = 7;
 	string capacity = 8;
+	int64 portRotationId = 9;
 }
 
 message SynopticalBallastRecord{

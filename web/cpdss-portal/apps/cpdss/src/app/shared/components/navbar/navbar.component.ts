@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { Observable } from 'rxjs';
 import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
 import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
-import { IMenuItem , IPermission } from './navbar.component.model';
+import { IMenuItem, IPermission } from './navbar.component.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { environment } from 'apps/cpdss/src/environments/environment';
 
 @Component({
   selector: 'cpdss-portal-navbar',
@@ -21,15 +22,21 @@ export class NavbarComponent implements OnInit {
   companyLogo = '';
   userPermission: any;
 
-  constructor(private themeService: ThemeService, private keycloakService: KeycloakService,
+  private keycloakService: KeycloakService;
+
+  constructor(private themeService: ThemeService, private injector: Injector,
     private router: Router,
-    private permissionsService: PermissionsService) { }
+    private permissionsService: PermissionsService) {
+    if (environment.name === 'shore') {
+      this.keycloakService = <KeycloakService>this.injector.get(KeycloakService);
+    }
+  }
 
   ngOnInit(): void {
 
     this.companyLogo = localStorage.getItem('companyLogo');
-    
-    
+
+
     /**
      * Array for showing nav
      */
@@ -64,7 +71,11 @@ export class NavbarComponent implements OnInit {
         'menuLink': 'synoptical',
         'subMenu': [],
         'isSubMenuOpen': false,
-        'permissionMapping': AppConfigurationService.settings.permissionMapping['SynopticalComponent']
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['SynopticalComponent'],
+        'addVesselId': true,
+        'addVoyageId': true,
+        'addLoadableStudyId': true,
+        'addLoadablePatternId': true,
       },
       {
         'menu': 'ADMIN',
@@ -73,8 +84,8 @@ export class NavbarComponent implements OnInit {
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminComponent'],
         'subMenu': [
-          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-permission' , 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false},
-          { 'name': 'User' , 'subMenuLink': '/business/admin/user-listing' , 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false},
+          { 'name': 'User Role Permission', 'subMenuLink': '/business/admin/user-role-permission', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false },
+          { 'name': 'User', 'subMenuLink': '/business/admin/user-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false },
         ],
       },
       /* {
@@ -116,71 +127,103 @@ export class NavbarComponent implements OnInit {
 
     ];
     const isUserPermissionAvailable = setInterval(() => {
-      if(JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'))) {
+      if (JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'))) {
         this.userPermission = JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'));
         clearInterval(isUserPermissionAvailable);
         this.getPagePermission(menuList);
-        
+
       }
-    },50);
+    }, 50);
   }
 
-    /**
-   * Get page permission
-   *
-   * @memberof NavbarComponent
-   */
+  /**
+ * Get page permission
+ *
+ * @memberof NavbarComponent
+ */
   getPagePermission(menuList) {
     this.menuList = []
     const list = [...menuList];
-    list?.map((menuItem:IMenuItem , index) => {
+    list?.map((menuItem: IMenuItem, index) => {
       const permission = this.getPermission(menuItem.permissionMapping);
       const menuListItem = [];
-      if((permission && permission?.view)) {
+      if ((permission && permission?.view)) {
         menuListItem.push({
           menu: menuItem.menu,
           menuIcon: menuItem.menuIcon,
           menuLink: menuItem.menuLink,
           subMenu: [],
           isSubMenuOpen: menuItem.isSubMenuOpen,
-          permissionMapping: menuItem.permissionMapping
+          permissionMapping: menuItem.permissionMapping,
+          addVesselId: menuItem.addVesselId,
+          addVoyageId: menuItem.addVoyageId,
+          addLoadableStudyId: menuItem.addLoadableStudyId,
+          addLoadablePatternId: menuItem.addLoadablePatternId,
         });
-        if(menuItem.subMenu.length) {
-          menuItem.subMenu?.map((subMenu, subMenuIndex) => { 
+        if (menuItem.subMenu.length) {
+          menuItem.subMenu?.map((subMenu, subMenuIndex) => {
             const subMenuPermission = this.getPermission(subMenu.permissionMapping);
-            if(subMenuPermission && subMenuPermission?.view) {
+            if (subMenuPermission && subMenuPermission?.view) {
               menuListItem[0]['subMenu'].push(subMenu);
             }
           })
-          if(menuListItem[0]['subMenu']?.length) {
-            this.menuList = [...this.menuList , ...menuListItem];
+          if (menuListItem[0]['subMenu']?.length) {
+            this.menuList = [...this.menuList, ...menuListItem];
           }
         } else {
-          this.menuList = [...this.menuList , ...menuListItem];
+          this.menuList = [...this.menuList, ...menuListItem];
         }
       }
-      
+
     });
   }
 
-    /**
-   * Method for fetching permission
-   *
-   * @param {string} languageKey
-   * @returns {IPermission}
-   * @memberof PermissionsService
-   */
+  /**
+ * Method for fetching permission
+ *
+ * @param {string} languageKey
+ * @returns {IPermission}
+ * @memberof PermissionsService
+ */
   getPermission(languageKey: string): IPermission {
     const permission = this.userPermission?.find(item => item.languageKey === languageKey)?.permission;
     return permission;
   }
 
   /**
-   * Display submenu when clicked
+   * Reroute or Display submenu when clicked
    */
-  showSubmenu(list, index) {
+  rerouteOrShowSubmenu(list, index) {
+    if (list.menuLink !== '') {
+      let link = '/business/' + list.menuLink;
+      if(list.addVesselId){
+        const vesselId = localStorage.getItem("vesselId")
+        if(vesselId){
+          link += '/' + vesselId
+        }
+      }
+      if(list.addVoyageId){
+        const voyageId = localStorage.getItem("voyageId")
+        if(voyageId){
+          link += '/' + voyageId
+        }
+      }
+      if(list.addLoadableStudyId){
+        const loadableStudyId = localStorage.getItem("loadableStudyId")
+        if(loadableStudyId){
+          link += '/' + loadableStudyId
+        }
+      }
+      if(list.addLoadablePatternId){
+        const loadablePatternId = localStorage.getItem("loadablePatternId")
+        if(loadablePatternId){
+          link += '/' + loadablePatternId
+        }
+      }
+      this.router.navigateByUrl(link)
+    }
     this.menuList?.map((menuItem: IMenuItem) => menuItem.isSubMenuOpen = false);
-    if (list.length > 0) {
+    if (list.subMenu?.length > 0) {
       this.menuList[index].isSubMenuOpen = true;
     }
   }
@@ -208,7 +251,11 @@ export class NavbarComponent implements OnInit {
     try {
       const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
       SecurityService.userLogoutAction();
-      this.keycloakService.logout(redirectUrl);
+      if (environment.name === 'shore') {
+        this.keycloakService.logout(redirectUrl);
+      } else {
+        window.location.href = redirectUrl;
+      }
 
     }
     catch {
@@ -230,9 +277,9 @@ export class NavbarComponent implements OnInit {
    *
    * @memberof NavbarComponent
    */
-  subRoute(event: any,subMenu: any,list: any, index: number) {
+  subRoute(event: any, subMenu: any, list: any, index: number) {
     this.router.navigate([subMenu.subMenuLink]);
-    this.hide(list,index);
+    this.hide(list, index);
     event.stopPropagation();
   }
 

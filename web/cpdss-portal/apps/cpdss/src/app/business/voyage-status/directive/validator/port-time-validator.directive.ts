@@ -10,15 +10,15 @@ export function portTimeValidator(index): ValidatorFn {
             const portsData = control.root.value?.portsData
             const time = new Date(control.value);
             const date = new Date(control.parent.value?.date);
-            if (date && time) {
+            if (date && time && control.value) {
                 date.setHours(0, 0, 0, 0);
                 let minDate: Date, maxDate: Date, minTime: Date, maxTime: Date, errors = null;
                 if (index > 0) {
-                    minDate = new Date(portsData[index - 1].date)
+                    minDate = portsData[index - 1].date ? new Date(portsData[index - 1].date) : null
                     minTime = new Date(portsData[index - 1].time)
                 }
                 if (index < portsData.length - 1) {
-                    maxDate = new Date(portsData[index + 1].date)
+                    maxDate = portsData[index + 1].date ? new Date(portsData[index + 1].date) : null
                     maxTime = new Date(portsData[index + 1].time)
                 }
                 if (minDate) {
@@ -45,6 +45,8 @@ export function portTimeValidator(index): ValidatorFn {
                     }
                 }
                 return errors;
+            } else {
+                return null;
             }
         }
         return null;

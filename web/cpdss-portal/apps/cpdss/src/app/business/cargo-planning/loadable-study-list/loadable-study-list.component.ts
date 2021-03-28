@@ -27,7 +27,7 @@ import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/co
 export class LoadableStudyListComponent implements OnInit {
   loadableStudyList: LoadableStudy[];
   voyages: Voyage[];
-  selectedVoyage: Voyage;
+  _selectedVoyage: Voyage;
   selectedLoadableStudy: LoadableStudy;
   loading = true;
   cols: IDataTableColumn[];
@@ -43,6 +43,17 @@ export class LoadableStudyListComponent implements OnInit {
   addLSBtnPermissionContext: IPermissionContext;
   VOYAGE_STATUS = VOYAGE_STATUS;
 
+  get selectedVoyage(): Voyage{
+    return this._selectedVoyage;
+  }
+
+  set selectedVoyage(voyage: Voyage){
+    this._selectedVoyage = voyage;
+    localStorage.setItem("voyageId",voyage?.id.toString())
+    localStorage.removeItem("loadableStudyId")
+    localStorage.removeItem("loadablePatternId")
+  }
+
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService, private router: Router,
     private translateService: TranslateService, private activatedRoute: ActivatedRoute,
@@ -56,6 +67,7 @@ export class LoadableStudyListComponent implements OnInit {
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
       this.vesselDetails = res[0] ?? <IVessel>{};
+      localStorage.setItem("vesselId",this.vesselDetails?.id.toString())
       this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
       this.ngxSpinnerService.hide();
       this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);
@@ -63,18 +75,22 @@ export class LoadableStudyListComponent implements OnInit {
     });
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
     this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
-    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission, this.selectedVoyage?.statusId);
     this.loading = false;
 
   }
   /**
-   * Take the user to particular loadable study
-   */
+  * Take the user to particular loadable study
+  */
   onRowSelect(event: IDataTableEvent) {
     if (event?.field !== 'actions') {
       this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
     } else {
-      this.callNewLoadableStudyPopup(true, event.data)
+      if (![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(event?.data?.statusId)) {
+        this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+      } else {
+        this.callNewLoadableStudyPopup(true, event.data)
+      }
+
     }
   }
 
@@ -84,11 +100,13 @@ export class LoadableStudyListComponent implements OnInit {
   async getLoadableStudyInfo(vesselId: number, voyageId: number) {
     this.ngxSpinnerService.show();
     if (voyageId !== 0) {
+      this.loadableStudyList = null;
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
-      this.loadableStudyList = result.loadableStudies.map(loadableStudy => {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true: false;
+      const loadableStudyList = result.loadableStudies.map(loadableStudy => {
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true : false;
         return loadableStudy;
       });
+      loadableStudyList?.length ? this.loadableStudyList = [...loadableStudyList] : this.loadableStudyList = [];
     }
     this.ngxSpinnerService.hide();
   }
@@ -114,14 +132,15 @@ export class LoadableStudyListComponent implements OnInit {
    */
   showLoadableStudyList() {
     this.isVoyageIdSelected = true;
+    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission, this.selectedVoyage?.statusId);
     this.getLoadableStudyInfo(this.vesselDetails?.id, this.selectedVoyage.id);
   }
 
   /**
-   * called when name is clicked
-   */
+  * called when name is clicked
+  */
   columnClick(event: IDataTableEvent) {
-    if (event?.field === 'actions') {
+    if (event?.field === 'actions' && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(event?.data?.statusId)) {
       this.callNewLoadableStudyPopup(true, event.data)
     } else {
       this.onRowSelect(event);

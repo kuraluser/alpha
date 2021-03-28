@@ -4,5 +4,9 @@
 	"LOGIN_SHIP_USERNAME_REQUIRED": "User name is required",
 	"LOGIN_SHIP_PASSWORD_REQUIRED": "Password is required",
 	"LOGIN_SHIP_PASSWORD_MINLEGTH": "Minimum character legth is 8",
-	"LOGIN_SHIP_PASSWORD_PATTERN": "Only aphanumeric is allowed"
+	"LOGIN_SHIP_PASSWORD_PATTERN": "Only aphanumeric is allowed",
+	"PASSWORD_EXPIRED": "Password Expired",
+	"PASSWORD_EXPIRED_DETAILS": "Your password has expired. Please contact administrator to reset the password",
+	"INCORRECT_PASSWORD": "Incorrect username or password",
+	"INCORRECT_PASSWORD_DETAILS": "The username and password you entered do not match"
 }

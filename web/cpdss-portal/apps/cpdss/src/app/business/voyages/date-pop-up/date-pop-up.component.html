@@ -1,10 +1,10 @@
-<p-dialog id="dialog_voyage_list_date_popup" [(visible)]="display" [modal]="true" styleClass="date-popup"
+<p-dialog id="dialog_voyage_list_date_popup" header="{{header | translate}}" [(visible)]="display" [modal]="true" styleClass="date-popup"
     [draggable]="false" [responsive]="true" [closable]="false" *ngIf="display">
     <div class="col">
 
-        <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true" [maxDate]="today" [readonlyInput]="true"
+        <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true" [minDate]="today" [readonlyInput]="true"
             inputId="actual_date_selector" id="actual_date_selector" dateFormat="dd-mm-yy"
-            [hideOnDateTimeSelect]="false" [placeholder]="'VOYAGE_LIST_DATE_POPUP_ACTUAL_DATE_PLACEHOLDER' | translate" [(ngModel)]="startDate" #coldatetime></p-calendar>
+            [hideOnDateTimeSelect]="false" [placeholder]="'VOYAGE_LIST_DATE_POPUP_ACTUAL_DATE_PLACEHOLDER' | translate" [(ngModel)]="defaultDate" #coldatetime></p-calendar>
     </div>
     <p-footer>
         <div class="row">
@@ -13,7 +13,7 @@
                     id="date-popup-cancel" (click)="closeDialog()">{{'VOYAGE_LIST_DATE_POPUP_CANCEL_BUTTON' |
                     translate}}</button>
                     <button type="button" class="btn btn-main"
-                    id="date-popup-start" (click)="startVoyage()">{{'VOYAGE_LIST_DATE_POPUP_START_BUTTON' |
+                    id="date-popup-start" (click)="startStopVoyage()">{{startStopButtonLabel |
                     translate}}</button>
 
             </div>

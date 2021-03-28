@@ -73,8 +73,8 @@
         }
         .front-tank-content{
             position: absolute;
-            top: 50%;
-            left: 10%;
+            bottom: 10%;
+            left: 5px;
             .tank-commodity-ullage{
                 display: none;
             }
@@ -98,6 +98,12 @@
         }
         .tank-filling-percentage{
             position: static;
+        }
+        &:last-child{
+            .front-tank-content{
+                top: 10%;
+                bottom: auto;
+            }
         }
     }
    

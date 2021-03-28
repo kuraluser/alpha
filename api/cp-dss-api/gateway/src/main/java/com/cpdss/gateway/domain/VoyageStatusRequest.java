@@ -10,6 +10,8 @@ public class VoyageStatusRequest {
 
   private Long portOrder;
 
+  private Long portRotationId;
+
   @Pattern(regexp = "ARR|DEP")
   private String operationType;
 }

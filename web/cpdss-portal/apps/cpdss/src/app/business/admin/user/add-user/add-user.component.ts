@@ -53,7 +53,7 @@ export class AddUserComponent implements OnInit {
     this.visible = true;
     this.errorMessages = this.userTransformationService.setValidationErrorMessage();
     this.addUserForm = this.fb.group({
-      'userName': ['', [Validators.required , Validators.maxLength(50) , Validators.pattern('^[a-zA-Z0-9 ]+') ]],
+      'userName': ['', [Validators.required , Validators.maxLength(50) , Validators.pattern('^[a-zA-Z0-9]+') ]],
       'userDesignation': ['', [Validators.required , Validators.maxLength(10), Validators.pattern('^[a-zA-Z0-9 ]+')]],
       'userRole': ['', [Validators.required]],
     });

@@ -1768,13 +1768,16 @@ class LoadableStudyServiceTest {
   void testGetOnHandQuantity() {
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
     LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setVoyage(new Voyage());
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(loadableStudy));
+    when(this.loadableStudyPortRotationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(new LoadableStudyPortRotation());
     Mockito.doReturn(this.createVesselReply().build())
         .when(spyService)
         .getVesselTanks(any(VesselRequest.class));
-    when(this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
-            any(LoadableStudy.class), anyLong(), anyBoolean()))
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            any(LoadableStudy.class), any(LoadableStudyPortRotation.class), anyBoolean()))
         .thenReturn(this.prepareOnHandQuantities());
     StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
     spyService.getOnHandQuantity(this.createOnHandQuantityRequest(), responseObserver);
@@ -1801,8 +1804,11 @@ class LoadableStudyServiceTest {
   void testGetOnHandQuantityVesselServiceFailure() {
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
     LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setVoyage(new Voyage());
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(loadableStudy));
+    when(this.loadableStudyPortRotationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(new LoadableStudyPortRotation());
     Mockito.doReturn(
             VesselReply.newBuilder()
                 .setResponseStatus(
@@ -1892,6 +1898,8 @@ class LoadableStudyServiceTest {
       when(this.onHandQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
           .thenReturn(new OnHandQuantity());
     }
+    when(this.loadableStudyPortRotationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(new LoadableStudyPortRotation());
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(new LoadableStudy()));
     OnHandQuantity entity = new OnHandQuantity();

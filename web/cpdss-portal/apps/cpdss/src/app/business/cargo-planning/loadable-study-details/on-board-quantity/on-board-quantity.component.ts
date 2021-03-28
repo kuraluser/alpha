@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -29,7 +29,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
   templateUrl: './on-board-quantity.component.html',
   styleUrls: ['./on-board-quantity.component.scss']
 })
-export class OnBoardQuantityComponent implements OnInit {
+export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
   @ViewChild('obqDatatable') obqDatatable: ElementRef;
 
@@ -138,6 +138,15 @@ export class OnBoardQuantityComponent implements OnInit {
     private translateService: TranslateService,
     private messageService: MessageService,
     private quantityPipe: QuantityPipe) { }
+
+  /**
+   * Method called on component destroy
+   *
+   * @memberof OnBoardQuantityComponent
+   */
+  ngOnDestroy(): void {
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
+  }
 
   /**
    * Method called on intialization of the component
@@ -289,7 +298,7 @@ export class OnBoardQuantityComponent implements OnInit {
       formGroup.controls.quantity.updateValueAndValidity();   
     }
 
-    if (formGroup.valid) {
+    if (formGroup.valid  && formGroup.controls.api.value && formGroup.controls.quantity.value) {
       event.data.processing = true;
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);     
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
@@ -356,17 +365,31 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   private initSubscriptions() {
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'obq_sync_finished') {
-        const index = this.selectedPortOBQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
-        if (index !== -1) {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof OnBoardQuantityComponent
+   */
+  private swMessageHandler = async (event) => {
+    const translationKeys = await this.translateService.get(['OBQ_UPDATE_ERROR', 'OBQ_UPDATE_STATUS_ERROR']).toPromise();
+    if (event?.data?.type === 'obq_sync_finished') {
+      const index = this.selectedPortOBQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
+      if (index !== -1) {
+        this.selectedPortOBQTankDetails[index].processing = false;
+        if (event?.data?.status === '200') {
           this.selectedPortOBQTankDetails[index].id = event.data.id;
-          this.selectedPortOBQTankDetails[index].processing = false;
           this.selectedPortOBQTankDetails = [...this.selectedPortOBQTankDetails];
         }
-        this.updateTankList()
       }
-    });
+      this.updateTankList();
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['OBQ_UPDATE_ERROR'], detail: translationKeys['OBQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+    }
   }
 
   /**
@@ -526,10 +549,17 @@ export class OnBoardQuantityComponent implements OnInit {
     if(this.editMode) {
       this.loadableStudy.loadOnTop = event.target.checked;
       this.ngxSpinnerService.show();
-      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL']).toPromise();
-      const res = await this.loadableStudyDetailsApiService.saveLoadableStudyLoadOnTop(this.vesselId, this.voyageId, this.loadableStudyId, { isLoadOnTop: event.target.checked }).toPromise();
-      if (res?.responseStatus?.status === "200") {
-        this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL'] });
+      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_ERROR', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_STATUS_ERROR']).toPromise();
+      try {
+        const res = await this.loadableStudyDetailsApiService.saveLoadableStudyLoadOnTop(this.vesselId, this.voyageId, this.loadableStudyId, { isLoadOnTop: event.target.checked }).toPromise();
+        if (res?.responseStatus?.status === "200") {
+          this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL'] });
+        }
+      }
+      catch (errorResponse) {
+        if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_ERROR'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_STATUS_ERROR'], life: 10000 });
+        }
       }
       this.ngxSpinnerService.hide();
     }
@@ -549,6 +579,11 @@ export class OnBoardQuantityComponent implements OnInit {
           obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value.toFixed(2)) : 0;
           const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, obqTankDetail?.api?.value);
           obqTankDetail.volume = volume ?? 0;
+
+          // setting converted values to the form below tank layout
+          if(obqTankDetail.tankId === this.selectedTankId) {
+            this.obqForm.controls.quantity.setValue(obqTankDetail.quantity.value);
+          }
         }
         const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
         if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {

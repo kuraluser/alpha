@@ -1369,9 +1369,10 @@ public class LoadableStudyService {
     portRotationReply
         .getPortsList()
         .forEach(
-            portList -> {
+            port -> {
               PortRotation portRotation = new PortRotation();
-              portRotation.setPortId(portList.getPortId());
+              portRotation.setPortId(port.getPortId());
+              portRotation.setId(port.getId());
               response.getPortList().add(portRotation);
             });
     response.setResponseStatus(
@@ -1796,7 +1797,7 @@ public class LoadableStudyService {
       final Long companyId,
       final Long vesselId,
       final Long loadableStudyId,
-      final Long portId,
+      final Long portRotationId,
       String correlationId)
       throws GenericServiceException {
     OnHandQuantityRequest request =
@@ -1804,7 +1805,7 @@ public class LoadableStudyService {
             .setCompanyId(companyId)
             .setVesselId(vesselId)
             .setLoadableStudyId(loadableStudyId)
-            .setPortId(portId)
+            .setPortRotationId(portRotationId)
             .build();
     OnHandQuantityReply grpcReply = this.getOnHandQuantity(request);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
@@ -1834,6 +1835,8 @@ public class LoadableStudyService {
       onHandQuantity.setFuelTypeId(detail.getFuelTypeId());
       onHandQuantity.setFuelTypeName(detail.getFuelType());
       onHandQuantity.setFuelTypeShortName(detail.getFuelTypeShortName());
+      onHandQuantity.setPortRotationId(detail.getPortRotationId());
+      onHandQuantity.setPortId(detail.getPortId());
       onHandQuantity.setArrivalQuantity(
           isEmpty(detail.getArrivalQuantity())
               ? BigDecimal.ZERO
@@ -1945,8 +1948,9 @@ public class LoadableStudyService {
     OnHandQuantityDetail.Builder builder = OnHandQuantityDetail.newBuilder();
     builder.setId(request.getId());
     builder.setLoadableStudyId(request.getLoadableStudyId());
-    builder.setPortId(request.getPortId());
+    builder.setPortRotationId(request.getPortRotationId());
     builder.setTankId(request.getTankId());
+    builder.setPortRotationId(request.getPortRotationId());
     builder.setFuelTypeId(request.getFuelTypeId());
     Optional.ofNullable(request.getArrivalQuantity())
         .ifPresent(item -> builder.setArrivalQuantity(valueOf(item)));
@@ -4281,6 +4285,7 @@ public class LoadableStudyService {
             .setVesselId(vesselId)
             .setLoadableStudyId(loadableStudyId)
             .setPortId(portId)
+            .setPortRotationId(voyageStatusRequest.getPortRotationId())
             .build();
     OnHandQuantityReply onHandQtyReply = this.getOnHandQuantity(ohqRequest);
     if (!SUCCESS.equals(onHandQtyReply.getResponseStatus().getStatus())) {

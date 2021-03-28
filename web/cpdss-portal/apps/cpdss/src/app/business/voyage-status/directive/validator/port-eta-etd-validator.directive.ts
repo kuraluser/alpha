@@ -10,16 +10,27 @@ export function portEtaEtdValidator(index): ValidatorFn {
             const portsData = control.root.value?.portsData
             const date = new Date(control.value);
             let minDate: Date, maxDate: Date, errors = null;
-            if (index > 0) {
-                minDate = new Date(portsData[index - 1].date)
+            
+            if(!control.value || control.value === '') {
+                return null;
             }
-            if (index < portsData.length - 1) {
+            if (index > 0) {
+                if(control.value && control.value !== '' && (!portsData[index - 1].date || portsData[index - 1].date === '')) {
+                    errors = { compareDateWithPrevious: true };
+                    return errors
+                } else if(portsData[index - 1].date || portsData[index - 1].date === ''){
+                    minDate = new Date(portsData[index - 1].date);
+                }
+            }
+            
+            if (index < portsData.length - 1 && portsData[index + 1].date) {
                 maxDate = new Date(portsData[index + 1].date)
             }
             if (minDate) {
                 minDate.setHours(0, 0, 0, 0);
                 if (minDate > date) {
-                    errors = { minError: true }
+                    errors = { minError: true };
+                    return errors;
                 }
             }
             if (maxDate) {
@@ -29,6 +40,7 @@ export function portEtaEtdValidator(index): ValidatorFn {
                         errors = {}
                     }
                     errors['maxError'] = true;
+                    return errors;
                 }
             }
             return errors;

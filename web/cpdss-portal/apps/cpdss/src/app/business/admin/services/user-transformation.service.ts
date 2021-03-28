@@ -36,7 +36,7 @@ export class UserTransformationService {
       },
       {
         field: 'username',
-        header: 'USER_NAME',
+        header: 'USER_NAME_HEADING',
         filter: true,
         filterPlaceholder: 'SEARCH_USER',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -52,7 +52,7 @@ export class UserTransformationService {
         filterPlaceholder: 'SEARCH_DESGNATION',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'description'
+        filterField: 'designation'
       },
       {
         field: 'role',
@@ -92,10 +92,11 @@ export class UserTransformationService {
  * Method for converting User details data to value object model
  *
  * @param {IUserDetails} userDetails
+ * @param {number} userId
  * @returns {IUserDetalisValueObject}
  * @memberof UserTransformationService
  */
-  getPortAsValueObject(userDetails: IUserDetails): IUserDetalisValueObject {
+  getPortAsValueObject(userDetails: IUserDetails , userId: number): IUserDetalisValueObject {
     const _user = <IUserDetalisValueObject>{};
     _user.id = userDetails.id;
     _user.username = userDetails.username;
@@ -105,6 +106,7 @@ export class UserTransformationService {
     _user.role = userDetails.role;
     _user.isActionsEnabled = !userDetails.defaultUser;
     _user.isResetPassword = true;
+    _user.isDeletable = userId === userDetails.id ? false : true;
     return _user;
   }
 
