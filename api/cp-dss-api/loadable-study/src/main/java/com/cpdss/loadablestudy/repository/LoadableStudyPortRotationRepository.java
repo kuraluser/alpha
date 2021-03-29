@@ -127,4 +127,9 @@ public interface LoadableStudyPortRotationRepository
       LoadableStudy loadableStudy, boolean isActive);
 
   public LoadableStudyPortRotation findByIdAndIsActive(Long id, boolean isActive);
+
+  @Query(
+      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2 ")
+  public List<LoadableStudyPortRotation> findByLoadableStudyIdAndIsActive(
+      final Long loadableStudyId, final boolean isActive);
 }

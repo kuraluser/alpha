@@ -57,6 +57,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OhqPorts;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
@@ -780,7 +781,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 builder.addAttachments(loadableStudyAttachmentBuilder.build());
               });
         }
-
+        if (null != portRotations && !portRotations.isEmpty()) {
+          OhqPorts.Builder ohqPortsBuilder = OhqPorts.newBuilder();
+          portRotations.forEach(
+              port -> {
+                ohqPortsBuilder.setId(port.getId());
+                Optional.ofNullable(port.getIsPortRotationOhqComplete())
+                    .ifPresent(ohqPortsBuilder::setIsPortRotationOhqComplete);
+                builder.addOhqPorts(ohqPortsBuilder.build());
+              });
+        }
         replyBuilder.addLoadableStudies(builder.build());
       }
 
@@ -2735,6 +2745,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
       entity = this.buildOnHandQuantityEntity(entity, request);
+
+      // save obq level status in port rotation table
+      if (null != entity.getPortRotation()) {
+        entity
+            .getPortRotation()
+            .setIsPortRotationOhqComplete(request.getIsPortRotationOhqComplete());
+        this.loadableStudyPortRotationRepository.save(entity.getPortRotation());
+      }
+      // save obq level status in loadable study table
+      this.saveOhqLevelStatus(request);
+
       entity = this.onHandQuantityRepository.save(entity);
       replyBuilder
           .setId(entity.getId())
@@ -2759,6 +2780,34 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void saveOhqLevelStatus(OnHandQuantityDetail request) throws GenericServiceException {
+    Optional<LoadableStudy> loadableStudyOpt =
+        this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (!loadableStudyOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable study does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<LoadableStudyPortRotation> portRotations =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+            loadableStudyOpt.get().getId(), true);
+
+    if (!portRotations.isEmpty()) {
+      Boolean status = true;
+
+      for (LoadableStudyPortRotation port : portRotations) {
+        Boolean ohqPortRotationStatus = port.getIsPortRotationOhqComplete();
+        if (null == ohqPortRotationStatus) {
+          ohqPortRotationStatus = false;
+        }
+        status = status && ohqPortRotationStatus;
+      }
+      loadableStudyOpt.get().setIsOhqComplete(status);
+      this.loadableStudyRepository.save(loadableStudyOpt.get());
     }
   }
 

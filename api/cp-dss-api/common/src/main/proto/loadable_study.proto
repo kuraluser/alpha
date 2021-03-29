@@ -613,6 +613,7 @@ message LoadableStudyDetail{
 	bool isOhqComplete=26;
 	bool isObqComplete=27;
 	bool isDischargingPortComplete=28;
+	repeated OhqPorts ohqPorts=29;
 }
 
 message LoadableStudyReply{
@@ -759,6 +760,7 @@ message OnHandQuantityDetail{
 	string density=16;
 	bool isOhqComplete=17;
 	int64 portRotationId = 18;
+	bool isPortRotationOhqComplete=19;
 }
 
 message TankDetail{
@@ -1135,4 +1137,9 @@ message JsonRequest {
 	int64 referenceId = 1;
 	int64 jsonTypeId = 2;
 	string json = 3;
+}
+
+message OhqPorts{
+	int64 id = 1;
+	bool isPortRotationOhqComplete = 2;
 }

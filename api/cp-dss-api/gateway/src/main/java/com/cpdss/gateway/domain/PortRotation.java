@@ -50,4 +50,6 @@ public class PortRotation {
   private Long portOrder;
 
   private Boolean isPortsComplete;
+
+  private Boolean isPortRotationOhqComplete;
 }

@@ -438,6 +438,17 @@ public class LoadableStudyService {
       dto.setIsOhqComplete(grpcReply.getIsOhqComplete());
       dto.setIsObqComplete(grpcReply.getIsObqComplete());
       dto.setIsDischargingPortComplete(grpcReply.getIsDischargingPortComplete());
+      List<PortRotation> portRotationList = new ArrayList<PortRotation>();
+      grpcReply
+          .getOhqPortsList()
+          .forEach(
+              ohqPort -> {
+                PortRotation portRotation = new PortRotation();
+                portRotation.setId(ohqPort.getId());
+                portRotation.setIsPortRotationOhqComplete(ohqPort.getIsPortRotationOhqComplete());
+                portRotationList.add(portRotation);
+              });
+      dto.setOhqPorts(portRotationList);
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -1990,6 +2001,10 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getDepartureVolume())
         .ifPresent(item -> builder.setDepartureVolume(valueOf(item)));
     Optional.ofNullable(request.getDensity()).ifPresent(item -> builder.setDensity(valueOf(item)));
+
+    Optional.ofNullable(request.getIsPortRotationOhqComplete())
+        .ifPresent(item -> builder.setIsPortRotationOhqComplete(item));
+
     OnHandQuantityReply grpcReply = this.saveOnHandQuantity(builder.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
