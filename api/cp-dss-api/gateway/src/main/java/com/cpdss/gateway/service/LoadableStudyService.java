@@ -2610,6 +2610,10 @@ public class LoadableStudyService {
         !isEmpty(synopticalProtoRecord.getSpeed())
             ? new BigDecimal(synopticalProtoRecord.getSpeed())
             : BigDecimal.ZERO);
+    synopticalRecord.setInPortHours(
+        !isEmpty(synopticalProtoRecord.getInPortHours())
+            ? new BigDecimal(synopticalProtoRecord.getInPortHours())
+            : null);
     synopticalRecord.setRunningHours(
         !isEmpty(synopticalProtoRecord.getRunningHours())
             ? new BigDecimal(synopticalProtoRecord.getRunningHours())

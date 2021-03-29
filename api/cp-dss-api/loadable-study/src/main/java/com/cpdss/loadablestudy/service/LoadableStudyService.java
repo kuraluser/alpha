@@ -4109,14 +4109,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     LoadicatorDataReply.Builder replyBuilder = LoadicatorDataReply.newBuilder();
     try {
       LoadicatorAlgoRequest loadicator = new LoadicatorAlgoRequest();
-      buildLoadicatorUrlRequest(request, loadicator);
+      this.buildLoadicatorUrlRequest(request, loadicator);
       ObjectMapper objectMapper = new ObjectMapper();
 
       objectMapper.writeValue(
           new File("json/loadicator_" + request.getLoadableStudyId() + ".json"), loadicator);
-      AlgoResponse algoResponse =
-          restTemplate.postForObject(loadicatorUrl, loadicator, AlgoResponse.class);
-
+      LoadicatorAlgoResponse algoResponse =
+          restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
+      this.saveloadicatorDataForSynopticalTable(algoResponse);
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
           LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
           algoResponse.getProcessId(),
@@ -4143,23 +4143,68 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * Save data for synoptical table
+   *
+   * @param algoResponse
+   */
+  private void saveloadicatorDataForSynopticalTable(LoadicatorAlgoResponse algoResponse) {
+    List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
+    for (LoadicatorPatternDetailsResults patternDetails :
+        algoResponse.getLoadicatorResultsPatternWise()) {
+      patternDetails
+          .getLoadicatorResultDetails()
+          .forEach(
+              result -> {
+                SynopticalTableLoadicatorData entity = new SynopticalTableLoadicatorData();
+                entity.setLoadablePatternId(patternDetails.getLoadablePatternId());
+                entity.setSynopticalTable(
+                    this.synopticalTableRepository.getOne(result.getSynopticalId()));
+                entity.setActive(true);
+                entity.setBlindSector(
+                    isEmpty(result.getDeflection())
+                        ? null
+                        : new BigDecimal(result.getDeflection()));
+                entity.setCalculatedDraftAftPlanned(
+                    isEmpty(result.getCalculatedDraftAftPlanned())
+                        ? null
+                        : new BigDecimal(result.getCalculatedDraftAftPlanned()));
+                entity.setCalculatedDraftFwdPlanned(
+                    isEmpty(result.getCalculatedDraftFwdPlanned())
+                        ? null
+                        : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
+                entity.setCalculatedDraftMidPlanned(
+                    isEmpty(result.getCalculatedDraftMidPlanned())
+                        ? null
+                        : new BigDecimal(result.getCalculatedDraftMidPlanned()));
+                entity.setCalculatedTrimPlanned(
+                    isEmpty(result.getCalculatedTrimPlanned())
+                        ? null
+                        : new BigDecimal(result.getCalculatedTrimPlanned()));
+                entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+                entities.add(entity);
+              });
+    }
+    this.synopticalTableLoadicatorDataRepository.saveAll(entities);
+  }
+
+  /**
    * @param request
    * @param loadicator void
    */
   private void buildLoadicatorUrlRequest(
       LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator) {
     loadicator.setProcessId(request.getProcessId());
-    loadicator.setLoadicatorPatternDetails(new ArrayList<LoadicatorPatternDetails>());
+    loadicator.setLoadicatorPatternDetails(new ArrayList<>());
     request
         .getLoadicatorPatternDetailsList()
         .forEach(
             patternDetails -> {
               LoadicatorPatternDetails patterns = new LoadicatorPatternDetails();
               patterns.setLoadablePatternId(patternDetails.getLoadablePatternId());
-              patterns.setLdTrim(createLdTrim(patternDetails.getLDtrimList()));
-              patterns.setLdStrength(createLdStrength(patternDetails.getLDStrengthList()));
+              patterns.setLdTrim(this.createLdTrim(patternDetails.getLDtrimList()));
+              patterns.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
               patterns.setLdIntactStability(
-                  createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+                  this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
               loadicator.getLoadicatorPatternDetails().add(patterns);
             });
   }
@@ -4210,6 +4255,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               lDIntactStability.getStabilityAreaBaJudgement());
           intactStability.setStabilityAreaBaValue(lDIntactStability.getStabilityAreaBaValue());
           intactStability.setPortId(lDIntactStability.getPortId());
+          intactStability.setSynioticalId(lDIntactStability.getSynopticalId());
           ldIntactStabilities.add(intactStability);
         });
 
@@ -4249,6 +4295,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           strength.setShearingForceJudgement(ldStrength.getShearingForceJudgement());
           strength.setShearingForcePersentValue(ldStrength.getShearingForcePersentValue());
           strength.setPortId(ldStrength.getPortId());
+          strength.setSynioticalId(ldStrength.getSynopticalId());
           ldStrengths.add(strength);
         });
 
@@ -4288,6 +4335,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               ldTrim.getMinimumForeDraftInRoughWeatherValue());
           trim.setTrimValue(ldTrim.getTrimValue());
           trim.setPortId(ldTrim.getPortId());
+          trim.setSynioticalId(ldTrim.getSynopticalId());
           ldTrims.add(trim);
         });
 
@@ -5230,7 +5278,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         obqEntity = obqEntityOpt.get();
 
       } else {
-
         obqEntity = new OnBoardQuantity();
         obqEntity.setTankId(cargoRecord.getTankId());
         obqEntity.setPortId(record.getPortId());
@@ -6113,12 +6160,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable synopticalEntity,
       SynopticalRecord.Builder builder,
       List<LoadableStudyPortRotation> portRotations) {
-    /*Optional<LoadableStudyPortRotation> portRotation =
-    portRotations
-        .stream()
-        .filter(
-            pr -> pr.getId().equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
-        .findFirst();*/
+    /*
+     * Optional<LoadableStudyPortRotation> portRotation = portRotations .stream()
+     * .filter( pr ->
+     * pr.getId().equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
+     * .findFirst();
+     */
     Optional<LoadableStudyPortRotation> portRotation =
         Optional.of(synopticalEntity.getLoadableStudyPortRotation());
     if (portRotation.isPresent()) {
