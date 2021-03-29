@@ -169,6 +169,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -3237,7 +3238,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return Long
    */
   private Long getLastPort(LoadableStudy loadableStudy, CargoOperation loading) {
-    return loadableStudyPortRotationRepository.findLastPort(loadableStudy, loading, true);
+    Object[] ob = getLastPortRotationData(loadableStudy, loading, true);
+    return (long) ob[0];
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loading
+   * @return Long - id
+   */
+  private Long getLastPortRotationId(LoadableStudy loadableStudy, CargoOperation loading) {
+    Object[] ob = getLastPortRotationData(loadableStudy, loading, true);
+    return (long) ob[1];
+  }
+
+  private Object[] getLastPortRotationData(
+      LoadableStudy loadableStudy, CargoOperation loading, boolean status) {
+    Object ob = loadableStudyPortRotationRepository.findLastPort(loadableStudy, loading, status);
+    Object[] obA = (Object[]) ob;
+    return obA;
   }
 
   /**
@@ -3454,15 +3473,41 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePatternBuilder.addAllLoadablePlanStowageDetails(
                   replyBuilder.getLoadablePlanStowageDetailsList());
 
+              // <--DSS-2016-->
+              List<LoadablePlanQuantity> loadablePlanQuantities =
+                  loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              LoadablePlanBuilder.buildLoadablePlanQuantity(
+                  loadablePlanQuantities, loadablePatternBuilder);
+              List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+                  loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              LoadablePlanBuilder.buildLoadablePlanCommingleDetails(
+                  loadablePlanCommingleDetails, loadablePatternBuilder);
+              List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
+                  loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              LoadablePlanBuilder.buildBallastGridDetails(
+                  loadablePlanBallastDetails, loadablePatternBuilder);
+              // <--DSS-2016!-->
+
               builder.addLoadablePattern(loadablePatternBuilder);
               loadablePatternBuilder.clearLoadablePlanStowageDetails();
             });
-        VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
+        // VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
+        VesselReply vesselReply =
+            this.getTanks(loadableStudy.get().getVesselXId(), CARGO_BALLAST_TANK_CATEGORIES);
         if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
           builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
         } else {
           builder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
           builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+          buildBallastTankLayout(
+              vesselReply.getVesselTanksList().stream()
+                  .filter(
+                      tankList -> BALLAST_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+                  .collect(Collectors.toList()),
+              builder);
         }
       }
     } catch (Exception e) {
@@ -3477,6 +3522,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+  /**
+   * Ballast Tank category builder
+   *
+   * @param vesselTankDetails - List<VesselTankDetail>
+   * @param replyBuilder - LoadablePatternReply.Builder
+   */
+  private void buildBallastTankLayout(
+      List<VesselTankDetail> vesselTankDetails, LoadablePatternReply.Builder replyBuilder) {
+
+    List<VesselTankDetail> frontBallastTanks = new ArrayList<>();
+    List<VesselTankDetail> centerBallestTanks = new ArrayList<>();
+    List<VesselTankDetail> rearBallastTanks = new ArrayList<>();
+    frontBallastTanks.addAll(
+        vesselTankDetails.stream()
+            .filter(tank -> BALLAST_FRONT_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+    centerBallestTanks.addAll(
+        vesselTankDetails.stream()
+            .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+
+    rearBallastTanks.addAll(
+        vesselTankDetails.stream()
+            .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+
+    replyBuilder.addAllBallastFrontTanks(this.groupTanks(frontBallastTanks));
+    replyBuilder.addAllBallastCenterTanks(this.groupTanks(centerBallestTanks));
+    replyBuilder.addAllBallastRearTanks(this.groupTanks(rearBallastTanks));
   }
 
   /**
@@ -8505,6 +8580,62 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           "Save not allowed for active voyage",
           CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
           HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Fetch Single Synoptic Data with DEP condition,
+   *
+   * @param request - LoadableStudy Id, LoadablePattern Id required
+   * @param responseObserver - SynopticalTableReply with One SynopticalTable Data
+   */
+  @Override
+  public void getSynopticDataByLoadableStudyId(
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+          responseObserver) {
+
+    SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
+    log.info(
+        "Synoptic DEP data for loadable study {}, loadable pattern {}",
+        request.getLoadableStudyId(),
+        request.getLoadablePatternId());
+    try {
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      CargoOperation cOp = this.cargoOperationRepository.getOne(LOADING_OPERATION_ID);
+      Long portRotationId = this.getLastPortRotationId(loadableStudy.get(), cOp);
+      LoadableStudyPortRotation lsPr = loadableStudyPortRotationRepository.getOne(portRotationId);
+      Pageable pageable = PageRequest.of(0, 10);
+      Page<SynopticalTable> synData =
+          synopticalTableRepository.findByloadableStudyPortRotation(lsPr, pageable);
+      Optional<SynopticalTable> synopticDEP =
+          synData.stream()
+              .filter(var1 -> (var1.getIsActive() && var1.getOperationType().equals("DEP")))
+              .findFirst();
+      log.info(
+          "Synoptic Table data id {}, for port rotation id {}",
+          synopticDEP.get().getId(),
+          lsPr.getId());
+      VesselReply vesselReply = this.getSynopticalTableVesselData(request, loadableStudy.get());
+      List<VesselTankDetail> sortedTankList = new ArrayList<>(vesselReply.getVesselTanksList());
+      buildSynopticalTableReply(
+          request,
+          Arrays.asList(synopticDEP.get()),
+          this.getSynopticalTablePortDetails(Arrays.asList(synopticDEP.get())),
+          this.getSynopticalTablePortRotations(loadableStudy.get()),
+          loadableStudy.get(),
+          sortedTankList,
+          vesselReply.getVesselLoadableQuantityDetails(),
+          replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (Exception e) {
+      log.error("Exception while fetch Synoptic data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
     }
   }
 }

@@ -114,6 +114,9 @@ service LoadableStudyService {
 	
 	rpc GetSynopticalPortDataByPortId (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
+
+	rpc GetSynopticDataByLoadableStudyId (SynopticalTableRequest) returns (SynopticalTableReply){
+	}
 	
 	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
 	}
@@ -842,19 +845,25 @@ message LoadablePatternReply {
  	repeated LoadablePattern loadablePattern = 1;
  	ResponseStatus responseStatus = 2;
  	repeated TankList tanks = 3;
- 	string loadablePatternCreatedDate = 4;
-    string loadableStudyName = 5;
+	repeated TankList ballastFrontTanks = 4;
+	repeated TankList ballastCenterTanks = 5;
+	repeated TankList ballastRearTanks = 6;
+ 	string loadablePatternCreatedDate = 7;
+ 	string loadableStudyName = 8;
 }
 
 message LoadablePattern {
 	int64 loadablePatternId = 1;
-	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 2;
-	repeated string constraints = 3;
-	int64 loadableStudyStatusId = 4;
-	int32 caseNumber = 5;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 6;
-	StabilityParameter stabilityParameters = 7;	
-	repeated int64 commingleTankIds = 8;
+	int32 caseNumber = 2;
+	int64 loadableStudyStatusId = 3;
+	repeated string constraints = 4;
+	repeated int64 commingleTankIds = 5;
+	StabilityParameter stabilityParameters = 6;
+	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 7;
+	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 8;
+	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 9;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 10;
+	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 11;
 }
 
 message LoadablePatternCargoDetails {
