@@ -3494,8 +3494,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               builder.addLoadablePattern(loadablePatternBuilder);
               loadablePatternBuilder.clearLoadablePlanStowageDetails();
             });
-        // VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
-        VesselReply vesselReply =
+        VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
+        VesselReply vesselReply2 =
             this.getTanks(loadableStudy.get().getVesselXId(), CARGO_BALLAST_TANK_CATEGORIES);
         if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
           builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
@@ -3503,7 +3503,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           builder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
           builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
           buildBallastTankLayout(
-              vesselReply.getVesselTanksList().stream()
+              vesselReply2.getVesselTanksList().stream()
                   .filter(
                       tankList -> BALLAST_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
                   .collect(Collectors.toList()),
