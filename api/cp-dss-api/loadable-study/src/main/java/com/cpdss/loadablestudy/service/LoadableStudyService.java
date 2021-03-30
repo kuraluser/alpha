@@ -8638,4 +8638,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Autowired AlgoErrorService algoErrorService;
+
+  @Override
+  public void saveAlgoErrors(
+      com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
+    algoErrorService.saveAlgoError(request, responseObserver);
+  }
+
+  @Override
+  public void fetchAllAlgoErrors(
+      com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
+    algoErrorService.fetchAllErrors(request, responseObserver);
+  }
 }

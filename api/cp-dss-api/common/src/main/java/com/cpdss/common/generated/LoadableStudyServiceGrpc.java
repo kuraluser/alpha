@@ -2544,6 +2544,102 @@ public final class LoadableStudyServiceGrpc {
     return getSaveJsonMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getSaveAlgoErrorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveAlgoErrors",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getSaveAlgoErrorsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        getSaveAlgoErrorsMethod;
+    if ((getSaveAlgoErrorsMethod = LoadableStudyServiceGrpc.getSaveAlgoErrorsMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveAlgoErrorsMethod = LoadableStudyServiceGrpc.getSaveAlgoErrorsMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveAlgoErrorsMethod =
+              getSaveAlgoErrorsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveAlgoErrors"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveAlgoErrors"))
+                      .build();
+        }
+      }
+    }
+    return getSaveAlgoErrorsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getFetchAllAlgoErrorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "FetchAllAlgoErrors",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getFetchAllAlgoErrorsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        getFetchAllAlgoErrorsMethod;
+    if ((getFetchAllAlgoErrorsMethod = LoadableStudyServiceGrpc.getFetchAllAlgoErrorsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getFetchAllAlgoErrorsMethod = LoadableStudyServiceGrpc.getFetchAllAlgoErrorsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getFetchAllAlgoErrorsMethod =
+              getFetchAllAlgoErrorsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "FetchAllAlgoErrors"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("FetchAllAlgoErrors"))
+                      .build();
+        }
+      }
+    }
+    return getFetchAllAlgoErrorsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -2995,6 +3091,22 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveJsonMethod(), responseObserver);
     }
 
+    /** */
+    public void saveAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveAlgoErrorsMethod(), responseObserver);
+    }
+
+    /** */
+    public void fetchAllAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getFetchAllAlgoErrorsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -3350,6 +3462,20 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.JsonRequest,
                       com.cpdss.common.generated.LoadableStudy.StatusReply>(
                       this, METHODID_SAVE_JSON)))
+          .addMethod(
+              getSaveAlgoErrorsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
+                      this, METHODID_SAVE_ALGO_ERRORS)))
+          .addMethod(
+              getFetchAllAlgoErrorsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
+                      this, METHODID_FETCH_ALL_ALGO_ERRORS)))
           .build();
     }
   }
@@ -3916,6 +4042,28 @@ public final class LoadableStudyServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /** */
+    public void saveAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void fetchAllAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -4282,6 +4430,19 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.StatusReply saveJson(
         com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
       return blockingUnaryCall(getChannel(), getSaveJsonMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrors saveAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return blockingUnaryCall(getChannel(), getSaveAlgoErrorsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrors fetchAllAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return blockingUnaryCall(
+          getChannel(), getFetchAllAlgoErrorsMethod(), getCallOptions(), request);
     }
   }
 
@@ -4736,6 +4897,22 @@ public final class LoadableStudyServiceGrpc {
         saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
       return futureUnaryCall(getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return futureUnaryCall(
+          getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -4788,6 +4965,8 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 47;
   private static final int METHODID_GET_ALL_CARGO_HISTORY = 48;
   private static final int METHODID_SAVE_JSON = 49;
+  private static final int METHODID_SAVE_ALGO_ERRORS = 50;
+  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 51;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5153,6 +5332,18 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_ALGO_ERRORS:
+          serviceImpl.saveAlgoErrors(
+              (com.cpdss.common.generated.LoadableStudy.AlgoErrors) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>)
+                  responseObserver);
+          break;
+        case METHODID_FETCH_ALL_ALGO_ERRORS:
+          serviceImpl.fetchAllAlgoErrors(
+              (com.cpdss.common.generated.LoadableStudy.AlgoErrors) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -5267,6 +5458,8 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetCargoApiTempHistoryMethod())
                       .addMethod(getGetAllCargoHistoryMethod())
                       .addMethod(getSaveJsonMethod())
+                      .addMethod(getSaveAlgoErrorsMethod())
+                      .addMethod(getFetchAllAlgoErrorsMethod())
                       .build();
         }
       }
