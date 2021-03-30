@@ -156,10 +156,6 @@ service LoadableStudyService {
 	
 	rpc SaveJson (JsonRequest) returns (StatusReply) {
 	}
-
-	rpc SaveAlgoErrors(AlgoErrors) returns (AlgoErrors){}
-
-	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors){}
 }
 
 message RecalculateVolumeRequest {
@@ -617,6 +613,7 @@ message LoadableStudyDetail{
 	bool isOhqComplete=26;
 	bool isObqComplete=27;
 	bool isDischargingPortComplete=28;
+	repeated OhqPorts ohqPorts=29;
 }
 
 message LoadableStudyReply{
@@ -763,6 +760,7 @@ message OnHandQuantityDetail{
 	string density=16;
 	bool isOhqComplete=17;
 	int64 portRotationId = 18;
+	bool isPortRotationOhqComplete=19;
 }
 
 message TankDetail{
@@ -1141,9 +1139,7 @@ message JsonRequest {
 	string json = 3;
 }
 
-message AlgoErrors{
+message OhqPorts{
 	int64 id = 1;
-	string errorHeading = 2;
-	repeated string errorMessages = 3;
-	ResponseStatus responseStatus = 4;
+	bool isPortRotationOhqComplete = 2;
 }
