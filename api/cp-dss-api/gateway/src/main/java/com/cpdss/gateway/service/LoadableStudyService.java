@@ -157,6 +157,7 @@ import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -1219,6 +1220,22 @@ public class LoadableStudyService {
       voyage.setEndDate(detail.getEndDate());
       voyage.setStatus(detail.getStatus());
       voyage.setStatusId(detail.getStatusId());
+
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+      Optional.ofNullable(detail.getActualStartDate())
+          .filter(it -> !it.isEmpty())
+          .ifPresent(
+              actualStartDate ->
+                  voyage.setActualStartDate(
+                      LocalDate.parse(detail.getActualStartDate(), formatter)));
+
+      Optional.ofNullable(detail.getActualEndDate())
+          .filter(it -> !it.isEmpty())
+          .ifPresent(
+              actualEndDate ->
+                  voyage.setActualEndDate(LocalDate.parse(detail.getActualEndDate(), formatter)));
+
       // voyage.setNoOfDays(detail.getNoOfDays());
       voyage.setNoOfDays(detail.getNoOfDays() != 0 ? detail.getNoOfDays() : null);
       voyage.setConfirmedLoadableStudyId(
