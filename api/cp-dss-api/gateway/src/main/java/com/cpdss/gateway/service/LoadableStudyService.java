@@ -5069,7 +5069,10 @@ public class LoadableStudyService {
               });
       // Fetch max 5 records for port history
       List<CargoHistory> portHistoryList =
-          cargoHistoryList.stream().limit(5L).collect(Collectors.toList());
+          cargoHistoryList.stream()
+              .filter(var1 -> request.getLoadingPortIds().contains(var1.getLoadingPortId()))
+              .limit(5L)
+              .collect(Collectors.toList());
       cargoHistoryResponse.setPortHistory(portHistoryList);
       /*
       // Monthly history - group by loaded year and latest loaded date
