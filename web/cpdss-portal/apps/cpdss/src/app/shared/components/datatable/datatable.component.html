@@ -1,10 +1,11 @@
 <div *ngIf="form" [formGroup]="form" class="row" style="height: 100%">
     <div formArrayName="dataTable" class="col" style="height: 100%">
-        <p-table #datatable  [columns]="columns"  [scrollable]="scrollable" scrollHeight="flex" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode" [loading]="loading"
+        <p-table #datatable [columns]="columns" [scrollable]="scrollable" scrollHeight="flex" [value]="value"
+            [editMode]="editMode" [selectionMode]="selectionMode" [loading]="loading"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
             (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)"
-            (onFilter)="onFilter($event)" [customSort]="customSort" (sortFunction)="sortFunction($event)"
-            [lazy]="lazy" (onLazyLoad)="loadDetails($event)"> 
+            (onFilter)="onFilter($event)" [customSort]="customSort" (sortFunction)="sortFunction($event)" [lazy]="lazy"
+            (onLazyLoad)="loadDetails($event)">
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                     <col *ngIf="progress" class="column-class column-loader">
@@ -22,7 +23,8 @@
                     <th *ngIf="tableRowReOrder"></th>
                     <th *ngFor="let col of columns" [pSortableColumn]="col?.sortField ? col?.sortField : col.field"
                         [pSortableColumnDisabled]="!col.sortable" [colSpan]="col?.columns?.length"
-                        [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)" [class]="col?.fieldColumnClass">
+                        [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)"
+                        [class]="col?.fieldColumnClass">
                         <span>{{col.header| translate}}</span>
                         <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field" *ngIf="col.sortable">
                         </p-sortIcon>
@@ -69,27 +71,29 @@
                 <ng-template #filterTemplate let-col="column">
                     <ng-container *ngIf="col.filter" [ngSwitch]="col.filterType">
                         <input *ngSwitchCase="filterType.TEXT" type="text" id="{{col.field+'_filter'}}"
-                            (input)="filterData($event , col)" [ngModel]="filterObject[col.filterField]" [ngModelOptions]="{standalone: true}"
-                            [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
+                            (input)="filterData($event , col)" [ngModel]="filterObject[col.filterField]"
+                            [ngModelOptions]="{standalone: true}" [placeholder]="col.filterPlaceholder| translate"
+                            class="p-column-filter">
                         <input *ngSwitchCase="filterType.NUMBER" type="number" id="{{col.field+'_filter'}}"
                             (input)="datatable.filter($event.target.value, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
                             [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                         <input *ngSwitchCase="filterType.ARRAY" type="text" id="{{col.field+'_filter'}}"
                             (input)="datatable.filter($event.target.value.trim(), col.arrayFilterField, col.filterMatchMode)"
                             [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
-                            <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"
-                            [maxDate]="col.filterFieldMaxvalue"
-                            (onSelect)="onDateSelect($event,col, col?.filterField, col?.filterMatchMode)" keepInvalid="true"
+                        <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE" [maxDate]="col.filterFieldMaxvalue"
+                            (onSelect)="onDateSelect($event,col, col?.filterField, col?.filterMatchMode)"
+                            keepInvalid="true"
                             (onInput)="onDateFilter($event.target.value, col, col?.filterField, col?.filterMatchMode)"
-                            (onClearClick)="datatable.filter('', col?.filterField, 'contains')"
-                            [showButtonBar]="true" styleClass="p-column-filter"
-                            [placeholder]="col.filterPlaceholder| translate" [readonlyInput]="false"
-                            dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
+                            (onClearClick)="datatable.filter('', col?.filterField, 'contains')" [showButtonBar]="true"
+                            styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
+                            [readonlyInput]="false" dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
                         </p-calendar>
-                        <p-dropdown *ngSwitchCase="filterType.SELECT" [options]="listData[col.filterListName]"
-                            [showClear]="true" appendTo="body" optionLabel="name"
-                            [placeholder]="col.filterPlaceholder| translate"
-                            (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)">
+                        <p-dropdown #dropDown1 *ngSwitchCase="filterType.SELECT"
+                            [options]="listData[col.filterListName]" [showClear]="true" appendTo="body"
+                            [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
+                            optionLabel="name" [placeholder]="col.filterPlaceholder| translate" resetFilterOnHide="true"
+                            (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
+                            (onFocus)="setDropDownFocus(dropDown1)">
                         </p-dropdown>
                     </ng-container>
                 </ng-template>
@@ -118,32 +122,42 @@
                     </ng-container>
                     <ng-template #rowTemplate let-rowData="rowData" let-col="column" let-colIndex="colIndex"
                         let-rowIndex="rowIndex" let-columns="columns">
-                        <td [class]="col.fieldClass" [ngSwitch]="col.fieldType"
-                            [pEditableColumn]="rowData" [pEditableColumnField]="col.field"
-                            [pEditableColumnRowIndex]="rowIndex" (click)="onClick($event, rowData, rowIndex, col)">
+                        <td [class]="col.fieldClass" [ngSwitch]="col.fieldType" [pEditableColumn]="rowData"
+                            [pEditableColumnField]="col.field" [pEditableColumnRowIndex]="rowIndex"
+                            (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
-                                (keyup)="onFocus($event, rowData, col, colIndex)" id="{{'cell'+col.field + '_' + rowIndex}}">
-                                
+                                (keyup)="onFocus($event, rowData, col, colIndex)"
+                                id="{{'cell'+col.field + '_' + rowIndex}}">
+
                                 <ng-container *ngIf="!lazy;else lazyRef">
                                     <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
                                         rowIndex+ 1}}</span>
-                                    <span *ngSwitchCase="fieldType.ICON"><i
+                                    <span *ngSwitchCase="fieldType.ICON"
+                                        [pTooltip]="col.showTooltip ? rowData[col.fieldValue] : null"
+                                        tooltipPosition="right"><i
                                             class="{{col.fieldValueIcon+'-'+rowData[col.field]}}"></i></span>
                                 </ng-container>
                                 <ng-template #lazyRef>
-                                    <span *ngSwitchCase="fieldType.SLNO">{{(paginatorRef?.paginatorState?.page*paginatorRef?.paginatorState?.rows) + (rowIndex +1)}}</span>
+                                    <span
+                                        *ngSwitchCase="fieldType.SLNO">{{(paginatorRef?.paginatorState?.page*paginatorRef?.paginatorState?.rows)
+                                        + (rowIndex +1)}}</span>
                                 </ng-template>
 
                                 <ng-container *ngSwitchCase="fieldType.BUTTON">
-                                        <ng-container *ngFor="let button of col?.buttons;let buttonIndex = index">
-                                            <a type="button" *ngIf="rowData[button?.field] || rowData[button?.field] === undefined" id="{{tableId + 'button' + rowIndex + buttonIndex}}"
-                                            class="{{button?.class}}" 
-                                            (click)="buttonEvent($event, rowData, rowIndex, button?.field, button)">{{button.label}}</a>
-                                        </ng-container>
+                                    <ng-container *ngFor="let button of col?.buttons;let buttonIndex = index">
+                                        <a type="button"
+                                            *ngIf="rowData[button?.field] || rowData[button?.field] === undefined"
+                                            id="{{tableId + 'button' + rowIndex + buttonIndex}}"
+                                            class="{{button?.class}}"
+                                            (click)="buttonEvent($event, rowData, rowIndex, button?.field, button)">
+                                            <div class="{{button?.icons}}" *ngIf="button.icons"></div>
+                                            {{button.label ? button.label : ''}}</a>
+                                    </ng-container>
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.ACTION">
-                                    <div class="action-buttons" *ngIf="rowData.isActionsEnabled === undefined || rowData.isActionsEnabled">
+                                    <div class="action-buttons"
+                                        *ngIf="rowData.isActionsEnabled === undefined || rowData.isActionsEnabled">
                                         <p-splitButton appendTo="body" id="{{tableId + 'split_button_' + rowIndex}}"
                                             *ngIf="col.actions.length > 1" icon="null"
                                             menuStyleClass="grid-dropdown-menu" styleClass="grid-dropdown-icon"
@@ -198,16 +212,20 @@
 
                                 <ng-container *ngSwitchCase="fieldType.SELECT">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <p-dropdown [options]="listData[col.listName]" styleClass="form-control"
-                                            appendTo="body" [formControlName]="col.field" [filter]="col.listFilter"
+                                        <p-dropdown #dropDown2 [options]="listData[col.listName]"
+                                            styleClass="form-control" appendTo="body"
+                                            [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
+                                            [formControlName]="col.field" [filter]="col.listFilter"
                                             optionLabel="{{col.fieldOptionLabel}}"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
+                                            resetFilterOnHide="true" (onFocus)="setDropDownFocus(dropDown2)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
                                             itemSize="30">
                                             <ng-template *ngIf="col?.showTemplate" let-item pTemplate="item">
                                                 <span>
-                                                    <i class="color-rounded align-top mr-5" [ngStyle]="{'background' : item.value.color}"></i>
+                                                    <i class="color-rounded align-top mr-5"
+                                                        [ngStyle]="{'background' : item.value.color}"></i>
                                                     <span>{{item.label}}</span>
                                                 </span>
                                             </ng-template>
@@ -279,8 +297,7 @@
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
                                             id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false"
-                                            [formControlName]="col.field"
-                                            #coldaterange>
+                                            [formControlName]="col.field" #coldaterange>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
@@ -306,12 +323,13 @@
                                             [hideOnDateTimeSelect]="false" #coldatetime>
                                             <p-footer>
                                                 <div class="text-center">
-                                                <button class="btn btn-main"
-                                                    (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
-                                                    translate}}</button>
+                                                    <button class="btn btn-main"
+                                                        (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                                        |
+                                                        translate}}</button>
                                                 </div>
-                                                </p-footer>
-                                                
+                                            </p-footer>
+
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
@@ -334,7 +352,7 @@
             <ng-template pTemplate="footer" let-columns>
                 <tr *ngIf="showTotal && value && value.length">
                     <td *ngIf="progress">
-                        
+
                     </td>
                     <td *ngFor="let col of columns; let i = index">
                         {{getTotal(col, i)}}
@@ -350,8 +368,11 @@
             </ng-template>
         </p-table>
         <ng-container *ngIf="paginator">
-            <p-paginator [first]="first" currentPageReportTemplate={{currentPageReportTemplate}} [showJumpToPageDropdown]="false"  #paginator [showCurrentPageReport]="true"   [rows]="rows" [totalRecords]="totalRecords"  (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage"></p-paginator>
+            <p-paginator [first]="first" currentPageReportTemplate={{currentPageReportTemplate}}
+                [showJumpToPageDropdown]="false" #paginator [showCurrentPageReport]="true" [rows]="rows"
+                [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage">
+            </p-paginator>
         </ng-container>
-        
+
     </div>
 </div>

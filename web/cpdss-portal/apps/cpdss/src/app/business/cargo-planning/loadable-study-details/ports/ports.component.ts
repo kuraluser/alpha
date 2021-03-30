@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -17,6 +17,7 @@ import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-val
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { first } from 'rxjs/operators';
 
 
 /**
@@ -31,7 +32,7 @@ import { LoadableStudy } from '../../models/loadable-study-list.model';
   templateUrl: './ports.component.html',
   styleUrls: ['./ports.component.scss']
 })
-export class PortsComponent implements OnInit {
+export class PortsComponent implements OnInit, OnDestroy {
 
   @Input() voyageId: number;
   @Input() voyage: Voyage;
@@ -78,6 +79,7 @@ export class PortsComponent implements OnInit {
   // private fields
   private _portsLists: IPortsValueObject[];
   private _loadableStudy: LoadableStudy;
+  private portsListSaved: IPortsValueObject[];
 
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -92,6 +94,10 @@ export class PortsComponent implements OnInit {
     this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
+  }
+
+  ngOnDestroy() {
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
   }
 
   /**
@@ -129,6 +135,10 @@ export class PortsComponent implements OnInit {
         }
       }, 500);
     }
+    this.portsListSaved = [];
+    this.portsLists.forEach(row => {
+      this.portsListSaved.push(JSON.parse(JSON.stringify(row)))
+    })
     this.ngxSpinnerService.hide();
   }
 
@@ -238,16 +248,30 @@ export class PortsComponent implements OnInit {
       this.addPort();
     });
 
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'ports_sync_finished') {
-        const index = this.portsLists.findIndex((item) => item.storeKey === event.data.storeKey);
-        if (index !== -1) {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof PortsComponent
+   */
+  private swMessageHandler = async (event) => {
+    const translationKeys = await this.translateService.get(['PORT_UPDATE_ERROR', 'PORT_UPDATE_STATUS_ERROR']).toPromise();
+    if (event?.data?.type === 'ports_sync_finished') {
+      const index = this.portsLists?.findIndex((item) => item.storeKey === event.data.storeKey);
+      if (index !== -1) {
+        this.portsLists[index].processing = false;
+        if (event?.data?.status === '200') {
           this.portsLists[index].id = event.data.id;
-          this.portsLists[index].processing = false;
           this.portsLists = [...this.portsLists];
         }
       }
-    });
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['PORT_UPDATE_ERROR'], detail: translationKeys['PORT_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+    }
   }
 
   /**
@@ -303,6 +327,32 @@ export class PortsComponent implements OnInit {
    */
   async onEditComplete(event: IPortsEvent) {
     const index = event.index;
+    const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
+    if ((event.field === 'port' || event.field === 'operation') && !event.data?.isAdd && !this.portsListSaved[index]['isAdd']) {
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORT_CHANGE_CONFIRM_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORT_CHANGE_CONFIRM_LABEL', rejectLabel: 'PORT_CHANGE_REJECT_LABEL' } });
+      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
+        if (response) {
+          this.portsListSaved[index] = JSON.parse(JSON.stringify(this.portsLists[index]))
+          this.portsListSaved[index]['isAdd'] = true;
+          this.updatePortsDetails(event)
+        } else {
+          this.portsLists[valueIndex][event.field].value = this.portsListSaved[valueIndex][event.field]['_value'];
+          this.updateField(event.index, event.field, this.portsListSaved[valueIndex][event.field]['_value']);
+        }
+      });
+    } else {
+      this.updatePortsDetails(event)
+    }
+  }
+
+  /**
+   * Method to handle ports data on update
+   *
+   * @param {IPortsEvent} event
+   * @memberof PortsComponent
+   */
+  updatePortsDetails(event: IPortsEvent) {
+    const index = event.index;
     const form = this.row(index);
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (event.field === 'port') {
@@ -354,20 +404,14 @@ export class PortsComponent implements OnInit {
       this.updateValidityAndEditMode(index, 'etd');
     }
     if (event.field === 'etd') {
-      this.updateValidityAndEditMode(index, 'eta');
-      if (index + 1 < this.portsLists.length) {
-        this.updateValidityAndEditMode(index + 1, 'eta')
-      }
-      if (index + 2 < this.portsLists.length) {
-        this.updateValidityAndEditMode(index + 2, 'eta')
+      for (let i = 0; i < this.portsLists.length; i++) {
+        this.updateValidityAndEditMode(i, 'eta')
       }
     }
     if (event.field === 'eta') {
-      this.updateValidityAndEditMode(index, 'etd');
-      if (index > 0)
-        this.updateValidityAndEditMode(index - 1, 'etd');
-      if (index - 1 > 0)
-        this.updateValidityAndEditMode(index - 2, 'etd');
+      for (let i = 0; i < this.portsLists.length; i++) {
+        this.updateValidityAndEditMode(i, 'etd')
+      }
     }
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, rowIndex) => {
@@ -381,12 +425,14 @@ export class PortsComponent implements OnInit {
       }
       if (row.valid && !event.data?.isAdd && row.touched) {
         event.data.processing = true;
-        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
-        if (res) {
-          row.markAsUntouched();
-          for (const key in this.portsLists[rowIndex]) {
-            if (this.portsLists[rowIndex].hasOwnProperty(key) && this.portsLists[rowIndex][key].hasOwnProperty('_isEditMode')) {
-              this.portsLists[rowIndex][key].isEditMode = false;
+        if (this.portsLists[rowIndex]?.id !== 0) {
+          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+          if (res) {
+            row.markAsUntouched();
+            for (const key in this.portsLists[rowIndex]) {
+              if (this.portsLists[rowIndex].hasOwnProperty(key) && this.portsLists[rowIndex][key].hasOwnProperty('_isEditMode')) {
+                this.portsLists[rowIndex][key].isEditMode = false;
+              }
             }
           }
         }
@@ -394,6 +440,7 @@ export class PortsComponent implements OnInit {
     });
     this.portsLists = [...this.portsLists];
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
+
   }
 
   /**
@@ -479,7 +526,7 @@ export class PortsComponent implements OnInit {
   */
   async onDeleteRow(event: IPortsEvent) {
     if (event?.data?.isDelete) {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
       const subscription = this.confirmationAlertService.confirmAlert$
         .subscribe(async (response) => {
           if (response) {

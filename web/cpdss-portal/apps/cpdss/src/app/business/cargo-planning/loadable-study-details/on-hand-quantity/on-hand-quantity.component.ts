@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -10,11 +10,11 @@ import { groupTotalValidator } from '../../directives/validator/group-total.dire
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
-import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { Observable, of } from 'rxjs';
-import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 
 /**
  * Compoent for OHQ tab
@@ -28,7 +28,7 @@ import { LoadableStudy } from '../../models/loadable-study-list.model';
   templateUrl: './on-hand-quantity.component.html',
   styleUrls: ['./on-hand-quantity.component.scss']
 })
-export class OnHandQuantityComponent implements OnInit {
+export class OnHandQuantityComponent implements OnInit, OnDestroy {
 
   @ViewChild('ohqDatatable') ohqDatatable: ElementRef;
 
@@ -49,21 +49,6 @@ export class OnHandQuantityComponent implements OnInit {
   @Input() vesselId: number;
 
   @Input() permission: IPermission;
-
-  @Input()
-  get quantitySelectedUnit(): QUANTITY_UNIT {
-    return this._quantitySelectedUnit;
-
-  }
-
-  set quantitySelectedUnit(value: QUANTITY_UNIT) {
-    this._prevQuantitySelectedUnit = this.quantitySelectedUnit;
-    this._quantitySelectedUnit = value;
-    if (this._prevQuantitySelectedUnit) {
-      this.convertSelectedPortOHQTankDetails();
-    }
-
-  }
 
   @Input()
   get loadableStudy() {
@@ -144,7 +129,7 @@ export class OnHandQuantityComponent implements OnInit {
   selectedTankFormGroupIndex: number;
   dataTableLoading: boolean;
   ohqCheckUpdatesTimer;
-  ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity' };
+  ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity', weightUnit: AppConfigurationService.settings.baseUnit };
   progress = true;
 
   private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
@@ -153,8 +138,6 @@ export class OnHandQuantityComponent implements OnInit {
   private _rearTanks: IBunkerTank[][];
   private _selectedTank: IPortOHQTankDetailValueObject;
   private _ohqForm: FormGroup;
-  private _quantitySelectedUnit: QUANTITY_UNIT;
-  private _prevQuantitySelectedUnit: QUANTITY_UNIT;
   private _loadableStudy: LoadableStudy;
 
 
@@ -162,7 +145,17 @@ export class OnHandQuantityComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
-    private quantityPipe: QuantityPipe) { }
+    private translateService: TranslateService,
+    private messageService: MessageService) { }
+
+  /**
+   * OnDestroy function for ohq component
+   *
+   * @memberof OnHandQuantityComponent
+   */
+  ngOnDestroy(): void {
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
+  }
 
   /**
    * NgOnit init function for ohq component
@@ -184,7 +177,9 @@ export class OnHandQuantityComponent implements OnInit {
     this.ports = await this.loadableStudyDetailsApiService.getPorts().toPromise();
     const result = await this.loadableStudyDetailsApiService.getOHQPortRotation(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     if (result?.portList) {
-      this.ohqPorts = result?.portList?.map((ohqPort) => this.ports?.find((port) => port.id === ohqPort.portId));
+      this.ohqPorts = result?.portList?.map((ohqPort) => {
+        return {...this.ports?.find((port) => port.id === ohqPort.portId), id: ohqPort?.id, portId: ohqPort?.portId};
+      });
       this.selectedPort = this.ohqPorts[0];
       await this.getPortOHQDetails(this.selectedPort?.id);
       const hasPendingUpdates = await this.checkForPendingUpdates();
@@ -207,29 +202,32 @@ export class OnHandQuantityComponent implements OnInit {
   /**
    * Method for fetching ohq details of selected port
    *
-   * @param {number} portId
+   * @param {number} portRotationId
    * @memberof OnHandQuantityComponent
    */
-  async getPortOHQDetails(portId: number) {
-    const result = await this.loadableStudyDetailsApiService.getPortOHQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
+  async getPortOHQDetails(portRotationId: number) {
+    const result = await this.loadableStudyDetailsApiService.getPortOHQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portRotationId).toPromise();
     const selectedPortOHQTankDetails = result?.onHandQuantities ?? [];
     this.listData.fuelTypes = [...new Map(selectedPortOHQTankDetails.map(item => [item['fuelTypeId'], { id: item?.fuelTypeId, name: item?.fuelTypeName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
     const _selectedPortOHQTankDetails = selectedPortOHQTankDetails?.map((ohqTankDetail) => {
-      ohqTankDetail.portId = portId;
+      ohqTankDetail.portRotationId = portRotationId;
       [...result?.tanks, ...result?.rearTanks].forEach(group => group.find(tank => {
         if (tank.id === ohqTankDetail.tankId) {
           ohqTankDetail.fullCapacityCubm = Number(tank.fullCapacityCubm);
+          ohqTankDetail.arrivalVolume = ohqTankDetail?.density ? ohqTankDetail?.arrivalQuantity / ohqTankDetail?.density : 0;
+          ohqTankDetail.departureVolume = ohqTankDetail?.density ? ohqTankDetail?.departureQuantity / ohqTankDetail?.density : 0;
+          ohqTankDetail.fullCapacity = ohqTankDetail?.fullCapacityCubm * ohqTankDetail?.density ?? 0;
         }
       }));
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailsAsValueObject(ohqTankDetail, false);
       return _ohqTankDetail;
     });
+    this.selectedPortOHQTankDetails = [..._selectedPortOHQTankDetails];
+    const ohqTankDetailsArray = _selectedPortOHQTankDetails?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails, selectedPortOHQTankDetails));
     this.ohqForm = this.fb.group({
-      dataTable: this.fb.array([]),
+      dataTable: this.fb.array([...ohqTankDetailsArray]),
       mode: this.fb.control(OHQ_MODE.ARRIVAL)
     });
-    this.selectedPortOHQTankDetails = [..._selectedPortOHQTankDetails];
-    this.convertSelectedPortOHQTankDetails();
     this.tanks = result?.tanks ?? [];
     this.rearTanks = result?.rearTanks ?? [];
   }
@@ -318,14 +316,7 @@ export class OnHandQuantityComponent implements OnInit {
   async onEditComplete(event: IPortOHQTankDetailEvent) {
     this.ngxSpinnerService.show();
     const fromGroup = this.row(event.index);
-
-    const _prevFullcapacitySelectedUnit = AppConfigurationService.settings.volumeBaseUnit;
-    if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
-      const fullCapacity = this.quantityPipe.transform(event?.data?.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, event?.data?.density.value);
-      event.data.fullCapacity = fullCapacity ?? 0;
-    } else {
-      event.data.fullCapacity = event?.data?.fullCapacityCubm;
-    }
+    event.data.fullCapacity = event?.data?.fullCapacityCubm * event?.data?.density.value ?? 0;
 
     let dependentKeys = [];
     switch (event?.field) {
@@ -342,7 +333,7 @@ export class OnHandQuantityComponent implements OnInit {
         break;
     }
 
-    if (event?.data[event?.field].value) {
+    if (Number(event?.data[event?.field].value)) {
       const formControl1 = this.field(event?.index, dependentKeys[0]);
       if (!formControl1.value) {
         formControl1.setValue(null);
@@ -361,16 +352,14 @@ export class OnHandQuantityComponent implements OnInit {
         formControl.setValue(null);
       }
     }
-    const arrivalVolume = this.quantityPipe.transform(event?.data?.arrivalQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.density?.value);
-    event.data.arrivalVolume = arrivalVolume ?? 0;
 
-    const departureVolume = this.quantityPipe.transform(event?.data.departureQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.density?.value);
-    event.data.departureVolume = departureVolume ?? 0;
+    event.data.arrivalVolume = event?.data?.density?.value ? event?.data?.arrivalQuantity?.value / event?.data?.density?.value : 0;
+    event.data.departureVolume = event?.data?.density?.value ? event?.data.departureQuantity?.value / event?.data?.density?.value : 0;   
 
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
     if (fromGroup.valid) {
       event.data.processing = true;
-      const _selectedPortOHQTankDetail = this.convertToStandardUnitForSave(this.selectedPortOHQTankDetails[valueIndex]);
+      const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
         for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
@@ -402,7 +391,7 @@ export class OnHandQuantityComponent implements OnInit {
         });
         if (row.valid) {
           event.data.processing = true;
-          const _selectedPortOHQTankDetail = this.convertToStandardUnitForSave(this.selectedPortOHQTankDetails[valueIndex]);
+          const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
           const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
           if (res) {
             for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
@@ -441,17 +430,32 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   private initSubscriptions() {
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'ohq_sync_finished') {
-        const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
-        if (index !== -1) {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof OnHandQuantityComponent
+   */
+  private swMessageHandler = async (event) => {
+    const translationKeys = await this.translateService.get(['OHQ_UPDATE_ERROR', 'OHQ_UPDATE_STATUS_ERROR']).toPromise();
+    if (event?.data?.type === 'ohq_sync_finished') {
+      const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
+      if (index !== -1) {
+        this.selectedPortOHQTankDetails[index].processing = false;
+        if (event?.data?.status === '200') {
           this.loadableStudyDetailsTransformationService.ohqUpdated(event);
           this.selectedPortOHQTankDetails[index].id = event.data.id;
           this.selectedPortOHQTankDetails[index].processing = false;
           this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
         }
       }
-    });
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['OHQ_UPDATE_ERROR'], detail: translationKeys['OHQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+    }
   }
 
   /**
@@ -666,55 +670,6 @@ export class OnHandQuantityComponent implements OnInit {
    */
   getSelectedPortOHQTankDetailsAsValue(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[]) {
     return selectedPortOHQTankDetails.map(ohqTankDetails => this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(ohqTankDetails));
-  }
-
-  /**
-   * Converting ohq quantities in selected unit
-   *
-   * @memberof OnHandQuantityComponent
-   */
-  convertSelectedPortOHQTankDetails() {
-    const _selectedPortOHQTankDetails = this.selectedPortOHQTankDetails?.map(ohqTankDetail => {
-      if (ohqTankDetail.density.value) {
-        const _prevQuantitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
-        if (_prevQuantitySelectedUnit !== this.quantitySelectedUnit) {
-          ohqTankDetail.arrivalQuantity.value = this.quantityPipe.transform(ohqTankDetail.arrivalQuantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, ohqTankDetail.density.value);
-          ohqTankDetail.arrivalQuantity.value = ohqTankDetail.arrivalQuantity.value ? Number(ohqTankDetail.arrivalQuantity.value.toFixed(2)) : 0;
-          ohqTankDetail.departureQuantity.value = this.quantityPipe.transform(ohqTankDetail.departureQuantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, ohqTankDetail.density.value);
-          ohqTankDetail.departureQuantity.value = ohqTankDetail.departureQuantity.value ? Number(ohqTankDetail.departureQuantity.value.toFixed(2)) : 0;
-        }
-        const arrivalVolume = this.quantityPipe.transform(ohqTankDetail.arrivalQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
-        ohqTankDetail.arrivalVolume = arrivalVolume ?? 0;
-        const departureVolume = this.quantityPipe.transform(ohqTankDetail.departureQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
-        ohqTankDetail.departureVolume = departureVolume ?? 0;
-
-        const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
-        if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
-          const fullCapacity = this.quantityPipe.transform(ohqTankDetail.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, ohqTankDetail.density.value);
-          ohqTankDetail.fullCapacity = fullCapacity ?? 0;
-        }
-      }
-
-      return ohqTankDetail;
-    });
-    this.selectedPortOHQTankDetails = [..._selectedPortOHQTankDetails];
-    const selectedPortOHQTankDetailsAsValue = this.getSelectedPortOHQTankDetailsAsValue(this.selectedPortOHQTankDetails);
-    const ohqTankDetailsArray = _selectedPortOHQTankDetails?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails, selectedPortOHQTankDetailsAsValue));
-    this.ohqForm.setControl('dataTable', this.fb.array([...ohqTankDetailsArray]));
-  }
-
-  /**
-   * Method to convert ohq quantity to standard unit for saving
-   *
-   * @param {IPortOHQTankDetailValueObject} selectedPortOHQTankDetails
-   * @returns {IPortOHQTankDetail}
-   * @memberof OnHandQuantityComponent
-   */
-  convertToStandardUnitForSave(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject): IPortOHQTankDetail {
-    const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(selectedPortOHQTankDetails);
-    _selectedPortOHQTankDetail.arrivalQuantity = this.quantityPipe.transform(_selectedPortOHQTankDetail?.arrivalQuantity, this.quantitySelectedUnit, QUANTITY_UNIT?.MT, _selectedPortOHQTankDetail?.density);
-    _selectedPortOHQTankDetail.departureQuantity = this.quantityPipe.transform(_selectedPortOHQTankDetail?.departureQuantity, this.quantitySelectedUnit, QUANTITY_UNIT?.MT, _selectedPortOHQTankDetail?.density);
-    return _selectedPortOHQTankDetail;
   }
 
 }

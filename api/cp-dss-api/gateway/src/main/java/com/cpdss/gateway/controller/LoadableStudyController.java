@@ -705,7 +705,7 @@ public class LoadableStudyController {
       log.info(
           "get loadable pattern API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.getLoadablePatterns(
-          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+          loadableStudiesId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in get loadable patterns ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -893,12 +893,13 @@ public class LoadableStudyController {
    */
   @GetMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities")
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/port-rotation/{portRotationId}/on-hand-quantities")
   public OnHandQuantityResponse getOnHandQuantity(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -906,7 +907,11 @@ public class LoadableStudyController {
       // TODO
       final Long companyId = 1L;
       return this.loadableStudyService.getOnHandQuantity(
-          companyId, vesselId, loadableStudyId, portId, headers.getFirst(CORRELATION_ID_HEADER));
+          companyId,
+          vesselId,
+          loadableStudyId,
+          portRotationId,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching on hand quantities", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -924,20 +929,21 @@ public class LoadableStudyController {
   @PostMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}"
-              + "/ports/{portId}/on-hand-quantities/{id}",
+              + "/port-rotation/{portRotationId}/on-hand-quantities/{id}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public OnHandQuantityResponse saveOnHandQuantity(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long id,
       @RequestBody @Valid OnHandQuantity request,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       request.setId(id);
-      request.setPortId(portId);
+      request.setPortRotationId(portRotationId);
       request.setLoadableStudyId(loadableStudyId);
       return this.loadableStudyService.saveOnHandQuantity(
           request, headers.getFirst(CORRELATION_ID_HEADER));

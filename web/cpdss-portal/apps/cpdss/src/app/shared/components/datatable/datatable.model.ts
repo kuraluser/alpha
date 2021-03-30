@@ -46,7 +46,10 @@ export interface IDataTableColumn {
     numberFormat?: string;
     showTotal?: boolean;
     filterByServer?: boolean,
-    buttons?: IButtons[]
+    buttons?: IButtons[],
+    fieldComponentClass?: string,
+    showTooltip?: boolean,
+    fieldValue?: string
 }
 
 /**

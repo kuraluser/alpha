@@ -10,5 +10,8 @@ export interface IAppConfiguration {
     volumeBaseUnit: QUANTITY_UNIT;
     permissionMapping?: IDictionary<string>;
     passwordMinLength?: number;
+    processingTimeout?: number;
+    tokenMinValidity?: number;
+    commingleColor?: string;
 }
 

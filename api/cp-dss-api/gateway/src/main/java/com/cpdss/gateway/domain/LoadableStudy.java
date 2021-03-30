@@ -77,4 +77,6 @@ public class LoadableStudy {
   private Boolean isObqComplete;
 
   private Boolean isDischargingPortComplete;
+
+  private List<PortRotation> ohqPorts;
 }

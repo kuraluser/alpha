@@ -1,17 +1,31 @@
 <div class="container-fluid">
   <div class="row pb-20">
-    <div class="col vessel-info-wrapper">
+
+    <!-- Will use the commented code in future  -->
+    <!-- <div class="col vessel-info-wrapper">
       <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo">
       </cpdss-portal-vessel-info>
-    </div>
-    <div class="col">
+    </div> -->
+
+    <div class="pl-15 pt-5">
       <h5 class="main-head inline-block">{{'CARGO_HISTORY'|translate}}</h5>
+    </div>
+    <div class="col calender-control-multi-date">
+      <span class="ml-20 mr-10">
+        {{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}</span>
+      <p-calendar selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy" [showButtonBar]="true" todayButtonStyleClass="hide"
+        (onSelect)="onDateRangeSelect()" (onClearClick)="resetDateFilter()" [maxDate]="today" [(ngModel)]="filteredDates"
+        placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_PLACEHOLDER'| translate }}" id="cargo_history_date_range_filter"
+        #cargoHistoryDateRange>
+      </p-calendar>
     </div>
   </div>
   <div class="row">
-    <div class="col loadable-study-table-wrapper">
-      <cpdss-portal-datatable *ngIf="cargoHistoryGridData" [tableId]="'cargo_history_grid'"
-        [columns]="cargoHistoryGridColumns" [value]="cargoHistoryGridData">
+    <div class="col table-listing-wrapper-default">
+      <cpdss-portal-datatable *ngIf="cargoHistoryGridData" [filterable]="true" [tableId]="'cargo_history_grid'"
+        [columns]="cargoHistoryGridColumns" [value]="cargoHistoryGridData" [paginator]="true" [rows]="10"
+        [totalRecords]="totalRecords" [lazy]="true" (dataStateChange)="onDataStateChange($event)" [loading]="loading"
+        [(currentPage)]="currentPage" [(first)]="first">
       </cpdss-portal-datatable>
     </div>
   </div>

@@ -612,6 +612,7 @@ public class VesselInfoService {
     vessel.setDeadweightConstantTcg(vesselAlgoReply.getVesselDetail().getDeadweightConstantTcg());
     vessel.setFrameSpace3l(vesselAlgoReply.getVesselDetail().getFrameSpace3L());
     vessel.setFrameSpace7l(vesselAlgoReply.getVesselDetail().getFrameSpace7L());
+    vessel.setHasLoadicator(vesselAlgoReply.getVesselDetail().getHasLoadicator());
     return vessel;
   }
 

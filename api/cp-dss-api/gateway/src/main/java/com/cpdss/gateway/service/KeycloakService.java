@@ -27,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
 public class KeycloakService {
   @Autowired private RestTemplate restTemplate;
 
-  @Value("${kc.admin.url}")
+  @Value("${keycloak.auth-server-url}")
   private String keycloakApiUrl;
 
   @Value("${kc.admin.username}")

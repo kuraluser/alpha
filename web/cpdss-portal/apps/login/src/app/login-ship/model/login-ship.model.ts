@@ -16,6 +16,7 @@ export interface ILoginShip{
  * @interface ILoginShipResponse
  */
 export interface ILoginShipResponse{
+    expiryReminder: any;
     responseStatus: IStatus;
     token: string;
     status?: string;
@@ -31,5 +32,4 @@ export interface ILoginShipResponse{
  */
 export interface IStatus{
     status: string;
-    
 }

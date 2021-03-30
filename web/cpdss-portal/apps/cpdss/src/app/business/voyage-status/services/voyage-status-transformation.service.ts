@@ -37,11 +37,11 @@ export class VoyageStatusTransformationService {
         for (let index = 0; index < ballastTankQuantities?.length; index++) {
           if (ballastTankQuantities[index]?.tankId === ballastTank[groupIndex][tankIndex]?.id) {
             ballastTank[groupIndex][tankIndex].commodity = ballastTankQuantities[index];
-            const plannedWeight = this.quantityPipe.transform(ballastTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, ballastTankQuantities[index]?.sg);
+            const plannedWeight = ballastTank[groupIndex][tankIndex].commodity.plannedWeight;
             ballastTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
-            const actualWeight = this.quantityPipe.transform(ballastTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, ballastTankQuantities[index]?.sg);
+            const actualWeight = ballastTank[groupIndex][tankIndex].commodity.actualWeight;
             ballastTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
-            ballastTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(ballastTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, ballastTank[groupIndex][tankIndex].commodity?.sg);
+            ballastTank[groupIndex][tankIndex].commodity.volume = ballastTank[groupIndex][tankIndex].density ? Number((ballastTank[groupIndex][tankIndex].commodity.actualWeight/ballastTank[groupIndex][tankIndex].density).toFixed(2)) : 0;
             ballastTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(ballastTank[groupIndex][tankIndex])
             break;
           }
@@ -60,12 +60,14 @@ export class VoyageStatusTransformationService {
       eta: {
         'required': 'PORT_ROTATION_RIBBON_ETA_REQUIRED',
         'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN'
+        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN',
+        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_ETD_DATE'
       },
       etd: {
         'required': 'PORT_ROTATION_RIBBON_ETD_REQUIRED',
         'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN'
+        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN',
+        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_ETA_DATE'
       },
       etaTime: {
         'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
@@ -91,17 +93,16 @@ export class VoyageStatusTransformationService {
 * @returns {IShipBunkerTank}
 * @memberof VoyageStatusTransformationService
 */
-  formatBunkerTanks(bunkerTank: IShipBunkerTank[][], bunkerTankQuantities: IBunkerQuantities[], mode: OHQ_MODE, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): IShipBunkerTank[][] {
+  formatBunkerTanks(bunkerTank: IShipBunkerTank[][], bunkerTankQuantities: IBunkerQuantities[], mode: OHQ_MODE): IShipBunkerTank[][] {
 
     for (let groupIndex = 0; groupIndex < bunkerTank?.length; groupIndex++) {
       for (let tankIndex = 0; tankIndex < bunkerTank[groupIndex].length; tankIndex++) {
         for (let index = 0; index < bunkerTankQuantities.length; index++) {
           if (bunkerTankQuantities[index]?.tankId === bunkerTank[groupIndex][tankIndex]?.id) {
             bunkerTank[groupIndex][tankIndex].commodity = bunkerTankQuantities[index];
-            let quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.actualArrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.actualDepartureQuantity;
-            quantity = this.quantityPipe.transform(quantity, prevUnit, currUnit, bunkerTank[groupIndex][tankIndex].commodity?.density);
+            const quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.actualArrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.actualDepartureQuantity;
             bunkerTank[groupIndex][tankIndex].commodity.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
-            bunkerTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(bunkerTank[groupIndex][tankIndex].commodity.quantity, currUnit, AppConfigurationService.settings.volumeBaseUnit, bunkerTank[groupIndex][tankIndex].commodity?.density);
+            bunkerTank[groupIndex][tankIndex].commodity.volume = bunkerTank[groupIndex][tankIndex].commodity?.density ? bunkerTank[groupIndex][tankIndex].commodity.quantity / bunkerTank[groupIndex][tankIndex].commodity?.density : 0;
             break;
           }
         }
@@ -216,11 +217,11 @@ export class VoyageStatusTransformationService {
       },
       {
         field: 'plannedWeight',
-        header: 'QUANTITY BEFORE LOADING'
+        header: 'QUANTITY BEFORE LOADING (MT)'
       },
       {
         field: 'actualWeight',
-        header: 'QUANTITY AFTER LOADING'
+        header: 'QUANTITY AFTER LOADING (MT)'
       },
       {
         field: 'percentageFilled',

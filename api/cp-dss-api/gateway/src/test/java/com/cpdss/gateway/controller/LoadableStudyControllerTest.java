@@ -1075,7 +1075,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {GET_LOADABLE_PATTERN_CLOUD_API_URL, GET_LOADABLE_PATTERN_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadablePatternDetails(String url) throws Exception {
-    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyLong(), anyString()))
         .thenReturn(new LoadablePatternResponse());
     this.mockMvc
         .perform(
@@ -1100,7 +1100,8 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString())).thenThrow(ex);
+    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyLong(), anyString()))
+        .thenThrow(ex);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(

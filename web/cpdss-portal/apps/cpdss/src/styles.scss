@@ -671,7 +671,7 @@ h5{
 }
 
 .new-loadable-study-pop-up{
-  width: 735px;
+  width: 765px;
   .col-form-label{
     min-width: 165px;
     padding-right: 0;
@@ -810,6 +810,7 @@ tr{
   table-layout: auto!important;
   .p-column-filter{
     width: 100%;
+    max-width: 100px;
   }
 }
 
@@ -896,11 +897,11 @@ input[type=number] {
   margin-right: 5px;
 }
 
-.action-buttons{
-  button, a{
-    visibility: hidden;
-  }
-}
+// .action-buttons{
+//   button, a{
+//     visibility: hidden;
+//   }
+// }
 .p-datatable .p-datatable-tbody > tr{
   &:hover, &:focus{
     .action-buttons{
@@ -1219,6 +1220,7 @@ td.sl div{
    min-width: 160px;
   text-transform: uppercase;
   padding-left: 0;
+  max-width: 190px;
 }
   &.p-dialog{
     /*max-width: 740px;*/
@@ -1228,6 +1230,7 @@ td.sl div{
     .col:nth-child(2){
       width: 120px;
       text-align: right;
+      max-width: 132px;
       input{
         text-align: right;
         &.p-dropdown-filter{
@@ -1454,7 +1457,6 @@ td.sl div{
         position: absolute;
         bottom: 5px;
         right: 5px;
-        text-align: right;
         overflow: hidden;
         text-overflow: ellipsis;
         width: 45%;
@@ -1725,7 +1727,7 @@ th .p-calendar .p-inputtext{
   box-shadow: none;
 }
 .p-orderlist .p-orderlist-list .p-orderlist-item{
-  padding-top: 10px;
+  padding-bottom: 0px;
 }
 
 .confirmation-wrapper{
@@ -1846,7 +1848,7 @@ height: 15px;
       text-align: left;
       padding-left: 3px;
       top: 7px;
-      left: 13px;
+      left: 15px;
     }
     .tank-filling-percentage{
       position: absolute;
@@ -2202,4 +2204,74 @@ width: 50px !important;
       margin-left: 3px;
     }
   }
+}
+.reset-btn{
+  width: 15px;
+  height: 17px;
+  display: inline-block;
+  &:hover{}
+}
+tr:hover{
+  td{
+    .reset-btn{
+      background-position: bottom left;
+    }
+  }
+}
+.p-dialog, .p-dialog-mask.p-component-overlay{
+  z-index: 9!important;
+}
+
+.index-1{
+  z-index: 1 !important;
+}
+
+.index-9{
+  z-index: 9999!important;
+}
+
+.api-temp-pop-up{
+  max-width: 570px!important;
+  .column-class{
+    width: auto!important;
+  }
+}
+
+@media  (max-width:1400px){
+  .sidebar-landing .p-datatable .p-datatable-tbody > tr > td, .sidebar-landing .p-datatable .p-datatable-tbody > tr > th{
+    padding: 5px !important;
+  }
+}
+
+.p-orderlist-droppoint{
+  height: 15px!important;
+}
+
+.calender-control-multi-date{
+  .p-calendar .p-inputtext{
+    width: 185px;
+  }
+}
+
+.table-listing-wrapper-default{
+  max-height: calc(100vh - 180px);
+  height: auto;
+}
+
+.distance-port.last-port{
+  background: none;
+  &:after{
+    display: none;
+  }
+  .ship-location{
+    top: 3px!important;
+  }
+}
+
+.p-toast .p-toast-message .p-toast-icon-close:hover{
+  background: none!important;
+}
+.p-toast .p-toast-message .p-toast-icon-close:focus{
+  outline: none;
+  box-shadow: none!important;
 }

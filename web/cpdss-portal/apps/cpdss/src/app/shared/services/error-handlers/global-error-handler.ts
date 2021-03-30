@@ -2,8 +2,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'apps/cpdss/src/environments/environment';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
+import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 
 /**
  * Service for globally hadling errors
@@ -66,7 +68,7 @@ export class GlobalErrorHandler implements ErrorHandler {
    */
   private handleUnAuthorized(error) {
     this.ngxSpinnerService.hide();
-    this.router.navigate(['access-denied']);
+      this.router.navigate(['access-denied']);
   }
 
   /**

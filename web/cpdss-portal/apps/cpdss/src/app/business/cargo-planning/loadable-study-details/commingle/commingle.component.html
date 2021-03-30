@@ -13,7 +13,8 @@
                     <div class="col-7">
                         <p-dropdown id="commingle_purpose_dropdown" styleClass="form-control" appendTo="body"
                             [options]="purposeOfCommingle" optionLabel="name" id="purpose_commingle"
-                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!editMode">
+                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!editMode"
+                            resetFilterOnHide="true">
                         </p-dropdown>
                     </div>
                 </div>
@@ -47,8 +48,9 @@
             </div>
         </div>
         <div class="row mb-5" *ngIf="!isVolumeMaximum && editMode">
-            <div class="col text-right">
-                <a id="add_new_btn" class="btn btn-link icon-btn float-right" (click)="addNew()"
+            <div class="col text-right" >
+                <a id="add_new_btn" class="btn btn-link icon-btn float-right" (click)="addNew()" 
+                [ngStyle]="{'pointer-events': (disableAddNewBtn) ? 'none' : null}"
                     *cpdssPortalPermission="cargoNominationPermissionContext"><i class="pi pi-plus mr-5"></i>
                     {{'ADD_NEW_BUTTON_LABEL'| translate}}</a>
             </div>
@@ -67,11 +69,11 @@
             <div class="row" *ngIf="isVolumeMaximum">
                 <div class="col">
                     <div class="row">
-                        <div class="col">
+                        <div class="col error-icon-wrapper">
                             <p-dropdown id="commingle_cargo1_dropdown" styleClass="form-control" appendTo="body"
                                 [filter]="true" [options]="cargoNominationsCargo1" optionLabel="name"
                                 formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="!editMode"
-                                placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
+                                placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}" resetFilterOnHide="true">
                                 <ng-template let-cargo pTemplate="item">
                                     <span>
                                         <i class="color-rounded align-top mr-5" [ngStyle]="{'background' : cargo.value.color}"></i>
@@ -92,11 +94,11 @@
 
                 <div class="col" [ngClass]="{'mr-15': !editMode}">
                     <div class="row">
-                        <div class="col">
+                        <div class="col error-icon-wrapper">
                             <p-dropdown id="commingle_cargo2_dropdown" appendTo="body" styleClass="form-control"
                                 [filter]="true" [options]="cargoNominationsCargo2" optionLabel="name"
                                 formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="!editMode"
-                                placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
+                                placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}" resetFilterOnHide="true">
                                 <ng-template let-cargo pTemplate="item">
                                     <span>
                                         <i class="color-rounded align-top mr-5" [ngStyle]="{'background' : cargo.value.color}"></i>

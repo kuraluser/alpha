@@ -92,4 +92,6 @@ public class Vessel {
   private String frameSpace3l;
 
   private String frameSpace7l;
+
+  private Boolean hasLoadicator;
 }

@@ -11,7 +11,7 @@ import { AppConfigurationService } from '../app-configuration/app-configuration.
 @Injectable({
     providedIn: 'root'
 })
-export class AuthGuard extends KeycloakAuthGuard {
+export class ShoreAuthGuard extends KeycloakAuthGuard {
 
     constructor(protected readonly router: Router, protected readonly keycloak: KeycloakService, private route: ActivatedRoute) {
         super(router, keycloak);

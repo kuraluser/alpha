@@ -4,9 +4,9 @@
     </div>
     <div class="header-nav">
         <ul class="nav">
-            <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen }" (click)="showSubmenu(list.subMenu, i)"
+            <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen }" (click)="rerouteOrShowSubmenu(list, i)"
                 (focusout)="hide(list.subMenu, i)" *ngFor="let list of menuList; let i = index"
-                [routerLink]="list.menuLink !== '' ? list.menuLink : null" routerLinkActive="active">
+                routerLinkActive="active">
                 <div class="menu-item-icon {{list.menuIcon}}"></div>
                 <div class="menu-item-text">{{ list.menu | translate}} </div>
                 <div class="dropdown-menu" [hidden]="!(list.subMenu.length>0 && list.isSubMenuOpen)">

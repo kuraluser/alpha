@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IApiTempHistory, IApiTempMonthWiseHistory, IApiTempPopupData, ICargoApiTempHistoryResponse, IMonths } from '../../../models/cargo-planning.model';
+import { IApiTempPortHistory, IApiTempMonthWiseHistory, IApiTempPopupData, ICargoApiTempHistoryResponse, IMonths } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -7,6 +7,9 @@ import { LoadableStudyDetailsApiService } from '../../../services/loadable-study
 import { DatePipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Router } from '@angular/router';
+import { IPermission } from 'apps/cpdss/src/app/shared/models/user-profile.model';
+import { PermissionsService } from 'apps/cpdss/src/app/shared/services/permissions/permissions.service';
+import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -41,13 +44,13 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     this.apiTempHistoryForm = this.fb.group({
       selectMonth: this.fb.control(null),
       selectPort: this.fb.control(null)
-    })
+    });
   }
 
   @Output() visibleChange = new EventEmitter<boolean>();
 
   apiTempHistoryColumns: IDataTableColumn[];
-  apiTempHistoryData: IApiTempHistory[];
+  apiTempHistoryData: IApiTempPortHistory[];
   monthwiseCargoHistory: IApiTempMonthWiseHistory[];
   apiTempHistoryMonths: IMonths[];
   apiTempHistoryForm: FormGroup;
@@ -57,6 +60,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   showMonthWiseGrid: boolean = false;
   uniqueYears: number[] = [];
   monthWiseGridColData: {} = {};
+  userPermission: IPermission;
 
   private _visible: boolean;
   private _apiTempHistoryPopupData: IApiTempPopupData;
@@ -66,13 +70,14 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     private datePipe: DatePipe,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
-    private router: Router,
+    private userPermissionService: PermissionsService,
     private ngxSpinnerService: NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
     this.apiTempHistoryColumns = this.loadableStudyDetailsTransformationService.getCargoNominationApiTempHistoryColumns();
     this.apiTempHistoryMonths = this.loadableStudyDetailsTransformationService.getMonthList();
+    this.userPermission = this.userPermissionService.getPermission(AppConfigurationService.settings.permissionMapping['CargoHistoryComponent'], false);
   }
 
   /**
@@ -83,14 +88,16 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     this.ngxSpinnerService.show();
     const cargoApiTempHistoryDetails: ICargoApiTempHistoryResponse = await this.loadableStudyDetailsApiService.getCargoApiTemperatureHistoryDetails(this.apiTempHistoryPopupData.vesselId, this.apiTempHistoryPopupData.voyageId, this.apiTempHistoryPopupData.loadableStudyId, {cargoId: cargoId, loadingPortIds:portIDs}).toPromise();
     if (cargoApiTempHistoryDetails.responseStatus.status === '200') {
-      const mockResponse = cargoApiTempHistoryDetails.portHistory;
-      if (mockResponse.length) {
+      const responsePortHistory: IApiTempPortHistory[] = cargoApiTempHistoryDetails.portHistory;
+      if (responsePortHistory?.length) {
         const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo.value.ports];
-        this.apiTempHistoryData = mockResponse.map(historyObj => {
+        this.apiTempHistoryData = responsePortHistory.map(historyObj => {
           const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId);
           const formattedDate = this.datePipe.transform(historyObj.loadedDate.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"), 'dd-MM-yyyy');
           return Object.assign(historyObj, { loadingPortName: loadingPort.name, loadedDate: formattedDate });
         });
+      } else {
+        this.apiTempHistoryData = [];
       }
       this.monthwiseCargoHistory = cargoApiTempHistoryDetails.monthlyHistory;
     }
@@ -181,15 +188,6 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    */
   hideShowMonthWiseApiTempHistoryGrid(): void {
     this.showMonthWiseGrid = !this.showMonthWiseGrid;
-  }
-
-  /**
-   * function to navigate to more cargo history grid
-   * @memberof ApiTemperatureHistoryPopupComponent
-   */
-  viewMore(): void {
-    this.closePopup();
-    this.router.navigate([`business/cargo-planning/cargo-history`]);
   }
 
   /**

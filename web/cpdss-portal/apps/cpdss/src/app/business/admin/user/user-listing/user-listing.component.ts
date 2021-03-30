@@ -42,6 +42,7 @@ export class UserListingComponent implements OnInit {
   public popupStatus: string;
   public userDetails: IUserDetails;
   public maxUserCount: number;
+  public userDetail: any;
 
   constructor(
     private fb: FormBuilder,
@@ -74,13 +75,14 @@ export class UserListingComponent implements OnInit {
   async getUserDetails() {
     this.ngxSpinnerService.show();
     const userRes: IUserResponse = await this.userApiService.getUserDetails().toPromise();
+    this.userDetail =  JSON.parse(localStorage.getItem('userDetails'));
     this.ngxSpinnerService.hide();
     if(userRes.responseStatus.status === '200') {
       const userList = userRes?.users;
       this.maxUserCount = userRes.maxUserCount;
       this.roles = userRes.roles;
       const _userList = userList?.map((user) => {
-        const userData = this.userTransformationService.getPortAsValueObject(user);
+        const userData = this.userTransformationService.getPortAsValueObject(user, this.userDetail.id);
         return userData;
       });
       this.userList = _userList ? _userList : [];
@@ -99,10 +101,12 @@ export class UserListingComponent implements OnInit {
     if(permissionResetPassword?.view) {
       this.columns.push({
         field: 'buttons',
-        header: '',
+        header: 'RESET_PASSWORD_HEADING',
+        fieldClass: 'text-center',
+        fieldColumnClass: 'text-center',
         fieldType: DATATABLE_FIELD_TYPE.BUTTON,
         buttons: [
-          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: '' , label: 'Reset button'}
+          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: 'reset-btn'}
         ]
       })
     }

@@ -14,29 +14,33 @@
                 <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.voyages"
                     [(ngModel)]="synopticalService.selectedVoyage" optionLabel="voyageNo" [filter]="true"
                     placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
-                    (onChange)="onVoyageSelected()">
+                    (onChange)="onVoyageSelected()"
+                    resetFilterOnHide="true">
                 </p-dropdown>
-                <!-- <span class="pl-15 text-danger" *ngIf="!synopticalService.isVoyageIdSelected">
-                    {{'NO_VOYAGE_NO_SELECTED' | translate }}</span> -->
 
                 <span class="ml-20 mr-10">
                     {{'SYNOPTICAL_LOADABLE_STUDY_LABEL' | translate }}</span>
                 <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadableStudyList"
                     [(ngModel)]="synopticalService.selectedLoadableStudy" optionLabel="name" [filter]="true"
                     placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}"
-                    (onChange)="onSelectLoadableStudy()">
+                    (onChange)="onSelectLoadableStudy()"
+                    resetFilterOnHide="true">
                 </p-dropdown>
 
-                <span class="ml-20 mr-10">
-                    {{'SYNOPTICAL_LOADABLE_PATTERN_LABEL' | translate }}</span>
-                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadablePatternsList"
-                    [(ngModel)]="synopticalService.selectedLoadablePattern" optionLabel="caseNumber" [filter]="true"
-                    placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
-                    (onChange)="onSelectLoadablePattern()">
-                </p-dropdown>
+                <ng-container *ngIf="synopticalService.loadablePatternsList?.length">
+
+                    <span class="ml-20 mr-10">
+                        {{'SYNOPTICAL_LOADABLE_PATTERN_LABEL' | translate }}</span>
+                        <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadablePatternsList"
+                        [(ngModel)]="synopticalService.selectedLoadablePattern" optionLabel="caseNumber" [filter]="true"
+                        placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
+                        (onChange)="onSelectLoadablePattern()"
+                        resetFilterOnHide="true">
+                    </p-dropdown>
+                </ng-container>
                
             </div>
-            <div class="ml-auto pr-15" *ngIf="synopticalService.showActions">
+            <div class="ml-auto pr-15" *ngIf="synopticalService.showActions && synopticalService.synopticalRecords?.length">
                 <ng-container *ngIf="isEditable()">
                     <button class="btn btn-main mr-10" (click)="synopticalService.onEditOrCancel()" *cpdssPortalPermission="editRoleBtnPermissionContext">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
                 </ng-container>

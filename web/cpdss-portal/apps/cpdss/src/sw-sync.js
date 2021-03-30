@@ -1,37 +1,69 @@
-(function () {
+(async function () {
   'use strict';
 
   importScripts('dexie.min.js');
-
-  let apiUrl;
-  if (self.location.protocol === 'https:') {
-    apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}/api/cloud`;
-  } else {
-    apiUrl = `${self.location.protocol}//192.168.2.89:8085/api/cloud`;
-  }
-
+  let apiUrl, environment, appConfig, token;
+  let apiEndPoint = '/api/cloud';
   const db = new Dexie("CPDSS");
   db.version(1).stores({
     cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    properties: ""
   });
-  db.open();
 
-  // Code for calling sync function in interval .Please dont remove this code
-  setInterval(() => {
-    serverSyncCargoNomination();
-    serverSyncPorts();
-    serverSyncOHQ();
-    serverSyncOBQ();
-  }, 2000);
+  const isOpen = await db.open();
+  if (isOpen) {
+     // Code for calling sync function in interval .Please dont remove this code
+    setInterval(async () => {
+      if (!environment) {
+        environment = await db.properties.get('environment');
+      }
+
+      if (!appConfig) {
+        appConfig = await db.properties.get('appConfig');
+      }
+
+      if (environment !== 'shore') {
+        apiEndPoint = '/api/ship';
+      }
+
+      if (appConfig?.path) {
+        apiEndPoint += appConfig?.path + apiEndPoint
+      }
+
+      if (self.location.protocol === 'https:') {
+        apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}${apiEndPoint}`;
+      } else {
+        const port = environment === 'shore' ? 8085 : 8084;
+        apiUrl = `${self.location.protocol}//192.168.2.89:${port}${apiEndPoint}`;
+      }
+
+      if (!token) {
+        token = await getToken();
+      }
+
+      if (token) {
+        serverSyncCargoNomination(token);
+        serverSyncPorts(token);
+        serverSyncOHQ(token);
+        serverSyncOBQ(token);
+      }
+    }, 2000);
+  }
+
+  // Function to get token from index DB
+  async function getToken() {
+    return await db.properties.get('token');
+  }
+
 
   /**
    * Fuction for sync of indexdb and server for cargo nomination grid
    *
    */
-  async function serverSyncCargoNomination() {
+  async function serverSyncCargoNomination(token) {
     // Remove all records with api initiated as status true
     db.cargoNominations.where({ 'status': 1 }).delete();
 
@@ -52,14 +84,15 @@
                 // send delete sync request to the server
                 var headers = {
                   'Accept': 'application/json',
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
                 }
                 const syncResponse = await fetch(`${apiUrl}/vessels/${cargoNomination?.vesselId}/voyages/${cargoNomination?.voyageId}/loadable-studies/${cargoNomination?.loadableStudyId}/cargo-nominations/${cargoNomination.id}`, {
                   method: 'DELETE',
                   headers: headers
                 });
 
-                if (syncResponse.status === 200) {
+                if (syncResponse.status === 200 || syncResponse.status === 400) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -74,7 +107,9 @@
                 // send update or add sync request to the server
                 var headers = {
                   'Accept': 'application/json',
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+
                 }
                 const syncResponse = await fetch(`${apiUrl}/vessels/${cargoNomination?.vesselId}/voyages/${cargoNomination?.voyageId}/loadable-studies/${cargoNomination?.loadableStudyId}/cargo-nominations/${cargoNomination?.id}`, {
                   method: 'POST',
@@ -82,7 +117,7 @@
                   headers: headers
                 });
 
-                if (syncResponse.status === 200) {
+                if (syncResponse.status === 200 || syncResponse.status === 400) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -109,7 +144,7 @@
    * Fuction for sync of port indexdb and server
    *
    */
-  async function serverSyncPorts() {
+  async function serverSyncPorts(token) {
     // Remove all records with api initiated as status true
     db.ports.where({ 'status': 1 }).delete();
 
@@ -128,14 +163,15 @@
               // send delete sync request to the server
               var headers = {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
               }
               const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/loadable-studies/${port?.loadableStudyId}/ports/${port.id}`, {
                 method: 'DELETE',
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200 || syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -150,7 +186,8 @@
               // send update or add sync request to the server
               var headers = {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
               }
               const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/loadable-studies/${port?.loadableStudyId}/ports/${port?.id}`, {
                 method: 'POST',
@@ -158,7 +195,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200 || syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -185,7 +222,7 @@
    * Fuction for sync of indexdb and server for ohq
    *
    */
-  async function serverSyncOHQ() {
+  async function serverSyncOHQ(token) {
     // Remove all records with api initiated as status true
     db.ohq.where({ 'status': 1 }).delete();
 
@@ -205,15 +242,16 @@
               // send update or add sync request to the server
               var headers = {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
               }
-              const syncResponse = await fetch(`${apiUrl}/vessels/${ohq?.vesselId}/voyages/${ohq?.voyageId}/loadable-studies/${ohq?.loadableStudyId}/ports/${ohq?.portId}/on-hand-quantities/${ohq?.id}`, {
+              const syncResponse = await fetch(`${apiUrl}/vessels/${ohq?.vesselId}/voyages/${ohq?.voyageId}/loadable-studies/${ohq?.loadableStudyId}/port-rotation/${ohq?.portRotationId}/on-hand-quantities/${ohq?.id}`, {
                 method: 'POST',
                 body: JSON.stringify(ohq),
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200|| syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = ohq.storeKey;
                 sync.type = 'ohq_sync_finished';
@@ -239,7 +277,7 @@
    * Fuction for sync of indexdb and server for obq
    *
    */
-  async function serverSyncOBQ() {
+  async function serverSyncOBQ(token) {
     // Remove all records with api initiated as status true
     db.obq.where({ 'status': 1 }).delete();
 
@@ -259,7 +297,8 @@
               // send update or add sync request to the server
               var headers = {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
               }
               const syncResponse = await fetch(`${apiUrl}/vessels/${obq?.vesselId}/voyages/${obq?.voyageId}/loadable-studies/${obq?.loadableStudyId}/ports/${obq?.portId}/on-board-quantities/${obq?.id}`, {
                 method: 'POST',
@@ -267,7 +306,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200 || syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = obq.storeKey;
                 sync.type = 'obq_sync_finished';
@@ -322,7 +361,8 @@
     const timer = setInterval(async () => {
       var headers = {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
       }
       const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loadable-studies/${data?.loadableStudyId}/loadable-pattern-status`, {
         method: 'POST',
@@ -339,7 +379,7 @@
           sync.statusId = syncView.loadableStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView.loadableStudyStatusId === 3 ) {
+        if (syncView.loadableStudyStatusId === 3) {
           clearInterval(timer);
           const sync = {};
           sync.pattern = data;
@@ -361,15 +401,15 @@
       }
     }, 3500);
     setTimeout(() => {
-      if(currentStatus === 4){
-      const sync = {};
-      sync.pattern = data;
-      sync.type = 'loadable-pattern-no-response';
-      // sending default status
-      sync.statusId = 1;
-      notifyClients(sync);
-      clearInterval(timer);         
-    }
+      if (currentStatus === 4) {
+        const sync = {};
+        sync.pattern = data;
+        sync.type = 'loadable-pattern-no-response';
+        // sending default status
+        sync.statusId = 1;
+        notifyClients(sync);
+        clearInterval(timer);
+      }
     }, 600000);
   }
 

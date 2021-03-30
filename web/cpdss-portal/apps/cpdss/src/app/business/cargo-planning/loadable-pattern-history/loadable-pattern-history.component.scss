@@ -4,9 +4,7 @@
   .content-pattern:last-child{
       border-bottom: 0;
   }
-  .content-pattern:nth-last-child(2){
-    border-right: 0;
-}
+
 
 .btn-main {
   min-width: 0;
@@ -22,4 +20,5 @@
   padding-left: 15px;
   padding-right: 15px;
   overflow-y: auto;
+  height: calc(100vh - 140px);
 }
