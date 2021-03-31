@@ -156,6 +156,10 @@ service LoadableStudyService {
 	
 	rpc SaveJson (JsonRequest) returns (StatusReply) {
 	}
+
+	rpc SaveAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
+
+	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 }
 
 message RecalculateVolumeRequest {
@@ -1142,4 +1146,11 @@ message JsonRequest {
 message OhqPorts{
 	int64 id = 1;
 	bool isPortRotationOhqComplete = 2;
+}
+
+message AlgoErrors{
+	int64 id = 1;
+	string errorHeading = 2;
+	repeated string errorMessages = 3;
+	ResponseStatus responseStatus = 4;
 }

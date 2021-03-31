@@ -18,6 +18,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.SyncRedisMasterService;
@@ -69,6 +70,8 @@ class LoadableStudyControllerTest {
   @MockBean private VoyageStatusResponse voyageStatusResponse;
 
   @MockBean private LoadableStudyCargoService loadableStudyCargoService;
+
+  @MockBean AlgoErrorService algoErrorService;
 
   @MockBean
   @Qualifier("cargoRedisSyncService")
@@ -1804,5 +1807,17 @@ class LoadableStudyControllerTest {
     history1.setLoadingPortName("test");
     response.setCargoHistory(Arrays.asList(history1));
     return response;
+  }
+
+  @Test
+  public void saveAlgoError() throws Exception {
+    List<AlgoError> list = new ArrayList<>();
+    list.add(new AlgoError("test", Arrays.asList("error1", "error2", "error3")));
+    mockMvc
+        .perform(
+            post("/api/ship/save-alog-errors")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(list.toString()))
+        .andExpect(status().isOk());
   }
 }
