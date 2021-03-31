@@ -85,6 +85,9 @@ service LoadableStudyService {
 	rpc GenerateLoadablePatterns (AlgoRequest) returns (AlgoReply) {
 	}
 	
+	rpc ValidateLoadablePlan (LoadablePlanDetailsRequest) returns (AlgoReply) {
+	}
+	
 	rpc getLoadablePatternList (LoadablePatternRequest) returns (LoadablePatternReply) {
 	}
 	
@@ -101,6 +104,9 @@ service LoadableStudyService {
 	}
 	
 	rpc SaveLoadicatorResults(LoadicatorResultsRequest) returns (AlgoReply){
+	}
+	
+	rpc SavePatternValidateResult(LoadablePatternAlgoRequest) returns (AlgoReply){
 	}
 	
 	rpc SaveSynopticalTable(SynopticalTableRequest) returns (SynopticalTableReply){
@@ -298,6 +304,9 @@ message LoadablePatternAlgoRequest {
 	string processsId = 1;
 	repeated LoadablePlanDetails loadablePlanDetails = 2;
 	int64 loadableStudyId = 3;
+	bool validated = 4;
+	repeated AlgoErrors algoErrors = 5;
+	int64 loadablePatternId = 6;
 }
 
 message LoadablePlanDetails {
@@ -388,6 +397,7 @@ message LoadablePlanStowageDetails {
   int64 id = 14;
   string colorCode = 15;
   bool isCommingle = 16;
+  int64 cargoNominationId = 17;
 }
 
 

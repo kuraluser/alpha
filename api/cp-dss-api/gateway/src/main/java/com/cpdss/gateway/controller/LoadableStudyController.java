@@ -6,6 +6,49 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.AlgoPatternResponse;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
+import com.cpdss.gateway.domain.AlgoStatusResponse;
+import com.cpdss.gateway.domain.CargoHistoryRequest;
+import com.cpdss.gateway.domain.CargoHistoryResponse;
+import com.cpdss.gateway.domain.CargoNomination;
+import com.cpdss.gateway.domain.CargoNominationResponse;
+import com.cpdss.gateway.domain.Comment;
+import com.cpdss.gateway.domain.CommingleCargo;
+import com.cpdss.gateway.domain.CommingleCargoResponse;
+import com.cpdss.gateway.domain.CommonResponse;
+import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
+import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadOnTopRequest;
+import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePatternResponse;
+import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePlanRequest;
+import com.cpdss.gateway.domain.LoadableQuantity;
+import com.cpdss.gateway.domain.LoadableQuantityResponse;
+import com.cpdss.gateway.domain.LoadableStudy;
+import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
+import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
+import com.cpdss.gateway.domain.LoadicatorResultsRequest;
+import com.cpdss.gateway.domain.OnBoardQuantity;
+import com.cpdss.gateway.domain.OnBoardQuantityResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
+import com.cpdss.gateway.domain.PatternValidateResultRequest;
+import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.PortRotationRequest;
+import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.RecalculateVolume;
+import com.cpdss.gateway.domain.SaveCommentResponse;
+import com.cpdss.gateway.domain.SynopticalTableRequest;
+import com.cpdss.gateway.domain.SynopticalTableResponse;
+import com.cpdss.gateway.domain.Voyage;
+import com.cpdss.gateway.domain.VoyageActionRequest;
+import com.cpdss.gateway.domain.VoyageActionResponse;
+import com.cpdss.gateway.domain.VoyageResponse;
+import com.cpdss.gateway.domain.VoyageStatusRequest;
+import com.cpdss.gateway.domain.VoyageStatusResponse;
 import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
@@ -826,6 +869,87 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in recalculateVolume ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * validateLoadablePlan
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudiesId
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns/{loadablePatternId}/validate-loadable-plan")
+  public AlgoPatternResponse validateLoadablePlan(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info(
+          "validateLoadablePlan API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.validateLoadablePlan(
+          loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in validateLoadablePlan ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in validateLoadablePlan ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudiesId
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException AlgoPatternResponse
+   */
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns/{loadablePatternId}/pattern-validate-result")
+  public AlgoPatternResponse patternValidateResult(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
+      @RequestBody PatternValidateResultRequest patternValidateResultRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info(
+          "patternValidateResult API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.patternValidateResult(
+          loadablePatternId, patternValidateResultRequest, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in patternValidateResult ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in patternValidateResult ", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

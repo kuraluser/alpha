@@ -9,7 +9,7 @@ public class LoadablePlanStowageDetails {
   private Long id;
   private Long tankId;
   private Long cargoNominationId;
-  private String cargoId;
+  private Long cargoId;
   private String quantityMT; // by ALGO
   private String api;
   private String temperature;
