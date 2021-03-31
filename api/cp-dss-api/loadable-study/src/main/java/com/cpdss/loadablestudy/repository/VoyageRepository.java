@@ -17,8 +17,7 @@ public interface VoyageRepository
   public List<Voyage> findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
       Long companyId, Long vesselXId, String voyageNo);
 
-  public List<Voyage> findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(
-      Long vesselXId, boolean isActive);
+  public List<Voyage> findByVesselXIdAndIsActiveOrderByIdDesc(Long vesselXId, boolean isActive);
 
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
 

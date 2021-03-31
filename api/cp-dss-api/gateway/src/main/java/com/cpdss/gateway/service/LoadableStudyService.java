@@ -131,6 +131,7 @@ import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
+import com.cpdss.gateway.domain.PatternValidateResultRequest;
 import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -3422,6 +3423,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
     Optional.ofNullable(lpsd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lpsd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
+    Optional.ofNullable(lpsd.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
     detailsBuilder.addLoadablePlanStowageDetails(builder.build());
   }
 
@@ -3446,6 +3448,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getColorCode()).ifPresent(qunatityBuilder::setColorCode);
     Optional.ofNullable(lpqcd.getPriority()).ifPresent(qunatityBuilder::setPriority);
     Optional.ofNullable(lpqcd.getLoadingOrder()).ifPresent(qunatityBuilder::setLoadingOrder);
+    Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
+    Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3805,6 +3809,39 @@ public class LoadableStudyService {
   LoadableStudyStatusReply getLoadableStudyStatus(
       LoadableStudyStatusRequest loadableStudyStatusRequest) {
     return this.loadableStudyServiceBlockingStub.getLoadableStudyStatus(loadableStudyStatusRequest);
+  }
+
+  /**
+   * @param loadablePatternId
+   * @param correlationId
+   * @return AlgoPatternResponse
+   */
+  public AlgoPatternResponse validateLoadablePlan(Long loadablePatternId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside validateLoadablePlan gateway service with correlationId : " + correlationId);
+    AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
+    LoadablePlanDetailsRequest.Builder request = LoadablePlanDetailsRequest.newBuilder();
+    request.setLoadablePatternId(loadablePatternId);
+    AlgoReply grpcReply = this.validateLoadablePlan(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to validateLoadablePlan",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    algoPatternResponse.setProcessId(grpcReply.getProcesssId());
+    algoPatternResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return algoPatternResponse;
+  }
+
+  /**
+   * @param request
+   * @return AlgoReply
+   */
+  AlgoReply validateLoadablePlan(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.Builder request) {
+    return this.loadableStudyServiceBlockingStub.validateLoadablePlan(request.build());
   }
 
   /**
@@ -4522,6 +4559,53 @@ public class LoadableStudyService {
 
   public SaveCommentReply saveLoadOnTop(SaveLoadOnTopRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.saveLoadOnTop(grpcRequest);
+  }
+
+  /**
+   * @param loadablePatternId
+   * @param patternValidateResultRequest
+   * @param first
+   * @return AlgoPatternResponse
+   */
+  public AlgoPatternResponse patternValidateResult(
+      Long loadablePatternId,
+      PatternValidateResultRequest patternValidateResultRequest,
+      String correlationId)
+      throws GenericServiceException {
+    log.info("Inside patternValidateResult in gateway micro service");
+    AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
+    LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
+    request.setLoadablePatternId(loadablePatternId);
+    request.setValidated(patternValidateResultRequest.getValidated());
+    if (patternValidateResultRequest.getValidated()) {
+      LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();
+      loadablePlanRequest
+          .getLoadablePlanDetails()
+          .add(patternValidateResultRequest.getLoadablePlanDetails());
+      buildLoadablePlanDetails(loadablePlanRequest, request);
+    } else {
+      // ToDo - error handling
+    }
+
+    AlgoReply algoReply = this.patternValidateResult(request);
+    if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to patternValidateResult from grpc service",
+          algoReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(algoReply.getResponseStatus().getCode())));
+    }
+    algoPatternResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return null;
+  }
+  /**
+   * @param request
+   * @return AlgoReply
+   */
+  private AlgoReply patternValidateResult(
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   /**

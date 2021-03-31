@@ -7,7 +7,8 @@ import lombok.Data;
 /** @Author jerin.g */
 @Data
 public class PatternValidateResultRequest {
+  private String processId;
   private Boolean validated;
-  private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
+  private LoadablePlanDetails loadablePlanDetails;
   private List<AlgoError> errors;
 }
