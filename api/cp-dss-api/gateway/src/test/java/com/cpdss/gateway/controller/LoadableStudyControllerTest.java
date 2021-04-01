@@ -18,6 +18,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.SyncRedisMasterService;
@@ -69,6 +70,8 @@ class LoadableStudyControllerTest {
   @MockBean private VoyageStatusResponse voyageStatusResponse;
 
   @MockBean private LoadableStudyCargoService loadableStudyCargoService;
+
+  @MockBean AlgoErrorService algoErrorService;
 
   @MockBean
   @Qualifier("cargoRedisSyncService")
@@ -1075,7 +1078,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {GET_LOADABLE_PATTERN_CLOUD_API_URL, GET_LOADABLE_PATTERN_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadablePatternDetails(String url) throws Exception {
-    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyLong(), anyString()))
         .thenReturn(new LoadablePatternResponse());
     this.mockMvc
         .perform(
@@ -1100,7 +1103,8 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString())).thenThrow(ex);
+    when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyLong(), anyString()))
+        .thenThrow(ex);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(
@@ -1803,5 +1807,17 @@ class LoadableStudyControllerTest {
     history1.setLoadingPortName("test");
     response.setCargoHistory(Arrays.asList(history1));
     return response;
+  }
+
+  @Test
+  public void saveAlgoError() throws Exception {
+    List<AlgoError> list = new ArrayList<>();
+    list.add(new AlgoError("test", Arrays.asList("error1", "error2", "error3")));
+    mockMvc
+        .perform(
+            post("/api/ship/save-alog-errors")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(list.toString()))
+        .andExpect(status().isOk());
   }
 }

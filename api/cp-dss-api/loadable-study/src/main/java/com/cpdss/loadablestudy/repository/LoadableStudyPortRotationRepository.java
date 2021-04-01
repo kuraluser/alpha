@@ -105,8 +105,8 @@ public interface LoadableStudyPortRotationRepository
       LoadableStudy loadableStudy, boolean isActive);
 
   @Query(
-      "SELECT LSPR.portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.portOrder = (SELECT MAX(portOrder) as PO FROM LoadableStudyPortRotation WHERE loadableStudy = ?1 and operation = ?2 and isActive = ?3) AND LSPR.loadableStudy = ?1 AND LSPR.operation = ?2 and LSPR.isActive = ?3")
-  public Long findLastPort(
+      "SELECT LSPR.portXId, LSPR.id FROM LoadableStudyPortRotation LSPR WHERE LSPR.portOrder = (SELECT MAX(portOrder) as PO FROM LoadableStudyPortRotation WHERE loadableStudy = ?1 and operation = ?2 and isActive = ?3) AND LSPR.loadableStudy = ?1 AND LSPR.operation = ?2 and LSPR.isActive = ?3")
+  public Object findLastPort(
       final LoadableStudy loadableStudy,
       final CargoOperation cargoOperation,
       final boolean isActive);
@@ -127,4 +127,9 @@ public interface LoadableStudyPortRotationRepository
       LoadableStudy loadableStudy, boolean isActive);
 
   public LoadableStudyPortRotation findByIdAndIsActive(Long id, boolean isActive);
+
+  @Query(
+      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2 ")
+  public List<LoadableStudyPortRotation> findByLoadableStudyIdAndIsActive(
+      final Long loadableStudyId, final boolean isActive);
 }

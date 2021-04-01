@@ -14,4 +14,9 @@ public class LoadablePattern {
   private Long loadableStudyStatusId;
   private Integer caseNumber;
   private StabilityParameter stabilityParameters;
+
+  private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
+  private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
+  private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
+  private LoadablePlanSynopticalRecord loadablePlanSynopticRecord;
 }

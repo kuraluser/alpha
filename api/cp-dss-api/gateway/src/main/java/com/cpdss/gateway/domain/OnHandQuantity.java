@@ -55,4 +55,6 @@ public class OnHandQuantity {
   private BigDecimal density;
 
   private Long portRotationId;
+
+  private Boolean isPortRotationOhqComplete;
 }

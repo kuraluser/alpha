@@ -94,4 +94,7 @@ public class LoadableStudyPortRotation extends EntityDoc {
   void prePersist() {
     this.isActive = true;
   }
+
+  @Column(name = "is_portrotation_ohq_complete")
+  private Boolean isPortRotationOhqComplete;
 }

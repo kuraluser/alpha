@@ -85,6 +85,9 @@ service LoadableStudyService {
 	rpc GenerateLoadablePatterns (AlgoRequest) returns (AlgoReply) {
 	}
 	
+	rpc ValidateLoadablePlan (LoadablePlanDetailsRequest) returns (AlgoReply) {
+	}
+	
 	rpc getLoadablePatternList (LoadablePatternRequest) returns (LoadablePatternReply) {
 	}
 	
@@ -103,6 +106,9 @@ service LoadableStudyService {
 	rpc SaveLoadicatorResults(LoadicatorResultsRequest) returns (AlgoReply){
 	}
 	
+	rpc SavePatternValidateResult(LoadablePatternAlgoRequest) returns (AlgoReply){
+	}
+	
 	rpc SaveSynopticalTable(SynopticalTableRequest) returns (SynopticalTableReply){
 	}
 	
@@ -113,6 +119,9 @@ service LoadableStudyService {
 	}
 	
 	rpc GetSynopticalPortDataByPortId (SynopticalTableRequest) returns (SynopticalTableReply){
+	}
+
+	rpc GetSynopticDataByLoadableStudyId (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
 	
 	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
@@ -153,6 +162,10 @@ service LoadableStudyService {
 	
 	rpc SaveJson (JsonRequest) returns (StatusReply) {
 	}
+
+	rpc SaveAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
+
+	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 }
 
 message RecalculateVolumeRequest {
@@ -291,6 +304,9 @@ message LoadablePatternAlgoRequest {
 	string processsId = 1;
 	repeated LoadablePlanDetails loadablePlanDetails = 2;
 	int64 loadableStudyId = 3;
+	bool validated = 4;
+	repeated AlgoErrors algoErrors = 5;
+	int64 loadablePatternId = 6;
 }
 
 message LoadablePlanDetails {
@@ -381,6 +397,7 @@ message LoadablePlanStowageDetails {
   int64 id = 14;
   string colorCode = 15;
   bool isCommingle = 16;
+  int64 cargoNominationId = 17;
 }
 
 
@@ -610,6 +627,7 @@ message LoadableStudyDetail{
 	bool isOhqComplete=26;
 	bool isObqComplete=27;
 	bool isDischargingPortComplete=28;
+	repeated OhqPorts ohqPorts=29;
 }
 
 message LoadableStudyReply{
@@ -756,6 +774,7 @@ message OnHandQuantityDetail{
 	string density=16;
 	bool isOhqComplete=17;
 	int64 portRotationId = 18;
+	bool isPortRotationOhqComplete=19;
 }
 
 message TankDetail{
@@ -842,19 +861,25 @@ message LoadablePatternReply {
  	repeated LoadablePattern loadablePattern = 1;
  	ResponseStatus responseStatus = 2;
  	repeated TankList tanks = 3;
- 	string loadablePatternCreatedDate = 4;
-    string loadableStudyName = 5;
+	repeated TankList ballastFrontTanks = 4;
+	repeated TankList ballastCenterTanks = 5;
+	repeated TankList ballastRearTanks = 6;
+ 	string loadablePatternCreatedDate = 7;
+ 	string loadableStudyName = 8;
 }
 
 message LoadablePattern {
 	int64 loadablePatternId = 1;
-	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 2;
-	repeated string constraints = 3;
-	int64 loadableStudyStatusId = 4;
-	int32 caseNumber = 5;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 6;
-	StabilityParameter stabilityParameters = 7;	
-	repeated int64 commingleTankIds = 8;
+	int32 caseNumber = 2;
+	int64 loadableStudyStatusId = 3;
+	repeated string constraints = 4;
+	repeated int64 commingleTankIds = 5;
+	StabilityParameter stabilityParameters = 6;
+	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 7;
+	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 8;
+	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 9;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 10;
+	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 11;
 }
 
 message LoadablePatternCargoDetails {
@@ -1126,4 +1151,16 @@ message JsonRequest {
 	int64 referenceId = 1;
 	int64 jsonTypeId = 2;
 	string json = 3;
+}
+
+message OhqPorts{
+	int64 id = 1;
+	bool isPortRotationOhqComplete = 2;
+}
+
+message AlgoErrors{
+	int64 id = 1;
+	string errorHeading = 2;
+	repeated string errorMessages = 3;
+	ResponseStatus responseStatus = 4;
 }

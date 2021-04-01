@@ -1344,6 +1344,56 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getValidateLoadablePlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ValidateLoadablePlan",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getValidateLoadablePlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        getValidateLoadablePlanMethod;
+    if ((getValidateLoadablePlanMethod = LoadableStudyServiceGrpc.getValidateLoadablePlanMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getValidateLoadablePlanMethod = LoadableStudyServiceGrpc.getValidateLoadablePlanMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getValidateLoadablePlanMethod =
+              getValidateLoadablePlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "ValidateLoadablePlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("ValidateLoadablePlan"))
+                      .build();
+        }
+      }
+    }
+    return getValidateLoadablePlanMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
           com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
       getGetLoadablePatternListMethod;
@@ -1648,6 +1698,59 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getSavePatternValidateResultMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SavePatternValidateResult",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getSavePatternValidateResultMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        getSavePatternValidateResultMethod;
+    if ((getSavePatternValidateResultMethod =
+            LoadableStudyServiceGrpc.getSavePatternValidateResultMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSavePatternValidateResultMethod =
+                LoadableStudyServiceGrpc.getSavePatternValidateResultMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSavePatternValidateResultMethod =
+              getSavePatternValidateResultMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SavePatternValidateResult"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "SavePatternValidateResult"))
+                      .build();
+        }
+      }
+    }
+    return getSavePatternValidateResultMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
           com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
       getSaveSynopticalTableMethod;
@@ -1850,6 +1953,59 @@ public final class LoadableStudyServiceGrpc {
       }
     }
     return getGetSynopticalPortDataByPortIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+      getGetSynopticDataByLoadableStudyIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetSynopticDataByLoadableStudyId",
+      requestType = com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+      getGetSynopticDataByLoadableStudyIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+        getGetSynopticDataByLoadableStudyIdMethod;
+    if ((getGetSynopticDataByLoadableStudyIdMethod =
+            LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetSynopticDataByLoadableStudyIdMethod =
+                LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetSynopticDataByLoadableStudyIdMethod =
+              getGetSynopticDataByLoadableStudyIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+                          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetSynopticDataByLoadableStudyId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetSynopticDataByLoadableStudyId"))
+                      .build();
+        }
+      }
+    }
+    return getGetSynopticDataByLoadableStudyIdMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
@@ -2491,6 +2647,102 @@ public final class LoadableStudyServiceGrpc {
     return getSaveJsonMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getSaveAlgoErrorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveAlgoErrors",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getSaveAlgoErrorsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        getSaveAlgoErrorsMethod;
+    if ((getSaveAlgoErrorsMethod = LoadableStudyServiceGrpc.getSaveAlgoErrorsMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveAlgoErrorsMethod = LoadableStudyServiceGrpc.getSaveAlgoErrorsMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveAlgoErrorsMethod =
+              getSaveAlgoErrorsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveAlgoErrors"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveAlgoErrors"))
+                      .build();
+        }
+      }
+    }
+    return getSaveAlgoErrorsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getFetchAllAlgoErrorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "FetchAllAlgoErrors",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoErrors.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+      getFetchAllAlgoErrorsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        getFetchAllAlgoErrorsMethod;
+    if ((getFetchAllAlgoErrorsMethod = LoadableStudyServiceGrpc.getFetchAllAlgoErrorsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getFetchAllAlgoErrorsMethod = LoadableStudyServiceGrpc.getFetchAllAlgoErrorsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getFetchAllAlgoErrorsMethod =
+              getFetchAllAlgoErrorsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "FetchAllAlgoErrors"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrors
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("FetchAllAlgoErrors"))
+                      .build();
+        }
+      }
+    }
+    return getFetchAllAlgoErrorsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -2748,6 +3000,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void validateLoadablePlan(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getValidateLoadablePlanMethod(), responseObserver);
+    }
+
+    /** */
     public void getLoadablePatternList(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
@@ -2796,6 +3056,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void savePatternValidateResult(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSavePatternValidateResultMethod(), responseObserver);
+    }
+
+    /** */
     public void saveSynopticalTable(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
@@ -2825,6 +3093,14 @@ public final class LoadableStudyServiceGrpc {
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
             responseObserver) {
       asyncUnimplementedUnaryCall(getGetSynopticalPortDataByPortIdMethod(), responseObserver);
+    }
+
+    /** */
+    public void getSynopticDataByLoadableStudyId(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetSynopticDataByLoadableStudyIdMethod(), responseObserver);
     }
 
     /** */
@@ -2932,6 +3208,22 @@ public final class LoadableStudyServiceGrpc {
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>
             responseObserver) {
       asyncUnimplementedUnaryCall(getSaveJsonMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveAlgoErrorsMethod(), responseObserver);
+    }
+
+    /** */
+    public void fetchAllAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getFetchAllAlgoErrorsMethod(), responseObserver);
     }
 
     @java.lang.Override
@@ -3122,6 +3414,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                       this, METHODID_GENERATE_LOADABLE_PATTERNS)))
           .addMethod(
+              getValidateLoadablePlanMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply>(
+                      this, METHODID_VALIDATE_LOADABLE_PLAN)))
+          .addMethod(
               getGetLoadablePatternListMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
@@ -3164,6 +3463,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                       this, METHODID_SAVE_LOADICATOR_RESULTS)))
           .addMethod(
+              getSavePatternValidateResultMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply>(
+                      this, METHODID_SAVE_PATTERN_VALIDATE_RESULT)))
+          .addMethod(
               getSaveSynopticalTableMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
@@ -3191,6 +3497,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                       this, METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID)))
+          .addMethod(
+              getGetSynopticDataByLoadableStudyIdMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
+                      this, METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID)))
           .addMethod(
               getGetLoadableStudyStatusMethod(),
               asyncUnaryCall(
@@ -3282,6 +3595,20 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.JsonRequest,
                       com.cpdss.common.generated.LoadableStudy.StatusReply>(
                       this, METHODID_SAVE_JSON)))
+          .addMethod(
+              getSaveAlgoErrorsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
+                      this, METHODID_SAVE_ALGO_ERRORS)))
+          .addMethod(
+              getFetchAllAlgoErrorsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
+                      this, METHODID_FETCH_ALL_ALGO_ERRORS)))
           .build();
     }
   }
@@ -3587,6 +3914,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void validateLoadablePlan(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getValidateLoadablePlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void getLoadablePatternList(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
@@ -3653,6 +3991,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void savePatternValidateResult(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSavePatternValidateResultMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void saveSynopticalTable(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
@@ -3692,6 +4041,17 @@ public final class LoadableStudyServiceGrpc {
             responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getGetSynopticalPortDataByPortIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getSynopticDataByLoadableStudyId(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -3836,6 +4196,28 @@ public final class LoadableStudyServiceGrpc {
             responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /** */
+    public void saveAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void fetchAllAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
   }
 
@@ -4040,6 +4422,13 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoReply validateLoadablePlan(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getValidateLoadablePlanMethod(), getCallOptions(), request);
+    }
+
+    /** */
     public com.cpdss.common.generated.LoadableStudy.LoadablePatternReply getLoadablePatternList(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
       return blockingUnaryCall(
@@ -4082,6 +4471,13 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoReply savePatternValidateResult(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSavePatternValidateResultMethod(), getCallOptions(), request);
+    }
+
+    /** */
     public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply saveSynopticalTable(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
       return blockingUnaryCall(
@@ -4108,6 +4504,14 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetSynopticalPortDataByPortIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+        getSynopticDataByLoadableStudyId(
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -4195,6 +4599,19 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.StatusReply saveJson(
         com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
       return blockingUnaryCall(getChannel(), getSaveJsonMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrors saveAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return blockingUnaryCall(getChannel(), getSaveAlgoErrorsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrors fetchAllAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return blockingUnaryCall(
+          getChannel(), getFetchAllAlgoErrorsMethod(), getCallOptions(), request);
     }
   }
 
@@ -4443,6 +4860,15 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        validateLoadablePlan(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getValidateLoadablePlanMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
         getLoadablePatternList(
             com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
@@ -4496,6 +4922,15 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        savePatternValidateResult(
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSavePatternValidateResultMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
         saveSynopticalTable(
             com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
@@ -4528,6 +4963,16 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetSynopticalPortDataByPortIdMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+        getSynopticDataByLoadableStudyId(
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()),
           request);
     }
 
@@ -4639,6 +5084,22 @@ public final class LoadableStudyServiceGrpc {
         saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
       return futureUnaryCall(getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+        fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
+      return futureUnaryCall(
+          getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -4667,29 +5128,34 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_COMMINGLE_CARGO = 23;
   private static final int METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS = 24;
   private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 25;
-  private static final int METHODID_GET_LOADABLE_PATTERN_LIST = 26;
-  private static final int METHODID_GET_ON_BOARD_QUANTITY = 27;
-  private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 28;
-  private static final int METHODID_GET_LOADICATOR_DATA = 29;
-  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 30;
-  private static final int METHODID_SAVE_LOADICATOR_RESULTS = 31;
-  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 32;
-  private static final int METHODID_GET_SYNOPTICAL_TABLE = 33;
-  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 34;
-  private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 35;
-  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 36;
-  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 37;
-  private static final int METHODID_RECALCULATE_VOLUME = 38;
-  private static final int METHODID_CONFIRM_PLAN_STATUS = 39;
-  private static final int METHODID_CONFIRM_PLAN = 40;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 41;
-  private static final int METHODID_SAVE_COMMENT = 42;
-  private static final int METHODID_SAVE_LOAD_ON_TOP = 43;
-  private static final int METHODID_GET_VOYAGES = 44;
-  private static final int METHODID_SAVE_VOYAGE_STATUS = 45;
-  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 46;
-  private static final int METHODID_GET_ALL_CARGO_HISTORY = 47;
-  private static final int METHODID_SAVE_JSON = 48;
+  private static final int METHODID_VALIDATE_LOADABLE_PLAN = 26;
+  private static final int METHODID_GET_LOADABLE_PATTERN_LIST = 27;
+  private static final int METHODID_GET_ON_BOARD_QUANTITY = 28;
+  private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 29;
+  private static final int METHODID_GET_LOADICATOR_DATA = 30;
+  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 31;
+  private static final int METHODID_SAVE_LOADICATOR_RESULTS = 32;
+  private static final int METHODID_SAVE_PATTERN_VALIDATE_RESULT = 33;
+  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 34;
+  private static final int METHODID_GET_SYNOPTICAL_TABLE = 35;
+  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 36;
+  private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 37;
+  private static final int METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID = 38;
+  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 39;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 40;
+  private static final int METHODID_RECALCULATE_VOLUME = 41;
+  private static final int METHODID_CONFIRM_PLAN_STATUS = 42;
+  private static final int METHODID_CONFIRM_PLAN = 43;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 44;
+  private static final int METHODID_SAVE_COMMENT = 45;
+  private static final int METHODID_SAVE_LOAD_ON_TOP = 46;
+  private static final int METHODID_GET_VOYAGES = 47;
+  private static final int METHODID_SAVE_VOYAGE_STATUS = 48;
+  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 49;
+  private static final int METHODID_GET_ALL_CARGO_HISTORY = 50;
+  private static final int METHODID_SAVE_JSON = 51;
+  private static final int METHODID_SAVE_ALGO_ERRORS = 52;
+  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 53;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4889,6 +5355,12 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
                   responseObserver);
           break;
+        case METHODID_VALIDATE_LOADABLE_PLAN:
+          serviceImpl.validateLoadablePlan(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
+                  responseObserver);
+          break;
         case METHODID_GET_LOADABLE_PATTERN_LIST:
           serviceImpl.getLoadablePatternList(
               (com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest) request,
@@ -4930,6 +5402,12 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_PATTERN_VALIDATE_RESULT:
+          serviceImpl.savePatternValidateResult(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
+                  responseObserver);
+          break;
         case METHODID_SAVE_SYNOPTICAL_TABLE:
           serviceImpl.saveSynopticalTable(
               (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
@@ -4953,6 +5431,13 @@ public final class LoadableStudyServiceGrpc {
           break;
         case METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID:
           serviceImpl.getSynopticalPortDataByPortId(
+              (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID:
+          serviceImpl.getSynopticDataByLoadableStudyId(
               (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
@@ -5048,6 +5533,18 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_ALGO_ERRORS:
+          serviceImpl.saveAlgoErrors(
+              (com.cpdss.common.generated.LoadableStudy.AlgoErrors) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>)
+                  responseObserver);
+          break;
+        case METHODID_FETCH_ALL_ALGO_ERRORS:
+          serviceImpl.fetchAllAlgoErrors(
+              (com.cpdss.common.generated.LoadableStudy.AlgoErrors) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -5138,16 +5635,19 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveCommingleCargoMethod())
                       .addMethod(getGetLoadablePatternCommingleDetailsMethod())
                       .addMethod(getGenerateLoadablePatternsMethod())
+                      .addMethod(getValidateLoadablePlanMethod())
                       .addMethod(getGetLoadablePatternListMethod())
                       .addMethod(getGetOnBoardQuantityMethod())
                       .addMethod(getSaveOnBoardQuantityMethod())
                       .addMethod(getGetLoadicatorDataMethod())
                       .addMethod(getSaveAlgoLoadableStudyStatusMethod())
                       .addMethod(getSaveLoadicatorResultsMethod())
+                      .addMethod(getSavePatternValidateResultMethod())
                       .addMethod(getSaveSynopticalTableMethod())
                       .addMethod(getGetSynopticalTableMethod())
                       .addMethod(getGetSynopticalDataByPortIdMethod())
                       .addMethod(getGetSynopticalPortDataByPortIdMethod())
+                      .addMethod(getGetSynopticDataByLoadableStudyIdMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getRecalculateVolumeMethod())
@@ -5161,6 +5661,8 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetCargoApiTempHistoryMethod())
                       .addMethod(getGetAllCargoHistoryMethod())
                       .addMethod(getSaveJsonMethod())
+                      .addMethod(getSaveAlgoErrorsMethod())
+                      .addMethod(getFetchAllAlgoErrorsMethod())
                       .build();
         }
       }

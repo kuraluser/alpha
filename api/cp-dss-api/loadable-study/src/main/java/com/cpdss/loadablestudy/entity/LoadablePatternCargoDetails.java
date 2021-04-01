@@ -63,4 +63,7 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "correction_factor")
   private String correctionFactor;
+
+  @Column(name = "cargo_nomination_xid")
+  private Long cargoNominationId;
 }

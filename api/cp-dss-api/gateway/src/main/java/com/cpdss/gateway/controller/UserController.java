@@ -128,8 +128,9 @@ public class UserController {
       throws CommonRestException {
     try {
       log.info("getUsers: {}");
+      Long companyId = 1L;
       request.setId(userId);
-      return this.userService.saveUser(request, headers.getFirst(CORRELATION_ID_HEADER));
+      return this.userService.saveUser(request, headers.getFirst(CORRELATION_ID_HEADER),companyId);
     } catch (GenericServiceException e) {
       log.error("Error in saveUser ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
