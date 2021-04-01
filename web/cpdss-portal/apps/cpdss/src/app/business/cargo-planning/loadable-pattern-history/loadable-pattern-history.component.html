@@ -30,16 +30,18 @@
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
                     [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
                     (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
-                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)" (newLoadableStudyAdded)="onNewLoadableStudyAdded($event)">
+                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)"
+                    (newLoadableStudyAdded)="onNewLoadableStudyAdded($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>
-        <div class="pl-30  pattern-container" [ngClass]="!loadablePatterns.length ? 'content-center' : ''">
-            <div class="row" *ngIf="loadablePatterns.length">
+        <div class="pl-30  pattern-container" [ngClass]="!loadablePatterns?.length ? 'content-center' : ''">
+            <div class="row" *ngIf="loadablePatterns?.length">
                 <div *ngFor="let loadablePattern of loadablePatterns; let i = index"
                     class="col-6 pb-15 pt-10 content-pattern">
                     <cpdss-portal-pattern-case [loadablePattern]="loadablePattern" [tankList]="tankLists"
-                        [index]="i + 1" (displayCommingleDetailPopup)="displayCommingleDetailPopup($event)">
+                        [index]="i + 1" (displayCommingleDetailPopup)="displayCommingleDetailPopup($event)"
+                        (displayPatternViewMorePopup)="displayPatternViewMorePopup($event)">
                     </cpdss-portal-pattern-case>
                     <div class="row">
                         <div class="col-7 text-center pt-20">
@@ -47,32 +49,36 @@
                                 (click)="viewPlan(loadablePattern)">{{'LOADABLE_PATTERN_HISTORY_VIEW_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main mr-10" (click)="confirmPlan(loadablePattern)"
+                            <button class="btn btn-main mr-10" (click)="confirmPlan(loadablePattern?.loadablePatternId)"
                                 *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main confirmed mr-10" *ngIf="loadablePattern?.loadableStudyStatusId === 2"
-                                [disabled]="true">
+                            <button class="btn btn-main confirmed mr-10"
+                                *ngIf="loadablePattern?.loadableStudyStatusId === 2" [disabled]="true">
                                 <span class="pi pi-check check-rounded"></span>
                                 {{'LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |
                                 translate}}</button>
-                                <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
-                                    {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button>
+                            <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
+                                {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div  *ngIf="!loadablePatterns.length">
+            <div *ngIf="!loadablePatterns?.length">
                 {{'LOADABLE_PATTERN_HISTORY_NO_PATTERN_GENERATED' |
                 translate}}
             </div>
         </div>
     </div>
 </div>
-<cpdss-portal-commingle-cargo-details-pop-up [display]="display" [selectedLoadablePatterns]="selectedLoadablePatterns"
+<cpdss-portal-commingle-cargo-details-pop-up [display]="display"
+    [selectedLoadablePatternCargoDetail]="selectedLoadablePatternCargoDetail"
     [loadablePatternDetailsId]="loadablePatternDetailsId" [vesselId]="vesselId" [voyageId]="voyageId"
     [loadableStudyId]="loadableStudyId" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
     (displayPopup)="setPopupVisibility($event)" *ngIf="display"></cpdss-portal-commingle-cargo-details-pop-up>
 <cpdss-portal-stability-pop-up [display]="showStability" [stabilityParameters]="stabilityParameters"
     (displayPopup)="setStabilityPopupVisibility($event)" *ngIf="showStability"></cpdss-portal-stability-pop-up>
-
+<cpdss-portal-pattern-view-more-pop-up [display]="viewMore" [selectedLoadablePattern]="selectedLoadablePattern"
+    (displayPopup)="setPatternViewMorePopupVisibility($event)" [vesselId]="vesselId" [voyageId]="voyageId"
+    [loadableStudyId]="loadableStudyId" [cargoTankList]="tankLists" *ngIf="viewMore" [rearBallastTanks]="rearBallastTanks"
+    [centerBallastTanks]="centerBallastTanks" [frontBallastTanks]="frontBallastTanks" [cargos]="cargos"></cpdss-portal-pattern-view-more-pop-up>

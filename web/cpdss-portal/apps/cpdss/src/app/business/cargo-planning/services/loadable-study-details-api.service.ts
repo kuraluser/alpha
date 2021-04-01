@@ -67,10 +67,11 @@ export class LoadableStudyDetailsApiService {
      * @returns {Promise<number>}
      * @memberof LoadableStudyDetailsApiService
      */
-    setCargoNomination(cargoNomination: ICargoNomination, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+    setCargoNomination(cargoNomination: ICargoNomination, vesselId: number, voyageId: number, loadableStudyId: number, isCargoNominationComplete: boolean): Promise<number> {
         cargoNomination.vesselId = vesselId;
         cargoNomination.voyageId = voyageId;
         cargoNomination.loadableStudyId = loadableStudyId;
+        cargoNomination.isCargoNominationComplete = isCargoNominationComplete;
         return this._cargoNominationDb.cargoNominations.add(cargoNomination);
     }
 
@@ -141,10 +142,11 @@ export class LoadableStudyDetailsApiService {
    * @returns {Observable<IPortsDetailsResponse>}
    * @memberof LoadableStudyDetailsApiService
    */
-    setPort(ports: IPortList, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+    setPort(ports: IPortList, vesselId: number, voyageId: number, loadableStudyId: number, isPortsComplete: boolean): Promise<number> {
         ports.vesselId = vesselId;
         ports.voyageId = voyageId;
         ports.loadableStudyId = loadableStudyId;
+        ports.isPortsComplete = isPortsComplete;
         return this._portsDb.ports.add(ports);
     }
 
@@ -198,10 +200,11 @@ export class LoadableStudyDetailsApiService {
      * @returns {Promise<number>}
      * @memberof LoadableStudyDetailsApiService
      */
-    setOHQTankDetails(ohqTankDetails: IPortOHQTankDetail, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+    setOHQTankDetails(ohqTankDetails: IPortOHQTankDetail, vesselId: number, voyageId: number, loadableStudyId: number, isPortRotationOhqComplete: boolean): Promise<number> {
         ohqTankDetails.vesselId = vesselId;
         ohqTankDetails.voyageId = voyageId;
         ohqTankDetails.loadableStudyId = loadableStudyId;
+        ohqTankDetails.isPortRotationOhqComplete = isPortRotationOhqComplete;
         return this._ohqDb.ohq.add(ohqTankDetails);
     }
 
@@ -242,10 +245,11 @@ export class LoadableStudyDetailsApiService {
    * @returns {Promise<number>}
    * @memberof LoadableStudyDetailsApiService
    */
-    setOBQTankDetails(obqTankDetails: IPortOBQTankDetail, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+    setOBQTankDetails(obqTankDetails: IPortOBQTankDetail, vesselId: number, voyageId: number, loadableStudyId: number, isObqComplete: boolean): Promise<number> {
         obqTankDetails.vesselId = vesselId;
         obqTankDetails.voyageId = voyageId;
         obqTankDetails.loadableStudyId = loadableStudyId;
+        obqTankDetails.isObqComplete = isObqComplete;
         return this._obqDb.obq.add(obqTankDetails);
     }
 

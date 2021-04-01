@@ -2,8 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
-import { ILoadablePlanSynopticalRecord , ISynopticalRecordArrangeModel } from '../../models/loadable-plan.model';
+import { ISynopticalRecordArrangeModel } from '../../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
+import { ILoadablePlanSynopticalRecord } from '../../models/cargo-planning.model';
 
 /**
  * Component class of ports eta etd component in loadable plan

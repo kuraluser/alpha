@@ -7,7 +7,8 @@
         <cpdss-portal-cargo-tank-layout [options]="cargoTankOptions" [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
     </div>
     <div class="col-5">
-        <cpdss-portal-cargo-priority-grid [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails"
-            (isCommingle)="showComminglePopup($event)"></cpdss-portal-cargo-priority-grid>
+        <cpdss-portal-cargo-priority-grid [tableCol]="tableCol" [styleClass]="'table-pattern'" [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails"
+            [totalHeader]="'CARGO_PRIORITY_GRID_FOOTER_TOTAL'" (isCommingle)="showComminglePopup($event)" (patternViewMore)="patternViewMore($event)">
+        </cpdss-portal-cargo-priority-grid>
     </div>
 </div>

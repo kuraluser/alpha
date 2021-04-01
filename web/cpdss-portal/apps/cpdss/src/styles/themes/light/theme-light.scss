@@ -1230,3 +1230,9 @@ header{
   background: url($images-theme + 'sidebar-expand-button.jpg') no-repeat center center;
   }
 }
+.tab-btn:hover{
+  color: $link-color!important;
+}
+.tab-btn.active:hover{
+  color: $hover-color!important;
+}

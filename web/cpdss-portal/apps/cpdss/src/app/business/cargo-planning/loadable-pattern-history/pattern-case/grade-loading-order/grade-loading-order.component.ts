@@ -16,6 +16,7 @@ import { ILoadablePatternCargoDetail } from '../../../models/loadable-pattern.mo
 export class GradeLoadingOrderComponent implements OnInit {
   @Input() loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
   @Input() index: number;
+  @Input() showCaseLabel = true;
   constructor() { }
 
   ngOnInit(): void {

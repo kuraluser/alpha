@@ -1,31 +1,34 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Injector, OnInit , OnDestroy} from '@angular/core';
+import { Event as NavigationEvent, Router, ActivatedRoute, NavigationStart, NavigationEnd } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
 import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
 import { IMenuItem, IPermission } from './navbar.component.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { environment } from 'apps/cpdss/src/environments/environment';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'cpdss-portal-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit , OnDestroy{
   isToggle = true;
   darkMode$: Observable<boolean>;
   menuList: IMenuItem[] = [];
   showUserIconDropdown = false;
   companyLogo = '';
   userPermission: any;
+  navigationEvent$:Subscription;
 
   private keycloakService: KeycloakService;
 
   constructor(private themeService: ThemeService, private injector: Injector,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private permissionsService: PermissionsService) {
     if (environment.name === 'shore') {
       this.keycloakService = <KeycloakService>this.injector.get(KeycloakService);
@@ -36,6 +39,11 @@ export class NavbarComponent implements OnInit {
 
     this.companyLogo = localStorage.getItem('companyLogo');
 
+    this.navigationEvent$ = this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+        .subscribe(event => {
+          this.activeRoute(event['url']);
+        });
+
 
     /**
      * Array for showing nav
@@ -45,6 +53,7 @@ export class NavbarComponent implements OnInit {
         'menu': 'STATUS',
         'menuIcon': 'status',
         'menuLink': 'voyage-status',
+        'routerLinkActive': 'voyage-status',
         'subMenu': [],
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']
@@ -53,6 +62,7 @@ export class NavbarComponent implements OnInit {
         'menu': 'CARGO_PLANNING',
         'menuIcon': 'cargo-planning',
         'menuLink': 'cargo-planning',
+        'routerLinkActive': 'cargo-planning',
         'subMenu': [],
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoPlanningComponent']
@@ -61,6 +71,7 @@ export class NavbarComponent implements OnInit {
         'menu': 'VOYAGES',
         'menuIcon': 'voyages',
         'menuLink': 'voyage-list',
+        'routerLinkActive': 'voyage-list',
         'subMenu': [],
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['voyagesComponent']
@@ -69,6 +80,7 @@ export class NavbarComponent implements OnInit {
         'menu': 'SYNOPTICAL',
         'menuIcon': 'synoptical-table',
         'menuLink': 'synoptical',
+        'routerLinkActive': 'synoptical',
         'subMenu': [],
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['SynopticalComponent'],
@@ -80,7 +92,8 @@ export class NavbarComponent implements OnInit {
       {
         'menu': 'ADMIN',
         'menuIcon': 'admin',
-        'menuLink': 'admin',
+        'menuLink': '',
+        'routerLinkActive': 'admin',
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminComponent'],
         'subMenu': [
@@ -131,11 +144,19 @@ export class NavbarComponent implements OnInit {
         this.userPermission = JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'));
         clearInterval(isUserPermissionAvailable);
         this.getPagePermission(menuList);
-
+        this.activeRoute(this.router.url);
       }
     }, 50);
   }
 
+  /**
+   * unsubscribe the observable
+   *
+   * @memberof NavbarComponent
+  */
+  ngOnDestroy() {
+    this.navigationEvent$.unsubscribe();
+  }
   /**
  * Get page permission
  *
@@ -159,6 +180,8 @@ export class NavbarComponent implements OnInit {
           addVoyageId: menuItem.addVoyageId,
           addLoadableStudyId: menuItem.addLoadableStudyId,
           addLoadablePatternId: menuItem.addLoadablePatternId,
+          routerLinkActive: menuItem.routerLinkActive,
+          isActive: false
         });
         if (menuItem.subMenu.length) {
           menuItem.subMenu?.map((subMenu, subMenuIndex) => {
@@ -281,6 +304,21 @@ export class NavbarComponent implements OnInit {
     this.router.navigate([subMenu.subMenuLink]);
     this.hide(list, index);
     event.stopPropagation();
+  }
+
+  /**
+   * Handler router link active
+   *
+   * @memberof NavbarComponent
+   */
+  activeRoute(url: string) {
+    this.menuList.findIndex(menu => {
+      if (url.includes(menu.routerLinkActive)) {
+        menu.isActive = true
+      } else {
+        menu.isActive = false
+      }
+    })
   }
 
 }

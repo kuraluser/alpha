@@ -8,6 +8,7 @@ import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
 import { IOperations, IPort, IPortList, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
+import { ILoadableOHQStatus } from '../models/loadable-study-list.model';
 
 /**
  * Transformation Service for Lodable Study details module
@@ -39,6 +40,7 @@ export class LoadableStudyDetailsTransformationService {
   ohqValidity$ = this._ohqValiditySource.asObservable();
   obqValidity$ = this._obqValiditySource.asObservable();
   obqUpdate$ = this._ohqUpdate.asObservable();
+  ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
   constructor() { }
 
@@ -1062,8 +1064,50 @@ export class LoadableStudyDetailsTransformationService {
    * @param {boolean} isValid
    * @memberof LoadableStudyDetailsTransformationService
    */
-  setOHQValidity(isValid: boolean) {
-    this._ohqValiditySource.next(isValid);
+  setOHQValidity(ohqPorts: ILoadableOHQStatus[]) {
+    this.ohqPortsValidity = ohqPorts;
+    if(!ohqPorts.length){
+      this._ohqValiditySource.next(false);
+      return
+    }
+    for(let i = 0; i < ohqPorts.length; i++){
+      if(!ohqPorts[i].isPortRotationOhqComplete){
+        this._ohqValiditySource.next(false);
+        return
+      }
+    }
+    this._ohqValiditySource.next(true);
+  }
+
+  /**
+   * Set ohq port complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  setOHQPortValidity(id: number, isPortRotationOhqComplete: boolean) {
+    if(typeof isPortRotationOhqComplete !== 'undefined'){
+      const i = this.ohqPortsValidity.findIndex(port => port.id === id);
+      if(i >= 0){
+        this.ohqPortsValidity[i].isPortRotationOhqComplete = isPortRotationOhqComplete;
+        this.setOHQValidity(this.ohqPortsValidity)
+      }
+    }
+  }
+
+  /**
+   * Get ohq port complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getOHQPortValidity(id: number): boolean {
+    const i = this.ohqPortsValidity.findIndex(port => port.id === id);
+    if(i >= 0){
+      return this.ohqPortsValidity[i].isPortRotationOhqComplete;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -1214,8 +1258,8 @@ export class LoadableStudyDetailsTransformationService {
    */
   getCommingleValueObject(commingleManual: ICargoGroup, isNewValue = true, isEditable = true, listData: ICommingleManual): ICommingleValueObject {
     const _commingleManual = <ICommingleValueObject>{};
-    const cargo1Obj: ICargoNomination = listData.cargoNominationsCargo1.find(cargo1Data => cargo1Data.cargoId === commingleManual.cargo1Id);
-    const cargo2Obj: ICargoNomination = listData.cargoNominationsCargo2.find(cargo2Data => cargo2Data.cargoId === commingleManual.cargo2Id);
+    const cargo1Obj: ICargoNomination = listData.cargoNominationsCargo1.find(cargo1Data => cargo1Data.id === commingleManual.cargoNomination1Id);
+    const cargo2Obj: ICargoNomination = listData.cargoNominationsCargo2.find(cargo2Data => cargo2Data.id === commingleManual.cargoNomination2Id);
     const cargo1IdPctObj: IPercentage = listData.percentage.find(percent1 => percent1.id === commingleManual.cargo1pct);
     const cargo2IdPctObj: IPercentage = listData.percentage.find(percent2 => percent2.id === commingleManual.cargo2pct);
     _commingleManual.cargo1 = new ValueObject<ICargoNomination>(cargo1Obj, true, isNewValue, false, isEditable);

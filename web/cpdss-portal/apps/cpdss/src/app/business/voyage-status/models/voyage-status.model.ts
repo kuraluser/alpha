@@ -50,6 +50,7 @@ export class IVoyageDetails {
     portOrder: number;
     operationType: string;
     portId?: number;
+    portRotationId?: number;
 }
 
 /**

@@ -70,8 +70,10 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageModel.captainId = this.vesselDetails?.captainId;
     this.newVoyageModel.chiefOfficerId = this.vesselDetails?.chiefOfficerId;
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
-    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.start_date, this.startDateTimeZone.offsetValue) : '';
-    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.end_date, this.endDateTimeZone.offsetValue) : '';
+    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.start_date, true), {isTime: true
+    }) : '';
+    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.end_date, true), {isTime: true
+    }) : '';
     this.newVoyageModel.startTimezoneId = this.newVoyageForm.value.start_date ? this.startDateTimeZone.id : null;
     this.newVoyageModel.endTimezoneId = this.newVoyageForm.value.end_date ? this.endDateTimeZone.id : null;
     this.saveNewVoyage();

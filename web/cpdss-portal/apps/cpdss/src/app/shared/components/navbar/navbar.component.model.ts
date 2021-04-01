@@ -12,6 +12,8 @@ export interface IMenuItem {
     addVoyageId?: boolean;
     addLoadableStudyId?: boolean;
     addLoadablePatternId?: boolean;
+    routerLinkActive: string;
+    isActive: boolean;
 }
 /**
  * Interface for submenu

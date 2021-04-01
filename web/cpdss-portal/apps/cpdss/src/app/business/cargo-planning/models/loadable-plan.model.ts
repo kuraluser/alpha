@@ -1,6 +1,7 @@
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { IResponseStatus, ValueObject , IResponse } from '../../../shared/models/common.model';
-import { IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
+import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from './cargo-planning.model';
 
 
 /**
@@ -27,31 +28,6 @@ export interface ILoadablePlanResponse {
     loadableStudyStatusId: number
 }
 
-/**
- * Interface for loadable quality 
- *
- * @export
- * @interface ILoadableQuantityCargo
- */
-export interface ILoadableQuantityCargo {
-    id: number,
-    grade: string,
-    estimatedAPI: string,
-    estimatedTemp: string,
-    orderBblsdbs: string,
-    orderBbls60f: string,
-    orderedQuantity: string,
-    minTolerence: string,
-    maxTolerence: string,
-    loadableBblsdbs: string,
-    loadableBbls60f: string,
-    loadableLT: string,
-    loadableMT: string,
-    loadableKL: string,
-    differencePercentage: string,
-    differencePercentageValue: number;
-    differenceColor: string
-}
 
 /**
  * Interface for loadable commingle Cargo
@@ -190,29 +166,6 @@ export interface ICargoTankDetailEvent extends IDataTableEvent {
     originalEvent: MouseEvent;
 }
 
-/**
- * Interface for ballast stowage
- *
- * @export
- * @interface 
- */
-export interface IBallastStowageDetails {
-    id: number,
-    tankName?: string,
-    tankId: number,
-    rdgLevel: string,
-    correctionFactor: string,
-    correctedLevel: string,
-    metricTon: string,
-    cubicMeter: string,
-    percentage: string,
-    sg: string,
-    lcg: string,
-    vcg: string,
-    tcg: string,
-    inertia: string
-    fullCapacityCubm: string;
-}
 
 
 /**
@@ -235,31 +188,7 @@ export interface IBallastTanksDetails {
     slopTank: boolean
 }
 
-/**
- * Interface for LoadablePlan Synoptical Records
- * @export
- * @interface 
- */
-export interface ILoadablePlanSynopticalRecord {
-    id: number,
-    operationType: string,
-    portId: number,
-    portName: string,
-    etaEtdPlanned: string,
-    plannedFOTotal: number,
-    plannedDOTotal: number,
-    plannedFWTotal: number,
-    othersPlanned: number,
-    totalDwtPlanned: number,
-    displacementPlanned: number,
-    specificGravity: number,
-    finalDraftFwd: number,
-    finalDraftAft: number,
-    finalDraftMid: number,
-    calculatedTrimPlanned: number,
-    cargoPlannedTotal: number,
-    ballastPlanned: number
-}
+
 
 /**
  * Interface for LoadablePlan arranged Synoptical Records

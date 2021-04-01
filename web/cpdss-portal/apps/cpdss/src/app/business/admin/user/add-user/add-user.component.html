@@ -35,9 +35,9 @@
               <p-dropdown styleClass="form-control" [options]="roles" appendTo="body" *ngIf="popupStatus !== 'VIEW';else viewRoleRef"
                 id="role_id" formControlName="userRole" optionLabel="name"
                 placeholder="{{'USER_ROLE_PLACEHOLDER' | translate}}" focusTrap
-                resetFilterOnHide="true">
+                resetFilterOnHide="true" [filter]="true">
             </p-dropdown>
-            <ng-template #viewRoleRef><span  class="form-control">{{formContolValue('userRole')?.name}}</span></ng-template>
+            <ng-template #viewRoleRef><span  class="form-control">{{formContolValue('userRole','name')}}</span></ng-template>
             </div>
             <cpdss-portal-validation-error  [errors]="fieldError('userRole')" [errorMessages]="errorMessages.userRole">
             </cpdss-portal-validation-error>
