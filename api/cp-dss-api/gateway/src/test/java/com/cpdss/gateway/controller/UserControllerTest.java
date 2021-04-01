@@ -124,7 +124,7 @@ public class UserControllerTest {
   @Test
   void saveUserTest() throws Exception {
     User dummy = TestUtils.getDummyUser();
-    when(userService.saveUser(dummy, "test")).thenReturn(new UserResponse());
+    when(userService.saveUser(dummy, "test",anyLong())).thenReturn(new UserResponse());
     ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String json = ow.writeValueAsString(dummy);
     this.mockMvc
