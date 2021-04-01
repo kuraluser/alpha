@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.entity;
 
-import java.io.Serializable;
+import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoadablePlanStowageDetailsTemp implements Serializable {
+public class LoadablePlanStowageDetailsTemp extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 

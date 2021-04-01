@@ -700,7 +700,7 @@ public class UserService {
    * @return
    * @throws GenericServiceException
    */
-  public UserResponse saveUser(User request, String correlationId) throws GenericServiceException {
+  public UserResponse saveUser(User request, String correlationId,Long companyId) throws GenericServiceException {
     UserResponse response = new UserResponse();
     if (this.isShip()) {
       Users entity = null;
@@ -720,6 +720,7 @@ public class UserService {
         entity.setIsShipUser(false);
       }
       this.checkUsernameDuplicate(request);
+      entity.setCompanyXId(companyId);
       entity.setUsername(request.getUsername());
       entity.setFirstName(request.getFirstName());
       entity.setLastName(request.getLastName());

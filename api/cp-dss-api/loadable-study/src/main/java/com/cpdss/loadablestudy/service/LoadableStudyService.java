@@ -173,6 +173,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
@@ -286,6 +287,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
+  @Autowired private LoadablePlanCommingleDetailsPortwiseRepository loadablePlanCommingleDetailsPortwiseRepository;
 
   @Autowired
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -2972,6 +2974,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePattern);
                   }
+                  saveLoadableQuantityCommingleCargoPortwiseDetails(lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
                   saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
@@ -3012,8 +3015,74 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+  
+  
+  /** save comminglo cargo portwise information into loadable_plan_commingle_details_portwise table **/
+	private void saveLoadableQuantityCommingleCargoPortwiseDetails(
+			List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList, LoadablePattern loadablePattern ) {
+		
+		
+		loadablePlanPortWiseDetailsList.forEach(it->{
+			saveLodableQtyCommingleCargoPortData(it.getPortId(), 
+					SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL, 
+					it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
+					loadablePattern);
+			
+			saveLodableQtyCommingleCargoPortData(it.getPortId(), 
+					SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE, 
+					it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
+					loadablePattern);
+		});
 
-  /**
+	}
+
+  private void saveLodableQtyCommingleCargoPortData(long portId,
+		String operationType, 
+		List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
+		 LoadablePattern loadablePattern ) {
+	
+	  
+	  if(Optional.ofNullable(loadableQuantityCommingleCargoDetailsList).isPresent()) {
+		  
+		  
+		  loadableQuantityCommingleCargoDetailsList.forEach(it->{
+
+			  LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails = LoadablePlanComminglePortwiseDetails
+				.builder().portId(portId)
+				.operationType(operationType)
+				.api(it.getApi())
+				.cargo1Abbreviation(it.getCargo1Abbreviation())
+				.cargo1Mt(it.getCargo1MT())
+				.cargo1Percentage(it.getCargo1Percentage())
+				.cargo2Abbreviation(it.getCargo2Abbreviation())
+				.cargo2Mt(it.getCargo2MT())
+				.cargo2Percentage(it.getCargo2Percentage())
+				.grade(it.getGrade())
+				.isActive(true)
+				.loadablePattern(loadablePattern)
+				.quantity(it.getQuantity())
+				.tankName(it.getTankName())
+				.temperature(it.getTemp())
+				.orderQuantity(it.getOrderedMT())
+				.priority(it.getPriority())
+				.loadingOrder(it.getLoadingOrder())
+				.tankId(it.getTankId())
+				.fillingRatio(it.getFillingRatio())
+				.correctionFactor(it.getCorrectionFactor())
+				.correctedUllage(it.getCorrectedUllage())
+				.rdgUllage(it.getRdgUllage()).build();
+
+				loadablePlanCommingleDetailsPortwiseRepository.save(loadablePlanComminglePortwiseDetails);
+
+		  });
+
+		 
+	  }
+	  
+	
+}
+
+/**
    * @param loadablePattern
    * @param lpd void
    * @param lastLoadingPort
@@ -4436,7 +4505,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePatternOpt.get());
                   }
-                  saveStabilityParameters(loadablePatternOpt.get(), lpd, lastLoadingPort);
+                  // saveStabilityParameters(loadablePatternOpt.get(), lpd, lastLoadingPort);
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
