@@ -4505,7 +4505,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePatternOpt.get());
                   }
-                  saveStabilityParameters(loadablePatternOpt.get(), lpd, lastLoadingPort);
+                  // saveStabilityParameters(loadablePatternOpt.get(), lpd, lastLoadingPort);
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });

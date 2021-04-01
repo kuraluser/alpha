@@ -3359,9 +3359,13 @@ public class LoadableStudyService {
                             null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
-              planBuilder.setCaseNumber(lpd.getCaseNumber());
-              planBuilder.setStabilityParameters(
-                  buildStabilityParamter(lpd.getStabilityParameters()));
+              Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
+
+              Optional.ofNullable(lpd.getStabilityParameters())
+                  .ifPresent(
+                      stabilityParameter ->
+                          planBuilder.setStabilityParameters(
+                              buildStabilityParamter(stabilityParameter)));
 
               request.addLoadablePlanDetails(planBuilder);
             });
@@ -4579,9 +4583,9 @@ public class LoadableStudyService {
     request.setValidated(patternValidateResultRequest.getValidated());
     if (patternValidateResultRequest.getValidated()) {
       LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();
-      loadablePlanRequest
-          .getLoadablePlanDetails()
-          .add(patternValidateResultRequest.getLoadablePlanDetails());
+      loadablePlanRequest.setLoadablePlanDetails(
+          Arrays.asList(patternValidateResultRequest.getLoadablePlanDetails()));
+      loadablePlanRequest.setProcessId(patternValidateResultRequest.getProcessId());
       buildLoadablePlanDetails(loadablePlanRequest, request);
     } else {
       // ToDo - error handling
@@ -4604,8 +4608,7 @@ public class LoadableStudyService {
    */
   private AlgoReply patternValidateResult(
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
-    // TODO Auto-generated method stub
-    return null;
+    return this.loadableStudyServiceBlockingStub.savePatternValidateResult(request.build());
   }
 
   /**
