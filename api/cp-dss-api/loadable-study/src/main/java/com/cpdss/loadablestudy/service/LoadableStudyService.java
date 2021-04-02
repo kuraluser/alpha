@@ -141,6 +141,7 @@ import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
@@ -452,6 +453,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String START_VOYAGE = "START";
 
   private static final Long CLOSE_VOYAGE_STATUS = 2L;
+
+  private static final String DEFAULT_USER_NAME = "UNKNOWN";
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -3015,21 +3018,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
-  
+
+
   /** save comminglo cargo portwise information into loadable_plan_commingle_details_portwise table **/
 	private void saveLoadableQuantityCommingleCargoPortwiseDetails(
 			List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList, LoadablePattern loadablePattern ) {
-		
-		
+
+
 		loadablePlanPortWiseDetailsList.forEach(it->{
-			saveLodableQtyCommingleCargoPortData(it.getPortId(), 
-					SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL, 
+			saveLodableQtyCommingleCargoPortData(it.getPortId(),
+					SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
 					it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
 					loadablePattern);
-			
-			saveLodableQtyCommingleCargoPortData(it.getPortId(), 
-					SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE, 
+
+			saveLodableQtyCommingleCargoPortData(it.getPortId(),
+					SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
 					it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
 					loadablePattern);
 		});
@@ -3037,14 +3040,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 	}
 
   private void saveLodableQtyCommingleCargoPortData(long portId,
-		String operationType, 
+		String operationType,
 		List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
 		 LoadablePattern loadablePattern ) {
-	
-	  
+
+
 	  if(Optional.ofNullable(loadableQuantityCommingleCargoDetailsList).isPresent()) {
-		  
-		  
+
+
 		  loadableQuantityCommingleCargoDetailsList.forEach(it->{
 
 			  LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails = LoadablePlanComminglePortwiseDetails
@@ -3076,10 +3079,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
 		  });
 
-		 
+
 	  }
-	  
-	
+
+
 }
 
 /**
@@ -6938,10 +6941,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               com.cpdss.common.generated.LoadableStudy.LoadablePlanComments.newBuilder();
           Optional.ofNullable(lpc.getId()).ifPresent(builder::setId);
           Optional.ofNullable(lpc.getComments()).ifPresent(builder::setComment);
+          Optional.ofNullable(lpc.getCreatedBy()).ifPresent(builder::setCreatedBy);
           Optional.ofNullable(
                   DateTimeFormatter.ofPattern(DATE_FORMAT).format(lpc.getCreatedDateTime()))
               .ifPresent(builder::setDataAndTime);
-          builder.setUserName("Uttam Kumar"); // ToDo - replace it with the value taken from cache
+          // Username set at gateway as Keycloack is at gateway layer
+          builder.setUserName(
+              DEFAULT_USER_NAME); // ToDo - replace it with the value taken from cache
           replyBuilder.addLoadablePlanComments(builder);
         });
   }
@@ -7827,7 +7833,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       entity.setCreatedBy(Long.toString(request.getUser()));
 
       entity.setIsActive(true);
-      entity = this.loadablePlanCommentsRepository.save(entity);
+      this.loadablePlanCommentsRepository.save(entity);
 
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {

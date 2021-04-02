@@ -98,6 +98,15 @@ public class KeycloakDynamicConfigResolver implements KeycloakConfigResolver {
   }
 
   /**
+   * Method to get realm
+   *
+   * @return Realm value
+   */
+  public String getRealm() {
+    return adapterConfig.getRealm();
+  }
+
+  /**
    * Extract realm information from keycloak token. Keycloak token has url of token issuing realm in
    * the format: https://keycloak-base_url/auth/realms/realm_name. So "realm_name" will be extracted
    * from here and will be used for keycloak configuration

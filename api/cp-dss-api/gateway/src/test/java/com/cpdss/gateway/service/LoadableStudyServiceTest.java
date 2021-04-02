@@ -2036,14 +2036,16 @@ class LoadableStudyServiceTest {
                 ResponseStatus.newBuilder().setMessage("Success").setStatus(SUCCESS).build())
             .build();
 
-    Mockito.when(spy.saveComment(ArgumentMatchers.any(Comment.class), anyString(), anyLong()))
+    Mockito.when(
+            spy.saveComment(
+                ArgumentMatchers.any(Comment.class), anyString(), anyLong(), anyString()))
         .thenCallRealMethod();
 
     Mockito.when(
             this.usersRepository.findByKeycloakIdAndIsActive(any(String.class), any(Boolean.class)))
         .thenReturn(createUser());
 
-    Mockito.when(spy.getUsersEntity()).thenReturn(createUser());
+    Mockito.when(spy.getUsersEntity(anyString())).thenReturn(createUser());
     Mockito.when(spy.saveComment(ArgumentMatchers.any(SaveCommentRequest.class)))
         .thenReturn(saveCommentReply);
 
@@ -2051,7 +2053,7 @@ class LoadableStudyServiceTest {
     comment.setComment("comment");
     comment.setUser(1L);
 
-    SaveCommentResponse commentResponse = spy.saveComment(comment, "corelationId", (long) 1);
+    SaveCommentResponse commentResponse = spy.saveComment(comment, "corelationId", (long) 1, "");
 
     Assert.assertEquals(
         String.valueOf(HttpStatusCode.OK.value()), commentResponse.getResponseStatus().getStatus());

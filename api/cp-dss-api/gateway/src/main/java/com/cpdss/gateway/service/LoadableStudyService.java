@@ -151,8 +151,10 @@ import com.cpdss.gateway.domain.VoyageActionResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.domain.VoyageStatusRequest;
 import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import java.io.File;
@@ -171,6 +173,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.keycloak.common.VerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -225,8 +228,14 @@ public class LoadableStudyService {
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
   private static final Long LOADABLE_STUDY_RESPONSE = 2L;
+  private static final String DEFAULT_USER_NAME = "UNKNOWN";
 
   @Autowired private UsersRepository usersRepository;
+
+  @Autowired private UserCachingService userCachingService;
+
+  @Autowired(required = false)
+  private KeycloakDynamicConfigResolver keycloakDynamicConfigResolver;
 
   /**
    * method for voyage save
@@ -3574,10 +3583,28 @@ public class LoadableStudyService {
         .forEach(
             lpc -> {
               LoadablePlanComments commets = new LoadablePlanComments();
+              //              Set user details
+              try {
+                Long userId = Long.parseLong(lpc.getCreatedBy());
+                Optional<Users> userEntity = this.usersRepository.findById(userId);
+                userEntity.ifPresent(
+                    user -> {
+                      try {
+                        KeycloakUser keycloakUser =
+                            userCachingService.getUser(userEntity.get().getKeycloakId());
+                        commets.setUserName(
+                            String.format(
+                                "%s %s", keycloakUser.getFirstName(), keycloakUser.getLastName()));
+                      } catch (GenericServiceException e) {
+                        commets.setUserName(DEFAULT_USER_NAME);
+                      }
+                    });
+              } catch (NumberFormatException e) {
+                commets.setUserName(DEFAULT_USER_NAME);
+              }
               commets.setId(lpc.getId());
               commets.setComment(lpc.getComment());
               commets.setDataAndTime(lpc.getDataAndTime());
-              commets.setUserName(lpc.getUserName());
               response.getLoadablePlanComments().add(commets);
             });
   }
@@ -4197,23 +4224,35 @@ public class LoadableStudyService {
   }
 
   public SaveCommentResponse saveComment(
-      Comment request, String correlationId, long loadablePatternId)
+      Comment request, String correlationId, long loadablePatternId, String authorizationToken)
       throws NumberFormatException, GenericServiceException {
     SaveCommentRequest.Builder builder = SaveCommentRequest.newBuilder();
     builder.setLoadablePatternId(loadablePatternId);
     Optional.ofNullable(request.getComment()).ifPresent(builder::setComment);
-    Users usersEntity = this.getUsersEntity();
-    if (usersEntity != null) {
-      request.setUser(usersEntity.getId());
+    Users usersEntity;
+    // Get user
+    try {
+      usersEntity =
+          this.getUsersEntity(
+              keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).getSubject());
+    } catch (VerificationException e) {
+      throw new GenericServiceException(
+          "Invalid token", CommonErrorCodes.E_HTTP_INVALID_TOKEN, HttpStatusCode.UNAUTHORIZED);
     }
 
-    builder.setUser(request.getUser());
+    // Exit on user not found
+    if (null == usersEntity) {
+      throw new GenericServiceException(
+          "User not found", CommonErrorCodes.E_CPDSS_INVALID_USER, HttpStatusCode.NOT_FOUND);
+    }
+
+    builder.setUser(usersEntity.getId());
     SaveCommentReply reply = this.saveComment(builder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "failed to save comment",
           reply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.parseInt(reply.getResponseStatus().getCode())));
     }
     SaveCommentResponse response = new SaveCommentResponse();
     response.setResponseStatus(
@@ -4225,9 +4264,8 @@ public class LoadableStudyService {
     return this.loadableStudyServiceBlockingStub.saveComment(grpcRequest);
   }
 
-  public Users getUsersEntity() {
-    return this.usersRepository.findByKeycloakIdAndIsActive(
-        "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
+  public Users getUsersEntity(String keyCloakId) {
+    return this.usersRepository.findByKeycloakIdAndIsActive(keyCloakId, true);
   }
 
   /**

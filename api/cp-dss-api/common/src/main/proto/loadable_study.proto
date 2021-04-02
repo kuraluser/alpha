@@ -360,6 +360,7 @@ message LoadablePlanComments {
 	string userName = 2;
 	string dataAndTime = 3;
 	string comment = 4;
+	string createdBy = 5;
 }
 
 message LoadablePlanBallastDetails {

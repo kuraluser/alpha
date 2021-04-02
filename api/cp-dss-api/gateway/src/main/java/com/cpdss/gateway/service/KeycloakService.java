@@ -6,7 +6,8 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.keycloak.KeycloakAuthenticationResponse;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
-import java.util.Objects;
+import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,20 +28,31 @@ import org.springframework.web.client.RestTemplate;
 public class KeycloakService {
   @Autowired private RestTemplate restTemplate;
 
+  @Autowired private ObjectMapper objectMapper;
+
+  @Autowired(required = false)
+  private KeycloakDynamicConfigResolver keycloakDynamicConfigResolver;
+
   @Value("${keycloak.auth-server-url}")
   private String keycloakApiUrl;
 
-  @Value("${kc.admin.username}")
+  @Value("${keycloak.admin.username}")
   private String keycloakApiUserName;
 
-  @Value("${kc.admin.password}")
+  @Value("${keycloak.admin.password}")
   private String keycloakApiPassword;
 
-  @Value("${kc.admin.clientId}")
+  @Value("${keycloak.admin.clientId}")
   private String getKeycloakApiClientId;
 
   public static final String REST_SERVICE_EXCEPTION_MSG = "Exception calling REST Service";
+  public static final String CONVERSION_EXCEPTION_MSG = "Exception converting object";
   public static final String KEYCLOAK_EXCEPTION_MSG = "Invalid Message From Keycloak";
+  public static final String GRANT_TYPE_VALUE = "password";
+  public static final String USER_NAME_KEY = "username";
+  public static final String PASSWORD_KEY = "password";
+  public static final String GRANT_TYPE_KEY = "grant_type";
+  public static final String CLIENT_ID_KEY = "client_id";
 
   /**
    * Method to authenticate Keycloak
@@ -57,22 +69,22 @@ public class KeycloakService {
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-    map.add("username", userName);
-    map.add("password", password);
-    map.add("grant_type", "password");
-    map.add("client_id", clientId);
+    map.add(USER_NAME_KEY, userName);
+    map.add(PASSWORD_KEY, password);
+    map.add(GRANT_TYPE_KEY, GRANT_TYPE_VALUE);
+    map.add(CLIENT_ID_KEY, clientId);
 
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
     try {
-      ResponseEntity<KeycloakAuthenticationResponse> response =
+      ResponseEntity<Object> response =
           this.restTemplate.postForEntity(
               keycloakApiUrl + "/realms/master/protocol/openid-connect/token",
               request,
-              KeycloakAuthenticationResponse.class);
+              Object.class);
 
       if (HttpStatus.OK.value() == response.getStatusCodeValue()) {
-        return Objects.requireNonNull(response.getBody());
+        return objectMapper.convertValue(response.getBody(), KeycloakAuthenticationResponse.class);
       } else {
         log.error(KEYCLOAK_EXCEPTION_MSG + ": {}", response);
         throw new GenericServiceException(
@@ -112,11 +124,12 @@ public class KeycloakService {
     HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
 
     try {
-      ResponseEntity<T> response =
-          this.restTemplate.exchange(apiUrl, httpMethod, entity, responseType);
+      ResponseEntity<Object> response =
+          this.restTemplate.exchange(apiUrl, httpMethod, entity, Object.class);
 
       if (HttpStatus.OK.value() == response.getStatusCodeValue()) {
-        return Objects.requireNonNull(response.getBody());
+        return responseType.cast(
+            objectMapper.convertValue(response.getBody(), Class.forName(responseType.getName())));
       } else {
         log.error(KEYCLOAK_EXCEPTION_MSG + ": {}", response);
         throw new GenericServiceException(
@@ -131,32 +144,42 @@ public class KeycloakService {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR,
           e);
+    } catch (ClassNotFoundException e) {
+      log.error(CONVERSION_EXCEPTION_MSG, e);
+      throw new GenericServiceException(
+          CONVERSION_EXCEPTION_MSG,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e);
     }
   }
 
   /**
    * Method to get all users for a specific realm
    *
-   * @param realm Realm name
    * @return KeycloakListUsersResponse List of users
    */
-  public KeycloakUser[] getUsers(final String realm) throws GenericServiceException {
+  public KeycloakUser[] getUsers() throws GenericServiceException {
     return callKeycloakApi(
-        HttpMethod.GET, keycloakApiUrl + "/admin/realms/" + realm + "/users", KeycloakUser[].class);
+        HttpMethod.GET,
+        keycloakApiUrl + "/admin/realms/" + keycloakDynamicConfigResolver.getRealm() + "/users",
+        KeycloakUser[].class);
   }
 
   /**
    * Method to get a specific user
    *
    * @param userId UserId value
-   * @param realmName Realm name
    * @return KeycloakUser user object
    */
-  public KeycloakUser getUser(final String userId, final String realmName)
-      throws GenericServiceException {
+  public KeycloakUser getUser(final String userId) throws GenericServiceException {
     return callKeycloakApi(
         HttpMethod.GET,
-        keycloakApiUrl + "/admin/realms/" + realmName + "/users/" + userId,
+        keycloakApiUrl
+            + "/admin/realms/"
+            + keycloakDynamicConfigResolver.getRealm()
+            + "/users/"
+            + userId,
         KeycloakUser.class);
   }
 }
