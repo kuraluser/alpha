@@ -130,7 +130,7 @@ service LoadableStudyService {
 	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
 	}
 	
-	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
+	rpc updateUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
 	}
 	
 	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
@@ -168,14 +168,14 @@ service LoadableStudyService {
 	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 }
 
-message RecalculateVolumeRequest {
+message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
-message RecalculateVolumeReply {
+message UpdateUllageReply {
 	ResponseStatus responseStatus = 1;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
 message LoadicatorResultsRequest {
@@ -398,6 +398,7 @@ message LoadablePlanStowageDetails {
   string colorCode = 15;
   bool isCommingle = 16;
   int64 cargoNominationId = 17;
+  bool isBallast = 18;
 }
 
 

@@ -59,6 +59,8 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
@@ -96,6 +98,7 @@ import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.StabilityParameter;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
+import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageActionRequest;
 import com.cpdss.gateway.domain.VoyageActionResponse;
@@ -117,6 +120,8 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -2530,5 +2535,63 @@ class LoadableStudyServiceTest {
             () -> spy.saveVoyageStatus(request, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void testUpdateUllage(boolean empty)
+      throws GenericServiceException, InstantiationException, IllegalAccessException {
+    Mockito.when(
+            this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.updateUllage(any(UpdateUllageRequest.class)))
+        .thenReturn(this.generateUpdateUllageResponse(empty).build());
+    UpdateUllage request = (UpdateUllage) createDummyObject(UpdateUllage.class);
+    UpdateUllage response =
+        this.loadableStudyService.updateUllage(request, 1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testUpdateUllageInvlidResponse()
+      throws GenericServiceException, InstantiationException, IllegalAccessException {
+    Mockito.when(
+            this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.updateUllage(any(UpdateUllageRequest.class)))
+        .thenReturn(
+            this.generateUpdateUllageResponse(false)
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    UpdateUllage request = (UpdateUllage) createDummyObject(UpdateUllage.class);
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.updateUllage(request, 1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private UpdateUllageReply.Builder generateUpdateUllageResponse(boolean empty) {
+    UpdateUllageReply.Builder builder = UpdateUllageReply.newBuilder();
+    builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    builder.setLoadablePlanStowageDetails(
+        LoadablePlanStowageDetails.newBuilder()
+            .setCorrectedUllage(empty ? "" : STRING_TEST_VALUE)
+            .setCorrectionFactor(empty ? "" : STRING_TEST_VALUE)
+            .setWeight(empty ? "" : STRING_TEST_VALUE)
+            .setFillingRatio(empty ? "" : STRING_TEST_VALUE)
+            .setId(1L)
+            .build());
+    return builder;
   }
 }

@@ -70,8 +70,6 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
-import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply;
-import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
@@ -86,6 +84,8 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
@@ -129,6 +129,8 @@ import com.cpdss.loadablestudy.domain.LoadicatorPatternDetails;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetailsResults;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
+import com.cpdss.loadablestudy.domain.UllageUpdateRequest;
+import com.cpdss.loadablestudy.domain.UllageUpdateResponse;
 import com.cpdss.loadablestudy.entity.ApiTempHistory;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
@@ -141,10 +143,12 @@ import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
@@ -179,6 +183,7 @@ import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
@@ -241,6 +246,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -263,6 +269,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Value("${algo.loadicator.api.url}")
   private String loadicatorUrl;
+
+  @Value("${algo.stowage.edit.api.url}")
+  private String algoUpdateUllageUrl;
 
   @Value("${loadablestudy.voyage.day.difference}")
   private String dayDifference;
@@ -287,7 +296,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
-  @Autowired private LoadablePlanCommingleDetailsPortwiseRepository loadablePlanCommingleDetailsPortwiseRepository;
+
+  @Autowired
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
+
+  @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
 
   @Autowired
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -2974,7 +2988,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePattern);
                   }
-                  saveLoadableQuantityCommingleCargoPortwiseDetails(lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+                  saveLoadableQuantityCommingleCargoPortwiseDetails(
+                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
                   saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
@@ -3015,74 +3030,74 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
-  
-  /** save comminglo cargo portwise information into loadable_plan_commingle_details_portwise table **/
-	private void saveLoadableQuantityCommingleCargoPortwiseDetails(
-			List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList, LoadablePattern loadablePattern ) {
-		
-		
-		loadablePlanPortWiseDetailsList.forEach(it->{
-			saveLodableQtyCommingleCargoPortData(it.getPortId(), 
-					SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL, 
-					it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
-					loadablePattern);
-			
-			saveLodableQtyCommingleCargoPortData(it.getPortId(), 
-					SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE, 
-					it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
-					loadablePattern);
-		});
 
-	}
+  /**
+   * save comminglo cargo portwise information into loadable_plan_commingle_details_portwise table *
+   */
+  private void saveLoadableQuantityCommingleCargoPortwiseDetails(
+      List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList,
+      LoadablePattern loadablePattern) {
 
-  private void saveLodableQtyCommingleCargoPortData(long portId,
-		String operationType, 
-		List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
-		 LoadablePattern loadablePattern ) {
-	
-	  
-	  if(Optional.ofNullable(loadableQuantityCommingleCargoDetailsList).isPresent()) {
-		  
-		  
-		  loadableQuantityCommingleCargoDetailsList.forEach(it->{
+    loadablePlanPortWiseDetailsList.forEach(
+        it -> {
+          saveLodableQtyCommingleCargoPortData(
+              it.getPortId(),
+              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+              it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
+              loadablePattern);
 
-			  LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails = LoadablePlanComminglePortwiseDetails
-				.builder().portId(portId)
-				.operationType(operationType)
-				.api(it.getApi())
-				.cargo1Abbreviation(it.getCargo1Abbreviation())
-				.cargo1Mt(it.getCargo1MT())
-				.cargo1Percentage(it.getCargo1Percentage())
-				.cargo2Abbreviation(it.getCargo2Abbreviation())
-				.cargo2Mt(it.getCargo2MT())
-				.cargo2Percentage(it.getCargo2Percentage())
-				.grade(it.getGrade())
-				.isActive(true)
-				.loadablePattern(loadablePattern)
-				.quantity(it.getQuantity())
-				.tankName(it.getTankName())
-				.temperature(it.getTemp())
-				.orderQuantity(it.getOrderedMT())
-				.priority(it.getPriority())
-				.loadingOrder(it.getLoadingOrder())
-				.tankId(it.getTankId())
-				.fillingRatio(it.getFillingRatio())
-				.correctionFactor(it.getCorrectionFactor())
-				.correctedUllage(it.getCorrectedUllage())
-				.rdgUllage(it.getRdgUllage()).build();
+          saveLodableQtyCommingleCargoPortData(
+              it.getPortId(),
+              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+              it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
+              loadablePattern);
+        });
+  }
 
-				loadablePlanCommingleDetailsPortwiseRepository.save(loadablePlanComminglePortwiseDetails);
+  private void saveLodableQtyCommingleCargoPortData(
+      long portId,
+      String operationType,
+      List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
+      LoadablePattern loadablePattern) {
 
-		  });
+    if (Optional.ofNullable(loadableQuantityCommingleCargoDetailsList).isPresent()) {
 
-		 
-	  }
-	  
-	
-}
+      loadableQuantityCommingleCargoDetailsList.forEach(
+          it -> {
+            LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails =
+                LoadablePlanComminglePortwiseDetails.builder()
+                    .portId(portId)
+                    .operationType(operationType)
+                    .api(it.getApi())
+                    .cargo1Abbreviation(it.getCargo1Abbreviation())
+                    .cargo1Mt(it.getCargo1MT())
+                    .cargo1Percentage(it.getCargo1Percentage())
+                    .cargo2Abbreviation(it.getCargo2Abbreviation())
+                    .cargo2Mt(it.getCargo2MT())
+                    .cargo2Percentage(it.getCargo2Percentage())
+                    .grade(it.getGrade())
+                    .isActive(true)
+                    .loadablePattern(loadablePattern)
+                    .quantity(it.getQuantity())
+                    .tankName(it.getTankName())
+                    .temperature(it.getTemp())
+                    .orderQuantity(it.getOrderedMT())
+                    .priority(it.getPriority())
+                    .loadingOrder(it.getLoadingOrder())
+                    .tankId(it.getTankId())
+                    .fillingRatio(it.getFillingRatio())
+                    .correctionFactor(it.getCorrectionFactor())
+                    .correctedUllage(it.getCorrectedUllage())
+                    .rdgUllage(it.getRdgUllage())
+                    .build();
 
-/**
+            loadablePlanCommingleDetailsPortwiseRepository.save(
+                loadablePlanComminglePortwiseDetails);
+          });
+    }
+  }
+
+  /**
    * @param loadablePattern
    * @param lpd void
    * @param lastLoadingPort
@@ -4104,37 +4119,138 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
-  public void recalculateVolume(
-      RecalculateVolumeRequest request, StreamObserver<RecalculateVolumeReply> responseObserver) {
-    log.info("Inside get recalculateVolume in loadable study micro service");
-    RecalculateVolumeReply.Builder builder = RecalculateVolumeReply.newBuilder();
+  public void updateUllage(
+      UpdateUllageRequest request, StreamObserver<UpdateUllageReply> responseObserver) {
+    log.info("Inside get updateUllage in loadable study micro service");
+    UpdateUllageReply.Builder replyBuilder = UpdateUllageReply.newBuilder();
     try {
       Optional<LoadablePattern> loadablePatternOpt =
           this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
       if (!loadablePatternOpt.isPresent()) {
-        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
-        builder.setResponseStatus(
-            ResponseStatus.newBuilder()
-                .setStatus(FAILED)
-                .setMessage(INVALID_LOADABLE_PATTERN_ID)
-                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
-
-      } else {
-        // ToDo - find corrected ullate
-        // ToDo - from corrected ullage find obsm3
+        throw new GenericServiceException(
+            INVALID_LOADABLE_PATTERN_ID,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
+      UllageUpdateResponse algoResponse =
+          this.callAlgoUllageUpdateApi(this.prepareUllageUpdateRequest(request));
+      this.saveUllageUpdateResponse(algoResponse, request);
+      replyBuilder.setLoadablePlanStowageDetails(
+          this.buildUpdateUllageReply(algoResponse, request));
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in update ullage", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
-      log.error("Exception while recalculating volume", e);
-      builder.setResponseStatus(
+      log.error("Exception in update ullage", e);
+      replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception while recalculating volume")
               .setStatus(FAILED)
               .build());
     } finally {
-      responseObserver.onNext(builder.build());
+      responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Build upadate ullage reply
+   *
+   * @param algoResponse
+   * @param request
+   * @return
+   */
+  private com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+      buildUpdateUllageReply(UllageUpdateResponse algoResponse, UpdateUllageRequest request) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+    Optional.ofNullable(algoResponse.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
+    Optional.ofNullable(algoResponse.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+    Optional.ofNullable(algoResponse.getFillingRatio()).ifPresent(builder::setFillingRatio);
+    Optional.ofNullable(algoResponse.getQuantityMt()).ifPresent(builder::setWeight);
+    Optional.ofNullable(request.getLoadablePlanStowageDetails().getIsBallast())
+        .ifPresent(builder::setIsBallast);
+    return builder.build();
+  }
+
+  /**
+   * Save corrected ullage to the temp table
+   *
+   * @param algoResponse
+   */
+  private void saveUllageUpdateResponse(
+      UllageUpdateResponse algoResponse, UpdateUllageRequest request) {
+    LoadablePlanStowageDetails stowageDetails =
+        this.loadablePlanStowageDetailsRespository.getOne(algoResponse.getId());
+    LoadablePlanStowageDetailsTemp stowageTemp =
+        this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsAndIsActive(
+            stowageDetails, true);
+    if (null == stowageTemp) {
+      stowageTemp = new LoadablePlanStowageDetailsTemp();
+      stowageTemp.setLoadablePlanStowageDetails(stowageDetails);
+      stowageTemp.setIsActive(true);
+    }
+    stowageTemp.setCorrectedUllage(
+        isEmpty(algoResponse.getCorrectedUllage())
+            ? null
+            : new BigDecimal(algoResponse.getCorrectedUllage()));
+    stowageTemp.setCorrectionFactor(
+        isEmpty(algoResponse.getCorrectionFactor())
+            ? null
+            : new BigDecimal(algoResponse.getCorrectionFactor()));
+    stowageTemp.setFillingRatio(
+        isEmpty(algoResponse.getFillingRatio())
+            ? null
+            : new BigDecimal(algoResponse.getFillingRatio()));
+    stowageTemp.setQuantity(
+        isEmpty(algoResponse.getQuantityMt())
+            ? null
+            : new BigDecimal(algoResponse.getQuantityMt()));
+    stowageTemp.setIsBallast(request.getLoadablePlanStowageDetails().getIsBallast());
+    this.stowageDetailsTempRepository.save(stowageTemp);
+  }
+
+  /**
+   * Call algo - ullage update api and validate the resonse
+   *
+   * @param algoRequest
+   * @return
+   * @throws GenericServiceException
+   */
+  private UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
+      throws GenericServiceException {
+    ResponseEntity<UllageUpdateResponse> responseEntity =
+        this.restTemplate.postForEntity(
+            this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);
+    if (HttpStatusCode.OK.value() != responseEntity.getStatusCodeValue()) {
+      throw new GenericServiceException(
+          "Error calling algo: invalid status received",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return responseEntity.getBody();
+  }
+
+  /**
+   * Prepare ullage upate request for algo
+   *
+   * @param request
+   * @return
+   */
+  private UllageUpdateRequest prepareUllageUpdateRequest(UpdateUllageRequest request) {
+    UllageUpdateRequest algoRequest = new UllageUpdateRequest();
+    algoRequest.setCorrectedUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
+    algoRequest.setId(request.getLoadablePlanStowageDetails().getId());
+    algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
+    return algoRequest;
   }
 
   @Override
