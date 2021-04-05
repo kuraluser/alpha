@@ -1828,6 +1828,14 @@ public class LoadableStudyService {
               details.setColorCode(lpsdl.getColorCode());
               details.setFillingRatio(lpsdl.getFillingRatio());
               details.setIsCommingle(lpsdl.getIsCommingle());
+              details.setApi(lpsdl.getApi());
+              details.setRdgUllage(lpsdl.getRdgUllage());
+              details.setTemperature(lpsdl.getTemperature());
+              details.setTankName(lpsdl.getTankName());
+              details.setCargoAbbreviation(lpsdl.getCargoAbbreviation());
+              details.setCargoNominationId(lpsdl.getCargoNominationId());
+              details.setCorrectionFactor(lpsdl.getCorrectionFactor());
+              details.setCorrectedUllage(lpsdl.getCorrectedUllage());
               loadablePlanStowageDetails.add(details);
             });
     return loadablePlanStowageDetails;
