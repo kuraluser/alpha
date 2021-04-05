@@ -1680,6 +1680,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       builder.setCaseNo(loadableStudy.get().getCaseNo());
       builder.setSelectedZone(selectedZone);
+
+      // DSS-2211
+      // Collect all last update time, find max of list
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+      String lastUpdatedTime = null;
+      List<LocalDateTime> lastUpdateTimeList = new ArrayList<>();
+      if (!loadableQuantity.isEmpty()) {
+        lastUpdateTimeList.add(loadableQuantity.get(0).getLastModifiedDateTime());
+      }
+      if (loadableStudy.isPresent()) {
+        lastUpdateTimeList.add(loadableStudy.get().getLastModifiedDateTime());
+      }
+      LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
+      lastUpdatedTime = formatter.format(maxOne);
+
       if (loadableQuantity.isEmpty()) {
         String draftRestictoin = "";
         if (Optional.ofNullable(loadableStudy.get().getDraftRestriction()).isPresent()) {
@@ -1701,6 +1716,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setEstDOOnBoard(String.valueOf(doOnboard))
                 .setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard))
                 .setBoilerWaterOnBoard(String.valueOf(boileWaterOnBoard))
+                .setLastUpdatedTime(lastUpdatedTime)
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
@@ -1708,6 +1724,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         LoadableQuantityRequest.Builder loadableQuantityRequest =
             LoadableQuantityRequest.newBuilder();
+        loadableQuantityRequest.setLastUpdatedTime(lastUpdatedTime);
         loadableQuantityRequest.setId(loadableQuantity.get(0).getId());
         Optional.ofNullable(loadableQuantity.get(0).getDisplacementAtDraftRestriction())
             .ifPresent(
@@ -1787,12 +1804,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(
                 foConsumptionPerDay ->
                     loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
-
-        // DSS-2211
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        Optional.ofNullable(loadableQuantity.get(0).getLastModifiedDateTime())
-            .ifPresent(val -> loadableQuantityRequest.setLastUpdatedTime(formatter.format(val)));
-
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       }
