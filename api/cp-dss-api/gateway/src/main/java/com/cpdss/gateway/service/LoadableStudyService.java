@@ -391,6 +391,7 @@ public class LoadableStudyService {
       dto.setName(grpcReply.getName());
       dto.setDetail(grpcReply.getDetail());
       dto.setCreatedDate(grpcReply.getCreatedDate());
+      dto.setLastEdited(grpcReply.getLastEdited());
       dto.setCharterer(grpcReply.getCharterer());
       dto.setSubCharterer(grpcReply.getSubCharterer());
       dto.setDraftMark(
@@ -857,6 +858,8 @@ public class LoadableStudyService {
       port.setPortOrder(0 == portDetail.getPortOrder() ? null : portDetail.getPortOrder());
       port.setLoadableStudyId(loadableStudyId);
       port.setOperationId(0 == portDetail.getOperationId() ? null : portDetail.getOperationId());
+      port.setPortTimezoneId(
+          0 == portDetail.getPortTimezoneId() ? null : portDetail.getPortTimezoneId());
       port.setSeaWaterDensity(
           isEmpty(portDetail.getSeaWaterDensity())
               ? null
@@ -1171,6 +1174,8 @@ public class LoadableStudyService {
     loadableQuantity.setSubTotal(
         loadableQuantityResponse.getLoadableQuantityRequest().getSubTotal());
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
+    loadableQuantity.setLastUpdatedTime(
+        loadableQuantityResponse.getLoadableQuantityRequest().getLastUpdatedTime());
     loadableQuantityResponseDto.setLoadableQuantityId(
         loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
@@ -2898,6 +2903,10 @@ public class LoadableStudyService {
         isEmpty(synopticalProtoRecord.getEtaEtdEstimated())
             ? null
             : synopticalProtoRecord.getEtaEtdEstimated());
+    synopticalRecord.setPortTimezoneId(
+        isEmpty(synopticalProtoRecord.getPortTimezoneId())
+            ? null
+            : synopticalProtoRecord.getPortTimezoneId());
   }
 
   /**
@@ -3641,6 +3650,7 @@ public class LoadableStudyService {
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
               synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
+              synopticalRecord.setPortTimezoneId(str.getPortTimezoneId());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }

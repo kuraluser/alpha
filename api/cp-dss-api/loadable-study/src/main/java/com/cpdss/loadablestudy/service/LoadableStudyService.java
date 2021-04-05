@@ -339,6 +339,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
+  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long BUNKERING_OPERATION_ID = 3L;
@@ -748,14 +749,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
                   request.getVesselId(), voyageOpt.get(), true);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder builder =
             LoadableStudyDetail.newBuilder();
+        builder.setLastEdited(dateTimeFormatter.format(entity.getLastModifiedDateTime()));
         builder.setId(entity.getId());
         builder.setName(entity.getName());
         Optional.ofNullable(entity.getDischargeCargoId()).ifPresent(builder::setDischargingCargoId);
-        builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDate()));
+        builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDateTime()));
         Optional.ofNullable(entity.getDuplicatedFrom())
             .ifPresent(
                 duplicatedFrom -> {

@@ -630,6 +630,7 @@ message LoadableStudyDetail{
 	bool isObqComplete=27;
 	bool isDischargingPortComplete=28;
 	repeated OhqPorts ohqPorts=29;
+	string lastEdited = 30;
 }
 
 message LoadableStudyReply{
