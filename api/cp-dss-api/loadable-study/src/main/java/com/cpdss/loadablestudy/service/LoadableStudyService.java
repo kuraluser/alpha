@@ -102,6 +102,7 @@ import com.cpdss.common.generated.Loadicator.OtherTankInfo;
 import com.cpdss.common.generated.Loadicator.StowageDetails;
 import com.cpdss.common.generated.Loadicator.StowagePlan;
 import com.cpdss.common.generated.LoadicatorServiceGrpc.LoadicatorServiceBlockingStub;
+import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
@@ -1534,7 +1535,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(entity.getLayCanTo())
         .ifPresent(layCanTo -> builder.setLayCanTo(layCanFormatter.format(layCanTo)));
     Optional.ofNullable(entity.getPortOrder()).ifPresent(builder::setPortOrder);
+    if (entity.getPortXId() != null && entity.getPortXId() > 0) {
+      this.setPortTimezoneId(entity.getPortXId(), builder);
+    }
     return builder.build();
+  }
+
+  private void setPortTimezoneId(Long portId, PortRotationDetail.Builder builder) {
+    PortInfo.PortReply reply =
+        portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder().addId(portId).build());
+    if (!reply.getPortsList().isEmpty()) { // Expect single entry as response
+      builder.setPortTimezoneId(reply.getPortsList().get(0).getTimezoneId());
+    }
   }
 
   /**
@@ -1772,6 +1785,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(
                 foConsumptionPerDay ->
                     loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
+
+        // DSS-2211
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        Optional.ofNullable(loadableQuantity.get(0).getLastModifiedDateTime())
+            .ifPresent(val -> loadableQuantityRequest.setLastUpdatedTime(formatter.format(val)));
 
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
@@ -6376,6 +6394,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               sortedTankList,
               request.getLoadablePatternId());
         }
+        if (synopticalEntity.getPortXid() != null && synopticalEntity.getPortXid() > 0) {
+          this.setPortDetailForSynoptics(synopticalEntity, builder);
+        }
         records.add(builder.build());
       }
       Collections.sort(
@@ -6383,6 +6404,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Comparator.comparing(SynopticalRecord::getPortOrder)
               .thenComparing(Comparator.comparing(SynopticalRecord::getOperationType)));
       replyBuilder.addAllSynopticalRecords(records);
+    }
+  }
+
+  /**
+   * Fetch Single Port Details
+   *
+   * @param synoptics
+   * @param builder
+   */
+  private void setPortDetailForSynoptics(
+      SynopticalTable synoptics, SynopticalRecord.Builder builder) {
+    PortInfo.PortReply reply =
+        portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                .addId(synoptics.getPortXid())
+                .build());
+    if (!reply.getPortsList().isEmpty()) { // Expect single entry as response
+      builder.setPortTimezoneId(reply.getPortsList().get(0).getTimezoneId());
     }
   }
 

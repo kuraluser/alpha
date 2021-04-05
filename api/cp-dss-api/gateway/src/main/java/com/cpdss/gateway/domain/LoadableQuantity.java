@@ -64,4 +64,6 @@ public class LoadableQuantity {
   private String subTotal;
 
   private Long loadableQuantityId;
+
+  private String lastUpdatedTime;
 }
