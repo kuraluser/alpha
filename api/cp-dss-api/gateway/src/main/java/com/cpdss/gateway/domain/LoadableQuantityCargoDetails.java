@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 
+import java.util.List;
+
 /** @Author jerin.g */
 @Data
 public class LoadableQuantityCargoDetails {
@@ -52,4 +54,8 @@ public class LoadableQuantityCargoDetails {
   private Integer priority;
   private Integer loadingOrder;
   private Long cargoNominationId;
+
+  private String slopQuantity;
+  private String timeRequiredForLoading;
+  private List<String> loadingPorts;
 }

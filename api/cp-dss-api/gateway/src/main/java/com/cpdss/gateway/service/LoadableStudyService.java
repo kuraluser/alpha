@@ -1656,6 +1656,10 @@ public class LoadableStudyService {
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              // Dummy value till actual from Alog
+              cargoDetails.setSlopQuantity("0");
+              cargoDetails.setTimeRequiredForLoading("0");
+              cargoDetails.setLoadingPorts(Arrays.asList("x"));
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
