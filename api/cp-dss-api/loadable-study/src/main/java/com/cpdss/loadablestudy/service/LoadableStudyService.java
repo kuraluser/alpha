@@ -4947,6 +4947,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     this.synopticalTableLoadicatorDataRepository.saveAll(entities);
   }
 
+  /**
+   * Create SynopticalTableLoadicatorData entities
+   *
+   * @param patternDetails
+   * @param result
+   * @return SynopticalTableLoadicatorData
+   */
   private SynopticalTableLoadicatorData createSynopticalTableLoadicatorDataEntity(
       LoadicatorPatternDetailsResults patternDetails, LoadicatorResultDetails result) {
     SynopticalTableLoadicatorData entity = new SynopticalTableLoadicatorData();
