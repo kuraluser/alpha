@@ -2197,6 +2197,13 @@ public final class PortInfo {
      * @return The bytes for timezoneOffsetVal.
      */
     com.google.protobuf.ByteString getTimezoneOffsetValBytes();
+
+    /**
+     * <code>int64 timezoneId = 21;</code>
+     *
+     * @return The timezoneId.
+     */
+    long getTimezoneId();
   }
   /** Protobuf type {@code PortDetail} */
   public static final class PortDetail extends com.google.protobuf.GeneratedMessageV3
@@ -2396,6 +2403,11 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 timezoneOffsetVal_ = s;
+                break;
+              }
+            case 168:
+              {
+                timezoneId_ = input.readInt64();
                 break;
               }
             default:
@@ -3106,6 +3118,17 @@ public final class PortInfo {
       }
     }
 
+    public static final int TIMEZONEID_FIELD_NUMBER = 21;
+    private long timezoneId_;
+    /**
+     * <code>int64 timezoneId = 21;</code>
+     *
+     * @return The timezoneId.
+     */
+    public long getTimezoneId() {
+      return timezoneId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -3180,6 +3203,9 @@ public final class PortInfo {
       if (!getTimezoneOffsetValBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 20, timezoneOffsetVal_);
       }
+      if (timezoneId_ != 0L) {
+        output.writeInt64(21, timezoneId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3249,6 +3275,9 @@ public final class PortInfo {
       if (!getTimezoneOffsetValBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, timezoneOffsetVal_);
       }
+      if (timezoneId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(21, timezoneId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3285,6 +3314,7 @@ public final class PortInfo {
       if (!getSunsetTime().equals(other.getSunsetTime())) return false;
       if (!getTimezone().equals(other.getTimezone())) return false;
       if (!getTimezoneOffsetVal().equals(other.getTimezoneOffsetVal())) return false;
+      if (getTimezoneId() != other.getTimezoneId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3336,6 +3366,8 @@ public final class PortInfo {
       hash = (53 * hash) + getTimezone().hashCode();
       hash = (37 * hash) + TIMEZONEOFFSETVAL_FIELD_NUMBER;
       hash = (53 * hash) + getTimezoneOffsetVal().hashCode();
+      hash = (37 * hash) + TIMEZONEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTimezoneId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3513,6 +3545,8 @@ public final class PortInfo {
 
         timezoneOffsetVal_ = "";
 
+        timezoneId_ = 0L;
+
         return this;
       }
 
@@ -3559,6 +3593,7 @@ public final class PortInfo {
         result.sunsetTime_ = sunsetTime_;
         result.timezone_ = timezone_;
         result.timezoneOffsetVal_ = timezoneOffsetVal_;
+        result.timezoneId_ = timezoneId_;
         onBuilt();
         return result;
       }
@@ -3689,6 +3724,9 @@ public final class PortInfo {
         if (!other.getTimezoneOffsetVal().isEmpty()) {
           timezoneOffsetVal_ = other.timezoneOffsetVal_;
           onChanged();
+        }
+        if (other.getTimezoneId() != 0L) {
+          setTimezoneId(other.getTimezoneId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5192,6 +5230,39 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         timezoneOffsetVal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long timezoneId_;
+      /**
+       * <code>int64 timezoneId = 21;</code>
+       *
+       * @return The timezoneId.
+       */
+      public long getTimezoneId() {
+        return timezoneId_;
+      }
+      /**
+       * <code>int64 timezoneId = 21;</code>
+       *
+       * @param value The timezoneId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTimezoneId(long value) {
+
+        timezoneId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 timezoneId = 21;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTimezoneId() {
+
+        timezoneId_ = 0L;
         onChanged();
         return this;
       }
@@ -9896,7 +9967,7 @@ public final class PortInfo {
           + "rtRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId"
           + "\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableStud"
           + "yId\030\004 \001(\003\"6\n\025PortRequestWithPaging\022\016\n\006of"
-          + "fset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\236\003\n\nPortDetail"
+          + "fset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\262\003\n\nPortDetail"
           + "\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\014\n\004code\030\003 \001(\t"
           + "\022\024\n\014waterDensity\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t"
           + "\022\023\n\013maxAirDraft\030\006 \001(\t\022\031\n\021averageTideHeig"
@@ -9907,28 +9978,28 @@ public final class PortInfo {
           + "TimeFrom\030\017 \001(\t\022\024\n\014lwTideTimeTo\030\020 \001(\t\022\023\n\013"
           + "sunriseTime\030\021 \001(\t\022\022\n\nsunsetTime\030\022 \001(\t\022\020\n"
           + "\010timezone\030\023 \001(\t\022\031\n\021timezoneOffsetVal\030\024 \001"
-          + "(\t\"P\n\tPortReply\022\'\n\016responseStatus\030\001 \001(\0132"
-          + "\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDe"
-          + "tail\".\n\033GetPortInfoByCargoIdRequest\022\017\n\007c"
-          + "argoId\030\001 \001(\003\"`\n\031GetPortInfoByCargoIdRepl"
-          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
-          + "us\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\"\022\n\020PortEm"
-          + "ptyRequest\"=\n\010Timezone\022\n\n\002id\030\001 \001(\003\022\020\n\010ti"
-          + "mezone\030\002 \001(\t\022\023\n\013offsetValue\030\003 \001(\t\"Y\n\020Tim"
-          + "ezoneResponse\022\'\n\016responseStatus\030\001 \001(\0132\017."
-          + "ResponseStatus\022\034\n\ttimezones\030\002 \003(\0132\t.Time"
-          + "zone2\221\003\n\017PortInfoService\022)\n\013GetPortInfo\022"
-          + "\014.PortRequest\032\n.PortReply\"\000\022R\n\024GetPortIn"
-          + "foByCargoId\022\034.GetPortInfoByCargoIdReques"
-          + "t\032\032.GetPortInfoByCargoIdReply\"\000\022B\n\024GetPo"
-          + "rtInfoByPortIds\022\034.GetPortInfoByPortIdsRe"
-          + "quest\032\n.PortReply\"\000\022G\n\031GetPortInfoDetail"
-          + "sForAlgo\022\034.GetPortInfoByPortIdsRequest\032\n"
-          + ".PortReply\"\000\0225\n\013GetTimezone\022\021.PortEmptyR"
-          + "equest\032\021.TimezoneResponse\"\000\022;\n\023GetPortIn"
-          + "foByPaging\022\026.PortRequestWithPaging\032\n.Por"
-          + "tReply\"\000B\036\n\032com.cpdss.common.generatedP\000"
-          + "b\006proto3"
+          + "(\t\022\022\n\ntimezoneId\030\025 \001(\003\"P\n\tPortReply\022\'\n\016r"
+          + "esponseStatus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005"
+          + "ports\030\002 \003(\0132\013.PortDetail\".\n\033GetPortInfoB"
+          + "yCargoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetP"
+          + "ortInfoByCargoIdReply\022\'\n\016responseStatus\030"
+          + "\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013."
+          + "PortDetail\"\022\n\020PortEmptyRequest\"=\n\010Timezo"
+          + "ne\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offs"
+          + "etValue\030\003 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016res"
+          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\tti"
+          + "mezones\030\002 \003(\0132\t.Timezone2\221\003\n\017PortInfoSer"
+          + "vice\022)\n\013GetPortInfo\022\014.PortRequest\032\n.Port"
+          + "Reply\"\000\022R\n\024GetPortInfoByCargoId\022\034.GetPor"
+          + "tInfoByCargoIdRequest\032\032.GetPortInfoByCar"
+          + "goIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034.Ge"
+          + "tPortInfoByPortIdsRequest\032\n.PortReply\"\000\022"
+          + "G\n\031GetPortInfoDetailsForAlgo\022\034.GetPortIn"
+          + "foByPortIdsRequest\032\n.PortReply\"\000\0225\n\013GetT"
+          + "imezone\022\021.PortEmptyRequest\032\021.TimezoneRes"
+          + "ponse\"\000\022;\n\023GetPortInfoByPaging\022\026.PortReq"
+          + "uestWithPaging\032\n.PortReply\"\000B\036\n\032com.cpds"
+          + "s.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -9983,6 +10054,7 @@ public final class PortInfo {
               "SunsetTime",
               "Timezone",
               "TimezoneOffsetVal",
+              "TimezoneId",
             });
     internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_PortReply_fieldAccessorTable =

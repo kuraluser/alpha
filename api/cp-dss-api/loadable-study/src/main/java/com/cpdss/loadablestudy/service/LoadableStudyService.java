@@ -102,6 +102,7 @@ import com.cpdss.common.generated.Loadicator.OtherTankInfo;
 import com.cpdss.common.generated.Loadicator.StowageDetails;
 import com.cpdss.common.generated.Loadicator.StowagePlan;
 import com.cpdss.common.generated.LoadicatorServiceGrpc.LoadicatorServiceBlockingStub;
+import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
@@ -338,6 +339,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
+  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long BUNKERING_OPERATION_ID = 3L;
@@ -747,14 +749,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
                   request.getVesselId(), voyageOpt.get(), true);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder builder =
             LoadableStudyDetail.newBuilder();
+        builder.setLastEdited(dateTimeFormatter.format(entity.getLastModifiedDateTime()));
         builder.setId(entity.getId());
         builder.setName(entity.getName());
         Optional.ofNullable(entity.getDischargeCargoId()).ifPresent(builder::setDischargingCargoId);
-        builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDate()));
+        builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDateTime()));
         Optional.ofNullable(entity.getDuplicatedFrom())
             .ifPresent(
                 duplicatedFrom -> {
@@ -1534,7 +1537,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(entity.getLayCanTo())
         .ifPresent(layCanTo -> builder.setLayCanTo(layCanFormatter.format(layCanTo)));
     Optional.ofNullable(entity.getPortOrder()).ifPresent(builder::setPortOrder);
+    if (entity.getPortXId() != null && entity.getPortXId() > 0) {
+      this.setPortTimezoneId(entity.getPortXId(), builder);
+    }
     return builder.build();
+  }
+
+  private void setPortTimezoneId(Long portId, PortRotationDetail.Builder builder) {
+    PortInfo.PortReply reply =
+        portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder().addId(portId).build());
+    if (!reply.getPortsList().isEmpty()) { // Expect single entry as response
+      builder.setPortTimezoneId(reply.getPortsList().get(0).getTimezoneId());
+    }
   }
 
   /**
@@ -1665,6 +1680,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       builder.setCaseNo(loadableStudy.get().getCaseNo());
       builder.setSelectedZone(selectedZone);
+
+      // DSS-2211
+      // Collect all last update time, find max of list
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+      String lastUpdatedTime = null;
+      List<LocalDateTime> lastUpdateTimeList = new ArrayList<>();
+      if (!loadableQuantity.isEmpty()) {
+        lastUpdateTimeList.add(loadableQuantity.get(0).getLastModifiedDateTime());
+      }
+      if (loadableStudy.isPresent()) {
+        lastUpdateTimeList.add(loadableStudy.get().getLastModifiedDateTime());
+      }
+      LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
+      lastUpdatedTime = formatter.format(maxOne);
+
       if (loadableQuantity.isEmpty()) {
         String draftRestictoin = "";
         if (Optional.ofNullable(loadableStudy.get().getDraftRestriction()).isPresent()) {
@@ -1686,6 +1716,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setEstDOOnBoard(String.valueOf(doOnboard))
                 .setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard))
                 .setBoilerWaterOnBoard(String.valueOf(boileWaterOnBoard))
+                .setLastUpdatedTime(lastUpdatedTime)
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
@@ -1693,6 +1724,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         LoadableQuantityRequest.Builder loadableQuantityRequest =
             LoadableQuantityRequest.newBuilder();
+        loadableQuantityRequest.setLastUpdatedTime(lastUpdatedTime);
         loadableQuantityRequest.setId(loadableQuantity.get(0).getId());
         Optional.ofNullable(loadableQuantity.get(0).getDisplacementAtDraftRestriction())
             .ifPresent(
@@ -1772,7 +1804,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(
                 foConsumptionPerDay ->
                     loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
-
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       }
@@ -6376,6 +6407,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               sortedTankList,
               request.getLoadablePatternId());
         }
+        if (synopticalEntity.getPortXid() != null && synopticalEntity.getPortXid() > 0) {
+          this.setPortDetailForSynoptics(synopticalEntity, builder);
+        }
         records.add(builder.build());
       }
       Collections.sort(
@@ -6383,6 +6417,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Comparator.comparing(SynopticalRecord::getPortOrder)
               .thenComparing(Comparator.comparing(SynopticalRecord::getOperationType)));
       replyBuilder.addAllSynopticalRecords(records);
+    }
+  }
+
+  /**
+   * Fetch Single Port Details
+   *
+   * @param synoptics
+   * @param builder
+   */
+  private void setPortDetailForSynoptics(
+      SynopticalTable synoptics, SynopticalRecord.Builder builder) {
+    PortInfo.PortReply reply =
+        portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                .addId(synoptics.getPortXid())
+                .build());
+    if (!reply.getPortsList().isEmpty()) { // Expect single entry as response
+      builder.setPortTimezoneId(reply.getPortsList().get(0).getTimezoneId());
     }
   }
 

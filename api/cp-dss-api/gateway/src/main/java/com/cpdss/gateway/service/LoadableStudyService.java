@@ -391,6 +391,7 @@ public class LoadableStudyService {
       dto.setName(grpcReply.getName());
       dto.setDetail(grpcReply.getDetail());
       dto.setCreatedDate(grpcReply.getCreatedDate());
+      dto.setLastEdited(grpcReply.getLastEdited());
       dto.setCharterer(grpcReply.getCharterer());
       dto.setSubCharterer(grpcReply.getSubCharterer());
       dto.setDraftMark(
@@ -857,6 +858,8 @@ public class LoadableStudyService {
       port.setPortOrder(0 == portDetail.getPortOrder() ? null : portDetail.getPortOrder());
       port.setLoadableStudyId(loadableStudyId);
       port.setOperationId(0 == portDetail.getOperationId() ? null : portDetail.getOperationId());
+      port.setPortTimezoneId(
+          0 == portDetail.getPortTimezoneId() ? null : portDetail.getPortTimezoneId());
       port.setSeaWaterDensity(
           isEmpty(portDetail.getSeaWaterDensity())
               ? null
@@ -1171,6 +1174,8 @@ public class LoadableStudyService {
     loadableQuantity.setSubTotal(
         loadableQuantityResponse.getLoadableQuantityRequest().getSubTotal());
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
+    loadableQuantity.setLastUpdatedTime(
+        loadableQuantityResponse.getLoadableQuantityRequest().getLastUpdatedTime());
     loadableQuantityResponseDto.setLoadableQuantityId(
         loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
@@ -1656,6 +1661,10 @@ public class LoadableStudyService {
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              // Dummy value till actual from Alog
+              cargoDetails.setSlopQuantity("0");
+              cargoDetails.setTimeRequiredForLoading("0");
+              cargoDetails.setLoadingPorts(Arrays.asList("x"));
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
@@ -1828,6 +1837,14 @@ public class LoadableStudyService {
               details.setColorCode(lpsdl.getColorCode());
               details.setFillingRatio(lpsdl.getFillingRatio());
               details.setIsCommingle(lpsdl.getIsCommingle());
+              details.setApi(lpsdl.getApi());
+              details.setRdgUllage(lpsdl.getRdgUllage());
+              details.setTemperature(lpsdl.getTemperature());
+              details.setTankName(lpsdl.getTankName());
+              details.setCargoAbbreviation(lpsdl.getCargoAbbreviation());
+              details.setCargoNominationId(lpsdl.getCargoNominationId());
+              details.setCorrectionFactor(lpsdl.getCorrectionFactor());
+              details.setCorrectedUllage(lpsdl.getCorrectedUllage());
               loadablePlanStowageDetails.add(details);
             });
     return loadablePlanStowageDetails;
@@ -2886,6 +2903,10 @@ public class LoadableStudyService {
         isEmpty(synopticalProtoRecord.getEtaEtdEstimated())
             ? null
             : synopticalProtoRecord.getEtaEtdEstimated());
+    synopticalRecord.setPortTimezoneId(
+        isEmpty(synopticalProtoRecord.getPortTimezoneId())
+            ? null
+            : synopticalProtoRecord.getPortTimezoneId());
   }
 
   /**
@@ -3629,6 +3650,7 @@ public class LoadableStudyService {
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
               synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
+              synopticalRecord.setPortTimezoneId(str.getPortTimezoneId());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
