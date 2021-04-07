@@ -661,7 +661,7 @@ public class UserService {
       LocalDateTime timeNow = LocalDateTime.now();
       long daysDiff = DAYS.between(timeNow, user.getPasswordExpiryDate());
       if (daysDiff <= PASSWORD_EXPIRE_REMINDER) {
-        response.setExpiryReminder(new PasswordExpiryReminder(daysDiff + 1));
+        response.setExpiryReminder(new PasswordExpiryReminder(daysDiff));
       }
     }
     return response;
@@ -760,7 +760,8 @@ public class UserService {
    * @throws GenericServiceException
    */
   private void checkUsernameDuplicate(User request) throws GenericServiceException {
-    Users duplicate = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
+    Users duplicate =
+        this.usersRepository.findByUsernameIgnoreCaseAndIsActive(request.getUsername(), true);
     // if new user
     if (request.getId() == 0) {
       if (null != duplicate) {

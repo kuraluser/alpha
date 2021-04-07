@@ -3854,6 +3854,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         lpq -> {
           LoadablePatternCargoDetails.Builder loadablePatternCargoDetailsBuilder =
               LoadablePatternCargoDetails.newBuilder();
+          Optional.ofNullable(lpq.getMaxTolerence())
+              .ifPresent(val -> loadablePatternCargoDetailsBuilder.setMaxTolerence(val));
+          Optional.ofNullable(lpq.getMinTolerence())
+              .ifPresent(val -> loadablePatternCargoDetailsBuilder.setMinTolerence(val));
           Optional.ofNullable(lpq.getPriority())
               .ifPresent(priority -> loadablePatternCargoDetailsBuilder.setPriority(priority));
           Optional.ofNullable(lpq.getLoadableMt())

@@ -131,6 +131,7 @@ public interface LoadableStudyPortRotationRepository
   public LoadableStudyPortRotation
       findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
           LoadableStudy loadableStudy, final CargoOperation operation, boolean isActive);
+
   @Query(
       "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2 ")
   public List<LoadableStudyPortRotation> findByLoadableStudyIdAndIsActive(
