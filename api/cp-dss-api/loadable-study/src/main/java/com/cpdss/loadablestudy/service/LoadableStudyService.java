@@ -3118,12 +3118,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         it -> {
           saveLodableQtyCommingleCargoPortData(
               it.getPortId(),
+              it.getPortRotationId(),
               SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
               it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
               loadablePattern);
 
           saveLodableQtyCommingleCargoPortData(
               it.getPortId(),
+              it.getPortRotationId(),
               SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
               it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
               loadablePattern);
@@ -3132,6 +3134,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private void saveLodableQtyCommingleCargoPortData(
       long portId,
+      long portRotationXid,
       String operationType,
       List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
       LoadablePattern loadablePattern) {
@@ -3165,6 +3168,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .correctionFactor(it.getCorrectionFactor())
                     .correctedUllage(it.getCorrectedUllage())
                     .rdgUllage(it.getRdgUllage())
+                    .portRotationXid(portRotationXid)
                     .build();
 
             loadablePlanCommingleDetailsPortwiseRepository.save(
