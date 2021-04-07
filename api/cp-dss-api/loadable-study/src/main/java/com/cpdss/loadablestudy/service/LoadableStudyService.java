@@ -232,6 +232,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
@@ -2545,6 +2546,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
+      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+
       LoadableStudyPortRotation portRotation =
           this.loadableStudyPortRotationRepository.findByIdAndIsActive(
               request.getPortRotationId(), true);
@@ -2557,10 +2560,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
+              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
                   loadableStudyOpt.get().getVoyage().getVoyageStartDate(),
                   loadableStudyOpt.get().getVoyage().getVesselXId(),
-                  true);
+                  true,
+                  voyageStatus);
 
       VesselReply vesselReply = this.getOhqTanks(request);
       List<OnHandQuantity> onHandQuantities =
@@ -2569,11 +2573,76 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudy> confirmedLoadableStudyOpt =
           this.loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
               previousVoyage, CONFIRMED_STATUS_ID, true);
-      List<OnHandQuantity> onHandQuantityList = new ArrayList<>();
+
+      List<OnHandQuantity> onHandQuantityList = null;
       if (confirmedLoadableStudyOpt.isPresent()) {
-        /*onHandQuantityList =
-        this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
-            confirmedLoadableStudyOpt.get(), request.getPortId(), true);*/
+
+        LoadableStudyPortRotation lastDischargingPortPortRotation =
+            this.loadableStudyPortRotationRepository
+                .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
+                    confirmedLoadableStudyOpt.get(),
+                    this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
+                    true);
+
+        onHandQuantityList =
+            this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+                confirmedLoadableStudyOpt.get(), lastDischargingPortPortRotation, true);
+
+        if (onHandQuantities.isEmpty() && !onHandQuantityList.isEmpty()) {
+
+          Long portOrder = portRotation.getPortOrder();
+          List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
+
+          List<LoadableStudyPortRotation> portRotationList =
+              this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+                  loadableStudyOpt.get().getId(), true);
+          if (null != portRotationList && !portRotationList.isEmpty()) {
+            int index =
+                IntStream.range(0, portRotationList.size())
+                    .filter(i -> portRotationList.get(i).getId().equals(portRotation.getId()))
+                    .findFirst()
+                    .orElse(-1);
+
+            if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
+
+              onHandQuantityList.forEach(
+                  onHandQuantity -> {
+                    entityManager.detach(onHandQuantity);
+                    onHandQuantity.setId(null);
+                    onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
+                    onHandQuantity.setActualArrivalQuantity(null);
+                    onHandQuantity.setActualDepartureQuantity(null);
+                    onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
+                    onHandQuantity.setPortXId(portRotation.getPortXId());
+                    onHandQuantity.setPortRotation(portRotation);
+                    OnHandQuantities.add(onHandQuantity);
+                  });
+            } else {
+
+              LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
+
+              onHandQuantityList =
+                  this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+                      loadableStudyOpt.get(), previousPortPortRotation, true);
+              onHandQuantityList.forEach(
+                  onHandQuantity -> {
+                    entityManager.detach(onHandQuantity);
+                    onHandQuantity.setId(null);
+                    onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
+                    onHandQuantity.setActualArrivalQuantity(null);
+                    onHandQuantity.setActualDepartureQuantity(null);
+                    onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
+                    onHandQuantity.setPortXId(portRotation.getPortXId());
+                    onHandQuantity.setPortRotation(portRotation);
+                    OnHandQuantities.add(onHandQuantity);
+                  });
+            }
+            this.onHandQuantityRepository.saveAll(OnHandQuantities);
+            onHandQuantities =
+                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+                    loadableStudyOpt.get(), portRotation, true);
+          }
+        }
       }
 
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
@@ -2618,30 +2687,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> detailBuilder.setPortRotationId(item.getId()));
           Optional.ofNullable(qty.getPortRotation())
               .ifPresent(item -> detailBuilder.setPortId(item.getPortXId()));
-        } else {
-          if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
-            Optional<OnHandQuantity> ohqQtyOpt =
-                onHandQuantityList.stream()
-                    .filter(
-                        entity ->
-                            entity.getFuelTypeXId().equals(tankDetail.getTankCategoryId())
-                                && entity.getTankXId().equals(tankDetail.getTankId()))
-                    .findAny();
-            if (ohqQtyOpt.isPresent()) {
-              OnHandQuantity ohqQty = ohqQtyOpt.get();
-              detailBuilder.setId(ohqQty.getId());
-              Optional.ofNullable(ohqQty.getArrivalQuantity())
-                  .ifPresent(item -> detailBuilder.setArrivalQuantity(valueOf(item)));
-              Optional.ofNullable(ohqQty.getArrivalVolume())
-                  .ifPresent(item -> detailBuilder.setArrivalVolume(valueOf(item)));
-              Optional.ofNullable(ohqQty.getDepartureQuantity())
-                  .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
-              Optional.ofNullable(ohqQty.getDepartureVolume())
-                  .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
-              Optional.ofNullable(ohqQty.getDensity())
-                  .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
-            }
-          }
         }
         replyBuilder.addOnHandQuantity(detailBuilder.build());
       }
@@ -3700,6 +3745,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               builder.addLoadablePattern(loadablePatternBuilder);
               loadablePatternBuilder.clearLoadablePlanStowageDetails();
             });
+
         VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
         VesselReply vesselReply2 =
             this.getTanks(loadableStudy.get().getVesselXId(), CARGO_BALLAST_TANK_CATEGORIES);
@@ -3729,6 +3775,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   /**
    * Ballast Tank category builder
    *
@@ -5551,10 +5598,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private List<CargoHistory> findCargoHistoryForPrvsVoyage(Voyage voyage) {
     if (voyage.getVoyageStartDate() != null && voyage.getVoyageEndDate() != null) {
+
+      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
-                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true);
+              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true, voyageStatus);
       if (null == previousVoyage) {
         log.error("Could not find previous voyage of {}", voyage.getVoyageNo());
       } else {
@@ -7677,6 +7727,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 entityManager.detach(onHandQuantity);
                 onHandQuantity.setId(null);
                 onHandQuantity.setLoadableStudy(entity);
+                onHandQuantity.setActualArrivalQuantity(null);
+                onHandQuantity.setActualDepartureQuantity(null);
                 OnHandQuantities.add(onHandQuantity);
               });
           this.onHandQuantityRepository.saveAll(OnHandQuantities);
@@ -7692,6 +7744,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 entityManager.detach(onBoardQuantity);
                 onBoardQuantity.setId(null);
                 onBoardQuantity.setLoadableStudy(entity);
+                onBoardQuantity.setActualArrivalWeight(null);
+                onBoardQuantity.setActualDepartureWeight(null);
                 OnBoardQuantities.add(onBoardQuantity);
               });
           this.onBoardQuantityRepository.saveAll(OnBoardQuantities);
@@ -7759,6 +7813,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             synopticalTable.setId(null);
             synopticalTable.setLoadableStudyPortRotation(duplicated.get());
             synopticalTable.setLoadableStudyXId(entity.getId());
+            synopticalTable.setEtaActual(null);
+            synopticalTable.setEtdActual(null);
+            synopticalTable.setConstantActual(null);
+            synopticalTable.setDisplacementActual(null);
+            synopticalTable.setConstantActual(null);
+            synopticalTable.setDeadWeightActual(null);
 
             synopticalTables.add(synopticalTable);
           }

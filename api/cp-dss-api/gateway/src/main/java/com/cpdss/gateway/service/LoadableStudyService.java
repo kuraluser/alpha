@@ -4959,12 +4959,14 @@ public class LoadableStudyService {
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getVoyageNo))
+                  .sorted(Comparator.comparing(Voyage::getVoyageNo, String.CASE_INSENSITIVE_ORDER))
                   .collect(Collectors.toList());
         } else {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getVoyageNo).reversed())
+                  .sorted(
+                      Comparator.comparing(Voyage::getVoyageNo, String.CASE_INSENSITIVE_ORDER)
+                          .reversed())
                   .collect(Collectors.toList());
         }
         break;
@@ -4972,12 +4974,14 @@ public class LoadableStudyService {
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getCharterer))
+                  .sorted(Comparator.comparing(Voyage::getCharterer, String.CASE_INSENSITIVE_ORDER))
                   .collect(Collectors.toList());
         } else {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getCharterer).reversed())
+                  .sorted(
+                      Comparator.comparing(Voyage::getCharterer, String.CASE_INSENSITIVE_ORDER)
+                          .reversed())
                   .collect(Collectors.toList());
         }
         break;
@@ -4985,12 +4989,21 @@ public class LoadableStudyService {
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getStatus))
+                  .filter(voyage -> !StringUtils.isEmpty(voyage.getStatus()))
+                  .sorted(Comparator.comparing(Voyage::getStatus, String.CASE_INSENSITIVE_ORDER))
                   .collect(Collectors.toList());
+
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> StringUtils.isEmpty(voyage.getStatus()))
+                  .collect(Collectors.toList()));
+
         } else {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getStatus).reversed())
+                  .sorted(
+                      Comparator.comparing(Voyage::getStatus, String.CASE_INSENSITIVE_ORDER)
+                          .reversed())
                   .collect(Collectors.toList());
         }
         break;

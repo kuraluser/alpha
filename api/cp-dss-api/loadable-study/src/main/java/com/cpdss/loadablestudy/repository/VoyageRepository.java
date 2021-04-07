@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,8 +22,12 @@ public interface VoyageRepository
 
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
 
-  public Voyage findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
-      LocalDateTime currentVoyageStartDate, Long vesselId, boolean isActive);
+  public Voyage
+      findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+          LocalDateTime currentVoyageStartDate,
+          Long vesselId,
+          boolean isActive,
+          VoyageStatus voyageStatus);
 
   @Query(
       "select V from Voyage V WHERE V.isActive = :isActive AND V.vesselXId= :vesselId AND "

@@ -3562,8 +3562,8 @@ class LoadableStudyServiceTest {
 
     Mockito.when(
             this.voyageRepository
-                .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
-                    any(LocalDateTime.class), anyLong(), anyBoolean()))
+                .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+                    any(LocalDateTime.class), anyLong(), anyBoolean(), any()))
         .thenReturn(voyage);
     Mockito.when(
             this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(any(Voyage.class)))
