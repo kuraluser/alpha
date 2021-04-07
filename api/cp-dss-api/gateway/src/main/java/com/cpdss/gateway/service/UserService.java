@@ -661,7 +661,7 @@ public class UserService {
       LocalDateTime timeNow = LocalDateTime.now();
       long daysDiff = DAYS.between(timeNow, user.getPasswordExpiryDate());
       if (daysDiff <= PASSWORD_EXPIRE_REMINDER) {
-        response.setExpiryReminder(new PasswordExpiryReminder(daysDiff + 1));
+        response.setExpiryReminder(new PasswordExpiryReminder(daysDiff));
       }
     }
     return response;
