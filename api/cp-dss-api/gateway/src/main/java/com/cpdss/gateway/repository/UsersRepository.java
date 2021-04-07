@@ -31,6 +31,8 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
 
   public Users findByUsernameAndIsActive(String username, boolean isActive);
 
+  Users findByUsernameIgnoreCaseAndIsActive(String username, boolean isActive);
+
   @Modifying
   @Query(
       "update Users us set us.userPassword = :password, us.passwordExpiryDate = :expD, us.passwordUpdateDate = :upD where us.id = :id")
