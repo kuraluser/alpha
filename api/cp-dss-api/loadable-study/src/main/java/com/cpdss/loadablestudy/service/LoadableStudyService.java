@@ -128,6 +128,7 @@ import com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest;
 import com.cpdss.loadablestudy.domain.LoadicatorAlgoResponse;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetails;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetailsResults;
+import com.cpdss.loadablestudy.domain.LoadicatorResultDetails;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.domain.UllageUpdateRequest;
@@ -3070,7 +3071,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
+        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -4893,7 +4894,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           new File("json/loadicator_" + request.getLoadableStudyId() + ".json"), loadicator);
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
-      this.saveloadicatorDataForSynopticalTable(algoResponse);
+      this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
           LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
           algoResponse.getProcessId(),
@@ -4924,7 +4925,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    *
    * @param algoResponse
    */
-  private void saveloadicatorDataForSynopticalTable(LoadicatorAlgoResponse algoResponse) {
+  private void saveloadicatorDataForSynopticalTable(
+      LoadicatorAlgoResponse algoResponse, Boolean isPattern) {
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
     for (LoadicatorPatternDetailsResults patternDetails :
         algoResponse.getLoadicatorResultsPatternWise()) {
@@ -4932,36 +4934,45 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .getLoadicatorResultDetails()
           .forEach(
               result -> {
-                SynopticalTableLoadicatorData entity = new SynopticalTableLoadicatorData();
-                entity.setLoadablePatternId(patternDetails.getLoadablePatternId());
-                entity.setSynopticalTable(
-                    this.synopticalTableRepository.getOne(result.getSynopticalId()));
-                entity.setActive(true);
-                entity.setBlindSector(
-                    isEmpty(result.getDeflection())
-                        ? null
-                        : new BigDecimal(result.getDeflection()));
-                entity.setCalculatedDraftAftPlanned(
-                    isEmpty(result.getCalculatedDraftAftPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedDraftAftPlanned()));
-                entity.setCalculatedDraftFwdPlanned(
-                    isEmpty(result.getCalculatedDraftFwdPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
-                entity.setCalculatedDraftMidPlanned(
-                    isEmpty(result.getCalculatedDraftMidPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedDraftMidPlanned()));
-                entity.setCalculatedTrimPlanned(
-                    isEmpty(result.getCalculatedTrimPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedTrimPlanned()));
-                entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
-                entities.add(entity);
+                if (isPattern) {
+                  this.synopticalTableLoadicatorDataRepository
+                      .deleteBySynopticalTableAndLoadablePatternId(
+                          this.synopticalTableRepository.getOne(result.getSynopticalId()),
+                          patternDetails.getLoadablePatternId());
+                }
+                entities.add(
+                    this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
               });
     }
     this.synopticalTableLoadicatorDataRepository.saveAll(entities);
+  }
+
+  private SynopticalTableLoadicatorData createSynopticalTableLoadicatorDataEntity(
+      LoadicatorPatternDetailsResults patternDetails, LoadicatorResultDetails result) {
+    SynopticalTableLoadicatorData entity = new SynopticalTableLoadicatorData();
+    entity.setLoadablePatternId(patternDetails.getLoadablePatternId());
+    entity.setSynopticalTable(this.synopticalTableRepository.getOne(result.getSynopticalId()));
+    entity.setActive(true);
+    entity.setBlindSector(
+        isEmpty(result.getDeflection()) ? null : new BigDecimal(result.getDeflection()));
+    entity.setCalculatedDraftAftPlanned(
+        isEmpty(result.getCalculatedDraftAftPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftAftPlanned()));
+    entity.setCalculatedDraftFwdPlanned(
+        isEmpty(result.getCalculatedDraftFwdPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
+    entity.setCalculatedDraftMidPlanned(
+        isEmpty(result.getCalculatedDraftMidPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftMidPlanned()));
+    entity.setCalculatedTrimPlanned(
+        isEmpty(result.getCalculatedTrimPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedTrimPlanned()));
+    entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    return entity;
   }
 
   /**
@@ -8286,7 +8297,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .filter(
                 port ->
                     Long.valueOf(port.getId())
-                        .equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
+                        .equals(synopticalEntity.getLoadableStudyPortRotation().getPortXId()))
             .findAny();
     if (portDetail.isPresent()) {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
