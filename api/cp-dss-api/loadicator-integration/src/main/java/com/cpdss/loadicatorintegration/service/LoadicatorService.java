@@ -91,9 +91,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       }
 
       this.stowagePlanRepository.saveAll(stowagePlanList);
-      if (this.getStatus(stowagePlanList)) {
+      if (true) {
 
-        LoadicatorDataRequest loadableStudyrequest = this.sendLoadicatorData(stowagePlanList);
+        LoadicatorDataRequest loadableStudyrequest = this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
 
         this.getLoadicatorDatas(loadableStudyrequest);
 
@@ -300,7 +300,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
    * @param stowagePlanList
    * @return
    */
-  public LoadicatorDataRequest sendLoadicatorData(List<StowagePlan> stowagePlanList) {
+  public LoadicatorDataRequest sendLoadicatorData(List<StowagePlan> stowagePlanList, Boolean isPattern) {
     LoadicatorDataRequest.Builder request = LoadicatorDataRequest.newBuilder();
     if (null != stowagePlanList) {
       Map<Long, List<StowagePlan>> stowagePlanMap = this.buildStowagePlanMap(stowagePlanList);
@@ -318,6 +318,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     request.setProcessId(stowagePlanList != null ? stowagePlanList.get(0).getProcessId() : "");
     request.setLoadableStudyId(
         stowagePlanList != null ? stowagePlanList.get(0).getBookingListId() : 0);
+    request.setIsPattern(isPattern);
     return request.build();
   }
 

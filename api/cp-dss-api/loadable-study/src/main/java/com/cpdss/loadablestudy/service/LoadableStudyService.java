@@ -141,6 +141,7 @@ import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
@@ -4509,7 +4510,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
+         this.saveLoadicatorInfo(loadablePatternOpt.get().getLoadableStudy(), request.getProcesssId(), request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -4693,7 +4694,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ObjectMapper objectMapper = new ObjectMapper();
 
       objectMapper.writeValue(
-          new File("json/loadicator_" + request.getLoadableStudyId() + ".json"), loadicator);
+          new File("D:/Projects/CPDSS/attachments/json/loadicator_" + request.getLoadableStudyId() + ".json"), loadicator);
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
       this.saveloadicatorDataForSynopticalTable(algoResponse);
@@ -4775,7 +4776,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator) {
     loadicator.setProcessId(request.getProcessId());
     loadicator.setLoadicatorPatternDetails(new ArrayList<>());
-    request
+    if (request.getIsPattern()) {
+    	com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails patternDetails = request.getLoadicatorPatternDetails(0);
+    	LoadicatorPatternDetails pattern = new LoadicatorPatternDetails();
+        pattern.setLoadablePatternId(patternDetails.getLoadablePatternId());
+        pattern.setLdTrim(this.createLdTrim(patternDetails.getLDtrimList()));
+        pattern.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
+        pattern.setLdIntactStability(
+            this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+        loadicator.setLoadicatorPatternDetail(pattern);
+    } else {
+    	request
         .getLoadicatorPatternDetailsList()
         .forEach(
             patternDetails -> {
@@ -4787,6 +4798,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
               loadicator.getLoadicatorPatternDetails().add(patterns);
             });
+    }
   }
 
   /**
@@ -7896,11 +7908,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param loadableStudyEntity
    * @param processId
    */
-  public void saveLoadicatorInfo(LoadableStudy loadableStudyEntity, String processId) {
+  public void saveLoadicatorInfo(LoadableStudy loadableStudyEntity, String processId, Long patternId) {
     LoadicatorRequest.Builder loadicatorRequestBuilder = LoadicatorRequest.newBuilder();
     try {
-      List<LoadablePattern> loadablePatterns =
-          this.loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+    	List<LoadablePattern> loadablePatterns = null;
+        if (patternId == 0) {
+      	  loadablePatterns =
+      	          this.loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+      	  loadicatorRequestBuilder.setIsPattern(false);
+        } else {
+      	  Optional<LoadablePattern> lpOpt = this.loadablePatternRepository.findByIdAndIsActive(patternId, true);
+      	  loadablePatterns = lpOpt.isPresent() ? new ArrayList<LoadablePattern>(Arrays.asList(lpOpt.get())) : null;
+      	  loadicatorRequestBuilder.setIsPattern(true);
+        }
       if (null == loadablePatterns) {
         throw new GenericServiceException(
             "No loadable patterns found for this loadable study",
