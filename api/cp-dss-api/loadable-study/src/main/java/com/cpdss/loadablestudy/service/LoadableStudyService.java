@@ -5912,7 +5912,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findAny();
       if (ohqEntityOpt.isPresent()) {
         ohqEntity = ohqEntityOpt.get();
-
       } else {
 
         ohqEntity = new OnHandQuantity();
@@ -6065,6 +6064,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         obqEntity.setLoadableStudy(loadableStudy);
         obqEntity.setIsActive(true);
       }
+
       this.validateSaveSynopticalObqData(obqEntity, cargoRecord, loadableStudy);
 
       obqEntity.setPlannedArrivalWeight(
@@ -9129,60 +9129,60 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private void validateSaveSynopticalOhqData(
-      OnHandQuantity ohqEntity,
-      SynopticalTable entity,
-      SynopticalOhqRecord ohqRecord,
-      LoadableStudy loadableStudy)
-      throws GenericServiceException {
+	      OnHandQuantity ohqEntity,
+	      SynopticalTable entity,
+	      SynopticalOhqRecord ohqRecord,
+	      LoadableStudy loadableStudy)
+	      throws GenericServiceException {
 
-    List<LoadablePattern> generatedPatterns =
-        this.loadablePatternRepository.findLoadablePatterns(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
+	    List<LoadablePattern> generatedPatterns =
+	        this.loadablePatternRepository.findLoadablePatterns(
+	            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
 
-    List<LoadablePattern> confirmedPatterns =
-        this.loadablePatternRepository.findLoadablePatterns(
-            CONFIRMED_STATUS_ID, loadableStudy, true);
+	    List<LoadablePattern> confirmedPatterns =
+	        this.loadablePatternRepository.findLoadablePatterns(
+	            CONFIRMED_STATUS_ID, loadableStudy, true);
 
-    if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
-        && ((SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
-                && ohqEntity.getArrivalQuantity() != null
-                && !Integer.toString(ohqEntity.getArrivalQuantity().intValue())
-                    .equals(ohqRecord.getPlannedWeight()))
-            || (SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(entity.getOperationType())
-                && ohqEntity.getDepartureQuantity() != null
-                && !Integer.toString(ohqEntity.getDepartureQuantity().intValue())
-                    .equals(ohqRecord.getPlannedWeight())))) {
+	    if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
+	        && ((SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
+	        		&&ohqEntity.getArrivalQuantity()!=null
+	                &&! Integer.toString(ohqEntity.getArrivalQuantity().intValue()).equals(ohqRecord.getPlannedWeight()))
+	            || (SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(entity.getOperationType())
+	            		 && ohqEntity
+	                     .getDepartureQuantity()!=null
+	                &&! Integer.toString(ohqEntity
+	                    .getDepartureQuantity()
+	                    .intValue())
+	                    .equals(ohqRecord.getPlannedWeight())))) {
 
-      throw new GenericServiceException(
-          "Cannot update planned values for plan generated loadable study",
-          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-          HttpStatusCode.BAD_REQUEST);
-    }
-  }
+	      throw new GenericServiceException(
+	          "Cannot update planned values for plan generated loadable study",
+	          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+	          HttpStatusCode.BAD_REQUEST);
+	    }
+	  }
 
   private void validateSaveSynopticalObqData(
-      OnBoardQuantity obqEntity, SynopticalCargoRecord cargoRecord, LoadableStudy loadableStudy)
-      throws GenericServiceException {
+	      OnBoardQuantity obqEntity, SynopticalCargoRecord cargoRecord, LoadableStudy loadableStudy)
+	      throws GenericServiceException {
 
-    List<LoadablePattern> generatedPatterns =
-        this.loadablePatternRepository.findLoadablePatterns(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
+	    List<LoadablePattern> generatedPatterns =
+	        this.loadablePatternRepository.findLoadablePatterns(
+	            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
 
-    List<LoadablePattern> confirmedPatterns =
-        this.loadablePatternRepository.findLoadablePatterns(
-            CONFIRMED_STATUS_ID, loadableStudy, true);
+	    List<LoadablePattern> confirmedPatterns =
+	        this.loadablePatternRepository.findLoadablePatterns(
+	            CONFIRMED_STATUS_ID, loadableStudy, true);
 
-    if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
-        && null != obqEntity.getPlannedArrivalWeight()
-        && !cargoRecord
-            .getPlannedWeight()
-            .equals(Integer.toString(obqEntity.getPlannedArrivalWeight().intValue()))) {
-      throw new GenericServiceException(
-          "Cannot update planned values for plan generated loadable study",
-          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-          HttpStatusCode.BAD_REQUEST);
-    }
-  }
+	    if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty()) 
+	    		&& null!=obqEntity.getPlannedArrivalWeight()
+	        && !cargoRecord.getPlannedWeight().equals(Integer.toString(obqEntity.getPlannedArrivalWeight().intValue()))) {
+	      throw new GenericServiceException(
+	          "Cannot update planned values for plan generated loadable study",
+	          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+	          HttpStatusCode.BAD_REQUEST);
+	    }
+	  }
 
   private void validateSaveSynopticalEtaEtdEstimates(
       SynopticalTable entity,

@@ -37,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.keycloak.common.VerificationException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -89,7 +90,7 @@ class UserServiceTest {
   }
 
   @Test
-  void getUserPermissionsTest() throws GenericServiceException {
+  void getUserPermissionsTest() throws GenericServiceException, VerificationException {
     HttpHeaders headers = new HttpHeaders();
     headers.set(AUTHORIZATION, AUTHORIZATION_VALUE);
     UserAuthorizationsResponse response = userService.getUserPermissions(headers);
@@ -97,7 +98,7 @@ class UserServiceTest {
   }
 
   @Test
-  void getUserPermissionsWithRolesTest() throws GenericServiceException {
+  void getUserPermissionsWithRolesTest() throws GenericServiceException, VerificationException {
     HttpHeaders headers = new HttpHeaders();
     headers.set(AUTHORIZATION, AUTHORIZATION_VALUE);
     when(usersRepository.findByKeycloakIdAndIsActive(anyString(), anyBoolean()))
@@ -217,7 +218,7 @@ class UserServiceTest {
   }
 
   @Test
-  void testGetUsers() {
+  void testGetUsers() throws GenericServiceException {
     Users users = new Users();
     users.setId(1L);
     List<Users> userList = new ArrayList<Users>();

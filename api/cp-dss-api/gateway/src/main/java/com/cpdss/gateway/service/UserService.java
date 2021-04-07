@@ -8,15 +8,25 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.keycloak.KeycloakUser;
+import com.cpdss.gateway.domain.user.NotificationStatusValue;
+import com.cpdss.gateway.domain.user.UserStatusValue;
+import com.cpdss.gateway.domain.user.UserType;
+import com.cpdss.gateway.entity.NotificationStatus;
+import com.cpdss.gateway.entity.Notifications;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.Roles;
 import com.cpdss.gateway.entity.Screen;
+import com.cpdss.gateway.entity.UserStatus;
 import com.cpdss.gateway.entity.Users;
+import com.cpdss.gateway.repository.NotificationRepository;
+import com.cpdss.gateway.repository.NotificationStatusRepository;
 import com.cpdss.gateway.repository.RoleScreenRepository;
 import com.cpdss.gateway.repository.RoleUserMappingRepository;
 import com.cpdss.gateway.repository.RoleUserRepository;
 import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
+import com.cpdss.gateway.repository.UserStatusRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.ship.ShipJwtService;
 import com.cpdss.gateway.security.ship.ShipUserContext;
@@ -28,6 +38,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
+import org.keycloak.TokenVerifier;
+import org.keycloak.common.VerificationException;
+import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -59,6 +72,16 @@ public class UserService {
 
   @Autowired private RoleUserRepository roleUserRepository;
 
+  @Autowired private NotificationRepository notificationRepository;
+
+  @Autowired private UserStatusRepository userStatusRepository;
+
+  @Autowired private NotificationStatusRepository notificationStatusRepository;
+
+  @Autowired private UserCachingService userCachingService;
+
+  @Autowired private KeycloakService keycloakService;
+
   @Autowired(required = false)
   private ShipJwtService jwtService;
 
@@ -68,6 +91,9 @@ public class UserService {
   private static final String SUCCESS = "SUCCESS";
 
   private static final String FAILED = "FAILED";
+
+  private static final Long DEFAULT_COMPANY_ID = 1L;
+  private static final int MAX_REJECTION_COUNT = 3;
 
   @Autowired private RoleUserMappingRepository roleUserMappingRepository;
 
@@ -98,30 +124,49 @@ public class UserService {
    */
   public UserAuthorizationsResponse getUserPermissions(HttpHeaders headers)
       throws GenericServiceException {
+
     UserAuthorizationsResponse userAuthResponse = new UserAuthorizationsResponse();
     // Retrieve user information from user database
     String authorizationToken = headers.getFirst(HttpHeaders.AUTHORIZATION);
     // if (authorizationToken != null) {
     // AccessToken token = parseKeycloakToken(authorizationToken);
-    Users usersEntity = null;
+    Users usersEntity;
+    User user = new User();
     if (this.isShip()) {
       Long userId =
           ((ShipUserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
               .getUserId();
       usersEntity = this.usersRepository.findByIdAndIsActive(userId, true);
     } else {
-      usersEntity =
-          this.usersRepository.findByKeycloakIdAndIsActive(
-              "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
+      try {
+        AccessToken token = parseKeycloakToken(authorizationToken);
+        usersEntity = this.usersRepository.findByKeycloakId(token.getSubject());
+      } catch (VerificationException e) {
+        throw new GenericServiceException(
+            "Token parsing failed",
+            CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
+            HttpStatusCode.FORBIDDEN);
+      }
     }
-    if (usersEntity == null) {
+
+    // Reject API if user not found
+    if (null == usersEntity) {
       throw new GenericServiceException(
           "Invalid user in request token",
           CommonErrorCodes.E_CPDSS_INVALID_USER,
-          HttpStatusCode.valueOf(Integer.valueOf(CommonErrorCodes.E_HTTP_BAD_REQUEST)));
+          HttpStatusCode.BAD_REQUEST);
     }
-    if (usersEntity.getId() != null) {
-      User user = new User();
+
+    // Set status values
+    if (null != usersEntity.getStatus()) {
+      user.setStatusCode(usersEntity.getStatus().getId());
+      user.setStatusValue(usersEntity.getStatus().getStatusName());
+      user.setRejectionCount(usersEntity.getRejectionCount());
+    }
+
+    if (null != usersEntity.getId()
+        && null != usersEntity.getStatus()
+        && UserStatusValue.APPROVED.getId() == usersEntity.getStatus().getId()) {
       user.setId(usersEntity.getId());
       List<RoleUserMapping> roleUserList =
           this.roleUserMappingRepository.findByUsersAndIsActive(
@@ -157,14 +202,16 @@ public class UserService {
               }
             });
       }
-      userAuthResponse.setUser(user);
     }
-    /*} else {
-    	throw new GenericServiceException("Invalid user in request token", CommonErrorCodes.E_CPDSS_INVALID_USER,
-    			HttpStatusCode.valueOf(Integer.valueOf(CommonErrorCodes.E_HTTP_BAD_REQUEST)));
-    }*/
+    /*
+     * } else { throw new GenericServiceException("Invalid user in request token",
+     * CommonErrorCodes.E_CPDSS_INVALID_USER,
+     * HttpStatusCode.valueOf(Integer.valueOf(CommonErrorCodes.E_HTTP_BAD_REQUEST)))
+     * ; }
+     */
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
     commonSuccessResponse.setStatus(SUCCESS);
+    userAuthResponse.setUser(user);
     userAuthResponse.setResponseStatus(commonSuccessResponse);
     return userAuthResponse;
   }
@@ -176,11 +223,9 @@ public class UserService {
    * @return {@link AccessToken} - The keycloak access token instance
    * @throws VerificationException
    */
-  // private AccessToken parseKeycloakToken(String token) throws
-  // VerificationException {
-  // return TokenVerifier.create(token.replace("Bearer ", ""),
-  // AccessToken.class).getToken();
-  // }
+  private AccessToken parseKeycloakToken(String token) throws VerificationException {
+    return TokenVerifier.create(token.replace("Bearer ", ""), AccessToken.class).getToken();
+  }
 
   public ScreenResponse getScreens(Long companyId, Long roleId, String corelationId)
       throws GenericServiceException {
@@ -373,6 +418,7 @@ public class UserService {
             role.setName(roleEntity.getName());
             role.setDescription(roleEntity.getDescription());
             role.setCompanyId(roleEntity.getCompanyXId());
+            role.setIsUserMapped(this.isUserMapped(roleEntity));
             roleList.add(role);
           });
     }
@@ -392,13 +438,13 @@ public class UserService {
    * @param correlationId
    * @return
    */
-  public UserResponse getUsers(String correlationId) {
+  public UserResponse getUsers(String correlationId) throws GenericServiceException {
     UserResponse userResponse = new UserResponse();
     if (this.isShip()) {
-      userResponse.setUsers(this.findShipUsers());
+      userResponse.setUsers(this.findUsers(UserType.SHIP));
       userResponse.setMaxUserCount(this.maxShipUserCount);
     } else {
-      // TODO the shore users has to be fetched from keycloak
+      userResponse.setUsers(this.findUsers(UserType.CLOUD));
     }
     List<Roles> roles = this.rolesRepository.findByIsActiveOrderByName(true);
     userResponse.setRoles(this.buildRoles(roles));
@@ -425,28 +471,66 @@ public class UserService {
   }
 
   /**
-   * Find ship users
+   * Method to find users
    *
-   * @return
+   * @param userType UserType Ship/Cloud
+   * @return List of users
+   * @throws GenericServiceException Exception object
    */
-  private List<User> findShipUsers() {
+  private List<User> findUsers(UserType userType) throws GenericServiceException {
     List<User> userList = new ArrayList<>();
-    List<Users> users = this.usersRepository.findByIsActiveOrderById(true);
-    if (users != null && !users.isEmpty()) {
-      users.forEach(
-          userEntity -> {
-            User user = new User();
-            user.setId(userEntity.getId());
-            user.setFirstName(userEntity.getFirstName());
-            user.setLastName(userEntity.getLastName());
-            user.setUsername(userEntity.getUsername());
-            user.setDesignation(userEntity.getDesignation());
-            if (null != userEntity.getRoles()) {
-              user.setRole(userEntity.getRoles().getName());
-            }
-            user.setDefaultUser(userEntity.getIsShipUser());
-            userList.add(user);
-          });
+    List<Users> users = new ArrayList<>();
+    switch (userType) {
+      case SHIP:
+        users = this.usersRepository.findByIsActiveOrderById(true);
+        if (users != null && !users.isEmpty()) {
+          users.forEach(
+              userEntity -> {
+                User user = new User();
+                user.setId(userEntity.getId());
+                user.setFirstName(userEntity.getFirstName());
+                user.setLastName(userEntity.getLastName());
+                user.setUsername(userEntity.getUsername());
+                user.setDesignation(userEntity.getDesignation());
+                if (null != userEntity.getRoles()) {
+                  user.setRole(userEntity.getRoles().getName());
+                }
+                user.setDefaultUser(userEntity.getIsShipUser());
+                userList.add(user);
+              });
+        }
+        break;
+      case CLOUD:
+        // Get all keycloak users
+        KeycloakUser[] keycloakUsersList = keycloakService.getUsers();
+        List<String> keyCloakIds =
+            Arrays.stream(keycloakUsersList).map(KeycloakUser::getId).collect(Collectors.toList());
+
+        users = this.usersRepository.findByKeycloakIdInOrderById(keyCloakIds);
+        users.forEach(
+            userEntity -> {
+              KeycloakUser keycloakUser = null;
+              try {
+                keycloakUser = userCachingService.getUser(userEntity.getKeycloakId());
+              } catch (GenericServiceException e) {
+                e.printStackTrace();
+              }
+              User user = new User();
+              user.setId(userEntity.getId());
+              user.setKeycloakId(keycloakUser.getId());
+              user.setFirstName(keycloakUser.getFirstName());
+              user.setLastName(keycloakUser.getLastName());
+              user.setUsername(keycloakUser.getUsername());
+              user.setDesignation(userEntity.getDesignation());
+              if (null != userEntity.getRoles()) {
+                user.setRole(userEntity.getRoles().getName());
+              }
+              user.setDefaultUser(userEntity.getIsShipUser());
+              userList.add(user);
+            });
+        break;
+      default:
+        throw new IllegalStateException("Unexpected value: " + userType);
     }
     return userList;
   }
@@ -486,8 +570,7 @@ public class UserService {
     }
 
     List<Users> users =
-        this.usersRepository.findByCompanyXIdAndIdInAndIsActive(
-            companyId, permission.getUserId(), true);
+        this.usersRepository.findByCompanyXIdAndIdIn(companyId, permission.getUserId());
 
     List<Long> screenIds = new ArrayList<>();
     for (ScreenInfo screenInfo : permission.getScreens()) {
@@ -507,6 +590,30 @@ public class UserService {
     if (users != null && !users.isEmpty()) {
       users.forEach(
           user -> {
+            // Activate user if user in requested for approval
+            if (null != user.getStatus()
+                && user.getStatus().getId().equals(UserStatusValue.REQUESTED.getId())) {
+              // Update user
+              UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
+              user.setStatus(userStatus);
+              user.setActive(true);
+              this.usersRepository.save(user);
+
+              // Update notification
+              NotificationStatus notificationStatus =
+                  notificationStatusRepository.getOne(NotificationStatusValue.CLOSED.getId());
+              List<Notifications> notificationsList =
+                  this.notificationRepository.findByRequestedByAndIsActive(user.getId(), true);
+              notificationsList.forEach(
+                  notification -> {
+                    notification.setNotificationStatus(notificationStatus);
+                    notification.setNotificationType(
+                        NotificationStatusValue.CLOSED.getNotificationType());
+                    notification.setIsActive(false);
+                  });
+              this.notificationRepository.saveAll(notificationsList);
+            }
+
             Optional<RoleUserMapping> roleUserOpt =
                 this.roleUserRepository.findByUsersAndRolesAndIsActive(
                     user.getId(), role.get().getId(), true);
@@ -727,10 +834,29 @@ public class UserService {
       entity.setLastName(request.getLastName());
       entity.setDesignation(request.getDesignation());
       entity.setRoles(this.rolesRepository.getOne(request.getRoleId()));
+
+      // Update user status
+      UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
+      entity.setStatus(userStatus);
+
       if (null != request.getIsLoginSuspended()) {
         entity.setLoginSuspended(request.getIsLoginSuspended());
       }
       entity = this.usersRepository.save(entity);
+
+      // Update notification
+      NotificationStatus notificationStatus =
+          notificationStatusRepository.getOne(NotificationStatusValue.CLOSED.getId());
+      List<Notifications> notificationsList =
+          this.notificationRepository.findByRequestedByAndIsActive(entity.getId(), true);
+      notificationsList.forEach(
+          notification -> {
+            notification.setNotificationStatus(notificationStatus);
+            notification.setNotificationType(NotificationStatusValue.CLOSED.getNotificationType());
+            notification.setIsActive(false);
+          });
+      this.notificationRepository.saveAll(notificationsList);
+
       response.setId(entity.getId());
     }
     response.setResponseStatus(
@@ -911,5 +1037,16 @@ public class UserService {
           CommonErrorCodes.E_CPDSS_INVALID_USER,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+  
+  private Boolean isUserMapped(Roles role) {
+	  Boolean usersExist=false;
+	  List<RoleUserMapping> roleUserList =
+	          this.roleUserMappingRepository.findByRolesAndIsActive(role,true);
+	  if(null!=roleUserList&&!roleUserList.isEmpty())
+	  {
+		  usersExist=true;
+	  }
+	  return usersExist;
   }
 }
