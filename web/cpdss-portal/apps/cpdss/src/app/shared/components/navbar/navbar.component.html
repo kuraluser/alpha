@@ -4,7 +4,7 @@
     </div>
     <div class="header-nav">
         <ul class="nav">
-            <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen }" (click)="rerouteOrShowSubmenu(list, i)"
+            <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen , 'active': list?.isActive}" (click)="rerouteOrShowSubmenu(list, i)"
                 (focusout)="hide(list.subMenu, i)" *ngFor="let list of menuList; let i = index"
                 routerLinkActive="active">
                 <div class="menu-item-icon {{list.menuIcon}}"></div>

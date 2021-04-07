@@ -545,7 +545,7 @@ a {
   font-size: $font-size-normal;
 }
 .new-voayge-pop-up{
-  width: 370px;
+  width: 670px;
 }
 
 .p-dialog .p-dialog-footer button:last-child{
@@ -2275,3 +2275,51 @@ tr:hover{
   outline: none;
   box-shadow: none!important;
 }
+.new-voayge-pop-up{
+  .p-calendar{
+    width: 100%;
+  }
+}
+
+.pattern-view-more-popup{
+  width: 83vw;
+  .tank-btn-rounded{
+    margin-left: 2px;
+  }
+  .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
+    top: 0!important;
+    left: 12px!important;
+    margin-top: 0!important;
+    width: auto!important;
+  }
+  .tank-commodity-weight{
+    position: absolute;
+    left: 2px;
+    top: 13px;
+  }
+  .p-datatable table{
+    table-layout: auto!important;
+  }
+}
+
+.table-pattern-view-more{
+  &.p-datatable .p-datatable-tbody > tr > td, &.p-datatable .p-datatable-tbody > tr > th{
+    padding:  2px 3px;
+    font-size: 10px;
+    &:last-child{
+      border-right: 0;
+    }
+  }
+  &.p-datatable .p-datatable-thead > tr > th{
+    padding:  2px 3px;
+    &:last-child{
+      border-right: 0;
+    }
+  }
+  &.p-datatable .p-datatable-tfoot > tr > td{
+    padding: 2px 3px!important;
+  }
+  table{
+    table-layout: auto!important;
+  }
+  }

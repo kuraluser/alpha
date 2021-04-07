@@ -20,9 +20,11 @@
                     {{rowData[col.field]}}
                 </ng-container>
                 <ng-container *ngIf="col.field === 'difference'">
-                    <span class="badge-custom" [ngStyle]="{'background': rowData?.isPositive?  'green' : 'red' }"> <span
+                    <span *ngIf="rowData[col.field]!==0" class="badge-custom"
+                        [ngStyle]="{'background': rowData?.isPositive?  'green' : 'red' }"> <span
                             *ngIf="rowData?.isPositive">+</span> {{rowData[col.field]}}
                     </span>
+                    <span *ngIf="rowData[col.field]===0"> {{rowData[col.field]}}</span>
                 </ng-container>
             </td>
         </tr>
@@ -33,8 +35,10 @@
             <td>{{totalPlanned}}</td>
             <td>{{totalActual}}</td>
             <td>
-                <span class="badge-custom" [ngStyle]="{'background': isTotalPositive?  'green' : 'red' }"> <span
-                        *ngIf="isTotalPositive">+</span> {{totalDifference}}
+                <span *ngIf="totalDifference!==0" class="badge-custom" [ngStyle]="{'background': isTotalPositive?  'green' : 'red' }">
+                    <span *ngIf="isTotalPositive">+</span> {{totalDifference}}
+                </span>
+                <span *ngIf="totalDifference===0"> {{totalDifference}}
                 </span>
             </td>
         </tr>

@@ -79,4 +79,6 @@ public class LoadableStudy {
   private Boolean isDischargingPortComplete;
 
   private List<PortRotation> ohqPorts;
+
+  private String lastEdited;
 }

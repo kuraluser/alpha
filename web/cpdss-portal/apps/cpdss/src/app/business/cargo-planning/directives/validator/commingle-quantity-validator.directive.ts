@@ -21,6 +21,8 @@ export function commingleQuantityValidator(): ValidatorFn {
             }
             loadingPortsTotal = cargo1Total + cargo2Total;
             if (loadingPortsTotal < control.value) {
+                control.markAsTouched();
+                control.markAsDirty();
                 return { isMaxQuantity: true };
             }
             else {

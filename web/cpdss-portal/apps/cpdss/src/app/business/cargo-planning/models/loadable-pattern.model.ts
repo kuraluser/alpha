@@ -1,5 +1,6 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
-import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
+import { ICargoTank, ILoadableCargo, IBallastStowageDetails,  IBallastTank} from '../../core/models/common.model';
+import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from './cargo-planning.model';
 
 
 /**
@@ -14,6 +15,9 @@ export interface ILoadablePatternResponse {
     loadablePatterns: ILoadablePattern[];
     loadablePatternCreatedDate: string;
     loadableStudyName: string;
+    frontBallastTanks: IBallastTank[][];
+    centerBallastTanks: IBallastTank[][];
+    rearBallastTanks: IBallastTank[][];
 }
 
 
@@ -31,6 +35,9 @@ export interface ILoadablePattern {
     stabilityParameters: IStabilityParameter;
     loadableStudyStatusId: number;
     caseNumber: number;
+    loadableQuantityCargoDetails: ILoadableQuantityCargo[];
+    loadablePlanBallastDetails: IBallastStowageDetails[];
+    loadablePlanSynopticRecord: ILoadablePlanSynopticalRecord;
 }
 
 /**
@@ -59,18 +66,18 @@ export interface ILoadablePatternCargoDetail extends ILoadableCargo {
  * @interface ILoadablePlanStowageDetails
  */
 export interface ILoadablePlanStowageDetails extends ILoadableCargo {
-    id: number;
+    id?: number;
     tankId: number;
     cargoAbbreviation: string;
-    weight: number;
+    weight?: number;
     correctedUllage: number;
     fillingRatio: string;
     tankName: string;
     rdgUllage: number;
     correctionFactor: number;
-    observedM3: number;
-    observedBarrels: number;
-    observedBarrelsAt60: number;
+    observedM3?: number;
+    observedBarrels?: number;
+    observedBarrelsAt60?: number;
     api: number;
     temperature: number;
     colorCode: string;
@@ -93,5 +100,7 @@ export interface IStabilityParameter {
     bendinMoment: string;
     shearForce: string;
 }
+
+
 
 

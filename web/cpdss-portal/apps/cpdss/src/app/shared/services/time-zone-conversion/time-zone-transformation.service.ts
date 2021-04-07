@@ -38,11 +38,11 @@ export class TimeZoneTransformationService {
    * @return {*}  {string}
    * @memberof TimeZoneTransformationService
    */
-  convertToZoneBasedTime(dateTime: Date, offsetValue: string): string {
-    const utcOffset = parseFloat(offsetValue.replace(':', '.'));
+  convertToZoneBasedTime(dateTime: Date, toUtc: boolean, offsetValue?: string): Date {
+    const utcOffset = toUtc ? 0.00 : parseFloat(offsetValue?.replace(':', '.'));
     const tzDifference = utcOffset * 60 + dateTime.getTimezoneOffset();
     const offsetTime = new Date(dateTime.getTime() + tzDifference * 60 * 1000);
-    return this.formatDateTime(offsetTime, {isTime: true});
+    return offsetTime;
   }
 
   /**
@@ -54,7 +54,7 @@ export class TimeZoneTransformationService {
    * @return {*} 
    * @memberof TimeZoneTransformationService
    */
-  formatDateTime(date, formatOptions?: IDateTimeFormatOptions) {
+  formatDateTime(date, formatOptions?: IDateTimeFormatOptions): string {
     let month = date.getMonth() + 1;
     let day = date.getDate();
     let hour = date.getHours();

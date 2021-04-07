@@ -265,14 +265,13 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       }
     } else if (['api', 'temperature'].includes(event.field)) {
       if (event.data?.cargo?.value) {
-        const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
-        event.data.cargo.value.ports = result?.ports;
         this.apiTempPopupData = <IApiTempPopupData>{
-          rowDataCargo: event.data?.cargo,
+          rowDataCargo: event.data?.loadingPorts?.value,
           vesselId: this.vesselId,
           voyageId: this.voyageId,
           loadableStudyId: this.loadableStudyId,
-          rowIndex: event.index
+          cargoId: event.data?.cargo?.value.id,
+          cargoName: event.data?.cargo?.value.name
         }
         this.openAPITemperatureHistoryPopup = true;
       }
@@ -329,7 +328,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
-
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
@@ -337,7 +335,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.updateCommingleButton(true);
         const row = this.cargoNominations[event.index];
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
-        const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+        const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, true);
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
         if (res) {
           for (const key in this.cargoNominations[valueIndex]) {
@@ -401,7 +399,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
             this.ngxSpinnerService.show();
             let res;
             if (!event?.data?.isAdd) {
-              res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+              res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
             } else {
               res = true;
             }
@@ -433,7 +431,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.show();
       this.updateCommingleButton(true, false);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
-      const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+      const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
       if (res) {
@@ -510,6 +508,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.cargoNominations = [...this.cargoNominations, _cargoNomination];
     const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
     dataTableControl.push(this.initCargoNominationFormGroup(_cargoNomination));
+    this.cargoNominationForm.updateValueAndValidity();
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 

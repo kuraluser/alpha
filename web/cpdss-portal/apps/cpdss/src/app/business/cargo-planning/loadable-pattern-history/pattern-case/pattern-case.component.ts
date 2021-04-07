@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { ICargoTank, ILoadableCargo, ITankOptions } from '../../../core/models/common.model';
+import { ICargoTank, ITankOptions } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
+import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service';
 
 /**
  * Component for pattern case
@@ -18,15 +20,17 @@ import { ILoadablePattern } from '../../models/loadable-pattern.model';
 export class PatternCaseComponent implements OnInit {
 
   @Output() displayCommingleDetailPopup = new EventEmitter();
+  @Output() displayPatternViewMorePopup = new EventEmitter();
 
   @Input() index: number;
   @Input() loadablePattern: ILoadablePattern;
   @Input() tankList: ICargoTank[][];
 
+  tableCol: IDataTableColumn[];
   loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
   cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantityMT' }
-  constructor() { }
+  constructor(private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService) { }
 
   /**
    * Component lifecycle ngOnit
@@ -35,8 +39,9 @@ export class PatternCaseComponent implements OnInit {
    * @memberof PatternCaseComponent
    */
   ngOnInit(): void {
+    this.tableCol =  this.loadableStudyPatternTransformationService.getCargoPriorityGridCaseTableColumn();
     this.loadablePatternDetailsId = this.loadablePattern?.loadablePatternId;
-    this.updateTankLIst()
+    this.updateTankLIst();
   }
 
   /**
@@ -70,4 +75,13 @@ export class PatternCaseComponent implements OnInit {
     }
     this.displayCommingleDetailPopup.emit(commingleData)
   }
+
+   /**
+  * Method to show pattern view more pop up
+  *
+  * @memberof PatternCaseComponent
+  */
+    patternViewMore(event) {
+      this.displayPatternViewMorePopup.emit(this.loadablePattern)
+    }
 }

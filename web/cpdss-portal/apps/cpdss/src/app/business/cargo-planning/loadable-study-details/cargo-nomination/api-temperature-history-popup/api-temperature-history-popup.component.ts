@@ -38,8 +38,8 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   }
   set apiTempHistoryPopupData(apiTempHistoryPopupData: IApiTempPopupData) {
     this._apiTempHistoryPopupData = apiTempHistoryPopupData;
-    const cargoId = apiTempHistoryPopupData.rowDataCargo.value.id;
-    const portIDs = [...apiTempHistoryPopupData.rowDataCargo.value.ports].map(port => (port.id));
+    const cargoId = apiTempHistoryPopupData.cargoId;
+    const portIDs = [...apiTempHistoryPopupData.rowDataCargo].map(port => (port.id));
     this.getApiTempHistoryData(cargoId, portIDs);
     this.apiTempHistoryForm = this.fb.group({
       selectMonth: this.fb.control(null),
@@ -57,7 +57,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   monthWithPreccedingSucceedingArr: IMonths[] = [];
   selectedPortID: number;
   filteredMonthwiseHistory: IApiTempMonthWiseHistory[] = [];
-  showMonthWiseGrid: boolean = false;
+  hideMonthWiseGrid: boolean = true;
   uniqueYears: number[] = [];
   monthWiseGridColData: {} = {};
   userPermission: IPermission;
@@ -90,11 +90,11 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     if (cargoApiTempHistoryDetails.responseStatus.status === '200') {
       const responsePortHistory: IApiTempPortHistory[] = cargoApiTempHistoryDetails.portHistory;
       if (responsePortHistory?.length) {
-        const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo.value.ports];
+        const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo];
         this.apiTempHistoryData = responsePortHistory.map(historyObj => {
           const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId);
           const formattedDate = this.datePipe.transform(historyObj.loadedDate.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"), 'dd-MM-yyyy');
-          return Object.assign(historyObj, { loadingPortName: loadingPort.name, loadedDate: formattedDate });
+          return Object.assign(historyObj, { loadingPortName: loadingPort?.name, loadedDate: formattedDate });
         });
       } else {
         this.apiTempHistoryData = [];
@@ -148,6 +148,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
         this.monthWiseGridColData = groupedByYear;
       }
     }
+    this.hideMonthWiseGrid = false;
   }
 
   /**
@@ -187,7 +188,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    * @memberof ApiTemperatureHistoryPopupComponent
    */
   hideShowMonthWiseApiTempHistoryGrid(): void {
-    this.showMonthWiseGrid = !this.showMonthWiseGrid;
+    this.hideMonthWiseGrid = !this.hideMonthWiseGrid;
   }
 
   /**

@@ -118,7 +118,7 @@ export interface ICargoTank extends ITank {
     shortName: string;
     heightFrom?: number;
     heightTo?: number;
-    fillCapcityCubm: number;
+    fillCapcityCubm?: number;
     fullCapacityCubm?: string;
     density: number;
     group: number;
@@ -208,6 +208,7 @@ export interface IBallastStowageDetails {
     tcg: string,
     inertia: string;
     colorCode?: string;
+    fullCapacityCubm?: string;
 }
 
 /**
@@ -228,7 +229,7 @@ export interface IBallastTank extends ITank {
     group: number,
     order: number,
     slopTank: boolean,
-    commodity: IBallastStowageDetails;
+    commodity?: IBallastStowageDetails;
 }
 /**
  * Interface for port
@@ -307,6 +308,7 @@ export interface IPortList {
     voyageId?: number;
     etaActual?: string;
     etdActual?: string;
+    isPortsComplete?: boolean;
 }
 
 /**

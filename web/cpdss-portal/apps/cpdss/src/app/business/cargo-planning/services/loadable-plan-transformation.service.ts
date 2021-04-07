@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable , Subject } from 'rxjs';
 
-import { IBallastTank, ICargoTank } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ILoadableQuantityCargo, ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, ICargoTankDetailValueObject, ILoadablePlanSynopticalRecord, ISynopticalRecordArrangeModel, IBallastStowageDetails } from '../models/loadable-plan.model';
+import { ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, ICargoTankDetailValueObject, ISynopticalRecordArrangeModel } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
 
 
 /**

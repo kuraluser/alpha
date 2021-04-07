@@ -18,6 +18,7 @@ export class LoadableStudyListApiService {
   getLoadableStudies(vesselId: number, voyageId: number): Observable<ILoadableStudiesResponse> {
     return this.commonApiService.get<ILoadableStudiesResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies
     `);
+
   }
 
   /**

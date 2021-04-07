@@ -4,8 +4,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
-import { ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
+import { ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { ILoadableQuantityCargo } from '../../models/cargo-planning.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -76,17 +77,19 @@ export class LoadableQuantityComponent implements OnInit {
    */
   public getPropByString(obj: any, propString: string) {
     if (!propString) return obj;
-    let prop,
-      props = propString.split(".");
-    for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
+    let prop;
+    const props = propString.split(".");
+    let index;
+    for (let i = 0, iLen = props.length - 1; i < iLen; i++) {
       prop = props[i];
       if (obj[prop] !== undefined) {
         obj = obj[prop];
+        index = i;
       } else {
         break;
       }
     }
-    return obj[props[i]];
+    return obj[props[index]];
   }
 
   /**

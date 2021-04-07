@@ -52,4 +52,6 @@ public class PortRotation {
   private Boolean isPortsComplete;
 
   private Boolean isPortRotationOhqComplete;
+
+  private Long portTimezoneId = 0l;
 }

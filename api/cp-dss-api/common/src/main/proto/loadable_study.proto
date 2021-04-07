@@ -130,7 +130,7 @@ service LoadableStudyService {
 	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
 	}
 	
-	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
+	rpc updateUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
 	}
 	
 	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
@@ -168,14 +168,14 @@ service LoadableStudyService {
 	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 }
 
-message RecalculateVolumeRequest {
+message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
-message RecalculateVolumeReply {
+message UpdateUllageReply {
 	ResponseStatus responseStatus = 1;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
 message LoadicatorResultsRequest {
@@ -398,6 +398,7 @@ message LoadablePlanStowageDetails {
   string colorCode = 15;
   bool isCommingle = 16;
   int64 cargoNominationId = 17;
+  bool isBallast = 18;
 }
 
 
@@ -577,6 +578,7 @@ message LoadableQuantityRequest {
 	string subTotal = 27;
 	string foConsumptionPerDay = 28;
 	int64 id = 29;
+	string lastUpdatedTime = 30;
 }
 
 message LoadableQuantityReply {
@@ -628,6 +630,7 @@ message LoadableStudyDetail{
 	bool isObqComplete=27;
 	bool isDischargingPortComplete=28;
 	repeated OhqPorts ohqPorts=29;
+	string lastEdited = 30;
 }
 
 message LoadableStudyReply{
@@ -711,7 +714,7 @@ message PortRotationDetail{
 	int64 loadableStudyId=16;
 	int64 portOrder=17;
 	bool isPortsComplete=18;
-	
+	int64 portTimezoneId = 19;
 }
 
 message Operation{
@@ -986,6 +989,7 @@ message SynopticalRecord{
 	string ballastActual = 37;
 	repeated SynopticalBallastRecord ballast = 38;
 	int64 portRotationId = 39;
+	int64 portTimezoneId = 40;
 }
 
 message SynopticalCargoRecord{

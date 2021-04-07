@@ -36,6 +36,7 @@ appConfig {
             replicas = 1
             rollbackOnUpdateFailure = true
         }
+	  dns = ['8.8.8.8']	
       environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 
 	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'KEYCLOAK_URL': keycloakURL]
   }

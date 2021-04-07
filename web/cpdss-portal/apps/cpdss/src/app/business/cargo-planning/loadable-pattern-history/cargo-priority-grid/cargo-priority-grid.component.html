@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col">
+        <p-table #dt [value]="loadablePatternCargoDetails" dataKey="id" [styleClass]="styleClass" [rowHover]="true"
+            [columns]="tableCol">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">{{col.header| translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr class="p-selectable-row" (click)="onRowSelect(priorityData)">
+                    <td *ngFor="let col of columns">
+                        <span *ngIf="col.field === 'priority'">{{rowData[col.field]}}</span>
+                        <span class="badge-custom" *ngIf="col.field === 'cargoAbbreviation'"
+                            [ngClass]="rowData?.isCommingle ? 'commingle' : ''"
+                            [ngStyle]="!rowData?.isCommingle && {'background': rowData?.cargoColor}">{{rowData[col.field]}}</span>
+                        <span *ngIf="col.field === 'quantity'">{{rowData[col.field].toFixed(2)}}</span>
+                        <span class="badge-custom" *ngIf="col.field === 'difference'"
+                            [ngClass]="(rowData?.quantity - rowData?.orderedQuantity) >= 0 ? 'success' : 'error'">
+                            {{(rowData?.quantity - rowData?.orderedQuantity).toFixed(2)}}
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr class="p-selectable-row">
+                    <td *ngIf="showTotalDifference"></td>
+                    <td>{{totalHeader | translate}}</td>
+                    <td>{{totalQuantity.toFixed(2)}}</td>
+                    <td *ngIf="showTotalDifference"><span class="badge-custom"  [ngClass]="totalDifference >= 0 ? 'success' : 'error'">
+                            {{totalDifference.toFixed(2)}} </span></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">{{'CARGO_PRIORITY_GRID_EMPTY_DATA' | translate}} </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+</div>
+<div class="row" *ngIf="showMoreButton">
+    <div class="col text-center pt-20">
+        <button class="btn btn-main mr-10" (click)="viewMore()">{{'CARGO_PRIORITY_GRID_MORE_BUTTON_LABEL' |
+            translate}}</button>
+    </div>
+</div>

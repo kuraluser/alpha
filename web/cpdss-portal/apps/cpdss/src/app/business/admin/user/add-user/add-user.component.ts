@@ -106,9 +106,9 @@ export class AddUserComponent implements OnInit {
   * @returns {FormControl}
   * @memberof AddUserComponent
   */
- formContolValue(formControlName: string): FormControl {
+ formContolValue(formControlName: string,propString?: string): FormControl {
   const formControl = <FormControl>this.addUserForm.get(formControlName);
-  return formControl.value;
+  return propString && formControl.value ? formControl.value[propString] : formControl.value;
 }
 
   /**

@@ -3,6 +3,7 @@ package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -52,4 +53,8 @@ public class LoadableQuantityCargoDetails {
   private Integer priority;
   private Integer loadingOrder;
   private Long cargoNominationId;
+
+  private String slopQuantity;
+  private String timeRequiredForLoading;
+  private List<String> loadingPorts;
 }
