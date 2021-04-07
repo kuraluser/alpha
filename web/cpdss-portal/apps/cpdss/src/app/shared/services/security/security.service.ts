@@ -93,7 +93,7 @@ export class SecurityService {
     if (serviceWorkerReady) {
       SecurityService.setPropertiesDB(token, 'token');
       SecurityService.setPropertiesDB(environment.name, 'environment');
-      SecurityService.setPropertiesDB(JSON.parse(JSON.stringify(AppConfigurationService.settings)), 'appConfig');
+      SecurityService.setPropertiesDB(JSON.parse(JSON.stringify(AppConfigurationService?.settings)), 'appConfig');
     }
   }
 

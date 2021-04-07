@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ILoadablePatternCargoDetail } from '../../../models/loadable-pattern.model';
+import { IDataTableColumn } from 'apps/cpdss/src/app/shared/components/datatable/datatable.model';
+import { ILoadablePatternCargoDetail } from '../../models/loadable-pattern.model';
 
 
 /**
@@ -17,6 +18,13 @@ import { ILoadablePatternCargoDetail } from '../../../models/loadable-pattern.mo
 export class CargoPriorityGridComponent implements OnInit {
 
   @Output() isCommingle = new EventEmitter();
+  @Output() patternViewMore = new EventEmitter();
+
+  @Input() tableCol: IDataTableColumn[];
+  @Input() totalHeader: string;
+  @Input() styleClass: string;
+  @Input() showTotalDifference = true;
+  @Input() showMoreButton = true;
 
   @Input() get loadablePatternCargoDetails(): ILoadablePatternCargoDetail[] {
     return this._loadablePatternCargoDetails;
@@ -48,7 +56,7 @@ export class CargoPriorityGridComponent implements OnInit {
   * @memberof CargoPriorityGridComponent
   */
   ngOnInit(): void {
-    
+
   }
 
   /**
@@ -58,6 +66,15 @@ export class CargoPriorityGridComponent implements OnInit {
   */
   onRowSelect(priorityData) {
     this.isCommingle.emit(priorityData)
+  }
+
+  /**
+  * Method to show pattern view more pop up
+  *
+  * @memberof CargoPriorityGridComponent
+  */
+  viewMore() {
+    this.patternViewMore.emit()
   }
 
 

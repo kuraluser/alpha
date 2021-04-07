@@ -460,7 +460,7 @@ class UserServiceTest {
       ReflectionTestUtils.setField(userService, "maxShipUserCount", 1);
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       when(this.usersRepository.save(any(Users.class))).thenReturn(users);
-      response = this.userService.saveUser(user, RandomString.make(6),1L);
+      response = this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }
@@ -474,7 +474,7 @@ class UserServiceTest {
       ReflectionTestUtils.setField(userService, "maxShipUserCount", 0);
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       User user = TestUtils.getDummyUser();
-      this.userService.saveUser(user, RandomString.make(6),1L);
+      this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }
@@ -488,7 +488,7 @@ class UserServiceTest {
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       User user = TestUtils.getDummyUser();
       user.setId(1l);
-      this.userService.saveUser(user, RandomString.make(6),1L);
+      this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }

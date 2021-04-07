@@ -141,21 +141,24 @@ export class CommingleComponent implements OnInit {
       });
       this.cargoNominationsCargo1 = this.cargoNominationsCargo;
       this.cargoNominationsCargo2 = this.cargoNominationsCargo;
-      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
-      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
+      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo;
+      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.listData.percentage = this.percentage;
       if (this.commingleCargo) {
         this.isVolumeMaximum = this.commingleCargo.purposeId === 1 ? true : false;
-        this.selectedCargo1 = this.cargoNominationsCargo.find(cargo => cargo.cargoId === this.commingleCargo.cargoGroups[0].cargo1Id);
-        this.selectedCargo2 = this.cargoNominationsCargo.find(cargo => cargo.cargoId === this.commingleCargo.cargoGroups[0].cargo2Id);
-        if (this.selectedCargo1) {
-          this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== this.selectedCargo1.id);
+        this.selectedCargo1 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargoNomination1Id);
+        this.selectedCargo2 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargoNomination2Id);
+        if(this.isVolumeMaximum) {
+          if (this.selectedCargo1) {
+            this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== this.selectedCargo1.id);
+          }
+          if (this.selectedCargo2) {
+            this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== this.selectedCargo2.id);
+          }
+        } else {
+          this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargoNomination2Id === cargos.id)) !== true);
+          this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargoNomination1Id === cargos.id)) !== true);
         }
-        if (this.selectedCargo2) {
-          this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== this.selectedCargo2.id);
-        }
-        this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo2Id === cargos.cargoId)) !== true);
-        this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo1Id === cargos.cargoId)) !== true);
         this.selectPurpose(null);
       }
       const cargoGroups = this.commingleCargo?.purposeId === 2 ? this.commingleData?.commingleCargo?.cargoGroups ?? [] : [];
@@ -204,13 +207,13 @@ export class CommingleComponent implements OnInit {
    */
   onChange(event, cargo) {
     if (cargo === 1) {
-      this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== event.value.cargoId);
+      this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.value.id);
       this.selectedCargo1 = event.value;
-      this.selectedCargo2 = this.selectedCargo1?.cargoId === this.selectedCargo2?.cargoId ? null : this.selectedCargo2;
+      this.selectedCargo2 = this.selectedCargo1?.id === this.selectedCargo2?.id ? null : this.selectedCargo2;
     } else {
-      this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== event.value.cargoId);
+      this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.value.id);
       this.selectedCargo2 = event.value;
-      this.selectedCargo1 = this.selectedCargo1?.cargoId === this.selectedCargo2?.cargoId ? null : this.selectedCargo1;
+      this.selectedCargo1 = this.selectedCargo1?.id === this.selectedCargo2?.id ? null : this.selectedCargo1;
     }
     this.commingleForm.patchValue({
       cargo1: this.selectedCargo1,
@@ -272,13 +275,13 @@ export class CommingleComponent implements OnInit {
   async onEditComplete(event: ICommingleManualEvent) {
     const form = this.row(event.index);
     if (event.field === 'cargo1') {
-      this.listData.cargoNominationsCargo2 = this.listData.cargoNominationsCargo2.filter(cargos => cargos.cargoId !== event.data.cargo1.value.cargoId);
+      this.listData.cargoNominationsCargo2 = this.listData.cargoNominationsCargo2.filter(cargos => cargos.id !== event.data.cargo1.value.id);
       this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color;
       // this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
     if (event.field === 'cargo2') {
-      this.listData.cargoNominationsCargo1 = this.listData.cargoNominationsCargo1.filter(cargos => cargos.cargoId !== event.data.cargo2.value.cargoId);
+      this.listData.cargoNominationsCargo1 = this.listData.cargoNominationsCargo1.filter(cargos => cargos.id !== event.data.cargo2.value.id);
       this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color;
       // this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
       form.controls.quantity.updateValueAndValidity();
@@ -336,14 +339,29 @@ export class CommingleComponent implements OnInit {
    */
   private async initCommingleManualArray(commingleData: ICargoGroup[]) {
     this.ngxSpinnerService.show();
-    this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
-    this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
+    this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo;
+    this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo;
     const _commingleLists = commingleData?.map((item) => {
       let manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, this.editMode ? true : false, this.listData);
       manualData = this.convertUnit(manualData)
       return manualData;
     });
-    const commingleListArray = _commingleLists.map(commingle => this.initCommingleManualFormGroup(commingle));
+    let cargo1Total = 0;
+    let cargo2Total = 0;
+    const commingleListArray = _commingleLists.map((commingle, index) =>  {
+      commingle?.cargo1?.value?.loadingPorts?.forEach((loadingPort) => {
+        cargo1Total += loadingPort.quantity;
+      })
+      commingle?.cargo2?.value?.loadingPorts?.forEach((loadingPort) => {
+        cargo2Total += loadingPort.quantity;
+      })
+      const loadingPortsTotal = cargo1Total + cargo2Total;
+      if(loadingPortsTotal < commingle.quantity.value) {
+        commingle.quantity.isEditMode = true;
+      }
+      return this.initCommingleManualFormGroup(commingle)
+    });
+
     this.commingleManualForm = this.fb.group({
       dataTable: this.fb.array([...commingleListArray])
     });
@@ -360,8 +378,8 @@ export class CommingleComponent implements OnInit {
   addNew(commingle: ICargoGroup = null) {
     this.disableAddNewBtn = this.cargoNominationsCargo.length <=2 ? true : false;
     if (this.manualCommingleList?.length <= 2) {
-      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
-      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
+      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo;
+      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo;
       commingle = commingle ?? <ICargoGroup>{
         id: 0,
         cargo1Id: null,

@@ -426,7 +426,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       if (row.valid && !event.data?.isAdd && row.touched) {
         event.data.processing = true;
         if (this.portsLists[rowIndex]?.id !== 0) {
-          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
           if (res) {
             row.markAsUntouched();
             for (const key in this.portsLists[rowIndex]) {
@@ -473,7 +473,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     const form = this.row(event.index);
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (form.valid) {
-      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
       if (res) {
         this.portsLists[valueIndex].isAdd = false;
 
@@ -535,7 +535,7 @@ export class PortsComponent implements OnInit, OnDestroy {
               this.portsLists = [...this.portsLists];
             } else {
               const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
-              const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+              const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
               if (res) {
                 this.portsLists.splice(event.index, 1);
                 this.portsLists = [...this.portsLists];
@@ -577,7 +577,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.portsLists[i].portOrder = i + 1;
         this.portsLists[i].slNo = i + 1;
         if (this.portsLists[i].id !== 0) {
-          await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId);
+          await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
         }
       }
       const portListArray = this.portsLists.map((ports, index) =>

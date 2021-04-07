@@ -219,6 +219,11 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (this.loadableStudies.length) {
       this.setProcessingLoadableStudyActions(0, 0);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+      this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
+      this.loadableStudyDetailsTransformationService.setPortValidity(this.selectedLoadableStudy.isPortsComplete)
+      this.loadableStudyDetailsTransformationService.setOHQValidity(this.selectedLoadableStudy.ohqPorts?? [])
+      this.loadableStudyDetailsTransformationService.setObqValidity(this.selectedLoadableStudy.isObqComplete)
+      
       if (sessionStorage.getItem('loadableStudyInfo')) {
         this.displayLoadableQuntity = true;
         sessionStorage.removeItem('loadableStudyInfo');
@@ -441,7 +446,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
     this.loadableStudyDetailsTransformationService.setPortValidity(false);
-    this.loadableStudyDetailsTransformationService.setOHQValidity(false);
+    this.loadableStudyDetailsTransformationService.setOHQValidity([]);
     this.loadableStudyDetailsTransformationService.setObqValidity(false);
     this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     this.selectedLoadableStudy = null;
@@ -584,7 +589,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
-      this.loadableStudyDetailsTransformationService.setOHQValidity(false);
+      this.loadableStudyDetailsTransformationService.setOHQValidity([]);
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
       this.isGenerateClicked = false;
       this.initSubsciptions();
@@ -642,7 +647,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
     const dischargingPortIds: IDischargingPortIds = {
       portIds: this.selectedLoadableStudy.dischargingPortIds,
-      dischargingCargoId: this.selectedDischargeCargo?.id ?? null
+      dischargingCargoId: this.selectedDischargeCargo?.id ?? null,
+      isDischargingPortComplete: !!this.selectedLoadableStudy.dischargingPortIds?.length
     };
     try {
       const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();

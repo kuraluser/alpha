@@ -20,7 +20,7 @@ export class UserAllocateComponent implements OnInit {
 
   _userDetails: IUserDetail[] = [];
   _selectedUser: IUserDetail[] = [];
-  totalColSpan: number = 3;
+  totalColSpan: number;
   
   @Output() selectedUserDetails = new EventEmitter<IUserDetail[]>();
   @Input()
@@ -51,6 +51,7 @@ export class UserAllocateComponent implements OnInit {
  * @memberof UserAllocateComponent
  */
   ngOnInit(): void {
+    this.totalColSpan = 3;
   }
 
   /**

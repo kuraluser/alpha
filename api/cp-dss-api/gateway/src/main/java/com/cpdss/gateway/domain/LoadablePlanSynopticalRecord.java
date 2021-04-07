@@ -26,4 +26,5 @@ public class LoadablePlanSynopticalRecord {
   private BigDecimal calculatedTrimPlanned;
   private BigDecimal cargoPlannedTotal;
   private BigDecimal ballastPlanned;
+  private Long portTimezoneId;
 }

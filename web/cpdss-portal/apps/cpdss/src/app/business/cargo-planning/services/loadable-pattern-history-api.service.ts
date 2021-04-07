@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IResponse , IConfirmStatusResponse } from '../../../shared/models/common.model';
+import { IResponse, IConfirmStatusResponse, ICargoResponseModel } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { ICommingleCargoDetailsResponse } from '../models/cargo-planning.model';
 import { ILoadablePatternResponse } from '../models/loadable-pattern.model';
@@ -18,15 +18,15 @@ export class LoadablePatternHistoryApiService {
 
   constructor(private commonApiService: CommonApiService) { }
 
-    /**
-   * Set loadable study api
-   *
-   * @param {number} vesselId
-   * @param {number} voyageId
-   * @param {number} loadableStudyId
-   * @returns {Observable<ILoadablePatternResponse>}
-   * @memberof LoadablePatternHistoryApiService
-   */
+  /**
+ * Set loadable study api
+ *
+ * @param {number} vesselId
+ * @param {number} voyageId
+ * @param {number} loadableStudyId
+ * @returns {Observable<ILoadablePatternResponse>}
+ * @memberof LoadablePatternHistoryApiService
+ */
   getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number): Observable<ILoadablePatternResponse> {
     return this.commonApiService.get<ILoadablePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patterns`);
   }
@@ -47,32 +47,40 @@ export class LoadablePatternHistoryApiService {
     return this.commonApiService.get<ICommingleCargoDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patterns/${loadablePatternId}/loadable-pattern-commingle-details/${loadablePatternCommingleDetailsId}`);
   }
 
-    /**
-   * Api for get confirm status
-   *
-   * @param {number} vesselId
-   * @param {number} voyageId
-   * @param {number} loadableStudyId
-   * @param {number} loadablePatternId
-   * @returns {Observable<ICommingleCargoDetailsResponse>}
-   * @memberof LoadablePatternHistoryApiService
-   */
+  /**
+ * Api for get confirm status
+ *
+ * @param {number} vesselId
+ * @param {number} voyageId
+ * @param {number} loadableStudyId
+ * @param {number} loadablePatternId
+ * @returns {Observable<ICommingleCargoDetailsResponse>}
+ * @memberof LoadablePatternHistoryApiService
+ */
   getConfirmStatus(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<IConfirmStatusResponse> {
     return this.commonApiService.get<IConfirmStatusResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/confirm-plan-status/${loadablePatternId}`);
   }
 
-     /**
-   * Api for get confirm status
-   *
-   * @param {number} vesselId
-   * @param {number} voyageId
-   * @param {number} loadableStudyId
-   * @param {number} loadablePatternId
-   * @returns {Observable<ICommingleCargoDetailsResponse>}
-   * @memberof LoadablePatternHistoryApiService
-   */
+  /**
+* Api for get confirm status
+*
+* @param {number} vesselId
+* @param {number} voyageId
+* @param {number} loadableStudyId
+* @param {number} loadablePatternId
+* @returns {Observable<ICommingleCargoDetailsResponse>}
+* @memberof LoadablePatternHistoryApiService
+*/
   confirm(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<IResponse> {
     return this.commonApiService.post<any, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/confirm-plan/${loadablePatternId}`, {});
   }
+
+   /**
+  * 
+  * Get api for cargo details
+  */
+    getCargos(): Observable<ICargoResponseModel> {
+      return this.commonApiService.get<ICargoResponseModel>(`cargos`);
+    }
 
 }

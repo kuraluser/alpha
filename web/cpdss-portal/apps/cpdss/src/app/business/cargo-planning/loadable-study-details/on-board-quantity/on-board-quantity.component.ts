@@ -302,7 +302,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       event.data.processing = true;
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);     
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
-      const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
+      const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.obqForm.controls.dataTable.valid);
       this.updateTankList();
       this.setFillingPercentage(this.selectedTankId);
     } 
@@ -574,7 +574,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     const _selectedPortOBQTankDetails = this.selectedPortOBQTankDetails?.map(obqTankDetail => {
       if (obqTankDetail.api.value) {
         const _prevQuantitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
-        if (_prevQuantitySelectedUnit !== this.quantitySelectedUnit) {
+        
           obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
           obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value.toFixed(2)) : 0;
           const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, obqTankDetail?.api?.value);
@@ -584,7 +584,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
           if(obqTankDetail.tankId === this.selectedTankId) {
             this.obqForm.controls.quantity.setValue(obqTankDetail.quantity.value);
           }
-        }
+        
         const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
         if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
           const fullCapacity = this.quantityPipe.transform(obqTankDetail.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);

@@ -18,7 +18,10 @@
                             <div class="col pl-0">
                                 <ul class="list-unstyled list-inline port-list pb-10 mb-0">
                                     <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}"
-                                        *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">{{port?.name}}
+                                        *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">
+                                        {{port?.name}} 
+                                        <span *ngIf="!loadableStudyDetailsTransformationService.getOHQPortValidity(port.id)"
+                                         class="error-icon">!</span>
                                     </li>
                                 </ul>
                             </div>

@@ -68,7 +68,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.formatOHQTankDetail(ohqTankDetail);
       return _ohqTankDetail;
     });
-    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm?.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
+    this.loadableStudyDetailsTransformationService.setOHQPortValidity(this.selectedPort.id, this.ohqForm?.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
   }
 
   get tanks(): IBunkerTank[][] {
@@ -143,7 +143,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    public loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
     private translateService: TranslateService,
     private messageService: MessageService) { }
@@ -348,9 +348,9 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       }
     } else {
       const formControl = this.field(event?.index, event?.field);
-      if (!event?.data[dependentKeys[0]].value || !event?.data[dependentKeys[0]].value) {
-        formControl.setValue(null);
-      }
+      event.data[event.field].value = 0;
+      formControl.setValue(0);
+      formControl.updateValueAndValidity();
     }
 
     event.data.arrivalVolume = event?.data?.density?.value ? event?.data?.arrivalQuantity?.value / event?.data?.density?.value : 0;
@@ -360,7 +360,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     if (fromGroup.valid) {
       event.data.processing = true;
       const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
-      const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
+      const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
       if (res) {
         for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
           if (this.selectedPortOHQTankDetails[valueIndex]?.hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
@@ -392,7 +392,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
         if (row.valid) {
           event.data.processing = true;
           const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
-          const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
+          const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
           if (res) {
             for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
               if (this.selectedPortOHQTankDetails[valueIndex].hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
@@ -417,7 +417,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       this.selectedTankFormGroup.get(event?.field).setValue(Number((this.field(event?.index, event?.field)).value));
     }
     this.ohqForm.updateValueAndValidity();
-    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this.selectedPortOHQTankDetails));
+    this.loadableStudyDetailsTransformationService.setOHQPortValidity(this.selectedPort.id,this.ohqForm.valid && this.ohqGroupValidity(this.selectedPortOHQTankDetails));
     this.tanks = [...this.tanks];
     this.rearTanks = [...this.rearTanks];
     this.ngxSpinnerService.hide();
@@ -631,11 +631,14 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
    * @returns {boolean}
    * @memberof OnHandQuantityComponent
    */
-  ohqGroupValidity(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[]): boolean {
+  ohqGroupValidity(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[], fuelTypeId: number = null): boolean {
     const key = ['density', 'arrivalQuantity', 'departureQuantity'];
     for (let index = 0; index < this.listData.fuelTypes.length; index++) {
       for (let i = 0; i < key.length; i++) {
         const groupId = this.listData.fuelTypes[index].id;
+        if(fuelTypeId && groupId === fuelTypeId){
+          continue;
+        }
         const total = selectedPortOHQTankDetails?.reduce((a, b) => a + (b.fuelTypeId === groupId ? b[key[i]]?.value || 0 : 0), 0);
         if (!total) {
           return false;

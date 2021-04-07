@@ -37,6 +37,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     return this._voyageDetails;
   }
   set voyageDetails(value: Voyage) {
+    this._voyageDetails = value;
     this.voyageId = value.id;
     this.loadableStudyId = value.confirmedLoadableStudyId;
     this.getPortRotationRibbonData();
@@ -147,7 +148,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const portDetails: IVoyageDetails = {
       "portOrder": port.portOrder,
       "operationType": port.type === 'Arrival' ? "ARR" : "DEP",
-      "portId": port.portId
+      "portId": port.portId,
+      "portRotationId": port.id
     }
     const index = this.portList.indexOf(port);
     this.resetPreviousPort(index);
@@ -167,13 +169,14 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       port.isFutureDate = true;
     }
   }
+  
   /**
    * Enable editing
    * @param port 
    * @param field 
    */
   editPort(event, port: IEditPortRotation, field: string) {
-    if (this.voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE) {
+    if (![VOYAGE_STATUS.CLOSE].includes(this.voyageDetails?.statusId)) {
       const form = this.row(this.portList.indexOf(port));
       this.setInvalid(port, form)
       if (port.isFutureDate === true) {
@@ -434,7 +437,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const portDetails: IVoyageDetails = {
       "portOrder": this.portList[0].portOrder,
       "operationType": this.portList[0].type === 'Arrival' ? "ARR" : "DEP",
-      "portId": this.portList[0].portId
+      "portId": this.portList[0].portId,
+      "portRotationId": this.portList[0].id
     }
     this.portList[0].isFocused = true;
     this.portList[0].isSelected = true;

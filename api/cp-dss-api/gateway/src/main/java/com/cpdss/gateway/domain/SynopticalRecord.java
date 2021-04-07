@@ -75,4 +75,5 @@ public class SynopticalRecord {
   private BigDecimal blindSector;
   private BigDecimal list;
   private List<SynopticalCargoBallastRecord> ballast;
+  private Long portTimezoneId;
 }

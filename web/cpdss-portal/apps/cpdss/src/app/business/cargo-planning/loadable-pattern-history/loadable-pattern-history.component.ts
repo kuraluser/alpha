@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
+import { ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastTank } from '../../core/models/common.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -11,11 +11,12 @@ import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-h
 import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse, IStabilityParameter } from '../models/loadable-pattern.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { ICargo, ICargoResponseModel, IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { first } from 'rxjs/operators';
 
 /**
  * Component class of pattern history screen
@@ -54,11 +55,14 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePatternResponse: ILoadablePatternResponse;
   loadablePatterns: ILoadablePattern[];
   tankLists: ICargoTank[][];
+  rearBallastTanks: IBallastTank[][];
+  centerBallastTanks: IBallastTank[][];
+  frontBallastTanks: IBallastTank[][];
   loadablePatternCreatedDate: string;
   loadableStudyName: string;
   display = false;
   isViewPattern: boolean;
-  selectedLoadablePatterns: ILoadablePatternCargoDetail;
+  selectedLoadablePatternCargoDetail: ILoadablePatternCargoDetail;
   loadablePatternPermissionContext: IPermissionContext;
   loadablePatternDetailsId: number;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
@@ -67,6 +71,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
   stabilityParameters: IStabilityParameter[];
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
+  viewMore = false;
+  selectedLoadablePattern: ILoadablePattern;
+  cargos: ICargo[];
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -102,6 +109,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
       if (this.isViewPattern) {
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       }
+      this.getCargos();
       this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
     });
   }
@@ -182,8 +190,11 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
       this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
       this.convertQuantityToSelectedUnit();
-      this.tankLists = this.loadablePatternResponse.tankLists;
-      this.loadablePatternCreatedDate = this.loadablePatternResponse.loadablePatternCreatedDate;
+      this.tankLists = this.loadablePatternResponse?.tankLists;
+      this.rearBallastTanks = this.loadablePatternResponse?.rearBallastTanks;
+      this.centerBallastTanks = this.loadablePatternResponse?.centerBallastTanks;
+      this.frontBallastTanks = this.loadablePatternResponse?.frontBallastTanks;
+      this.loadablePatternCreatedDate = this.loadablePatternResponse?.loadablePatternCreatedDate;
       this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
     }
     this.ngxSpinnerService.hide();
@@ -196,7 +207,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   setPopupVisibility(emittedValue) {
-    this.selectedLoadablePatterns = null;
+    this.selectedLoadablePatternCargoDetail = null;
     this.display = emittedValue;
   }
 
@@ -208,7 +219,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    */
   displayCommingleDetailPopup(emittedValue) {
     this.loadablePatternDetailsId = emittedValue?.loadablePatternDetailsId;
-    this.selectedLoadablePatterns = emittedValue?.loadablePatternCargoDetail?.isCommingle ? emittedValue?.loadablePatternCargoDetail : null;
+    this.selectedLoadablePatternCargoDetail = emittedValue?.loadablePatternCargoDetail?.isCommingle ? emittedValue?.loadablePatternCargoDetail : null;
     this.display = emittedValue?.loadablePatternCargoDetail?.isCommingle;
   }
 
@@ -276,9 +287,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @param {*} event
    * @memberof LoadablePatternHistoryComponent
    */
-  async confirmPlan(loadablePattern: ILoadablePattern) {
+  async confirmPlan(loadablePatternId: number) {
     this.ngxSpinnerService.show();
-    const result = await this.loadablePatternApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
+    const result = await this.loadablePatternApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, loadablePatternId).toPromise();
     this.ngxSpinnerService.hide();
     let detail;
     if (result.confirmed) {
@@ -287,11 +298,11 @@ export class LoadablePatternHistoryComponent implements OnInit {
       detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
     }
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
+    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
         const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
         try {
-          const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
+          const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePatternId).toPromise();
           if (confirmResult.responseStatus.status === '200') {
             this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
           }
@@ -348,4 +359,37 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.showStability = emittedValue;
   }
 
+  /**
+  * set visibility of pattern view more popup (show/hide)
+  *
+  * @param {*} event
+  * @memberof LoadablePatternHistoryComponent
+  */
+  displayPatternViewMorePopup(emittedValue) {
+    this.selectedLoadablePattern = emittedValue;
+    this.viewMore = true;
+  }
+
+  /**
+  * set visibility of stability pattern view more popup (show/hide)
+  *
+  * @param {*} event
+  * @memberof LoadablePatternHistoryComponent
+  */
+  setPatternViewMorePopupVisibility(emittedValue) {
+    this.viewMore = emittedValue;
+  }
+
+    /**
+    * Method to get cargos
+    *
+    * @memberof LoadablePatternHistoryComponent
+  */
+     async getCargos() {
+      const cargos: ICargoResponseModel = await this.loadablePatternApiService.getCargos().toPromise();
+      if (cargos.responseStatus.status === '200') {
+        this.cargos = cargos.cargos;
+      }
+    }
+  
 }
