@@ -760,7 +760,8 @@ public class UserService {
    * @throws GenericServiceException
    */
   private void checkUsernameDuplicate(User request) throws GenericServiceException {
-    Users duplicate = this.usersRepository.findByUsernameIgnoreCaseAndIsActive(request.getUsername(), true);
+    Users duplicate =
+        this.usersRepository.findByUsernameIgnoreCaseAndIsActive(request.getUsername(), true);
     // if new user
     if (request.getId() == 0) {
       if (null != duplicate) {
