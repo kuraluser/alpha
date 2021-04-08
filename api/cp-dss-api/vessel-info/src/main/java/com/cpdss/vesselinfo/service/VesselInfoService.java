@@ -598,6 +598,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         .ifPresent(
             evenKeelCapacityCubm ->
                 ullageDetailsBuilder.setEvenKeelCapacityCubm(String.valueOf(evenKeelCapacityCubm)));
+    Optional.ofNullable(ullageTableData.getSoundDepth())
+        .ifPresent(soundDepth -> ullageDetailsBuilder.setSoundDepth(String.valueOf(soundDepth)));
     return ullageDetailsBuilder.build();
   }
 

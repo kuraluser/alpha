@@ -1038,15 +1038,14 @@ public class UserService {
           HttpStatusCode.BAD_REQUEST);
     }
   }
-  
+
   private Boolean isUserMapped(Roles role) {
-	  Boolean usersExist=false;
-	  List<RoleUserMapping> roleUserList =
-	          this.roleUserMappingRepository.findByRolesAndIsActive(role,true);
-	  if(null!=roleUserList&&!roleUserList.isEmpty())
-	  {
-		  usersExist=true;
-	  }
-	  return usersExist;
+    Boolean usersExist = false;
+    List<RoleUserMapping> roleUserList =
+        this.roleUserMappingRepository.findByRolesAndIsActive(role, true);
+    if (null != roleUserList && !roleUserList.isEmpty()) {
+      usersExist = true;
+    }
+    return usersExist;
   }
 }
