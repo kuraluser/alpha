@@ -245,7 +245,7 @@ public class CargoPortInfoService {
     for (Timezone prOb : tzRlp.getTimezonesList()) {
       list.add(
           new com.cpdss.gateway.domain.Timezone(
-              prOb.getId(), prOb.getTimezone(), prOb.getOffsetValue()));
+              prOb.getId(), prOb.getTimezone(), prOb.getOffsetValue(), prOb.getAbbreviation()));
     }
     tzRep.setTimezones(list);
     return tzRep;

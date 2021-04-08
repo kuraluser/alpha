@@ -8206,6 +8206,19 @@ public final class PortInfo {
      * @return The bytes for offsetValue.
      */
     com.google.protobuf.ByteString getOffsetValueBytes();
+
+    /**
+     * <code>string abbreviation = 4;</code>
+     *
+     * @return The abbreviation.
+     */
+    java.lang.String getAbbreviation();
+    /**
+     * <code>string abbreviation = 4;</code>
+     *
+     * @return The bytes for abbreviation.
+     */
+    com.google.protobuf.ByteString getAbbreviationBytes();
   }
   /** Protobuf type {@code Timezone} */
   public static final class Timezone extends com.google.protobuf.GeneratedMessageV3
@@ -8221,6 +8234,7 @@ public final class PortInfo {
     private Timezone() {
       timezone_ = "";
       offsetValue_ = "";
+      abbreviation_ = "";
     }
 
     @java.lang.Override
@@ -8269,6 +8283,13 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 offsetValue_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                abbreviation_ = s;
                 break;
               }
             default:
@@ -8384,6 +8405,41 @@ public final class PortInfo {
       }
     }
 
+    public static final int ABBREVIATION_FIELD_NUMBER = 4;
+    private volatile java.lang.Object abbreviation_;
+    /**
+     * <code>string abbreviation = 4;</code>
+     *
+     * @return The abbreviation.
+     */
+    public java.lang.String getAbbreviation() {
+      java.lang.Object ref = abbreviation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        abbreviation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string abbreviation = 4;</code>
+     *
+     * @return The bytes for abbreviation.
+     */
+    public com.google.protobuf.ByteString getAbbreviationBytes() {
+      java.lang.Object ref = abbreviation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        abbreviation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -8407,6 +8463,9 @@ public final class PortInfo {
       if (!getOffsetValueBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, offsetValue_);
       }
+      if (!getAbbreviationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, abbreviation_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -8424,6 +8483,9 @@ public final class PortInfo {
       }
       if (!getOffsetValueBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, offsetValue_);
+      }
+      if (!getAbbreviationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, abbreviation_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -8444,6 +8506,7 @@ public final class PortInfo {
       if (getId() != other.getId()) return false;
       if (!getTimezone().equals(other.getTimezone())) return false;
       if (!getOffsetValue().equals(other.getOffsetValue())) return false;
+      if (!getAbbreviation().equals(other.getAbbreviation())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -8461,6 +8524,8 @@ public final class PortInfo {
       hash = (53 * hash) + getTimezone().hashCode();
       hash = (37 * hash) + OFFSETVALUE_FIELD_NUMBER;
       hash = (53 * hash) + getOffsetValue().hashCode();
+      hash = (37 * hash) + ABBREVIATION_FIELD_NUMBER;
+      hash = (53 * hash) + getAbbreviation().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -8604,6 +8669,8 @@ public final class PortInfo {
 
         offsetValue_ = "";
 
+        abbreviation_ = "";
+
         return this;
       }
 
@@ -8633,6 +8700,7 @@ public final class PortInfo {
         result.id_ = id_;
         result.timezone_ = timezone_;
         result.offsetValue_ = offsetValue_;
+        result.abbreviation_ = abbreviation_;
         onBuilt();
         return result;
       }
@@ -8693,6 +8761,10 @@ public final class PortInfo {
         }
         if (!other.getOffsetValue().isEmpty()) {
           offsetValue_ = other.offsetValue_;
+          onChanged();
+        }
+        if (!other.getAbbreviation().isEmpty()) {
+          abbreviation_ = other.abbreviation_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -8905,6 +8977,82 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         offsetValue_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object abbreviation_ = "";
+      /**
+       * <code>string abbreviation = 4;</code>
+       *
+       * @return The abbreviation.
+       */
+      public java.lang.String getAbbreviation() {
+        java.lang.Object ref = abbreviation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          abbreviation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string abbreviation = 4;</code>
+       *
+       * @return The bytes for abbreviation.
+       */
+      public com.google.protobuf.ByteString getAbbreviationBytes() {
+        java.lang.Object ref = abbreviation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          abbreviation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string abbreviation = 4;</code>
+       *
+       * @param value The abbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAbbreviation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        abbreviation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string abbreviation = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAbbreviation() {
+
+        abbreviation_ = getDefaultInstance().getAbbreviation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string abbreviation = 4;</code>
+       *
+       * @param value The bytes for abbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAbbreviationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        abbreviation_ = value;
         onChanged();
         return this;
       }
@@ -9984,22 +10132,23 @@ public final class PortInfo {
           + "yCargoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetP"
           + "ortInfoByCargoIdReply\022\'\n\016responseStatus\030"
           + "\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013."
-          + "PortDetail\"\022\n\020PortEmptyRequest\"=\n\010Timezo"
+          + "PortDetail\"\022\n\020PortEmptyRequest\"S\n\010Timezo"
           + "ne\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offs"
-          + "etValue\030\003 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\tti"
-          + "mezones\030\002 \003(\0132\t.Timezone2\221\003\n\017PortInfoSer"
-          + "vice\022)\n\013GetPortInfo\022\014.PortRequest\032\n.Port"
-          + "Reply\"\000\022R\n\024GetPortInfoByCargoId\022\034.GetPor"
-          + "tInfoByCargoIdRequest\032\032.GetPortInfoByCar"
-          + "goIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034.Ge"
-          + "tPortInfoByPortIdsRequest\032\n.PortReply\"\000\022"
-          + "G\n\031GetPortInfoDetailsForAlgo\022\034.GetPortIn"
-          + "foByPortIdsRequest\032\n.PortReply\"\000\0225\n\013GetT"
-          + "imezone\022\021.PortEmptyRequest\032\021.TimezoneRes"
-          + "ponse\"\000\022;\n\023GetPortInfoByPaging\022\026.PortReq"
-          + "uestWithPaging\032\n.PortReply\"\000B\036\n\032com.cpds"
-          + "s.common.generatedP\000b\006proto3"
+          + "etValue\030\003 \001(\t\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020T"
+          + "imezoneResponse\022\'\n\016responseStatus\030\001 \001(\0132"
+          + "\017.ResponseStatus\022\034\n\ttimezones\030\002 \003(\0132\t.Ti"
+          + "mezone2\221\003\n\017PortInfoService\022)\n\013GetPortInf"
+          + "o\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024GetPort"
+          + "InfoByCargoId\022\034.GetPortInfoByCargoIdRequ"
+          + "est\032\032.GetPortInfoByCargoIdReply\"\000\022B\n\024Get"
+          + "PortInfoByPortIds\022\034.GetPortInfoByPortIds"
+          + "Request\032\n.PortReply\"\000\022G\n\031GetPortInfoDeta"
+          + "ilsForAlgo\022\034.GetPortInfoByPortIdsRequest"
+          + "\032\n.PortReply\"\000\0225\n\013GetTimezone\022\021.PortEmpt"
+          + "yRequest\032\021.TimezoneResponse\"\000\022;\n\023GetPort"
+          + "InfoByPaging\022\026.PortRequestWithPaging\032\n.P"
+          + "ortReply\"\000B\036\n\032com.cpdss.common.generated"
+          + "P\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -10087,7 +10236,7 @@ public final class PortInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_Timezone_descriptor,
             new java.lang.String[] {
-              "Id", "Timezone", "OffsetValue",
+              "Id", "Timezone", "OffsetValue", "Abbreviation",
             });
     internal_static_TimezoneResponse_descriptor = getDescriptor().getMessageTypes().get(9);
     internal_static_TimezoneResponse_fieldAccessorTable =
