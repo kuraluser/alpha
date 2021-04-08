@@ -55,6 +55,9 @@ public class UserController {
     UserAuthorizationsResponse response = null;
     try {
       response = userService.getUserPermissions(headers);
+    } catch (GenericServiceException e) {
+      log.error("Error in getUserAuthorizations: ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in getUserAuthorizations ", e);
       throw new CommonRestException(
@@ -97,6 +100,9 @@ public class UserController {
     try {
       log.info("getUsers: {}");
       return this.userService.getUsers(headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in save voyage", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in getScreens ", e);
       throw new CommonRestException(
@@ -128,10 +134,10 @@ public class UserController {
       throws CommonRestException {
     try {
       log.info("getUsers: {}");
-      
+
       final Long companyId = 1L;
       request.setId(userId);
-      
+
       return this.userService.saveUser(request, headers.getFirst(CORRELATION_ID_HEADER), companyId);
     } catch (GenericServiceException e) {
       log.error("Error in saveUser ", e);
@@ -161,7 +167,7 @@ public class UserController {
       log.info("getScreens: {}");
       Long companyId = 1L;
 
-      //      Get filters
+      // Get filters
       List<String> filterKeys = Arrays.asList("id", "name", "description", "companyXId");
       Map<String, String> filterParams =
           params.entrySet().stream()

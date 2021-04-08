@@ -471,6 +471,7 @@ message ConfirmPlanReply {
 message LoadableStudyStatusRequest {
 	int64 loadableStudyId = 1;
 	string processId = 2;
+	int64 loadablePatternId = 3;
 }
 
 message LoadableStudyStatusReply {
@@ -897,6 +898,8 @@ message LoadablePatternCargoDetails {
  	int32 loadingOrder = 8;
  	string api = 9;
  	string tankName = 10;
+ 	string maxTolerence = 11;
+ 	string minTolerence = 12;
 }
 
 message LoadablePatternRequest {

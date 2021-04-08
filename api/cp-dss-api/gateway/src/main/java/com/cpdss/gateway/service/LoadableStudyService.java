@@ -1661,6 +1661,8 @@ public class LoadableStudyService {
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+              cargoDetails.setMinTolerence(lqcd.getMinTolerence());
               // Dummy value till actual from Alog
               cargoDetails.setSlopQuantity("0");
               cargoDetails.setTimeRequiredForLoading("0");
@@ -3803,17 +3805,19 @@ public class LoadableStudyService {
 
   /**
    * @param loadableStudyId
-   * @param processId
+   * @param loadablePlanRequest
    * @param first
    * @return LoadableStudyStatusResponse
    */
   public LoadableStudyStatusResponse getLoadableStudyStatus(
-      Long loadableStudyId, String processId, String correlationId) throws GenericServiceException {
+      Long loadableStudyId, LoadablePlanRequest loadablePlanRequest, String correlationId)
+      throws GenericServiceException {
     log.info("Inside getLoadableStudyStatus gateway service with correlationId : " + correlationId);
     LoadableStudyStatusResponse response = new LoadableStudyStatusResponse();
     LoadableStudyStatusReply grpcReply =
         this.getLoadableStudyStatus(
-            this.buildLoadableStudyStatusRequest(loadableStudyId, processId, correlationId));
+            this.buildLoadableStudyStatusRequest(
+                loadableStudyId, loadablePlanRequest, correlationId));
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Failed to get Loadable Study Status",
@@ -3877,10 +3881,12 @@ public class LoadableStudyService {
    * @return Long
    */
   private LoadableStudyStatusRequest buildLoadableStudyStatusRequest(
-      Long loadableStudyId, String processId, String correlationId) {
+      Long loadableStudyId, LoadablePlanRequest loadablePlanRequest, String correlationId) {
     LoadableStudyStatusRequest.Builder builder = LoadableStudyStatusRequest.newBuilder();
     builder.setLoadableStudyId(loadableStudyId);
-    builder.setProcessId(processId);
+    builder.setProcessId(loadablePlanRequest.getProcessId());
+    Optional.ofNullable(loadablePlanRequest.getLoadablePatternId())
+        .ifPresent(builder::setLoadablePatternId);
     return builder.build();
   }
 

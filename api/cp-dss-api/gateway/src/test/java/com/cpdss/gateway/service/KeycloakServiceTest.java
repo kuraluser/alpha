@@ -41,7 +41,7 @@ class KeycloakServiceTest {
     when(restTemplate.exchange(
             anyString(), any(HttpMethod.class), any(HttpEntity.class), (Class<Object>) any()))
         .thenReturn(createGetUserResponse());
-    assertThat(keycloakService.getUser(USER_ID, REALM_NAME).getId()).isEqualTo(USER_ID);
+    assertThat(keycloakService.getUser(USER_ID).getId()).isEqualTo(USER_ID);
   }
 
   /** Positive test case for getUsers method */
@@ -54,7 +54,7 @@ class KeycloakServiceTest {
     when(restTemplate.exchange(
             anyString(), any(HttpMethod.class), any(HttpEntity.class), (Class<Object>) any()))
         .thenReturn(createGetUsersResponse());
-    assertArrayEquals(keycloakService.getUsers(REALM_NAME), users);
+    assertArrayEquals(keycloakService.getUsers(), users);
   }
 
   /** Negative test case for getUser method. Handling RestClientException on authentication */
@@ -66,7 +66,7 @@ class KeycloakServiceTest {
         assertThrows(
             GenericServiceException.class,
             () -> {
-              keycloakService.getUser(USER_ID, REALM_NAME);
+              keycloakService.getUser(USER_ID);
             });
     assertEquals(REST_SERVICE_EXCEPTION_MSG, exception.getMessage());
   }
@@ -80,7 +80,7 @@ class KeycloakServiceTest {
         assertThrows(
             GenericServiceException.class,
             () -> {
-              keycloakService.getUser(USER_ID, REALM_NAME);
+              keycloakService.getUser(USER_ID);
             });
     assertEquals(KEYCLOAK_EXCEPTION_MSG, exception.getMessage());
   }
@@ -97,7 +97,7 @@ class KeycloakServiceTest {
         assertThrows(
             GenericServiceException.class,
             () -> {
-              keycloakService.getUser(USER_ID, REALM_NAME);
+              keycloakService.getUser(USER_ID);
             });
     assertEquals(REST_SERVICE_EXCEPTION_MSG, exception.getMessage());
   }
@@ -114,7 +114,7 @@ class KeycloakServiceTest {
         assertThrows(
             GenericServiceException.class,
             () -> {
-              keycloakService.getUser(USER_ID, REALM_NAME);
+              keycloakService.getUser(USER_ID);
             });
     assertEquals(KEYCLOAK_EXCEPTION_MSG, exception.getMessage());
   }

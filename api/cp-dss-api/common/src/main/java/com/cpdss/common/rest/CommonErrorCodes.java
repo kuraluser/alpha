@@ -29,6 +29,9 @@ public interface CommonErrorCodes {
   String E_CPDSS_ACTIVE_VOYAGE_EXISTS = "108";
   String E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST = "109";
   String E_CPDSS_SAVE_NOT_ALLOWED = "110";
+  String E_CPDSS_RESEND_ACCESS_REQUSET = "111";
+  String E_CPDSS_ALREADY_REQUESTED = "112";
+  String E_CPDSS_REJECTION_COUNT_EXCEEDED = "113";
 
   String E_CPDSS_PASSWORD_POLICIES_VIOLATION_1 =
       "120"; // Password cannot contain first name or last name

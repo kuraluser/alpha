@@ -22,18 +22,16 @@ public class UserCachingService extends CommonKeyValueStore<KeycloakUser> {
    * Method to get a specific user
    *
    * @param userId userId value
-   * @param realmName Realm name value
    * @return KeycloakUser User object
    */
-  public KeycloakUser getUser(final String userId, final String realmName)
-      throws GenericServiceException {
+  public KeycloakUser getUser(final String userId) throws GenericServiceException {
     //    Try to read from cache
     KeycloakUser user = this.getData(userId);
     log.debug("User data from cache: {}", user);
 
     if (null == user) {
       //    Get user data from Keycloak when user not found in cache
-      user = keycloakService.getUser(userId, realmName);
+      user = keycloakService.getUser(userId);
       log.debug("User data from Keycloak: {}", user);
       this.storeData(user.getId(), user);
     }
