@@ -2,11 +2,14 @@
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 /** User object with user information */
 @Data
+@JsonInclude(Include.NON_EMPTY)
 public class User {
 
   private Long id;
@@ -29,4 +32,12 @@ public class User {
   private Boolean isLoginSuspended;
 
   private Boolean defaultUser;
+
+  private long statusCode;
+
+  private String statusValue;
+
+  private Integer rejectionCount;
+
+  private String keycloakId;
 }

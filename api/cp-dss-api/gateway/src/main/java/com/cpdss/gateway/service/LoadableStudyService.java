@@ -1661,6 +1661,8 @@ public class LoadableStudyService {
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+              cargoDetails.setMinTolerence(lqcd.getMinTolerence());
               // Dummy value till actual from Alog
               cargoDetails.setSlopQuantity("0");
               cargoDetails.setTimeRequiredForLoading("0");

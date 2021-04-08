@@ -212,6 +212,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
         timezone.setId(tz.getId());
         timezone.setTimezone(tz.getTimezone() + " " + tz.getRegion());
         timezone.setOffsetValue(tz.getOffsetValue());
+        timezone.setAbbreviation(tz.getAbbreviation());
         replyBuilder.addTimezones(timezone);
       }
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
