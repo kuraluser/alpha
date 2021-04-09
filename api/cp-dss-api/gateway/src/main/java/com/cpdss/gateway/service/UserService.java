@@ -558,6 +558,7 @@ public class UserService {
     if (permission.getRole().getName() != null) {
       this.validateRoleName(permission.getRoleId(), permission.getRole().getName());
     }
+
     PermissionResponse permissionResponse = new PermissionResponse();
     Optional<Roles> role =
         this.rolesRepository.findByIdAndCompanyXIdAndIsActive(
@@ -569,9 +570,7 @@ public class UserService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    List<Users> users =
-        this.usersRepository.findByCompanyXIdAndIdIn(companyId, permission.getUserId());
-
+    List<Users> users = this.usersRepository.findByIdIn(permission.getUserId());
     List<Long> screenIds = new ArrayList<>();
     for (ScreenInfo screenInfo : permission.getScreens()) {
       screenIds.add(screenInfo.getId());
@@ -613,7 +612,6 @@ public class UserService {
                   });
               this.notificationRepository.saveAll(notificationsList);
             }
-
             Optional<RoleUserMapping> roleUserOpt =
                 this.roleUserRepository.findByUsersAndRolesAndIsActive(
                     user.getId(), role.get().getId(), true);
