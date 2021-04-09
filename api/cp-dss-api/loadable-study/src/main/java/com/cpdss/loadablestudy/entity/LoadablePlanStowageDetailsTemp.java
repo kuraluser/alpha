@@ -45,4 +45,8 @@ public class LoadablePlanStowageDetailsTemp extends EntityDoc {
   @JoinColumn(name = "stowage_details_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadablePlanStowageDetails loadablePlanStowageDetails;
+
+  @JoinColumn(name = "ballast_details_xid", referencedColumnName = "id")
+  @ManyToOne
+  private LoadablePlanBallastDetails loadablePlanBallastDetails;
 }

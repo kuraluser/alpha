@@ -10,4 +10,5 @@ public class LoadablePlanRequest {
   private String processId;
   private List<LoadablePlanDetails> loadablePlanDetails;
   private List<AlgoError> errors;
+  private Long loadablePatternId;
 }

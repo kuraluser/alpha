@@ -10,6 +10,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface RoleUserMappingRepository extends CrudRepository<RoleUserMapping, Long> {
 
   public List<RoleUserMapping> findByUsersAndIsActive(Users user, boolean isActive);
-  
+
   public List<RoleUserMapping> findByRolesAndIsActive(Roles roles, boolean isActive);
 }

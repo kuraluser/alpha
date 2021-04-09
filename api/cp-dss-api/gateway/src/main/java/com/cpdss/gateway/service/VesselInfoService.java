@@ -254,6 +254,7 @@ public class VesselInfoService {
               ullageDetail.setTankId(ullage.getTankId());
               ullageDetail.setUllageDepth(ullage.getUllageDepth());
               ullageDetail.setEvenKeelCapacityCubm(ullage.getEvenKeelCapacityCubm());
+              ullageDetail.setSoundDepth(ullage.getSoundDepth());
               ullageDetails.add(ullageDetail);
             });
     return ullageDetails;
