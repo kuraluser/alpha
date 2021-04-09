@@ -402,8 +402,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           FRESH_WATER_TANK_CATEGORY_ID,
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
-          LUBRICATING_OIL_TANK_CATEGORY_ID,
-          LUBRICANT_OIL_TANK_CATEGORY_ID,
           FUEL_VOID_TANK_CATEGORY_ID,
           FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
@@ -451,8 +449,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           FRESH_WATER_TANK_CATEGORY_ID,
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
-          LUBRICATING_OIL_TANK_CATEGORY_ID,
-          LUBRICANT_OIL_TANK_CATEGORY_ID,
           BALLAST_TANK_CATEGORY_ID);
 
   private static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
