@@ -340,7 +340,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
-  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+  private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long BUNKERING_OPERATION_ID = 3L;
