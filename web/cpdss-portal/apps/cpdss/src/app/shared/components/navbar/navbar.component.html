@@ -26,14 +26,35 @@
             <li class="nav-item">
                 <a></a>
             </li>
-            <li class="nav-item">
-                <a></a>
+            <li id="adminNotification" *ngIf="isShore" tabindex="-1" (focusout)="toggleNotification(true)" class="nav-item dropdown" [ngClass]="{'active': showNotification}">
+                <a class="header-menu-item-right notification-menu">
+                    <span class="pi pi-bell" id="toggle-notification" (click)="toggleNotification()"></span>
+                    <div class="notification-count" (click)="toggleNotification()" >{{notificationList?.length}}</div>
+                    <div class="dropdown-menu dropdown-menu-right notification-dropdown" [ngClass]="{'show': showNotification}" >
+                        <div id="{{'notification'+ i}}" *ngFor="let item of notificationList; let i = index" class="notification-item dropdown-item">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="text-uppercase">{{item?.username}}</div>
+                                    {{'USER_AUTHORIZATION_REQUEST_FOR_LOGIN' | translate}}
+                                </div>
+                                <div class="ml-auto pr-15 pt-10"><a id="{{'btn-goto-role-'+ i}}" (click)="gotoRoleLIst(item)" [tooltipPosition]="'top'" [pTooltip]="'USER_AUTHORIZATION_APPROVE' | translate" class="pi pi-check mr-10"></a><a [tooltipPosition]="'top'" [pTooltip]="'USER_AUTHORIZATION_REJECT'| translate" id="{{'btn-reject-'+ i}}" (click)="rejectUser(item)" class="pi pi-times"></a></div>
+                            </div>
+                        </div>
+                        <div id="adminNotificationNoData" (click)="toggleNotification()" *ngIf="!notificationList || !notificationList?.length" class="notification-item dropdown-item">
+                            <div class="row">
+                                <div class="col">
+                                    {{'USER_AUTHORIZATION_NO_NOTIFICATION_AVAILABLE' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </li>
             <li tabindex="-1" class="nav-item dropdown" [ngClass]="{'active': showUserIconDropdown}"
                 (focusout)="onUserIconMenuToggle()">
                 <a class="header-menu-item-right sign-in-icon" id="user-icon-button" (click)="onUserIconMenuToggle()">
                 </a>
-                <div class="dropdown-menu dropdown-menu dropdown-menu-right" [ngClass]="{'show': showUserIconDropdown}">
+                <div class="dropdown-menu  dropdown-menu-right" [ngClass]="{'show': showUserIconDropdown}">
                     <a class="dropdown-item" (click)="logout()" id="logout-button">{{'LOGOUT'| translate}}</a>
                 </div>
             </li>

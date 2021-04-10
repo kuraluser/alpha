@@ -15,6 +15,7 @@ import { UserRolePermissionTransformationService } from '../../../services/user-
 import { PermissionsService } from '../../../../../shared/services/permissions/permissions.service';
 import { AppConfigurationService } from '../../../../../shared/services/app-configuration/app-configuration.service';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../../shared/models/common.model';
+import { NotificationService } from '../../../../../shared/services/notification/notification.service';
 
 /**
  * Component class of role permission for user role
@@ -57,7 +58,8 @@ export class RolePermissionComponent implements OnInit {
         private permissionsService: PermissionsService,
         private messageService: MessageService,
         private userRolePermissionApiService: UserRolePermissionApiService,
-        private userRolePermissionTransformationService: UserRolePermissionTransformationService
+        private userRolePermissionTransformationService: UserRolePermissionTransformationService,
+        private notificationService: NotificationService
     ) { }
 
     /**
@@ -437,7 +439,7 @@ export class RolePermissionComponent implements OnInit {
             this.ngxSpinnerService.show();
             try {
             const savePermissionRes: ISavePermissionResponse = await this.userRolePermissionApiService.rolePermission(userPermission).toPromise();
-            
+                this.notificationService.getNotification.next(true);
                 this.ngxSpinnerService.hide();
                 if (savePermissionRes.responseStatus.status === '200') {
                     this.messageService.add({ severity: 'success', summary: translationKeys['USER_PERMISSION_CREATE_SUCCESS'], detail: translationKeys['USER_PERMISSION_CREATED_SUCCESSFULLY'] });

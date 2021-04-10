@@ -36,6 +36,7 @@ export class LodadableQuantity {
     public foConsumptionPerDay?: string;
     public estTotalFOConsumption?: string;
     public updateDateAndTime?: string;
+    public lastUpdatedTime?: string;
     public foConInSZ?: string;
     public subTotal?: string;
     public totalQuantity?: string;

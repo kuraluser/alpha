@@ -58,7 +58,6 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
-    this.ngxSpinnerService.show();
     this.permissionStart = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStart'], false);
     this.permissionStop = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStop'], false);
     this.first = 0;
@@ -69,15 +68,16 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     this.columns = this.voyageListTransformationService.getVoyageListDatatableColumns(this.permissionStart, this.permissionStop);
     this.getVoyageLists$.pipe(
       switchMap(() => {
+        this.ngxSpinnerService.show();
         return this.voyageListApiService.getVoyageList(this.vesselId, this.pageState, this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[0]), this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[1]))
       })
     ).subscribe((voyageLIstResponse: IVoyageListResponse) => {
       this.getVoyageList(voyageLIstResponse);
+      this.ngxSpinnerService.hide();
       this.loading = false;
     });
     this.pageState = <IDataStateChange>{};
     this.getVoyageLists$.next();
-    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -197,7 +197,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       this.isStart = false;
       dateArr = event?.data?.actualEndDate ? event?.data?.actualEndDate?.split('-') : event?.data?.plannedEndDate?.split('-');
     }
-    this.defaultDate = dateArr.length ? new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0])) : new Date();
+    this.defaultDate = dateArr ? new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0])) : new Date();
     this.selectedVoyageId = event?.data?.id;
     this.showDatePopup = true;
   }

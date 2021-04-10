@@ -8,7 +8,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr class="p-selectable-row" (click)="onRowSelect(priorityData)">
+                <tr class="p-selectable-row" (click)="onRowSelect(rowData)">
                     <td *ngFor="let col of columns">
                         <span *ngIf="col.field === 'priority'">{{rowData[col.field]}}</span>
                         <span class="badge-custom" *ngIf="col.field === 'cargoAbbreviation'"

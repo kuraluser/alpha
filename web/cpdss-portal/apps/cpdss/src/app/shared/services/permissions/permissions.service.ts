@@ -38,6 +38,8 @@ export class PermissionsService {
    * @memberof PermissionsService
    */
   setPermissions(permissions: IResource[]): void {
-    window.localStorage.setItem('_USER_PERMISSIONS', JSON.stringify(permissions));
+    if(permissions){
+      window.localStorage.setItem('_USER_PERMISSIONS', JSON.stringify(permissions));
+    }
   }
 }

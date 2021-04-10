@@ -10,6 +10,8 @@ import { IResponse } from './common.model';
  */
 export interface IUserProfile extends KeycloakProfile {
     rolePermissions?: IRolePermission;
+    statusCode?: number;
+    rejectionCount?: number;
 }
 
 /**
@@ -31,6 +33,7 @@ export interface IRolePermission {
  * @interface IResource
  */
 export interface IResource {
+    id: number;
     name: string;
     languageKey: string;
     permission: IPermission;

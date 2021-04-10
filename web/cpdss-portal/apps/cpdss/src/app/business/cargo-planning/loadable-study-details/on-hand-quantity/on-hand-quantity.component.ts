@@ -15,6 +15,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 
 /**
  * Compoent for OHQ tab
@@ -146,7 +147,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     public loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
     private translateService: TranslateService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private globalErrorHandler: GlobalErrorHandler) { }
 
   /**
    * OnDestroy function for ohq component
@@ -445,15 +447,18 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.selectedPortOHQTankDetails[index].processing = false;
-        if (event?.data?.status === '200') {
+        if (event?.data?.responseStatus?.status === '200') {
           this.loadableStudyDetailsTransformationService.ohqUpdated(event);
           this.selectedPortOHQTankDetails[index].id = event.data.id;
           this.selectedPortOHQTankDetails[index].processing = false;
           this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
         }
       }
-      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+      if (event?.data?.responseStatus?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['OHQ_UPDATE_ERROR'], detail: translationKeys['OHQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+      if(event?.data?.responseStatus?.status === '401' && event?.data?.errorCode === '210'){
+        this.globalErrorHandler.sessionOutMessage();
       }
     }
   }

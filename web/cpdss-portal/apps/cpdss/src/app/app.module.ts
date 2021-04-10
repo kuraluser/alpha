@@ -21,7 +21,6 @@ import { HttpAuthInterceptor } from "../app/shared/services/interceptors/auth.in
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastAlertModule } from './shared/components/toast-alert/toast-alert.module';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { GlobalErrorHandler } from './shared/services/error-handlers/global-error-handler';
 import { ConfirmationAlertModule } from './shared/components/confirmation-alert/confirmation-alert.module';
 import { FocusTrapModule } from 'primeng/focustrap';
@@ -40,7 +39,7 @@ let providers: any = [
 
 if (environment.name === 'shore') {
   providers = [...providers, KeycloakService,
-  { provide: APP_INITIALIZER, useFactory: keycloakCPDSSInitializer, multi: true, deps: [KeycloakService, HttpClient, AppConfigurationService, ActivatedRoute] },
+  { provide: APP_INITIALIZER, useFactory: keycloakCPDSSInitializer, multi: true, deps: [KeycloakService, HttpClient, AppConfigurationService, ActivatedRoute, GlobalErrorHandler] },
   ]
 } else {
   providers = [...providers, 
@@ -51,7 +50,6 @@ if (environment.name === 'shore') {
   declarations: [
     AppComponent,
     PageNotFoundComponent,
-    AccessDeniedComponent
   ],
   imports: [
     BrowserModule,

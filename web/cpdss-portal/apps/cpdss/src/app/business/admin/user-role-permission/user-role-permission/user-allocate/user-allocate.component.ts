@@ -1,4 +1,5 @@
-import { Component, OnInit , Output , EventEmitter, Input } from '@angular/core';
+import { Component, OnInit , Output , EventEmitter, Input, ViewChild } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { IUserDetail, IUserDetailsResponse } from '../../../models/user-role-permission.model';
 import { UserRolePermissionApiService } from '../../../services/user-role-permission-api.service';
@@ -21,6 +22,7 @@ export class UserAllocateComponent implements OnInit {
   _userDetails: IUserDetail[] = [];
   _selectedUser: IUserDetail[] = [];
   totalColSpan: number;
+  userInfo: any;
   
   @Output() selectedUserDetails = new EventEmitter<IUserDetail[]>();
   @Input()
@@ -36,12 +38,16 @@ export class UserAllocateComponent implements OnInit {
     this._userDetails = userDetails;
   }
   get userDetails() {
+    this.scrollIntoUser();
     return this._userDetails;
   }
 
+  @ViewChild('datatable') userTable;
+
   // public method
   constructor(
-    private userRolePermissionApiService: UserRolePermissionApiService
+    private userRolePermissionApiService: UserRolePermissionApiService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   /**
@@ -51,7 +57,23 @@ export class UserAllocateComponent implements OnInit {
  * @memberof UserAllocateComponent
  */
   ngOnInit(): void {
+    this.userInfo = this.activatedRoute.snapshot.params.userId ? this.activatedRoute.snapshot.params.userId : null;
     this.totalColSpan = 3;
+  }
+
+   /**
+ * scroll into user
+ *
+ * @returns {void}
+ * @memberof UserAllocateComponent
+ */
+  scrollIntoUser(): void{ 
+    if(this.userTable && this._userDetails && this._userDetails.length && this.userInfo){
+      const rowEl = this.userTable.el.nativeElement.querySelector('[id="'+this.userInfo+'"]');
+      if(rowEl){
+        rowEl.scrollIntoView({behavior: "smooth", inline: "start", block: "start"});
+      }
+    }
   }
 
   /**

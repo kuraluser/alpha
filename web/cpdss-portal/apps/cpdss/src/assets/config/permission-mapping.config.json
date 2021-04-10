@@ -21,5 +21,9 @@
     "voyageStart" : "VOYAGE_HISTORY_START_VOYAGE",
     "voyageStop" : "VOYAGE_HISTORY_STOP_VOYAGE",
     "GenerateButton" : "CARGOPLANNING_GENERATE_LOADABLE_PLAN",
-    "CargoHistoryComponent": "CARGOPLANNING_CARGO_HISTORY"
+    "CargoHistoryComponent": "CARGOPLANNING_CARGO_HISTORY",
+    "OperationsComponent": "OPERATIONS",
+    "LoadingComponent": "OPERATIONS_LOADING",
+    "DischargingComponent": "OPERATIONS_DISCHARGING",
+    "BunkeringComponent": "OPERATIONS_BUNKERING"
 }

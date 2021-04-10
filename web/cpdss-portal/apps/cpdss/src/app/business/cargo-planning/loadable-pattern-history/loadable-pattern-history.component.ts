@@ -74,6 +74,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   viewMore = false;
   selectedLoadablePattern: ILoadablePattern;
   cargos: ICargo[];
+  patternLoaded = false;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -135,8 +136,43 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.ngxSpinnerService.show();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
-    this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+    if(this.loadableStudies.length) {
+      this.setProcessingLoadableStudyActions(0, 0);
+      this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+    } else {
+      this.selectedLoadableStudy = null;
+    }
     this.ngxSpinnerService.hide();
+  }
+
+   /**
+   * Enable/ Disable actions of currently processing/processed loadable study
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
+    const loadableStudies = this.loadableStudies.map(loadableStudy => {
+      if (loadableStudyId === loadableStudy?.id) {
+        if ([4, 5].includes(statusId) && this.router.url.includes('loadable-pattern-history')) {
+          loadableStudy.isActionsEnabled = false;
+        }
+        else if ([2, 3].includes(statusId)) {
+          loadableStudy.isEditable = false;
+          loadableStudy.isDeletable = false;
+          loadableStudy.isActionsEnabled = true;
+        }
+        else if ([6, 1].includes(statusId)) {
+          loadableStudy.isActionsEnabled = true;
+        }
+      } else if (!loadableStudyId && !statusId) {
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
+        loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
+      }
+      return loadableStudy;
+    });
+    this.loadableStudies = loadableStudies;
   }
 
   /**
@@ -181,7 +217,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
-    this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
     this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
@@ -196,8 +231,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.frontBallastTanks = this.loadablePatternResponse?.frontBallastTanks;
       this.loadablePatternCreatedDate = this.loadablePatternResponse?.loadablePatternCreatedDate;
       this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
+      this.patternLoaded = true;
     }
-    this.ngxSpinnerService.hide();
+      this.ngxSpinnerService.hide();
   }
 
   /**
@@ -231,7 +267,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    */
   onLoadableStudyChange(event) {
     this.loadableStudyId = event;
-    this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    this.selectedLoadableStudy = this.loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === this.loadableStudyId) : this.loadableStudies[0];
   }
 
   /**
@@ -304,6 +340,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
         try {
           const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePatternId).toPromise();
           if (confirmResult.responseStatus.status === '200') {
+            this.patternLoaded = false;
+            this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
             this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
           }
         } catch (errorResponse) {

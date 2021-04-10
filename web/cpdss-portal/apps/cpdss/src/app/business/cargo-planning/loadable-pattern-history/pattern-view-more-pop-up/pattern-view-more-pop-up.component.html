@@ -1,4 +1,5 @@
-<p-dialog id="dialog_pattern_view_more_popup" header="{{'PATTERN_VIEW_MORE_POPUP_HEADER' | translate}}"
+<p-dialog id="dialog_pattern_view_more_popup"
+    header="{{'PATTERN_VIEW_MORE_CASE_LABEL' |translate}} {{selectedLoadablePattern?.caseNumber}} {{'PATTERN_VIEW_MORE_POPUP_HEADER' | translate}}"
     [(visible)]="display" [modal]="true" styleClass="pattern-view-more-popup" [draggable]="false" [responsive]="true"
     [closable]="false" *ngIf="display">
     <div class="row pb-15 pt-15">
@@ -33,29 +34,38 @@
             </div>
         </div>
         <div class="col pattern-view-sidebar">
-    
-            <cpdss-portal-cargo-priority-grid [tableCol]="cargoTableCol" *ngIf="selectedTab === tankType.CARGO" [styleClass]="'table-pattern-view-more'" [loadablePatternCargoDetails]="selectedLoadablePattern?.loadablePatternCargoDetails"
-            [totalHeader]="'PATTERN_VIEW_MORE_CARGO_GRID_FOOTER_TOTAL'" [showTotalDifference]="false" [showMoreButton]='false' >
-        </cpdss-portal-cargo-priority-grid>
+            <div class="row">
+               <div class="col mb-10">
+                <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)" ></cpdss-portal-unit-dropdown>
+               </div>
+            </div>
+            <cpdss-portal-cargo-priority-grid [tableCol]="cargoTableCol" *ngIf="selectedTab === tankType.CARGO"
+                [styleClass]="'table-pattern-view-more'"
+                [loadablePatternCargoDetails]="selectedLoadablePattern?.loadablePatternCargoDetails"
+                [totalHeader]="'PATTERN_VIEW_MORE_CARGO_GRID_FOOTER_TOTAL'" [showTotalDifference]="false"
+                [showMoreButton]='false'>
+            </cpdss-portal-cargo-priority-grid>
             <div class="row" *ngIf="selectedTab === tankType.BALLAST">
                 <div class="col">
                     {{'PATTERN_VIEW_MORE_BALLAST_TOTAL' | translate}}
                 </div>
                 <div class="col">
-                    {{totalBallast}}
+                    {{totalBallast.toFixed(2)}}
                 </div>
             </div>
-            <cpdss-portal-synoptical-grid [loadablePlanSynopticRecord]="selectedLoadablePattern?.loadablePlanSynopticRecord"></cpdss-portal-synoptical-grid>
+            <cpdss-portal-synoptical-grid
+                [loadablePlanSynopticRecord]="selectedLoadablePattern?.loadablePlanSynopticRecord">
+            </cpdss-portal-synoptical-grid>
         </div>
     </div>
 
-    <div class="row pt-25">
+    <div class="row pt-25"  *ngIf="selectedTab === tankType.CARGO">
         <div class="col  mr-30">
             <h5 class="heading-border secondary-text pb-10 mb-10">{{'PATTERN_VIEW_MORE_POPUP_CARGO_TO_BE_LOADED_HEADER'
                 | translate}}</h5>
         </div>
     </div>
-    <div class="row">
+    <div class="row"  *ngIf="selectedTab === tankType.CARGO">
         <div class="col  ml-30 mr-30">
             <cpdss-portal-datatable [tableId]="'cargoTobeLoaded'" [columns]="cargoTobeLoadedColumns"
                 [value]="cargoTobeLoaded" [scrollable]="false">

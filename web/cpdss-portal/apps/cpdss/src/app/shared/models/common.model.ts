@@ -320,6 +320,7 @@ export interface ITimeZone {
     id: number;
     timezone: string;
     offsetValue: string;
+    abbreviation?: string;
 }
 
 /**
@@ -329,6 +330,22 @@ export interface ITimeZone {
  * @interface IDateTimeFormatOptions
  */
 export interface IDateTimeFormatOptions {
-    isTime?: boolean;
-    isTimeSeconds?: boolean;
+    utcFormat?: boolean;
+    portLocalFormat?: boolean;
+    portTimeZoneOffset?: string;
+    portTimeZoneAbbr?: string;
+    customFormat?: string;
+}
+
+/**
+* User authorizaion status
+ *
+ * @export
+ * @enum {number}
+ */
+export enum AUTH_STATUS {
+    APPROVED = 1,
+    REJECTED = 2,
+    REQUESTED = 3,
+    CREATED = 4
 }

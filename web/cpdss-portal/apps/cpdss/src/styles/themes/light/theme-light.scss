@@ -757,7 +757,8 @@ a{
 }
 
 .tank-inner-wrapper-pattern{
-  border: 2px solid $tank-ohq-border; 
+  border-top: 1px solid $tank-ohq-border; 
+  border-bottom: 1px solid $tank-ohq-border; 
   .tank-column-pattern{
     >div{
       border-color: $tank-ohq-border!important;
@@ -1230,9 +1231,36 @@ header{
   background: url($images-theme + 'sidebar-expand-button.jpg') no-repeat center center;
   }
 }
+
+.notification-menu{
+  .pi{
+      color: $main-head;
+  }
+  .notification-count{
+    background: $red;
+    color: $hover-color;
+  }
+}
+
+.notification-dropdown{
+  .notification-item{
+      &:hover{
+        .text-muted, a{
+          color: $hover-color!important;
+        }
+      }
+  }
+}
+
 .tab-btn:hover{
   color: $link-color!important;
 }
 .tab-btn.active:hover{
   color: $hover-color!important;
+}
+.voyage-start{
+  background: url($images-theme + 'voyage-start.png') no-repeat center center;
+}
+.voyage-end{
+  background: url($images-theme + 'voyage-end.png') no-repeat center center;
 }
