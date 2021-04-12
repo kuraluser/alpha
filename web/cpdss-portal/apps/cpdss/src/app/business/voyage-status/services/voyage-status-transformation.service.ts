@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Subject } from "rxjs";
 import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities } from '../models/voyage-status.model';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
@@ -17,9 +16,6 @@ import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 @Injectable()
 export class VoyageStatusTransformationService {
   columns: IDataTableColumn[];
-
-  public portOrderChange = new Subject();
-  voyageDistance: number;
 
   constructor(private quantityPipe: QuantityPipe) { }
 
@@ -49,40 +45,6 @@ export class VoyageStatusTransformationService {
       }
     }
     return ballastTank;
-  }
-
-
-  /**
-   * Set validation Error to form control
-   */
-  setValidationErrorMessageForPortRotationRibbon() {
-    return {
-      eta: {
-        'required': 'PORT_ROTATION_RIBBON_ETA_REQUIRED',
-        'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN',
-        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_ETD_DATE'
-      },
-      etd: {
-        'required': 'PORT_ROTATION_RIBBON_ETD_REQUIRED',
-        'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN',
-        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_ETA_DATE'
-      },
-      etaTime: {
-        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
-        'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN'
-      },
-      etdTime: {
-        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
-        'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN'
-      },
-      distance: {
-        'required': 'PORT_ROTATION_RIBBON_DISTANCE_REQUIRED',
-      }
-    }
   }
 
   /**

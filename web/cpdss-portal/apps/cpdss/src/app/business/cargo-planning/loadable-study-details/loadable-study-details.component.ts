@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -96,7 +96,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isPatternOpenOrNoplan = false;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
-  generateBtnPermissionContext: IPermissionContext;
+  generateBtnPermissionContext: IPermission;
+
+  get combined$(){
+    return combineLatest(
+      this.cargoNominationComplete$,
+      this.portsComplete$,
+      this.ohqComplete$,
+      this.obqComplete$,
+      (cargo, port, ohq, obq)=>(cargo || port || ohq || obq));
+  }
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -183,7 +192,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.addCommingleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
-    this.generateBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['GenerateButton'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
+     this.generateBtnPermissionContext = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['GenerateButton'], false);
   }
 
   /**
@@ -350,6 +359,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.isPatternOpenOrNoplan = false;
         this.isPatternGenerated = false;
         this.isGenerateClicked = false;
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_NO_SOLUTION;
       }
       this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
     }
@@ -587,14 +598,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   onLoadableStudyChange(event) {
     if (event) {
       this.loadableStudyId = event;
-      this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
-      this.loadableStudyDetailsTransformationService.setPortValidity(false);
-      this.loadableStudyDetailsTransformationService.setOHQValidity([]);
-      this.loadableStudyDetailsTransformationService.setObqValidity(false);
-      this.isGenerateClicked = false;
-      this.initSubsciptions();
-      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
-      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
     }
   }
 

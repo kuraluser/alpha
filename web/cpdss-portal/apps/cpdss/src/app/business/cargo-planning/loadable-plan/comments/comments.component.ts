@@ -14,6 +14,7 @@ import { SecurityService } from "../../../../shared/services/security/security.s
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  * Component class of comments component in loadable plan
@@ -35,7 +36,7 @@ export class CommentsComponent implements OnInit {
   @Input() enableSubmit: boolean;
 
   @Input() set commentsDetails(value: ILoadablePlanCommentsDetails[]) {
-    this._commentsDetails = value;
+    this._commentsDetails = value && this.showCommentedDateTimeInUTC(value);
   }
 
   get commentsDetails(): ILoadablePlanCommentsDetails[] {
@@ -54,6 +55,7 @@ export class CommentsComponent implements OnInit {
     private loadablePlanApiService: LoadablePlanApiService,
     private datePipe: DatePipe,
     private fb: FormBuilder,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
@@ -122,6 +124,18 @@ export class CommentsComponent implements OnInit {
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.commentForm.get(formControlName);
     return formControl;
+  }
+
+  /**
+   * function to show commented date-time in UTC format
+   *
+   * @param {ILoadablePlanCommentsDetails[]} commentArray
+   * @return {*}  {ILoadablePlanCommentsDetails[]}
+   * @memberof CommentsComponent
+   */
+  showCommentedDateTimeInUTC(commentArray: ILoadablePlanCommentsDetails[]): ILoadablePlanCommentsDetails[]  {
+    commentArray.map(comment => (comment.dataAndTime = this.timeZoneTransformationService.formatDateTime(comment.dataAndTime, {utcFormat: true})));
+    return commentArray;
   }
 
 }

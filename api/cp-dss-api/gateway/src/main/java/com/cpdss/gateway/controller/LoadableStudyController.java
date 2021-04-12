@@ -5,7 +5,7 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
@@ -75,7 +75,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -1470,9 +1478,7 @@ public class LoadableStudyController {
     try {
       log.info("getLoadableStudyStatus with process id ", loadablePlanRequest.getProcessId());
       return this.loadableStudyService.getLoadableStudyStatus(
-          loadableStudyId,
-          loadablePlanRequest.getProcessId(),
-          headers.getFirst(CORRELATION_ID_HEADER));
+          loadableStudyId, loadablePlanRequest, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when get loadable Study status", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

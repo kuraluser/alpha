@@ -22,7 +22,7 @@
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
             <div class="pr-15">
-                {{voyageStatusTransformationService.voyageDistance? voyageStatusTransformationService.voyageDistance :
+                {{portRotationService.voyageDistance? portRotationService.voyageDistance :
                 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
         </div>
@@ -38,10 +38,10 @@
             (displayPopUp)="displayPopUpTab($event)">
         </cpdss-portal-new-voyage-popup>
 
-        <cpdss-portal-edit-port-rotation *ngIf="displayEditPortPopup && vesselInfo && selectedVoyage"
+        <cpdss-portal-edit-port-rotation-popup *ngIf="displayEditPortPopup && vesselInfo && selectedVoyage"
             (displayPopUp)="displayEditPortRotationPopUpTab($event)" [vesselDetails]="vesselInfo"
             [voyageDetails]="selectedVoyage">
-        </cpdss-portal-edit-port-rotation>
+        </cpdss-portal-edit-port-rotation-popup>
         <div class="row no-wrap pt-10">
             <div class="col sidebar-landing">
                 <cpdss-portal-parameter-list *ngIf="bunkerConditions &&  cargoQuantities"

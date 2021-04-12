@@ -629,6 +629,7 @@ h5{
 
 .p-datepicker{
  // min-width: 340px !important;
+ z-index: 9999 !important;
 }
 
 .p-dropdown{ 
@@ -1349,8 +1350,10 @@ td.sl div{
       position: relative;
       > div{
         /*height: 33.33%;*/
-        width: 100%;
-        border: 1px solid;
+        margin-right: -1px;
+        border-left: 2px solid;
+        border-top: 1px solid;
+        border-bottom: 1px solid;
         position: relative;
         .tank-level-pattern{
           position: absolute;
@@ -1368,6 +1371,9 @@ td.sl div{
           text-overflow: ellipsis;
           padding-left: 2px;
           padding-right: 1px;
+        }
+        .tank-btn-rounded{
+          margin-left: 2px;
         }
       }
       &.two-column-tank{
@@ -1731,7 +1737,7 @@ th .p-calendar .p-inputtext{
 }
 
 .confirmation-wrapper{
-  z-index: 9999!important;
+  z-index: 999999!important;
 }
 
 .datatable-loading .col, .datatable-loading .p-datatable{
@@ -1984,7 +1990,7 @@ width: 50px !important;
 }
 }
 .column-priority{
-  width: 73px!important;
+  width: 85px!important;
 }
 .column-qty{
   width: 120px!important;
@@ -2219,15 +2225,18 @@ tr:hover{
   }
 }
 .p-dialog, .p-dialog-mask.p-component-overlay{
-  z-index: 9!important;
+  z-index: 9999 !important;
+}
+.p-dropdown-panel{
+  z-index: 99999!important;
 }
 
-.index-1{
+.p-dropdown-panel.index-1{
   z-index: 1 !important;
 }
 
-.index-9{
-  z-index: 9999!important;
+.p-dropdown-panel.index-9{
+  z-index: 99999!important;
 }
 
 .api-temp-pop-up{
@@ -2310,16 +2319,50 @@ tr:hover{
       border-right: 0;
     }
   }
-  &.p-datatable .p-datatable-thead > tr > th{
-    padding:  2px 3px;
-    &:last-child{
-      border-right: 0;
+    &.p-datatable .p-datatable-thead > tr > th{
+      padding:  2px 3px;
+      &:last-child{
+        border-right: 0;
+      }
+    }
+    &.p-datatable .p-datatable-tfoot > tr > td{
+      padding: 2px 3px!important;
+    }
+    table{
+      table-layout: auto!important;
     }
   }
-  &.p-datatable .p-datatable-tfoot > tr > td{
-    padding: 2px 3px!important;
+  .content-ellipsis{
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  table{
-    table-layout: auto!important;
+
+  .column-planned-start-date, .column-planned-end-date, .column-actual-start-date{
+    width: 150px!important;
   }
+
+  .voyage-start{
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    background-position: center center;
+  }
+  .voyage-end{
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+  }
+  .p-tooltip{
+    z-index: 999999!important;
+  }
+  .p-overlaypanel{
+    z-index: 99999 !important;
+  }
+  .content-pattern{
+    .tank-outer-pattern{
+      min-width: 98%;
+      width: 98%;
+    }
   }

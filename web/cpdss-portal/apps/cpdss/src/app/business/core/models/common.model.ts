@@ -1,14 +1,4 @@
-import { IResponseStatus } from '../../../shared/models/common.model';
-
-/**
- *  vessel-info model
- */
-export interface IVesselInfo {
-    responseStatus: {
-        status: string
-    },
-    vessels: IVessels[]
-}
+import { IResponse, IResponseStatus } from '../../../shared/models/common.model';
 
 /**
  *  model for new-loadable-study-list-names
@@ -336,7 +326,7 @@ export enum VOYAGE_STATUS_LABEL {
 }
 
 /**
- * ENUM for Loadable Study Status
+ * ENUM for Loadable Study Status ID
  *
  * @export
  * @enum {number}
@@ -349,4 +339,107 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING_COMPETED = 5,
     PLAN_NO_SOLUTION = 6,
     PLAN_ERROR = 11
+}
+
+/**
+ * ENUM for Loadable Study Status
+ *
+ * @export
+ * @enum {string}
+ */
+ export enum LOADABLE_STUDY_STATUS_TEXT {
+    PLAN_PENDING = "Pending",
+    PLAN_CONFIRMED = "Confirmed",
+    PLAN_GENERATED = "Plan Generated",
+    PLAN_ALGO_PROCESSING = "ALGO Processing Started",
+    PLAN_ALGO_PROCESSING_COMPETED = "ALGO Processing Completed",
+    PLAN_NO_SOLUTION = "No Plan Available",
+    PLAN_ERROR = "Plan Error"
+}
+
+/**
+ * Interface for Edit port rotation response 
+ */
+ export interface IPortResponseModel {
+    responseStatus: IResponseStatus;
+}
+
+/**
+ *  Interface for edit port rotation model
+ */
+export interface IEditPortRotationModel {
+    portList: IPortList[];
+}
+
+/**
+ *  Interface for edit port rotation 
+ */
+export interface IEditPortRotation{
+    id: number;
+    portOrder: number;
+    loadableStudyId: number;
+    portId: number;
+    operationId: number;
+    seaWaterDensity: number;
+    distanceBetweenPorts: number;
+    timeOfStay: number;
+    maxDraft: number;
+    maxAirDraft: number;
+    eta: string;
+    etd: string;
+    layCanFrom: string;
+    layCanTo: string;
+    isDelete?: boolean;
+    isAdd?: boolean;
+    storeKey?: number;
+    vesselId?: number;
+    voyageId?: number;
+    etaActual?: string;
+    etdActual?: string;
+    name: string;
+    index?: number;
+    isFutureDate?: boolean;
+    type?: string;
+    isDateEditable?: boolean;
+    isTimeEditable?: boolean;
+    isDistanceEditable?: boolean;
+    currentPort?: boolean;
+    isEditable?: boolean;
+    isSelected?: boolean;
+    isFocused?: boolean;
+}
+
+/**
+ * Interface for Port Voyage Details model
+ */
+ export class IVoyagePortDetails {
+    portOrder: number;
+    operationType: string;
+    portId?: number;
+    portRotationId?: number;
+}
+
+/**
+ * Model for new voyage
+ */
+ export class NewVoyageModel {
+    public voyageNo!: string;
+    public captainId!: number;
+    public chiefOfficerId!: number;
+    public startDate!: string;
+    public endDate!: string;
+    public startTimezoneId!: number;
+    public endTimezoneId!: number;
+}
+
+/**
+ * Model for new voyage api response
+ */
+export class NewVoyageResponseModel implements IResponse {
+    responseStatus?: IResponseStatus;
+    status: string;
+    message?: string;
+    errorCode?: string;
+    correlationId?: string;
+    voyageId: number;
 }

@@ -7,6 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { PermissionsService } from '../shared/services/permissions/permissions.service';
 import { environment } from '../../environments/environment';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 import { AppConfigurationService } from '../shared/services/app-configuration/app-configuration.service';
 
 /**
@@ -25,7 +26,7 @@ export class LoginComponent implements OnInit {
 
   private kycloakService: KeycloakService
 
-  constructor(private injector: Injector, private loginService: LoginService, private ngxSpinnerService: NgxSpinnerService, private permissionsService: PermissionsService, private messageService: MessageService) {
+  constructor(protected readonly router: Router, private injector: Injector, private loginService: LoginService, private ngxSpinnerService: NgxSpinnerService, private permissionsService: PermissionsService, private messageService: MessageService) {
     if (environment.name === 'shore') {
       this.kycloakService = <KeycloakService>this.injector.get(KeycloakService);
     }
@@ -55,11 +56,28 @@ export class LoginComponent implements OnInit {
         this.user = <IUserProfile>await this.kycloakService.loadUserProfile();
 
         /* get user details and user permission */
-        const result = await this.loginService.getUserDetails().toPromise();
-        this.user = <IUserProfile>{ ...this.user, ...result?.user };
-        SecurityService.setUserProfile(this.user);
-        this.permissionsService.setPermissions(this.user?.rolePermissions?.resources);
-        this.setPropertiesDB(token);
+        try{
+          const result = await this.loginService.getUserDetails().toPromise();
+          this.user = <IUserProfile>{ ...this.user, ...result?.user };
+          SecurityService.setUserProfile(this.user);
+          this.permissionsService.setPermissions(this.user?.rolePermissions?.resources);
+          this.setPropertiesDB(token);
+          if(this.user.statusCode === 1){
+            this.router.navigate(['business']);
+          } else {
+            const params = { id: this.user.id, status: this.user.statusCode, count: this.user.rejectionCount };
+            this.router.navigate(['access-denied/auth/'+ encodeURIComponent(btoa(JSON.stringify(params)))]);
+            localStorage.removeItem('_USER_PERMISSIONS');
+          }
+        } catch(e){
+          if(e.error.errorCode === "ERR-RICO-101" && e.error.status === "400"){
+            const params = { id: 0, status: 4, count: 0 };
+            this.router.navigate(['access-denied/auth/'+ encodeURIComponent(btoa(JSON.stringify(params)))]);
+            localStorage.removeItem('_USER_PERMISSIONS');
+          }
+        }
+        
+        
       }
     }
     catch (ex) {

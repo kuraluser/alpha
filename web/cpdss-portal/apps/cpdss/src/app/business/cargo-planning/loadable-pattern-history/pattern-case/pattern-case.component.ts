@@ -29,7 +29,7 @@ export class PatternCaseComponent implements OnInit {
   tableCol: IDataTableColumn[];
   loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantityMT' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantityMT', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
   constructor(private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService) { }
 
   /**

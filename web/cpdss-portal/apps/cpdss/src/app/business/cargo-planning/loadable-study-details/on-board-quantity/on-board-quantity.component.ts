@@ -16,6 +16,7 @@ import { MessageService } from 'primeng/api';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 
 /**
  * Component for OBQ tab 
@@ -137,7 +138,8 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private translateService: TranslateService,
     private messageService: MessageService,
-    private quantityPipe: QuantityPipe) { }
+    private quantityPipe: QuantityPipe,
+    private globalErrorHandler: GlobalErrorHandler) { }
 
   /**
    * Method called on component destroy
@@ -388,6 +390,9 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       this.updateTankList();
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['OBQ_UPDATE_ERROR'], detail: translationKeys['OBQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+      if(event?.data?.status === '401' && event?.data?.errorCode === '210'){
+        this.globalErrorHandler.sessionOutMessage();
       }
     }
   }

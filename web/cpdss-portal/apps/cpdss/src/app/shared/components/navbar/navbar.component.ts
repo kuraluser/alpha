@@ -1,13 +1,18 @@
-import { Component, Injector, OnInit , OnDestroy} from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { Event as NavigationEvent, Router, ActivatedRoute, NavigationStart, NavigationEnd } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { Observable, Subscription } from 'rxjs';
 import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
 import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
-import { IMenuItem, IPermission } from './navbar.component.model';
+import { IMenuItem, IPermission, INotificationItem } from './navbar.component.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { environment } from 'apps/cpdss/src/environments/environment';
+import { NavbarApiService } from './navbar-api.service';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { NotificationService } from '../../services/notification/notification.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -15,35 +20,53 @@ import { filter } from 'rxjs/operators';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit , OnDestroy{
+export class NavbarComponent implements OnInit, OnDestroy {
   isToggle = true;
   darkMode$: Observable<boolean>;
   menuList: IMenuItem[] = [];
   showUserIconDropdown = false;
   companyLogo = '';
   userPermission: any;
-  navigationEvent$:Subscription;
+  notificationList: INotificationItem[] = [];
+  showNotification = false;
+  notificationSubscription: Subscription;
+  isShore = false;
+  navigationEvent$: Subscription;
 
   private keycloakService: KeycloakService;
 
-  constructor(private themeService: ThemeService, private injector: Injector,
+  constructor(
+    private themeService: ThemeService,
+    private injector: Injector,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private permissionsService: PermissionsService) {
+    private permissionsService: PermissionsService,
+    private navbarApiService: NavbarApiService,
+    private translateService: TranslateService,
+    private messageService: MessageService,
+    private ngxSpinnerService: NgxSpinnerService,
+    private notificationService: NotificationService,
+    private activatedRoute: ActivatedRoute
+  ) {
     if (environment.name === 'shore') {
       this.keycloakService = <KeycloakService>this.injector.get(KeycloakService);
     }
   }
 
   ngOnInit(): void {
-
     this.companyLogo = localStorage.getItem('companyLogo');
-
+    if (environment.name === 'shore') {
+      this.isShore = true;
+      this.getNotifications();
+      this.notificationSubscription = this.notificationService.getNotification.subscribe((value) => {
+        if (value) {
+          this.getNotifications();
+        }
+      });
+    }
     this.navigationEvent$ = this.router.events.pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe(event => {
-          this.activeRoute(event['url']);
-        });
-
+      .subscribe(event => {
+        this.activeRoute(event['url']);
+      });
 
     /**
      * Array for showing nav
@@ -101,16 +124,18 @@ export class NavbarComponent implements OnInit , OnDestroy{
           { 'name': 'User', 'subMenuLink': '/business/admin/user-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false },
         ],
       },
-      /* {
+      {
         'menu': 'OPERATIONS',
-        'menuIcon': 'voyages',
-        'menuLink': 'operations',
+        'menuIcon': '',
+        'menuLink': '',
+        'routerLinkActive': 'operations',
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['OperationsComponent'],
         'subMenu': [
-          { 'name': 'LOADING' },
-          { 'name': 'DISCHARGING' },
-          { 'name': 'BUNKERING' }
-        ]
+          { 'name': 'Loading', 'subMenuLink': '/business/operations/loading', 'permissionMapping': AppConfigurationService.settings.permissionMapping['LoadingComponent'], 'isVisible': false }
+        ],
       },
+      /*
       {
         'menu': 'VOYAGES',
         'menuIcon': 'voyages',
@@ -156,6 +181,9 @@ export class NavbarComponent implements OnInit , OnDestroy{
   */
   ngOnDestroy() {
     this.navigationEvent$.unsubscribe();
+    if (environment.name === 'shore') {
+      this.notificationSubscription.unsubscribe();
+    }
   }
   /**
  * Get page permission
@@ -219,27 +247,27 @@ export class NavbarComponent implements OnInit , OnDestroy{
   rerouteOrShowSubmenu(list, index) {
     if (list.menuLink !== '') {
       let link = '/business/' + list.menuLink;
-      if(list.addVesselId){
+      if (list.addVesselId) {
         const vesselId = localStorage.getItem("vesselId")
-        if(vesselId){
+        if (vesselId) {
           link += '/' + vesselId
         }
       }
-      if(list.addVoyageId){
+      if (list.addVoyageId) {
         const voyageId = localStorage.getItem("voyageId")
-        if(voyageId){
+        if (voyageId) {
           link += '/' + voyageId
         }
       }
-      if(list.addLoadableStudyId){
+      if (list.addLoadableStudyId) {
         const loadableStudyId = localStorage.getItem("loadableStudyId")
-        if(loadableStudyId){
+        if (loadableStudyId) {
           link += '/' + loadableStudyId
         }
       }
-      if(list.addLoadablePatternId){
+      if (list.addLoadablePatternId) {
         const loadablePatternId = localStorage.getItem("loadablePatternId")
-        if(loadablePatternId){
+        if (loadablePatternId) {
           link += '/' + loadablePatternId
         }
       }
@@ -304,6 +332,53 @@ export class NavbarComponent implements OnInit , OnDestroy{
     this.router.navigate([subMenu.subMenuLink]);
     this.hide(list, index);
     event.stopPropagation();
+  }
+
+  /**
+   * Method for getting admin notifications list 
+   *
+   * @memberof NavbarComponent
+   */
+  async getNotifications() {
+    const results = await this.navbarApiService.getNotification().toPromise();
+    this.notificationList = results.notifications ? results.notifications : [];
+
+  }
+
+  /**
+   * Handler for notification Icon toggle 
+   *
+   * @memberof NavbarComponent
+   */
+  toggleNotification(outside?) {
+    this.showNotification = outside ? false : !this.showNotification;
+  }
+
+  /**
+   * Handler for role list redirection 
+   *
+   * @memberof NavbarComponent
+   */
+  gotoRoleLIst(user) {
+    this.router.navigate(['/business/admin/user-role-permission/user/' + user.id]);
+    this.showNotification = false;
+  }
+
+  /**
+   * Handler for reject user 
+   *
+   * @memberof NavbarComponent
+   */
+
+  async rejectUser(user) {
+    this.showNotification = false;
+    this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['USER_AUTHORIZATION_SUCCESS', 'USER_AUTHORIZATION_REJECT_USER_SUCCESS']).toPromise();
+    const results = await this.navbarApiService.rejectUser(user.userId, {}).toPromise();
+    this.ngxSpinnerService.hide();
+    this.messageService.add({ severity: 'success', summary: translationKeys['USER_AUTHORIZATION_SUCCESS'], detail: translationKeys['USER_AUTHORIZATION_REJECT_USER_SUCCESS'] });
+    this.getNotifications();
+
   }
 
   /**

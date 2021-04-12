@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 
 /**
  * Component class of cargonomination screen
@@ -140,7 +141,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private confirmationAlertService: ConfirmationAlertService) {
+    private confirmationAlertService: ConfirmationAlertService,
+    private globalErrorHandler: GlobalErrorHandler) {
   }
 
   /**
@@ -628,6 +630,9 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       }
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+      if(event?.data?.status === '401' && event?.data?.errorCode === '210'){
+        this.globalErrorHandler.sessionOutMessage();
       }
     }
   }

@@ -12,7 +12,7 @@ import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, ILoadablePlanCommentsDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 
-import { ICargoResponseModel, ICargo } from '../../../shared/models/common.model';
+import { ICargoResponseModel, ICargo, ITimeZone } from '../../../shared/models/common.model';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
 
 import { VoyageService } from '../../core/services/voyage.service';
@@ -23,6 +23,8 @@ import { PermissionsService } from '../../../shared/services/permissions/permiss
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 
 /**
  * Component class of loadable plan
@@ -93,6 +95,7 @@ export class LoadablePlanComponent implements OnInit {
   public cargos: ICargo[];
   public confirmPlanPermission: boolean;
   public loadableStudyStatus: boolean;
+  timeZoneList: ITimeZone[];
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -111,6 +114,7 @@ export class LoadablePlanComponent implements OnInit {
     private voyageService: VoyageService,
     private loadableStudyListApiService: LoadableStudyListApiService,
     private permissionsService: PermissionsService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService
   ) { }
@@ -134,6 +138,7 @@ export class LoadablePlanComponent implements OnInit {
       this.getCargos()
       this.getVesselInfo();
       this.initSubsciptions();
+      this.getGlobalTimeZones();
       this.getVoyages(this.vesselId, this.voyageId);
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
@@ -234,6 +239,15 @@ export class LoadablePlanComponent implements OnInit {
   }
 
   /**
+   * function list golbal time zones
+   *
+   * @memberof LoadablePlanComponent
+   */
+  async getGlobalTimeZones() {
+    this.timeZoneList = await this.timeZoneTransformationService.getTimeZoneList().toPromise();
+  }
+
+  /**
   * Get details for loadable Plan
   * @returns {Promise<ILoadablePlanResponse>}
   * @memberof LoadablePlanComponent
@@ -262,7 +276,7 @@ export class LoadablePlanComponent implements OnInit {
     this.frontBallastTanks = loadablePlanRes.frontBallastTanks;
     this.rearBallastTanks = loadablePlanRes.rearBallastTanks;
     this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
-    this.loadablePlanSynopticalRecords = loadablePlanRes.loadablePlanSynopticalRecords;
+    this.loadablePlanSynopticalRecords = this.convertLoadablePlanSynRecordsDateTime(loadablePlanRes.loadablePlanSynopticalRecords);
     this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
     this.voyageNumber = loadablePlanRes.voyageNumber;
     this.date = loadablePlanRes.date;
@@ -359,6 +373,36 @@ export class LoadablePlanComponent implements OnInit {
         }
       }
     })
+  }
+
+  /**
+   * function to map the eta-etd port-based date and time
+   *
+   * @param {ILoadablePlanSynopticalRecord[]} synopticalRecords
+   * @return {*}  {ILoadablePlanSynopticalRecord[]}
+   * @memberof LoadablePlanComponent
+   */
+  convertLoadablePlanSynRecordsDateTime(synopticalRecords: ILoadablePlanSynopticalRecord[]): ILoadablePlanSynopticalRecord[] {
+    synopticalRecords.map(record => (record.etaEtdPlanned = this.transformDateTimeToPortLocal(record.etaEtdPlanned, record.portTimezoneId)));
+    return synopticalRecords;
+  }
+
+  /**
+   * function to conevrt the eta-etd local to port timezone
+   *
+   * @param {string} etaEtdDateTime
+   * @param {number} timeZonId
+   * @return {*}  {string}
+   * @memberof LoadablePlanComponent
+   */
+  transformDateTimeToPortLocal(etaEtdDateTime: string, timeZonId: number): string {
+    const selectedPortTimeZone = this.timeZoneList.find(tz => (tz.id === timeZonId));
+    const formatOptions: IDateTimeFormatOptions = {
+      portLocalFormat: true,
+      portTimeZoneOffset: selectedPortTimeZone?.offsetValue,
+      portTimeZoneAbbr: selectedPortTimeZone?.abbreviation
+    };
+    return this.timeZoneTransformationService.formatDateTime(etaEtdDateTime, formatOptions);
   }
 
 }
