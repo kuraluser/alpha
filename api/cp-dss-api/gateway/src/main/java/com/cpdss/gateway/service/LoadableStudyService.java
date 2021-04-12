@@ -326,6 +326,7 @@ public class LoadableStudyService {
     Optional.ofNullable(loadableQuantity.getVesselLightWeight())
         .ifPresent(builder::setVesselLightWeight);
     Optional.ofNullable(loadableQuantity.getPortId()).ifPresent(builder::setPortId);
+    Optional.ofNullable(loadableQuantity.getPortRotationId()).ifPresent(builder::setPortRotationId);
     Optional.ofNullable(loadableQuantity.getBoilerWaterOnBoard())
         .ifPresent(builder::setBoilerWaterOnBoard);
     Optional.ofNullable(loadableQuantity.getBallast()).ifPresent(builder::setBallast);
