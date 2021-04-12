@@ -102,7 +102,7 @@ public class LoadableQuantityService {
                         null != ohq.getFuelTypeXId()
                             && null != ohq.getPortRotation()
                             && ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                            && ohq.getPortRotation().getId() == portRotationId
+                            && ohq.getPortRotation().getId().equals(portRotationId)
                             && ohq.getIsActive())
                 .map(OnHandQuantity::getArrivalQuantity)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -136,14 +136,11 @@ public class LoadableQuantityService {
     builder.setSelectedZone(selectedZone);
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-    String lastUpdatedTime = null;
+    String lastUpdatedTime;
     List<LocalDateTime> lastUpdateTimeList = new ArrayList<>();
-    if (loadableQuantity.isPresent()) {
-      lastUpdateTimeList.add(loadableQuantity.get().getLastModifiedDateTime());
-    }
-    if (loadableStudy.isPresent()) {
-      lastUpdateTimeList.add(loadableStudy.get().getLastModifiedDateTime());
-    }
+    loadableQuantity.ifPresent(
+        quantity -> lastUpdateTimeList.add(quantity.getLastModifiedDateTime()));
+    loadableStudy.ifPresent(study -> lastUpdateTimeList.add(study.getLastModifiedDateTime()));
     LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
     lastUpdatedTime = formatter.format(maxOne);
 
