@@ -1104,12 +1104,16 @@ public class LoadableStudyService {
    * @return
    * @throws GenericServiceException LoadableQuantityResponse
    */
-  public LoadableQuantityResponse getLoadableQuantity(long loadableStudyId, String correlationId)
+  public LoadableQuantityResponse getLoadableQuantity(
+      long loadableStudyId, Long portRotationId, String correlationId)
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
     LoadableQuantity loadableQuantity = new LoadableQuantity();
     LoadableQuantityReply loadableQuantityRequest =
-        LoadableQuantityReply.newBuilder().setLoadableStudyId(loadableStudyId).build();
+        LoadableQuantityReply.newBuilder()
+            .setLoadableStudyId(loadableStudyId)
+            .setPortRotationId(portRotationId)
+            .build();
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
         this.getLoadableQuantityResponse(loadableQuantityRequest);
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getStatus())) {
@@ -1157,9 +1161,13 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getVesselAverageSpeed());
     loadableQuantity.setUpdateDateAndTime(
         loadableQuantityResponse.getLoadableQuantityRequest().getUpdateDateAndTime());
-    loadableQuantity.setPortId(
-        Integer.parseInt(
-            String.valueOf(loadableQuantityResponse.getLoadableQuantityRequest().getPortId())));
+
+    // Port Id is not using, as it can be duplicate in DB(using port-rotation-id)
+    // loadableQuantity.setPortId(Integer.parseInt(
+    // String.valueOf(loadableQuantityResponse.getLoadableQuantityRequest().getPortId())));
+
+    loadableQuantity.setPortRotationId(
+        loadableQuantityResponse.getLoadableQuantityRequest().getPortRotationId());
     loadableQuantity.setBoilerWaterOnBoard(
         loadableQuantityResponse.getLoadableQuantityRequest().getBoilerWaterOnBoard());
     loadableQuantity.setBallast(loadableQuantityResponse.getLoadableQuantityRequest().getBallast());

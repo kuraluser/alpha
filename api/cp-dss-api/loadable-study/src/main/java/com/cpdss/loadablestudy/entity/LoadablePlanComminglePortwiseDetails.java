@@ -121,7 +121,7 @@ public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
 
   @Column(name = "rdg_ullage")
   private String rdgUllage;
-  
+
   @Column(name = "port_rotation_xid")
   private Long portRotationXid;
 }

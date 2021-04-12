@@ -764,7 +764,8 @@ class LoadableStudyServiceTest {
             .setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY)
             .build();
 
-    Mockito.when(spy.getLoadableQuantity((anyLong()), anyString())).thenCallRealMethod();
+    Mockito.when(spy.getLoadableQuantity((anyLong()), (anyLong()), anyString()))
+        .thenCallRealMethod();
 
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.newBuilder()
@@ -777,12 +778,12 @@ class LoadableStudyServiceTest {
                     .build());
 
     LoadableQuantityReply loadableQuantityReply =
-        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).build();
+        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).setPortRotationId(1l).build();
     Mockito.when(spy.getLoadableQuantityResponse(loadableQuantityReply))
         .thenReturn(replyBuilder.build());
-    spy.getLoadableQuantity((long) 1, CORRELATION_ID_HEADER_VALUE);
+    spy.getLoadableQuantity((long) 1, (anyLong()), CORRELATION_ID_HEADER_VALUE);
     LoadableQuantityResponse loadableQuantityResponse =
-        spy.getLoadableQuantity((long) 1, CORRELATION_ID_HEADER_VALUE);
+        spy.getLoadableQuantity((long) 1, (anyLong()), CORRELATION_ID_HEADER_VALUE);
 
     Assert.assertEquals(
         String.valueOf(HttpStatusCode.OK.value()),
@@ -797,7 +798,7 @@ class LoadableStudyServiceTest {
   @Test
   public void negativeTestCaseForLoadableQuantity() throws GenericServiceException {
 
-    Mockito.when(loadableStudyService.getLoadableQuantity((anyLong()), anyString()))
+    Mockito.when(loadableStudyService.getLoadableQuantity((anyLong()), (anyLong()), anyString()))
         .thenCallRealMethod();
 
     LoadableQuantityRequest loadableQuantityRequest =
@@ -814,7 +815,7 @@ class LoadableStudyServiceTest {
             .build();
 
     LoadableQuantityReply loadableQuantityReply =
-        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).build();
+        LoadableQuantityReply.newBuilder().setPortRotationId(1l).setLoadableStudyId(1).build();
     Mockito.when(loadableStudyService.getLoadableQuantityResponse(loadableQuantityReply))
         .thenReturn(replyBuilder);
 
@@ -823,7 +824,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadableQuantity(
-                    (long) 1, CORRELATION_ID_HEADER_VALUE));
+                    (long) 1, (anyLong()), CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));

@@ -65,6 +65,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.websocket.server.PathParam;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -340,6 +341,8 @@ public class LoadableStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudiesId,
+      @PathParam("portRotationId") @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -347,7 +350,7 @@ public class LoadableStudyController {
       log.info(
           "get loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.getLoadableQuantity(
-          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+          loadableStudiesId, portRotationId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in save loadable quantity ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -695,6 +698,9 @@ public class LoadableStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudiesId,
+      @PathParam(value = "portRotationId")
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {

@@ -579,12 +579,14 @@ message LoadableQuantityRequest {
 	string foConsumptionPerDay = 28;
 	int64 id = 29;
 	string lastUpdatedTime = 30;
+	int64 portRotationId = 31;
 }
 
 message LoadableQuantityReply {
 	StatusReply responseStatus = 1;
 	int64 loadableQuantityId = 2;
 	int64 loadableStudyId = 3;
+	int64 portRotationId = 4;
 }
 
 message LoadableStudyRequest{
