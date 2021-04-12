@@ -11,4 +11,5 @@ public class LoadabalePatternValidateRequest {
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
   private Boolean ballastEdited;
   private Long loadablePatternId;
+  private Integer caseNumber;
 }
