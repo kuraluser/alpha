@@ -2450,6 +2450,53 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+      getGetAlgoErrorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAlgoErrors",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+      getGetAlgoErrorsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+        getGetAlgoErrorsMethod;
+    if ((getGetAlgoErrorsMethod = LoadableStudyServiceGrpc.getGetAlgoErrorsMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetAlgoErrorsMethod = LoadableStudyServiceGrpc.getGetAlgoErrorsMethod) == null) {
+          LoadableStudyServiceGrpc.getGetAlgoErrorsMethod =
+              getGetAlgoErrorsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAlgoErrors"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrorReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetAlgoErrors"))
+                      .build();
+        }
+      }
+    }
+    return getGetAlgoErrorsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest,
           com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply>
       getSaveVoyageStatusMethod;
@@ -3177,6 +3224,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetAlgoErrorsMethod(), responseObserver);
+    }
+
+    /** */
     public void saveVoyageStatus(
         com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply>
@@ -3565,6 +3620,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                       com.cpdss.common.generated.LoadableStudy.VoyageListReply>(
                       this, METHODID_GET_VOYAGES)))
+          .addMethod(
+              getGetAlgoErrorsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>(
+                      this, METHODID_GET_ALGO_ERRORS)))
           .addMethod(
               getSaveVoyageStatusMethod(),
               asyncUnaryCall(
@@ -4155,6 +4217,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetAlgoErrorsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void saveVoyageStatus(
         com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply>
@@ -4569,6 +4642,12 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.VoyageListReply getVoyages(
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return blockingUnaryCall(getChannel(), getGetVoyagesMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrorReply getAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
+      return blockingUnaryCall(getChannel(), getGetAlgoErrorsMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -5051,6 +5130,14 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+        getAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetAlgoErrorsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply>
         saveVoyageStatus(com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request) {
       return futureUnaryCall(
@@ -5146,12 +5233,13 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_COMMENT = 45;
   private static final int METHODID_SAVE_LOAD_ON_TOP = 46;
   private static final int METHODID_GET_VOYAGES = 47;
-  private static final int METHODID_SAVE_VOYAGE_STATUS = 48;
-  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 49;
-  private static final int METHODID_GET_ALL_CARGO_HISTORY = 50;
-  private static final int METHODID_SAVE_JSON = 51;
-  private static final int METHODID_SAVE_ALGO_ERRORS = 52;
-  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 53;
+  private static final int METHODID_GET_ALGO_ERRORS = 48;
+  private static final int METHODID_SAVE_VOYAGE_STATUS = 49;
+  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 50;
+  private static final int METHODID_GET_ALL_CARGO_HISTORY = 51;
+  private static final int METHODID_SAVE_JSON = 52;
+  private static final int METHODID_SAVE_ALGO_ERRORS = 53;
+  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 54;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5502,6 +5590,12 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageListReply>)
                   responseObserver);
           break;
+        case METHODID_GET_ALGO_ERRORS:
+          serviceImpl.getAlgoErrors(
+              (com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>)
+                  responseObserver);
+          break;
         case METHODID_SAVE_VOYAGE_STATUS:
           serviceImpl.saveVoyageStatus(
               (com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest) request,
@@ -5653,6 +5747,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveCommentMethod())
                       .addMethod(getSaveLoadOnTopMethod())
                       .addMethod(getGetVoyagesMethod())
+                      .addMethod(getGetAlgoErrorsMethod())
                       .addMethod(getSaveVoyageStatusMethod())
                       .addMethod(getGetCargoApiTempHistoryMethod())
                       .addMethod(getGetAllCargoHistoryMethod())
