@@ -139,6 +139,7 @@ export class CommingleComponent implements OnInit {
         return {...this.cargos.find((item) => (item.id === itm.cargoId) && item),
         ...itm}
       });
+      this.disableAddNewBtn = (this.cargoNominationsCargo.length <=2 && this.commingleCargo.cargoGroups.length <=2) ? true : false;
       this.cargoNominationsCargo1 = this.cargoNominationsCargo;
       this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo;

@@ -6,6 +6,8 @@ import { environment } from 'apps/cpdss/src/environments/environment';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
+import { ConfirmationAlertService } from './../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { first } from 'rxjs/operators';
 
 /**
  * Service for globally hadling errors
@@ -22,7 +24,8 @@ export class GlobalErrorHandler implements ErrorHandler {
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private router: Router,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private confirmationAlertService: ConfirmationAlertService) { }
 
   /**
    * Method for handling error
@@ -68,7 +71,27 @@ export class GlobalErrorHandler implements ErrorHandler {
    */
   private handleUnAuthorized(error) {
     this.ngxSpinnerService.hide();
+    if (error.error.errorCode === '210') {
+      this.sessionOutMessage();
+    } else {
       this.router.navigate(['access-denied']);
+    }
+  }
+
+  /**
+   * Handler session out
+   *
+   * @private
+   * @memberof GlobalErrorHandler
+   */
+  public sessionOutMessage() {
+    this.confirmationAlertService.clear('confirmation-alert');
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'SESSIONOUT_DIALOG_HEADER', detail: 'SESSIONOUT_DIALOG_BODY', data: { confirmLabel: 'SESSIONOUT_CONFIRM_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
+      if (response) {
+        window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
+      }
+    });
   }
 
   /**
@@ -91,7 +114,7 @@ export class GlobalErrorHandler implements ErrorHandler {
   private async handlePageNotFound() {
     this.ngxSpinnerService.hide();
     const translationKeys = await this.translateService.get(['SOMETHING_WENT_WRONG_ERROR', 'SOMETHING_WENT_WRONG']).toPromise();
-    this.messageService.add({severity: 'error', summary: translationKeys['SOMETHING_WENT_WRONG_ERROR'], detail: translationKeys['SOMETHING_WENT_WRONG'], sticky: true});
+    this.messageService.add({ severity: 'error', summary: translationKeys['SOMETHING_WENT_WRONG_ERROR'], detail: translationKeys['SOMETHING_WENT_WRONG'], sticky: true });
     this.router.navigate(['page-not-found']);
   }
 
@@ -105,7 +128,7 @@ export class GlobalErrorHandler implements ErrorHandler {
   private async handleInternalServer(error) {
     this.ngxSpinnerService.hide();
     const translationKeys = await this.translateService.get(['SOMETHING_WENT_WRONG_ERROR', 'SOMETHING_WENT_WRONG']).toPromise();
-    this.messageService.add({severity: 'error', summary: translationKeys['SOMETHING_WENT_WRONG_ERROR'], detail: translationKeys['SOMETHING_WENT_WRONG'], sticky: true});
+    this.messageService.add({ severity: 'error', summary: translationKeys['SOMETHING_WENT_WRONG_ERROR'], detail: translationKeys['SOMETHING_WENT_WRONG'], sticky: true });
   }
 
   /**
@@ -117,7 +140,7 @@ export class GlobalErrorHandler implements ErrorHandler {
   private async handleConnectionTimeout() {
     this.ngxSpinnerService.hide();
     const translationKeys = await this.translateService.get(['CONNECTION_TIMEOUT_ERROR', 'CONNECTION_TIMEOUT']).toPromise();
-    this.messageService.add({severity: 'error', summary: translationKeys['CONNECTION_TIMEOUT_ERROR'], detail: translationKeys['CONNECTION_TIMEOUT'], sticky: true});
+    this.messageService.add({ severity: 'error', summary: translationKeys['CONNECTION_TIMEOUT_ERROR'], detail: translationKeys['CONNECTION_TIMEOUT'], sticky: true });
   }
 
 }

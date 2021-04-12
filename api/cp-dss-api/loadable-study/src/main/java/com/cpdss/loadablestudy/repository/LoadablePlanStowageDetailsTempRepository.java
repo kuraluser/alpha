@@ -5,7 +5,9 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
 import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 /** @author suhail.k */
 public interface LoadablePlanStowageDetailsTempRepository
@@ -27,4 +29,9 @@ public interface LoadablePlanStowageDetailsTempRepository
   @Query(
       "SELECT CASE WHEN count(*) > 0 then true else false end from LoadablePlanStowageDetailsTemp LPSDT WHERE LPSDT.loadablePlanBallastDetails.id in (SELECT id FROM LoadablePlanBallastDetails LPBD WHERE LPBD.loadablePattern.id = ?1 AND LPBD.isActive = ?2) AND LPSDT.isActive = ?2")
   public Boolean isBallastEdited(Long loadablePatternId, Boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadablePlanStowageDetailsTemp SET isActive = ?1 WHERE loadablePattern.id = ?2")
+  public void deleteLoadablePlanStowageDetailsTemp(Boolean isActive, Long loadablePatternId);
 }

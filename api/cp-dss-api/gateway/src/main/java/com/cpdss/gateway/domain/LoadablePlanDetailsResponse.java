@@ -49,4 +49,10 @@ public class LoadablePlanDetailsResponse {
 
   @JsonInclude(Include.NON_NULL)
   private CommonSuccessResponse responseStatus;
+
+  @JsonInclude(Include.NON_NULL)
+  private Long loadablePatternStatusId;
+
+  @JsonInclude(Include.NON_NULL)
+  private Long voyageStatusId;
 }

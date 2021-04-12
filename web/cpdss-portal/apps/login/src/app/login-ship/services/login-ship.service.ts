@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { ILoginShip, ILoginShipResponse } from '../model/login-ship.model';
 
 /**
@@ -21,6 +22,6 @@ export class LoginShipService {
    * @param loginData 
    */
   validateShipLogin(loginData: ILoginShip): Observable<ILoginShipResponse>{
-    return this.http.post<ILoginShipResponse>(`api/ship/authenticate`, loginData); 
+    return this.http.post<ILoginShipResponse>(`${AppConfigurationService?.settings?.apiUrl}api/ship/authenticate`, loginData); 
   }
 }

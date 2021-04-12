@@ -9,6 +9,9 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
@@ -89,6 +92,8 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoError;
+import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
@@ -155,6 +160,7 @@ import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ProtocolStringList;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -224,7 +230,8 @@ public class LoadableStudyService {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
-  private static final Long LOADABLE_STUDY_RESPONSE = 2L;
+  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
 
   @Autowired private UsersRepository usersRepository;
 
@@ -3268,7 +3275,7 @@ public class LoadableStudyService {
       StatusReply reply =
           this.saveJson(
               loadableStudiesId,
-              LOADABLE_STUDY_RESPONSE,
+              LOADABLE_STUDY_RESULT_JSON_ID,
               objectMapper.writeValueAsString(loadablePlanRequest));
       if (!SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
@@ -3535,6 +3542,78 @@ public class LoadableStudyService {
   }
 
   /**
+   * @param request
+   * @param loadablePatternId
+   * @param first
+   * @return AlgoErrorResponse
+   */
+  public AlgoErrorResponse getAlgoError(Long loadablePatternId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getAlgoError gateway service with correlationId : " + correlationId);
+    AlgoErrorRequest.Builder request = AlgoErrorRequest.newBuilder();
+    request.setLoadablePatternId(loadablePatternId);
+    AlgoErrorReply grpcReply = this.getAlgoError(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to getAlgoError",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return buildErrorResponse(grpcReply, correlationId);
+  }
+
+  /**
+   * @param grpcReply
+   * @return AlgoErrorResponse
+   */
+  private AlgoErrorResponse buildErrorResponse(AlgoErrorReply grpcReply, String correlationId) {
+    AlgoErrorResponse errorResponse = new AlgoErrorResponse();
+    errorResponse.setAlgoErrors(new ArrayList<AlgoError>());
+    grpcReply
+        .getAlgoErrorsList()
+        .forEach(
+            algoError -> {
+              errorResponse.getAlgoErrors().add(buildAlgoError(algoError));
+            });
+    errorResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return errorResponse;
+  }
+
+  /**
+   * @param algoError
+   * @return AlgoError
+   */
+  private AlgoError buildAlgoError(AlgoErrors algoError) {
+    AlgoError error = new AlgoError();
+    error.setErrorHeading(algoError.getErrorHeading());
+    error.setErrorDetails(buildErrorMessage(algoError.getErrorMessagesList()));
+    return error;
+  }
+
+  /**
+   * @param errorMessagesList
+   * @return List<String>
+   */
+  private List<String> buildErrorMessage(ProtocolStringList errorMessagesList) {
+    List<String> errors = new ArrayList<String>();
+    errorMessagesList.forEach(
+        error -> {
+          errors.add(error);
+        });
+    return errors;
+  }
+
+  /**
+   * @param request
+   * @return AlgoErrorReply
+   */
+  public AlgoErrorReply getAlgoError(
+      com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.Builder request) {
+    return this.loadableStudyServiceBlockingStub.getAlgoErrors(request.build());
+  }
+
+  /**
    * @param loadablePatternId
    * @param loadableStudyId
    * @param first
@@ -3583,6 +3662,8 @@ public class LoadableStudyService {
     response.setVoyageNumber(grpcReply.getVoyageNumber());
     response.setCaseNumber(grpcReply.getCaseNumber());
     response.setDate(grpcReply.getDate());
+    response.setVoyageStatusId(grpcReply.getVoyageStatusId());
+    response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
   }
 
   /**
@@ -4625,6 +4706,23 @@ public class LoadableStudyService {
       String correlationId)
       throws GenericServiceException {
     log.info("Inside patternValidateResult in gateway micro service");
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      objectMapper.writeValue(
+          new File(this.rootFolder + "/json/patternValidateResult_" + loadablePatternId + ".json"),
+          patternValidateResultRequest);
+      StatusReply reply =
+          this.saveJson(
+              loadablePatternId,
+              LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID,
+              objectMapper.writeValueAsString(patternValidateResultRequest));
+      if (!SUCCESS.equals(reply.getStatus())) {
+        log.error("Error occured  in gateway while writing JSON to database.");
+      }
+    } catch (IOException e) {
+      log.error("Error in json writing ", e);
+    }
+
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadablePatternId(loadablePatternId);
@@ -4636,7 +4734,8 @@ public class LoadableStudyService {
       loadablePlanRequest.setProcessId(patternValidateResultRequest.getProcessId());
       buildLoadablePlanDetails(loadablePlanRequest, request);
     } else {
-      // ToDo - error handling
+      if (null != patternValidateResultRequest.getErrors())
+        buildAlgoError(patternValidateResultRequest.getErrors(), request);
     }
 
     AlgoReply algoReply = this.patternValidateResult(request);
@@ -4648,8 +4747,32 @@ public class LoadableStudyService {
     }
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-    return null;
+    return algoPatternResponse;
   }
+  /**
+   * @param list
+   * @param request void
+   */
+  private void buildAlgoError(
+      List<AlgoError> list,
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
+    list.forEach(
+        error -> {
+          request.addAlgoErrors(buildSingleAlgoError(error));
+        });
+  }
+
+  /**
+   * @param error
+   * @return AlgoErrors
+   */
+  private AlgoErrors buildSingleAlgoError(AlgoError errors) {
+    AlgoErrors.Builder error = AlgoErrors.newBuilder();
+    error.setErrorHeading(errors.getErrorHeading());
+    error.addAllErrorMessages(errors.getErrorDetails());
+    return error.build();
+  }
+
   /**
    * @param request
    * @return AlgoReply

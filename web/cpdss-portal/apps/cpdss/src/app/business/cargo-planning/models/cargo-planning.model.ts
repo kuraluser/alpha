@@ -811,6 +811,10 @@ export interface ICargoHistoryDetails {
     cargoId?: number;
     apiTemp?: string;
     minMaxTolerance?: string;
+    slopQuantity?: string;
+    timeRequiredForLoading?: string;
+    loadingPorts?: string[];
+    loadingPort?: string;
 }
 
 
@@ -824,6 +828,7 @@ export interface ICargoHistoryDetails {
     operationType: string;
     portId: number;
     portName: string;
+    portTimezoneId: number;
     etaEtdPlanned: string;
     plannedFOTotal: number;
     plannedDOTotal: number;

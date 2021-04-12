@@ -26,9 +26,10 @@ export class ShoreAuthGuard extends KeycloakAuthGuard {
 
         const loggedIn = await this.keycloak.isLoggedIn();
         if (loggedIn) {
-            setTimeout(() => {
+            // *** commented after first time login user task implementation - DSS-1634 ***
+            /* setTimeout(() => {
                 this.router.navigate(['business']);
-            }, 500);
+            }, 500); */
         }
         else {
             window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;

@@ -18,6 +18,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { first } from 'rxjs/operators';
+import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 
 
 /**
@@ -88,7 +89,8 @@ export class PortsComponent implements OnInit, OnDestroy {
     private ngxSpinnerService: NgxSpinnerService,
     private confirmationAlertService: ConfirmationAlertService,
     private messageService: MessageService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private globalErrorHandler: GlobalErrorHandler) { }
 
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
@@ -197,9 +199,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
     this.updatePortOrder();
     this.ngxSpinnerService.hide();
-    setTimeout(() => {
-      this.updateFormValidity(portListArray)
-    }, 500);
+    this.updateFormValidity(portListArray);
   }
 
 
@@ -270,6 +270,9 @@ export class PortsComponent implements OnInit, OnDestroy {
       }
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['PORT_UPDATE_ERROR'], detail: translationKeys['PORT_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+      if(event?.data?.status === '401' && event?.data?.errorCode === '210'){
+        this.globalErrorHandler.sessionOutMessage();
       }
     }
   }

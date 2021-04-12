@@ -36,3 +36,14 @@ export interface IPermission {
     delete: boolean;
     view: boolean;
 }
+
+/**
+ * Interface for notification
+ */
+export interface INotificationItem {
+    email: string;
+    firstName: string;
+    id: string;
+    lastName: string;
+    username: string;
+}

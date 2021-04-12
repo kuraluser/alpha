@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import  {UnitDropdownComponent } from './unit-dropdown.component'
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 /**
@@ -21,7 +22,8 @@ import { DropdownModule } from 'primeng/dropdown';
   imports: [
     CommonModule,
     FormsModule,
-    DropdownModule
+    DropdownModule,
+    TranslateModule
   ]
 })
 export class UnitDropdownModule { }

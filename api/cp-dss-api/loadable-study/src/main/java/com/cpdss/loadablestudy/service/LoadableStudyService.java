@@ -10,6 +10,9 @@ import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
@@ -132,6 +135,7 @@ import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.domain.UllageUpdateRequest;
 import com.cpdss.loadablestudy.domain.UllageUpdateResponse;
+import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
 import com.cpdss.loadablestudy.entity.ApiTempHistory;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
@@ -164,6 +168,8 @@ import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
@@ -297,6 +303,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
+  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired private AlgoErrorsRepository algoErrorsRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
 
   @Autowired
@@ -340,7 +348,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
-  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+  private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long BUNKERING_OPERATION_ID = 3L;
@@ -3070,7 +3078,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
+        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -4364,7 +4372,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             new com.cpdss.loadablestudy.domain.LoadableStudy();
 
         buildLoadableStudy(
-            loadablePatternOpt.get().getId(),
+            loadablePatternOpt.get().getLoadableStudy().getId(),
             loadablePatternOpt.get().getLoadableStudy(),
             loadableStudy,
             modelMapper);
@@ -4376,6 +4384,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadabalePatternValidateRequest.setBallastEdited(
             stowageDetailsTempRepository.isBallastEdited(request.getLoadablePatternId(), true));
         loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
+        loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
 
         ObjectMapper objectMapper = new ObjectMapper();
         this.saveJsonToDatabase(
@@ -4782,6 +4791,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_FAILED_ID, request.getProcesssId(), true);
 
+        algoErrorsRepository.deleteAlgoError(false, request.getLoadablePatternId());
+        algoErrorHeadingRepository.deleteAlgoErrorHeading(false, request.getLoadablePatternId());
+
+        saveAlgoErrorToDB(request, loadablePatternOpt.get(), new LoadableStudy(), true);
+
       } else {
 
         deleteExistingPlanDetails(loadablePatternOpt.get());
@@ -4853,8 +4867,48 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  /**
+   * @param request
+   * @param loadableStudy
+   * @param loadablePattern
+   * @param b void
+   */
+  private void saveAlgoErrorToDB(
+      LoadablePatternAlgoRequest request,
+      LoadablePattern loadablePattern,
+      LoadableStudy loadableStudy,
+      boolean isPatternErrorSaving) {
+    request
+        .getAlgoErrorsList()
+        .forEach(
+            algoError -> {
+              AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+              algoErrorHeading.setErrorHeading(algoError.getErrorHeading());
+              if (isPatternErrorSaving) {
+                algoErrorHeading.setLoadablePattern(loadablePattern);
+              } else {
+                algoErrorHeading.setLoadableStudy(loadableStudy);
+              }
+              algoErrorHeading.setIsActive(true);
+              algoErrorHeadingRepository.save(algoErrorHeading);
+              algoError
+                  .getErrorMessagesList()
+                  .forEach(
+                      error -> {
+                        com.cpdss.loadablestudy.entity.AlgoErrors algoErrors =
+                            new com.cpdss.loadablestudy.entity.AlgoErrors();
+                        algoErrors.setAlgoErrorHeading(algoErrorHeading);
+                        algoErrors.setErrorMessage(error);
+                        algoErrors.setIsActive(true);
+                        algoErrorsRepository.save(algoErrors);
+                      });
+            });
+  }
+
   /** @param loadablePattern void */
   private void deleteExistingPlanDetails(LoadablePattern loadablePattern) {
+    stowageDetailsTempRepository.deleteLoadablePlanStowageDetailsTemp(
+        false, loadablePattern.getId());
     loadablePlanQuantityRepository.deleteLoadablePlanQuantity(false, loadablePattern.getId());
     loadablePlanCommingleDetailsRepository.deleteLoadablePlanCommingleDetails(
         false, loadablePattern.getId());
@@ -7143,6 +7197,82 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     return this.vesselInfoGrpcService.getVesselDetailForSynopticalTable(request);
   }
 
+  @Override
+  public void getAlgoErrors(
+      AlgoErrorRequest request, StreamObserver<AlgoErrorReply> responseObserver) {
+    log.info("inside getAlgoErrors loadable study service");
+    AlgoErrorReply.Builder replyBuilder = AlgoErrorReply.newBuilder();
+    try {
+      if (request.getLoadablePatternId() != 0) {
+        Optional<LoadablePattern> loadablePatternOpt =
+            this.loadablePatternRepository.findByIdAndIsActive(
+                request.getLoadablePatternId(), true);
+        if (!loadablePatternOpt.isPresent()) {
+          log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+          throw new GenericServiceException(
+              INVALID_LOADABLE_PATTERN_ID,
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+
+        } else {
+          log.info("inside getAlgoErrors loadable study service - getting error details");
+          buildLoadablePatternErrorDetails(loadablePatternOpt.get(), replyBuilder);
+        }
+      } else {
+        // ToDo - error in pattern generate
+      }
+
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study - getAlgoErrors", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+
+    } catch (Exception e) {
+      log.error("Exception when getAlgoErrors ", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param loadablePattern
+   * @param replyBuilder void
+   */
+  private void buildLoadablePatternErrorDetails(
+      LoadablePattern loadablePattern,
+      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder replyBuilder) {
+
+    Optional<List<AlgoErrorHeading>> alogError =
+        algoErrorHeadingRepository.findByLoadablePatternAndIsActive(loadablePattern, true);
+    if (alogError.isPresent()) {
+      log.info("Adding ALGO error");
+      for (AlgoErrorHeading errorHeading : alogError.get()) {
+        AlgoErrors.Builder errorBuilder = AlgoErrors.newBuilder();
+
+        Optional<List<com.cpdss.loadablestudy.entity.AlgoErrors>> algoError =
+            algoErrorsRepository.findByAlgoErrorHeadingAndIsActive(errorHeading, true);
+        if (algoError.isPresent()) {
+          List<String> res = new ArrayList<>();
+          res.addAll(
+              algoError.get().stream()
+                  .map(val -> val.getErrorMessage())
+                  .collect(Collectors.toList()));
+          errorBuilder.addAllErrorMessages(res);
+        }
+
+        errorBuilder.setErrorHeading(errorHeading.getErrorHeading());
+        replyBuilder.addAlgoErrors(errorBuilder);
+      }
+    }
+    replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
   private VesselReply getTanks(Long vesselId, List<Long> tankCategory)
       throws GenericServiceException {
     VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
@@ -7260,6 +7390,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     replyBuilder.setDate(
         DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT).format(loadablePattern.getCreatedDate()));
     replyBuilder.setVoyageNumber(loadablePattern.getLoadableStudy().getVoyage().getVoyageNo());
+    replyBuilder.setVoyageStatusId(
+        loadablePattern.getLoadableStudy().getVoyage().getVoyageStatus().getId());
+    List<LoadablePatternAlgoStatus> status =
+        loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(loadablePattern, true);
+    if (!status.isEmpty()) {
+      replyBuilder.setLoadablePatternStatusId(
+          status.get(status.size() - 1).getLoadableStudyStatus().getId());
+    }
   }
 
   /**

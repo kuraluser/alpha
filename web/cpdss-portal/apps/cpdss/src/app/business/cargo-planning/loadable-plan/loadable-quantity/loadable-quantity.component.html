@@ -57,7 +57,7 @@
             </p-table>
     </div>
     </div>
-    <div  class="row">
+    <div  class="row" *ngIf="loadableQuantityCommingleCargoDetails?.length"> 
         <div class="col">
             <cpdss-portal-commingled-cargo-details [loadableQuantityCargoDetails]="loadableQuantityCommingleCargoDetails"></cpdss-portal-commingled-cargo-details>
     </div>

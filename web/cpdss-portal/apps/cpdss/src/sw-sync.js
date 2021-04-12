@@ -2,8 +2,7 @@
   'use strict';
 
   importScripts('dexie.min.js');
-  let apiUrl, environment, appConfig, token;
-  let apiEndPoint = '/api/cloud';
+  let apiUrl, environment, appConfig, token, apiEndPoint;
   const db = new Dexie("CPDSS");
   db.version(1).stores({
     cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
@@ -27,10 +26,12 @@
 
       if (environment !== 'shore') {
         apiEndPoint = '/api/ship';
+      } else {
+        apiEndPoint = '/api/cloud';
       }
 
       if (appConfig?.path) {
-        apiEndPoint += appConfig?.path + apiEndPoint
+        apiEndPoint = appConfig?.path + apiEndPoint;
       }
 
       if (self.location.protocol === 'https:') {
@@ -92,7 +93,7 @@
                   headers: headers
                 });
 
-                if (syncResponse.status === 200 || syncResponse.status === 400) {
+                if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -117,7 +118,7 @@
                   headers: headers
                 });
 
-                if (syncResponse.status === 200 || syncResponse.status === 400) {
+                if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -171,7 +172,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200 || syncResponse.status === 400) {
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -195,7 +196,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200 || syncResponse.status === 400) {
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -251,7 +252,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200|| syncResponse.status === 400) {
+              if (syncResponse.status === 200|| syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = ohq.storeKey;
                 sync.type = 'ohq_sync_finished';
@@ -306,7 +307,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200 || syncResponse.status === 400) {
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = obq.storeKey;
                 sync.type = 'obq_sync_finished';
