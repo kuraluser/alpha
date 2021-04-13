@@ -151,6 +151,9 @@ service LoadableStudyService {
 	rpc GetVoyages (VoyageRequest) returns (VoyageListReply) {
 	}
 	
+	rpc GetAlgoErrors (AlgoErrorRequest) returns (AlgoErrorReply) {
+	}
+	
 	rpc SaveVoyageStatus(SaveVoyageStatusRequest) returns (SaveVoyageStatusReply){
 	}
 	
@@ -307,6 +310,17 @@ message LoadablePatternAlgoRequest {
 	bool validated = 4;
 	repeated AlgoErrors algoErrors = 5;
 	int64 loadablePatternId = 6;
+	
+}
+
+message AlgoErrorRequest {
+	int64 loadableStudyId = 1;
+	int64 loadablePatternId = 2;
+}
+
+message AlgoErrorReply {
+	repeated AlgoErrors algoErrors = 1;
+	ResponseStatus responseStatus = 2;
 }
 
 message LoadablePlanDetails {
@@ -353,6 +367,8 @@ message LoadablePlanDetailsReply {
   	string date = 12;
   	string voyageNumber = 13;
   	int64 id = 14;
+  	int64 loadablePatternStatusId = 15;
+  	int64 voyageStatusId = 16;
 }
 
 message LoadablePlanComments {
