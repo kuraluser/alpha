@@ -410,8 +410,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           FRESH_WATER_TANK_CATEGORY_ID,
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
-          LUBRICATING_OIL_TANK_CATEGORY_ID,
-          LUBRICANT_OIL_TANK_CATEGORY_ID,
           FUEL_VOID_TANK_CATEGORY_ID,
           FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
@@ -459,8 +457,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           FRESH_WATER_TANK_CATEGORY_ID,
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
-          LUBRICATING_OIL_TANK_CATEGORY_ID,
-          LUBRICANT_OIL_TANK_CATEGORY_ID,
           BALLAST_TANK_CATEGORY_ID);
 
   private static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
@@ -2500,6 +2496,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> detailBuilder.setPortRotationId(item.getId()));
           Optional.ofNullable(qty.getPortRotation())
               .ifPresent(item -> detailBuilder.setPortId(item.getPortXId()));
+        } else {
+          if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
+            Optional<OnHandQuantity> ohqQtyOpt =
+                onHandQuantityList.stream()
+                    .filter(
+                        entity ->
+                            entity.getFuelTypeXId().equals(tankDetail.getTankCategoryId())
+                                && entity.getTankXId().equals(tankDetail.getTankId()))
+                    .findAny();
+            if (ohqQtyOpt.isPresent()) {
+              OnHandQuantity ohqQty = ohqQtyOpt.get();
+              detailBuilder.setId(ohqQty.getId());
+              Optional.ofNullable(ohqQty.getArrivalQuantity())
+                  .ifPresent(item -> detailBuilder.setArrivalQuantity(valueOf(item)));
+              Optional.ofNullable(ohqQty.getArrivalVolume())
+                  .ifPresent(item -> detailBuilder.setArrivalVolume(valueOf(item)));
+              Optional.ofNullable(ohqQty.getDepartureQuantity())
+                  .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
+              Optional.ofNullable(ohqQty.getDepartureVolume())
+                  .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
+              Optional.ofNullable(ohqQty.getDensity())
+                  .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
+            }
+          }
         }
         replyBuilder.addOnHandQuantity(detailBuilder.build());
       }
@@ -3251,6 +3271,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableQuantityCommingleCargoDetailsList.get(i).getCorrectedUllage());
       loadablePlanCommingleDetails.setRdgUllage(
           loadableQuantityCommingleCargoDetailsList.get(i).getRdgUllage());
+      loadablePlanCommingleDetails.setSlopQuantity(
+          loadableQuantityCommingleCargoDetailsList.get(i).getSlopQuantity());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
     }
   }
@@ -3281,6 +3303,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setLoadingOrder(lqcd.getLoadingOrder());
               loadablePlanQuantity.setMinTolerence(lqcd.getMinTolerence());
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
+              loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
             });
   }
@@ -3555,8 +3578,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
                   loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
+              List<LoadablePlanStowageDetailsTemp> ballstTempList =
+                  this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
+                      loadablePlanBallastDetails, true);
               LoadablePlanBuilder.buildBallastGridDetails(
-                  loadablePlanBallastDetails, loadablePatternBuilder);
+                  loadablePlanBallastDetails, ballstTempList, loadablePatternBuilder);
               // <--DSS-2016!-->
 
               builder.addLoadablePattern(loadablePatternBuilder);
@@ -4087,16 +4113,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private void saveUllageUpdateResponse(
       UllageUpdateResponse algoResponse, UpdateUllageRequest request) {
-    LoadablePlanStowageDetails stowageDetails =
-        this.loadablePlanStowageDetailsRespository.getOne(algoResponse.getId());
-    LoadablePlanStowageDetailsTemp stowageTemp =
-        this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsAndIsActive(
-            stowageDetails, true);
-    if (null == stowageTemp) {
-      stowageTemp = new LoadablePlanStowageDetailsTemp();
-      stowageTemp.setLoadablePlanStowageDetails(stowageDetails);
-      stowageTemp.setIsActive(true);
+    LoadablePlanStowageDetailsTemp stowageTemp = null;
+    if (request.getLoadablePlanStowageDetails().getIsBallast()) {
+      LoadablePlanBallastDetails ballastDetails =
+          this.loadablePlanBallastDetailsRepository.getOne(algoResponse.getId());
+      stowageTemp =
+          this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsAndIsActive(
+              ballastDetails, true);
+      if (null == stowageTemp) {
+        stowageTemp = new LoadablePlanStowageDetailsTemp();
+        stowageTemp.setLoadablePlanBallastDetails(ballastDetails);
+        stowageTemp.setIsActive(true);
+      }
+    } else {
+      LoadablePlanStowageDetails stowageDetails =
+          this.loadablePlanStowageDetailsRespository.getOne(algoResponse.getId());
+      stowageTemp =
+          this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsAndIsActive(
+              stowageDetails, true);
+      if (null == stowageTemp) {
+        stowageTemp = new LoadablePlanStowageDetailsTemp();
+        stowageTemp.setLoadablePlanStowageDetails(stowageDetails);
+        stowageTemp.setIsActive(true);
+      }
     }
+
     stowageTemp.setCorrectedUllage(
         isEmpty(algoResponse.getCorrectedUllage())
             ? null
@@ -4113,6 +4154,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(algoResponse.getQuantityMt())
             ? null
             : new BigDecimal(algoResponse.getQuantityMt()));
+    stowageTemp.setRdgUllage(
+        isEmpty(request.getLoadablePlanStowageDetails().getCorrectedUllage())
+            ? null
+            : new BigDecimal(request.getLoadablePlanStowageDetails().getCorrectedUllage()));
     stowageTemp.setIsBallast(request.getLoadablePlanStowageDetails().getIsBallast());
     this.stowageDetailsTempRepository.save(stowageTemp);
   }
@@ -4197,7 +4242,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             LOADABLE_PATTERN_EDIT_REQUEST,
             objectMapper.writeValueAsString(loadabalePatternValidateRequest));
         objectMapper.writeValue(
-            new File("json/loadablePattern_request_" + request.getLoadablePatternId() + ".json"),
+            new File(
+                this.rootFolder
+                    + "/json/loadablePattern_request_"
+                    + request.getLoadablePatternId()
+                    + ".json"),
             loadabalePatternValidateRequest);
 
         AlgoResponse algoResponse =
@@ -4749,7 +4798,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.writeValue(
-            new File("json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
+            new File(
+                this.rootFolder + "/json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
             loadableStudy);
 
         this.saveJsonToDatabase(
@@ -4866,7 +4916,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ObjectMapper objectMapper = new ObjectMapper();
 
       objectMapper.writeValue(
-          new File("json/loadicator_" + request.getLoadableStudyId() + ".json"), loadicator);
+          new File(this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+          loadicator);
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
       this.saveloadicatorDataForSynopticalTable(algoResponse);
@@ -7234,6 +7285,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void buildBallastGridDetails(
       List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+    List<LoadablePlanStowageDetailsTemp> ballstTempList =
+        this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
+            loadablePlanBallastDetails, true);
     loadablePlanBallastDetails.forEach(
         lpbd -> {
           com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.Builder builder =
@@ -7253,6 +7307,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
+          LoadablePlanBuilder.setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
   }
@@ -7351,6 +7406,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void buildLoadablePlanStowageCargoDetails(
       List<LoadablePlanStowageDetails> loadablePlanStowageDetails,
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+    List<LoadablePlanStowageDetailsTemp> tempStowageDetails =
+        this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsInAndIsActive(
+            loadablePlanStowageDetails, true);
     loadablePlanStowageDetails.forEach(
         lpsd -> {
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
@@ -7371,9 +7429,38 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
+          this.setTempStowageDetails(lpsd, tempStowageDetails, builder);
           builder.setIsCommingle(false);
           replyBuilder.addLoadablePlanStowageDetails(builder);
         });
+  }
+
+  /**
+   * Check if data present in temporary table
+   *
+   * @param lpsd
+   * @param tempStowageDetails
+   * @param builder
+   */
+  private void setTempStowageDetails(
+      LoadablePlanStowageDetails lpsd,
+      List<LoadablePlanStowageDetailsTemp> tempStowageDetails,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder) {
+    Optional<LoadablePlanStowageDetailsTemp> tempStowageOpt =
+        tempStowageDetails.stream()
+            .filter(temp -> temp.getLoadablePlanStowageDetails().getId().equals(lpsd.getId()))
+            .findAny();
+    if (tempStowageOpt.isPresent()) {
+      LoadablePlanStowageDetailsTemp tempStowage = tempStowageOpt.get();
+      Optional.ofNullable(tempStowage.getCorrectedUllage())
+          .ifPresent(item -> builder.setCorrectedUllage(valueOf(item)));
+      Optional.ofNullable(tempStowage.getCorrectionFactor())
+          .ifPresent(item -> builder.setCorrectionFactor(valueOf(item)));
+      Optional.ofNullable(tempStowage.getFillingRatio())
+          .ifPresent(item -> builder.setFillingRatio(valueOf(item)));
+      Optional.ofNullable(tempStowage.getQuantity())
+          .ifPresent(item -> builder.setWeight(valueOf(item)));
+    }
   }
 
   /**

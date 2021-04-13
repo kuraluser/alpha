@@ -113,4 +113,7 @@ public class LoadablePlanCommingleDetails extends EntityDoc {
 
   @Column(name = "rdg_ullage")
   private String rdgUllage;
+
+  @Column(name = "slop_quantity")
+  private String slopQuantity;
 }
