@@ -1156,6 +1156,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       CargoNomination cargoNomination = null;
       List<Long> existingCargoPortIds = null;
+      ApiTempHistory apiTempHistory   = null;
       if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() != 0) {
         Optional<CargoNomination> existingCargoNomination =
@@ -1175,10 +1176,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .collect(Collectors.toList());
         }
         cargoNomination = buildCargoNomination(cargoNomination, request);
+        apiTempHistory = buildApiTempHistory(cargoNomination, request);
       } else if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() == 0) {
         cargoNomination = new CargoNomination();
         cargoNomination = buildCargoNomination(cargoNomination, request);
+        apiTempHistory = buildApiTempHistory(cargoNomination, request);
       }
 
       // update port rotation table with loading ports from cargo nomination
@@ -1199,6 +1202,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
       this.cargoNominationRepository.save(cargoNomination);
+      this.apiTempHistoryRepository.save(apiTempHistory);
       this.updatePortRotationWithLoadingPorts(
           loadableStudyRecord, cargoNomination, existingCargoPortIds);
       cargoNominationReplyBuilder
@@ -1383,6 +1387,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 Optional.ofNullable(loadingPort.getPortId()).ifPresent(reqBuilder::addId);
               });
     }
+  }
+  
+  private ApiTempHistory buildApiTempHistory(
+	      CargoNomination cargoNomination, CargoNominationRequest request) {
+	  
+	  return ApiTempHistory.builder()
+	     .vesselId(request.getVesselId())
+	     .cargoId(cargoNomination.getCargoXId())
+	     .api(cargoNomination.getApi())
+	     .isActive(true)
+	     .temp(cargoNomination.getTemperature()).build();
+
   }
 
   private CargoNomination buildCargoNomination(
