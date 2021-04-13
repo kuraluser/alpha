@@ -209,6 +209,7 @@ import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -306,7 +307,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired private AlgoErrorsRepository algoErrorsRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
-
+  
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
@@ -346,7 +347,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String COMMINGLE = "COM";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
-  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm"; 
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
@@ -1701,14 +1702,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         builder.addLoadingPortDetails(loadingPortDetailBuilder);
                       });
             }
+            
+            if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+            	CargoNominationPortDetails cargoNominationPortDetail = cargoNomination.getCargoNominationPortDetails().iterator().next();
+            	if(cargoNomination.getCargoXId() != null && cargoNominationPortDetail.getPortId() != null) {
+            		
+                   	List<ApiTempHistory> apiTempHistories = apiTempHistoryRepository.
+                   			findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(cargoNominationPortDetail.getPortId(), cargoNomination.getCargoXId() , true);
+                	if(!CollectionUtils.isEmpty(apiTempHistories)) {
+                		ApiTempHistory apiTempHistory = apiTempHistories.get(0);
+                		Optional.ofNullable(apiTempHistory.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                		Optional.ofNullable(apiTempHistory.getTemp()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                	}else {
+                    	Optional.ofNullable(cargoNomination.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                		Optional.ofNullable(cargoNomination.getTemperature()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                    }
+            	}
+            }
             Optional.ofNullable(cargoNomination.getMaxTolerance())
                 .ifPresent(maxTolerance -> builder.setMaxTolerance(String.valueOf(maxTolerance)));
             Optional.ofNullable(cargoNomination.getMinTolerance())
                 .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
-            Optional.ofNullable(cargoNomination.getApi())
-                .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-            Optional.ofNullable(cargoNomination.getTemperature())
-                .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
             Optional.ofNullable(cargoNomination.getSegregationXId())
                 .ifPresent(builder::setSegregationId);
             cargoNominationReplyBuilder.addCargoNominations(builder);
