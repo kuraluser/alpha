@@ -1188,12 +1188,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .collect(Collectors.toList());
         }
         cargoNomination = buildCargoNomination(cargoNomination, request);
-        apiTempHistory = buildApiTempHistory(cargoNomination, request);
+        apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
       } else if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() == 0) {
         cargoNomination = new CargoNomination();
         cargoNomination = buildCargoNomination(cargoNomination, request);
-        apiTempHistory = buildApiTempHistory(cargoNomination, request);
+        apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
       }
 
       // update port rotation table with loading ports from cargo nomination
@@ -1401,16 +1401,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  private ApiTempHistory buildApiTempHistory(
-      CargoNomination cargoNomination, CargoNominationRequest request) {
+  private ApiTempHistory buildApiTempHistory( CargoNomination cargoNomination, CargoNominationRequest request, List<Long> existingCargoPortIds) {
+	  
+	  Long portId = null;
+	  if(!Optional.ofNullable(existingCargoPortIds).isEmpty()) {
+		  portId =  existingCargoPortIds.stream().findFirst().get();
+	  }
+	  
+	  return ApiTempHistory.builder()
+	     .vesselId(request.getVesselId())
+	     .cargoId(cargoNomination.getCargoXId())
+	     .loadingPortId(portId!= null ? portId: null)
+	     .api(cargoNomination.getApi())
+	     .isActive(true)
+	     .temp(cargoNomination.getTemperature()).build();
 
-    return ApiTempHistory.builder()
-        .vesselId(request.getVesselId())
-        .cargoId(cargoNomination.getCargoXId())
-        .api(cargoNomination.getApi())
-        .isActive(true)
-        .temp(cargoNomination.getTemperature())
-        .build();
   }
 
   private CargoNomination buildCargoNomination(
