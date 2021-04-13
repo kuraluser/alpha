@@ -17,4 +17,5 @@ public class Port {
   private BigDecimal maxAirDraft;
   private String timezone;
   private String timezoneOffsetVal;
+  private String timezoneAbbreviation;
 }

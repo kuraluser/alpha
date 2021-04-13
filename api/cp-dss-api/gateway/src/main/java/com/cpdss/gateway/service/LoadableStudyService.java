@@ -333,6 +333,7 @@ public class LoadableStudyService {
     Optional.ofNullable(loadableQuantity.getVesselLightWeight())
         .ifPresent(builder::setVesselLightWeight);
     Optional.ofNullable(loadableQuantity.getPortId()).ifPresent(builder::setPortId);
+    Optional.ofNullable(loadableQuantity.getPortRotationId()).ifPresent(builder::setPortRotationId);
     Optional.ofNullable(loadableQuantity.getBoilerWaterOnBoard())
         .ifPresent(builder::setBoilerWaterOnBoard);
     Optional.ofNullable(loadableQuantity.getBallast()).ifPresent(builder::setBallast);
@@ -1111,12 +1112,16 @@ public class LoadableStudyService {
    * @return
    * @throws GenericServiceException LoadableQuantityResponse
    */
-  public LoadableQuantityResponse getLoadableQuantity(long loadableStudyId, String correlationId)
+  public LoadableQuantityResponse getLoadableQuantity(
+      long loadableStudyId, Long portRotationId, String correlationId)
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
     LoadableQuantity loadableQuantity = new LoadableQuantity();
     LoadableQuantityReply loadableQuantityRequest =
-        LoadableQuantityReply.newBuilder().setLoadableStudyId(loadableStudyId).build();
+        LoadableQuantityReply.newBuilder()
+            .setLoadableStudyId(loadableStudyId)
+            .setPortRotationId(portRotationId)
+            .build();
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
         this.getLoadableQuantityResponse(loadableQuantityRequest);
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getStatus())) {
@@ -1164,9 +1169,13 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getVesselAverageSpeed());
     loadableQuantity.setUpdateDateAndTime(
         loadableQuantityResponse.getLoadableQuantityRequest().getUpdateDateAndTime());
-    loadableQuantity.setPortId(
-        Integer.parseInt(
-            String.valueOf(loadableQuantityResponse.getLoadableQuantityRequest().getPortId())));
+
+    // Port Id is not using, as it can be duplicate in DB(using port-rotation-id)
+    // loadableQuantity.setPortId(Integer.parseInt(
+    // String.valueOf(loadableQuantityResponse.getLoadableQuantityRequest().getPortId())));
+
+    loadableQuantity.setPortRotationId(
+        loadableQuantityResponse.getLoadableQuantityRequest().getPortRotationId());
     loadableQuantity.setBoilerWaterOnBoard(
         loadableQuantityResponse.getLoadableQuantityRequest().getBoilerWaterOnBoard());
     loadableQuantity.setBallast(loadableQuantityResponse.getLoadableQuantityRequest().getBallast());
@@ -1670,8 +1679,8 @@ public class LoadableStudyService {
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
               cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
               cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+              cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
               // Dummy value till actual from Alog
-              cargoDetails.setSlopQuantity("0");
               cargoDetails.setTimeRequiredForLoading("0");
               cargoDetails.setLoadingPorts(Arrays.asList("x"));
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
@@ -1709,6 +1718,7 @@ public class LoadableStudyService {
               details.setQuantity(lqccd.getQuantity());
               details.setTankName(lqccd.getTankName());
               details.setTemp(lqccd.getTemp());
+              details.setSlopQuantity(lqccd.getSlopQuantity());
               response.getLoadableQuantityCommingleCargoDetails().add(details);
             });
   }
@@ -3287,6 +3297,11 @@ public class LoadableStudyService {
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
     buildLoadablePlanDetails(loadablePlanRequest, request);
+
+    if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
+      this.buildAlgoError(loadablePlanRequest.getErrors(), request);
+    }
+
     AlgoReply algoReply = this.saveLoadablePatterns(request);
     if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -3484,6 +3499,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getLoadingOrder()).ifPresent(qunatityBuilder::setLoadingOrder);
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
+    Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3515,6 +3531,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
     Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
+    Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -5420,5 +5437,20 @@ public class LoadableStudyService {
       }
     }
     return cargoHistoryResponse;
+  }
+
+  public AlgoErrorResponse getAlgoErrorLoadableStudy(Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getAlgoError gateway service with correlationId : " + correlationId);
+    AlgoErrorRequest.Builder request = AlgoErrorRequest.newBuilder();
+    request.setLoadableStudyId(loadableStudyId);
+    AlgoErrorReply grpcReply = this.getAlgoError(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to getAlgoError",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return buildErrorResponse(grpcReply, correlationId);
   }
 }

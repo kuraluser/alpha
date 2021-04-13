@@ -22,4 +22,10 @@ public interface AlgoErrorsRepository
   @Query(
       "UPDATE AlgoErrors SET isActive = ?1 WHERE algoErrorHeading.id IN (SELECT AEH.id FROM AlgoErrorHeading AEH WHERE AEH.loadablePattern.id = ?2)")
   public void deleteAlgoError(Boolean isActive, Long loadablePatternId);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE AlgoErrors SET isActive = ?1 WHERE algoErrorHeading.id IN (SELECT AEH.id FROM AlgoErrorHeading AEH WHERE AEH.loadableStudy.id = ?2)")
+  public void deleteAlgoErrorByLSId(Boolean isActive, Long loadableStudyId);
 }

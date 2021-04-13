@@ -176,6 +176,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
             portDetail.setTimezone(port.getTimezone().getTimezone());
             portDetail.setTimezoneOffsetVal(port.getTimezone().getOffsetValue());
             portDetail.setTimezoneId(port.getTimezone().getId());
+            portDetail.setTimezoneAbbreviation(port.getTimezone().getAbbreviation());
           }
 
           if (!port.getBerthInfoSet().isEmpty()) {

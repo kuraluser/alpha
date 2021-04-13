@@ -96,4 +96,7 @@ public class LoadablePlanQuantity extends EntityDoc {
 
   @Column(name = "loading_order")
   private Integer loadingOrder;
+
+  @Column(name = "slop_quantity")
+  private String slopQuantity;
 }

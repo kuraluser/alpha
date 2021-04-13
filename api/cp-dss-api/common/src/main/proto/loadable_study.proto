@@ -447,6 +447,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 string correctedUllage = 26; 
  	 string rdgUllage = 27;
      string correctionFactor = 28;
+      string slopQuantity = 29;
 }
 
 message LoadableQuantityCargoDetails {
@@ -471,6 +472,7 @@ message LoadableQuantityCargoDetails {
 	 string colorCode = 19;
 	 int32 priority = 20;
 	 int32 loadingOrder = 21;
+	 string slopQuantity = 22;
 }
 
 message ConfirmPlanRequest {
@@ -596,12 +598,14 @@ message LoadableQuantityRequest {
 	string foConsumptionPerDay = 28;
 	int64 id = 29;
 	string lastUpdatedTime = 30;
+	int64 portRotationId = 31;
 }
 
 message LoadableQuantityReply {
 	StatusReply responseStatus = 1;
 	int64 loadableQuantityId = 2;
 	int64 loadableStudyId = 3;
+	int64 portRotationId = 4;
 }
 
 message LoadableStudyRequest{
