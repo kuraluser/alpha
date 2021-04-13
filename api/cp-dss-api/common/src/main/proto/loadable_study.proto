@@ -447,6 +447,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 string correctedUllage = 26; 
  	 string rdgUllage = 27;
      string correctionFactor = 28;
+      string slopQuantity = 29;
 }
 
 message LoadableQuantityCargoDetails {
@@ -471,6 +472,7 @@ message LoadableQuantityCargoDetails {
 	 string colorCode = 19;
 	 int32 priority = 20;
 	 int32 loadingOrder = 21;
+	 string slopQuantity = 22;
 }
 
 message ConfirmPlanRequest {

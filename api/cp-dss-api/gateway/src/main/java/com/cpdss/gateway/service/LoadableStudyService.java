@@ -1670,8 +1670,8 @@ public class LoadableStudyService {
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
               cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
               cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+              cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
               // Dummy value till actual from Alog
-              cargoDetails.setSlopQuantity("0");
               cargoDetails.setTimeRequiredForLoading("0");
               cargoDetails.setLoadingPorts(Arrays.asList("x"));
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
@@ -1709,6 +1709,7 @@ public class LoadableStudyService {
               details.setQuantity(lqccd.getQuantity());
               details.setTankName(lqccd.getTankName());
               details.setTemp(lqccd.getTemp());
+              details.setSlopQuantity(lqccd.getSlopQuantity());
               response.getLoadableQuantityCommingleCargoDetails().add(details);
             });
   }
@@ -3484,6 +3485,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getLoadingOrder()).ifPresent(qunatityBuilder::setLoadingOrder);
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
+    Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3515,6 +3517,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
     Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
+    Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
