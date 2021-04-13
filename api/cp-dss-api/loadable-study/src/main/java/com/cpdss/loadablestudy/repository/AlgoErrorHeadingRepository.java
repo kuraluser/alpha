@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -21,6 +22,9 @@ public interface AlgoErrorHeadingRepository
 
   Optional<List<AlgoErrorHeading>> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
+
+  Optional<List<AlgoErrorHeading>> findByLoadableStudyAndIsActive(
+      LoadableStudy loadablePattern, Boolean isActive);
 
   @Transactional
   @Modifying

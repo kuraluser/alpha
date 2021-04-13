@@ -3090,6 +3090,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             true); // ToDo - remove this code once Lodicator is implemented
       }
 
+      if (request.getAlgoErrorsCount() > 0) {
+        // algoErrorsRepository.deleteAlgoError(false, request.getLoadablePatternId());
+        // algoErrorHeadingRepository.deleteAlgoErrorHeading(false, request.getLoadablePatternId());
+        saveAlgoErrorToDB(request, null, loadableStudyOpt.get(), false);
+      }
+
       builder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
           .build();
@@ -7219,9 +7225,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           buildLoadablePatternErrorDetails(loadablePatternOpt.get(), replyBuilder);
         }
       } else {
-        // ToDo - error in pattern generate
+        if (request.getLoadableStudyId() > 0) {
+          Optional<LoadableStudy> ls =
+              loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+          if (!ls.isPresent()) {
+            log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadablePatternId());
+            throw new GenericServiceException(
+                INVALID_LOADABLE_STUDY_ID,
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+          log.info("Algo Error Fetch, Loadable Study, id - {}", ls.get().getId());
+          buildLoadableStudyErrorDetails(ls.get(), replyBuilder);
+        }
       }
-
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - getAlgoErrors", e);
       replyBuilder.setResponseStatus(
@@ -9666,5 +9683,40 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
     algoErrorService.fetchAllErrors(request, responseObserver);
+  }
+
+  /**
+   * Algorithm Error For Loadable Study
+   *
+   * @param loadableStudy - Object
+   * @param replyBuilder - GRPC Object
+   */
+  private void buildLoadableStudyErrorDetails(
+      LoadableStudy loadableStudy,
+      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder replyBuilder) {
+
+    Optional<List<AlgoErrorHeading>> alogError =
+        algoErrorHeadingRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
+    if (alogError.isPresent()) {
+      log.info("Adding ALGO error");
+      for (AlgoErrorHeading errorHeading : alogError.get()) {
+        AlgoErrors.Builder errorBuilder = AlgoErrors.newBuilder();
+
+        Optional<List<com.cpdss.loadablestudy.entity.AlgoErrors>> algoError =
+            algoErrorsRepository.findByAlgoErrorHeadingAndIsActive(errorHeading, true);
+        if (algoError.isPresent()) {
+          List<String> res = new ArrayList<>();
+          res.addAll(
+              algoError.get().stream()
+                  .map(val -> val.getErrorMessage())
+                  .collect(Collectors.toList()));
+          errorBuilder.addAllErrorMessages(res);
+        }
+
+        errorBuilder.setErrorHeading(errorHeading.getErrorHeading());
+        replyBuilder.addAlgoErrors(errorBuilder);
+      }
+    }
+    replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 }
