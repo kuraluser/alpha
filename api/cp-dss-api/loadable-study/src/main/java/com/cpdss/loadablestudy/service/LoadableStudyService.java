@@ -1410,7 +1410,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<Long> existingCargoPortIds) {
 
     Long portId = null;
-    if (!Optional.ofNullable(existingCargoPortIds).isEmpty()) {
+    if (!Optional.ofNullable(existingCargoPortIds).isPresent()) {
       portId = existingCargoPortIds.stream().findFirst().get();
     }
 
@@ -3340,6 +3340,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setMinTolerence(lqcd.getMinTolerence());
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
+              loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
             });
   }

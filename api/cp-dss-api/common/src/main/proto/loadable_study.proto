@@ -473,6 +473,7 @@ message LoadableQuantityCargoDetails {
 	 int32 priority = 20;
 	 int32 loadingOrder = 21;
 	 string slopQuantity = 22;
+	 int64 cargoNominationId = 23;
 }
 
 message ConfirmPlanRequest {
