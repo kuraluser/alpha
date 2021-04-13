@@ -3297,6 +3297,11 @@ public class LoadableStudyService {
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
     buildLoadablePlanDetails(loadablePlanRequest, request);
+
+    if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
+      this.buildAlgoError(loadablePlanRequest.getErrors(), request);
+    }
+
     AlgoReply algoReply = this.saveLoadablePatterns(request);
     if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -5432,5 +5437,20 @@ public class LoadableStudyService {
       }
     }
     return cargoHistoryResponse;
+  }
+
+  public AlgoErrorResponse getAlgoErrorLoadableStudy(Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getAlgoError gateway service with correlationId : " + correlationId);
+    AlgoErrorRequest.Builder request = AlgoErrorRequest.newBuilder();
+    request.setLoadableStudyId(loadableStudyId);
+    AlgoErrorReply grpcReply = this.getAlgoError(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to getAlgoError",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return buildErrorResponse(grpcReply, correlationId);
   }
 }

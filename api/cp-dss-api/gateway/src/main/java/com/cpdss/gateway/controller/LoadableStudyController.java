@@ -1958,4 +1958,28 @@ public class LoadableStudyController {
           e);
     }
   }
+
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/algo-errors")
+  public AlgoErrorResponse getAlgoError2(
+      @PathVariable Long loadableStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      return this.loadableStudyService.getAlgoErrorLoadableStudy(
+          loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoError", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }
