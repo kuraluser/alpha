@@ -5,6 +5,7 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -136,4 +137,8 @@ public interface LoadableStudyPortRotationRepository
       "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2 ")
   public List<LoadableStudyPortRotation> findByLoadableStudyIdAndIsActive(
       final Long loadableStudyId, final boolean isActive);
+
+  @Query(
+      "select var.id as id, var.portXId as portId from LoadableStudyPortRotation var where var.loadableStudy.id = ?1 and var.isActive = ?2")
+  List<PortRotationIdAndPortId> findAllIdAndPortIdsByLSId(Long loadableStudyId, boolean isActive);
 }

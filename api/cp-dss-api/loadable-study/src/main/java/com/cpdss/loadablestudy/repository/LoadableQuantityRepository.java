@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 
 /** @Author jerin.g */
@@ -14,4 +15,9 @@ public interface LoadableQuantityRepository extends CommonCrudRepository<Loadabl
 
   @Query("FROM LoadableQuantity LQ WHERE LQ.id = ?1 and isActive = ?2")
   public LoadableQuantity findByIdAndIsActive(Long id, Boolean isActive);
+
+  @Query(
+      "FROM LoadableQuantity LQ WHERE LQ.loadableStudyXId.id = ?1 and LQ.loadableStudyPortRotation.id = ?2 and isActive = ?3")
+  Optional<LoadableQuantity> findByLSIdAndPortRotationId(
+      Long loadableStudyId, Long portRotationId, Boolean isActive);
 }

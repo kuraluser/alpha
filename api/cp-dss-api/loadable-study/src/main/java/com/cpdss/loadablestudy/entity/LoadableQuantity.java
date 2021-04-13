@@ -108,4 +108,8 @@ public class LoadableQuantity extends EntityDoc {
   @JoinColumn(name = "loadable_study_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadableStudy loadableStudyXId;
+
+  @ManyToOne
+  @JoinColumn(name = "port_rotation_xid", referencedColumnName = "id")
+  private LoadableStudyPortRotation loadableStudyPortRotation;
 }

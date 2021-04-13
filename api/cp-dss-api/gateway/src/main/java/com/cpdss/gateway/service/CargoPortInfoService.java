@@ -153,6 +153,7 @@ public class CargoPortInfoService {
                         : null);
                 port.setTimezone(portDetail.getTimezone());
                 port.setTimezoneOffsetVal(portDetail.getTimezoneOffsetVal());
+                port.setTimezoneAbbreviation(portDetail.getTimezoneAbbreviation());
                 portList.add(port);
               });
       portsResponse.setPorts(portList);
