@@ -334,11 +334,12 @@ public class LoadableStudyController {
   }
 
   /**
-   * Get port list for loadable study
+   * Fetch Loadable Quantity For LS, and Port Rotation Id
    *
    * @param vesselId
    * @param voyageId
-   * @param loadableStudyId
+   * @param loadableStudiesId
+   * @param portRotationId
    * @param headers
    * @return
    * @throws CommonRestException
@@ -350,21 +351,22 @@ public class LoadableStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudiesId,
-      @PathParam("portRotationId") @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long portRotationId,
+      @PathParam("portRotationId") Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      log.info("getLoadableQuantity: {}", getClientIp());
       log.info(
-          "get loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+          "Fetch Loadable Quantity, correlationId: {}, loadableStudiesId: {}, portRotationId:{}",
+          headers.getFirst(CORRELATION_ID_HEADER),
+          loadableStudiesId,
+          portRotationId);
       return loadableStudyService.getLoadableQuantity(
           loadableStudiesId, portRotationId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException in save loadable quantity ", e);
+      log.error("Fetch Loadable Quantity - GenericServiceException", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Error in save loadable quantity ", e);
+      log.error("Fetch Loadable Quantity - Exception", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
