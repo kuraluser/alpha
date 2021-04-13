@@ -3446,6 +3446,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableQuantityCommingleCargoDetailsList.get(i).getCorrectedUllage());
       loadablePlanCommingleDetails.setRdgUllage(
           loadableQuantityCommingleCargoDetailsList.get(i).getRdgUllage());
+      loadablePlanCommingleDetails.setSlopQuantity(
+          loadableQuantityCommingleCargoDetailsList.get(i).getSlopQuantity());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
     }
   }
@@ -3476,6 +3478,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setLoadingOrder(lqcd.getLoadingOrder());
               loadablePlanQuantity.setMinTolerence(lqcd.getMinTolerence());
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
+              loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
             });
   }
@@ -4392,7 +4395,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             LOADABLE_PATTERN_EDIT_REQUEST,
             objectMapper.writeValueAsString(loadabalePatternValidateRequest));
         objectMapper.writeValue(
-            new File("json/loadablePattern_request_" + request.getLoadablePatternId() + ".json"),
+            new File(
+                this.rootFolder
+                    + "/json/loadablePattern_request_"
+                    + request.getLoadablePatternId()
+                    + ".json"),
             loadabalePatternValidateRequest);
 
         AlgoResponse algoResponse =
@@ -4944,7 +4951,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.writeValue(
-            new File("json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
+            new File(
+                this.rootFolder + "/json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
             loadableStudy);
 
         this.saveJsonToDatabase(
@@ -5061,7 +5069,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ObjectMapper objectMapper = new ObjectMapper();
 
       objectMapper.writeValue(
-          new File("json/loadicator_" + request.getLoadableStudyId() + ".json"), loadicator);
+          new File(this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+          loadicator);
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
       this.saveloadicatorDataForSynopticalTable(algoResponse);

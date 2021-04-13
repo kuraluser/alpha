@@ -59,4 +59,5 @@ public class LoadableQuantityCommingleCargoDetails {
   private String correctedUllage; // ullage(M)
   private String rdgUllage;
   private String correctionFactor;
+  private String slopQuantity;
 }
