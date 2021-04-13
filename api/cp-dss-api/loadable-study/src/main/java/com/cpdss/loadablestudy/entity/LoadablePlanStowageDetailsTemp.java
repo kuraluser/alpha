@@ -33,6 +33,9 @@ public class LoadablePlanStowageDetailsTemp extends EntityDoc {
   @Column(name = "quantity")
   private BigDecimal quantity;
 
+  @Column(name = "rdg_ullage")
+  private BigDecimal rdgUllage;
+
   @Column(name = "filling_ratio")
   private BigDecimal fillingRatio;
 
