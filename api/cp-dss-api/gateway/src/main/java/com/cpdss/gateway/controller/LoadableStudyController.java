@@ -468,7 +468,7 @@ public class LoadableStudyController {
       request.setId(id);
       request.setLoadableStudyId(loadableStudyId);
       return this.loadableStudyService.savePortRotation(
-          request, headers.getFirst(CORRELATION_ID_HEADER));
+          request, headers.getFirst(CORRELATION_ID_HEADER), headers);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port rotation", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

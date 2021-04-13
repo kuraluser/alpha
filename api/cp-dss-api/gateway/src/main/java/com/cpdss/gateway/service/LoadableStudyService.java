@@ -233,6 +233,8 @@ public class LoadableStudyService {
   private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
   private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
 
+  private static final String VOYAGE_STATUS_URI = "voyage-status";
+
   @Autowired private UsersRepository usersRepository;
 
   /**
@@ -954,10 +956,12 @@ public class LoadableStudyService {
    * @return
    * @throws GenericServiceException
    */
-  public PortRotationResponse savePortRotation(PortRotation request, String correlationId)
+  public PortRotationResponse savePortRotation(
+      PortRotation request, String correlationId, HttpHeaders headers)
       throws GenericServiceException {
     log.info("Inside savePortRotation");
-    PortRotationReply grpcReply = this.savePortRotation(this.createPortRotationDetail(request));
+    PortRotationReply grpcReply =
+        this.savePortRotation(this.createPortRotationDetail(request, headers));
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "failed to save loadable study - ports",
@@ -1069,7 +1073,7 @@ public class LoadableStudyService {
    * @param request
    * @return
    */
-  private PortRotationDetail createPortRotationDetail(PortRotation request) {
+  private PortRotationDetail createPortRotationDetail(PortRotation request, HttpHeaders headers) {
     PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
     builder.setId(request.getId());
     builder.setLoadableStudyId(request.getLoadableStudyId());
@@ -1103,6 +1107,10 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setEtdActual(valueOf(request.getEtdActual())));
     Optional.ofNullable(request.getIsPortsComplete())
         .ifPresent(item -> builder.setIsPortsComplete(item));
+    List<String> referer = headers.get("Referer");
+    if (referer != null && referer.get(0).contains(VOYAGE_STATUS_URI)) {
+      builder.setIsLandingPage(true);
+    }
     return builder.build();
   }
 
@@ -3142,6 +3150,8 @@ public class LoadableStudyService {
       rec.setApi(isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
+      rec.setIsCommingleCargo(
+          isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -4625,7 +4635,8 @@ public class LoadableStudyService {
                                       index.getColorCode(),
                                       index.getCorrectedUllage(),
                                       index.getApi(),
-                                      index.getSg())),
+                                      index.getSg(),
+                                      index.getIsCommingleCargo())),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {

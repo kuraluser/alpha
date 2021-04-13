@@ -736,6 +736,7 @@ message PortRotationDetail{
 	int64 portOrder=17;
 	bool isPortsComplete=18;
 	int64 portTimezoneId = 19;
+	bool isLandingPage=20;
 }
 
 message Operation{
@@ -1026,7 +1027,8 @@ message SynopticalCargoRecord{
 	string cargoAbbreviation = 8;
 	int64 cargoId = 9;
 	string capacity = 10;
-	string api = 11;
+	string api = 11;	
+	bool isCommingleCargo=12;
 }
 
 message SynopticalOhqRecord{

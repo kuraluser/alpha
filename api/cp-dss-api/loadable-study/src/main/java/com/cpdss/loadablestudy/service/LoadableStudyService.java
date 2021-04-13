@@ -473,6 +473,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String START_VOYAGE = "START";
 
   private static final Long CLOSE_VOYAGE_STATUS = 2L;
+  private static final Long OPEN_VOYAGE_STATUS = 1L;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -535,6 +536,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 : null);
         voyage.setStartTimezoneId((long) request.getStartTimezoneId());
         voyage.setEndTimezoneId((long) request.getEndTimezoneId());
+        voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
         voyage = voyageRepository.save(voyage);
         // when Db save is complete we return to client a success message
         reply =
@@ -932,15 +934,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setIsObqComplete(request.getIsObqComplete());
         entity.setIsDischargePortsComplete(request.getIsDischargingPortComplete());
       } else {
+
+        entity = new LoadableStudy();
         if (request.getDuplicatedFromId() == 0) {
           this.checkIfVoyageActive(request.getVoyageId());
+          entity.setIsCargoNominationComplete(false);
+          entity.setIsPortsComplete(false);
+          entity.setIsOhqComplete(false);
+          entity.setIsObqComplete(true);
+          entity.setIsDischargePortsComplete(false);
         }
-        entity = new LoadableStudy();
-        entity.setIsCargoNominationComplete(false);
-        entity.setIsPortsComplete(false);
-        entity.setIsOhqComplete(false);
-        entity.setIsObqComplete(true);
-        entity.setIsDischargePortsComplete(false);
       }
 
       this.validateLoadableStudySaveRequest(request, entity);
@@ -1401,21 +1404,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  private ApiTempHistory buildApiTempHistory( CargoNomination cargoNomination, CargoNominationRequest request, List<Long> existingCargoPortIds) {
-	  
-	  Long portId = null;
-	  if(!Optional.ofNullable(existingCargoPortIds).isEmpty()) {
-		  portId =  existingCargoPortIds.stream().findFirst().get();
-	  }
-	  
-	  return ApiTempHistory.builder()
-	     .vesselId(request.getVesselId())
-	     .cargoId(cargoNomination.getCargoXId())
-	     .loadingPortId(portId!= null ? portId: null)
-	     .api(cargoNomination.getApi())
-	     .isActive(true)
-	     .temp(cargoNomination.getTemperature()).build();
+  private ApiTempHistory buildApiTempHistory(
+      CargoNomination cargoNomination,
+      CargoNominationRequest request,
+      List<Long> existingCargoPortIds) {
 
+    Long portId = null;
+    if (!Optional.ofNullable(existingCargoPortIds).isEmpty()) {
+      portId = existingCargoPortIds.stream().findFirst().get();
+    }
+
+    return ApiTempHistory.builder()
+        .vesselId(request.getVesselId())
+        .cargoId(cargoNomination.getCargoXId())
+        .loadingPortId(portId != null ? portId : null)
+        .api(cargoNomination.getApi())
+        .isActive(true)
+        .temp(cargoNomination.getTemperature())
+        .build();
   }
 
   private CargoNomination buildCargoNomination(
@@ -1825,7 +1831,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      if (!request.getIsLandingPage()) {
+        this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      }
       LoadableStudyPortRotation entity = null;
       if (request.getId() == 0) {
         entity = new LoadableStudyPortRotation();
@@ -1843,9 +1851,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity = portRoationOpt.get();
       }
-
-      this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
-
+      if (!request.getIsLandingPage()) {
+        this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
+      }
       entity =
           this.loadableStudyPortRotationRepository.save(
               this.createPortRotationEntity(entity, request));
@@ -6086,6 +6094,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  public void saveSynopticalCommingleCargoDetails(
+      SynopticalTableRequest request, SynopticalTable entity, SynopticalRecord record) {
+
+    /*
+     * List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails>
+     * cargoEntities = this.loadablePlanCommingleDetailsPortwiseRepository
+     * .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+     * request.getLoadablePatternId(),
+     * entity.getLoadableStudyPortRotation().getId(), entity.getOperationType(),
+     * true);
+     */
+    List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails>
+        toBeSavedCommingleCargoList = new ArrayList<>();
+  }
+
   /**
    * Save obq data from synoptical table
    *
@@ -7926,6 +7949,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity.setDischargeCargoId(loadableStudyOpt.get().getDischargeCargoId());
         entity.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
+        entity.setIsCargoNominationComplete(loadableStudyOpt.get().getIsCargoNominationComplete());
+        entity.setIsDischargePortsComplete(loadableStudyOpt.get().getIsDischargePortsComplete());
+        entity.setIsObqComplete(loadableStudyOpt.get().getIsObqComplete());
+        entity.setIsOhqComplete(loadableStudyOpt.get().getIsOhqComplete());
+        entity.setIsPortsComplete(loadableStudyOpt.get().getIsPortsComplete());
 
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
@@ -7933,15 +7961,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         if (!onHandQuantityList.isEmpty()) {
           List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
 
-          onHandQuantityList.forEach(
-              onHandQuantity -> {
-                entityManager.detach(onHandQuantity);
-                onHandQuantity.setId(null);
-                onHandQuantity.setLoadableStudy(entity);
-                onHandQuantity.setActualArrivalQuantity(null);
-                onHandQuantity.setActualDepartureQuantity(null);
-                OnHandQuantities.add(onHandQuantity);
-              });
+          for (OnHandQuantity onHandQuantity : onHandQuantityList) {
+
+            Optional<LoadableStudyPortRotation> duplicated =
+                loadableStudyDuplicatedPorts.stream()
+                    .filter(
+                        port ->
+                            port.getPortXId().equals(onHandQuantity.getPortXId())
+                                && onHandQuantity.getPortRotation() != null
+                                && port.getOperation()
+                                    .getId()
+                                    .equals(onHandQuantity.getPortRotation().getOperation().getId())
+                                && port.getPortOrder()
+                                    .equals(onHandQuantity.getPortRotation().getPortOrder()))
+                    .findAny();
+
+            if (!duplicated.isPresent()) {
+              throw new GenericServiceException(
+                  "Could not find the duplicated port rotation entity",
+                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                  HttpStatusCode.BAD_REQUEST);
+            }
+
+            entityManager.detach(onHandQuantity);
+            onHandQuantity.setId(null);
+            onHandQuantity.setLoadableStudy(entity);
+            onHandQuantity.setActualArrivalQuantity(null);
+            onHandQuantity.setActualDepartureQuantity(null);
+            onHandQuantity.setPortRotation(duplicated.get());
+            OnHandQuantities.add(onHandQuantity);
+          }
           this.onHandQuantityRepository.saveAll(OnHandQuantities);
         }
         List<OnBoardQuantity> onBoardQuantityList =
@@ -9326,7 +9375,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<LoadablePattern> confirmedPatterns =
         this.loadablePatternRepository.findLoadablePatterns(
             CONFIRMED_STATUS_ID, loadableStudy, true);
-
     if (!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty()) {
       throw new GenericServiceException(
           "Save/Edit/Delte not allowed for plan generated /confirmed loadable study",

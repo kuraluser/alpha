@@ -164,9 +164,9 @@ public class UserService {
       user.setRejectionCount(usersEntity.getRejectionCount());
     }
 
-    if (null != usersEntity.getId()
-        && null != usersEntity.getStatus()
-        && UserStatusValue.APPROVED.getId() == usersEntity.getStatus().getId()) {
+    if ((null != usersEntity.getId() && this.isShip())
+        || (null != usersEntity.getStatus()
+            && UserStatusValue.APPROVED.getId().equals(usersEntity.getStatus().getId()))) {
       user.setId(usersEntity.getId());
       List<RoleUserMapping> roleUserList =
           this.roleUserMappingRepository.findByUsersAndIsActive(
@@ -612,9 +612,9 @@ public class UserService {
                   });
               this.notificationRepository.saveAll(notificationsList);
             }
+
             Optional<RoleUserMapping> roleUserOpt =
-                this.roleUserRepository.findByUsersAndRolesAndIsActive(
-                    user.getId(), role.get().getId(), true);
+                this.roleUserRepository.findByUsersAndIsActive(user.getId(), true);
             RoleUserMapping roleUser = null;
             if (!roleUserOpt.isPresent()) {
               roleUser = new RoleUserMapping();

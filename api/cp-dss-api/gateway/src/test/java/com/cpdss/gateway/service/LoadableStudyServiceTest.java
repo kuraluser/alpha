@@ -879,14 +879,15 @@ class LoadableStudyServiceTest {
 
   @Test
   void testSavePortRotation() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    Mockito.when(
+            this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
         .thenReturn(this.generatePortRotationReply(false).build());
     PortRotation request = this.createPortRotationRequest();
     request.setOperationId(null);
     PortRotationResponse response =
-        this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE);
+        this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE, any());
     assertAll(
         () ->
             assertEquals(
@@ -898,7 +899,8 @@ class LoadableStudyServiceTest {
 
   @Test
   void testSavePortRotationGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    Mockito.when(
+            this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
         .thenReturn(
@@ -914,7 +916,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.savePortRotation(
-                    this.createPortRotationRequest(), CORRELATION_ID_HEADER_VALUE));
+                    this.createPortRotationRequest(), CORRELATION_ID_HEADER_VALUE, any()));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
