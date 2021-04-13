@@ -30,4 +30,9 @@ public interface AlgoErrorHeadingRepository
   @Modifying
   @Query("UPDATE AlgoErrorHeading SET isActive = ?1 WHERE loadablePattern.id = ?2")
   public void deleteAlgoErrorHeading(Boolean isActive, Long loadablePatternId);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE AlgoErrorHeading SET isActive = ?1 WHERE loadableStudy.id = ?2")
+  public void deleteAlgoErrorHeadingByLSId(Boolean isActive, Long loadableStudyId);
 }

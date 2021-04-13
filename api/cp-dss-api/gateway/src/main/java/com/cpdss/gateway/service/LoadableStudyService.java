@@ -3298,7 +3298,7 @@ public class LoadableStudyService {
     request.setLoadableStudyId(loadableStudiesId);
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
-    if (loadablePlanRequest.getErrors() != null) {
+    if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
       this.buildAlgoError(loadablePlanRequest.getErrors(), request);
     }
 

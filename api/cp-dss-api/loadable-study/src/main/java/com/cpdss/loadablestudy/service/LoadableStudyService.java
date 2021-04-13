@@ -1168,7 +1168,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       CargoNomination cargoNomination = null;
       List<Long> existingCargoPortIds = null;
-      ApiTempHistory apiTempHistory   = null;
+      ApiTempHistory apiTempHistory = null;
       if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() != 0) {
         Optional<CargoNomination> existingCargoNomination =
@@ -1400,17 +1400,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               });
     }
   }
-  
-  private ApiTempHistory buildApiTempHistory(
-	      CargoNomination cargoNomination, CargoNominationRequest request) {
-	  
-	  return ApiTempHistory.builder()
-	     .vesselId(request.getVesselId())
-	     .cargoId(cargoNomination.getCargoXId())
-	     .api(cargoNomination.getApi())
-	     .isActive(true)
-	     .temp(cargoNomination.getTemperature()).build();
 
+  private ApiTempHistory buildApiTempHistory(
+      CargoNomination cargoNomination, CargoNominationRequest request) {
+
+    return ApiTempHistory.builder()
+        .vesselId(request.getVesselId())
+        .cargoId(cargoNomination.getCargoXId())
+        .api(cargoNomination.getApi())
+        .isActive(true)
+        .temp(cargoNomination.getTemperature())
+        .build();
   }
 
   private CargoNomination buildCargoNomination(
@@ -2932,9 +2932,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
       if (request.getAlgoErrorsCount() > 0) {
-        // algoErrorsRepository.deleteAlgoError(false, request.getLoadablePatternId());
-        // algoErrorHeadingRepository.deleteAlgoErrorHeading(false, request.getLoadablePatternId());
-        saveAlgoErrorToDB(request, null, loadableStudyOpt.get(), false);
+        algoErrorsRepository.deleteAlgoErrorByLSId(false, request.getLoadableStudyId());
+        algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(
+            false, request.getLoadableStudyId());
+        saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
       }
 
       builder
