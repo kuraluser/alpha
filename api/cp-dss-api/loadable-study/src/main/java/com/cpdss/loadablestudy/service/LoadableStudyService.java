@@ -2261,8 +2261,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
         List<LoadableStudyPortRotation> ports =
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
-                loadableStudy.get(), true);
+            this.loadableStudyPortRotationRepository
+                .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
+                    loadableStudy.get(), true);
         if (ports.isEmpty()) {
           log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
           portRotationReplyBuilder.setResponseStatus(
@@ -6376,8 +6377,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<SynopticalTable> synopticalTableList =
-          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByOperationAndPortOrder(
-              request.getLoadableStudyId(), true);
+          this.synopticalTableRepository
+              .findByLoadableStudyXIdAndIsActiveOrderByOperationAndPortOrder(
+                  request.getLoadableStudyId(), true);
       if (!synopticalTableList.isEmpty()) {
         VesselReply vesselReply =
             this.getSynopticalTableVesselData(request, loadableStudyOpt.get());

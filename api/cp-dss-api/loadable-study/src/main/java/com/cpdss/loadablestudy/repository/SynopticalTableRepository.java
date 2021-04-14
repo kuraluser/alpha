@@ -26,10 +26,11 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActive(
       Long loadableStudyXId, boolean isActive);
 
-  @Query("SELECT ST FROM SynopticalTable ST WHERE ST.loadableStudyXId = ?1 AND ST.isActive = ?2 ORDER BY ST.loadableStudyPortRotation.operation.id, ST.loadableStudyPortRotation.portOrder, ST.operationType")
+  @Query(
+      "SELECT ST FROM SynopticalTable ST WHERE ST.loadableStudyXId = ?1 AND ST.isActive = ?2 ORDER BY ST.loadableStudyPortRotation.operation.id, ST.loadableStudyPortRotation.portOrder, ST.operationType")
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActiveOrderByOperationAndPortOrder(
-	  Long loadableStudyXId, boolean isActive);
-  
+      Long loadableStudyXId, boolean isActive);
+
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActiveAndPortXid(
       Long loadableStudyXId, boolean isActive, Long portId);
 
