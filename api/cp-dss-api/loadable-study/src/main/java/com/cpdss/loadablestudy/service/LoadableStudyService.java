@@ -2261,7 +2261,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
         List<LoadableStudyPortRotation> ports =
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
                 loadableStudy.get(), true);
         if (ports.isEmpty()) {
           log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
@@ -6376,7 +6376,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<SynopticalTable> synopticalTableList =
-          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByOperationAndPortOrder(
               request.getLoadableStudyId(), true);
       if (!synopticalTableList.isEmpty()) {
         VesselReply vesselReply =
@@ -6544,10 +6544,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         records.add(builder.build());
       }
-      Collections.sort(
-          records,
-          Comparator.comparing(SynopticalRecord::getPortOrder)
-              .thenComparing(Comparator.comparing(SynopticalRecord::getOperationType)));
       replyBuilder.addAllSynopticalRecords(records);
     }
   }
