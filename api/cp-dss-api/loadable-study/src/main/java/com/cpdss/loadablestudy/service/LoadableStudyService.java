@@ -1411,7 +1411,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<Long> existingCargoPortIds) {
 
     Long portId = null;
-    if (!Optional.ofNullable(existingCargoPortIds).isPresent()) {
+    if (existingCargoPortIds != null && existingCargoPortIds.size()>0) {
       portId = existingCargoPortIds.stream().findFirst().get();
     }
 
