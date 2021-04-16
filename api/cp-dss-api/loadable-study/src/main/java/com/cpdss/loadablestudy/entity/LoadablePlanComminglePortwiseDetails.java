@@ -126,5 +126,5 @@ public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
   private Long portRotationXid;
 
   @Column(name = "actual_quantity")
-  private String actualQuantity;
+  private Long actualQuantity;
 }
