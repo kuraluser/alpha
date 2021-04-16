@@ -77,7 +77,6 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
-import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
@@ -4455,17 +4454,18 @@ public class LoadableStudyService {
       UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
       throws GenericServiceException {
     log.info("Inside updateUllageRequest in gateway micro service");
-
-    UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
-    buildUpdateUllageRequest(updateUllageRequest, loadablePatternId, grpcRequest);
-    UpdateUllageReply grpcReply = this.updateUllage(grpcRequest.build());
-    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to get response  for  from grpc service",
-          grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
-    }
-    return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+    /*
+     * UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
+     * buildUpdateUllageRequest(updateUllageRequest, loadablePatternId,
+     * grpcRequest); UpdateUllageReply grpcReply =
+     * this.updateUllage(grpcRequest.build()); if
+     * (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) { throw new
+     * GenericServiceException( "Failed to get response  for  from grpc service",
+     * grpcReply.getResponseStatus().getCode(),
+     * HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode(
+     * )))); } return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+     */
+    return this.buildeUpdateUllageResponseTemp(correlationId);
   }
 
   private UpdateUllage buildeUpdateUllageResponse(
@@ -4488,6 +4488,18 @@ public class LoadableStudyService {
             ? null
             : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getFillingRatio()));
     response.setIsBallast(grpcReply.getLoadablePlanStowageDetails().getIsBallast());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private UpdateUllage buildeUpdateUllageResponseTemp(String correlationId) {
+    UpdateUllage response = new UpdateUllage();
+    response.setCorrectedUllage(new BigDecimal("10"));
+    response.setCorrectionFactor(new BigDecimal("10"));
+    response.setQuantityMt(new BigDecimal("10"));
+    response.setFillingRatio(new BigDecimal("10"));
+    response.setIsBallast(true);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;

@@ -4111,7 +4111,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       UllageUpdateResponse algoResponse =
           this.callAlgoUllageUpdateApi(this.prepareUllageUpdateRequest(request));
-      this.saveUllageUpdateResponse(algoResponse, request);
+      this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
       replyBuilder.setLoadablePlanStowageDetails(
           this.buildUpdateUllageReply(algoResponse, request));
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -4162,9 +4162,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * Save corrected ullage to the temp table
    *
    * @param algoResponse
+   * @param loadablePattern
    */
   private void saveUllageUpdateResponse(
-      UllageUpdateResponse algoResponse, UpdateUllageRequest request) {
+      UllageUpdateResponse algoResponse,
+      UpdateUllageRequest request,
+      LoadablePattern loadablePattern) {
     LoadablePlanStowageDetailsTemp stowageTemp = null;
     if (request.getLoadablePlanStowageDetails().getIsBallast()) {
       LoadablePlanBallastDetails ballastDetails =
@@ -4211,6 +4214,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? null
             : new BigDecimal(request.getLoadablePlanStowageDetails().getCorrectedUllage()));
     stowageTemp.setIsBallast(request.getLoadablePlanStowageDetails().getIsBallast());
+    stowageTemp.setLoadablePattern(loadablePattern);
     this.stowageDetailsTempRepository.save(stowageTemp);
   }
 
@@ -5111,7 +5115,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               lDIntactStability.getStabilityAreaBaJudgement());
           intactStability.setStabilityAreaBaValue(lDIntactStability.getStabilityAreaBaValue());
           intactStability.setPortId(lDIntactStability.getPortId());
-          intactStability.setSynioticalId(lDIntactStability.getSynopticalId());
+          intactStability.setSynopticalId(lDIntactStability.getSynopticalId());
           ldIntactStabilities.add(intactStability);
         });
 
@@ -5151,7 +5155,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           strength.setShearingForceJudgement(ldStrength.getShearingForceJudgement());
           strength.setShearingForcePersentValue(ldStrength.getShearingForcePersentValue());
           strength.setPortId(ldStrength.getPortId());
-          strength.setSynioticalId(ldStrength.getSynopticalId());
+          strength.setSynopticalId(ldStrength.getSynopticalId());
           ldStrengths.add(strength);
         });
 
@@ -5191,7 +5195,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               ldTrim.getMinimumForeDraftInRoughWeatherValue());
           trim.setTrimValue(ldTrim.getTrimValue());
           trim.setPortId(ldTrim.getPortId());
-          trim.setSynioticalId(ldTrim.getSynopticalId());
+          trim.setSynopticalId(ldTrim.getSynopticalId());
           ldTrims.add(trim);
         });
 
@@ -7321,8 +7325,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     replyBuilder.setDate(
         DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT).format(loadablePattern.getCreatedDate()));
     replyBuilder.setVoyageNumber(loadablePattern.getLoadableStudy().getVoyage().getVoyageNo());
-    replyBuilder.setVoyageStatusId(
-        loadablePattern.getLoadableStudy().getVoyage().getVoyageStatus().getId());
+    try {
+      Optional.ofNullable(loadablePattern.getLoadableStudy().getVoyage().getVoyageStatus().getId())
+          .ifPresent(replyBuilder::setVoyageStatusId);
+    } catch (Exception e) {
+      log.info("voyage status not found");
+    }
+
     List<LoadablePatternAlgoStatus> status =
         loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(loadablePattern, true);
     if (!status.isEmpty()) {

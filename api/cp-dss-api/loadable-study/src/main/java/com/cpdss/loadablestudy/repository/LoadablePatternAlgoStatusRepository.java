@@ -17,7 +17,7 @@ public interface LoadablePatternAlgoStatusRepository
   @Transactional
   @Modifying
   @Query(
-      "UPDATE LoadablePatternAlgoStatus SET loadablePattern.id = ?1 WHERE processId = ?2 and isActive = ?3")
+      "UPDATE LoadablePatternAlgoStatus SET loadableStudyStatus.id = ?1 WHERE processId = ?2 and isActive = ?3")
   public void updateLoadablePatternAlgoStatus(
       Long loadableStudyStatusId, String processId, Boolean isActive);
 
