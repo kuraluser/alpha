@@ -12,6 +12,7 @@ export class LoadableQuantityModel {
  * Model for loadable quantity
  */
 export class LodadableQuantity {
+    public portRotationId?: number;
     public portId?: number;
     public draftRestriction: string;
     public displacmentDraftRestriction?: string;

@@ -11,6 +11,7 @@ export class LoadableStudy {
     public statusId: LOADABLE_STUDY_STATUS;
     public detail: string;
     public createdDate: string;
+    public lastEdited:string;
     public charterer: string;
     public subCharterer: string;
     public draftMark: number;

@@ -241,6 +241,7 @@ export interface IPortsDetailsResponse {
 export interface IPortsValueObject {
     id: number;
     portOrder: number;
+    portTimezoneId?: number;
     slNo: number;
     port: ValueObject<IPort>;
     portcode: ValueObject<string>;

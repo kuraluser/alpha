@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CommonApiService } from '../common/common-api.service';
+import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 import { IDateTimeFormatOptions, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
 import * as moment from 'moment';
 
@@ -16,6 +17,14 @@ import * as moment from 'moment';
   providedIn: 'root'
 })
 export class TimeZoneTransformationService {
+
+  private momentInputStringFormat = 'DD-MM-YYYY HH:mm';
+  private dateTimeFormatArray = [
+    {
+      dateFormat:'DD/MMM/YYYY HH:mm',
+      calenderFormat: 'dd/M/yy'
+    }
+  ];
 
   constructor(
     private commonAPiService: CommonApiService
@@ -41,10 +50,27 @@ export class TimeZoneTransformationService {
    * @memberof TimeZoneTransformationService
    */
   convertToZoneBasedTime(dateTime: Date | string, toUtc: boolean, offsetValue?: string): Date {
-    const _format = 'YYYY/MM/DD HH:mm';
-    let convertToTimezone = toUtc ? moment(dateTime).utc().format(_format) : moment(dateTime).add(offsetValue, 'hours').format(_format);
+    const toDateInput = 'YYYY/MM/DD HH:mm';
+    let convertToTimezone: string;
+    if (typeof dateTime === 'string') {
+      convertToTimezone = toUtc ? moment(dateTime, this.momentInputStringFormat).utc().format(toDateInput) : moment(dateTime, this.momentInputStringFormat).add(offsetValue, 'hours').format(toDateInput);
+    } else {
+      convertToTimezone = toUtc ? moment(dateTime).utc().format(toDateInput) : moment(dateTime).add(offsetValue, 'hours').format(toDateInput);
+    }
     const convertedDateTime = moment(convertToTimezone).toDate();
     return convertedDateTime;
+  }
+
+  /**
+   * function to revert back the port-based time to UTC
+   *
+   * @param {(Date | string)} dateTime
+   * @param {string} offsetValue
+   * @return {*}  {string}
+   * @memberof TimeZoneTransformationService
+   */
+  revertZoneTimetoUTC(dateTime: Date | string, offsetValue: string): string {
+    return moment(dateTime, this.momentInputStringFormat).subtract(offsetValue, 'hours').format(this.momentInputStringFormat);
   }
 
   /**
@@ -55,18 +81,19 @@ export class TimeZoneTransformationService {
    * @return {*}  {string}
    * @memberof TimeZoneTransformationService
    */
-  formatDateTime(dateTime, formatOptions?: IDateTimeFormatOptions): string {
-
-    let formattedDate: string;
-    const initFormat = 'DD-MM-YYYY HH:mm';
+  formatDateTime(dateTime, formatOptions?: IDateTimeFormatOptions): any {
+    let formattedDate: Date | string;
     if (formatOptions?.utcFormat) {
-      formattedDate = moment(dateTime, initFormat).format('DD/MMM/YYYY HH:mm').toUpperCase() + ' UTC';
+      formattedDate = moment(dateTime, this.momentInputStringFormat).format(AppConfigurationService.settings?.dateFormat) + ' UTC';
     } else if (formatOptions?.portLocalFormat && formatOptions?.portTimeZoneOffset && formatOptions?.portTimeZoneAbbr) {
       formattedDate = this.modifiedDateTime(dateTime, formatOptions?.portTimeZoneOffset, formatOptions?.portTimeZoneAbbr);
+    } else if (formatOptions?.stringToDate) {
+      const stringDate = moment(dateTime, this.momentInputStringFormat).format(AppConfigurationService.settings?.dateFormat);
+      formattedDate = moment(stringDate).toDate();
     } else if (formatOptions?.customFormat) {
-      formattedDate = moment(dateTime, initFormat).format(formatOptions?.customFormat);
+      formattedDate = moment(dateTime, this.momentInputStringFormat).format(formatOptions?.customFormat);
     } else {
-      formattedDate = moment(dateTime, initFormat).format('DD-MM-YYYY');
+      formattedDate = moment(dateTime, this.momentInputStringFormat).format('DD-MM-YYYY');
     }
     return formattedDate;
   }
@@ -83,7 +110,6 @@ export class TimeZoneTransformationService {
   modifiedDateTime(dateTime, offsetValue: string, abbr?: string): string {
 
     let _offsetValue: string;
-    const initFormat = 'DD-MM-YYYY HH:mm';
     const abbreviation = ' ' + abbr + ' ';
     if (offsetValue.charAt(0) === '-') {
       let unsignedOffset = offsetValue.split('-')[1];
@@ -108,12 +134,18 @@ export class TimeZoneTransformationService {
       }
     }
 
-    const addedPortTZ = moment(dateTime, initFormat).add(_offsetValue, 'hours').format('DD/MMM/YYYY HH:mm').toUpperCase();
-    let convertedPortTZ = moment(dateTime, initFormat).utcOffset(_offsetValue).format('DD/MMM/YYYY HH:mm (UTC Z)');
+    const addedPortTZ = moment(dateTime, this.momentInputStringFormat).add(_offsetValue, 'hours').format(AppConfigurationService.settings?.dateFormat);
+    const tzFormat = AppConfigurationService.settings?.dateFormat + ' (UTC Z)';
+    let convertedPortTZ = moment(dateTime, this.momentInputStringFormat).utcOffset(_offsetValue).format(tzFormat);
 
     const dateTimeSplitIndex = convertedPortTZ.indexOf('(UTC');
     const dateTimeWithAbbr = [addedPortTZ, abbreviation, convertedPortTZ.slice(dateTimeSplitIndex)].join('');
     return dateTimeWithAbbr;
+  }
+
+  getMappedConfigurationDateFormat(dateTimeFormat: string){
+    const mappedFormat = [...this.dateTimeFormatArray].find(format => (format.dateFormat === dateTimeFormat));
+    return mappedFormat.calenderFormat;
   }
 
 }

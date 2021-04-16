@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AUTH_STATUS } from '../shared/models/common.model';
 import { AccessDeniedApiService } from './access-denied-api.service';
@@ -6,6 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { KeycloakService } from 'keycloak-angular';
+import { environment } from '../../../src/environments/environment';
+import { SecurityService } from '../shared/services/security/security.service';
 
 /**
  * Compoent class for access denied nabvigation
@@ -31,7 +34,8 @@ export class AccessDeniedComponent implements OnInit {
     private translateService: TranslateService,
     private accessDeniedService: AccessDeniedApiService,
     private ngxSpinnerService: NgxSpinnerService,
-  ) { }
+    @Optional() private keycloakService: KeycloakService,
+  ) {}
 
   /**
    * Component Lifecycle hook OnInit
@@ -59,7 +63,13 @@ export class AccessDeniedComponent implements OnInit {
   * @memberof AccessDeniedComponent
  */
   gobackToLogin() {
-    window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
+    const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
+    SecurityService.userLogoutAction();
+    if(environment.name === 'shore'){
+      this.keycloakService.logout(redirectUrl);
+    } else {
+      window.location.href = redirectUrl;
+    }
   }
 
   /**

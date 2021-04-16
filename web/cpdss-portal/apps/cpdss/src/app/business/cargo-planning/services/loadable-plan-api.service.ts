@@ -3,9 +3,9 @@ import { Observable } from 'rxjs';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ILoadablePlanResponse, ISaveComment } from '../models/loadable-plan.model';
-import { ICargoResponseModel } from '../../../shared/models/common.model';
-import { IResponse , IConfirmStatusResponse } from '../../../shared/models/common.model';
+import { ILoadablePlanResponse, ISaveComment, IUpdateUllageModel , IUpdatedUllageResponse  , IAlgoResponse , IValidateAndSaveStowage , IUpdatedRdgLevelResponse } from '../models/loadable-plan.model';
+import { ICargoResponseModel , IValidateAndSaveResponse } from '../../../shared/models/common.model';
+import { IResponse, IConfirmStatusResponse } from '../../../shared/models/common.model';
 
 /**
  * Api Service for loadable plan
@@ -84,6 +84,47 @@ export class LoadablePlanApiService {
   */
   confirm(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<IResponse> {
     return this.commonApiService.post<any, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/confirm-plan/${loadablePatternId}`, {});
+  }
+
+  /**
+  * Api for update ullage 
+  *
+  * @param {number} vesselId
+  * @param {number} voyageId
+  * @param {number} loadableStudyId
+  * @param {number} loadablePatternId
+  * @returns {Observable<IUpdatedUllageResponse>}
+  * @memberof LoadablePlanApiService
+  */
+  updateUllage(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number, data: IUpdateUllageModel): Observable<IUpdatedUllageResponse> {
+    return this.commonApiService.post<IUpdateUllageModel, IUpdatedUllageResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patterns/${loadablePatternId}/update-ullage`, data);
+  }
+
+
+  /**
+  * Api for validate and save for edi stowage
+  *
+  * @param {number} vesselId
+  * @param {number} voyageId
+  * @param {number} loadableStudyId
+  * @param {number} loadablePatternId
+  * @returns {Observable<IUpdatedUllageResponse>}
+  * @memberof LoadablePlanApiService
+  */
+  validateAndSave(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number, data: any): Observable<IValidateAndSaveResponse> {
+    return this.commonApiService.post<IValidateAndSaveStowage, IValidateAndSaveResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patterns/${loadablePatternId}/validate-loadable-plan`, data);
+  }
+
+    /**
+  * 
+  * @param {number} vesselId 
+  * @param {number} voyageId 
+  * @param {number} loadableStudyId 
+  * @param {number} loadablePatternId
+  * Get api for algo error response
+  */
+  getAlgoErrorDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<IAlgoResponse> {
+    return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern-details/${loadablePatternId}/algo-errors`);
   }
 }
 

@@ -42,6 +42,7 @@
                                 class="p-button-text p-button-rounded p-button-plain"
                                 [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                             <span class="row-header">{{header.header | translate}}</span>
+                            <span *ngIf="header.toolTip" class="inline-block ml-5 v-middle pointer pi pi-info-circle" pTooltip="{{header.toolTip | translate}}" tooltipPosition="top"></span>
                         </th>
                     </ng-container>
                     <th [attr.rowspan]="calculateRowSpan(rowData)">

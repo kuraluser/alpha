@@ -16,6 +16,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { NumberDirectiveModule } from '../../shared/directives/number-directive/number-directive.module';
 import { SynopticalApiService } from './services/synoptical-api.service';
 import { PermissionDirectiveModule } from '../../shared/directives/permission/permission-directive.module';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Module for Synoptical Table
@@ -40,6 +41,7 @@ import { PermissionDirectiveModule } from '../../shared/directives/permission/pe
     CalendarModule,
     NumberDirectiveModule,
     PermissionDirectiveModule,
+    TooltipModule
   ],
   providers: [
     LoadableStudyListApiService,

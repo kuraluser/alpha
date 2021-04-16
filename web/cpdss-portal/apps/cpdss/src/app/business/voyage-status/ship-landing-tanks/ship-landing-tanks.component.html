@@ -1,13 +1,13 @@
 <div>
     <div class="row  pt-15">
         <div class="col  text-center">
-            <a class="tab-btn tab-btn-default tab-landing tank-icon" [ngClass]="{'active': selectedTab === tankType.CARGO}"
+            <a class="tab-btn tab-btn-default tab-landing tank-icon" [ngClass]="{'active': selectedTab === tankType.CARGO}" pTooltip="{{'CARGO' | translate}}" tooltipPosition="top"
                 id="ship_landing_cargo_tab" (click)="onTabClick(tankType.CARGO)">
             </a>
-            <a class="tab-btn tab-btn-default tab-landing ballast-icon" [ngClass]="{'active': selectedTab === tankType.BALLAST}"
+            <a class="tab-btn tab-btn-default tab-landing ballast-icon" [ngClass]="{'active': selectedTab === tankType.BALLAST}" pTooltip="{{'BALLAST' | translate}}" tooltipPosition="top"
                 id="ship_landing_ballast_tab" (click)="onTabClick(tankType.BALLAST)">
             </a>
-            <a class="tab-btn tab-btn-default tab-landing bunker-icon" [ngClass]="{'active': selectedTab === tankType.BUNKER}"
+            <a class="tab-btn tab-btn-default tab-landing bunker-icon" [ngClass]="{'active': selectedTab === tankType.BUNKER}" pTooltip="{{'BUNKER' | translate}}" tooltipPosition="top"
             id="ship_landing_bunker_tab" (click)="onTabClick(tankType.BUNKER)">
         </a>
         </div>

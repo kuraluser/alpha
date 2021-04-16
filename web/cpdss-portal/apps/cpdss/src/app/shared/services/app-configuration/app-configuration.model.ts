@@ -13,5 +13,6 @@ export interface IAppConfiguration {
     processingTimeout?: number;
     tokenMinValidity?: number;
     commingleColor?: string;
+    dateFormat?: string;
 }
 

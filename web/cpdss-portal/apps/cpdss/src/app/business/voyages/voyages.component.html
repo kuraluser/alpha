@@ -17,7 +17,7 @@
                 pTooltip="{{'VOYAGE_LIST_GLOBAL_DATE_FILTER_INFO' | translate}}" tooltipPosition="top"></span>
 
         </div>
-        <div class="ml-auto pr-15"><button class="btn btn-main ml-auto">Create New Voyage</button></div>
+        <div class="ml-auto pr-15"><button class="btn btn-main ml-auto" (click)="showDialog()">{{ 'VOYAGE_LIST_CREATE_NEW_VOYAGE_BUTTON_LABEL' | translate }}</button></div>
     </div>
     <div class="row">
         <div class="col-12  voyage-listing-wrapper">
@@ -34,3 +34,6 @@
 <cpdss-portal-date-pop-up [voyageId]="selectedVoyageId" [vesselId]="vesselId" [isStart]="isStart" [display]="showDatePopup"
     (displayPopup)="setPopupVisibility($event)" *ngIf="showDatePopup" [defaultDate]="defaultDate" >
 </cpdss-portal-date-pop-up>
+<cpdss-portal-new-voyage-popup [vesselDetails]="vesselDetails" *ngIf="display && vesselDetails"
+(displayPopUp)="displayPopUpTab($event)">
+</cpdss-portal-new-voyage-popup>

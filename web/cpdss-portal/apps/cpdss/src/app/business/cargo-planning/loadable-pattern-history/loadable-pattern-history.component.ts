@@ -75,6 +75,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   selectedLoadablePattern: ILoadablePattern;
   cargos: ICargo[];
   patternLoaded = false;
+  baseUnit = AppConfigurationService.settings.baseUnit;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -142,7 +143,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
     } else {
       this.selectedLoadableStudy = null;
     }
-    this.ngxSpinnerService.hide();
   }
 
    /**
@@ -311,10 +311,18 @@ export class LoadablePatternHistoryComponent implements OnInit {
         return cargo;
       });
       pattern.loadablePatternCargoDetails = loadablePatternCargoDetails;
+      const loadablePlanStowageDetails = pattern.loadablePlanStowageDetails?.map(loadableStowage => {
+        if (loadableStowage) {
+          const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api);
+          loadableStowage.quantity = Number(quantity?.toFixed(2));
+        }
+        return loadableStowage;
+      })
+      pattern.loadablePlanStowageDetails = loadablePlanStowageDetails;
 
       return pattern;
     });
-    this.loadablePatterns = loadablePatterns;
+    this.loadablePatterns = JSON.parse(JSON.stringify(loadablePatterns));
   }
 
   /**

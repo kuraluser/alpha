@@ -329,12 +329,23 @@ export interface ITimeZone {
  * @export
  * @interface IDateTimeFormatOptions
  */
-export interface IDateTimeFormatOptions {
+ export interface IDateTimeFormatOptions {
     utcFormat?: boolean;
     portLocalFormat?: boolean;
+    stringToDate?: boolean;
     portTimeZoneOffset?: string;
     portTimeZoneAbbr?: string;
     customFormat?: string;
+}
+/**
+ * Interface for generate processing Id
+ *
+ * @export
+ * @interface IValidateAndSaveResponse
+ */
+ export interface IValidateAndSaveResponse {
+    responseStatus: IResponse;
+    processId: string;
 }
 
 /**
@@ -348,4 +359,22 @@ export enum AUTH_STATUS {
     REJECTED = 2,
     REQUESTED = 3,
     CREATED = 4
+}
+
+/**
+* calculate subtotal
+ * @interface ISubTotal
+ * @export
+ */
+export interface ISubTotal {
+  dwt: string;
+  sagCorrection: string;
+  sgCorrection?: string;
+  foOnboard: string;
+  doOnboard: string;
+  freshWaterOnboard: string;
+  boilerWaterOnboard: string;
+  ballast: string;
+  constant: string;
+  others: string;
 }

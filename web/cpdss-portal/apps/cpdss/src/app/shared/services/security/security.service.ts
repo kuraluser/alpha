@@ -42,7 +42,7 @@ export class SecurityService {
 
   // setting properties in indexed db
   static setPropertiesDB(value: string, key: string) {
-    SecurityService.cpdssDB?.properties.add(value, key)
+    SecurityService.cpdssDB?.properties.put(value, key)
   }
 
   // setting logged-in user details

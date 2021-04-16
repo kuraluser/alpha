@@ -23,7 +23,7 @@
             <a class="tab-btn" *cpdssPortalPermission="cargoNominationTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION)">{{'CARGO_NOMINATION' | translate}}
-                <div *ngIf="(cargoNominationComplete$|async) && dischargingPorts?.length> 0  else incomplete"
+                <div *ngIf="cargoNominationComplete && dischargingPorts?.length> 0  else incomplete"
                     class="pt-5">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
@@ -36,7 +36,7 @@
             <a class="tab-btn" *cpdssPortalPermission="portsTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.PORTS)">{{'PORT' | translate}}
-                <div *ngIf="(portsComplete$|async) else incomplete" class="pt-5">
+                <div *ngIf="portsComplete else incomplete" class="pt-5">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -48,7 +48,7 @@
             <a class="tab-btn" *cpdssPortalPermission="ohqTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OHQ)">{{'ON_HAND_QUANTITIES' | translate}}
-                <div class="pt-5" *ngIf="(ohqComplete$|async)  else incomplete">
+                <div class="pt-5" *ngIf="ohqComplete  else incomplete">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -60,7 +60,7 @@
             <a class="tab-btn" *cpdssPortalPermission="obqTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OBQ)">{{'ON_BOARD_QUANTITIES' | translate}}
-                <div class="pt-5" *ngIf="(obqComplete$|async) else incomplete">
+                <div class="pt-5" *ngIf="obqComplete else incomplete">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -73,8 +73,8 @@
         <div class="pr-15 text-right">
             <button id="pattern_history" class="btn btn-main mr-10" (click)="navigateToPatternHistory('0')"
                 [disabled]="!loadableStudies?.length">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
-            <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
-                [disabled]="(!loadableStudies?.length || (combined$ | async) || isGenerateClicked || isPatternGenerated || isPatternOpenOrNoplan ||[VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId) || !(generateBtnPermissionContext?.view))">{{'LOADABLE_PATTERN_GENERATE_BUTTON_LABEL'
+                <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
+                [disabled]="(!loadableStudies?.length || !cargoNominationComplete || !portsComplete || !ohqComplete || !obqComplete || isGenerateClicked || isPatternGenerated || isPatternOpenOrNoplan ||[VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId) || !(generateBtnPermissionContext?.view))">{{'LOADABLE_PATTERN_GENERATE_BUTTON_LABEL'
                 | translate}}</button>
             <button id="view_pattern" class="btn btn-main" (click)="navigateToPatternHistory('1')"
                 *ngIf="isPatternGenerated">{{'VIEW_PATTERN_BUTTON_LABEL' | translate }}</button>

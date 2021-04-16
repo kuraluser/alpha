@@ -71,8 +71,8 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageModel.captainId = this.vesselDetails?.captainId;
     this.newVoyageModel.chiefOfficerId = this.vesselDetails?.chiefOfficerId;
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
-    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.start_date, true), dtFormatOpts) : '';
-    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.end_date, true), dtFormatOpts) : '';
+    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.convertToTimeZoneDT(this.newVoyageForm.value.start_date, this.startDateTimeZone.id) : '';
+    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.convertToTimeZoneDT(this.newVoyageForm.value.end_date, this.endDateTimeZone.id) : '';
     this.newVoyageModel.startTimezoneId = this.newVoyageForm.value.start_date ? this.startDateTimeZone.id : null;
     this.newVoyageModel.endTimezoneId = this.newVoyageForm.value.end_date ? this.endDateTimeZone.id : null;
     this.saveNewVoyage();
@@ -186,5 +186,25 @@ export class NewVoyagePopupComponent implements OnInit {
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.newVoyageForm.get(formControlName);
     return formControl;
+  }
+
+  /**
+   * function to convert date-time to time-zone based
+   *
+   * @param {Date} dateTime
+   * @param {number} portTimezoneId
+   * @return {*}  {string}
+   * @memberof PortRotationRibbonComponent
+   */
+  convertToTimeZoneDT(dateTime: Date | string, portTimezoneId: number): string {
+    if (dateTime && portTimezoneId) {
+      const selectedTimeZone: ITimeZone = this.globalTimeZones.find(tz => (tz.id === portTimezoneId));
+      const formatOptions: IDateTimeFormatOptions = {
+        portLocalFormat: true,
+        portTimeZoneOffset: selectedTimeZone?.offsetValue,
+        portTimeZoneAbbr: selectedTimeZone?.abbreviation
+      };
+      return this.timeZoneTransformationService.revertZoneTimetoUTC(dateTime, selectedTimeZone.offsetValue);
+    }
   }
 }

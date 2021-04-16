@@ -28,6 +28,7 @@ import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.mo
 import { DraftConditionComponent } from './draft-condition/draft-condition.component';
 import { ListConditionComponent } from './list-condition/list-condition.component';
 import { TrimConditionComponent } from './trim-condition/trim-condition.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Module for new voyage-status
@@ -52,6 +53,7 @@ import { TrimConditionComponent } from './trim-condition/trim-condition.componen
     InputSwitchModule,
     UnitDropdownModule,
     QuantityPipeModule,
+    TooltipModule,
     PortRotationRibbonModule,
     NewVoyagePopupModule,
     EditPortRotationPopupModule
