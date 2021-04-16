@@ -1551,6 +1551,9 @@ public class LoadableStudyService {
                       loadablePatternCargoDetail -> {
                         LoadablePatternCargoDetails loadablePatternCargoDetails =
                             new LoadablePatternCargoDetails();
+
+                        // Optional.ofNullable(loadablePatternCargoDetail.get)
+
                         Optional.ofNullable(loadablePatternCargoDetail.getPriority())
                             .ifPresent(
                                 priority -> loadablePatternCargoDetails.setPriority(priority));
@@ -2554,6 +2557,9 @@ public class LoadableStudyService {
       dto.setTankName(detail.getTankName());
       dto.setApi(
           isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
+
+      // add Temperature
+
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));

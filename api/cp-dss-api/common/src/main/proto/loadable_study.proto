@@ -921,6 +921,7 @@ message LoadablePatternCargoDetails {
  	string tankName = 10;
  	string maxTolerence = 11;
  	string minTolerence = 12;
+	string temperature = 13;
 }
 
 message LoadablePatternRequest {
