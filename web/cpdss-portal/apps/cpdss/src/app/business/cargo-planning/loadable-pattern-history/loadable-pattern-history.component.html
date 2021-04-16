@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="pl-30  pattern-container" [ngClass]="!loadablePatterns?.length ? 'content-center' : ''">
-            <div class="row" *ngIf="loadablePatterns?.length">
+            <div class="row" *ngIf="loadablePatterns?.length && patternLoaded">
                 <div *ngFor="let loadablePattern of loadablePatterns; let i = index"
                     class="col-6 pb-15 pt-10 content-pattern">
                     <cpdss-portal-pattern-case [loadablePattern]="loadablePattern" [tankList]="tankLists"
@@ -64,7 +64,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="!loadablePatterns?.length">
+            <div *ngIf="!loadablePatterns?.length && patternLoaded">
                 {{'LOADABLE_PATTERN_HISTORY_NO_PATTERN_GENERATED' |
                 translate}}
             </div>

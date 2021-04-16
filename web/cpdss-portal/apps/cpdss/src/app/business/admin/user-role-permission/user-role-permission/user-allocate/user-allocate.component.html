@@ -1,7 +1,7 @@
 <p class="text-secondary text-uppercase">{{ 'USER' | translate }}</p>
 <div >{{ 'USER_PRIVILEGES' | translate }}</div>
 
-<p-table #datatable [value]="userDetails" [(selection)]="selectedUser" selectionMode="multiple"  (onRowSelect)="onRowSelect()" (onRowUnselect)="onRowSelect()" >
+<p-table [scrollable]="true" scrollHeight="250px" #datatable [value]="userDetails" [(selection)]="selectedUser" selectionMode="multiple"  (onRowSelect)="onRowSelect()" (onRowUnselect)="onRowSelect()" >
     <ng-template pTemplate="header">
         <tr *ngIf="userDetails?.length">
             <th style="width: 3rem">
@@ -12,11 +12,11 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-userDetail>
-        <tr>
+        <tr id="{{userDetail.keycloakId ? userDetail.keycloakId : userDetail.id}}">
             <td>
                 <p-tableCheckbox [value]="userDetail" (onChange)="onChange($event)"></p-tableCheckbox>
             </td>
-            <td>{{userDetail.username}}</td>
+            <td [ngClass]="{'strong': userInfo === userDetail.keycloakId}">{{userDetail.username}}</td>
             <td></td>
         </tr>
     </ng-template>

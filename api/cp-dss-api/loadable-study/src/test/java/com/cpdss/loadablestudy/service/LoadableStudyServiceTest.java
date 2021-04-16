@@ -121,6 +121,8 @@ import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
@@ -130,12 +132,14 @@ import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
@@ -228,7 +232,12 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
+  @MockBean
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
+
   @MockBean private CommingleCargoRepository commingleCargoRepository;
+  @MockBean private AlgoErrorService algoErrorService;
 
   @MockBean
   private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
@@ -252,7 +261,9 @@ class LoadableStudyServiceTest {
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
   @MockBean private RestTemplate restTemplate;
   @MockBean private EntityManager entityManager;
-
+  @MockBean private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @MockBean private AlgoErrorsRepository algoErrorsRepository;
+  @MockBean private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @MockBean private EntityManagerFactory entityManagerFactory;
 
   @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
@@ -1999,6 +2010,34 @@ class LoadableStudyServiceTest {
   /** @return EntityDoc */
   private LoadablePatternRequest createGetLoadablePatternDetails() {
     return LoadablePatternRequest.newBuilder().setLoadableStudyId(0L).build();
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void testValidateLoadablePatterns() {
+    AlgoResponse algoResponse = new AlgoResponse();
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    algoResponse.setProcessId("");
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadablePattern()));
+
+    Mockito.doReturn(this.createPortReply())
+        .when(spyService)
+        .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
+    Mockito.when(
+            restTemplate.postForObject(
+                anyString(),
+                any(com.cpdss.loadablestudy.domain.LoadableStudy.class),
+                any(Class.class)))
+        .thenReturn(algoResponse);
+
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    spyService.validateLoadablePlan(
+        LoadablePlanDetailsRequest.newBuilder().build(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
   @SuppressWarnings("unchecked")

@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
+import { IEditPortRotation, IEditPortRotationModel, IPort, IPortList, IPortResponseModel, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IEditPortRotation, IEditPortRotationModel, IPortResponseModel } from '../models/edit-port-rotation.model';
 
 /**
  * Service for edit port rotation
  */
 @Injectable()
-export class EditPortRotationApiService {
+export class PortRotationService {
+
+  public portOrderChange = new Subject();
+  voyageDistance: number;
 
   constructor(private commonApiService: CommonApiService) { }
   /**
@@ -27,7 +29,7 @@ export class EditPortRotationApiService {
  * Method to get all ports in port master
  *
  * @returns {Observable<IPort[]>}
- * @memberof EditPortRotationApiService
+ * @memberof PortRotationService
  */
   getPorts(): Observable<IPort[]> {
     return this.commonApiService.get<IPortsResponse>('ports').pipe(map((response) => {
@@ -38,7 +40,7 @@ export class EditPortRotationApiService {
 * Method to get all port details
 *
 * @returns {Observable<IPortsDetailsResponse>}
-* @memberof EditPortRotationApiService
+* @memberof PortRotationService
 */
   getPortsDetails(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IPortsDetailsResponse> {
     return this.commonApiService.get<IPortsDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports`);

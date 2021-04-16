@@ -11,7 +11,15 @@ const routes: Routes = [
     {
         path: ':roleId',
         component: RolePermissionComponent
-    }
+    },
+    {
+        path: 'user/:userId',
+        component: UserRoleListingComponent
+    },
+    {
+        path: ':roleId/user/:userId',
+        component: RolePermissionComponent
+    },
 ];
 
 /**

@@ -20,7 +20,7 @@
           <div class="form-group row">
             <label for="role_description" class="col-md-6 col-form-label text-secondary">{{'USER_DESIGNATION' | translate}}</label>
             <div class="col-md-6">
-              <input type="text" *ngIf="popupStatus !== 'VIEW';else viewDesignationRef" class="form-control" id="role_description" maxlength="10" formControlName="userDesignation"
+              <input type="text" *ngIf="popupStatus !== 'VIEW';else viewDesignationRef" class="form-control" id="role_description" maxlength="50" formControlName="userDesignation"
               (change)="trimFormControl('userDesignation')" [placeholder]="'USER_DESIGNATION_PLACEHOLDER' | translate" focusTrap />
               <ng-template #viewDesignationRef><span  class="form-control">{{formContolValue('userDesignation')}}</span></ng-template>
             </div>

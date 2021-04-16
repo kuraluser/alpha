@@ -20,7 +20,10 @@ export class ShoreCanActivateGuard extends KeycloakAuthGuard {
     if (!this.authenticated) {
       this.router.navigate(['/']);
     }
-
+    const hasRole = localStorage.getItem('_USER_PERMISSIONS');
+    if(!hasRole){
+      this.router.navigate(['/access-denied']);
+    }
     // Get the roles required from the route.
     const requiredRoles = route.data.roles;
 

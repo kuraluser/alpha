@@ -15,6 +15,7 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { Dropdown } from 'primeng/dropdown';
+import { TimeZoneTransformationService } from 'apps/cpdss/src/app/shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  *  popup for loadable quantity
@@ -69,6 +70,7 @@ export class LoadableQuantityComponent implements OnInit {
   constructor(private fb: FormBuilder,
     private loadableQuantityApiService: LoadableQuantityApiService,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private translateService: TranslateService,
@@ -102,7 +104,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.selectedZone = loadableQuantityResult.selectedZone;
       this.loadableQuantity = loadableQuantityResult.loadableQuantity;
       this.selectedPort = this.ports.find(port => port.id === this.loadableQuantity.portId);
-      this.lastUpdatedDateAndTime = this.loadableQuantity.updateDateAndTime;
+      this.lastUpdatedDateAndTime = this.timeZoneTransformationService.formatDateTime(this.loadableQuantity.lastUpdatedTime, {utcFormat: true});
       this.loadableQuantityId = this.loadableQuantity.loadableQuantityId;
       this.buttonLabel = this.loadableQuantityId ? 'LOADABLE_QUANTITY_UPDATE' : 'LOADABLE_QUANTITY_SAVE';
 

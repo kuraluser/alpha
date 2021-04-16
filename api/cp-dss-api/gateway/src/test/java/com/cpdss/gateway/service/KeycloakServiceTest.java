@@ -136,7 +136,7 @@ class KeycloakServiceTest {
    * @return KeycloakUser user object
    */
   private KeycloakUser getKeycloakUser() {
-    return new KeycloakUser(USER_ID, "TestUserName", "FirstName", "LastName", "xyz@xyz.com");
+    return new KeycloakUser(USER_ID, "TestUserName", "FirstName", "LastName", "xyz@xyz.com", 1L);
   }
 
   /**

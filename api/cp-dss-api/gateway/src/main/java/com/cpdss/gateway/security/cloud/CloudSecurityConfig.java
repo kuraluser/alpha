@@ -41,7 +41,7 @@ public class CloudSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
           "/api/cloud/vessel-details/*",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns",
-          "/api/cloud//vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patterns/{loadablePatternId}/validate-loadable-plan");
+          "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns/{loadablePatternId}/pattern-validate-result");
 
   /** Registers the KeycloakAuthenticationProvider with the authentication manager. */
   @Autowired

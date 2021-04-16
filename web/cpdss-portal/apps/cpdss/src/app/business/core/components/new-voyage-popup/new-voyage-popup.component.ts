@@ -3,16 +3,16 @@ import { EventEmitter } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IVessel } from '../../core/models/vessel-details.model';
-import { NewVoyageModel } from '../models/new-voyage.model';
-import { VoyageApiService } from '../services/voyage-api.service';
-import { TimeZoneTransformationService } from './../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { IVessel } from '../../models/vessel-details.model';
+import { NewVoyageModel } from '../../models/common.model';
+import { VoyageService } from '../../services/voyage.service';
+import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { dateCompareValidator } from '../directive/validator/date-compare-validator.directive'
-import { specialCharacterValidator } from '../../core/directives/special-character-validator.directive';
-import { ITimeZone } from '../../../shared/models/common.model';
+import { dateCompareValidator } from '../../directives/date-compare-validator.directive';
+import { specialCharacterValidator } from '../../directives/special-character-validator.directive';
+import { IDateTimeFormatOptions, ITimeZone } from '../../../../shared/models/common.model';
 
 /**
  * Component for new voyage popup
@@ -33,13 +33,13 @@ export class NewVoyagePopupComponent implements OnInit {
   isSubmitted: boolean;
   isExisting = false;
   errorMessages: any;
-  date:Date;
+  date: Date;
   globalTimeZones: ITimeZone[];
   startDateTimeZone: ITimeZone;
   endDateTimeZone: ITimeZone;
 
   constructor(private fb: FormBuilder, private router: Router,
-    private voyageApiService: VoyageApiService,
+    private voyageApiService: VoyageService,
     private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
@@ -66,14 +66,13 @@ export class NewVoyagePopupComponent implements OnInit {
    */
   onSubmit() {
     this.isLoading = true;
+    const dtFormatOpts: IDateTimeFormatOptions = { customFormat: 'DD-MM-YYYY HH:mm' };
     this.newVoyageModel = new NewVoyageModel();
     this.newVoyageModel.captainId = this.vesselDetails?.captainId;
     this.newVoyageModel.chiefOfficerId = this.vesselDetails?.chiefOfficerId;
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
-    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.start_date, true), {isTime: true
-    }) : '';
-    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.end_date, true), {isTime: true
-    }) : '';
+    this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.start_date, true), dtFormatOpts) : '';
+    this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.timeZoneTransformationService.formatDateTime(this.timeZoneTransformationService.convertToZoneBasedTime(this.newVoyageForm.value.end_date, true), dtFormatOpts) : '';
     this.newVoyageModel.startTimezoneId = this.newVoyageForm.value.start_date ? this.startDateTimeZone.id : null;
     this.newVoyageModel.endTimezoneId = this.newVoyageForm.value.end_date ? this.endDateTimeZone.id : null;
     this.saveNewVoyage();

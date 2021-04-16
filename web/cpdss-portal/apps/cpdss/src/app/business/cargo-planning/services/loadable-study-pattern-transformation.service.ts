@@ -180,7 +180,7 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
         header: 'CARGO_TO_BE_LOADED_API_TEMP'
       },
       {
-        field: 'tankShortName',
+        field: 'loadingPort',
         header: 'CARGO_TO_BE_LOADED_LOADING_PORT'
       },
       {
@@ -192,7 +192,7 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
         header: 'CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE'
       },
       {
-        field: 'tankShortName',
+        field: 'loadableMT',
         header: 'CARGO_TO_BE_LOADED_SHIP_LOADABLE'
       },
       {
@@ -200,11 +200,11 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
         header: 'CARGO_TO_BE_LOADED_DIFFERENCE'
       },
       {
-        field: 'tankShortName',
+        field: 'timeRequiredForLoading',
         header: 'CARGO_TO_BE_LOADED_TIME_REQUIRED'
       },
       {
-        field: 'tankShortName',
+        field: 'slopQuantity',
         header: 'CARGO_TO_BE_LOADED_SLOP_QTY'
       }
     ]

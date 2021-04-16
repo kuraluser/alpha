@@ -164,9 +164,9 @@ public class UserService {
       user.setRejectionCount(usersEntity.getRejectionCount());
     }
 
-    if (null != usersEntity.getId()
-        && null != usersEntity.getStatus()
-        && UserStatusValue.APPROVED.getId() == usersEntity.getStatus().getId()) {
+    if ((null != usersEntity.getId() && this.isShip())
+        || (null != usersEntity.getStatus()
+            && UserStatusValue.APPROVED.getId().equals(usersEntity.getStatus().getId()))) {
       user.setId(usersEntity.getId());
       List<RoleUserMapping> roleUserList =
           this.roleUserMappingRepository.findByUsersAndIsActive(
@@ -558,6 +558,7 @@ public class UserService {
     if (permission.getRole().getName() != null) {
       this.validateRoleName(permission.getRoleId(), permission.getRole().getName());
     }
+
     PermissionResponse permissionResponse = new PermissionResponse();
     Optional<Roles> role =
         this.rolesRepository.findByIdAndCompanyXIdAndIsActive(
@@ -569,9 +570,7 @@ public class UserService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    List<Users> users =
-        this.usersRepository.findByCompanyXIdAndIdIn(companyId, permission.getUserId());
-
+    List<Users> users = this.usersRepository.findByIdIn(permission.getUserId());
     List<Long> screenIds = new ArrayList<>();
     for (ScreenInfo screenInfo : permission.getScreens()) {
       screenIds.add(screenInfo.getId());
@@ -615,8 +614,7 @@ public class UserService {
             }
 
             Optional<RoleUserMapping> roleUserOpt =
-                this.roleUserRepository.findByUsersAndRolesAndIsActive(
-                    user.getId(), role.get().getId(), true);
+                this.roleUserRepository.findByUsersAndIsActive(user.getId(), true);
             RoleUserMapping roleUser = null;
             if (!roleUserOpt.isPresent()) {
               roleUser = new RoleUserMapping();

@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { CommonApiService } from '../common/common-api.service';
 import { IDateTimeFormatOptions, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
+import * as moment from 'moment';
 
 /**
  * Service for listing and converting Time Zone
@@ -32,61 +33,87 @@ export class TimeZoneTransformationService {
   }
 
   /**
-   * function to convert date-time to selected time-zone
-   * @param {(string|Date)} dateTime
-   * @param {string} zone
-   * @return {*}  {string}
+   * function to convert date-time to UTC & UTC to particular offset time zone
+   * @param {(Date | string)} dateTime
+   * @param {boolean} toUtc
+   * @param {string} [offsetValue]
+   * @return {*}  {Date}
    * @memberof TimeZoneTransformationService
    */
-  convertToZoneBasedTime(dateTime: Date, toUtc: boolean, offsetValue?: string): Date {
-    const utcOffset = toUtc ? 0.00 : parseFloat(offsetValue?.replace(':', '.'));
-    const tzDifference = utcOffset * 60 + dateTime.getTimezoneOffset();
-    const offsetTime = new Date(dateTime.getTime() + tzDifference * 60 * 1000);
-    return offsetTime;
+  convertToZoneBasedTime(dateTime: Date | string, toUtc: boolean, offsetValue?: string): Date {
+    const _format = 'YYYY/MM/DD HH:mm';
+    let convertToTimezone = toUtc ? moment(dateTime).utc().format(_format) : moment(dateTime).add(offsetValue, 'hours').format(_format);
+    const convertedDateTime = moment(convertToTimezone).toDate();
+    return convertedDateTime;
   }
 
   /**
-   * function to format date time (dd-mm-yyyy) default
-   * (dd-mm-yyyy HH:mm) is optional using {formatOptions > isTime}
-   * (dd-mm-yyyy HH:mm:ss) is optional using {formatOptions > isTime & isTimeSeconds}
-   * @param {*} date
+   * function to format date-time
+   *
+   * @param {*} dateTime
    * @param {IDateTimeFormatOptions} [formatOptions]
-   * @return {*} 
+   * @return {*}  {string}
    * @memberof TimeZoneTransformationService
    */
-  formatDateTime(date, formatOptions?: IDateTimeFormatOptions): string {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    let seconds = date.getSeconds();
+  formatDateTime(dateTime, formatOptions?: IDateTimeFormatOptions): string {
 
-    if (month < 10) {
-      month = '0' + month;
+    let formattedDate: string;
+    const initFormat = 'DD-MM-YYYY HH:mm';
+    if (formatOptions?.utcFormat) {
+      formattedDate = moment(dateTime, initFormat).format('DD/MMM/YYYY HH:mm').toUpperCase() + ' UTC';
+    } else if (formatOptions?.portLocalFormat && formatOptions?.portTimeZoneOffset && formatOptions?.portTimeZoneAbbr) {
+      formattedDate = this.modifiedDateTime(dateTime, formatOptions?.portTimeZoneOffset, formatOptions?.portTimeZoneAbbr);
+    } else if (formatOptions?.customFormat) {
+      formattedDate = moment(dateTime, initFormat).format(formatOptions?.customFormat);
+    } else {
+      formattedDate = moment(dateTime, initFormat).format('DD-MM-YYYY');
     }
-    if (day < 10) {
-      day = '0' + day;
-    }
-    if (hour < 10) {
-      hour = '0' + hour;
-    }
-    if (minute < 10) {
-      minute = '0' + minute;
-    }
-    if (seconds < 10) {
-      seconds = '0' + seconds;
-    }
-
-    let formattedDate = day + '-' + month + '-' + date.getFullYear();
-
-    if (formatOptions?.isTime) {
-      formattedDate += ' ' + hour + ':' + minute;
-    }
-    if (formatOptions?.isTime && formatOptions?.isTimeSeconds) {
-      formattedDate += ':' + seconds;
-    }
-
     return formattedDate;
+  }
+
+  /**
+   * function to modify date-time format with port based zone conversion
+   *
+   * @param {*} dateTime
+   * @param {string} offsetValue
+   * @param {string} [abbr]
+   * @return {*}  {string}
+   * @memberof TimeZoneTransformationService
+   */
+  modifiedDateTime(dateTime, offsetValue: string, abbr?: string): string {
+
+    let _offsetValue: string;
+    const initFormat = 'DD-MM-YYYY HH:mm';
+    const abbreviation = ' ' + abbr + ' ';
+    if (offsetValue.charAt(0) === '-') {
+      let unsignedOffset = offsetValue.split('-')[1];
+      if (unsignedOffset.includes('.')) {
+        let splittedOffset = offsetValue.split('.');
+        splittedOffset[0] = splittedOffset[0].length !== 2 ? '0' + splittedOffset[0] : splittedOffset[0];
+        splittedOffset[1] = splittedOffset[1] === '5' && '30';
+        _offsetValue = '-' + splittedOffset[0] + ':' + splittedOffset[1];
+      } else {
+        unsignedOffset = unsignedOffset.length !== 2 ? '0' + unsignedOffset : unsignedOffset;
+        _offsetValue = '-' + unsignedOffset + ':00';
+      }
+    } else {
+      if (offsetValue.includes('.')) {
+        let splittedOffset = offsetValue.split('.');
+        splittedOffset[0] = splittedOffset[0].length !== 2 ? '0' + splittedOffset[0] : splittedOffset[0];
+        splittedOffset[1] = splittedOffset[1] === '5' && '30';
+        _offsetValue = '+' + splittedOffset[0] + ':' + splittedOffset[1];
+      } else {
+        offsetValue = offsetValue.length !== 2 ? '0' + offsetValue : offsetValue;
+        _offsetValue = '+' + offsetValue + ':00';
+      }
+    }
+
+    const addedPortTZ = moment(dateTime, initFormat).add(_offsetValue, 'hours').format('DD/MMM/YYYY HH:mm').toUpperCase();
+    let convertedPortTZ = moment(dateTime, initFormat).utcOffset(_offsetValue).format('DD/MMM/YYYY HH:mm (UTC Z)');
+
+    const dateTimeSplitIndex = convertedPortTZ.indexOf('(UTC');
+    const dateTimeWithAbbr = [addedPortTZ, abbreviation, convertedPortTZ.slice(dateTimeSplitIndex)].join('');
+    return dateTimeWithAbbr;
   }
 
 }

@@ -1,19 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IVessel } from '../../core/models/vessel-details.model';
+import { IVessel } from '../../models/vessel-details.model';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { EditPortRotationApiService } from '../services/edit-port-rotation-api.service';
+import { PortRotationService } from '../../services/port-rotation.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { IEditPortRotation } from '../models/edit-port-rotation.model';
-import { IPortsDetailsResponse, VOYAGE_STATUS } from '../../core/models/common.model';
-import { Voyage } from '../../core/models/common.model';
+import { IEditPortRotation, IPortsDetailsResponse, IVoyagePortDetails, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { Voyage } from '../../../core/models/common.model';
 import { Subscription , fromEvent, Observable } from 'rxjs';
 import { OnDestroy } from '@angular/core';
-import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
-import { IVoyageDetails } from '../models/voyage-status.model';
-import { portEtaEtdValidator } from '../directive/validator/port-eta-etd-validator.directive';
-import { portTimeValidator } from '../directive/validator/port-time-validator.directive';
+import { portEtaEtdValidator } from '../../directives/port-eta-etd-validator.directive';
+import { portTimeValidator } from '../../directives/port-time-validator.directive';
 
 /**
  * Component class of PortRotationRibbonComponent
@@ -44,7 +41,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
  @Input() isDeletable = false;
 
-  @Output() portDetails = new EventEmitter<IVoyageDetails>();
+  @Output() portDetails = new EventEmitter<IVoyagePortDetails>();
 
   voyageId: number;
   loadableStudyId: number;
@@ -68,10 +65,9 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private fb: FormBuilder,
-    private editPortRotationApiService: EditPortRotationApiService,
+    private editPortRotationApiService: PortRotationService,
     private translateService: TranslateService,
-    private messageService: MessageService,
-    private voyageStatusTransformationService: VoyageStatusTransformationService) { }
+    private messageService: MessageService) { }
 
   /**
    * Component lifecycle ngOnit
@@ -81,10 +77,10 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
   async ngOnInit(): Promise<void> {
     this.resizeObservable$ = fromEvent(window, 'resize')
-    this.resizeSubscription$ = this.resizeObservable$.subscribe(evt => {
+    this.resizeSubscription$ = this.resizeObservable$.subscribe((evt) => {
       this.setCarouselNumVisble(evt.target['innerWidth']);
     })
-    this.portOrderSubscription$ = this.voyageStatusTransformationService.portOrderChange.subscribe(data => {
+    this.portOrderSubscription$ = this.editPortRotationApiService.portOrderChange.subscribe((data) => {
       if (data) {
         this.getPortRotationRibbonData();
       }
@@ -145,7 +141,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param port 
    */
   onClickPort(port: IEditPortRotation) {
-    const portDetails: IVoyageDetails = {
+    const portDetails: IVoyagePortDetails = {
       "portOrder": port.portOrder,
       "operationType": port.type === 'Arrival' ? "ARR" : "DEP",
       "portId": port.portId,
@@ -385,9 +381,9 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const result = await this.editPortRotationApiService.getPorts().toPromise();
     const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
     this.portCarousel = [];
-    this.voyageStatusTransformationService.voyageDistance = 0
+    this.editPortRotationApiService.voyageDistance = 0
     for (let i = 0; i < portsFormData?.portList?.length; i++) {
-      this.voyageStatusTransformationService.voyageDistance = portsFormData?.portList[i].distanceBetweenPorts + this.voyageStatusTransformationService.voyageDistance;
+      this.editPortRotationApiService.voyageDistance = portsFormData?.portList[i].distanceBetweenPorts + this.editPortRotationApiService.voyageDistance;
     }
     const portData: IEditPortRotation[] = portsFormData?.portList?.map(itm => ({
       ...result.find((item) => (item.id === itm.portId) && item),
@@ -422,7 +418,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.setPOrtData();
     this.initPortRotationArray();
     this.currentPosition();
-    this.errorMesages = this.voyageStatusTransformationService.setValidationErrorMessageForPortRotationRibbon();
+    this.errorMesages = this.setValidationErrorMessageForPortRotationRibbon();
     this.setCarouselNumVisble(window.innerWidth);
     setTimeout(() => {
         this.portCarousel = [...this.portList];
@@ -434,7 +430,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * Method to set port data on page load
    */
   setPOrtData() {
-    const portDetails: IVoyageDetails = {
+    const portDetails: IVoyagePortDetails = {
       "portOrder": this.portList[0].portOrder,
       "operationType": this.portList[0].type === 'Arrival' ? "ARR" : "DEP",
       "portId": this.portList[0].portId,
@@ -543,6 +539,13 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.selectedPortIndex = index;
   }
 
+  /**
+   * Set invalid state
+   *
+   * @param {*} port
+   * @param {*} form
+   * @memberof PortRotationRibbonComponent
+   */
   setInvalid(port, form) {
     if(port.isFutureDate){
       let control = form.controls.distance
@@ -551,6 +554,39 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       port.isDateEditable = control.invalid && control.touched;
       control = form.controls.time
       port.isTimeEditable = control.invalid && control.touched;
+    }
+  }
+
+  /**
+   * Set validation Error to form control
+   */
+   setValidationErrorMessageForPortRotationRibbon() {
+    return {
+      eta: {
+        'required': 'PORT_ROTATION_RIBBON_ETA_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN',
+        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_ETD_DATE'
+      },
+      etd: {
+        'required': 'PORT_ROTATION_RIBBON_ETD_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN',
+        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_ETA_DATE'
+      },
+      etaTime: {
+        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN'
+      },
+      etdTime: {
+        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN'
+      },
+      distance: {
+        'required': 'PORT_ROTATION_RIBBON_DISTANCE_REQUIRED',
+      }
     }
   }
 

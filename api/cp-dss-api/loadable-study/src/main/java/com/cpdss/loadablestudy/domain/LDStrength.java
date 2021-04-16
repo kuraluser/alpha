@@ -29,5 +29,5 @@ public class LDStrength {
   private String errorDetails;
   private String messageText;
   private Long portId;
-  private Long synioticalId;
+  private Long synopticalId;
 }
