@@ -13,7 +13,7 @@
                 [errorMessages]="errorMessages">
                 </cpdss-portal-validation-error>
             </div>
-            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" [disabled]="!isPermissionAvaliable" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
+            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" [disabled]="!isPermissionAvaliable || commentButtonStatus || isVoyageClosed" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
             
         </form>
         <div class="row">

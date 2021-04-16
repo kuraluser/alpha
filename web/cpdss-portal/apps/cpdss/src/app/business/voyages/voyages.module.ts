@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { DatePopUpComponent } from './date-pop-up/date-pop-up.component';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { NewVoyagePopupModule } from '../core/components/new-voyage-popup/new-voyage-popup.module';
 
 /**
  * CPDSS app main module. All voyages list logic will be inside this module
@@ -29,7 +30,8 @@ import { TooltipModule } from 'primeng/tooltip';
     FormsModule,
     CalendarModule,
     DialogModule,
-    TooltipModule
+    TooltipModule,
+    NewVoyagePopupModule
   ],
   exports: [DatePopUpComponent],
   providers: [ VoyageListTransformationService, VoyageListApiService ]

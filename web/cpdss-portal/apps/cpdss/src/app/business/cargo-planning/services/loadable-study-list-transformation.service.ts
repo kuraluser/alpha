@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { VOYAGE_STATUS } from '../../core/models/common.model';
 
 @Injectable({
@@ -8,7 +10,7 @@ import { VOYAGE_STATUS } from '../../core/models/common.model';
 })
 export class LoadableStudyListTransformationService {
 
-  constructor() { }
+  constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
 
   /**
 *  loadable study details transformation service
@@ -63,8 +65,22 @@ export class LoadableStudyListTransformationService {
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
+        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'createdDate',
+        filterFieldMaxvalue: new Date()
+      },
+      {
+        field: 'lastEdited',
+        header: 'LOADABLE_STUDY_LIST_GRID_DATE_LAST_EDITED_LABEL',
+        sortable: true,
+        filter: true,
+        editable: false,
+        filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_DATE',
+        filterType: DATATABLE_FILTER_TYPE.DATE,
+        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'lastEdited',
         filterFieldMaxvalue: new Date()
       }
     ];

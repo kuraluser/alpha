@@ -124,6 +124,8 @@ export class EditPortRotationPopupComponent implements OnInit {
     for (let j = i; j < this.portList.length; j++) {
       this.portList[j].etaActual = '';
       this.portList[j].etdActual = '';
+      this.portList[j].eta = '';
+      this.portList[j].etd = '';
       this.portList[j].distanceBetweenPorts = 0;
       this.portList[j].portOrder = i + 1;
     }

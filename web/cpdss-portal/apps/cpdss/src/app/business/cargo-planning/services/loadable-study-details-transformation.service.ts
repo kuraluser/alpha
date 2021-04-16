@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ValueObject } from '../../../shared/models/common.model';
+import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON , DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { ValueObject , ISubTotal } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IMonths, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
@@ -9,6 +9,10 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
 import { IOperations, IPort, IPortList, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
 import { ILoadableOHQStatus } from '../models/loadable-study-list.model';
+import * as moment from 'moment';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+
 
 /**
  * Transformation Service for Lodable Study details module
@@ -42,7 +46,7 @@ export class LoadableStudyDetailsTransformationService {
   obqUpdate$ = this._ohqUpdate.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
-  constructor() { }
+  constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
 
   /**
    * Method for formating cargo nomination data
@@ -338,8 +342,20 @@ export class LoadableStudyDetailsTransformationService {
     ];
     if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
+      
       if (permission?.add) {
-        actions.push(DATATABLE_ACTION.SAVE);
+        const buttons = {
+          field: 'buttons',
+          fieldHeaderClass: 'column-save',
+          header: '',
+          fieldClass: 'text-center',
+          fieldColumnClass: 'text-center',
+          fieldType: DATATABLE_FIELD_TYPE.BUTTON,
+          buttons: [
+            {type: DATATABLE_BUTTON.SAVE_BUTTON , field: 'isAdd' , icons: '' , class: 'pi pi-save' , label: '' , tooltip: 'Save' , tooltipPosition: "top"}
+          ]
+        }
+        columns = [...columns, buttons];
         actions.push(DATATABLE_ACTION.DUPLICATE);
       }
       if (permission?.delete) {
@@ -628,6 +644,7 @@ export class LoadableStudyDetailsTransformationService {
     const layCan = (port.layCanFrom && port.layCanTo) ? (port.layCanFrom + ' to ' + port.layCanTo) : '';
     _port.id = port.id;
     _port.portOrder = port.portOrder;
+    _port.portTimezoneId = port.portTimezoneId;
     _port.portcode = new ValueObject<string>(portObj?.code, true, false, false, false);
     _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEdit && isEditable);
     _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit && isEditable);
@@ -742,6 +759,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'CHOOSE_LAY_CAN',
         fieldClass: 'lay-can',
         dateFormat: 'dd-mm-yy',
+        fieldHeaderTooltipIcon: 'pi-info-circle',
+        fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
         errorMessages: {
           'required': 'PORT_LAY_CAN_REQUIRED_ERROR',
           'toDate': 'PORT_LAY_CAN_TO_DATE_ERROR',
@@ -789,9 +808,11 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'eta.value',
         fieldPlaceholder: 'CHOOSE_ETA',
-        dateFormat: 'dd-mm-yy',
+        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         minDate: minDate,
         fieldClass: 'eta',
+        fieldHeaderTooltipIcon: 'pi-info-circle',
+        fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
         errorMessages: {
           'required': 'PORT_ETA_REQUIRED_ERROR',
           'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
@@ -811,8 +832,10 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'etd.value',
         fieldPlaceholder: 'CHOOSE_ETD',
         minDate: minDate,
-        dateFormat: 'dd-mm-yy',
+        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         fieldClass: 'etd',
+        fieldHeaderTooltipIcon: 'pi-info-circle',
+        fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
         errorMessages: {
           'required': 'PORT_ETD_REQUIRED_ERROR',
           'notInRange': 'PORT_ETD_NOT_IN_DATE_RANGE',
@@ -881,6 +904,12 @@ export class LoadableStudyDetailsTransformationService {
             _ports.layCanFrom = "";
             _ports.layCanTo = "";
           }
+        } else if (key === 'eta') {
+          const newEta = moment(port.eta.value.slice(0, 17)).format('DD-MM-YYYY HH:mm');
+          _ports.eta = this.timeZoneTransformationService.revertZoneTimetoUTC(newEta, port.port.value?.timezoneOffsetVal);
+        } else if (key === 'etd') {
+          const newEtd = moment(port.etd.value.slice(0, 17)).format('DD-MM-YYYY HH:mm');
+          _ports.etd = this.timeZoneTransformationService.revertZoneTimetoUTC(newEtd, port.port.value?.timezoneOffsetVal);
         }
         else {
           if (key !== 'layCanFrom' && key !== 'layCanTo') {
@@ -1508,5 +1537,19 @@ export class LoadableStudyDetailsTransformationService {
         'required': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED"'
       }
     }
+  }
+
+  /**
+ * Method for calculating  subtotal
+ *
+ * @param {ISubTotal} data
+ * @returns {number}
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  getSubTotal(data: ISubTotal): Number {
+    const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection ? data.sgCorrection : 0) - Number(data.foOnboard)
+      - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.boilerWaterOnboard) - Number(data.ballast)
+      - Number(data.constant) - Number(data.others);
+    return Number(subTotal);
   }
 }

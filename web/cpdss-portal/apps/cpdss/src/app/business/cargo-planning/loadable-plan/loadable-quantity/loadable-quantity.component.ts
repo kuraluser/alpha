@@ -28,6 +28,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe, loadableQuantityData))
     });
     this.calculateTotal(this.loadableQuantityData);
+    this.total.differencePercentage = ((this.total.loadableBbls60f - this.total.orderBbls60f)/this.total.orderBbls60f)*100;
   }
 
   @Input() set loadableQuantityCommingleCargoDetails(value: ILoadableQuantityCommingleCargo[]) {
@@ -67,7 +68,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.total.loadableLT += this.convertToNumber(value?.loadableLT);
       this.total.loadableMT += this.convertToNumber(value?.loadableMT);
       this.total.loadableKL += this.convertToNumber(value?.loadableKL);
-      this.total.differencePercentage += (value?.differencePercentageValue);
+      
     })
   }
 
@@ -97,7 +98,7 @@ export class LoadableQuantityComponent implements OnInit {
    * @returns {number}
    */
   convertToNumber(value: string) {
-    value = value?.replace(',', '');
+    value = value?.replace(/,/g, '');
     return Number(value)
   }
 

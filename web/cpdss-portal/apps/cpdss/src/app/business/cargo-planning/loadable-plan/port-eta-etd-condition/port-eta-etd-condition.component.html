@@ -5,7 +5,7 @@
 </div>
 <div class="row">
     <div class="col ml-30 table-eta">
-        <p-table #datatable [columns]="tableCol" [value]="tableRow">
+        <p-table #datatable [columns]="tableCol" [value]="tableRow" styleClass="body-header-row-span-table">
             <ng-template #row pTemplate="header" let-rowData let-columns>
                 <tr>
                     <th></th>
@@ -15,7 +15,10 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
                 <tr>
-                    <th *ngIf="rowData?.header" [attr.rowspan]="rowData.rowspan">{{rowData.header | translate}}</th>
+                    <th *ngIf="rowData?.header" [attr.rowspan]="rowData.rowspan">
+                        {{rowData.header | translate}}
+                        <span *ngIf="rowData.field === 'etaEtdPlanned'" class="inline-block ml-5 v-middle pointer pi pi-info-circle" pTooltip="{{'PORT_TIME_ZONE_NOTIFICATION' | translate}}" tooltipPosition="top"></span>
+                    </th>
                     <th>{{rowData.subHeader | translate}}</th>
                     <ng-container *ngFor="let col of columns;let index = index">
                             <td>{{arrangeRecords[index][rowData.field]}}</td>

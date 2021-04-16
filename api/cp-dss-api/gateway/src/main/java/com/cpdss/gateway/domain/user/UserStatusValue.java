@@ -12,6 +12,6 @@ public enum UserStatusValue {
   REJECTED(2L, "Rejected"),
   REQUESTED(3L, "Requested");
 
-  private final long id;
+  private final Long id;
   private final String statusName;
 }

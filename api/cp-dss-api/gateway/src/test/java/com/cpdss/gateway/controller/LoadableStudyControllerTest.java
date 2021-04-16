@@ -523,7 +523,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
   @ParameterizedTest
   void testSavePortRotation(String url) throws Exception {
-    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenReturn(new PortRotationResponse());
     this.mockMvc
         .perform(
@@ -539,7 +539,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
   @ParameterizedTest
   void testSavePortRotationServiceException(String url) throws Exception {
-    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenThrow(
             new GenericServiceException(
                 "service exception",
@@ -559,7 +559,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
   @ParameterizedTest
   void testSavePortRotationRuntimeException(String url) throws Exception {
-    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(

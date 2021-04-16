@@ -73,7 +73,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
      */
     const menuList = [
       {
-        'menu': 'STATUS',
+        'menu': 'DASHBOARD',
         'menuIcon': 'status',
         'menuLink': 'voyage-status',
         'routerLinkActive': 'voyage-status',

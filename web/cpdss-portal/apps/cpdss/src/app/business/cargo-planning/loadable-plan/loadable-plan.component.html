@@ -18,7 +18,7 @@
 
             </div>
             <div class="ml-auto pr-15">
-                <button class="btn btn-main" id="confirm_plan" [disabled]="!confirmPlanPermission" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">
+                <button class="btn btn-main" id="confirm_plan" [disabled]="!confirmPlanPermission || confirmButtonStatus" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">
                     <span class="pi pi-check check-rounded" *ngIf="loadableStudyStatus"></span>
                     {{loadableStudyStatus ? ('LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |translate) : ('LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |translate)}}
                 </button>
@@ -40,7 +40,8 @@
                 [centerBallastTanks]="centerBallastTanks" [frontBallastTanks]="frontBallastTanks"
                 [cargoTankDetails]="cargoTankDetails" [ballastDetails]="loadablePlanBallastDetails"
                 [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
-                [loadableStudyId]="loadableStudyId" [voyage]="selectedVoyage" [loadableStudy]="loadableStudy">
+                [loadableStudyId]="loadableStudyId" [voyage]="selectedVoyage" [loadableStudy]="loadableStudy" [loadablePatternValidationStatus]="loadablePatternValidationStatus"
+                [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup">
             </cpdss-portal-stowage>
         </div>
         <div>
@@ -48,8 +49,8 @@
             </cpdss-portal-port-eta-etd-condition>
         </div>
         <div>
-            <cpdss-portal-comments [loadablePatternId]="loadablePatternId" [loadableStudyId]="loadableStudyId"
-                [commentsDetails]="loadablePlanComments" [vesselId]="vesselId" [voyageId]="voyageId" [enableSubmit]="true">
+            <cpdss-portal-comments [loadablePatternId]="loadablePatternId" [loadableStudyId]="loadableStudyId" [isVoyageClosed]="isVoyageClosed"
+                [commentsDetails]="loadablePlanComments" [loadablePatternValidationStatus]="loadablePatternValidationStatus" [vesselId]="vesselId" [voyageId]="voyageId" [enableSubmit]="true">
             </cpdss-portal-comments>
         </div>
     </div>

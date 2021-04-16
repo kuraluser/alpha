@@ -473,6 +473,7 @@ message LoadableQuantityCargoDetails {
 	 int32 priority = 20;
 	 int32 loadingOrder = 21;
 	 string slopQuantity = 22;
+	 int64 cargoNominationId = 23;
 }
 
 message ConfirmPlanRequest {
@@ -598,12 +599,14 @@ message LoadableQuantityRequest {
 	string foConsumptionPerDay = 28;
 	int64 id = 29;
 	string lastUpdatedTime = 30;
+	int64 portRotationId = 31;
 }
 
 message LoadableQuantityReply {
 	StatusReply responseStatus = 1;
 	int64 loadableQuantityId = 2;
 	int64 loadableStudyId = 3;
+	int64 portRotationId = 4;
 }
 
 message LoadableStudyRequest{
@@ -734,6 +737,7 @@ message PortRotationDetail{
 	int64 portOrder=17;
 	bool isPortsComplete=18;
 	int64 portTimezoneId = 19;
+	bool isLandingPage=20;
 }
 
 message Operation{
@@ -1024,7 +1028,8 @@ message SynopticalCargoRecord{
 	string cargoAbbreviation = 8;
 	int64 cargoId = 9;
 	string capacity = 10;
-	string api = 11;
+	string api = 11;	
+	bool isCommingleCargo=12;
 }
 
 message SynopticalOhqRecord{

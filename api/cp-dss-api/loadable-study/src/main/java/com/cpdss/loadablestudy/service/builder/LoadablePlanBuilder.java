@@ -55,6 +55,7 @@ public class LoadablePlanBuilder {
           Optional.ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
           Optional.ofNullable(lpq.getOrderQuantity())
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
+          Optional.ofNullable(lpq.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }
@@ -94,6 +95,7 @@ public class LoadablePlanBuilder {
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
+          Optional.ofNullable(lpcd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder

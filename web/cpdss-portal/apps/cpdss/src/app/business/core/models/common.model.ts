@@ -199,6 +199,8 @@ export interface IBallastStowageDetails {
     inertia: string;
     colorCode?: string;
     fullCapacityCubm?: string;
+    api?:number;
+    temperature?: number;
 }
 
 /**
@@ -229,11 +231,15 @@ export interface IBallastTank extends ITank {
  */
 export interface IPort {
     id: number;
+    portId?: number;
     name: string;
     code?: string;
     maxAirDraft?: number;
     maxDraft?: number;
     waterDensity?: number;
+    timezone?: string;
+    timezoneOffsetVal?: string;
+    timezoneAbbreviation?: string;
 }
 
 /**
@@ -281,6 +287,7 @@ export interface IPortList {
     portOrder: number;
     loadableStudyId: number;
     portId: number;
+    portTimezoneId?: number;
     operationId: number;
     seaWaterDensity: number;
     distanceBetweenPorts: number;
@@ -377,6 +384,7 @@ export interface IEditPortRotationModel {
 export interface IEditPortRotation{
     id: number;
     portOrder: number;
+    portTimezoneId?: number;
     loadableStudyId: number;
     portId: number;
     operationId: number;
@@ -407,6 +415,8 @@ export interface IEditPortRotation{
     isEditable?: boolean;
     isSelected?: boolean;
     isFocused?: boolean;
+    portDate?: string;
+    portTime?: string;
 }
 
 /**

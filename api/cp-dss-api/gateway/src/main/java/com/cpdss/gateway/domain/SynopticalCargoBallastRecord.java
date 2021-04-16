@@ -32,4 +32,6 @@ public class SynopticalCargoBallastRecord {
   private BigDecimal api;
 
   private String sg;
+
+  private Boolean isCommingleCargo;
 }

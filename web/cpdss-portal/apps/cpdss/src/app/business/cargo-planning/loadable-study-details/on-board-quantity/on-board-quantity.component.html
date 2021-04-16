@@ -24,15 +24,15 @@
                         <div class="col" *ngIf="obqForm"> 
                             <form [formGroup]="obqForm">
                                 <div class="form-group row">
-                                    <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
-                                        <div class="table-responsive-custom cargo-nomination-table obq" #obqDatatable>
+                                    <div class="col table-responsive-custom cargo-nomination-table obq" [ngClass]="{'datatable-loading': dataTableLoading }" #obqDatatable>
+                                       
                                             <cpdss-portal-datatable [tableId]="'obq'" [form]="obqForm"
                                                 [columns]="columns" [value]="selectedPortOBQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
                                                 [selectionMode]="selectionMode" [loading]="dataTableLoading" [progress]="progress" (editComplete)="onEditComplete($event)"
                                                 (rowSelection)="onRowSelection($event)" [selection]="selectedTank">
                                             </cpdss-portal-datatable>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </form>

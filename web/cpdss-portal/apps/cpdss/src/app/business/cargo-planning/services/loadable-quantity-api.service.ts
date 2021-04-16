@@ -18,10 +18,11 @@ export class LoadableQuantityApiService {
    * @param vesselId 
    * @param voyageId 
    * @param loadableStudyId 
+   * @param portRotationId
    * Get api for loadable quantity
    */
-  getLoadableQuantity(vesselId: number, voyageId: number, loadableStudyId: number): Observable<LoadableQuantityModel> {
-    return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity`);
+  getLoadableQuantity(vesselId: number, voyageId: number, loadableStudyId: number, portRotationId: number): Observable<LoadableQuantityModel> {
+    return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity?portRotationId=${portRotationId}`);
   }
 
   /**
@@ -29,7 +30,7 @@ export class LoadableQuantityApiService {
    * @param vesselId 
    * @param voyageId 
    * @param loadableStudyId 
-   * @param loadableQuantity 
+   * @param loadableQuantity
    * Save loadable quantity
    */
   saveLoadableQuantity(vesselId: number, voyageId: number, loadableStudyId: number, loadableQuantity: LodadableQuantity): Observable<LoadableQuantityResponseModel> {

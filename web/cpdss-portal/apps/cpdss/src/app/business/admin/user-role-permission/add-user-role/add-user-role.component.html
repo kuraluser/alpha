@@ -5,9 +5,8 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-
           <div class="form-group row">
-            <label for="new_user_role" class="col-md-6 col-form-label text-secondary">{{'ADD_NEW_ROLE' | translate}}</label>
+            <label for="new_user_role" class="col-md-2 col-form-label text-secondary">{{'ADD_NEW_ROLE' | translate}}</label>
             <div class="col-md-6">
               <input type="text" class="form-control" id="new_user_role" formControlName="roleName"
                (change)="trimFormControl('roleName')" (input)="isExisting = false" maxlength="10">
@@ -17,14 +16,13 @@
 
           </div>
           <div class="form-group row">
-            <label for="role_description" class="col-md-6 col-form-label text-secondary">{{'ADD_NEW_DESCRIPTION' | translate}}</label>
-            <div class="col-md-6">
-              <input type="text" class="form-control" id="role_description" maxlength="100" formControlName="roleDescription"
-              (change)="trimFormControl('roleDescription')" >
+            <label for="role_description" class="col-md-2 col-form-label text-secondary">{{'ADD_NEW_DESCRIPTION' | translate}}</label>
+            <div class="col-md-10">
+              <textarea type="text" class="form-control" id="role_description" maxlength="100" formControlName="roleDescription"
+              (change)="trimFormControl('roleDescription')" ></textarea>
             </div>
             <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
             </cpdss-portal-validation-error>
-
           </div>
 
           <div class="row">
@@ -34,11 +32,9 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
-
   </form>
   <p-footer>
     <div class="row">

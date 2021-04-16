@@ -132,12 +132,14 @@ import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
@@ -230,7 +232,12 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
+  @MockBean
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
+
   @MockBean private CommingleCargoRepository commingleCargoRepository;
+  @MockBean private AlgoErrorService algoErrorService;
 
   @MockBean
   private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
@@ -256,7 +263,7 @@ class LoadableStudyServiceTest {
   @MockBean private EntityManager entityManager;
   @MockBean private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @MockBean private AlgoErrorsRepository algoErrorsRepository;
-
+  @MockBean private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @MockBean private EntityManagerFactory entityManagerFactory;
 
   @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
@@ -2011,6 +2018,12 @@ class LoadableStudyServiceTest {
     AlgoResponse algoResponse = new AlgoResponse();
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
     algoResponse.setProcessId("");
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadablePattern()));
+
+    Mockito.doReturn(this.createPortReply())
+        .when(spyService)
+        .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
     Mockito.when(
             restTemplate.postForObject(
                 anyString(),
