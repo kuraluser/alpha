@@ -4975,9 +4975,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.buildLoadicatorUrlRequest(request, loadicator);
       ObjectMapper objectMapper = new ObjectMapper();
 
-      objectMapper.writeValue(
-          new File(this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
-          loadicator);
+      if (request.getIsPattern()) {
+    	  objectMapper.writeValue(
+    	          new File(this.rootFolder + "/json/loadicator_pattern_" + request.getLoadicatorPatternDetails(0).getLoadablePatternId() + ".json"),
+    	          loadicator);
+      } else {
+    	  objectMapper.writeValue(
+    	          new File(this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+    	          loadicator);
+      }
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
       this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
@@ -8577,7 +8583,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(stowagePlanBuilder::setProvisionalConstant);
     Optional.ofNullable(vessel.getDeadweightConstant())
         .ifPresent(stowagePlanBuilder::setDeadweightConstant);
-    stowagePlanBuilder.setPortId(synopticalEntity.getLoadableStudyPortRotation().getId());
+    stowagePlanBuilder.setPortId(synopticalEntity.getLoadableStudyPortRotation().getPortXId());
     stowagePlanBuilder.setStowageId(pattern.getId());
     stowagePlanBuilder.setStatus(STOWAGE_STATUS);
     stowagePlanBuilder.setBookingListId(loadableStudyEntity.getId());

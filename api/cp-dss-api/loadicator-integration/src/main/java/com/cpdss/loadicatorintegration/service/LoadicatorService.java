@@ -46,7 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Log4j2
-@Transactional
 @GrpcService
 public class LoadicatorService extends LoadicatorServiceImplBase {
 
@@ -61,7 +60,6 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   private static final String FAILED = "FAILED";
   private static final String SUCCESS = "SUCCESS";
 
-  @Transactional
   @Override
   public void saveLoadicatorInfo(
       LoadicatorRequest request, StreamObserver<LoadicatorReply> responseObserver) {
@@ -91,7 +89,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       }
 
       this.stowagePlanRepository.saveAll(stowagePlanList);
-      if (true) {
+      if (this.getStatus(stowagePlanList)) {
 
         LoadicatorDataRequest loadableStudyrequest =
             this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
@@ -282,6 +280,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   public boolean getStatus(List<StowagePlan> stowagePlans) throws InterruptedException {
     boolean status = false;
     do {
+      log.info("Checking loadicator status");
       Thread.sleep(10000);
       List<Long> stowagePlanIds =
           stowagePlans.stream().map(StowagePlan::getId).collect(Collectors.toList());
