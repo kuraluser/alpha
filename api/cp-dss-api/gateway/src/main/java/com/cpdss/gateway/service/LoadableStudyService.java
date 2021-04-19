@@ -3528,6 +3528,7 @@ public class LoadableStudyService {
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.newBuilder();
     Optional.ofNullable(lqccd.getApi()).ifPresent(builder::setApi);
+    Optional.ofNullable(lqccd.getGrade()).ifPresent(builder::setGrade);
     Optional.ofNullable(lqccd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
     Optional.ofNullable(lqccd.getCargo1MT()).ifPresent(builder::setCargo1MT);
     Optional.ofNullable(lqccd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
