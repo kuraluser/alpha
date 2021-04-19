@@ -159,8 +159,8 @@ export class VoyageListTransformationService {
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.BUTTON,
         buttons: [
-          ...(permissionStart && permissionStart.view ? [{type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , class: 'voyage-start'}] : []),
-          ...(permissionStop && permissionStop.view ? [{type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' ,  class: 'voyage-end'}] : []),
+          ...(permissionStart && permissionStart.view ? [{type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , icons: 'voyage-start', label: 'Start'}] : []),
+          ...(permissionStop && permissionStop.view ? [{type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' ,  icons: 'voyage-end', label: 'Stop'}] : []),
         ]
       }
     ]

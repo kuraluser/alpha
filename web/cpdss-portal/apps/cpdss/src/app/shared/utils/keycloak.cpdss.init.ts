@@ -73,7 +73,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     keycloak.keycloakEvents$.subscribe(async (response: KeycloakEvent) => {
                         if (response.type === KeycloakEventType.OnTokenExpired) {
                             if (keycloakInstance.refreshToken) {
-                                const refreshed = await keycloakInstance.updateToken(300);
+                                const refreshed = await keycloakInstance.updateToken(appSettings?.tokenMinValidity ?? 180);
                                 if (refreshed) {
                                     SecurityService.setAuthToken(keycloakInstance.token);
                                     SecurityService.initPropertiesDB(keycloakInstance.token);

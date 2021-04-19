@@ -731,14 +731,14 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   private async updateCommingleButton(disableCommingleButton, showQuantityError = true) {
     const addedCargoNominations = this.cargoNominations.filter((cargoNomination) => !cargoNomination.isAdd);
-    if (addedCargoNominations.length >= 2) { 
-      if(this.dataTableLoading){
-        this.cargoNominationUpdate.emit({ value: true, error: showQuantityError});
-      }else{
+    if (addedCargoNominations.length >= 2) {
+      if (this.dataTableLoading) {
+        this.cargoNominationUpdate.emit({ value: true, error: showQuantityError });
+      } else {
         this.cargoNominationUpdate.emit({ value: disableCommingleButton, error: showQuantityError })
       }
     } else {
-      this.cargoNominationUpdate.emit({ value: true, error: showQuantityError})
+      this.cargoNominationUpdate.emit({ value: true, error: showQuantityError })
     }
   }
 
@@ -779,7 +779,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsApiService.currentUnit = unitTo;
     if (update) {
       this.cargoNominations.forEach(row => {
-        this.updateRowByUnit(row, unitFrom, unitTo);
+        this.updateRowByUnit(row, unitFrom, unitTo, true);
       })
     }
   }
@@ -789,14 +789,16 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    *
    * @memberof CargoNominationComponent
    */
-  updateRowByUnit(row, unitFrom, unitTo) {
-    const api = row.api.value;
-    const temp = row.temperature.value;
-    row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, unitTo, api, temp)
-    if (row?.loadingPorts?.value?.length) {
-      row.loadingPorts.value.forEach(loadingPort => {
-        loadingPort.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(loadingPort.quantity, unitFrom, unitTo, api, temp)
-      })
+  updateRowByUnit(row, unitFrom, unitTo, excludeAdd = false) {
+    if (!excludeAdd || !row.isAdd) {
+      const api = row.api.value;
+      const temp = row.temperature.value;
+      row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, unitTo, api, temp)
+      if (row?.loadingPorts?.value?.length) {
+        row.loadingPorts.value.forEach(loadingPort => {
+          loadingPort.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(loadingPort.quantity, unitFrom, unitTo, api, temp)
+        })
+      }
     }
   }
 

@@ -40,6 +40,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   permissionStop: IPermission;
   defaultDate: Date;
   isStart: boolean;
+  display: boolean;
 
   public loading: boolean;
   public totalRecords: number;
@@ -211,6 +212,20 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   reloadVoyageHistory() {
     this.loading = true;
     this.getVoyageLists$.next();
+  }
+
+  /**
+  * Value from new-voyage
+  */
+  displayPopUpTab(displayNew_: boolean) {
+    this.display = displayNew_;
+  }
+
+  /**
+   * Show new-voyage popup
+   */
+  showDialog() {
+    this.display = true;
   }
 
 }

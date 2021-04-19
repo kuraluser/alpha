@@ -413,10 +413,13 @@ export class RolePermissionComponent implements OnInit {
             const selectedUser = this.selectedUser?.map((user) => {
                 return user.id
             })
+            
             let deselectedUserDetails = [];
             const deselectedUserId = [];
             if(this.selectedUser?.length) {
                 deselectedUserDetails = this.deselectedUserId();
+            } else {
+                deselectedUserDetails = this.userDetails;
             }
             deselectedUserDetails?.map((deselectedUserDetail) => {
                 deselectedUserId.push(deselectedUserDetail.id);

@@ -9,7 +9,7 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, ILoadablePlanCommentsDetails } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError , ILoadablePlanCommentsDetails , VALIDATION_AND_SAVE_STATUS , IAlgoResponse } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 
 import { ICargoResponseModel, ICargo, ITimeZone } from '../../../shared/models/common.model';
@@ -95,6 +95,11 @@ export class LoadablePlanComponent implements OnInit {
   public cargos: ICargo[];
   public confirmPlanPermission: boolean;
   public loadableStudyStatus: boolean;
+  public loadablePatternValidationStatus: number;
+  public confirmButtonStatus: boolean;
+  public isVoyageClosed: boolean;
+  public errorMessage: IAlgoError[];
+  public errorPopup: boolean;
   timeZoneList: ITimeZone[];
 
   private _cargoTanks: ICargoTank[][];
@@ -125,6 +130,7 @@ export class LoadablePlanComponent implements OnInit {
     * @memberof LoadablePlanComponent
   */
   ngOnInit(): void {
+    this.listenEvents();
     this.getPagePermission();
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
@@ -146,9 +152,95 @@ export class LoadablePlanComponent implements OnInit {
   }
 
   /**
+   * Listen events in this page
+   *
+   * @private
+   * @memberof LoadablePlanComponent
+   */
+  private async listenEvents() {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  
+    /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof LoadablePlanComponent
+   */
+  private swMessageHandler = async event => {
+    if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        this.processingMessage();
+        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
+      } else {
+        this.messageService.clear("process");
+      }
+    } else if (event.data.type === 'loadable-pattern-validation-failed') {
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        this.validationFailed();
+        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED;
+        this.getAlgoErrorMessage(true);
+      }
+
+    } else if (event.data.type === 'loadable-pattern-validation-success') {
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        this.validationCompleted();
+        this.getLoadablePlanDetails();
+        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS;
+      }
+    }
+    this.setProcessingLoadableStudyActions();
+  }
+
+    /**
+   * Enable/ Disable buttons of currently processing/processed loadable pattern
+   * @memberof LoadablePlanComponent
+   */
+   setProcessingLoadableStudyActions() {
+     if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
+       this.confirmButtonStatus = true;
+     } else {
+      this.confirmButtonStatus = false;
+     }
+   }
+
+  /**
+   * Toast to show validating pattern started
+   *
+   * @memberof LoadablePlanComponent
+  */
+  async processingMessage() {
+    this.messageService.clear("process");
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_INFO', 'LOADABLE_PATTERN_VALIDATION_STARTED']).toPromise();
+    this.messageService.add({ severity: 'info', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_INFO'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_STARTED'], life: 1000, key: "process", closable: false });
+  }
+
+  /**
+ * Toast to show validating pattern completed 
+ *
+ * @memberof LoadablePlanComponent
+ */
+  async validationCompleted() {
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_SUCCESS', 'LOADABLE_PATTERN_VALIDATION_SUCCESSFULLY']).toPromise();
+    this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESS'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESSFULLY'], sticky: true, closable: true });
+  }
+
+  /**
+  * Toast to show validating pattern error
+  *
+  * @memberof LoadablePlanComponent
+  */
+  async validationFailed() {
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_ERROR', 'LOADABLE_PATTERN_VALIDATION_ERROR_DETAILS']).toPromise();
+    this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR'], detail:  translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR_DETAILS'], sticky: true, closable: true });
+  }
+
+
+  /**
 * Get page permission
 *
-* @memberof AdminComponent
+* @memberof LoadablePlanComponent
 */
   getPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePlanComponent']);
@@ -281,8 +373,27 @@ export class LoadablePlanComponent implements OnInit {
     this.voyageNumber = loadablePlanRes.voyageNumber;
     this.date = loadablePlanRes.date;
     this.caseNumber = loadablePlanRes.caseNumber;
+    this.isVoyageClosed = loadablePlanRes.voyageStatusId === 2 ? true : false;
+    this.loadablePatternValidationStatus = loadablePlanRes.loadablePatternStatusId;
+    if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
+      this.getAlgoErrorMessage(false);
+    }
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
+    this.setProcessingLoadableStudyActions();
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+  * Get algo error response
+  * @returns {Promise<IAlgoResponse>}
+  * @memberof LoadablePlanComponent
+  */
+  async getAlgoErrorMessage(status: boolean) {
+    const algoError: IAlgoResponse = await this.loadablePlanApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+    if(algoError.responseStatus.status === '200') {
+      this.errorMessage = algoError.algoErrors;
+      this.errorPopup = status;
+    }
   }
 
   /**

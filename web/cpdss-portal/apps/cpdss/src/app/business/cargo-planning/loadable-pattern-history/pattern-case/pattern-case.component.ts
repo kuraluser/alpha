@@ -4,6 +4,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { ICargoTank, ITankOptions } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 
 /**
  * Component for pattern case
@@ -23,13 +24,23 @@ export class PatternCaseComponent implements OnInit {
   @Output() displayPatternViewMorePopup = new EventEmitter();
 
   @Input() index: number;
-  @Input() loadablePattern: ILoadablePattern;
+ 
+  @Input() 
+  set loadablePattern(loadablePattern: ILoadablePattern){
+    this._loadablePattern = loadablePattern;
+    this.loadablePatternDetailsId = loadablePattern?.loadablePatternId;
+    this.updateTankLIst();
+  }
+  get loadablePattern():ILoadablePattern{
+    return this._loadablePattern
+  }
   @Input() tankList: ICargoTank[][];
-
+  
+  private _loadablePattern: ILoadablePattern;
   tableCol: IDataTableColumn[];
   loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantityMT', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantity', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
   constructor(private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService) { }
 
   /**
@@ -40,7 +51,6 @@ export class PatternCaseComponent implements OnInit {
    */
   ngOnInit(): void {
     this.tableCol =  this.loadableStudyPatternTransformationService.getCargoPriorityGridCaseTableColumn();
-    this.loadablePatternDetailsId = this.loadablePattern?.loadablePatternId;
     this.updateTankLIst();
   }
 
@@ -50,7 +60,7 @@ export class PatternCaseComponent implements OnInit {
    * @memberof PatternCaseComponent
    */
   updateTankLIst() {
-    this.tanks = this.tankList.map(group => {
+    this.tanks = this.tankList?.map(group => {
       const newGroup = group.map((groupItem) => {
         const tank = Object.assign({}, groupItem);
         tank.commodity = this.loadablePattern.loadablePlanStowageDetails.find((item) => (item.tankId === groupItem.id) && item);
@@ -61,6 +71,7 @@ export class PatternCaseComponent implements OnInit {
       });
       return newGroup;
     })
+    this.cargoTankOptions.weightUnit  = <QUANTITY_UNIT>localStorage.getItem('unit');
   }
 
   /**

@@ -1076,7 +1076,7 @@ input[type=number] {
 
 .table-responsive-custom{
   width: 100%;
-  height: calc(100vh - 260px);
+  max-height: calc(100vh - 260px);
   /*overflow: auto;*/
   padding-left: 15px;
   padding-right: 15px;
@@ -1213,7 +1213,7 @@ td.lay-can {
 
 td.sl div{
   min-width: 40px!important;
-  max-width: 40px;
+  padding-right: 0!important;
 }
 
 .loadable-quantity-pop-up{ 
@@ -1290,6 +1290,7 @@ td.sl div{
 }
 .p-toast{
   opacity: 1!important;
+  z-index: 999999!important;
 }
 
 .p-datatable table th{
@@ -2227,7 +2228,7 @@ tr:hover{
 .p-dialog, .p-dialog-mask.p-component-overlay{
   z-index: 9999 !important;
 }
-.p-dropdown-panel{
+.p-dropdown-panel, .p-multiselect-panel{
   z-index: 99999!important;
 }
 
@@ -2365,4 +2366,33 @@ tr:hover{
       min-width: 98%;
       width: 98%;
     }
+  }  
+
+   .data-table-outer, .data-table-inner{
+     height: 100%;
+   }
+
+  .v-middle {
+    vertical-align: middle;
   }
+  .colorpicker-custom{
+    width: 36px;
+    height: 39px;
+    background: none;
+    border: 0;
+    outline: none;
+    padding: 0;
+    margin-left: -2px;
+    margin-top: -2px;
+  }
+  .column-save {
+    width: 30px !important;
+  }
+  .text-capitalise {
+    text-transform: capitalize;
+  }
+
+
+textarea{
+  resize: none;
+}

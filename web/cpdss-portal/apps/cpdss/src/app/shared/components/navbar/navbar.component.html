@@ -6,7 +6,7 @@
         <ul class="nav">
             <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen , 'active': list?.isActive}" (click)="rerouteOrShowSubmenu(list, i)"
                 (focusout)="hide(list.subMenu, i)" *ngFor="let list of menuList; let i = index"
-                routerLinkActive="active">
+                routerLinkActive="active" tabindex="-1">
                 <div class="menu-item-icon {{list.menuIcon}}"></div>
                 <div class="menu-item-text">{{ list.menu | translate}} </div>
                 <div class="dropdown-menu" [hidden]="!(list.subMenu.length>0 && list.isSubMenuOpen)">

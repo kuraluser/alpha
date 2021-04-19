@@ -1,0 +1,14 @@
+<p-dialog [header]="header" [(visible)]="visible"  (onHide)="closePopup()" [modal]="true"
+[draggable]="false" [responsive]="true">
+    <p *ngIf="subHeading">{{subHeading}}</p>
+    <p-table [value]="errorMessage" >
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+            <tr>
+                <td [attr.rowspan]="rowData?.errorDetails?.length + 1">{{rowData.errorHeading}}</td>
+            </tr>
+            <tr *ngFor="let errorDetail of rowData?.errorDetails">
+                <td>{{errorDetail}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>

@@ -733,7 +733,9 @@ a{
   background: $alert-bg;
   color: $text-secondary;
 }
-
+.p-toast .p-toast-message{
+  background: $alert-bg!important;
+}
 .confirmation-dialog{
   &.p-toast .p-toast-message.p-toast-message-warn{
     border: 1px solid $border-color!important;

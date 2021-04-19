@@ -55,6 +55,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   selectedTab = TANKTYPE.CARGO;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   prevQuantitySelectedUnit: QUANTITY_UNIT;
+  baseUnit = AppConfigurationService.settings.baseUnit;
 
   cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
   ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM', showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
@@ -241,7 +242,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   updateLoadablePlanStowageData(){
     this.selectedLoadablePattern.loadablePlanStowageDetails = this.selectedLoadablePattern.loadablePlanStowageDetails?.map(loadableStowage => {
       if (loadableStowage) {
-        const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadableStowage?.api);
+        const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit, this.currentQuantitySelectedUnit, loadableStowage?.api);
         loadableStowage.quantity = Number(quantity?.toFixed(2));
       }
       return loadableStowage;
