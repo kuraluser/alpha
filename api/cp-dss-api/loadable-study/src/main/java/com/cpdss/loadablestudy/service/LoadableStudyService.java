@@ -3788,6 +3788,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
 
           loadablePatternCargoDetailsBuilder.setIsCommingle(false);
+          Optional.ofNullable(lpq.getEstimatedTemperature())
+              .ifPresent(
+                  var -> loadablePatternCargoDetailsBuilder.setTemperature(String.valueOf(var)));
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
         });
 
