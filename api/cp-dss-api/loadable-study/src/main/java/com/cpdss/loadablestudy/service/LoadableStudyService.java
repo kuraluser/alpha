@@ -4748,10 +4748,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-        this.saveLoadicatorInfo(
-            loadablePatternOpt.get().getLoadableStudy(),
-            request.getProcesssId(),
-            request.getLoadablePatternId());
+//         this.saveLoadicatorInfo(
+//             loadablePatternOpt.get().getLoadableStudy(),
+//             request.getProcesssId(),
+//             request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
