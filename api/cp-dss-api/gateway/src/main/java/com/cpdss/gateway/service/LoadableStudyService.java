@@ -1602,6 +1602,9 @@ public class LoadableStudyService {
                         Optional.ofNullable(loadablePatternCargoDetail.getApi())
                             .ifPresent(api -> loadablePatternCargoDetails.setApi(api));
 
+                        Optional.ofNullable(loadablePatternCargoDetail.getTemperature())
+                            .ifPresent(var -> loadablePatternCargoDetails.setTemperature(var));
+
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
