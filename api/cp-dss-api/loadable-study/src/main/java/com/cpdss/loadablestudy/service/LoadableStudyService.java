@@ -1290,6 +1290,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             });
       }
     }
+    
+    // Set port ordering after deletion
+    this.setPortOrdering(loadableStudy);
+    
     // remove loading portIds from request which are already available in port
     // rotation for the
     // specific loadable study
@@ -1313,9 +1317,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
+      
+      // Set port ordering after updation
+      this.setPortOrdering(loadableStudy);
     }
   }
 
+	private void setPortOrdering(LoadableStudy loadableStudy) {
+		AtomicLong portOrder = new AtomicLong(0L);
+		this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(loadableStudy, true)
+		.forEach(portRotation -> {
+			portRotation.setPortOrder(portOrder.incrementAndGet());
+			this.loadableStudyPortRotationRepository.save(portRotation);
+		});
+	}
+  
   /**
    * Fetch transit ports for the specific loadableStudy if available in port rotation so that they
    * are not added as loading ports
@@ -1937,6 +1953,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           portIds.remove(portRotation.getPortXId());
         }
       }
+
       if (!CollectionUtils.isEmpty(portIds)) {
         // ports already added as transit cannot be again added as discharge ports
         validateTransitPorts(loadableStudyOpt.get(), portIds);
@@ -1960,6 +1977,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
         }
       }
+      
+      // Set port ordering after updation
+      this.setPortOrdering(loadableStudy);
+      
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving discharging ports", e);
