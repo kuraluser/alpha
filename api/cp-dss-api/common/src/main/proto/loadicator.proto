@@ -14,6 +14,7 @@ service LoadicatorService {
 
 message LoadicatorRequest{
 	repeated StowagePlan stowagePlanDetails=1;
+	bool isPattern=2;
 }
 
 message StowagePlan{
