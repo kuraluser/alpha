@@ -34,4 +34,6 @@ public class SynopticalCargoBallastRecord {
   private String sg;
 
   private Boolean isCommingleCargo;
+
+  private BigDecimal temperature;
 }

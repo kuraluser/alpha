@@ -1031,6 +1031,7 @@ message SynopticalCargoRecord{
 	string capacity = 10;
 	string api = 11;	
 	bool isCommingleCargo=12;
+	string temperature = 13;
 }
 
 message SynopticalOhqRecord{

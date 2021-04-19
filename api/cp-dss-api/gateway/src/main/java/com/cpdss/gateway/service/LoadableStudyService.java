@@ -3160,6 +3160,10 @@ public class LoadableStudyService {
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       rec.setIsCommingleCargo(
           isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
+      rec.setTemperature(
+          isEmpty(protoRec.getTemperature())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getTemperature()));
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -3518,6 +3522,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
+    Optional.ofNullable(lpqcd.getCargoNominationId())
+        .ifPresent(qunatityBuilder::setCargoNominationId);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -4658,7 +4664,8 @@ public class LoadableStudyService {
                                       index.getCorrectedUllage(),
                                       index.getApi(),
                                       index.getSg(),
-                                      index.getIsCommingleCargo())),
+                                      index.getIsCommingleCargo(),
+                                      index.getTemperature())),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {
