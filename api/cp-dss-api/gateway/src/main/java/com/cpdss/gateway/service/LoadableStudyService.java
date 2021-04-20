@@ -1695,7 +1695,13 @@ public class LoadableStudyService {
               cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
               // Dummy value till actual from Alog
               cargoDetails.setTimeRequiredForLoading("0");
-              cargoDetails.setLoadingPorts(Arrays.asList("x"));
+              if (!lqcd.getLoadingPortsList().isEmpty()) {
+                List portNames =
+                    lqcd.getLoadingPortsList().stream()
+                        .map(var -> var.getName())
+                        .collect(Collectors.toList());
+                cargoDetails.setLoadingPorts(portNames);
+              }
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }

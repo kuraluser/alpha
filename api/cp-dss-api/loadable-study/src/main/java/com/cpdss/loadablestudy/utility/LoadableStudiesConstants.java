@@ -20,4 +20,11 @@ public class LoadableStudiesConstants {
   public static final Long FRESH_WATER_VOID_TANK_CATEGORY_ID = 23L;
   public static final Long BALLAST_VOID_TANK_CATEGORY_ID = 16L;
   public static final Long BALLAST_TANK_CATEGORY_ID = 2L;
+
+  public static final Long LOADING_OPERATION_ID = 1L;
+  public static final Long DISCHARGING_OPERATION_ID = 2L;
+  public static final Long BUNKERING_OPERATION_ID = 3L;
+  public static final Long TRANSIT_OPERATION_ID = 4L;
+  public static final Long STS_LOADING_OPERATION_ID = 5L;
+  public static final Long STS_DISCHARGING_OPERATION_ID = 6L;
 }

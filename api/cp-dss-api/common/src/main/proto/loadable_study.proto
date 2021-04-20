@@ -474,6 +474,7 @@ message LoadableQuantityCargoDetails {
 	 int32 loadingOrder = 21;
 	 string slopQuantity = 22;
 	 int64 cargoNominationId = 23;
+	 repeated LoadingPortDetail loadingPorts = 24;
 }
 
 message ConfirmPlanRequest {

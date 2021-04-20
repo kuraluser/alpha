@@ -1,31 +1,40 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.loadablestudy.service.builder;
+package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-/**
- * For LoadablePlan Static functions for build grpc Objects
- *
- * @author johnsoorajxavier
- * @since 25-03-2021
- */
-public class LoadablePlanBuilder {
+/** Master Service for Loadable Plans */
+@Slf4j
+@Service
+public class LoadablePlanService {
 
-  /**
-   * Loadable plan quantity builder
-   *
-   * @param loadablePlanQuantities - List<LoadablePlanQuantity>
-   * @param replyBuilder - LoadablePattern.Builder
-   */
-  public static void buildLoadablePlanQuantity(
+  @Autowired CargoNominationRepository cargoNominationRepository;
+
+  @Autowired LoadablePatternCargoDetailsRepository lpCargoDetailsRepository;
+
+  @Autowired LoadableStudyPortRotationRepository portRotationRepository;
+
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+
+  public void buildLoadablePlanQuantity(
       List<LoadablePlanQuantity> loadablePlanQuantities,
       com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder) {
     loadablePlanQuantities.forEach(
@@ -56,17 +65,17 @@ public class LoadablePlanBuilder {
           Optional.ofNullable(lpq.getOrderQuantity())
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           Optional.ofNullable(lpq.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+
+          try { // collect port names - for each LQ
+            this.setLoadingPortForLoadableQuantityCargoDetails(lpq, builder);
+          } catch (Exception e) {
+            log.info("Loadable Pattern Details, Failed to fetch Port Info ", e);
+          }
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }
 
-  /**
-   * Loadable plan commingle builder
-   *
-   * @param loadablePlanCommingleDetails - List<LoadablePlanCommingleDetails>
-   * @param replyBuilder - LoadablePattern.Builder
-   */
-  public static void buildLoadablePlanCommingleDetails(
+  public void buildLoadablePlanCommingleDetails(
       List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails,
       com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder) {
     loadablePlanCommingleDetails.forEach(
@@ -120,7 +129,7 @@ public class LoadablePlanBuilder {
         });
   }
 
-  public static void buildBallastGridDetails(
+  public void buildBallastGridDetails(
       List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
       List<LoadablePlanStowageDetailsTemp> ballstTempList,
       com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder) {
@@ -148,14 +157,7 @@ public class LoadablePlanBuilder {
         });
   }
 
-  /**
-   * Set ballast temp details
-   *
-   * @param lpbd
-   * @param ballstTempList
-   * @param builder
-   */
-  public static void setTempBallastDetails(
+  public void setTempBallastDetails(
       LoadablePlanBallastDetails lpbd,
       List<LoadablePlanStowageDetailsTemp> ballstTempList,
       com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.Builder builder) {
@@ -174,5 +176,49 @@ public class LoadablePlanBuilder {
       Optional.ofNullable(temp.getQuantity())
           .ifPresent(item -> builder.setMetricTon(valueOf(item)));
     }
+  }
+
+  boolean setLoadingPortForLoadableQuantityCargoDetails(
+      LoadablePlanQuantity lpQuantity, LoadableStudy.LoadableQuantityCargoDetails.Builder builder) {
+    LoadableStudy.LoadingPortDetail.Builder portsBuilder =
+        LoadableStudy.LoadingPortDetail.newBuilder();
+    if (lpQuantity == null || lpQuantity.getCargoNominationId() == null) {
+      return false;
+    }
+    List<Long> lpPortRotationIds =
+        lpCargoDetailsRepository.findAllPortRotationIdByCargoNomination(
+            lpQuantity.getCargoNominationId());
+    if (!lpPortRotationIds.isEmpty()) { // all unique, because it fetch by distinct query
+      for (Long id : lpPortRotationIds) {
+        LoadableStudyPortRotation lsPR = portRotationRepository.findByIdAndIsActive(id, true);
+        if (lsPR != null) {
+          if (lsPR.getOperation().getId().equals(LOADING_OPERATION_ID)) {
+            LoadableStudy.LoadingPortDetail.Builder a =
+                this.fetchPortNameFromPortService(lsPR.getPortXId());
+            builder.addLoadingPorts(a);
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  public LoadableStudy.LoadingPortDetail.Builder fetchPortNameFromPortService(Long portId) {
+    PortInfo.GetPortInfoByPortIdsRequest.Builder builder =
+        PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
+    builder.addAllId(Arrays.asList(portId));
+    PortInfo.PortReply grpcReplay = portInfoGrpcService.getPortInfoByPortIds(builder.build());
+    if (grpcReplay.getResponseStatus().getStatus().equals(SUCCESS)) {
+      Optional<PortInfo.PortDetail> portInfo = grpcReplay.getPortsList().stream().findFirst();
+      if (portInfo.isPresent()) {
+        LoadableStudy.LoadingPortDetail.Builder portsBuilder =
+            LoadableStudy.LoadingPortDetail.newBuilder();
+        log.info(
+            "Port name received from ports, id - {} name -{}", portId, portInfo.get().getName());
+        portsBuilder.setName(portInfo.get().getName()).setPortId(portInfo.get().getId()).build();
+        return portsBuilder;
+      }
+    }
+    return null;
   }
 }

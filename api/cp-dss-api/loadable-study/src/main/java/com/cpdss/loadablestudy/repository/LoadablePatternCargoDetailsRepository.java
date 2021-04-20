@@ -28,4 +28,8 @@ public interface LoadablePatternCargoDetailsRepository
   @Modifying
   @Query("UPDATE LoadablePatternCargoDetails SET isActive = ?1 WHERE loadablePatternId = ?2")
   public void deleteLoadablePatternCargoDetails(Boolean isActive, Long loadablePatternId);
+
+  @Query(
+      "SELECT DISTINCT lp.portRotationId FROM LoadablePatternCargoDetails lp WHERE lp.cargoNominationId =?1 AND lp.isActive = true")
+  List<Long> findAllPortRotationIdByCargoNomination(Long var1);
 }
