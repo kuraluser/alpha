@@ -477,6 +477,7 @@ message LoadableQuantityCargoDetails {
 	 int32 loadingOrder = 21;
 	 string slopQuantity = 22;
 	 int64 cargoNominationId = 23;
+	 repeated LoadingPortDetail loadingPorts = 24;
 }
 
 message ConfirmPlanRequest {
@@ -924,6 +925,7 @@ message LoadablePatternCargoDetails {
  	string tankName = 10;
  	string maxTolerence = 11;
  	string minTolerence = 12;
+	string temperature = 13;
 }
 
 message LoadablePatternRequest {
@@ -1033,6 +1035,7 @@ message SynopticalCargoRecord{
 	string capacity = 10;
 	string api = 11;	
 	bool isCommingleCargo=12;
+	string temperature = 13;
 }
 
 message SynopticalOhqRecord{
