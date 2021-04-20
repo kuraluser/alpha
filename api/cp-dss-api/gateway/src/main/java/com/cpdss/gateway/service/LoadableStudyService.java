@@ -4687,7 +4687,9 @@ public class LoadableStudyService {
                                       index.getCorrectedUllage(),
                                       index.getApi(),
                                       index.getSg(),
-                                      index.getIsCommingleCargo())),
+                                      index.getIsCommingleCargo(),
+                                      index.getGrade(),
+                                      index.getTemperature())),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {

@@ -207,7 +207,6 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
-import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -339,6 +338,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private JsonDataRepository jsonDataRepository;
   @Autowired private JsonTypeRepository jsonTypeRepository;
+
+  @Autowired private LoadablePlanService loadablePlanService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -3632,12 +3633,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanQuantity> loadablePlanQuantities =
                   loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              LoadablePlanBuilder.buildLoadablePlanQuantity(
+              loadablePlanService.buildLoadablePlanQuantity(
                   loadablePlanQuantities, loadablePatternBuilder);
               List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
                   loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              LoadablePlanBuilder.buildLoadablePlanCommingleDetails(
+              loadablePlanService.buildLoadablePlanCommingleDetails(
                   loadablePlanCommingleDetails, loadablePatternBuilder);
               List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
                   loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
@@ -3645,7 +3646,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanStowageDetailsTemp> ballstTempList =
                   this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
                       loadablePlanBallastDetails, true);
-              LoadablePlanBuilder.buildBallastGridDetails(
+              loadablePlanService.buildBallastGridDetails(
                   loadablePlanBallastDetails, ballstTempList, loadablePatternBuilder);
               // <--DSS-2016!-->
 
@@ -7449,7 +7450,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
-          LoadablePlanBuilder.setTempBallastDetails(lpbd, ballstTempList, builder);
+          loadablePlanService.setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
   }
