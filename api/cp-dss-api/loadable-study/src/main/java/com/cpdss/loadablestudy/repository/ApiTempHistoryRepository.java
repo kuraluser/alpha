@@ -21,8 +21,6 @@ public interface ApiTempHistoryRepository
   public List<com.cpdss.loadablestudy.entity.ApiTempHistory> findApiTempHistoryWithYearAfter(
       Long cargoId, Integer year);
   
-  public List<ApiTempHistory> findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(Long loadingPortId,Long cargoId, Boolean isActive);
-
   public List<ApiTempHistory> findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
       Long loadingPortId, Long cargoId, Boolean isActive);
 
