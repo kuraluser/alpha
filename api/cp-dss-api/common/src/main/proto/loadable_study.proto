@@ -706,6 +706,7 @@ message CargoNominationReply {
 	ResponseStatus responseStatus = 1;
 	int64 cargoNominationId = 2;
 	repeated CargoNominationDetail cargoNominations = 3;
+	repeated CargoHistoryDetail cargoHistory = 4;
 }
 
 
