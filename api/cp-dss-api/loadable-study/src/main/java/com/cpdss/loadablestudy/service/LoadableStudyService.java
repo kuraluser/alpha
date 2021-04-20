@@ -210,7 +210,6 @@ import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -308,7 +307,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired private AlgoErrorsRepository algoErrorsRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
-  
+
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
@@ -348,7 +347,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String COMMINGLE = "COM";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
-  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm"; 
+  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
@@ -476,6 +475,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private static final Long CLOSE_VOYAGE_STATUS = 2L;
   private static final Long OPEN_VOYAGE_STATUS = 1L;
+
+  private static final String DEFAULT_USER_NAME = "UNKNOWN";
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -1412,7 +1413,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<Long> existingCargoPortIds) {
 
     Long portId = null;
-    if (existingCargoPortIds != null && existingCargoPortIds.size()>0) {
+    if (existingCargoPortIds != null && existingCargoPortIds.size() > 0) {
       portId = existingCargoPortIds.stream().findFirst().get();
     }
 
@@ -1703,22 +1704,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         builder.addLoadingPortDetails(loadingPortDetailBuilder);
                       });
             }
-            
+
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
-            	CargoNominationPortDetails cargoNominationPortDetail = cargoNomination.getCargoNominationPortDetails().iterator().next();
-            	if(cargoNomination.getCargoXId() != null && cargoNominationPortDetail.getPortId() != null) {
-            		
-                   	List<ApiTempHistory> apiTempHistories = apiTempHistoryRepository.
-                   			findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(cargoNominationPortDetail.getPortId(), cargoNomination.getCargoXId() , true);
-                	if(!CollectionUtils.isEmpty(apiTempHistories)) {
-                		ApiTempHistory apiTempHistory = apiTempHistories.get(0);
-                		Optional.ofNullable(apiTempHistory.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                		Optional.ofNullable(apiTempHistory.getTemp()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                	}else {
-                    	Optional.ofNullable(cargoNomination.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                		Optional.ofNullable(cargoNomination.getTemperature()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                    }
-            	}
+              CargoNominationPortDetails cargoNominationPortDetail =
+                  cargoNomination.getCargoNominationPortDetails().iterator().next();
+              if (cargoNomination.getCargoXId() != null
+                  && cargoNominationPortDetail.getPortId() != null) {
+
+                List<ApiTempHistory> apiTempHistories =
+                    apiTempHistoryRepository
+                        .findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
+                            cargoNominationPortDetail.getPortId(),
+                            cargoNomination.getCargoXId(),
+                            true);
+                if (!CollectionUtils.isEmpty(apiTempHistories)) {
+                  ApiTempHistory apiTempHistory = apiTempHistories.get(0);
+                  Optional.ofNullable(apiTempHistory.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(apiTempHistory.getTemp())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                } else {
+                  Optional.ofNullable(cargoNomination.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(cargoNomination.getTemperature())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                }
+              }
             }
             Optional.ofNullable(cargoNomination.getMaxTolerance())
                 .ifPresent(maxTolerance -> builder.setMaxTolerance(String.valueOf(maxTolerance)));
@@ -4748,10 +4759,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-//         this.saveLoadicatorInfo(
-//             loadablePatternOpt.get().getLoadableStudy(),
-//             request.getProcesssId(),
-//             request.getLoadablePatternId());
+        //         this.saveLoadicatorInfo(
+        //             loadablePatternOpt.get().getLoadableStudy(),
+        //             request.getProcesssId(),
+        //             request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -4976,13 +4987,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ObjectMapper objectMapper = new ObjectMapper();
 
       if (request.getIsPattern()) {
-    	  objectMapper.writeValue(
-    	          new File(this.rootFolder + "/json/loadicator_pattern_" + request.getLoadicatorPatternDetails(0).getLoadablePatternId() + ".json"),
-    	          loadicator);
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_pattern_"
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
+                    + ".json"),
+            loadicator);
       } else {
-    	  objectMapper.writeValue(
-    	          new File(this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
-    	          loadicator);
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+            loadicator);
       }
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
@@ -7393,10 +7409,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               com.cpdss.common.generated.LoadableStudy.LoadablePlanComments.newBuilder();
           Optional.ofNullable(lpc.getId()).ifPresent(builder::setId);
           Optional.ofNullable(lpc.getComments()).ifPresent(builder::setComment);
+          Optional.ofNullable(lpc.getCreatedBy()).ifPresent(builder::setCreatedBy);
           Optional.ofNullable(
                   DateTimeFormatter.ofPattern(DATE_FORMAT).format(lpc.getCreatedDateTime()))
               .ifPresent(builder::setDataAndTime);
-          builder.setUserName("Uttam Kumar"); // ToDo - replace it with the value taken from cache
+          // Username set at gateway as Keycloack is at gateway layer
+          builder.setUserName(
+              DEFAULT_USER_NAME); // ToDo - replace it with the value taken from cache
           replyBuilder.addLoadablePlanComments(builder);
         });
   }
@@ -8376,7 +8395,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       entity.setCreatedBy(Long.toString(request.getUser()));
 
       entity.setIsActive(true);
-      entity = this.loadablePlanCommentsRepository.save(entity);
+      this.loadablePlanCommentsRepository.save(entity);
 
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {

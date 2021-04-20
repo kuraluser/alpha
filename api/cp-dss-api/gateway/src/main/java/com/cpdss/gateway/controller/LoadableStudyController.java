@@ -1595,7 +1595,10 @@ public class LoadableStudyController {
     try {
       log.info("saveComment: {}", getClientIp());
       return this.loadableStudyService.saveComment(
-          request, headers.getFirst(CORRELATION_ID_HEADER), loadablePatternId);
+          request,
+          headers.getFirst(CORRELATION_ID_HEADER),
+          loadablePatternId,
+          headers.getFirst(HttpHeaders.AUTHORIZATION));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving comment", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
