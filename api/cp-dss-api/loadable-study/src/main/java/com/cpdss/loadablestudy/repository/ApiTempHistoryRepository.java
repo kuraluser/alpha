@@ -20,7 +20,7 @@ public interface ApiTempHistoryRepository
           + "ath.cargoId = ?1 AND ath.year >= ?2 order by ath.loadedDate desc")
   public List<com.cpdss.loadablestudy.entity.ApiTempHistory> findApiTempHistoryWithYearAfter(
       Long cargoId, Integer year);
-  
+
   public List<ApiTempHistory> findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
       Long loadingPortId, Long cargoId, Boolean isActive);
 
