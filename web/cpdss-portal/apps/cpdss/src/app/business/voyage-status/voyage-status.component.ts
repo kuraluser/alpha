@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { IVessel } from '../core/models/vessel-details.model';
 import { VoyageService } from '../core/services/voyage.service';
-import { Voyage, VOYAGE_STATUS } from '../core/models/common.model';
-import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
-import { IPortsDetailsResponse } from '../core/models/common.model';
+import { IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common.model';
+import { PortRotationService } from '../core/services/port-rotation.service';
 import { VoyageApiService } from './services/voyage-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageDetails, IVoyageStatus } from './models/voyage-status.model';
+import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageStatus } from './models/voyage-status.model';
 import { VoyageStatusTransformationService } from './services/voyage-status-transformation.service';
 import { QUANTITY_UNIT } from '../../shared/models/common.model';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
@@ -32,18 +31,18 @@ export class VoyageStatusComponent implements OnInit {
   bunkerConditions: IBunkerConditions;
   cargoConditions: ICargoConditions[];
   cargoQuantities: ICargoQuantities[];
-  selectedPortDetails: IVoyageDetails;
+  selectedPortDetails: IVoyagePortDetails;
   voyageStatusResponse: IVoyageStatus;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit') ?? AppConfigurationService.settings.baseUnit;
   VOYAGE_STATUS = VOYAGE_STATUS;
 
-  get selectedVoyage(): Voyage{
+  get selectedVoyage(): Voyage {
     return this._selectedVoyage;
   }
 
-  set selectedVoyage(voyage: Voyage){
+  set selectedVoyage(voyage: Voyage) {
     this._selectedVoyage = voyage;
-    localStorage.setItem("voyageId",voyage.id.toString())
+    localStorage.setItem("voyageId", voyage?.id.toString())
     localStorage.removeItem("loadableStudyId")
     localStorage.removeItem("loadablePatternId")
   }
@@ -54,7 +53,8 @@ export class VoyageStatusComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     public voyageStatusTransformationService: VoyageStatusTransformationService,
     private messageService: MessageService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    public portRotationService: PortRotationService) { }
 
   ngOnInit() {
     this.ngxSpinnerService.show();
@@ -73,7 +73,7 @@ export class VoyageStatusComponent implements OnInit {
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
     if (this.vesselInfo?.id) {
-      localStorage.setItem("vesselId",this.vesselInfo?.id.toString())
+      localStorage.setItem("vesselId", this.vesselInfo?.id.toString())
       this.getVoyageInfo(this.vesselInfo?.id);
     }
   }
@@ -112,8 +112,9 @@ export class VoyageStatusComponent implements OnInit {
   async getVoyageInfo(vesselId: number) {
     const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
     this.voyageInfo = this.getSelectedVoyages(voyages);
+    this.selectedVoyage = this.voyageInfo[0];
     const alertForVoyageEnd = localStorage.getItem('alertForVoyageEnd');
-    if(alertForVoyageEnd !== 'true'){
+    if (alertForVoyageEnd !== 'true') {
       this.alertForEnd()
     }
   }
@@ -127,8 +128,9 @@ export class VoyageStatusComponent implements OnInit {
    */
   getSelectedVoyages(voyages: Voyage[]): Voyage[] {
     this.selectedVoyage = voyages?.find(voyage => voyage?.statusId === VOYAGE_STATUS.ACTIVE);
-    const latestClosedVoyages = [...voyages?.filter(voyage => voyage?.statusId === VOYAGE_STATUS.CLOSE)]?.sort((a,b) => this.convertToDate(b?.actualStartDate)?.getTime() - this.convertToDate(a?.actualStartDate)?.getTime())?.slice(0, this.selectedVoyage ? 9 : 10);
-    return [this.selectedVoyage, ...latestClosedVoyages];
+    const latestClosedVoyages = [...voyages?.filter(voyage => voyage?.statusId === VOYAGE_STATUS.CLOSE)]?.sort((a, b) => this.convertToDate(b?.actualStartDate)?.getTime() - this.convertToDate(a?.actualStartDate)?.getTime())?.slice(0, this.selectedVoyage ? 9 : 10);
+    const voyageInfo = this.selectedVoyage ? [this.selectedVoyage, ...latestClosedVoyages] : [...latestClosedVoyages]
+    return voyageInfo;
   }
 
   /**
@@ -170,7 +172,7 @@ export class VoyageStatusComponent implements OnInit {
    * Emit port data from port rotation ribbon
    * @param portData 
    */
-  getPortDetails(portData: IVoyageDetails) {
+  getPortDetails(portData: IVoyagePortDetails) {
     this.selectedPortDetails = portData;
     this.getVoyageStatus(this.vesselInfo?.id, this.selectedVoyage?.id, this.selectedVoyage?.confirmedLoadableStudyId);
   }
@@ -192,13 +194,13 @@ export class VoyageStatusComponent implements OnInit {
   */
   async alertForEnd() {
     localStorage.setItem('alertForVoyageEnd', 'true');
-    this.voyageInfo.forEach(async (voyage) => {
+    const activeVoyage = this.voyageInfo?.find(voyage => voyage?.statusId === VOYAGE_STATUS.ACTIVE);
+    if (activeVoyage) {
       const translationKeys = await this.translateService.get(['VOYAGE_STATUS_ACTIVE_END_WARNING', 'VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST', 'VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND']).toPromise();
-      if (voyage?.noOfDays >= 0) {
-        this.messageService.add({ severity: 'warn', summary: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING'], detail: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST'] + " " + voyage?.endDate?.split(' ')[0] + ". " +  translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND'], sticky: true});
+      if (activeVoyage?.noOfDays >= 0) {
+        this.messageService.add({ severity: 'warn', summary: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING'], detail: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST'] + " " + activeVoyage?.endDate?.split(' ')[0] + ". " + translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND'], sticky: true });
       }
-    })
-
+    }
   }
 
 }

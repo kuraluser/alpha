@@ -23,6 +23,8 @@ import { SaveStowagePopupComponent } from './stowage/save-stowage-popup/save-sto
 import { DialogModule } from 'primeng/dialog';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
+import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module'
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Module for loadable plan
@@ -43,7 +45,9 @@ import { LoadableStudyListApiService } from '../services/loadable-study-list-api
     DatatableModule,
     BallastLayoutModule,
     DialogModule,
-    ValidationErrorModule
+    ErrorLogPopupModule,
+    ValidationErrorModule,
+    TooltipModule
   ],
   providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe, LoadableStudyListApiService ],
   exports: [

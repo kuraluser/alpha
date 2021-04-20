@@ -40,16 +40,18 @@ export interface IDataTableColumn {
     showTemplate?: boolean;
     rowspan?: number;
     colspan?: number;
-    fieldColumnClass?: string,
-    subColumns? : IDataTableColumn[],
+    fieldColumnClass?: string;
+    subColumns? : IDataTableColumn[];
     subHeader?: string;
     numberFormat?: string;
     showTotal?: boolean;
-    filterByServer?: boolean,
-    buttons?: IButtons[],
-    fieldComponentClass?: string,
-    showTooltip?: boolean,
-    fieldValue?: string
+    filterByServer?: boolean;
+    buttons?: IButtons[];
+    fieldComponentClass?: string;
+    showTooltip?: boolean;
+    fieldValue?: string;
+    fieldHeaderTooltipIcon?: string;
+    fieldHeaderTooltipText?: string;
 }
 
 /**
@@ -63,7 +65,9 @@ interface IButtons {
     field: string,
     icons?: string,
     class?: string,
-    label?: string
+    label?: string,
+    tooltip?: string;
+    tooltipPosition?: string;
 }
 
 /**
@@ -102,6 +106,7 @@ export enum DATATABLE_FILTER_TYPE {
     NUMBER = 'NUMBER',
     ARRAY = 'ARRAY',
     DATE = 'DATE',
+    DATETIME = 'DATETIME',
     SELECT = 'SELECT'
 }
 
@@ -242,5 +247,6 @@ export interface ISort {
 export enum DATATABLE_BUTTON {
     RESETPASSWORD = 'RESET PASSWORD',
     START_VOYAGE = "Start",
-    STOP_VOYAGE = "Stop"
+    STOP_VOYAGE = "Stop",
+    SAVE_BUTTON = 'Save'
 }

@@ -21,4 +21,6 @@ public class Role {
   private String description;
 
   private Long companyId;
+
+  private Boolean isUserMapped;
 }

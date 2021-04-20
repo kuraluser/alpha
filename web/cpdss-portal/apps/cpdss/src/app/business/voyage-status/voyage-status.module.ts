@@ -2,19 +2,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VoyageStatusComponent } from './voyage-status.component';
 import { VoyageStatusRoutingModule } from './voyage-status-routing.module';
-import { DialogModule } from 'primeng/dialog';
-import { NewVoyagePopupComponent } from './new-voyage-popup/new-voyage-popup.component';
+import { NewVoyagePopupModule } from '../core/components/new-voyage-popup/new-voyage-popup.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VoyageApiService } from './services/voyage-api.service';
 import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.module';
-import { EditPortRotationComponent } from './edit-port-rotation/edit-port-rotation.component';
-import { CalendarModule } from 'primeng/calendar';
+import { EditPortRotationPopupModule } from '../core/components/edit-port-rotation-popup/edit-port-rotation-popup.module';
 import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
-import { PortRotationRibbonComponent } from './port-rotation-ribbon/port-rotation-ribbon.component';
-import { CarouselModule } from 'primeng/carousel';
-import { OrderListModule } from 'primeng/orderlist';
-import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
+import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbon/port-rotation-ribbon.module';
+import { PortRotationService } from '../core/services/port-rotation.service';
 import { ShipLandingTanksComponent } from './ship-landing-tanks/ship-landing-tanks.component';
 import { CargoTankLayoutModule } from '../core/components/cargo-tank-layout/cargo-tank-layout.module';
 import { BallastLayoutModule } from '../core/components/ballast-layout/ballast-layout.module';
@@ -32,40 +28,41 @@ import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.mo
 import { DraftConditionComponent } from './draft-condition/draft-condition.component';
 import { ListConditionComponent } from './list-condition/list-condition.component';
 import { TrimConditionComponent } from './trim-condition/trim-condition.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Module for new voyage-status
  */
 
 @NgModule({
-  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent, ShipLandingTanksComponent, DraftConditionComponent, ListConditionComponent, TrimConditionComponent],
+  declarations: [VoyageStatusComponent, ParameterListComponent, CargoDetailsComponent, ShipLandingTanksComponent, DraftConditionComponent, ListConditionComponent, TrimConditionComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     ValidationErrorModule,
-    DialogModule,
     TranslateModule,
     VesselInfoModule,
     VoyageStatusRoutingModule,
-    CalendarModule,
-    OrderListModule,
     CargoTankLayoutModule,
     BallastLayoutModule,
-    CarouselModule,
     DropdownModule,
     BunkeringLayoutModule,
     TableModule,
     DatatableModule,
     InputSwitchModule,
     UnitDropdownModule,
-    QuantityPipeModule
+    QuantityPipeModule,
+    TooltipModule,
+    PortRotationRibbonModule,
+    NewVoyagePopupModule,
+    EditPortRotationPopupModule
   ],
   providers: [
     VoyageApiService,
-    EditPortRotationApiService,
     VoyageStatusTransformationService,
-    QuantityPipe
+    QuantityPipe,
+    PortRotationService
   ]
 })
 export class VoyageStatusModule { }

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ITankOptions, TANKTYPE } from '../../core/models/common.model';
+import { ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
 import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
-import { IBallastQuantities, ICargoQuantities, IShipBallastTank, IShipBunkerTank, IShipCargoTank, IVoyageDetails } from '../models/voyage-status.model';
+import { IBallastQuantities, ICargoQuantities, IShipBallastTank, IShipBunkerTank, IShipCargoTank } from '../models/voyage-status.model';
 import { IVoyageStatus } from '../models/voyage-status.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
@@ -25,7 +25,7 @@ export class ShipLandingTanksComponent implements OnInit {
   @Input() vesselId: number;
   @Input() voyageId: number;
   @Input() loadableStudyId: number;
-  @Input() selectedPortDetails: IVoyageDetails;
+  @Input() selectedPortDetails: IVoyagePortDetails;
   @Input() get shipLandingTanks() : IVoyageStatus {
     return this._shipLandingTanks;
   }

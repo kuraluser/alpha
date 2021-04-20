@@ -73,6 +73,8 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
@@ -88,6 +90,8 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CargoHistory;
+import com.cpdss.loadablestudy.domain.UllageUpdateRequest;
+import com.cpdss.loadablestudy.domain.UllageUpdateResponse;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
@@ -104,6 +108,7 @@ import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
@@ -116,6 +121,8 @@ import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
@@ -125,17 +132,20 @@ import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
@@ -145,6 +155,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
@@ -181,9 +192,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -206,6 +220,7 @@ class LoadableStudyServiceTest {
 
   @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
+  @MockBean private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -217,7 +232,12 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
+  @MockBean
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
+
   @MockBean private CommingleCargoRepository commingleCargoRepository;
+  @MockBean private AlgoErrorService algoErrorService;
 
   @MockBean
   private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
@@ -241,13 +261,17 @@ class LoadableStudyServiceTest {
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
   @MockBean private RestTemplate restTemplate;
   @MockBean private EntityManager entityManager;
-
+  @MockBean private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @MockBean private AlgoErrorsRepository algoErrorsRepository;
+  @MockBean private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @MockBean private EntityManagerFactory entityManagerFactory;
 
   @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @MockBean private VoyageStatusRepository voyageStatusRepository;
   @MockBean private ApiTempHistoryRepository apiTempHistoryRepository;
+
+  @MockBean private StabilityParameterRepository stabilityParameterRepository;
 
   @MockBean private JsonDataRepository jsonDataRepository;
   @MockBean private JsonTypeRepository jsonTypeRepository;
@@ -1990,6 +2014,34 @@ class LoadableStudyServiceTest {
 
   @SuppressWarnings("unchecked")
   @Test
+  void testValidateLoadablePatterns() {
+    AlgoResponse algoResponse = new AlgoResponse();
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    algoResponse.setProcessId("");
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadablePattern()));
+
+    Mockito.doReturn(this.createPortReply())
+        .when(spyService)
+        .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
+    Mockito.when(
+            restTemplate.postForObject(
+                anyString(),
+                any(com.cpdss.loadablestudy.domain.LoadableStudy.class),
+                any(Class.class)))
+        .thenReturn(algoResponse);
+
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    spyService.validateLoadablePlan(
+        LoadablePlanDetailsRequest.newBuilder().build(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
   void testGenerateLoadablePatterns() {
     Optional<LoadableStudy> optional = Optional.of(new LoadableStudy());
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
@@ -3549,8 +3601,8 @@ class LoadableStudyServiceTest {
 
     Mockito.when(
             this.voyageRepository
-                .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
-                    any(LocalDateTime.class), anyLong(), anyBoolean()))
+                .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+                    any(LocalDateTime.class), anyLong(), anyBoolean(), any()))
         .thenReturn(voyage);
     Mockito.when(
             this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(any(Voyage.class)))
@@ -4778,5 +4830,103 @@ class LoadableStudyServiceTest {
             .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
             .build(),
         response);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2})
+  void testUpdateUllage(int iteration)
+      throws RestClientException, InstantiationException, IllegalAccessException {
+    UpdateUllageRequest request = this.createUpdateUllageRequest();
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadablePattern()));
+    when(this.restTemplate.postForEntity(anyString(), any(UllageUpdateRequest.class), any()))
+        .thenReturn(
+            new ResponseEntity<Object>(this.createAlgoResponseForUpdateUllage(), HttpStatus.OK));
+    when(this.loadablePlanStowageDetailsRespository.getOne(anyLong()))
+        .thenReturn(new LoadablePlanStowageDetails());
+    LoadablePlanStowageDetailsTemp temp = null;
+    if (iteration == 2) {
+      temp =
+          (LoadablePlanStowageDetailsTemp) createDummyObject(LoadablePlanStowageDetailsTemp.class);
+    }
+    when(this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsAndIsActive(
+            any(LoadablePlanStowageDetails.class), anyBoolean()))
+        .thenReturn(temp);
+
+    StreamRecorder<UpdateUllageReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.updateUllage(request, responseObserver);
+    List<UpdateUllageReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testUpdateUllageInvalidAlgoResponse()
+      throws RestClientException, InstantiationException, IllegalAccessException {
+    UpdateUllageRequest request = this.createUpdateUllageRequest();
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadablePattern()));
+    when(this.restTemplate.postForEntity(anyString(), any(UllageUpdateRequest.class), any()))
+        .thenReturn(new ResponseEntity<Object>(HttpStatus.BAD_REQUEST));
+    when(this.loadablePlanStowageDetailsRespository.getOne(anyLong()))
+        .thenReturn(new LoadablePlanStowageDetails());
+
+    StreamRecorder<UpdateUllageReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.updateUllage(request, responseObserver);
+    List<UpdateUllageReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testUpdateUllageInvalidPattern()
+      throws RestClientException, InstantiationException, IllegalAccessException {
+    UpdateUllageRequest request = this.createUpdateUllageRequest();
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<UpdateUllageReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.updateUllage(request, responseObserver);
+    List<UpdateUllageReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testUpdateUllageException()
+      throws RestClientException, InstantiationException, IllegalAccessException {
+    UpdateUllageRequest request = this.createUpdateUllageRequest();
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<UpdateUllageReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.updateUllage(request, responseObserver);
+    List<UpdateUllageReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private UllageUpdateResponse createAlgoResponseForUpdateUllage() {
+    UllageUpdateResponse response = new UllageUpdateResponse();
+    response.setCorrectedUllage(NUMERICAL_TEST_VALUE);
+    response.setQuantityMt(NUMERICAL_TEST_VALUE);
+    response.setCorrectionFactor(NUMERICAL_TEST_VALUE);
+    response.setFillingRatio(NUMERICAL_TEST_VALUE);
+    return response;
+  }
+
+  private UpdateUllageRequest createUpdateUllageRequest() {
+    return UpdateUllageRequest.newBuilder()
+        .setLoadablePatternId(ID_TEST_VALUE)
+        .setLoadablePlanStowageDetails(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder()
+                .setCorrectedUllage(NUMERICAL_TEST_VALUE)
+                .setId(ID_TEST_VALUE)
+                .setTankId(ID_TEST_VALUE)
+                .setIsBallast(true)
+                .build())
+        .build();
   }
 }

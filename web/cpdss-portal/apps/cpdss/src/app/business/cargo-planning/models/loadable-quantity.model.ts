@@ -12,6 +12,7 @@ export class LoadableQuantityModel {
  * Model for loadable quantity
  */
 export class LodadableQuantity {
+    public portRotationId?: number;
     public portId?: number;
     public draftRestriction: string;
     public displacmentDraftRestriction?: string;
@@ -36,6 +37,7 @@ export class LodadableQuantity {
     public foConsumptionPerDay?: string;
     public estTotalFOConsumption?: string;
     public updateDateAndTime?: string;
+    public lastUpdatedTime?: string;
     public foConInSZ?: string;
     public subTotal?: string;
     public totalQuantity?: string;

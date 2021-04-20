@@ -1,13 +1,12 @@
-import { ValueObject } from '../../../shared/models/common.model';
+import { IResponseStatus } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
-import { Status } from '../models/new-voyage.model';
 
 
 /**
  * Interface for voyage status model
  */
 export class IVoyageStatus {
-    responseStatus?: Status;
+    responseStatus?: IResponseStatus;
     cargoQuantities: ICargoQuantities[];
     ballastQuantities: IBallastQuantities[];
     bunkerQuantities: IBunkerQuantities[];
@@ -43,14 +42,7 @@ export class IBunkerConditions {
     displacement: number;
     specificGravity: number;
 }
-/**
- * Interface for voyage Details model
- */
-export class IVoyageDetails {
-    portOrder: number;
-    operationType: string;
-    portId?: number;
-}
+
 
 /**
  * Interface for parameter list

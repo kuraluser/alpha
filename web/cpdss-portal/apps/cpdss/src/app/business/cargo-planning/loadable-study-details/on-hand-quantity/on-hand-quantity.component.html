@@ -18,7 +18,10 @@
                             <div class="col pl-0">
                                 <ul class="list-unstyled list-inline port-list pb-10 mb-0">
                                     <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}"
-                                        *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">{{port?.name}}
+                                        *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">
+                                        {{port?.name}} 
+                                        <span *ngIf="!loadableStudyDetailsTransformationService.getOHQPortValidity(port.id)"
+                                         class="error-icon">!</span>
                                     </li>
                                 </ul>
                             </div>
@@ -89,6 +92,11 @@
                         <cpdss-portal-bunkering-layout [tanks]="tanks" [rearTanks]="rearTanks"
                             [(selectedTankId)]="selectedTankId" [options]="ohqTankOptions">
                         </cpdss-portal-bunkering-layout>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col">
+                        <p class="text-uppercase text-center text-danger">{{'OHQ_LUBRICANT_TANK_MESSAGE' | translate}}</p>
                     </div>
                 </div>
                 <div class="row text-uppercase text-secondary mt-10" *ngIf="selectedTankFormGroup"

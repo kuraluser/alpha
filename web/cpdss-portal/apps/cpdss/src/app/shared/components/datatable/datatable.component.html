@@ -1,5 +1,5 @@
-<div *ngIf="form" [formGroup]="form" class="row" style="height: 100%">
-    <div formArrayName="dataTable" class="col" style="height: 100%">
+<div *ngIf="form" [formGroup]="form" class="row data-table-outer">
+    <div formArrayName="dataTable" class="col data-table-inner">
         <p-table #datatable [columns]="columns" [scrollable]="scrollable" scrollHeight="flex" [value]="value"
             [editMode]="editMode" [selectionMode]="selectionMode" [loading]="loading"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
@@ -26,6 +26,7 @@
                         [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)"
                         [class]="col?.fieldColumnClass">
                         <span>{{col.header| translate}}</span>
+                        <span *ngIf="col?.fieldHeaderTooltipIcon && col?.fieldHeaderTooltipText" class="inline-block ml-5 v-middle pointer pi" [ngClass]="col?.fieldHeaderTooltipIcon" pTooltip="{{col?.fieldHeaderTooltipText | translate}}" tooltipPosition="top"></span>
                         <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field" *ngIf="col.sortable">
                         </p-sortIcon>
                     </th>
@@ -86,7 +87,15 @@
                             (onInput)="onDateFilter($event.target.value, col, col?.filterField, col?.filterMatchMode)"
                             (onClearClick)="datatable.filter('', col?.filterField, 'contains')" [showButtonBar]="true"
                             styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
-                            [readonlyInput]="false" dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
+                            [readonlyInput]="false" dateFormat="{{col.dateFormat ? col.dateFormat : 'dd-mm-yy'}}" id="{{col.field+'_filter'}}">
+                        </p-calendar>
+                        <p-calendar appendTo="body" *ngSwitchCase="filterType.DATETIME" [maxDate]="col.filterFieldMaxvalue"
+                            (onSelect)="onDateSelect($event,col, col?.filterField, col?.filterMatchMode)"
+                            keepInvalid="true"
+                            (onInput)="onDateFilter($event.target.value, col, col?.filterField, col?.filterMatchMode)"
+                            (onClearClick)="datatable.filter('', col?.filterField, 'contains')" [showButtonBar]="true"
+                            styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
+                            [readonlyInput]="false" dateFormat="dd-mm-yy" showTime="true" hourFormat="24" id="{{col.field+'_filter'}}">
                         </p-calendar>
                         <p-dropdown #dropDown1 *ngSwitchCase="filterType.SELECT"
                             [options]="listData[col.filterListName]" [showClear]="true" appendTo="body"
@@ -145,13 +154,13 @@
 
                                 <ng-container *ngSwitchCase="fieldType.BUTTON">
                                     <ng-container *ngFor="let button of col?.buttons;let buttonIndex = index">
-                                        <a type="button"
+                                        <a type="button" [pTooltip]="button?.tooltip && button?.tooltip?.trim() !== '' ? button?.tooltip : null" [tooltipPosition]="button?.tooltipPosition"
                                             *ngIf="rowData[button?.field] || rowData[button?.field] === undefined"
                                             id="{{tableId + 'button' + rowIndex + buttonIndex}}"
                                             class="{{button?.class}}"
                                             (click)="buttonEvent($event, rowData, rowIndex, button?.field, button)">
-                                            <div class="{{button?.icons}}" *ngIf="button.icons"></div>
-                                            {{button.label ? button.label : ''}}</a>
+                                            <div class="{{button?.icons}}" [pTooltip]="button.label" tooltipPosition="right" *ngIf="button.icons"></div>
+                                            {{button.icons ? '' : button.label}}</a>
                                     </ng-container>
                                 </ng-container>
 
@@ -255,10 +264,10 @@
 
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <p-colorPicker [formControlName]="col.field"
+                                        <input type="color" [formControlName]="col.field"
                                             [ngClass]="{'empty': !rowData[col.field]?.value}"
-                                            (onChange)="onChange($event, rowData, rowIndex, col)"
-                                            id="{{col.field+'_'+rowIndex}}"></p-colorPicker>
+                                            (change)="onChange($event, rowData, rowIndex, col)"
+                                            id="{{col.field+'_'+rowIndex}}" class="colorpicker-custom">
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>

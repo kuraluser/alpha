@@ -14,7 +14,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ConstraintComponent implements OnInit {
 @Input() constraint: string[];
-ssss:string[] = ['check'];
+
 constraints: string;
   constructor() { }
 

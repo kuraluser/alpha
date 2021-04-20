@@ -1,10 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service.builder;
 
+import static java.lang.String.valueOf;
+
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +55,7 @@ public class LoadablePlanBuilder {
           Optional.ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
           Optional.ofNullable(lpq.getOrderQuantity())
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
+          Optional.ofNullable(lpq.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }
@@ -91,6 +95,7 @@ public class LoadablePlanBuilder {
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
+          Optional.ofNullable(lpcd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
@@ -117,6 +122,7 @@ public class LoadablePlanBuilder {
 
   public static void buildBallastGridDetails(
       List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
+      List<LoadablePlanStowageDetailsTemp> ballstTempList,
       com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder) {
     loadablePlanBallastDetails.forEach(
         lpbd -> {
@@ -137,7 +143,36 @@ public class LoadablePlanBuilder {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
+          setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
+  }
+
+  /**
+   * Set ballast temp details
+   *
+   * @param lpbd
+   * @param ballstTempList
+   * @param builder
+   */
+  public static void setTempBallastDetails(
+      LoadablePlanBallastDetails lpbd,
+      List<LoadablePlanStowageDetailsTemp> ballstTempList,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.Builder builder) {
+    Optional<LoadablePlanStowageDetailsTemp> tempOpt =
+        ballstTempList.stream()
+            .filter(b -> b.getLoadablePlanBallastDetails().getId().equals(lpbd.getId()))
+            .findAny();
+    if (tempOpt.isPresent()) {
+      LoadablePlanStowageDetailsTemp temp = tempOpt.get();
+      Optional.ofNullable(temp.getRdgUllage())
+          .ifPresent(item -> builder.setRdgLevel(valueOf(item)));
+      Optional.ofNullable(temp.getCorrectedUllage())
+          .ifPresent(item -> builder.setCorrectedLevel(valueOf(item)));
+      Optional.ofNullable(temp.getCorrectionFactor())
+          .ifPresent(item -> builder.setCorrectionFactor(valueOf(item)));
+      Optional.ofNullable(temp.getQuantity())
+          .ifPresent(item -> builder.setMetricTon(valueOf(item)));
+    }
   }
 }

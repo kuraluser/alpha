@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 
 /**
  * Component class of cargonomination screen
@@ -140,7 +141,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private confirmationAlertService: ConfirmationAlertService) {
+    private confirmationAlertService: ConfirmationAlertService,
+    private globalErrorHandler: GlobalErrorHandler) {
   }
 
   /**
@@ -265,14 +267,13 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       }
     } else if (['api', 'temperature'].includes(event.field)) {
       if (event.data?.cargo?.value) {
-        const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
-        event.data.cargo.value.ports = result?.ports;
         this.apiTempPopupData = <IApiTempPopupData>{
-          rowDataCargo: event.data?.cargo,
+          rowDataCargo: event.data?.loadingPorts?.value,
           vesselId: this.vesselId,
           voyageId: this.voyageId,
           loadableStudyId: this.loadableStudyId,
-          rowIndex: event.index
+          cargoId: event.data?.cargo?.value.id,
+          cargoName: event.data?.cargo?.value.name
         }
         this.openAPITemperatureHistoryPopup = true;
       }
@@ -329,7 +330,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
-
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
@@ -337,7 +337,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.updateCommingleButton(true);
         const row = this.cargoNominations[event.index];
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
-        const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+        const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, true);
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
         if (res) {
           for (const key in this.cargoNominations[valueIndex]) {
@@ -401,7 +401,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
             this.ngxSpinnerService.show();
             let res;
             if (!event?.data?.isAdd) {
-              res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+              res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
             } else {
               res = true;
             }
@@ -433,7 +433,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.show();
       this.updateCommingleButton(true, false);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
-      const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+      const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
       if (res) {
@@ -510,6 +510,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.cargoNominations = [...this.cargoNominations, _cargoNomination];
     const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
     dataTableControl.push(this.initCargoNominationFormGroup(_cargoNomination));
+    this.cargoNominationForm.updateValueAndValidity();
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 
@@ -630,6 +631,9 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }
+      if(event?.data?.status === '401' && event?.data?.errorCode === '210'){
+        this.globalErrorHandler.sessionOutMessage();
+      }
     }
   }
 
@@ -727,14 +731,14 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   private async updateCommingleButton(disableCommingleButton, showQuantityError = true) {
     const addedCargoNominations = this.cargoNominations.filter((cargoNomination) => !cargoNomination.isAdd);
-    if (addedCargoNominations.length >= 2) { 
-      if(this.dataTableLoading){
-        this.cargoNominationUpdate.emit({ value: true, error: showQuantityError});
-      }else{
+    if (addedCargoNominations.length >= 2) {
+      if (this.dataTableLoading) {
+        this.cargoNominationUpdate.emit({ value: true, error: showQuantityError });
+      } else {
         this.cargoNominationUpdate.emit({ value: disableCommingleButton, error: showQuantityError })
       }
     } else {
-      this.cargoNominationUpdate.emit({ value: true, error: showQuantityError})
+      this.cargoNominationUpdate.emit({ value: true, error: showQuantityError })
     }
   }
 
@@ -775,7 +779,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsApiService.currentUnit = unitTo;
     if (update) {
       this.cargoNominations.forEach(row => {
-        this.updateRowByUnit(row, unitFrom, unitTo);
+        this.updateRowByUnit(row, unitFrom, unitTo, true);
       })
     }
   }
@@ -785,14 +789,16 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    *
    * @memberof CargoNominationComponent
    */
-  updateRowByUnit(row, unitFrom, unitTo) {
-    const api = row.api.value;
-    const temp = row.temperature.value;
-    row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, unitTo, api, temp)
-    if (row?.loadingPorts?.value?.length) {
-      row.loadingPorts.value.forEach(loadingPort => {
-        loadingPort.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(loadingPort.quantity, unitFrom, unitTo, api, temp)
-      })
+  updateRowByUnit(row, unitFrom, unitTo, excludeAdd = false) {
+    if (!excludeAdd || !row.isAdd) {
+      const api = row.api.value;
+      const temp = row.temperature.value;
+      row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, unitTo, api, temp)
+      if (row?.loadingPorts?.value?.length) {
+        row.loadingPorts.value.forEach(loadingPort => {
+          loadingPort.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(loadingPort.quantity, unitFrom, unitTo, api, temp)
+        })
+      }
     }
   }
 

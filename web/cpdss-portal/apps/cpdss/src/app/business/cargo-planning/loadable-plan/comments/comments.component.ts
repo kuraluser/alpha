@@ -6,7 +6,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 
-import { ILoadablePlanCommentsDetails, ISaveComment } from '../../models/loadable-plan.model';
+import { ILoadablePlanCommentsDetails, ISaveComment , VALIDATION_AND_SAVE_STATUS } from '../../models/loadable-plan.model';
 import { IResponse } from '../../../../shared/models/common.model';
 
 import { LoadablePlanApiService } from '../../services/loadable-plan-api.service';
@@ -14,6 +14,7 @@ import { SecurityService } from "../../../../shared/services/security/security.s
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  * Component class of comments component in loadable plan
@@ -35,14 +36,36 @@ export class CommentsComponent implements OnInit {
   @Input() enableSubmit: boolean;
 
   @Input() set commentsDetails(value: ILoadablePlanCommentsDetails[]) {
-    this._commentsDetails = value;
+    this._commentsDetails = value && this.showCommentedDateTimeInUTC(value);
   }
 
   get commentsDetails(): ILoadablePlanCommentsDetails[] {
     return this._commentsDetails;
   }
 
+  @Input() set loadablePatternValidationStatus(value: number) {
+    this._loadablePatternValidationStatus = value;
+    [VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED].includes(value) ? this.commentButtonStatus = true : this.commentButtonStatus = false;
+  }
+
+  get loadablePatternValidationStatus(): number {
+    return this._loadablePatternValidationStatus;
+  }
+
+  @Input() set isVoyageClosed(value: boolean) {
+    this._isVoyageClosed = value;
+  }
+
+  get isVoyageClosed(): boolean {
+    return this._isVoyageClosed;
+  }
+  
+
   private _commentsDetails: ILoadablePlanCommentsDetails[];
+  private _loadablePatternValidationStatus: number;
+  private _isVoyageClosed: boolean;
+
+  public commentButtonStatus: boolean;
   public commentForm: FormGroup;
   public formError: boolean;
   public isPermissionAvaliable: boolean;
@@ -54,6 +77,7 @@ export class CommentsComponent implements OnInit {
     private loadablePlanApiService: LoadablePlanApiService,
     private datePipe: DatePipe,
     private fb: FormBuilder,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
@@ -122,6 +146,18 @@ export class CommentsComponent implements OnInit {
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.commentForm.get(formControlName);
     return formControl;
+  }
+
+  /**
+   * function to show commented date-time in UTC format
+   *
+   * @param {ILoadablePlanCommentsDetails[]} commentArray
+   * @return {*}  {ILoadablePlanCommentsDetails[]}
+   * @memberof CommentsComponent
+   */
+  showCommentedDateTimeInUTC(commentArray: ILoadablePlanCommentsDetails[]): ILoadablePlanCommentsDetails[]  {
+    commentArray.map(comment => (comment.dataAndTime = this.timeZoneTransformationService.formatDateTime(comment.dataAndTime, {utcFormat: true})));
+    return commentArray;
   }
 
 }

@@ -7,12 +7,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
-import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
+import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails, IBallastStowageDetails } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError , ILoadablePlanCommentsDetails , VALIDATION_AND_SAVE_STATUS , IAlgoResponse } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 
-import { ICargoResponseModel, ICargo } from '../../../shared/models/common.model';
+import { ICargoResponseModel, ICargo, ITimeZone } from '../../../shared/models/common.model';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
 
 import { VoyageService } from '../../core/services/voyage.service';
@@ -22,6 +22,9 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 
 /**
  * Component class of loadable plan
@@ -92,6 +95,12 @@ export class LoadablePlanComponent implements OnInit {
   public cargos: ICargo[];
   public confirmPlanPermission: boolean;
   public loadableStudyStatus: boolean;
+  public loadablePatternValidationStatus: number;
+  public confirmButtonStatus: boolean;
+  public isVoyageClosed: boolean;
+  public errorMessage: IAlgoError[];
+  public errorPopup: boolean;
+  timeZoneList: ITimeZone[];
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -110,6 +119,7 @@ export class LoadablePlanComponent implements OnInit {
     private voyageService: VoyageService,
     private loadableStudyListApiService: LoadableStudyListApiService,
     private permissionsService: PermissionsService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService
   ) { }
@@ -120,6 +130,7 @@ export class LoadablePlanComponent implements OnInit {
     * @memberof LoadablePlanComponent
   */
   ngOnInit(): void {
+    this.listenEvents();
     this.getPagePermission();
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
@@ -133,6 +144,7 @@ export class LoadablePlanComponent implements OnInit {
       this.getCargos()
       this.getVesselInfo();
       this.initSubsciptions();
+      this.getGlobalTimeZones();
       this.getVoyages(this.vesselId, this.voyageId);
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
@@ -140,9 +152,95 @@ export class LoadablePlanComponent implements OnInit {
   }
 
   /**
+   * Listen events in this page
+   *
+   * @private
+   * @memberof LoadablePlanComponent
+   */
+  private async listenEvents() {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  
+    /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof LoadablePlanComponent
+   */
+  private swMessageHandler = async event => {
+    if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        this.processingMessage();
+        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
+      } else {
+        this.messageService.clear("process");
+      }
+    } else if (event.data.type === 'loadable-pattern-validation-failed') {
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        this.validationFailed();
+        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED;
+        this.getAlgoErrorMessage(true);
+      }
+
+    } else if (event.data.type === 'loadable-pattern-validation-success') {
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        this.validationCompleted();
+        this.getLoadablePlanDetails();
+        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS;
+      }
+    }
+    this.setProcessingLoadableStudyActions();
+  }
+
+    /**
+   * Enable/ Disable buttons of currently processing/processed loadable pattern
+   * @memberof LoadablePlanComponent
+   */
+   setProcessingLoadableStudyActions() {
+     if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
+       this.confirmButtonStatus = true;
+     } else {
+      this.confirmButtonStatus = false;
+     }
+   }
+
+  /**
+   * Toast to show validating pattern started
+   *
+   * @memberof LoadablePlanComponent
+  */
+  async processingMessage() {
+    this.messageService.clear("process");
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_INFO', 'LOADABLE_PATTERN_VALIDATION_STARTED']).toPromise();
+    this.messageService.add({ severity: 'info', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_INFO'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_STARTED'], life: 1000, key: "process", closable: false });
+  }
+
+  /**
+ * Toast to show validating pattern completed 
+ *
+ * @memberof LoadablePlanComponent
+ */
+  async validationCompleted() {
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_SUCCESS', 'LOADABLE_PATTERN_VALIDATION_SUCCESSFULLY']).toPromise();
+    this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESS'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESSFULLY'], sticky: true, closable: true });
+  }
+
+  /**
+  * Toast to show validating pattern error
+  *
+  * @memberof LoadablePlanComponent
+  */
+  async validationFailed() {
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_ERROR', 'LOADABLE_PATTERN_VALIDATION_ERROR_DETAILS']).toPromise();
+    this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR'], detail:  translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR_DETAILS'], sticky: true, closable: true });
+  }
+
+
+  /**
 * Get page permission
 *
-* @memberof AdminComponent
+* @memberof LoadablePlanComponent
 */
   getPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePlanComponent']);
@@ -233,6 +331,15 @@ export class LoadablePlanComponent implements OnInit {
   }
 
   /**
+   * function list golbal time zones
+   *
+   * @memberof LoadablePlanComponent
+   */
+  async getGlobalTimeZones() {
+    this.timeZoneList = await this.timeZoneTransformationService.getTimeZoneList().toPromise();
+  }
+
+  /**
   * Get details for loadable Plan
   * @returns {Promise<ILoadablePlanResponse>}
   * @memberof LoadablePlanComponent
@@ -261,13 +368,32 @@ export class LoadablePlanComponent implements OnInit {
     this.frontBallastTanks = loadablePlanRes.frontBallastTanks;
     this.rearBallastTanks = loadablePlanRes.rearBallastTanks;
     this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
-    this.loadablePlanSynopticalRecords = loadablePlanRes.loadablePlanSynopticalRecords;
+    this.loadablePlanSynopticalRecords = this.convertLoadablePlanSynRecordsDateTime(loadablePlanRes.loadablePlanSynopticalRecords);
     this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
     this.voyageNumber = loadablePlanRes.voyageNumber;
     this.date = loadablePlanRes.date;
     this.caseNumber = loadablePlanRes.caseNumber;
+    this.isVoyageClosed = loadablePlanRes.voyageStatusId === 2 ? true : false;
+    this.loadablePatternValidationStatus = loadablePlanRes.loadablePatternStatusId;
+    if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
+      this.getAlgoErrorMessage(false);
+    }
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
+    this.setProcessingLoadableStudyActions();
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+  * Get algo error response
+  * @returns {Promise<IAlgoResponse>}
+  * @memberof LoadablePlanComponent
+  */
+  async getAlgoErrorMessage(status: boolean) {
+    const algoError: IAlgoResponse = await this.loadablePlanApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+    if(algoError.responseStatus.status === '200') {
+      this.errorMessage = algoError.algoErrors;
+      this.errorPopup = status;
+    }
   }
 
   /**
@@ -358,6 +484,36 @@ export class LoadablePlanComponent implements OnInit {
         }
       }
     })
+  }
+
+  /**
+   * function to map the eta-etd port-based date and time
+   *
+   * @param {ILoadablePlanSynopticalRecord[]} synopticalRecords
+   * @return {*}  {ILoadablePlanSynopticalRecord[]}
+   * @memberof LoadablePlanComponent
+   */
+  convertLoadablePlanSynRecordsDateTime(synopticalRecords: ILoadablePlanSynopticalRecord[]): ILoadablePlanSynopticalRecord[] {
+    synopticalRecords.map(record => (record.etaEtdPlanned = this.transformDateTimeToPortLocal(record.etaEtdPlanned, record.portTimezoneId)));
+    return synopticalRecords;
+  }
+
+  /**
+   * function to conevrt the eta-etd local to port timezone
+   *
+   * @param {string} etaEtdDateTime
+   * @param {number} timeZonId
+   * @return {*}  {string}
+   * @memberof LoadablePlanComponent
+   */
+  transformDateTimeToPortLocal(etaEtdDateTime: string, timeZonId: number): string {
+    const selectedPortTimeZone = this.timeZoneList.find(tz => (tz.id === timeZonId));
+    const formatOptions: IDateTimeFormatOptions = {
+      portLocalFormat: true,
+      portTimeZoneOffset: selectedPortTimeZone?.offsetValue,
+      portTimeZoneAbbr: selectedPortTimeZone?.abbreviation
+    };
+    return this.timeZoneTransformationService.formatDateTime(etaEtdDateTime, formatOptions);
   }
 
 }

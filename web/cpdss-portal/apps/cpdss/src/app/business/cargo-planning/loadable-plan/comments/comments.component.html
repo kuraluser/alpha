@@ -13,13 +13,13 @@
                 [errorMessages]="errorMessages">
                 </cpdss-portal-validation-error>
             </div>
-            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" [disabled]="!isPermissionAvaliable" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
+            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" [disabled]="!isPermissionAvaliable || commentButtonStatus || isVoyageClosed" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
             
         </form>
         <div class="row">
             <div class="col ml-30">
             <div *ngFor="let commentsDetail of commentsDetails">
-                <div class="text-secondary pb-10">{{commentsDetail?.userName}}, {{commentsDetail?.dataAndTime}} {{'COMMENTS_TIME' | translate}}</div>
+                <div class="text-secondary pb-10">{{commentsDetail?.userName}}, {{commentsDetail?.dataAndTime}}</div>
                 <div class="ml-30"><i class="icon-api-temp mr-10" ></i> {{commentsDetail?.comment}}</div>
                 <hr>
             </div>

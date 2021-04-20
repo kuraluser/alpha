@@ -33,6 +33,9 @@ public class LoadablePlanStowageDetailsTemp extends EntityDoc {
   @Column(name = "quantity")
   private BigDecimal quantity;
 
+  @Column(name = "rdg_ullage")
+  private BigDecimal rdgUllage;
+
   @Column(name = "filling_ratio")
   private BigDecimal fillingRatio;
 
@@ -45,4 +48,12 @@ public class LoadablePlanStowageDetailsTemp extends EntityDoc {
   @JoinColumn(name = "stowage_details_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadablePlanStowageDetails loadablePlanStowageDetails;
+
+  @JoinColumn(name = "ballast_details_xid", referencedColumnName = "id")
+  @ManyToOne
+  private LoadablePlanBallastDetails loadablePlanBallastDetails;
+
+  @JoinColumn(name = "loadable_pattern_xid", referencedColumnName = "id")
+  @ManyToOne
+  private LoadablePattern loadablePattern;
 }

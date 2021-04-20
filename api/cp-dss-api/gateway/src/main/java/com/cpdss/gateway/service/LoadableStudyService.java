@@ -9,6 +9,9 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
@@ -60,8 +63,6 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
-import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply;
-import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
@@ -75,6 +76,7 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
@@ -89,6 +91,8 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoError;
+import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
@@ -136,13 +140,13 @@ import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
-import com.cpdss.gateway.domain.RecalculateVolume;
 import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.StabilityConditions;
 import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
 import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
+import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.ValveSegregation;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.Voyage;
@@ -157,6 +161,7 @@ import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ProtocolStringList;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -227,8 +232,11 @@ public class LoadableStudyService {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
-  private static final Long LOADABLE_STUDY_RESPONSE = 2L;
+  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
+
+  private static final String VOYAGE_STATUS_URI = "voyage-status";
 
   @Autowired private UsersRepository usersRepository;
 
@@ -335,6 +343,7 @@ public class LoadableStudyService {
     Optional.ofNullable(loadableQuantity.getVesselLightWeight())
         .ifPresent(builder::setVesselLightWeight);
     Optional.ofNullable(loadableQuantity.getPortId()).ifPresent(builder::setPortId);
+    Optional.ofNullable(loadableQuantity.getPortRotationId()).ifPresent(builder::setPortRotationId);
     Optional.ofNullable(loadableQuantity.getBoilerWaterOnBoard())
         .ifPresent(builder::setBoilerWaterOnBoard);
     Optional.ofNullable(loadableQuantity.getBallast()).ifPresent(builder::setBallast);
@@ -400,6 +409,7 @@ public class LoadableStudyService {
       dto.setName(grpcReply.getName());
       dto.setDetail(grpcReply.getDetail());
       dto.setCreatedDate(grpcReply.getCreatedDate());
+      dto.setLastEdited(grpcReply.getLastEdited());
       dto.setCharterer(grpcReply.getCharterer());
       dto.setSubCharterer(grpcReply.getSubCharterer());
       dto.setDraftMark(
@@ -866,6 +876,8 @@ public class LoadableStudyService {
       port.setPortOrder(0 == portDetail.getPortOrder() ? null : portDetail.getPortOrder());
       port.setLoadableStudyId(loadableStudyId);
       port.setOperationId(0 == portDetail.getOperationId() ? null : portDetail.getOperationId());
+      port.setPortTimezoneId(
+          0 == portDetail.getPortTimezoneId() ? null : portDetail.getPortTimezoneId());
       port.setSeaWaterDensity(
           isEmpty(portDetail.getSeaWaterDensity())
               ? null
@@ -952,10 +964,12 @@ public class LoadableStudyService {
    * @return
    * @throws GenericServiceException
    */
-  public PortRotationResponse savePortRotation(PortRotation request, String correlationId)
+  public PortRotationResponse savePortRotation(
+      PortRotation request, String correlationId, HttpHeaders headers)
       throws GenericServiceException {
     log.info("Inside savePortRotation");
-    PortRotationReply grpcReply = this.savePortRotation(this.createPortRotationDetail(request));
+    PortRotationReply grpcReply =
+        this.savePortRotation(this.createPortRotationDetail(request, headers));
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "failed to save loadable study - ports",
@@ -1067,7 +1081,7 @@ public class LoadableStudyService {
    * @param request
    * @return
    */
-  private PortRotationDetail createPortRotationDetail(PortRotation request) {
+  private PortRotationDetail createPortRotationDetail(PortRotation request, HttpHeaders headers) {
     PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
     builder.setId(request.getId());
     builder.setLoadableStudyId(request.getLoadableStudyId());
@@ -1101,6 +1115,10 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setEtdActual(valueOf(request.getEtdActual())));
     Optional.ofNullable(request.getIsPortsComplete())
         .ifPresent(item -> builder.setIsPortsComplete(item));
+    List<String> referer = headers.get("Referer");
+    if (referer != null && referer.get(0).contains(VOYAGE_STATUS_URI)) {
+      builder.setIsLandingPage(true);
+    }
     return builder.build();
   }
 
@@ -1110,12 +1128,16 @@ public class LoadableStudyService {
    * @return
    * @throws GenericServiceException LoadableQuantityResponse
    */
-  public LoadableQuantityResponse getLoadableQuantity(long loadableStudyId, String correlationId)
+  public LoadableQuantityResponse getLoadableQuantity(
+      long loadableStudyId, Long portRotationId, String correlationId)
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
     LoadableQuantity loadableQuantity = new LoadableQuantity();
     LoadableQuantityReply loadableQuantityRequest =
-        LoadableQuantityReply.newBuilder().setLoadableStudyId(loadableStudyId).build();
+        LoadableQuantityReply.newBuilder()
+            .setLoadableStudyId(loadableStudyId)
+            .setPortRotationId(portRotationId)
+            .build();
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
         this.getLoadableQuantityResponse(loadableQuantityRequest);
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getStatus())) {
@@ -1163,9 +1185,13 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getVesselAverageSpeed());
     loadableQuantity.setUpdateDateAndTime(
         loadableQuantityResponse.getLoadableQuantityRequest().getUpdateDateAndTime());
-    loadableQuantity.setPortId(
-        Integer.parseInt(
-            String.valueOf(loadableQuantityResponse.getLoadableQuantityRequest().getPortId())));
+
+    // Port Id is not using, as it can be duplicate in DB(using port-rotation-id)
+    // loadableQuantity.setPortId(Integer.parseInt(
+    // String.valueOf(loadableQuantityResponse.getLoadableQuantityRequest().getPortId())));
+
+    loadableQuantity.setPortRotationId(
+        loadableQuantityResponse.getLoadableQuantityRequest().getPortRotationId());
     loadableQuantity.setBoilerWaterOnBoard(
         loadableQuantityResponse.getLoadableQuantityRequest().getBoilerWaterOnBoard());
     loadableQuantity.setBallast(loadableQuantityResponse.getLoadableQuantityRequest().getBallast());
@@ -1180,6 +1206,8 @@ public class LoadableStudyService {
     loadableQuantity.setSubTotal(
         loadableQuantityResponse.getLoadableQuantityRequest().getSubTotal());
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
+    loadableQuantity.setLastUpdatedTime(
+        loadableQuantityResponse.getLoadableQuantityRequest().getLastUpdatedTime());
     loadableQuantityResponseDto.setLoadableQuantityId(
         loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
@@ -1665,6 +1693,12 @@ public class LoadableStudyService {
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+              cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+              cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
+              // Dummy value till actual from Alog
+              cargoDetails.setTimeRequiredForLoading("0");
+              cargoDetails.setLoadingPorts(Arrays.asList("x"));
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
@@ -1700,6 +1734,7 @@ public class LoadableStudyService {
               details.setQuantity(lqccd.getQuantity());
               details.setTankName(lqccd.getTankName());
               details.setTemp(lqccd.getTemp());
+              details.setSlopQuantity(lqccd.getSlopQuantity());
               response.getLoadableQuantityCommingleCargoDetails().add(details);
             });
   }
@@ -1837,6 +1872,14 @@ public class LoadableStudyService {
               details.setColorCode(lpsdl.getColorCode());
               details.setFillingRatio(lpsdl.getFillingRatio());
               details.setIsCommingle(lpsdl.getIsCommingle());
+              details.setApi(lpsdl.getApi());
+              details.setRdgUllage(lpsdl.getRdgUllage());
+              details.setTemperature(lpsdl.getTemperature());
+              details.setTankName(lpsdl.getTankName());
+              details.setCargoAbbreviation(lpsdl.getCargoAbbreviation());
+              details.setCargoNominationId(lpsdl.getCargoNominationId());
+              details.setCorrectionFactor(lpsdl.getCorrectionFactor());
+              details.setCorrectedUllage(lpsdl.getCorrectedUllage());
               loadablePlanStowageDetails.add(details);
             });
     return loadablePlanStowageDetails;
@@ -2895,6 +2938,10 @@ public class LoadableStudyService {
         isEmpty(synopticalProtoRecord.getEtaEtdEstimated())
             ? null
             : synopticalProtoRecord.getEtaEtdEstimated());
+    synopticalRecord.setPortTimezoneId(
+        isEmpty(synopticalProtoRecord.getPortTimezoneId())
+            ? null
+            : synopticalProtoRecord.getPortTimezoneId());
   }
 
   /**
@@ -3111,6 +3158,8 @@ public class LoadableStudyService {
       rec.setApi(isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
+      rec.setIsCommingleCargo(
+          isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -3254,7 +3303,7 @@ public class LoadableStudyService {
       StatusReply reply =
           this.saveJson(
               loadableStudiesId,
-              LOADABLE_STUDY_RESPONSE,
+              LOADABLE_STUDY_RESULT_JSON_ID,
               objectMapper.writeValueAsString(loadablePlanRequest));
       if (!SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
@@ -3266,6 +3315,11 @@ public class LoadableStudyService {
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
     buildLoadablePlanDetails(loadablePlanRequest, request);
+
+    if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
+      this.buildAlgoError(loadablePlanRequest.getErrors(), request);
+    }
+
     AlgoReply algoReply = this.saveLoadablePatterns(request);
     if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -3463,6 +3517,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getLoadingOrder()).ifPresent(qunatityBuilder::setLoadingOrder);
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
+    Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3476,6 +3531,7 @@ public class LoadableStudyService {
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.newBuilder();
     Optional.ofNullable(lqccd.getApi()).ifPresent(builder::setApi);
+    Optional.ofNullable(lqccd.getGrade()).ifPresent(builder::setGrade);
     Optional.ofNullable(lqccd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
     Optional.ofNullable(lqccd.getCargo1MT()).ifPresent(builder::setCargo1MT);
     Optional.ofNullable(lqccd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
@@ -3494,6 +3550,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
     Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
+    Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -3518,6 +3575,78 @@ public class LoadableStudyService {
             .setJson(json)
             .build();
     return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
+  }
+
+  /**
+   * @param request
+   * @param loadablePatternId
+   * @param first
+   * @return AlgoErrorResponse
+   */
+  public AlgoErrorResponse getAlgoError(Long loadablePatternId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getAlgoError gateway service with correlationId : " + correlationId);
+    AlgoErrorRequest.Builder request = AlgoErrorRequest.newBuilder();
+    request.setLoadablePatternId(loadablePatternId);
+    AlgoErrorReply grpcReply = this.getAlgoError(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to getAlgoError",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return buildErrorResponse(grpcReply, correlationId);
+  }
+
+  /**
+   * @param grpcReply
+   * @return AlgoErrorResponse
+   */
+  private AlgoErrorResponse buildErrorResponse(AlgoErrorReply grpcReply, String correlationId) {
+    AlgoErrorResponse errorResponse = new AlgoErrorResponse();
+    errorResponse.setAlgoErrors(new ArrayList<AlgoError>());
+    grpcReply
+        .getAlgoErrorsList()
+        .forEach(
+            algoError -> {
+              errorResponse.getAlgoErrors().add(buildAlgoError(algoError));
+            });
+    errorResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return errorResponse;
+  }
+
+  /**
+   * @param algoError
+   * @return AlgoError
+   */
+  private AlgoError buildAlgoError(AlgoErrors algoError) {
+    AlgoError error = new AlgoError();
+    error.setErrorHeading(algoError.getErrorHeading());
+    error.setErrorDetails(buildErrorMessage(algoError.getErrorMessagesList()));
+    return error;
+  }
+
+  /**
+   * @param errorMessagesList
+   * @return List<String>
+   */
+  private List<String> buildErrorMessage(ProtocolStringList errorMessagesList) {
+    List<String> errors = new ArrayList<String>();
+    errorMessagesList.forEach(
+        error -> {
+          errors.add(error);
+        });
+    return errors;
+  }
+
+  /**
+   * @param request
+   * @return AlgoErrorReply
+   */
+  public AlgoErrorReply getAlgoError(
+      com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.Builder request) {
+    return this.loadableStudyServiceBlockingStub.getAlgoErrors(request.build());
   }
 
   /**
@@ -3569,6 +3698,8 @@ public class LoadableStudyService {
     response.setVoyageNumber(grpcReply.getVoyageNumber());
     response.setCaseNumber(grpcReply.getCaseNumber());
     response.setDate(grpcReply.getDate());
+    response.setVoyageStatusId(grpcReply.getVoyageStatusId());
+    response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
   }
 
   /**
@@ -3656,6 +3787,7 @@ public class LoadableStudyService {
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
               synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
+              synopticalRecord.setPortTimezoneId(str.getPortTimezoneId());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
@@ -3808,17 +3940,19 @@ public class LoadableStudyService {
 
   /**
    * @param loadableStudyId
-   * @param processId
+   * @param loadablePlanRequest
    * @param first
    * @return LoadableStudyStatusResponse
    */
   public LoadableStudyStatusResponse getLoadableStudyStatus(
-      Long loadableStudyId, String processId, String correlationId) throws GenericServiceException {
+      Long loadableStudyId, LoadablePlanRequest loadablePlanRequest, String correlationId)
+      throws GenericServiceException {
     log.info("Inside getLoadableStudyStatus gateway service with correlationId : " + correlationId);
     LoadableStudyStatusResponse response = new LoadableStudyStatusResponse();
     LoadableStudyStatusReply grpcReply =
         this.getLoadableStudyStatus(
-            this.buildLoadableStudyStatusRequest(loadableStudyId, processId, correlationId));
+            this.buildLoadableStudyStatusRequest(
+                loadableStudyId, loadablePlanRequest, correlationId));
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Failed to get Loadable Study Status",
@@ -3882,10 +4016,12 @@ public class LoadableStudyService {
    * @return Long
    */
   private LoadableStudyStatusRequest buildLoadableStudyStatusRequest(
-      Long loadableStudyId, String processId, String correlationId) {
+      Long loadableStudyId, LoadablePlanRequest loadablePlanRequest, String correlationId) {
     LoadableStudyStatusRequest.Builder builder = LoadableStudyStatusRequest.newBuilder();
     builder.setLoadableStudyId(loadableStudyId);
-    builder.setProcessId(processId);
+    builder.setProcessId(loadablePlanRequest.getProcessId());
+    Optional.ofNullable(loadablePlanRequest.getLoadablePatternId())
+        .ifPresent(builder::setLoadablePatternId);
     return builder.build();
   }
 
@@ -4348,25 +4484,61 @@ public class LoadableStudyService {
   }
 
   /**
-   * @param recalculateVolumeRequest
+   * @param updateUllageRequest
    * @param loadablePatternId
    * @param first
    * @return RecalculateVolume
    */
-  public RecalculateVolume recalculateVolume(
-      RecalculateVolume recalculateVolumeRequest, Long loadablePatternId, String correlationId)
+  public UpdateUllage updateUllage(
+      UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
       throws GenericServiceException {
-    log.info("Inside recalculateVolume in gateway micro service");
-    RecalculateVolume response = new RecalculateVolume();
-    RecalculateVolumeRequest.Builder grpcRequest = RecalculateVolumeRequest.newBuilder();
-    buildRecalculateVolumeRequest(recalculateVolumeRequest, loadablePatternId, grpcRequest);
-    RecalculateVolumeReply grpcReply = this.recalculateVolumeReply(grpcRequest);
-    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to recalculateVolume from grpc service",
-          grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
-    }
+    log.info("Inside updateUllageRequest in gateway micro service");
+    /*
+     * UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
+     * buildUpdateUllageRequest(updateUllageRequest, loadablePatternId,
+     * grpcRequest); UpdateUllageReply grpcReply =
+     * this.updateUllage(grpcRequest.build()); if
+     * (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) { throw new
+     * GenericServiceException( "Failed to get response  for  from grpc service",
+     * grpcReply.getResponseStatus().getCode(),
+     * HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode(
+     * )))); } return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+     */
+    return this.buildeUpdateUllageResponseTemp(correlationId);
+  }
+
+  private UpdateUllage buildeUpdateUllageResponse(
+      UpdateUllageReply grpcReply, String correlationId) {
+    UpdateUllage response = new UpdateUllage();
+    response.setCorrectedUllage(
+        isEmpty(grpcReply.getLoadablePlanStowageDetails().getCorrectedUllage())
+            ? null
+            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getCorrectedUllage()));
+    response.setCorrectionFactor(
+        isEmpty(grpcReply.getLoadablePlanStowageDetails().getCorrectionFactor())
+            ? null
+            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getCorrectionFactor()));
+    response.setQuantityMt(
+        isEmpty(grpcReply.getLoadablePlanStowageDetails().getWeight())
+            ? null
+            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getWeight()));
+    response.setFillingRatio(
+        isEmpty(grpcReply.getLoadablePlanStowageDetails().getFillingRatio())
+            ? null
+            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getFillingRatio()));
+    response.setIsBallast(grpcReply.getLoadablePlanStowageDetails().getIsBallast());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private UpdateUllage buildeUpdateUllageResponseTemp(String correlationId) {
+    UpdateUllage response = new UpdateUllage();
+    response.setCorrectedUllage(new BigDecimal("10"));
+    response.setCorrectionFactor(new BigDecimal("10"));
+    response.setQuantityMt(new BigDecimal("10"));
+    response.setFillingRatio(new BigDecimal("10"));
+    response.setIsBallast(true);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
@@ -4376,31 +4548,28 @@ public class LoadableStudyService {
    * @param grpcRequest
    * @return RecalculateVolumeReply
    */
-  private RecalculateVolumeReply recalculateVolumeReply(
-      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.Builder grpcRequest) {
-    return this.loadableStudyServiceBlockingStub.recalculateVolume(grpcRequest.build());
+  public UpdateUllageReply updateUllage(
+      com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.updateUllage(grpcRequest);
   }
 
   /**
-   * @param recalculateVolumeRequest
+   * @param updateUllageRequest
    * @param grpcRequest void
    */
-  public void buildRecalculateVolumeRequest(
-      RecalculateVolume recalculateVolumeRequest,
+  public void buildUpdateUllageRequest(
+      UpdateUllage updateUllageRequest,
       Long loadablePatternId,
-      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.Builder grpcRequest) {
+      com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.Builder grpcRequest) {
     grpcRequest.setLoadablePatternId(loadablePatternId);
-    recalculateVolumeRequest
-        .getCargoDetails()
-        .forEach(
-            cargoDetails -> {
-              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
-                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
-              builder.setId(cargoDetails.getId());
-              builder.setTankId(cargoDetails.getTankId());
-              builder.setRdgUllage(cargoDetails.getRdgUllage());
-              grpcRequest.getLoadablePlanStowageDetailsBuilderList().add(builder);
-            });
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+    builder.setId(updateUllageRequest.getId());
+    builder.setTankId(updateUllageRequest.getTankId());
+    builder.setIsBallast(updateUllageRequest.getIsBallast());
+    Optional.ofNullable(updateUllageRequest.getCorrectedUllage())
+        .ifPresent(ullage -> builder.setCorrectedUllage(valueOf(ullage)));
+    grpcRequest.setLoadablePlanStowageDetails(builder.build());
   }
 
   /**
@@ -4517,7 +4686,8 @@ public class LoadableStudyService {
                                       index.getColorCode(),
                                       index.getCorrectedUllage(),
                                       index.getApi(),
-                                      index.getSg())),
+                                      index.getSg(),
+                                      index.getIsCommingleCargo())),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {
@@ -4615,6 +4785,23 @@ public class LoadableStudyService {
       String correlationId)
       throws GenericServiceException {
     log.info("Inside patternValidateResult in gateway micro service");
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      objectMapper.writeValue(
+          new File(this.rootFolder + "/json/patternValidateResult_" + loadablePatternId + ".json"),
+          patternValidateResultRequest);
+      StatusReply reply =
+          this.saveJson(
+              loadablePatternId,
+              LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID,
+              objectMapper.writeValueAsString(patternValidateResultRequest));
+      if (!SUCCESS.equals(reply.getStatus())) {
+        log.error("Error occured  in gateway while writing JSON to database.");
+      }
+    } catch (IOException e) {
+      log.error("Error in json writing ", e);
+    }
+
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadablePatternId(loadablePatternId);
@@ -4626,7 +4813,8 @@ public class LoadableStudyService {
       loadablePlanRequest.setProcessId(patternValidateResultRequest.getProcessId());
       buildLoadablePlanDetails(loadablePlanRequest, request);
     } else {
-      // ToDo - error handling
+      if (null != patternValidateResultRequest.getErrors())
+        buildAlgoError(patternValidateResultRequest.getErrors(), request);
     }
 
     AlgoReply algoReply = this.patternValidateResult(request);
@@ -4638,8 +4826,32 @@ public class LoadableStudyService {
     }
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-    return null;
+    return algoPatternResponse;
   }
+  /**
+   * @param list
+   * @param request void
+   */
+  private void buildAlgoError(
+      List<AlgoError> list,
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
+    list.forEach(
+        error -> {
+          request.addAlgoErrors(buildSingleAlgoError(error));
+        });
+  }
+
+  /**
+   * @param error
+   * @return AlgoErrors
+   */
+  private AlgoErrors buildSingleAlgoError(AlgoError errors) {
+    AlgoErrors.Builder error = AlgoErrors.newBuilder();
+    error.setErrorHeading(errors.getErrorHeading());
+    error.addAllErrorMessages(errors.getErrorDetails());
+    return error.build();
+  }
+
   /**
    * @param request
    * @return AlgoReply
@@ -4955,12 +5167,14 @@ public class LoadableStudyService {
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getVoyageNo))
+                  .sorted(Comparator.comparing(Voyage::getVoyageNo, String.CASE_INSENSITIVE_ORDER))
                   .collect(Collectors.toList());
         } else {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getVoyageNo).reversed())
+                  .sorted(
+                      Comparator.comparing(Voyage::getVoyageNo, String.CASE_INSENSITIVE_ORDER)
+                          .reversed())
                   .collect(Collectors.toList());
         }
         break;
@@ -4968,12 +5182,14 @@ public class LoadableStudyService {
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getCharterer))
+                  .sorted(Comparator.comparing(Voyage::getCharterer, String.CASE_INSENSITIVE_ORDER))
                   .collect(Collectors.toList());
         } else {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getCharterer).reversed())
+                  .sorted(
+                      Comparator.comparing(Voyage::getCharterer, String.CASE_INSENSITIVE_ORDER)
+                          .reversed())
                   .collect(Collectors.toList());
         }
         break;
@@ -4981,12 +5197,21 @@ public class LoadableStudyService {
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getStatus))
+                  .filter(voyage -> !StringUtils.isEmpty(voyage.getStatus()))
+                  .sorted(Comparator.comparing(Voyage::getStatus, String.CASE_INSENSITIVE_ORDER))
                   .collect(Collectors.toList());
+
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> StringUtils.isEmpty(voyage.getStatus()))
+                  .collect(Collectors.toList()));
+
         } else {
           voyages =
               voyageList.stream()
-                  .sorted(Comparator.comparing(Voyage::getStatus).reversed())
+                  .sorted(
+                      Comparator.comparing(Voyage::getStatus, String.CASE_INSENSITIVE_ORDER)
+                          .reversed())
                   .collect(Collectors.toList());
         }
         break;
@@ -5274,5 +5499,20 @@ public class LoadableStudyService {
       }
     }
     return cargoHistoryResponse;
+  }
+
+  public AlgoErrorResponse getAlgoErrorLoadableStudy(Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getAlgoError gateway service with correlationId : " + correlationId);
+    AlgoErrorRequest.Builder request = AlgoErrorRequest.newBuilder();
+    request.setLoadableStudyId(loadableStudyId);
+    AlgoErrorReply grpcReply = this.getAlgoError(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to getAlgoError",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return buildErrorResponse(grpcReply, correlationId);
   }
 }

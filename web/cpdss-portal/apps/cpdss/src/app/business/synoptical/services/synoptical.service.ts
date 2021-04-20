@@ -7,6 +7,7 @@ import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS_LABEL } from '../../core/m
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
+import { ISubTotal } from '../../../shared/models/common.model';
 
 /*
  * Service class for synoptical table
@@ -149,5 +150,19 @@ export class SynopticalService {
     } else {
       this.edit.next()
     }
+  }
+
+  /**
+* Method for calculating  subtotal
+*
+* @param {ISubTotal} data
+* @returns {number}
+* @memberof SynopticalService
+*/
+  getSubTotal(data: ISubTotal): Number {
+    const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection ? data.sgCorrection : 0) - Number(data.foOnboard)
+      - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.boilerWaterOnboard) - Number(data.ballast)
+      - Number(data.constant) - Number(data.others);
+    return Number(subTotal);
   }
 }

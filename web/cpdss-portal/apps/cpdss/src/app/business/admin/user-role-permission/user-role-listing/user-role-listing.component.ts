@@ -172,7 +172,11 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
    * @memberof UserRoleListingComponent
    */
   editRow(event) {
-    this.router.navigate([event.data.id], { relativeTo: this.activatedRoute.parent });
+    if(this.activatedRoute.snapshot.params.userId){
+      this.router.navigate([event.data.id + '/user/' +this.activatedRoute.snapshot.params.userId], { relativeTo: this.activatedRoute.parent });
+    } else {
+      this.router.navigate([event.data.id], { relativeTo: this.activatedRoute.parent });
+    }
   }
 
   /**

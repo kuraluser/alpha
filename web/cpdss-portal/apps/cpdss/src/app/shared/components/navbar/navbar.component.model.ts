@@ -12,6 +12,8 @@ export interface IMenuItem {
     addVoyageId?: boolean;
     addLoadableStudyId?: boolean;
     addLoadablePatternId?: boolean;
+    routerLinkActive: string;
+    isActive: boolean;
 }
 /**
  * Interface for submenu
@@ -33,4 +35,15 @@ export interface IPermission {
     edit: boolean;
     delete: boolean;
     view: boolean;
+}
+
+/**
+ * Interface for notification
+ */
+export interface INotificationItem {
+    email: string;
+    firstName: string;
+    id: string;
+    lastName: string;
+    username: string;
 }

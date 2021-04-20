@@ -5,7 +5,8 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.AlgoError;
+import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
@@ -39,10 +40,10 @@ import com.cpdss.gateway.domain.PatternValidateResultRequest;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
-import com.cpdss.gateway.domain.RecalculateVolume;
 import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.SynopticalTableRequest;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
+import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageActionRequest;
 import com.cpdss.gateway.domain.VoyageActionResponse;
@@ -65,6 +66,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.websocket.server.PathParam;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -74,7 +76,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -324,11 +334,12 @@ public class LoadableStudyController {
   }
 
   /**
-   * Get port list for loadable study
+   * Fetch Loadable Quantity For LS, and Port Rotation Id
    *
    * @param vesselId
    * @param voyageId
-   * @param loadableStudyId
+   * @param loadableStudiesId
+   * @param portRotationId
    * @param headers
    * @return
    * @throws CommonRestException
@@ -340,19 +351,22 @@ public class LoadableStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudiesId,
+      @PathParam("portRotationId") Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      log.info("getLoadableQuantity: {}", getClientIp());
       log.info(
-          "get loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+          "Fetch Loadable Quantity, correlationId: {}, loadableStudiesId: {}, portRotationId:{}",
+          headers.getFirst(CORRELATION_ID_HEADER),
+          loadableStudiesId,
+          portRotationId);
       return loadableStudyService.getLoadableQuantity(
-          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+          loadableStudiesId, portRotationId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException in save loadable quantity ", e);
+      log.error("Fetch Loadable Quantity - GenericServiceException", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Error in save loadable quantity ", e);
+      log.error("Fetch Loadable Quantity - Exception", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
@@ -456,7 +470,7 @@ public class LoadableStudyController {
       request.setId(id);
       request.setLoadableStudyId(loadableStudyId);
       return this.loadableStudyService.savePortRotation(
-          request, headers.getFirst(CORRELATION_ID_HEADER));
+          request, headers.getFirst(CORRELATION_ID_HEADER), headers);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port rotation", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -695,6 +709,9 @@ public class LoadableStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudiesId,
+      @PathParam(value = "portRotationId")
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -841,34 +858,33 @@ public class LoadableStudyController {
    * @param voyageId
    * @param loadableStudiesId
    * @param loadablePatternId
-   * @param recalculateVolumeRequest
+   * @param updateUllageRequest
    * @param headers
    * @return
-   * @throws CommonRestException RecalculateVolume
+   * @throws CommonRestException
    */
   @PostMapping(
-      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns/{loadablePatternId}/recalculate-volume")
-  public RecalculateVolume recalculateVolume(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patterns/{loadablePatternId}/update-ullage")
+  public UpdateUllage updateUllage(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long loadableStudiesId,
+          Long loadableStudyId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadablePatternId,
-      @RequestBody RecalculateVolume recalculateVolumeRequest,
+      @RequestBody UpdateUllage updateUllageRequest,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      log.info("recalculateVolume : {}", getClientIp());
-      log.info(
-          "recalculateVolume API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      return loadableStudyService.recalculateVolume(
-          recalculateVolumeRequest, loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+      log.info("updateUllage : {}", getClientIp());
+      log.info("updateUllage API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.updateUllage(
+          updateUllageRequest, loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException in recalculateVolume ", e);
+      log.error("GenericServiceException in updateUllage ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Error in recalculateVolume ", e);
+      log.error("Error in updateUllage ", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
@@ -1465,9 +1481,7 @@ public class LoadableStudyController {
     try {
       log.info("getLoadableStudyStatus with process id ", loadablePlanRequest.getProcessId());
       return this.loadableStudyService.getLoadableStudyStatus(
-          loadableStudyId,
-          loadablePlanRequest.getProcessId(),
-          headers.getFirst(CORRELATION_ID_HEADER));
+          loadableStudyId, loadablePlanRequest, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when get loadable Study status", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -1590,6 +1604,36 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error when saving comment", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException AlgoErrorResponse
+   */
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patten/{loadablePatternId}/algo-errors")
+  public AlgoErrorResponse getAlgoError(
+      @PathVariable Long loadablePatternId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      return this.loadableStudyService.getAlgoError(
+          loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoError", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
@@ -1911,6 +1955,30 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception getAllCargoHistory", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/algo-errors")
+  public AlgoErrorResponse getAlgoError2(
+      @PathVariable Long loadableStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      return this.loadableStudyService.getAlgoErrorLoadableStudy(
+          loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoError", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

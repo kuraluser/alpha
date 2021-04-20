@@ -59,6 +59,8 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
@@ -96,6 +98,7 @@ import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.StabilityParameter;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
+import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageActionRequest;
 import com.cpdss.gateway.domain.VoyageActionResponse;
@@ -117,6 +120,8 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -759,7 +764,8 @@ class LoadableStudyServiceTest {
             .setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY)
             .build();
 
-    Mockito.when(spy.getLoadableQuantity((anyLong()), anyString())).thenCallRealMethod();
+    Mockito.when(spy.getLoadableQuantity((anyLong()), (anyLong()), anyString()))
+        .thenCallRealMethod();
 
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.newBuilder()
@@ -772,12 +778,12 @@ class LoadableStudyServiceTest {
                     .build());
 
     LoadableQuantityReply loadableQuantityReply =
-        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).build();
+        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).setPortRotationId(1l).build();
     Mockito.when(spy.getLoadableQuantityResponse(loadableQuantityReply))
         .thenReturn(replyBuilder.build());
-    spy.getLoadableQuantity((long) 1, CORRELATION_ID_HEADER_VALUE);
+    spy.getLoadableQuantity((long) 1, (anyLong()), CORRELATION_ID_HEADER_VALUE);
     LoadableQuantityResponse loadableQuantityResponse =
-        spy.getLoadableQuantity((long) 1, CORRELATION_ID_HEADER_VALUE);
+        spy.getLoadableQuantity((long) 1, (anyLong()), CORRELATION_ID_HEADER_VALUE);
 
     Assert.assertEquals(
         String.valueOf(HttpStatusCode.OK.value()),
@@ -792,7 +798,7 @@ class LoadableStudyServiceTest {
   @Test
   public void negativeTestCaseForLoadableQuantity() throws GenericServiceException {
 
-    Mockito.when(loadableStudyService.getLoadableQuantity((anyLong()), anyString()))
+    Mockito.when(loadableStudyService.getLoadableQuantity((anyLong()), (anyLong()), anyString()))
         .thenCallRealMethod();
 
     LoadableQuantityRequest loadableQuantityRequest =
@@ -809,7 +815,7 @@ class LoadableStudyServiceTest {
             .build();
 
     LoadableQuantityReply loadableQuantityReply =
-        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).build();
+        LoadableQuantityReply.newBuilder().setPortRotationId(1l).setLoadableStudyId(1).build();
     Mockito.when(loadableStudyService.getLoadableQuantityResponse(loadableQuantityReply))
         .thenReturn(replyBuilder);
 
@@ -818,7 +824,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadableQuantity(
-                    (long) 1, CORRELATION_ID_HEADER_VALUE));
+                    (long) 1, (anyLong()), CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
@@ -873,14 +879,15 @@ class LoadableStudyServiceTest {
 
   @Test
   void testSavePortRotation() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    Mockito.when(
+            this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
         .thenReturn(this.generatePortRotationReply(false).build());
     PortRotation request = this.createPortRotationRequest();
     request.setOperationId(null);
     PortRotationResponse response =
-        this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE);
+        this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE, any());
     assertAll(
         () ->
             assertEquals(
@@ -892,7 +899,8 @@ class LoadableStudyServiceTest {
 
   @Test
   void testSavePortRotationGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    Mockito.when(
+            this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
         .thenReturn(
@@ -908,7 +916,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.savePortRotation(
-                    this.createPortRotationRequest(), CORRELATION_ID_HEADER_VALUE));
+                    this.createPortRotationRequest(), CORRELATION_ID_HEADER_VALUE, any()));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
@@ -2532,5 +2540,63 @@ class LoadableStudyServiceTest {
             () -> spy.saveVoyageStatus(request, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void testUpdateUllage(boolean empty)
+      throws GenericServiceException, InstantiationException, IllegalAccessException {
+    Mockito.when(
+            this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.updateUllage(any(UpdateUllageRequest.class)))
+        .thenReturn(this.generateUpdateUllageResponse(empty).build());
+    UpdateUllage request = (UpdateUllage) createDummyObject(UpdateUllage.class);
+    UpdateUllage response =
+        this.loadableStudyService.updateUllage(request, 1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testUpdateUllageInvlidResponse()
+      throws GenericServiceException, InstantiationException, IllegalAccessException {
+    Mockito.when(
+            this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.updateUllage(any(UpdateUllageRequest.class)))
+        .thenReturn(
+            this.generateUpdateUllageResponse(false)
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    UpdateUllage request = (UpdateUllage) createDummyObject(UpdateUllage.class);
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.updateUllage(request, 1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private UpdateUllageReply.Builder generateUpdateUllageResponse(boolean empty) {
+    UpdateUllageReply.Builder builder = UpdateUllageReply.newBuilder();
+    builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    builder.setLoadablePlanStowageDetails(
+        LoadablePlanStowageDetails.newBuilder()
+            .setCorrectedUllage(empty ? "" : STRING_TEST_VALUE)
+            .setCorrectionFactor(empty ? "" : STRING_TEST_VALUE)
+            .setWeight(empty ? "" : STRING_TEST_VALUE)
+            .setFillingRatio(empty ? "" : STRING_TEST_VALUE)
+            .setId(1L)
+            .build());
+    return builder;
   }
 }

@@ -1,0 +1,36 @@
+<p-dialog header="{{voyageName}} - {{'EDIT_PORT_ROTATION' | translate}}" [(visible)]="showPopUp"
+    styleClass="edit-port-rotation" [closable]="false" [draggable]="false" [modal]="true">
+    <div class="relative">
+        <div class="port-rotation-border"></div>
+        <div class="text-danger" *ngIf="isPortVisited">{{'EDIT_PORT_ROTATION_VALIDATION_MESSAGE' | translate }}</div>
+        <p-orderList [value]="portList" dragdrop="true" [(selection)]="selectedPorts"
+            (onReorder)="portOrderChange($event)">
+            <ng-template let-port let-i="index" pTemplate="item">
+                <div class="row">
+                    <div class="col"><span class="circle-outline"></span><span class="port-count">{{i+1}}</span>
+                        {{port.name}}</div>
+                </div>
+            </ng-template>
+        </p-orderList>
+    </div>
+    <div class="row">
+        <div class="col text-left ml-30">{{'EDIT_PORT_ROTATION_NOTE' | translate}}:</div>
+    </div>
+    <div class="row">
+        <div class="col text-left ml-30">{{'EDIT_PORT_ROTATION_NOTE_DETAILS' | translate }}</div>
+    </div>
+    <p-footer>
+
+
+        <div class="row">
+            <div class="col text-right">
+                <button class="btn btn-main mr-10" id="edit-port-rotation-popup-cancel" (click)="cancel()">{{
+                    'CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
+                <button class="btn btn-main" type="submit" id="edit-port-rotation-popup-submit"
+                    (click)="saveEditPortRotation()">{{
+                    'SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
+            </div>
+        </div>
+
+    </p-footer>
+</p-dialog>

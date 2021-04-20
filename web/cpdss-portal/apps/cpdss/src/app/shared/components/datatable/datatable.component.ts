@@ -8,6 +8,11 @@ import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_BUTTON, DATATABLE_FIELD
 import { Paginator } from 'primeng/paginator';
 import { DecimalPipe } from '@angular/common';
 import { Dropdown } from 'primeng/dropdown';
+import * as moment from 'moment';
+import { TimeZoneTransformationService } from '../../services/time-zone-conversion/time-zone-transformation.service';
+import { IDateTimeFormatOptions } from '../../models/common.model';
+import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
+
 
 /**
  * Compoent for Datatable
@@ -226,8 +231,11 @@ export class DatatableComponent implements OnInit {
 
 
   // public methods
-  constructor(private translateService: TranslateService, private fb: FormBuilder, private decimalPipe: DecimalPipe) {
-  }
+  constructor(
+    private translateService: TranslateService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
+    private fb: FormBuilder,
+    private decimalPipe: DecimalPipe) {}
 
   ngOnInit(): void {
     this._first = 0;
@@ -266,12 +274,6 @@ export class DatatableComponent implements OnInit {
       if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE) {
         event.data[event.field].isEditMode = control?.invalid;
       }
-      if (control?.dirty && control?.valid) {
-        if (col?.fieldType === DATATABLE_FIELD_TYPE.COLORPICKER) {
-          event.data[event.field].value = control.value;
-          this.editComplete.emit(event);
-        }
-      }
     }
   }
 
@@ -286,9 +288,7 @@ export class DatatableComponent implements OnInit {
    */
   onChange(event, rowData: any, rowIndex: number, col: IDataTableColumn) {
     rowData[col.field].value = this.field(rowIndex, col.field).value;
-    if (!event?.originalEvent?.target?.className?.includes('p-colorpicker')) {
-      this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
-    }
+    this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
   }
 
   /**
@@ -627,7 +627,11 @@ export class DatatableComponent implements OnInit {
       this.currentPageChange.emit(this._currentPage);
       this.dataStateChange.emit(data);
     } else {
-      this.datatable.filter(this.formatDateTime(value), field, filterMatchMode);
+      if (col?.dateFormat && col?.dateFormat === this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)) {
+        this.datatable.filter(moment(value).format(AppConfigurationService.settings?.dateFormat.split(' ')[0]), field, filterMatchMode);
+      } else {
+        this.datatable.filter(this.formatDateTime(value), field, filterMatchMode);
+      }
     }
   }
 
@@ -721,10 +725,10 @@ export class DatatableComponent implements OnInit {
   onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any) {
     const formControl = this.field(formGroupIndex, formControlName);
     const oldValue = rowData[formControlName].value;
-    const newValue = this.formatDateTime(formControl.value, true);
+    const newValue = this.convertDT_PortBasedTimeZone(formControl.value, rowData.port.value.timezoneOffsetVal, rowData.port.value.timezoneAbbreviation);
     rowData[formControlName].value = newValue;
     rowData[formControlName].isEditMode = formControl?.invalid;
-    if(oldValue !== newValue) {
+    if (oldValue !== newValue) {
       this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
     }
   }
@@ -902,6 +906,28 @@ export class DatatableComponent implements OnInit {
    */
   private updateCurrentPage(currentPage: number): void {
     setTimeout(() => { this.paginatorRef.changePage(currentPage), this.currentPageChange.emit(currentPage) });
+  }
+
+  /**
+   * function to convert date-time to port local
+   *
+   * @param {Date} dateTime
+   * @param {number} portTimezoneId
+   * @return {*}  {string}
+   * @memberof PortRotationRibbonComponent
+   */
+  convertDT_PortBasedTimeZone(dateTime: Date | string, offsetValue: string, abbreviation?: string): any {
+    if (dateTime && offsetValue && abbreviation) {
+      const formatOptions: IDateTimeFormatOptions = {
+        portLocalFormat: true,
+        portTimeZoneOffset: offsetValue,
+        portTimeZoneAbbr: abbreviation
+      };
+      const portAbbr = this.timeZoneTransformationService.formatDateTime(dateTime, formatOptions)?.slice(17);
+      return moment(dateTime).format(AppConfigurationService.settings?.dateFormat) + portAbbr;
+    } else {
+      return moment(dateTime).format(AppConfigurationService.settings?.dateFormat);
+    }
   }
 
 }

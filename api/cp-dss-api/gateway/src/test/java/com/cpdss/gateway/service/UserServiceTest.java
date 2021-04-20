@@ -37,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.keycloak.common.VerificationException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -89,7 +90,7 @@ class UserServiceTest {
   }
 
   @Test
-  void getUserPermissionsTest() throws GenericServiceException {
+  void getUserPermissionsTest() throws GenericServiceException, VerificationException {
     HttpHeaders headers = new HttpHeaders();
     headers.set(AUTHORIZATION, AUTHORIZATION_VALUE);
     UserAuthorizationsResponse response = userService.getUserPermissions(headers);
@@ -97,7 +98,7 @@ class UserServiceTest {
   }
 
   @Test
-  void getUserPermissionsWithRolesTest() throws GenericServiceException {
+  void getUserPermissionsWithRolesTest() throws GenericServiceException, VerificationException {
     HttpHeaders headers = new HttpHeaders();
     headers.set(AUTHORIZATION, AUTHORIZATION_VALUE);
     when(usersRepository.findByKeycloakIdAndIsActive(anyString(), anyBoolean()))
@@ -217,7 +218,7 @@ class UserServiceTest {
   }
 
   @Test
-  void testGetUsers() {
+  void testGetUsers() throws GenericServiceException {
     Users users = new Users();
     users.setId(1L);
     List<Users> userList = new ArrayList<Users>();
@@ -460,7 +461,7 @@ class UserServiceTest {
       ReflectionTestUtils.setField(userService, "maxShipUserCount", 1);
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       when(this.usersRepository.save(any(Users.class))).thenReturn(users);
-      response = this.userService.saveUser(user, RandomString.make(6),1L);
+      response = this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }
@@ -474,7 +475,7 @@ class UserServiceTest {
       ReflectionTestUtils.setField(userService, "maxShipUserCount", 0);
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       User user = TestUtils.getDummyUser();
-      this.userService.saveUser(user, RandomString.make(6),1L);
+      this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }
@@ -488,7 +489,7 @@ class UserServiceTest {
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       User user = TestUtils.getDummyUser();
       user.setId(1l);
-      this.userService.saveUser(user, RandomString.make(6),1L);
+      this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }

@@ -10,4 +10,5 @@ public class UllageDetails {
   private Long tankId;
   private String ullageDepth;
   private String evenKeelCapacityCubm;
+  private String soundDepth;
 }

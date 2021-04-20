@@ -13,4 +13,6 @@ public class UllageUpdateResponse {
   private String correctedUllage;
 
   private String quantityMt;
+
+  private String fillingRatio;
 }

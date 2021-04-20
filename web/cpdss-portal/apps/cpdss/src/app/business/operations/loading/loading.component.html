@@ -1,1 +1,108 @@
-<p>loading works!</p>
+<div class="row">
+    <div class="col">
+        Ras Tanura
+    </div>
+    <div class="col">
+        buttons here
+    </div>
+</div>
+<div class="row">
+    <div class="col text-center">
+        <a (click)="currentTab ='LOADING_INFO'" [ngClass]="{'active' : currentTab ==='LOADING_INFO'}" class="tab-btn">
+            Loading Information
+            <div class="pt-5">
+                <div class="tab-status-icon pi pi-check completed">
+                </div>
+                Complete
+            </div>
+        </a>
+        <a (click)="currentTab ='LOADING_INSTRUCTION'" [ngClass]="{'active' : currentTab ==='LOADING_INSTRUCTION'}"  class="tab-btn">
+            Loading Instructions
+            <div class="pt-5">
+                <div class="tab-status-icon pi pi-check completed">
+                </div>
+                Incomplete
+            </div>
+        </a>
+        <a  class="btn btn-main">
+            Generate Loading Plan
+        </a>
+        <a  class="tab-btn">
+            Loading Sequence
+            <div class="pt-5">
+                <div class="tab-status-icon pi pi-check completed">
+                </div>
+                Incomplete
+            </div>
+        </a>
+        <a  class="tab-btn">
+            Loading Plan
+            <div class="pt-5">
+                <div class="tab-status-icon pi pi-check completed">
+                </div>
+                Incomplete
+            </div>
+        </a>
+    </div>
+</div>
+<div class="row" *ngIf="currentTab === 'LOADING_INFO'">
+    <div class="col-4">
+        <div class="row">
+            <div class="col">
+                <h5>Loading Details</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h5>Berth Details</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h5>Cargo Machinery in use</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="row">
+            <div class="col">
+                <h5>Cargo Details</h5>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div>Loadable Study LS1- Loadable Pattern</div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                Tank Layout
+            </div>
+            <div class="col-4">
+                grade table
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                bottom layout table
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h5>selected cargo type topping off sequence</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row" *ngIf="currentTab === 'LOADING_INSTRUCTION'">
+    <div class="col-4">
+        <cpdss-portal-instruction-side-panel [panelList]="panelList" (selectedInstructionChange)="sidePanelInstructionChange($event)"></cpdss-portal-instruction-side-panel>
+    </div>
+    <div class="col-8">
+        <cpdss-portal-instruction-check-list [instructionList]="instructionList"></cpdss-portal-instruction-check-list>
+    </div>
+</div>

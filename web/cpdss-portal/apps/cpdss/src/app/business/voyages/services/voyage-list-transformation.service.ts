@@ -33,7 +33,7 @@ export class VoyageListTransformationService {
       {
         field: 'voyageNo',
         header: 'VOYAGE NO',
-        fieldHeaderClass: 'column-voyageNo',
+        fieldHeaderClass: 'column-voyage-no',
         filter: true,
         filterPlaceholder: 'SEARCH_VOYAGE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -59,7 +59,7 @@ export class VoyageListTransformationService {
       {
         field: 'plannedStartDate',
         header: 'PLANNED START DATE',
-        fieldHeaderClass: 'column-plannedStartDate',
+        fieldHeaderClass: 'column-planned-start-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -72,7 +72,7 @@ export class VoyageListTransformationService {
       {
         field: 'plannedEndDate',
         header: 'PLANNED END DATE',
-        fieldHeaderClass: 'column-plannedEndDate',
+        fieldHeaderClass: 'column-planned-end-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -85,7 +85,7 @@ export class VoyageListTransformationService {
       {
         field: 'actualStartDate',
         header: 'ACTUAL START DATE',
-        fieldHeaderClass: 'column-actualStartDate',
+        fieldHeaderClass: 'column-actual-start-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -98,7 +98,7 @@ export class VoyageListTransformationService {
       {
         field: 'actualEndDate',
         header: 'ACTUAL END DATE',
-        fieldHeaderClass: 'column-actualEndDate',
+        fieldHeaderClass: 'column-actual-end-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
@@ -159,8 +159,8 @@ export class VoyageListTransformationService {
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.BUTTON,
         buttons: [
-          ...(permissionStart && permissionStart.view ? [{type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , icons: 'voyage-start' , class: '' , label: 'Start'}] : []),
-          ...(permissionStop && permissionStop.view ? [{type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' , icons: 'voyage-end' , class: '' , label: 'Stop'}] : []),
+          ...(permissionStart && permissionStart.view ? [{type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , icons: 'voyage-start', label: 'Start'}] : []),
+          ...(permissionStop && permissionStop.view ? [{type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' ,  icons: 'voyage-end', label: 'Stop'}] : []),
         ]
       }
     ]

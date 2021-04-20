@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -15,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT , ISubTotal } from '../../../shared/models/common.model';
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
@@ -55,8 +55,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   dischargingPortsNames: string;//TODO to be populated form loadable study details
   totalQuantity: number;
   ports: IPort[];
-  cargoNominationComplete$: Observable<boolean>;
-  ohqComplete$: Observable<boolean>;
   voyageId: number;
   loadableStudyId: number;
   vesselId: number;
@@ -65,7 +63,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   voyages: Voyage[];
   loadableStudies: LoadableStudy[];
   openSidePane = true;
-  portsComplete$: Observable<boolean>;
   selectedTab: string;
   cargoNominationTabPermissionContext: IPermissionContext;
   portsTabPermissionContext: IPermissionContext;
@@ -84,7 +81,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   loadableQuantityPermission: IPermission;
   showCommingleButton = false;
   addCommingleBtnPermissionContext: IPermissionContext;
-  obqComplete$: Observable<boolean>;
   errorMesages: any;
   isSelectedDischargePort = true;
   selectedDischargeCargo: ICargo;
@@ -96,7 +92,11 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isPatternOpenOrNoplan = false;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
-  generateBtnPermissionContext: IPermissionContext;
+  generateBtnPermissionContext: IPermission;
+  cargoNominationComplete: boolean;
+  portsComplete: boolean;
+  ohqComplete: boolean;
+  obqComplete: boolean;
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -183,7 +183,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.addCommingleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
-    this.generateBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['GenerateButton'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
+    this.generateBtnPermissionContext = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['GenerateButton'], false);
   }
 
   /**
@@ -219,6 +219,11 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (this.loadableStudies.length) {
       this.setProcessingLoadableStudyActions(0, 0);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+      this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
+      this.loadableStudyDetailsTransformationService.setPortValidity(this.selectedLoadableStudy.isPortsComplete)
+      this.loadableStudyDetailsTransformationService.setOHQValidity(this.selectedLoadableStudy.ohqPorts ?? [])
+      this.loadableStudyDetailsTransformationService.setObqValidity(this.selectedLoadableStudy.isObqComplete)
+
       if (sessionStorage.getItem('loadableStudyInfo')) {
         this.displayLoadableQuntity = true;
         sessionStorage.removeItem('loadableStudyInfo');
@@ -257,7 +262,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
     } else {
-      const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
+      const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(vesselId, voyageId, this.loadableStudyId).toPromise();
+      const portRotationId = portsData.portList ? portsData.portList[0].id : 0;
+
+      const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
       if (loadableQuantityResult.responseStatus.status === "200") {
         loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
         if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
@@ -266,6 +274,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         }
         this.loadableQuantityModel = loadableQuantityResult;
       }
+
     }
     this.ngxSpinnerService.hide();
   }
@@ -289,18 +298,31 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(totalQuantity => {
       this.totalQuantity = totalQuantity;
     });
-    this.cargoNominationComplete$ = this.loadableStudyDetailsTransformationService.cargoNominationValidity$;
-    this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
-    this.ohqComplete$ = this.loadableStudyDetailsTransformationService.ohqValidity$;
-    this.obqComplete$ = this.loadableStudyDetailsTransformationService.obqValidity$;
+    this.loadableStudyDetailsTransformationService.cargoNominationValidity$.subscribe((res)=> {
+      this.cargoNominationComplete = res;
+    })
+    this.loadableStudyDetailsTransformationService.portValidity$.subscribe((res)=> {
+      this.portsComplete = res;
+    })
+    this.loadableStudyDetailsTransformationService.ohqValidity$.subscribe((res)=> {
+      this.ohqComplete = res;
+    })
+    this.loadableStudyDetailsTransformationService.obqValidity$.subscribe((res)=> {
+      this.obqComplete = res;
+    })
     this.loadableStudyDetailsApiService.cargoNominationChange.asObservable()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         this.onCargoNominationChange();
       })
+    let portsData;
+    if(this.vesselId && this.voyageId && this.loadableStudyId){
+      portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
+    }
+    const portRotationId = portsData?.portList ? portsData.portList[0].id : 0;
     this.loadableStudyDetailsTransformationService.obqUpdate$?.pipe(
       switchMap(() => {
-        return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id);
+        return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.loadableStudyId, portRotationId);
       })
     ).subscribe((loadableQuantityResult) => {
       if (loadableQuantityResult.responseStatus.status === "200") {
@@ -345,6 +367,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.isPatternOpenOrNoplan = false;
         this.isPatternGenerated = false;
         this.isGenerateClicked = false;
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_NO_SOLUTION;
       }
       this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
     }
@@ -441,7 +465,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
     this.loadableStudyDetailsTransformationService.setPortValidity(false);
-    this.loadableStudyDetailsTransformationService.setOHQValidity(false);
+    this.loadableStudyDetailsTransformationService.setOHQValidity([]);
     this.loadableStudyDetailsTransformationService.setObqValidity(false);
     this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     this.selectedLoadableStudy = null;
@@ -582,14 +606,15 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   onLoadableStudyChange(event) {
     if (event) {
       this.loadableStudyId = event;
+      this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
-      this.loadableStudyDetailsTransformationService.setOHQValidity(false);
+      this.loadableStudyDetailsTransformationService.setOHQValidity([]);
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
       this.isGenerateClicked = false;
-      this.initSubsciptions();
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
-      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      this.initSubsciptions();
+      this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
     }
   }
 
@@ -642,7 +667,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
     const dischargingPortIds: IDischargingPortIds = {
       portIds: this.selectedLoadableStudy.dischargingPortIds,
-      dischargingCargoId: this.selectedDischargeCargo?.id ?? null
+      dischargingCargoId: this.selectedDischargeCargo?.id ?? null,
+      isDischargingPortComplete: !!this.selectedLoadableStudy.dischargingPortIds?.length
     };
     try {
       const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
@@ -676,17 +702,34 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     let subTotal = 0;
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
-      subTotal = Number(loadableQuantity.dwt)
-        + Number(loadableQuantity.saggingDeduction)
-        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard)
-        - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard)
-        - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant)
-        - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      const data:ISubTotal = {
+        dwt: loadableQuantity.dwt,
+        sagCorrection:loadableQuantity.saggingDeduction,
+        foOnboard: loadableQuantity.estFOOnBoard,
+        doOnboard: loadableQuantity.estDOOnBoard,
+        freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
+        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
+        ballast: loadableQuantity.ballast,
+        constant: loadableQuantity.constant,
+        others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
+      }
+      subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
-      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.saggingDeduction) + Number(loadableQuantity.sgCorrection)
-        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard) - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard) - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant) - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      const data:ISubTotal = {
+        dwt: loadableQuantity.dwt,
+        sagCorrection:loadableQuantity.saggingDeduction,
+        sgCorrection:loadableQuantity.sgCorrection,
+        foOnboard: loadableQuantity.estFOOnBoard,
+        doOnboard: loadableQuantity.estDOOnBoard,
+        freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
+        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
+        ballast: loadableQuantity.ballast,
+        constant: loadableQuantity.constant,
+        others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
+      }
+      subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
   }
@@ -698,7 +741,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     if (loadableQuantityResult.caseNo === 1) {
-      const total = Number(subTotal) - Number(loadableQuantity.foConInSZ);
+      const total = Number(subTotal) + Number(loadableQuantity.foConInSZ);
       if (total < 0) {
         this.loadableQuantityNew = '0';
       }

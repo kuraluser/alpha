@@ -110,4 +110,11 @@ public class Users extends EntityDoc {
 
   @Column(name = "is_ship_user")
   private Boolean isShipUser;
+
+  @Column(name = "rejection_count")
+  private Integer rejectionCount;
+
+  @ManyToOne
+  @JoinColumn(name = "user_status_xid")
+  private UserStatus status;
 }

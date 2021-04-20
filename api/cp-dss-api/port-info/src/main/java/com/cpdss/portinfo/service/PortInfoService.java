@@ -175,6 +175,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
           if (port.getTimezone() != null) {
             portDetail.setTimezone(port.getTimezone().getTimezone());
             portDetail.setTimezoneOffsetVal(port.getTimezone().getOffsetValue());
+            portDetail.setTimezoneId(port.getTimezone().getId());
+            portDetail.setTimezoneAbbreviation(port.getTimezone().getAbbreviation());
           }
 
           if (!port.getBerthInfoSet().isEmpty()) {
@@ -211,6 +213,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
         timezone.setId(tz.getId());
         timezone.setTimezone(tz.getTimezone() + " " + tz.getRegion());
         timezone.setOffsetValue(tz.getOffsetValue());
+        timezone.setAbbreviation(tz.getAbbreviation());
         replyBuilder.addTimezones(timezone);
       }
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();

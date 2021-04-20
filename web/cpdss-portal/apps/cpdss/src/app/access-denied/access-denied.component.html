@@ -1,9 +1,28 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-12 text-center">
+        <div *ngIf="!enableUserAuth" class="col-md-12 text-center">
             <h4>{{'PERMISSION_TO_VIEW_THIS_CONTENT'|translate}}</h4>
             <h3>{{'CONTACT_YOUR_ADMINISTRATOR'| translate}}</h3>
-            <button class="btn btn-primary" (click)="goBackToHome()">{{'BACK_TO_HOME'| translate}}</button>
+            <button id="backtoHome" class="btn btn-primary" (click)="goBackToHome()">{{'BACK_TO_HOME'| translate}}</button>
+        </div>
+        <div *ngIf="enableUserAuth && !(userStatus == 2 && userInfo.count >= 3)" class="col-md-12 text-center">
+            <h4>{{'USER_AUTHORIZATION_WARNING'|translate}}</h4>
+            <h3>{{ userStatus != 3 ? ('USER_REQUEST_FOR_PERMISSION'| translate) : ('USER_REQUEST_WAITING_PERMISSION' | translate)}}</h3>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <button id="btnRequest" [disabled]="userStatus == 3" class="btn btn-primary" (click)="requestPermission()">{{userStatus == 3 ? ('USER_REQUESTED_BUTTON_LABEL'| translate) : ('USER_REQUEST_BUTTON_LABEL'| translate) }}</button>
+                </div>
+            </div>
+            <div class="row pt-10">
+                <div class="col-md-12 text-center">
+                    <button id="backToLogin" class="btn btn-primary" (click)="gobackToLogin()">{{'USER_AUTHORIZATION_BACK_TO_LOGIN'| translate}}</button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="enableUserAuth && userStatus == 2 && userInfo.count >= 3" class="col-md-12 text-center">
+            <h4>{{'PERMISSION_TO_VIEW_THIS_CONTENT'|translate}}</h4>
+            <h3>{{'USER_AUTHORIZATION_LIMIT_REACHED'| translate}}</h3>
+            <button id="backToLoginDenied" class="btn btn-primary" (click)="gobackToLogin()">{{'USER_AUTHORIZATION_BACK_TO_LOGIN'| translate}}</button>
         </div>
     </div>
 </div>

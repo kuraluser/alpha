@@ -2113,52 +2113,50 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
-          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
-      getRecalculateVolumeMethod;
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+      getUpdateUllageMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RecalculateVolume",
-      requestType = com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.class,
-      responseType = com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.class,
+      fullMethodName = SERVICE_NAME + '/' + "updateUllage",
+      requestType = com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.UpdateUllageReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
-          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
-      getRecalculateVolumeMethod() {
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+      getUpdateUllageMethod() {
     io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
-            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
-        getRecalculateVolumeMethod;
-    if ((getRecalculateVolumeMethod = LoadableStudyServiceGrpc.getRecalculateVolumeMethod)
-        == null) {
+            com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+            com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+        getUpdateUllageMethod;
+    if ((getUpdateUllageMethod = LoadableStudyServiceGrpc.getUpdateUllageMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getRecalculateVolumeMethod = LoadableStudyServiceGrpc.getRecalculateVolumeMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getRecalculateVolumeMethod =
-              getRecalculateVolumeMethod =
+        if ((getUpdateUllageMethod = LoadableStudyServiceGrpc.getUpdateUllageMethod) == null) {
+          LoadableStudyServiceGrpc.getUpdateUllageMethod =
+              getUpdateUllageMethod =
                   io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
-                          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+                      .<com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+                          com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RecalculateVolume"))
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "updateUllage"))
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+                              com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest
                                   .getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+                              com.cpdss.common.generated.LoadableStudy.UpdateUllageReply
                                   .getDefaultInstance()))
                       .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("RecalculateVolume"))
+                          new LoadableStudyServiceMethodDescriptorSupplier("updateUllage"))
                       .build();
         }
       }
     }
-    return getRecalculateVolumeMethod;
+    return getUpdateUllageMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
@@ -2449,6 +2447,53 @@ public final class LoadableStudyServiceGrpc {
       }
     }
     return getGetVoyagesMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+      getGetAlgoErrorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAlgoErrors",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+      getGetAlgoErrorsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+        getGetAlgoErrorsMethod;
+    if ((getGetAlgoErrorsMethod = LoadableStudyServiceGrpc.getGetAlgoErrorsMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetAlgoErrorsMethod = LoadableStudyServiceGrpc.getGetAlgoErrorsMethod) == null) {
+          LoadableStudyServiceGrpc.getGetAlgoErrorsMethod =
+              getGetAlgoErrorsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAlgoErrors"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrorReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetAlgoErrors"))
+                      .build();
+        }
+      }
+    }
+    return getGetAlgoErrorsMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
@@ -3122,11 +3167,11 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public void recalculateVolume(
-        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+    public void updateUllage(
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
             responseObserver) {
-      asyncUnimplementedUnaryCall(getRecalculateVolumeMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getUpdateUllageMethod(), responseObserver);
     }
 
     /** */
@@ -3176,6 +3221,14 @@ public final class LoadableStudyServiceGrpc {
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply>
             responseObserver) {
       asyncUnimplementedUnaryCall(getGetVoyagesMethod(), responseObserver);
+    }
+
+    /** */
+    public void getAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetAlgoErrorsMethod(), responseObserver);
     }
 
     /** */
@@ -3519,12 +3572,12 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>(
                       this, METHODID_GET_LOADABLE_PLAN_DETAILS)))
           .addMethod(
-              getRecalculateVolumeMethod(),
+              getUpdateUllageMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
-                      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>(
-                      this, METHODID_RECALCULATE_VOLUME)))
+                      com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+                      com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>(
+                      this, METHODID_UPDATE_ULLAGE)))
           .addMethod(
               getConfirmPlanStatusMethod(),
               asyncUnaryCall(
@@ -3567,6 +3620,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                       com.cpdss.common.generated.LoadableStudy.VoyageListReply>(
                       this, METHODID_GET_VOYAGES)))
+          .addMethod(
+              getGetAlgoErrorsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>(
+                      this, METHODID_GET_ALGO_ERRORS)))
           .addMethod(
               getSaveVoyageStatusMethod(),
               asyncUnaryCall(
@@ -4081,12 +4141,12 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public void recalculateVolume(
-        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+    public void updateUllage(
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
             responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRecalculateVolumeMethod(), getCallOptions()),
+          getChannel().newCall(getUpdateUllageMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -4154,6 +4214,17 @@ public final class LoadableStudyServiceGrpc {
             responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getGetVoyagesMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /** */
+    public void getAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetAlgoErrorsMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
     /** */
@@ -4529,10 +4600,9 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply recalculateVolume(
-        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getRecalculateVolumeMethod(), getCallOptions(), request);
+    public com.cpdss.common.generated.LoadableStudy.UpdateUllageReply updateUllage(
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
+      return blockingUnaryCall(getChannel(), getUpdateUllageMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -4572,6 +4642,12 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.VoyageListReply getVoyages(
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return blockingUnaryCall(getChannel(), getGetVoyagesMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrorReply getAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
+      return blockingUnaryCall(getChannel(), getGetAlgoErrorsMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -4996,11 +5072,10 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
-        recalculateVolume(
-            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request) {
+            com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+        updateUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRecalculateVolumeMethod(), getCallOptions()), request);
+          getChannel().newCall(getUpdateUllageMethod(), getCallOptions()), request);
     }
 
     /** */
@@ -5051,6 +5126,14 @@ public final class LoadableStudyServiceGrpc {
         getVoyages(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetVoyagesMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+        getAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetAlgoErrorsMethod(), getCallOptions()), request);
     }
 
     /** */
@@ -5143,19 +5226,20 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID = 38;
   private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 39;
   private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 40;
-  private static final int METHODID_RECALCULATE_VOLUME = 41;
+  private static final int METHODID_UPDATE_ULLAGE = 41;
   private static final int METHODID_CONFIRM_PLAN_STATUS = 42;
   private static final int METHODID_CONFIRM_PLAN = 43;
   private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 44;
   private static final int METHODID_SAVE_COMMENT = 45;
   private static final int METHODID_SAVE_LOAD_ON_TOP = 46;
   private static final int METHODID_GET_VOYAGES = 47;
-  private static final int METHODID_SAVE_VOYAGE_STATUS = 48;
-  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 49;
-  private static final int METHODID_GET_ALL_CARGO_HISTORY = 50;
-  private static final int METHODID_SAVE_JSON = 51;
-  private static final int METHODID_SAVE_ALGO_ERRORS = 52;
-  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 53;
+  private static final int METHODID_GET_ALGO_ERRORS = 48;
+  private static final int METHODID_SAVE_VOYAGE_STATUS = 49;
+  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 50;
+  private static final int METHODID_GET_ALL_CARGO_HISTORY = 51;
+  private static final int METHODID_SAVE_JSON = 52;
+  private static final int METHODID_SAVE_ALGO_ERRORS = 53;
+  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 54;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5457,11 +5541,11 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>)
                   responseObserver);
           break;
-        case METHODID_RECALCULATE_VOLUME:
-          serviceImpl.recalculateVolume(
-              (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest) request,
+        case METHODID_UPDATE_ULLAGE:
+          serviceImpl.updateUllage(
+              (com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest) request,
               (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>)
+                      com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>)
                   responseObserver);
           break;
         case METHODID_CONFIRM_PLAN_STATUS:
@@ -5504,6 +5588,12 @@ public final class LoadableStudyServiceGrpc {
               (com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.VoyageListReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ALGO_ERRORS:
+          serviceImpl.getAlgoErrors(
+              (com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>)
                   responseObserver);
           break;
         case METHODID_SAVE_VOYAGE_STATUS:
@@ -5650,13 +5740,14 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetSynopticDataByLoadableStudyIdMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
-                      .addMethod(getRecalculateVolumeMethod())
+                      .addMethod(getUpdateUllageMethod())
                       .addMethod(getConfirmPlanStatusMethod())
                       .addMethod(getConfirmPlanMethod())
                       .addMethod(getDownloadLoadableStudyAttachmentMethod())
                       .addMethod(getSaveCommentMethod())
                       .addMethod(getSaveLoadOnTopMethod())
                       .addMethod(getGetVoyagesMethod())
+                      .addMethod(getGetAlgoErrorsMethod())
                       .addMethod(getSaveVoyageStatusMethod())
                       .addMethod(getGetCargoApiTempHistoryMethod())
                       .addMethod(getGetAllCargoHistoryMethod())

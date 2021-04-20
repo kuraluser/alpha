@@ -1,3 +1,4 @@
+import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,6 +16,7 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  * Loadable study list
@@ -57,7 +59,9 @@ export class LoadableStudyListComponent implements OnInit {
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService, private router: Router,
     private translateService: TranslateService, private activatedRoute: ActivatedRoute,
-    private voyageService: VoyageService, private loadableStudyListTransformationService: LoadableStudyListTransformationService,
+    private voyageService: VoyageService,
+    private loadableStudyListTransformationService: LoadableStudyListTransformationService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private ngxSpinnerService: NgxSpinnerService,
     private permissionsService: PermissionsService) { }
 
@@ -71,7 +75,8 @@ export class LoadableStudyListComponent implements OnInit {
       this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
       this.ngxSpinnerService.hide();
       this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);
-      this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
+      this.selectedVoyage = this.voyages[0];
+      this.showLoadableStudyList();
     });
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
     this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
@@ -97,16 +102,19 @@ export class LoadableStudyListComponent implements OnInit {
   /**
    * Get loadable study list
    */
-  async getLoadableStudyInfo(vesselId: number, voyageId: number) {
+  async getLoadableStudyInfo(vesselId: number, voyageId: number) {    
     this.ngxSpinnerService.show();
     if (voyageId !== 0) {
       this.loadableStudyList = null;
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
+      const dateFormatOptions: IDateTimeFormatOptions = { utcFormat: true };
       const loadableStudyList = result.loadableStudies.map(loadableStudy => {
+        loadableStudy.createdDate = this.timeZoneTransformationService.formatDateTime(loadableStudy.createdDate, dateFormatOptions);
+        loadableStudy.lastEdited = this.timeZoneTransformationService.formatDateTime(loadableStudy.lastEdited, dateFormatOptions);
         loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true : false;
         return loadableStudy;
       });
-      loadableStudyList?.length ? this.loadableStudyList = [...loadableStudyList] : this.loadableStudyList = [];
+      loadableStudyList?.length ? this.loadableStudyList = [...loadableStudyList] : this.loadableStudyList = [];      
     }
     this.ngxSpinnerService.hide();
   }

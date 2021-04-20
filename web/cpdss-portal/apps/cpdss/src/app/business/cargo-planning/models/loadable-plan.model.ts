@@ -1,6 +1,7 @@
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { IResponseStatus, ValueObject , IResponse } from '../../../shared/models/common.model';
-import { IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
+import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from './cargo-planning.model';
 
 
 /**
@@ -24,34 +25,11 @@ export interface ILoadablePlanResponse {
     voyageNumber: string,
     date: string,
     caseNumber: string,
-    loadableStudyStatusId: number
+    loadableStudyStatusId: number;
+    loadablePatternStatusId: number,
+    voyageStatusId: number
 }
 
-/**
- * Interface for loadable quality 
- *
- * @export
- * @interface ILoadableQuantityCargo
- */
-export interface ILoadableQuantityCargo {
-    id: number,
-    grade: string,
-    estimatedAPI: string,
-    estimatedTemp: string,
-    orderBblsdbs: string,
-    orderBbls60f: string,
-    orderedQuantity: string,
-    minTolerence: string,
-    maxTolerence: string,
-    loadableBblsdbs: string,
-    loadableBbls60f: string,
-    loadableLT: string,
-    loadableMT: string,
-    loadableKL: string,
-    differencePercentage: string,
-    differencePercentageValue: number;
-    differenceColor: string
-}
 
 /**
  * Interface for loadable commingle Cargo
@@ -174,7 +152,31 @@ export interface ICargoTankDetailValueObject {
     api: ValueObject<number>;
     temperature: ValueObject<number>;
     isAdd: boolean;
+    fullCapacityCubm: string;
 }
+
+/**
+ * Interface for ballast tank details value object
+ *
+ * @export
+ * @interface IBallastTankDetailValueObject
+ */
+ export interface IBallastTankDetailValueObject {
+    id: number;
+    tankName?: ValueObject<string>;
+    tankId: number;
+    rdgLevel: ValueObject<string>;
+    correctionFactor: ValueObject<string>;
+    correctedLevel: ValueObject<string>;
+    metricTon: ValueObject<string>;
+    cubicMeter: ValueObject<string>;
+    percentage: ValueObject<string>;
+    sg: ValueObject<string>;
+    fullCapacityCubm: string;
+    isAdd: boolean;
+    api: ValueObject<number>;
+    temperature: ValueObject<number>;
+ }
 
 /**
  * Interface for cargo tank details grid events
@@ -190,29 +192,6 @@ export interface ICargoTankDetailEvent extends IDataTableEvent {
     originalEvent: MouseEvent;
 }
 
-/**
- * Interface for ballast stowage
- *
- * @export
- * @interface 
- */
-export interface IBallastStowageDetails {
-    id: number,
-    tankName?: string,
-    tankId: number,
-    rdgLevel: string,
-    correctionFactor: string,
-    correctedLevel: string,
-    metricTon: string,
-    cubicMeter: string,
-    percentage: string,
-    sg: string,
-    lcg: string,
-    vcg: string,
-    tcg: string,
-    inertia: string
-    fullCapacityCubm: string;
-}
 
 
 /**
@@ -235,31 +214,7 @@ export interface IBallastTanksDetails {
     slopTank: boolean
 }
 
-/**
- * Interface for LoadablePlan Synoptical Records
- * @export
- * @interface 
- */
-export interface ILoadablePlanSynopticalRecord {
-    id: number,
-    operationType: string,
-    portId: number,
-    portName: string,
-    etaEtdPlanned: string,
-    plannedFOTotal: number,
-    plannedDOTotal: number,
-    plannedFWTotal: number,
-    othersPlanned: number,
-    totalDwtPlanned: number,
-    displacementPlanned: number,
-    specificGravity: number,
-    finalDraftFwd: number,
-    finalDraftAft: number,
-    finalDraftMid: number,
-    calculatedTrimPlanned: number,
-    cargoPlannedTotal: number,
-    ballastPlanned: number
-}
+
 
 /**
  * Interface for LoadablePlan arranged Synoptical Records
@@ -308,4 +263,138 @@ export interface ISaveComment {
     comment: string;
 }
 
+
+/**
+ * Interface for edit data table
+ *
+ * @export
+ * @interface IPortsEvent
+ */
+ export interface IPortsEvent {
+    data: any;
+    field: string;
+    index: number;
+    originalEvent: MouseEvent;
+
+}
+
+/**
+ * Interface for change rdg Ulg
+ *
+ * @export
+ * @interface IUpdateUllageModel
+ */
+export interface IUpdateUllageModel {
+   id: number;
+   tankId: number;
+   correctedUllage: string;
+   isBallast: boolean;
+}
+
+/**
+ * Interface for change rdg Ulg
+ *
+ * @export
+ * @interface IUpdateBallastUllagegModel
+ */
+ export interface IUpdateBallastUllagegModel {
+    id: number;
+    tankId: number;
+    correctedUllage: string;
+ }
+
+ /**
+ * Interface for change response
+ *
+ * @export
+ * @interface IUpdatedBallastUllageResponse
+ */
+  export interface IUpdatedBallastUllageResponse {
+    responseStatus: IResponseStatus;
+    id: number;
+    correctionFactor: string;
+    correctedUllage: string;
+    quantityMt: string;
+ } 
+
+/**
+ * Interface for change response
+ *
+ * @export
+ * @interface IUpdatedUllageResponse
+ */
+ export interface IUpdatedUllageResponse {
+    responseStatus: IResponseStatus;
+    id: number;
+    correctionFactor: string;
+    correctedUllage: string;
+    quantityMt: string;
+    fillingRatio?: number;
+ }
+
+ /**
+ * Interface for save and validate model
+ *
+ * @export
+ * @interface IValidateAndSaveStowage
+ */
+export interface IValidateAndSaveStowage {
+    vesselId: number,
+    voyageId: number,
+    loadableStudyId: number,
+    loadablePatternId: number,
+    processId: string
+ }
+
+ /**
+ * Interface for change response
+ *
+ * @export
+ * @interface IUpdatedUllageResponse
+ */
+  export interface IUpdatedRdgLevelResponse {
+    responseStatus: IResponseStatus;
+    id: number;
+    correctionFactor: string;
+    correctedUllage: string;
+    quantityMt: string;
+ }
+
+ /**
+ * ENUM for validaion and save
+ *
+ * @export
+ * @enum {number}
+ */
+export enum VALIDATION_AND_SAVE_STATUS {
+    LOADABLE_PLAN_SUCCESS = 12,
+    LOADABLE_PLAN_FAILED = 13,
+    LOADABLE_PLAN_STARTED = 14,
+}
+
+ /**
+ * Interface for algo response
+ *
+ * @export
+ * @interface IAlgoResponse
+ */
+  export interface IAlgoResponse {
+    responseStatus: IResponseStatus;
+    algoErrors: IAlgoError[]
+ }
+
+ /**
+ * Interface for algo error
+ *
+ * @export
+ * @interface IAlgoError
+ */
+ export interface IAlgoError {
+    errorHeading: string,
+    errorDetails: string[]
+ }
+
+
+
+ 
 

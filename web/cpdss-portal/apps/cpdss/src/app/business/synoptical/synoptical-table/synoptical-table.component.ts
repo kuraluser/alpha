@@ -14,7 +14,11 @@ import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
+import { VOYAGE_STATUS, LOADABLE_STUDY_STATUS ,} from '../../core/models/common.model';
+import { ISubTotal } from '../../../shared/models/common.model';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { IDateTimeFormatOptions, ITimeZone } from '../../../shared/models/common.model';
+import * as moment from 'moment';
 
 /**
  * Component class of synoptical table
@@ -60,7 +64,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   synopticalRecordsCopy: ISynopticalRecords[] = [];
   loadableQuantityValue: number;
   today = new Date();
-
+  globalTimeZones: ITimeZone[];
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -69,6 +73,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     public synopticalService: SynopticalService,
     private messageService: MessageService,
     private translateService: TranslateService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
   ) {
   }
 
@@ -111,6 +116,39 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.synopticalService.showActions = false;
   }
 
+   /***
+   * function to get time zone list
+   * @memberof SynopticalTableComponent
+   */
+    async getTimeZoneList() {
+      return await this.timeZoneTransformationService.getTimeZoneList().toPromise();
+    }
+  
+    /**
+     * Method to convert  etaEtdPlanned Time and etaActual Time into  Zone based time
+     *  @returns {Promise<void>}
+     *  @memberof SynopticalTableComponent
+    */
+    async convertIntoZoneTimeZone(): Promise<void> {
+      if (this.synopticalService.synopticalRecords?.length) {
+        const dtFormatOpts: IDateTimeFormatOptions = { portLocalFormat: true };
+        this.globalTimeZones = await this.getTimeZoneList();
+         for (let i in this.synopticalService.synopticalRecords) {
+          this.globalTimeZones.forEach((item) => {            
+            if (item.id === this.synopticalService.synopticalRecords[i].portTimezoneId) {
+              dtFormatOpts.portTimeZoneOffset = item.offsetValue;
+              dtFormatOpts.portTimeZoneAbbr = item.abbreviation;            
+              if (this.synopticalService.synopticalRecords[i].etaEtdPlanned)
+                this.synopticalService.synopticalRecords[i].etaEtdPlanned = this.timeZoneTransformationService.formatDateTime(this.synopticalService.synopticalRecords[i].etaEtdPlanned, dtFormatOpts);
+              if (this.synopticalService.synopticalRecords[i].etaEtdActual)
+                this.synopticalService.synopticalRecords[i].etaEtdActual = this.timeZoneTransformationService.formatDateTime(this.synopticalService.synopticalRecords[i].etaEtdActual, dtFormatOpts);
+            }
+          })
+        }
+      }
+    }
+    
+ 
   /**
    * Function to initalize data
    *
@@ -131,6 +169,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         this.formatData(dynamicColumn)
         this.addToColumns(dynamicColumn);
       })
+      await this.convertIntoZoneTimeZone();
       this.initForm();
       this.setLoadableQuantity()
     }
@@ -238,6 +277,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       },
       {
         header: 'ETA/ETD',
+        toolTip :"PORT_TIME_ZONE_NOTIFICATION",
         subHeaders: [{
           header: '',
           subHeaders: [
@@ -1128,7 +1168,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     if (type) {
       switch (type) {
         case this.fieldType.DATETIME:
-          return this.convertToDate(value)
+          return this.convertIntoDate(value)
         case this.fieldType.TIME:
           return this.convertToDate(value)
         default:
@@ -1170,6 +1210,24 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     }
     return value;
   }
+
+
+  /**
+   * Convert value to date
+   * @param value
+   * @returns {any}
+   * @memberof SynopticalTableComponent
+  */
+  convertIntoDate(value: any) {
+    if(value)
+     {
+      value = value?.length ? moment(value.slice(0, 17),'DD/MMM/YYYY HH:mm').toDate() : value;
+       return value;
+     }
+     else{        
+       return value;
+     }   
+ }
 
   /**
  * Method to update other fields on keyup of an input
@@ -1292,7 +1350,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }
         break;
       case 'etaEtdPlanned': case 'etaEtdActual':
-        const value: Date = fc.value;
+        const value: Date = fc.value;        
         value.setSeconds(0, 0)
         if (colIndex > 0) {
           fcMin = this.getControl(colIndex - 1, field.key)
@@ -1415,6 +1473,33 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     return (typeof value !== 'undefined' && value !== '');
   }
 
+
+   /**
+   * Method to do convert etaEtdPlanned,etaEtdActual into utc timezone
+   * @param {any} 
+   * @param {any} 
+   * @returns {any}
+   * @memberof SynopticalTableComponent
+  */
+  ConvertIntoUtcTimeZone(postData: any): any {
+    if (this.synopticalService.synopticalRecords?.length) {
+      for (let i in this.synopticalService.synopticalRecords) {
+        this.globalTimeZones.forEach((item) => {
+          if (item.id === this.synopticalService.synopticalRecords[i].portTimezoneId) {
+            let index = postData.synopticalRecords.findIndex((item) => item.id == this.synopticalService.synopticalRecords[i].id);
+            if (this.synopticalService.synopticalRecords[i].etaEtdPlanned) {
+              postData.synopticalRecords[index].etaEtdPlanned = this.timeZoneTransformationService.revertZoneTimetoUTC(postData.synopticalRecords[index].etaEtdPlanned,item.offsetValue);
+            }
+            if (this.synopticalService.synopticalRecords[i].etaEtdActual)
+              postData.synopticalRecords[index].etaEtdActual = this.timeZoneTransformationService.revertZoneTimetoUTC(postData.synopticalRecords[index].etaEtdActual, item.offsetValue);
+
+          }
+        })
+      }
+    }
+    return postData;
+  }
+
   /**
    * Method to export table data
    *
@@ -1509,15 +1594,19 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           })
           synopticalRecords.push(saveJson)
         })
-        const postData = {
-          synopticalRecords: synopticalRecords
-        }
+       
+         let postData = {
+            synopticalRecords: synopticalRecords
+          }
+          postData =  this.ConvertIntoUtcTimeZone(postData);
+
         try {
           const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise();
-          if (res?.responseStatus?.status === '200') {
+          if (res?.responseStatus?.status === '200') {    
+            await this.initData();      
             msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
             severity = 'success';
-            this.synopticalService.editMode = false;
+            this.synopticalService.editMode = false;           
           } else if (res?.responseStatus?.status === '207' && Object.values(res?.failedRecords).includes('ERR-RICO-110')) {
             msgkeys = ['SYNOPTICAL_UPDATE_ERROR', 'SYNOPTICAL_UPDATE_STATUS_ERROR']
             severity = 'error';
@@ -1735,17 +1824,34 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     let subTotal = 0;
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
-      subTotal = Number(loadableQuantity.dwt)
-        + Number(loadableQuantity.saggingDeduction)
-        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard)
-        - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard)
-        - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant)
-        - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      const data:ISubTotal = {
+        dwt: loadableQuantity.dwt,
+        sagCorrection:loadableQuantity.saggingDeduction,
+        foOnboard: loadableQuantity.estFOOnBoard,
+        doOnboard: loadableQuantity.estDOOnBoard,
+        freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
+        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
+        ballast: loadableQuantity.ballast,
+        constant: loadableQuantity.constant,
+        others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
+      }
+      subTotal = Number(this.synopticalService.getSubTotal(data));
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
-      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.saggingDeduction) + Number(loadableQuantity.sgCorrection)
-        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard) - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard) - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant) - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      const data:ISubTotal = {
+        dwt: loadableQuantity.dwt,
+        sagCorrection:loadableQuantity.saggingDeduction,
+        sgCorrection:loadableQuantity.sgCorrection,
+        foOnboard: loadableQuantity.estFOOnBoard,
+        doOnboard: loadableQuantity.estDOOnBoard,
+        freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
+        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
+        ballast: loadableQuantity.ballast,
+        constant: loadableQuantity.constant,
+        others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
+      }
+      subTotal = Number(this.synopticalService.getSubTotal(data));
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
   }
@@ -1756,7 +1862,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     if (loadableQuantityResult.caseNo === 1) {
-      const total = Number(subTotal) - Number(loadableQuantity.foConInSZ);
+      const total = Number(subTotal) + Number(loadableQuantity.foConInSZ);
       if (total < 0) {
         this.loadableQuantityValue = 0;
       }

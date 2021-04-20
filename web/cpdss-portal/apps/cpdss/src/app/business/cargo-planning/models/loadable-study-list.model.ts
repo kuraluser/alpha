@@ -11,6 +11,7 @@ export class LoadableStudy {
     public statusId: LOADABLE_STUDY_STATUS;
     public detail: string;
     public createdDate: string;
+    public lastEdited:string;
     public charterer: string;
     public subCharterer: string;
     public draftMark: number;
@@ -19,7 +20,7 @@ export class LoadableStudy {
     public maxAirTemperature: number;
     public maxWaterTemperature: number;
     public dischargingPortIds?: number[];
-    public loadableStudyStatusLastModifiedTime ?: string;
+    public loadableStudyStatusLastModifiedTime?: string;
     loadableStudyAttachment?: ILoadableStudyAttachment[];
     dischargingCargoId: number;
     createdFromId?: number;
@@ -28,6 +29,23 @@ export class LoadableStudy {
     isDeletable?: boolean;
     isDuplicate?: boolean;
     isActionsEnabled?: boolean;
+    isCargoNominationComplete: boolean;
+    isPortsComplete: boolean;
+    isOhqComplete: boolean;
+    isObqComplete: boolean;
+    isDischargingPortComplete: boolean;
+    ohqPorts: ILoadableOHQStatus[];
+}
+
+/**
+ * Interface for OHQ ports status
+ *
+ * @export
+ * @interface ILoadableOHQStatus
+ */
+export interface ILoadableOHQStatus {
+    id: number;
+    isPortRotationOhqComplete: boolean;
 }
 
 /**
@@ -50,6 +68,7 @@ export interface ILoadableStudyAttachment {
 export interface IDischargingPortIds {
     portIds: number[];
     dischargingCargoId: number;
+    isDischargingPortComplete: boolean;
 }
 
 /**
@@ -91,6 +110,6 @@ export interface LoadablePattern {
 * @interface ILoadablePatternsResponse
 */
 export interface ILoadablePatternsResponse {
-   requestStatus: any;
-   loadablePatterns: LoadablePattern[];
+    requestStatus: any;
+    loadablePatterns: LoadablePattern[];
 }

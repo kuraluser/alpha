@@ -10,8 +10,9 @@ export function portDuplicationValidator(field): ValidatorFn {
         if (control.root && control.parent) {
             let filtered = [];
             let portId, operationId;
-            const dataTableArray = control.root.value.dataTable.filter(portData => portData.portOrder !== control.parent.value?.portOrder);
-            if (control?.value) {
+            const dataTableArray = control.root.value.dataTable?.filter(portData => portData.portOrder !== control.parent.value?.portOrder);
+            if (dataTableArray?.length) {
+                if (control?.value) {
                 if ( field === 'operation') {
                     operationId = control.value?.id;
                     if(control.parent.value?.port){
@@ -36,6 +37,7 @@ export function portDuplicationValidator(field): ValidatorFn {
             }
             if(filtered.length >= 1){
                 return { transitDuplicate: true }
+            }
             }
         }
         return null;

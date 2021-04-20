@@ -42,7 +42,7 @@ export class SecurityService {
 
   // setting properties in indexed db
   static setPropertiesDB(value: string, key: string) {
-    SecurityService.cpdssDB?.properties.add(value, key)
+    SecurityService.cpdssDB?.properties.put(value, key)
   }
 
   // setting logged-in user details
@@ -93,7 +93,9 @@ export class SecurityService {
     if (serviceWorkerReady) {
       SecurityService.setPropertiesDB(token, 'token');
       SecurityService.setPropertiesDB(environment.name, 'environment');
-      SecurityService.setPropertiesDB(JSON.parse(JSON.stringify(AppConfigurationService.settings)), 'appConfig');
+      if(AppConfigurationService?.settings) {
+        SecurityService.setPropertiesDB(JSON.parse(JSON.stringify(AppConfigurationService?.settings)), 'appConfig');
+      }      
     }
   }
 

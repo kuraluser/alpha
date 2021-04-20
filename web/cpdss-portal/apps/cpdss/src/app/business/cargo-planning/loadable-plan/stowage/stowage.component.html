@@ -32,30 +32,43 @@
         </div>
         <div class="row pt-15 pb-15">
             <div class="col text-center">
-                <button class="btn btn-main" id="grid_toggle_btn"
+                <button class="btn btn-main" id="grid_toggle_btn" 
                     (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
             </div>
         </div>
         <div *ngIf="showGrid" class="row mb-15">
-            <div class="col" *ngIf="selectedTab === tankType.CARGO">
+            <div class="col"  *ngIf="selectedTab === tankType.CARGO">
                 <div class="text-right mb-10" *ngIf="isEditable">
-                    <button class="btn btn-main" [hidden]="loadableStudyStatus" *ngIf="!editMode" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable"
+                    <button class="btn btn-main mr-10" *ngIf="loadablePatternValidationStatus === validateAndSaveStatus.LOADABLE_PLAN_FAILED" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
+                    <button class="btn btn-main mr-10" [hidden]="loadableStudyStatus" *ngIf="!buttonStatus" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable || !cargoTankDetails?.length || isStowageEditable"
                         (click)="changeGridToEditMode()">{{'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL'| translate}}
                     </button>
-                    <button class="btn btn-main" *ngIf="editMode" id="editmode_toggle_button"
-                        (click)="saveStowage()">{{'LOADABLE_PLAN_SAVE_STOWAGE_BUTTON_LABEL'| translate}}
+                    <button class="btn btn-main mr-10" (click)="commentsPopup(true)" *ngIf="buttonStatus === 1">
+                        {{'LOADABLE_PLAN_VALIDATE_AND_SAVE'| translate}}
+                    </button>
+                    <button class="btn btn-main" *ngIf="buttonStatus === 1" (click)="cancelStowageEdit()">
+                        {{'LOADABLE_PLAN_STOWAGE_CANCEL'| translate}}
                     </button>
                 </div>
                 <div class="row">
                     <div class="col content-wrapper-view-more">
-                <cpdss-portal-datatable *ngIf="loadablePlanForm.controls?.cargoTanks" [columns]="cargoGridColumns"
-                    [value]="cargoTankDetails" [editMode]="editMode" [form]="loadablePlanForm.controls?.cargoTanks">
+                <cpdss-portal-datatable *ngIf="loadablePlanForm?.controls?.cargoTanks && this.cargoTankDetails" [columns]="cargoGridColumns"
+                    [value]="cargoTankDetails" [editMode]="editMode" (editComplete)="onEditComplete($event)" [form]="loadablePlanForm?.controls?.cargoTanks">
                 </cpdss-portal-datatable>
                     </div>
                 </div>
             </div>
-            <div class="col" *ngIf="selectedTab === tankType.BALLAST">
-                <cpdss-portal-ballast-stowage [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
+            <div *ngIf="selectedTab === tankType.BALLAST">
+                <cpdss-portal-ballast-stowage (validateAndSave)="openSaveStowagePopup = $event" (ballastStowageDataEdit)="ballastStowageDataEdit($event)" 
+                [initBallastTankDetails]="initBallastTankDetails" 
+                [ballastForm]="getFormGroup('ballastTanks')" 
+                [ballastDetails]="ballastTankDetails" 
+                [isEditable]="isEditable" 
+                [isPermissionAvaliable]="isPermissionAvaliable"
+                [loadableStudyStatus]="loadableStudyStatus"
+                [isStowageEditable]="isStowageEditable"
+                (viewErrorMessage)="viewError($event)"
+                [loadablePatternValidationStatus]="loadablePatternValidationStatus"></cpdss-portal-ballast-stowage>
             </div>
         </div>
     </div>
@@ -63,3 +76,5 @@
 <cpdss-portal-save-stowage-popup [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
     [loadableStudyId]="loadableStudyId" [(visible)]="openSaveStowagePopup">
 </cpdss-portal-save-stowage-popup>
+
+<cpdss-portal-error-log-popup [(visible)]="errorPopup" [header]="'ERROR'" [subHeading]="'The entered value will not be saved due to the below issues. Please recheck the values'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>

@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Observable , Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
-import { IBallastTank, ICargoTank } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ILoadableQuantityCargo, ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, ICargoTankDetailValueObject, ILoadablePlanSynopticalRecord, ISynopticalRecordArrangeModel, IBallastStowageDetails } from '../models/loadable-plan.model';
+import { ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly,  ICargoTankDetailValueObject, ISynopticalRecordArrangeModel , IBallastTankDetailValueObject } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-
+import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -28,7 +28,6 @@ export class LoadablePlanTransformationService {
   private savedComments = new Subject();
 
   public savedComments$ = this.savedComments.asObservable();
-
   constructor() { }
 
   /**
@@ -231,7 +230,7 @@ export class LoadablePlanTransformationService {
    */
   getFormattedBallastDetails(_decimalPipe, ballast: IBallastStowageDetails): IBallastStowageDetails {
     const newBallast = <IBallastStowageDetails>JSON.parse(JSON.stringify(ballast))
-    newBallast.cubicMeter = (Number(newBallast.metricTon)/Number(newBallast.sg)).toFixed(2);
+    newBallast.cubicMeter = (Number(newBallast.metricTon) / Number(newBallast.sg)).toFixed(2);
     if (newBallast.fullCapacityCubm) {
       newBallast.percentage = (Number(newBallast.cubicMeter) / Number(newBallast.fullCapacityCubm) * 100).toString();
       newBallast.percentage = this.decimalConvertion(_decimalPipe, newBallast.percentage, "1.2-2");
@@ -267,6 +266,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.observedBarrels = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.OBSBBLS, 'weight');
     _cargoTankDetail.observedBarrelsAt60 = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.BBLS, 'weight');
     _cargoTankDetail.fillingRatio = (_cargoTankDetail.observedM3 / Number(cargoTankDetail.fullCapacityCubm) * 100).toFixed(2);
+    _cargoTankDetail.fullCapacityCubm = cargoTankDetail.fullCapacityCubm;
     return _cargoTankDetail;
   }
 
@@ -280,6 +280,11 @@ export class LoadablePlanTransformationService {
    */
   getCargoTankDetailAsValueObject(cargoTankDetail: ICargoTankDetail, isNewValue = true): ICargoTankDetailValueObject {
     const _cargoTankDetail = <ICargoTankDetailValueObject>{};
+    const unitConvertedTankDetails = {
+      observedM3: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoTankDetail?.api, cargoTankDetail?.temperature),
+      observedBarrelsAt60: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoTankDetail?.api, cargoTankDetail?.temperature),
+      observedBarrels: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSBBLS, cargoTankDetail?.api, cargoTankDetail?.temperature)
+    }
     _cargoTankDetail.id = cargoTankDetail?.id;
     _cargoTankDetail.tankId = cargoTankDetail?.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail?.cargoAbbreviation;
@@ -289,14 +294,14 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.tankName = cargoTankDetail?.tankName;
     _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, isNewValue);
     _cargoTankDetail.correctionFactor = new ValueObject<number>(cargoTankDetail?.correctionFactor, true, false);
-    _cargoTankDetail.observedM3 = new ValueObject<number>(cargoTankDetail?.observedM3, true, false);
-    _cargoTankDetail.observedBarrels = new ValueObject<number>(cargoTankDetail?.observedBarrels, true, false);
-    _cargoTankDetail.observedBarrelsAt60 = new ValueObject<number>(cargoTankDetail?.observedBarrelsAt60, true, false);
+    _cargoTankDetail.observedM3 = new ValueObject<number>(unitConvertedTankDetails.observedM3, true, false);
+    _cargoTankDetail.observedBarrels = new ValueObject<number>(unitConvertedTankDetails?.observedBarrels, true, false);
+    _cargoTankDetail.observedBarrelsAt60 = new ValueObject<number>(unitConvertedTankDetails?.observedBarrelsAt60, true, false);
     _cargoTankDetail.api = new ValueObject<number>(cargoTankDetail?.api, true, false);
     _cargoTankDetail.temperature = new ValueObject<number>(cargoTankDetail?.temperature, true, false);
     _cargoTankDetail.colorCode = cargoTankDetail?.colorCode;
     _cargoTankDetail.isAdd = isNewValue;
-
+    _cargoTankDetail.fullCapacityCubm = cargoTankDetail.fullCapacityCubm;
     return _cargoTankDetail;
   }
 
@@ -345,7 +350,8 @@ export class LoadablePlanTransformationService {
         fieldHeaderClass: 'column-rdg-ullage',
         numberFormat: '1.0-2',
         errorMessages: {
-          'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED'
+          'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED',
+          'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR'
         }
       },
       {
@@ -419,17 +425,74 @@ export class LoadablePlanTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadablePlanTransformationService
    */
-  getBallastDatatableColumns(): IDataTableColumn[] {
+   getBallastDatatableColumns(): IDataTableColumn[] {
     return [
-      { field: 'tankName', header: 'STOWAGE_BALLAST_TANK' },
-      { field: 'rdgLevel', header: 'STOWAGE_BALLAST_RDG_LEVEL' },
-      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR' },
-      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL' },
-      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON' },
-      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER' },
-      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE' },
-      { field: 'sg', header: 'STOWAGE_BALLAST_SG' }
+      { field: 'tankName', header: 'STOWAGE_BALLAST_TANK', editable: false , fieldType: DATATABLE_FIELD_TYPE.TEXT},
+      {
+        field: 'rdgLevel',
+        header: 'STOWAGE_BALLAST_RDG_LEVEL',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'LOADABLE_PLAN_BALLAST_GRID_RDG_ULG_PLACEHOLDER',
+        numberFormat: '1.0-2',
+        errorMessages: {
+          'required': 'LOADABLE_PLAN_BALLAST_CARGO_GRID_RDG_ULG_REQUIRED',
+          'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR'
+        }
+      },
+      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER}
     ]
+  }
+
+    /**
+   * Method to convert loadable plan tank details to value object
+   *
+   * @param {IBallastStowageDetails} ballastTankDetail
+   * @param {boolean} [isNewValue=true]
+   * @returns {IBallastTankDetailValueObject}
+   * @memberof LoadablePlanTransformationService
+   */
+    getBallastTankDetailAsValueObject(ballastTankDetail: IBallastStowageDetails, isNewValue = true): IBallastTankDetailValueObject {
+      const _ballastTankDetail = <IBallastTankDetailValueObject>{};
+      _ballastTankDetail.id = ballastTankDetail.id;
+      _ballastTankDetail.tankName = new ValueObject<string>(ballastTankDetail?.tankName, true, false);
+      _ballastTankDetail.tankId = ballastTankDetail.tankId;
+      _ballastTankDetail.rdgLevel = new ValueObject<string>(ballastTankDetail?.rdgLevel, true, isNewValue);
+      _ballastTankDetail.correctionFactor = new ValueObject<string>(ballastTankDetail?.correctionFactor, true, false);
+      _ballastTankDetail.correctedLevel = new ValueObject<string>(ballastTankDetail?.correctedLevel, true, false);
+      _ballastTankDetail.metricTon = new ValueObject<string>(ballastTankDetail?.metricTon, true, false);
+      _ballastTankDetail.cubicMeter = new ValueObject<string>(this.convertToNumber(ballastTankDetail?.cubicMeter), true, false);
+      _ballastTankDetail.percentage = new ValueObject<string>(ballastTankDetail?.percentage, true, false);
+      _ballastTankDetail.api = new ValueObject<number>(ballastTankDetail?.api, true, false);
+      _ballastTankDetail.temperature = new ValueObject<number>(ballastTankDetail?.temperature, true, false);
+      _ballastTankDetail.sg = new ValueObject<string>(ballastTankDetail?.sg, true, false);
+      _ballastTankDetail.fullCapacityCubm = ballastTankDetail.fullCapacityCubm;
+      _ballastTankDetail.isAdd = isNewValue;
+      return _ballastTankDetail;
+    }
+
+    /**
+   * parse number from formatted string
+   * @returns {number}
+   */
+    convertToNumber(value: string) {
+      value = value?.replace(',', '');
+      return value
+    }
+
+  /**
+  * 
+  * calculate percentage
+  * @returns {number} 
+  * @param { number } fullCapacityCubm
+  * @param { number } cubicMeter 
+  */
+  calculatePercentage(cubicMeter: number, fullCapacityCubm: number) {
+    return Number((cubicMeter / fullCapacityCubm * 100));
   }
 
   /**
@@ -439,7 +502,7 @@ export class LoadablePlanTransformationService {
   * @param { ILoadablePlanSynopticalRecord } synopticalRecord 
   */
   public getFormatedEtaEtdData(_decimalPipe: any, synopticalRecord: ILoadablePlanSynopticalRecord): ISynopticalRecordArrangeModel {
-    let _synopticalRecord = <ISynopticalRecordArrangeModel>{};
+    const _synopticalRecord = <ISynopticalRecordArrangeModel>{};
     _synopticalRecord.id = synopticalRecord.id;
     _synopticalRecord.operationType = synopticalRecord.operationType;
     _synopticalRecord.portId = synopticalRecord.portId;
@@ -506,7 +569,7 @@ export class LoadablePlanTransformationService {
   * @param { IBallastStowageDetails } ballast 
   * @param { QUANTITY_UNIT } unitTo 
   */
-   convertQuantityBallast(ballast: IBallastStowageDetails, unitTo: QUANTITY_UNIT) {
+  convertQuantityBallast(ballast: IBallastStowageDetails, unitTo: QUANTITY_UNIT) {
     return this.quantityPipe.transform(ballast.metricTon, this.baseUnit, unitTo, ballast.sg)
   }
 

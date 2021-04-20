@@ -57,6 +57,7 @@ export interface ICargoNomination {
     storeKey?: number;
     vesselId?: number;
     voyageId?: number;
+    isCargoNominationComplete?: boolean;
 }
 
 /**
@@ -240,6 +241,7 @@ export interface IPortsDetailsResponse {
 export interface IPortsValueObject {
     id: number;
     portOrder: number;
+    portTimezoneId?: number;
     slNo: number;
     port: ValueObject<IPort>;
     portcode: ValueObject<string>;
@@ -359,6 +361,7 @@ export interface IPortOHQTankDetail {
     fuelTypeShortName: string;
     fullCapacityCubm: number;
     fullCapacity: number;
+    isPortRotationOhqComplete: boolean;
 }
 
 /**
@@ -565,6 +568,7 @@ export interface IPortOBQTankDetail {
     abbreviation: string;
     loadOnTop: boolean;
     volume: number;
+    isObqComplete?: boolean;
 }
 
 /**
@@ -640,7 +644,18 @@ export interface IGeneratePatternResponse {
     processId: string;
 }
 
-
+/**
+ * Interface Api Temperature history popup selected loading ports
+ *
+ * @export
+ * @interface IApiTempLoadingPorts
+ */
+export interface IApiTempLoadingPorts {
+    id: number;
+    isAdd?: boolean;
+    name: string;
+    quantity: number;
+}
 /**
  * Interface for get Api-Temperature popup passvalue
  *
@@ -648,11 +663,12 @@ export interface IGeneratePatternResponse {
  * @interface IApiTempPopupData
  */
 export interface IApiTempPopupData {
-    rowDataCargo: ValueObject<ICargo>;
+    rowDataCargo: IApiTempLoadingPorts[];
     vesselId: number;
     voyageId: number;
     loadableStudyId: number;
-    rowIndex: number;
+    cargoId: number;
+    cargoName: string;
 }
 
 /**
@@ -767,4 +783,65 @@ export interface ICargoHistoryDetails {
     loadedDay: number;
     api: number;
     temperature: number;
+}
+
+/**
+ * Interface for loadable quality 
+ *
+ * @export
+ * @interface ILoadableQuantityCargo
+ */
+ export interface ILoadableQuantityCargo {
+    id: number,
+    grade: string,
+    estimatedAPI: string,
+    estimatedTemp: string,
+    orderBblsdbs: string,
+    orderBbls60f: string,
+    orderedQuantity: string,
+    minTolerence: string,
+    maxTolerence: string,
+    loadableBblsdbs: string,
+    loadableBbls60f: string,
+    loadableLT: string,
+    loadableMT: string,
+    loadableKL: string,
+    differencePercentage: string,
+    differencePercentageValue?: number;
+    differenceColor: string
+    cargoId?: number;
+    apiTemp?: string;
+    minMaxTolerance?: string;
+    slopQuantity?: string;
+    timeRequiredForLoading?: string;
+    loadingPorts?: string[];
+    loadingPort?: string;
+}
+
+
+/**
+ * Interface for  Synoptical Records
+ * @export
+ * @interface ILoadablePlanSynopticalRecord
+ */
+ export interface ILoadablePlanSynopticalRecord {
+    id: number;
+    operationType: string;
+    portId: number;
+    portName: string;
+    portTimezoneId: number;
+    etaEtdPlanned: string;
+    plannedFOTotal: number;
+    plannedDOTotal: number;
+    plannedFWTotal: number;
+    othersPlanned: number;
+    totalDwtPlanned: number;
+    displacementPlanned: number;
+    specificGravity: number;
+    finalDraftFwd: number;
+    finalDraftAft: number;
+    finalDraftMid: number;
+    calculatedTrimPlanned: number;
+    cargoPlannedTotal: number;
+    ballastPlanned: number;
 }

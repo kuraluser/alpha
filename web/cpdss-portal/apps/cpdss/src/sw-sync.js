@@ -2,8 +2,7 @@
   'use strict';
 
   importScripts('dexie.min.js');
-  let apiUrl, environment, appConfig, token;
-  let apiEndPoint = '/api/cloud';
+  let apiUrl, environment, appConfig, apiEndPoint;
   const db = new Dexie("CPDSS");
   db.version(1).stores({
     cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
@@ -27,10 +26,12 @@
 
       if (environment !== 'shore') {
         apiEndPoint = '/api/ship';
+      } else {
+        apiEndPoint = '/api/cloud';
       }
 
       if (appConfig?.path) {
-        apiEndPoint += appConfig?.path + apiEndPoint
+        apiEndPoint = appConfig?.path + apiEndPoint;
       }
 
       if (self.location.protocol === 'https:') {
@@ -40,9 +41,7 @@
         apiUrl = `${self.location.protocol}//192.168.2.89:${port}${apiEndPoint}`;
       }
 
-      if (!token) {
-        token = await getToken();
-      }
+      const token = await getToken();
 
       if (token) {
         serverSyncCargoNomination(token);
@@ -92,7 +91,7 @@
                   headers: headers
                 });
 
-                if (syncResponse.status === 200 || syncResponse.status === 400) {
+                if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -117,7 +116,7 @@
                   headers: headers
                 });
 
-                if (syncResponse.status === 200 || syncResponse.status === 400) {
+                if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -171,7 +170,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200 || syncResponse.status === 400) {
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -195,7 +194,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200 || syncResponse.status === 400) {
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -251,7 +250,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200|| syncResponse.status === 400) {
+              if (syncResponse.status === 200|| syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = ohq.storeKey;
                 sync.type = 'ohq_sync_finished';
@@ -306,7 +305,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200 || syncResponse.status === 400) {
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
                 sync.storeKey = obq.storeKey;
                 sync.type = 'obq_sync_finished';
@@ -348,13 +347,62 @@
       syncStore[id] = event.data
       // register a sync and pass the id as tag for it to get the data
       self.registration.sync.register(id)
+    } else if(event.data.type === 'validate-and-save') {
+      const id = event.data.data.loadablePatternId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
     }
   })
 
 
   self.addEventListener('sync', function (event) {
-    event.waitUntil(checkLoadableStudyStatus(syncStore[event.tag].data));
+    if(syncStore[event.tag].type === 'loadable-pattern-status') {
+      event.waitUntil(checkLoadableStudyStatus(syncStore[event.tag].data));
+    } else if(syncStore[event.tag].type === 'validate-and-save') {
+      event.waitUntil(checkSaveAndValidateStatus(syncStore[event.tag].data));
+    }
   });
+
+  async function checkSaveAndValidateStatus(data) {
+    let currentStatus;
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loadable-studies/${data?.loadableStudyId}/loadable-pattern-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId , loadablePatternId: data.loadablePatternId}),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      if (syncView.responseStatus.status === '200') { 
+        if (syncView.loadableStudyStatusId === 12) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-validation-success';
+          sync.statusId = syncView.loadableStudyStatusId;
+          notifyClients(sync);
+        } else if (syncView.loadableStudyStatusId === 13) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-validation-failed';
+          sync.statusId = syncView.loadableStudyStatusId;
+          notifyClients(sync);
+        } else if (syncView.loadableStudyStatusId === 14) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-validation-started';
+          sync.statusId = syncView.loadableStudyStatusId;
+          notifyClients(sync);
+        }
+      }
+      if (syncView.responseStatus.status === '500') {
+        clearInterval(timer);
+      }
+    }, 3500);
+  }
 
   async function checkLoadableStudyStatus(data) {
     let currentStatus;

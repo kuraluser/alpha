@@ -3,8 +3,7 @@
     <p-header>
         {{'LOADABLE_QUANTITY' | translate}}
         <div class="header-right-content" *ngIf="lastUpdatedDateAndTime">
-            {{'LOADABLE_QUANTITY_LAST_UPDATED' | translate }} {{lastUpdatedDateAndTime}}
-            {{'LOADABLE_QUANTITY_TIME'| translate}}
+            {{'LOADABLE_QUANTITY_LAST_UPDATED' | translate }} <span class="text-capitalise">{{lastUpdatedDateAndTime}}</span>
         </div>
         <div class="header-info-pop-up"><span class="info-icon mr-5">!</span> {{'LOADABLE_QUANTITY_INFO' | translate}}
         </div>
@@ -18,8 +17,9 @@
                         <label for="loadable_quantity_port_dropdown"
                             class="col no-left-padding">{{'LOADABLE_QUANTITY_PORT_NAME' | translate}}</label>
                         <div class="col dropdown-loadable-quantity">
-                            <p-dropdown #dd id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true"
-                                [options]="ports" formControlName="portName" optionLabel="name" (click)="clearFilter(dd)"
+                            <p-dropdown #dd id="loadable_quantity_port_dropdown" styleClass="form-control"
+                                [filter]="true" [options]="ports" formControlName="portName" optionLabel="name"
+                                (click)="clearFilter(dd)" (onChange)="onPortChange($event)"
                                 placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}"
                                 [readonly]="!isEditable" resetFilterOnHide="true">
                             </p-dropdown>
@@ -392,7 +392,7 @@
             </button>
             <ng-container *ngIf="isEditable">
                 <button class="btn btn-main" type="submit" id="lodable_quantity_submit" form="fg_loadableQunatity"
-                *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{ buttonLabel | translate}}</button>
+                    *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{ buttonLabel | translate}}</button>
             </ng-container>
         </div>
     </p-footer>

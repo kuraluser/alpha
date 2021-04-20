@@ -130,7 +130,7 @@ service LoadableStudyService {
 	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
 	}
 	
-	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
+	rpc updateUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
 	}
 	
 	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
@@ -151,6 +151,9 @@ service LoadableStudyService {
 	rpc GetVoyages (VoyageRequest) returns (VoyageListReply) {
 	}
 	
+	rpc GetAlgoErrors (AlgoErrorRequest) returns (AlgoErrorReply) {
+	}
+	
 	rpc SaveVoyageStatus(SaveVoyageStatusRequest) returns (SaveVoyageStatusReply){
 	}
 	
@@ -168,14 +171,14 @@ service LoadableStudyService {
 	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 }
 
-message RecalculateVolumeRequest {
+message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
-message RecalculateVolumeReply {
+message UpdateUllageReply {
 	ResponseStatus responseStatus = 1;
-	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
 message LoadicatorResultsRequest {
@@ -205,6 +208,7 @@ message LoadicatorDataRequest {
 	string processId = 1;
 	repeated LoadicatorPatternDetails loadicatorPatternDetails= 2;
 	int64 loadableStudyId = 3;
+	bool isPattern = 4;
 }
 message LoadicatorDataReply {
 	string processId = 1;
@@ -307,6 +311,17 @@ message LoadablePatternAlgoRequest {
 	bool validated = 4;
 	repeated AlgoErrors algoErrors = 5;
 	int64 loadablePatternId = 6;
+	
+}
+
+message AlgoErrorRequest {
+	int64 loadableStudyId = 1;
+	int64 loadablePatternId = 2;
+}
+
+message AlgoErrorReply {
+	repeated AlgoErrors algoErrors = 1;
+	ResponseStatus responseStatus = 2;
 }
 
 message LoadablePlanDetails {
@@ -353,6 +368,8 @@ message LoadablePlanDetailsReply {
   	string date = 12;
   	string voyageNumber = 13;
   	int64 id = 14;
+  	int64 loadablePatternStatusId = 15;
+  	int64 voyageStatusId = 16;
 }
 
 message LoadablePlanComments {
@@ -399,6 +416,7 @@ message LoadablePlanStowageDetails {
   string colorCode = 15;
   bool isCommingle = 16;
   int64 cargoNominationId = 17;
+  bool isBallast = 18;
 }
 
 
@@ -431,6 +449,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 string correctedUllage = 26; 
  	 string rdgUllage = 27;
      string correctionFactor = 28;
+      string slopQuantity = 29;
 }
 
 message LoadableQuantityCargoDetails {
@@ -455,6 +474,8 @@ message LoadableQuantityCargoDetails {
 	 string colorCode = 19;
 	 int32 priority = 20;
 	 int32 loadingOrder = 21;
+	 string slopQuantity = 22;
+	 int64 cargoNominationId = 23;
 }
 
 message ConfirmPlanRequest {
@@ -470,6 +491,7 @@ message ConfirmPlanReply {
 message LoadableStudyStatusRequest {
 	int64 loadableStudyId = 1;
 	string processId = 2;
+	int64 loadablePatternId = 3;
 }
 
 message LoadableStudyStatusReply {
@@ -578,12 +600,15 @@ message LoadableQuantityRequest {
 	string subTotal = 27;
 	string foConsumptionPerDay = 28;
 	int64 id = 29;
+	string lastUpdatedTime = 30;
+	int64 portRotationId = 31;
 }
 
 message LoadableQuantityReply {
 	StatusReply responseStatus = 1;
 	int64 loadableQuantityId = 2;
 	int64 loadableStudyId = 3;
+	int64 portRotationId = 4;
 }
 
 message LoadableStudyRequest{
@@ -629,6 +654,7 @@ message LoadableStudyDetail{
 	bool isObqComplete=27;
 	bool isDischargingPortComplete=28;
 	repeated OhqPorts ohqPorts=29;
+	string lastEdited = 30;
 }
 
 message LoadableStudyReply{
@@ -712,7 +738,8 @@ message PortRotationDetail{
 	int64 loadableStudyId=16;
 	int64 portOrder=17;
 	bool isPortsComplete=18;
-	
+	int64 portTimezoneId = 19;
+	bool isLandingPage=20;
 }
 
 message Operation{
@@ -894,6 +921,8 @@ message LoadablePatternCargoDetails {
  	int32 loadingOrder = 8;
  	string api = 9;
  	string tankName = 10;
+ 	string maxTolerence = 11;
+ 	string minTolerence = 12;
 }
 
 message LoadablePatternRequest {
@@ -987,6 +1016,7 @@ message SynopticalRecord{
 	string ballastActual = 37;
 	repeated SynopticalBallastRecord ballast = 38;
 	int64 portRotationId = 39;
+	int64 portTimezoneId = 40;
 }
 
 message SynopticalCargoRecord{
@@ -1000,7 +1030,8 @@ message SynopticalCargoRecord{
 	string cargoAbbreviation = 8;
 	int64 cargoId = 9;
 	string capacity = 10;
-	string api = 11;
+	string api = 11;	
+	bool isCommingleCargo=12;
 }
 
 message SynopticalOhqRecord{

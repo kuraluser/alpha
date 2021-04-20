@@ -1,3 +1,4 @@
+import { AppConfigurationService } from './../../../../shared/services/app-configuration/app-configuration.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
@@ -18,6 +19,10 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { first } from 'rxjs/operators';
+import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
+import { IDateTimeFormatOptions, ITimeZone } from './../../../../shared/models/common.model';
+import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import * as moment from 'moment';
 
 
 /**
@@ -75,6 +80,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   dataTableLoading: boolean;
   portCheckUpdatesTimer;
   progress = true;
+  timeZoneList: ITimeZone[];
 
   // private fields
   private _portsLists: IPortsValueObject[];
@@ -84,20 +90,32 @@ export class PortsComponent implements OnInit, OnDestroy {
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private fb: FormBuilder,
     private ngxSpinnerService: NgxSpinnerService,
     private confirmationAlertService: ConfirmationAlertService,
     private messageService: MessageService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private globalErrorHandler: GlobalErrorHandler) { }
 
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
+    this.getTimeZoneList();
   }
 
   ngOnDestroy() {
     navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * function to list timezones
+   *
+   * @memberof PortsComponent
+   */
+  async getTimeZoneList(){
+    this.timeZoneList = await this.timeZoneTransformationService.getTimeZoneList().toPromise();
   }
 
   /**
@@ -183,7 +201,14 @@ export class PortsComponent implements OnInit, OnDestroy {
   private async initPortsArray(portsLists: IPortList[]) {
     this.ngxSpinnerService.show();
     const isEditable = this.permission ? this.permission?.edit : true;
+    const formatOpt: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat }
     const _portsLists = portsLists?.map((item) => {
+      if (item.eta) {
+        item.eta = item.portTimezoneId ? this.convertDateTimeWithZone(item.eta, item.portTimezoneId) : this.timeZoneTransformationService.formatDateTime(item.eta, formatOpt);
+      }
+      if (item.etd) {
+        item.etd = item.portTimezoneId ? this.convertDateTimeWithZone(item.etd, item.portTimezoneId) : this.timeZoneTransformationService.formatDateTime(item.etd, formatOpt);
+      }
       const portData = this.loadableStudyDetailsTransformationService.getPortAsValueObject(item, false, isEditable, this.listData);
       return portData;
     });
@@ -197,9 +222,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
     this.updatePortOrder();
     this.ngxSpinnerService.hide();
-    setTimeout(() => {
-      this.updateFormValidity(portListArray)
-    }, 500);
+    this.updateFormValidity(portListArray);
   }
 
 
@@ -214,8 +237,8 @@ export class PortsComponent implements OnInit, OnDestroy {
   private initPortsFormGroup(ports: IPortsValueObject, index: number) {
     const layCanData = (ports.operation.value && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING, OPERATIONS.TRANSIT].includes(ports.operation.value.id));
     const layCanArray = [];
-    const layCanFrom = this.convertToDate(ports.layCan.value?.split('to')[0]?.trim());
-    const layCanTo = this.convertToDate(ports.layCan.value?.split('to')[1]?.trim());
+    const layCanFrom = this.dateStringToDate(ports.layCan.value?.split('to')[0]?.trim(), true);
+    const layCanTo = this.dateStringToDate(ports.layCan.value?.split('to')[1]?.trim(), true);
     if (layCanFrom && layCanTo) {
       layCanArray.push(layCanFrom)
       layCanArray.push(layCanTo)
@@ -227,12 +250,12 @@ export class PortsComponent implements OnInit, OnDestroy {
       operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator('operation')]),
       seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 2)]),
       layCan: this.fb.control({ value: layCanFrom && layCanTo ? layCanArray : null, disabled: layCanData }, { validators: layCanData ? [] : Validators.required }),
-      layCanFrom: this.fb.control({ value: this.convertToDate(ports.layCan.value?.split('to')[0]?.trim()), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
-      layCanTo: this.fb.control({ value: this.convertToDate(ports.layCan.value?.split('to')[1]?.trim()), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
+      layCanFrom: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[0]?.trim(),true), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
+      layCanTo: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[1]?.trim(),true), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
-      eta: this.fb.control(this.convertToDate(ports.eta.value), this.getValidators('eta', index)),
-      etd: this.fb.control(this.convertToDate(ports.etd.value), this.getValidators('etd', index))
+      eta: this.fb.control(this.dateStringToDate(ports.eta.value), this.getValidators('eta', index)),
+      etd: this.fb.control(this.dateStringToDate(ports.etd.value), this.getValidators('etd', index))
     });
 
   }
@@ -270,6 +293,9 @@ export class PortsComponent implements OnInit, OnDestroy {
       }
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['PORT_UPDATE_ERROR'], detail: translationKeys['PORT_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+      if(event?.data?.status === '401' && event?.data?.errorCode === '210'){
+        this.globalErrorHandler.sessionOutMessage();
       }
     }
   }
@@ -398,8 +424,8 @@ export class PortsComponent implements OnInit, OnDestroy {
       const layCanTo = event.data.layCan.value.split('to')[1].trim()
       this.portsLists[valueIndex]['layCanFrom'].value = layCanFrom;
       this.portsLists[valueIndex]['layCanTo'].value = layCanTo;
-      this.updateField(event.index, 'layCanFrom', this.convertToDate(layCanFrom));
-      this.updateField(event.index, 'layCanTo', this.convertToDate(layCanTo));
+      this.updateField(event.index, 'layCanFrom', this.dateStringToDate(layCanFrom, true));
+      this.updateField(event.index, 'layCanTo', this.dateStringToDate(layCanTo, true));
       this.updateValidityAndEditMode(index, 'eta');
       this.updateValidityAndEditMode(index, 'etd');
     }
@@ -426,11 +452,11 @@ export class PortsComponent implements OnInit, OnDestroy {
       if (row.valid && !event.data?.isAdd && row.touched) {
         event.data.processing = true;
         if (this.portsLists[rowIndex]?.id !== 0) {
-          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
           if (res) {
             row.markAsUntouched();
             for (const key in this.portsLists[rowIndex]) {
-              if (this.portsLists[rowIndex].hasOwnProperty(key) && this.portsLists[rowIndex][key].hasOwnProperty('_isEditMode')) {
+              if (this.portsLists[rowIndex]?.hasOwnProperty(key) && this.portsLists[rowIndex][key]?.hasOwnProperty('_isEditMode')) {
                 this.portsLists[rowIndex][key].isEditMode = false;
               }
             }
@@ -473,12 +499,12 @@ export class PortsComponent implements OnInit, OnDestroy {
     const form = this.row(event.index);
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (form.valid) {
-      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
       if (res) {
         this.portsLists[valueIndex].isAdd = false;
 
         for (const key in this.portsLists[valueIndex]) {
-          if (this.portsLists[valueIndex].hasOwnProperty(key) && this.portsLists[valueIndex][key].hasOwnProperty('_isEditMode')) {
+          if (this.portsLists[valueIndex]?.hasOwnProperty(key) && this.portsLists[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
             this.portsLists[valueIndex][key].isEditMode = false;
           }
         }
@@ -535,7 +561,7 @@ export class PortsComponent implements OnInit, OnDestroy {
               this.portsLists = [...this.portsLists];
             } else {
               const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
-              const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+              const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
               if (res) {
                 this.portsLists.splice(event.index, 1);
                 this.portsLists = [...this.portsLists];
@@ -577,7 +603,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.portsLists[i].portOrder = i + 1;
         this.portsLists[i].slNo = i + 1;
         if (this.portsLists[i].id !== 0) {
-          await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId);
+          await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
         }
       }
       const portListArray = this.portsLists.map((ports, index) =>
@@ -648,30 +674,9 @@ export class PortsComponent implements OnInit, OnDestroy {
     const field = this.field(index, key)
     if (field) {
       field.updateValueAndValidity();
-      field.markAsTouched()
+      field.markAsTouched();
       this.portsLists[index][key].isEditMode = field.invalid && field.enabled;
     }
-  }
-
-  /**
-  * Convert to date time(dd-mm-yyyy hh:mm)
-  *
-  * @memberof PortsComponent
-  */
-  convertToDate(value) {
-    if (value) {
-      const arr = value.toString().split(' ')
-      const dateArr = arr[0]?.split('-');
-      if (arr[1]) {
-        const timeArr = arr[1].split(':')
-        if (dateArr.length > 2 && timeArr.length > 1) {
-          return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]), Number(timeArr[0]), Number(timeArr[1]));
-        }
-      } else {
-        return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]))
-      }
-    }
-    return null
   }
 
   /**
@@ -728,5 +733,39 @@ export class PortsComponent implements OnInit, OnDestroy {
         return [];
     }
   }
+
+  /**
+   * function to convert date-time to port local
+   *
+   * @param {Date} dateTime
+   * @param {number} portTimezoneId
+   * @return {*}  {string}
+   * @memberof PortRotationRibbonComponent
+   */
+  convertDateTimeWithZone(dateTime: Date | string, timeZoneId: number): string{
+    const selectedTimeZone: ITimeZone = this.timeZoneList.find(tz => (tz.id === timeZoneId));
+    const formatOptions: IDateTimeFormatOptions = {
+      portLocalFormat: true,
+      portTimeZoneOffset: selectedTimeZone?.offsetValue,
+      portTimeZoneAbbr: selectedTimeZone?.abbreviation
+    };
+    return this.timeZoneTransformationService.formatDateTime(dateTime, formatOptions);
+  }
+
+  /**
+   * function to convert string to Date object
+   *
+   * @param {string} dateTime
+   * @return {*}  {Date}
+   * @memberof PortsComponent
+   */
+  dateStringToDate(dateTime: string, layCan?: boolean): Date {
+    if (dateTime) {
+      const _dateTime = layCan? moment(dateTime,'DD-MM-YYYY').format('DD-MM-YYYY HH:mm') : moment(dateTime.slice(0, 17)).format('DD-MM-YYYY HH:mm');
+      const formatOptions: IDateTimeFormatOptions = {stringToDate: true};
+      return this.timeZoneTransformationService.formatDateTime(_dateTime, formatOptions);
+    }
+  }
+
 }
 

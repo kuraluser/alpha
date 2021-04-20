@@ -11,4 +11,5 @@ public class Timezone {
   Long id;
   String timezone;
   String offsetValue;
+  String abbreviation;
 }

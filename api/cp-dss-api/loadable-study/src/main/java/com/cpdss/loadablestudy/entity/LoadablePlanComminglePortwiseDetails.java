@@ -24,13 +24,13 @@ import lombok.Setter;
 public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
-  
+
   @Column(name = "port_xid")
   private Long portId;
-  
+
   @Column(name = "operation_type ")
   private String operationType;
-  
+
   @Column(name = "loadable_plan_xid")
   private Long loadablePlanId;
 
@@ -121,4 +121,10 @@ public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
 
   @Column(name = "rdg_ullage")
   private String rdgUllage;
+
+  @Column(name = "port_rotation_xid")
+  private Long portRotationXid;
+
+  @Column(name = "actual_quantity")
+  private Long actualQuantity;
 }

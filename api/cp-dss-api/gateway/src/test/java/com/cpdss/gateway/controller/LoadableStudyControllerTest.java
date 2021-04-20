@@ -43,6 +43,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -55,6 +56,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @WebMvcTest(controllers = LoadableStudyController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {GatewayTestConfiguration.class})
+@TestPropertySource(properties = {"cpdss.build.env=none"})
 class LoadableStudyControllerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -240,6 +242,14 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_SYNOPTICAL_TABLE_API_URL;
   private static final String GET_SYNOPTICAL_TABLE_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_SYNOPTICAL_TABLE_API_URL;
+
+  private static final String UPDATE_ULLAGE_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patterns/{loadablePatternId}/update-ullage";
+  private static final String UPDATE_ULLAGE_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + UPDATE_ULLAGE_API_URL;
+  private static final String UPDATE_ULLAGE_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + UPDATE_ULLAGE_API_URL;
+
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
   /**
@@ -513,7 +523,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
   @ParameterizedTest
   void testSavePortRotation(String url) throws Exception {
-    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenReturn(new PortRotationResponse());
     this.mockMvc
         .perform(
@@ -529,7 +539,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
   @ParameterizedTest
   void testSavePortRotationServiceException(String url) throws Exception {
-    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenThrow(
             new GenericServiceException(
                 "service exception",
@@ -549,7 +559,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
   @ParameterizedTest
   void testSavePortRotationRuntimeException(String url) throws Exception {
-    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString(), any()))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(
@@ -1819,5 +1829,50 @@ class LoadableStudyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(list.toString()))
         .andExpect(status().isOk());
+  }
+
+  @ValueSource(strings = {UPDATE_ULLAGE_CLOUD_API_URL, UPDATE_ULLAGE_SHIP_API_URL})
+  @ParameterizedTest
+  void testUpdateUllage(String url) throws Exception {
+    when(this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+        .thenReturn(new UpdateUllage());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .content(this.createUpdateUllageRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  private String createUpdateUllageRequest()
+      throws JsonProcessingException, InstantiationException, IllegalAccessException {
+    UpdateUllage request = (UpdateUllage) createDummyObject(UpdateUllage.class);
+    return new ObjectMapper().writeValueAsString(request);
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testUpdateUllageException(Class<? extends Exception> exceptionClass) throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    UPDATE_ULLAGE_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .content(this.createUpdateUllageRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
   }
 }

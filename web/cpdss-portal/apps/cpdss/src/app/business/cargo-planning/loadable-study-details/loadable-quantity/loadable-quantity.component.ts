@@ -4,17 +4,18 @@ import { LoadableQuantityApiService } from '../../services/loadable-quantity-api
 import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
-import { Voyage,IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION , ISubTotal } from '../../../../shared/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { Dropdown } from 'primeng/dropdown';
+import { TimeZoneTransformationService } from 'apps/cpdss/src/app/shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  *  popup for loadable quantity
@@ -32,7 +33,7 @@ export class LoadableQuantityComponent implements OnInit {
   }
   set selectedLoadableStudy(value: LoadableStudy) {
     this._selectedLoadableStudy = value;
-    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? true : false;
+    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? true : false;
   }
   @Input() vesselId: number;
   @Input() voyage: Voyage;
@@ -63,12 +64,14 @@ export class LoadableQuantityComponent implements OnInit {
   isNodisplacement = false;
   isNoLwt = false;
   isNoConstant = false;
+  portRotationId = 0;
 
   private _selectedLoadableStudy: LoadableStudy;
 
   constructor(private fb: FormBuilder,
     private loadableQuantityApiService: LoadableQuantityApiService,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private translateService: TranslateService,
@@ -85,9 +88,23 @@ export class LoadableQuantityComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.loadableQuantityBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
-    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.selectedLoadableStudy?.statusId)  && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId);
+    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId);
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessageForLoadableQuantity();
-    this.ports = await this.getPorts();
+    const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id).toPromise();
+    const portList = portsData?.portList;
+    if (portList) {
+      let ports = await this.getPorts();
+      ports = ports.filter(item => {
+        return (portList.some(port => port.portId === item.id)) && item;
+      })
+
+      const map = new Map();
+      ports.forEach(item => map.set(item.id, item));
+      portList.forEach(item => map.set(item.portId, { ...map.get(item.portId), ...item }));
+      this.ports = Array.from(map.values());
+      this.selectedPort = this.ports[0];
+      this.portRotationId = this.selectedPort?.id;
+    }
     this.getLoadableQuantity();
   }
 
@@ -96,28 +113,27 @@ export class LoadableQuantityComponent implements OnInit {
    */
   async getLoadableQuantity() {
     this.ngxSpinnerService.show();
-    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id).toPromise();
+    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id, this.portRotationId).toPromise();
     if (loadableQuantityResult.responseStatus.status === '200') {
       this.caseNo = loadableQuantityResult.caseNo;
       this.selectedZone = loadableQuantityResult.selectedZone;
       this.loadableQuantity = loadableQuantityResult.loadableQuantity;
-      this.selectedPort = this.ports.find(port => port.id === this.loadableQuantity.portId);
-      this.lastUpdatedDateAndTime = this.loadableQuantity.updateDateAndTime;
+      this.lastUpdatedDateAndTime = this.timeZoneTransformationService.formatDateTime(this.loadableQuantity.lastUpdatedTime, { utcFormat: true });
       this.loadableQuantityId = this.loadableQuantity.loadableQuantityId;
       this.buttonLabel = this.loadableQuantityId ? 'LOADABLE_QUANTITY_UPDATE' : 'LOADABLE_QUANTITY_SAVE';
 
       this.loadableQuantityForm = this.fb.group({
-        portName: [this.ports.find(port => port.id === this.loadableQuantity.portId), Validators.required],
+        portName: [this.selectedPort, Validators.required],
         arrivalMaxDraft: ['', [numberValidator(2, 2)]],
         dwt: [''],
         tpc: ['', [numberValidator(1, 3)]],
         estimateSag: ['', [Validators.required, numberValidator(2, 2), , Validators.min(0)]],
         safCorrection: ['', [Validators.required, numberValidator(5, 7), Validators.min(0)]],
-        foOnboard: [{ value: '', disabled: true} , [Validators.required, numberValidator(2, 7), Validators.min(0)]],
-        doOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
-        freshWaterOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
+        foOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
+        doOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
+        freshWaterOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
 
-        boilerWaterOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
+        boilerWaterOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
 
         ballast: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         constant: ['', [Validators.required, numberValidator(2)]],
@@ -154,24 +170,24 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getLoadableQuantityData() {
 
-    if(this.loadableQuantity.tpc === ''){
-      this.isNoTpc =  true;
-    }if(this.loadableQuantity.dwt === ''){
+    if (this.loadableQuantity.tpc === '') {
+      this.isNoTpc = true;
+    } if (this.loadableQuantity.dwt === '') {
       this.isNoDwt = true;
-    }if(this.loadableQuantity.draftRestriction === ''){
+    } if (this.loadableQuantity.draftRestriction === '') {
       this.isNoArrivalMaxDraft = true;
     }
-    if(this.loadableQuantity.displacmentDraftRestriction === ''){
+    if (this.loadableQuantity.displacmentDraftRestriction === '') {
       this.isNodisplacement = true;
     }
-    if(this.loadableQuantity.vesselLightWeight === ''){
+    if (this.loadableQuantity.vesselLightWeight === '') {
       this.isNoLwt = true;
     }
-    if(this.loadableQuantity.constant === ''){
+    if (this.loadableQuantity.constant === '') {
       this.isNoConstant = true;
     }
 
-    this.loadableQuantityForm.controls.portName.setValue(this.ports.find(port => port.id === this.loadableQuantity.portId));
+    this.loadableQuantityForm.controls.portName.setValue(this.selectedPort);
     this.loadableQuantityForm.controls.arrivalMaxDraft.setValue(this.loadableQuantity.draftRestriction);
     this.loadableQuantityForm.controls.dwt.setValue(this.loadableQuantity.dwt);
     this.loadableQuantityForm.controls.tpc.setValue(this.loadableQuantity.tpc);
@@ -228,9 +244,9 @@ export class LoadableQuantityComponent implements OnInit {
 
     if (this.loadableQuantityForm.valid && !this.isNegative) {
       this.ngxSpinnerService.show();
-      if (this.caseNo === 1  && !this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoConstant) {
+      if (this.caseNo === 1 && !this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoConstant) {
         this.loadableQuantity = {
-
+          portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
@@ -258,6 +274,7 @@ export class LoadableQuantityComponent implements OnInit {
       }
       else if (this.caseNo === 2 && !this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoConstant) {
         this.loadableQuantity = {
+          portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
@@ -275,8 +292,9 @@ export class LoadableQuantityComponent implements OnInit {
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value
         }
       }
-      else if(!this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoLwt && !this.isNodisplacement && !this.isNoConstant){
+      else if (!this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoLwt && !this.isNodisplacement && !this.isNoConstant) {
         this.loadableQuantity = {
+          portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
@@ -298,8 +316,8 @@ export class LoadableQuantityComponent implements OnInit {
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value,
         }
       }
-      this.loadableQuantityId ? this.loadableQuantity['loadableStudyId'] = this.selectedLoadableStudy.id: null; 
-      const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_SUCCESS', 'LOADABLE_QUANTITY_SAVED_SUCCESSFULLY','LOADABLE_QUANTITY_UPDATE_SUCCESS','LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY', 'LOADABLE_QUANTITY_SAVE_ERROR', 'LOADABLE_QUANTITY_SAVE_STATUS_ERROR']).toPromise();
+      this.loadableQuantityId ? this.loadableQuantity['loadableStudyId'] = this.selectedLoadableStudy.id : null;
+      const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_SUCCESS', 'LOADABLE_QUANTITY_SAVED_SUCCESSFULLY', 'LOADABLE_QUANTITY_UPDATE_SUCCESS', 'LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY', 'LOADABLE_QUANTITY_SAVE_ERROR', 'LOADABLE_QUANTITY_SAVE_STATUS_ERROR']).toPromise();
       try {
         const result = await this.loadableQuantityApiService.saveLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id, this.loadableQuantity).toPromise();
         this.newLoadableQuantity.emit(this.loadableQuantity.totalQuantity);
@@ -367,9 +385,9 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getRunningHours() {
     // Auto calculate (Distance/ Speed)
-    this.loadableQuantityForm.get('speedInSz').valid && this.loadableQuantityForm.get('distanceInSummerzone').valid ? 
+    this.loadableQuantityForm.get('speedInSz').valid && this.loadableQuantityForm.get('distanceInSummerzone').valid ?
       (this.loadableQuantityForm.controls['runningHours'].setValue(Number(this.loadableQuantityForm.get('distanceInSummerzone').value) / Number(this.loadableQuantityForm.get('speedInSz').value)),
-      this.getRunningDays()) : (this.loadableQuantityForm.controls['runningHours'].setValue(0) , this.loadableQuantityForm.controls['runningDays'].setValue(0));
+        this.getRunningDays()) : (this.loadableQuantityForm.controls['runningHours'].setValue(0), this.loadableQuantityForm.controls['runningDays'].setValue(0));
   }
 
   /**
@@ -415,18 +433,37 @@ export class LoadableQuantityComponent implements OnInit {
   getSubTotal() {
     let subTotal = 0;
     if (this.caseNo === 1 || this.caseNo === 2) {
-      subTotal = Number(this.loadableQuantityForm.get('dwt').value)
-        + Number(this.loadableQuantityForm.get('safCorrection').value)
-        - Number(this.loadableQuantityForm.get('foOnboard').value) - Number(this.loadableQuantityForm.get('doOnboard').value)
-        - Number(this.loadableQuantityForm.get('freshWaterOnboard').value) - Number(this.loadableQuantityForm.get('boilerWaterOnboard').value)
-        - Number(this.loadableQuantityForm.get('ballast').value) - Number(this.loadableQuantityForm.get('constant').value)
-        - Number(this.loadableQuantityForm.get('others').value);
+      const data:ISubTotal = {
+        dwt: this.loadableQuantityForm.get('dwt').value,
+        sagCorrection:this.loadableQuantityForm.get('safCorrection').value,
+        foOnboard: this.loadableQuantityForm.get('foOnboard').value,
+        doOnboard: this.loadableQuantityForm.get('doOnboard').value,
+        freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
+        boilerWaterOnboard: this.loadableQuantityForm.get('boilerWaterOnboard').value,
+        ballast: this.loadableQuantityForm.get('ballast').value,
+        constant: this.loadableQuantityForm.get('constant').value,
+        others: this.loadableQuantityForm.get('others').value
+      }
+      subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
+
+      
       this.getTotalLoadableQuantity();
     }
     else {
-      subTotal = Number(this.loadableQuantityForm.get('dwt').value) + Number(this.loadableQuantityForm.get('safCorrection').value) + Number(this.loadableQuantityForm.get('sgCorrection').value)
-        - Number(this.loadableQuantityForm.get('foOnboard').value) - Number(this.loadableQuantityForm.get('doOnboard').value) - Number(this.loadableQuantityForm.get('freshWaterOnboard').value) - Number(this.loadableQuantityForm.get('boilerWaterOnboard').value) - Number(this.loadableQuantityForm.get('ballast').value) - Number(this.loadableQuantityForm.get('constant').value) - Number(this.loadableQuantityForm.get('others').value);
+      const data:ISubTotal = {
+        dwt: this.loadableQuantityForm.get('dwt').value,
+        sagCorrection:this.loadableQuantityForm.get('safCorrection').value,
+        sgCorrection:this.loadableQuantityForm.get('sgCorrection').value,
+        foOnboard: this.loadableQuantityForm.get('foOnboard').value,
+        doOnboard: this.loadableQuantityForm.get('doOnboard').value,
+        freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
+        boilerWaterOnboard: this.loadableQuantityForm.get('boilerWaterOnboard').value,
+        ballast: this.loadableQuantityForm.get('ballast').value,
+        constant: this.loadableQuantityForm.get('constant').value,
+        others: this.loadableQuantityForm.get('others').value
+      }
+      subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
       this.getTotalLoadableQuantity();
     }
@@ -449,7 +486,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getTotalLoadableQuantity() {
     if (this.caseNo === 1) {
-      const total = Number(this.loadableQuantityForm.get('subTotal').value) - Number(this.loadableQuantityForm.get('foConsInSz').value);
+      const total = Number(this.loadableQuantityForm.get('subTotal').value) + Number(this.loadableQuantityForm.get('foConsInSz').value);
       if (total < 0) {
         this.isNegative = true;
         this.loadableQuantityForm.controls['totalQuantity'].setValue('');
@@ -515,6 +552,14 @@ export class LoadableQuantityComponent implements OnInit {
    */
   clearFilter(dropdown: Dropdown) {
     dropdown.resetFilter();
-}
+  }
 
+  /**
+   * method for update loadable quantity on port change
+   */
+  onPortChange(event) {
+    this.selectedPort = event.value;
+    this.portRotationId = this.selectedPort?.id;
+    this.getLoadableQuantity();
+  }
 }

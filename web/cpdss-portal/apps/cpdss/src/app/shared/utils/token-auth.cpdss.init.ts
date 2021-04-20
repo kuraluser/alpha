@@ -17,25 +17,25 @@ export function tokenAuthCPDSSInitializer(http: HttpClient, appConfig: AppConfig
             try {
                 if (window.location.search) {
                     const arr = window.location.search.split('&')
-                    let realm = arr[0].split('=')[1];
+                    let realm = window.location.search.indexOf('realm=') >= 0 ? arr[0].split('=')[1] : null;
                     if (realm) {
                         localStorage.setItem('realm', realm);
                     } else if (localStorage.getItem('realm') !== undefined && localStorage.getItem('realm') !== 'undefined' && localStorage.getItem('realm') !== '' && localStorage.getItem('realm') !== null) {
                         realm = localStorage.getItem('realm');
                     }
-                    let imgUri = arr[1].split('=')[1];
+                    let imgUri = window.location.search.indexOf('logoUrl=') >= 0 ? arr[1].split('=')[1] : null;
                     if (imgUri) {
                         localStorage.setItem('companyLogo', imgUri);
                     } else if (localStorage.getItem('companyLogo') !== undefined && localStorage.getItem('companyLogo') !== 'undefined' && localStorage.getItem('companyLogo') !== '' && localStorage.getItem('companyLogo') !== null) {
                         imgUri = localStorage.getItem('companyLogo');
                     }
-                    let token = arr[2].split('=')[1];
+                    let token = window.location.search.indexOf('token=') >= 0 ? arr[2].split('=')[1] : null;
                     if (token) {
                         localStorage.setItem('token', token);
                     } else if (localStorage.getItem('token') !== undefined && localStorage.getItem('token') !== 'undefined' && localStorage.getItem('token') !== '' && localStorage.getItem('token') !== null) {
                         token = localStorage.getItem('token');
                     }
-                    let favicon = arr[3].split('=')[1];
+                    let favicon = window.location.search.indexOf('faviconUrl=') >= 0 ? arr[3].split('=')[1] : null;
                     if (favicon) {
                         localStorage.setItem('favicon', favicon);
                     } else if (localStorage.getItem('favicon') !== undefined && localStorage.getItem('favicon') !== 'undefined' && localStorage.getItem('favicon') !== '' && localStorage.getItem('favicon') !== null) {
@@ -43,7 +43,7 @@ export function tokenAuthCPDSSInitializer(http: HttpClient, appConfig: AppConfig
                     }
                     
                     if (arr[4]) {
-                        let daysRemain = arr[4].split('=')[1];
+                        let daysRemain = window.location.search.indexOf('daysRemain=') >= 0 ? arr[4].split('=')[1] : null;
                         if (daysRemain) {
                             localStorage.setItem('daysRemain', daysRemain);
                         } else if (localStorage.getItem('daysRemain') !== undefined && localStorage.getItem('daysRemain') !== 'undefined' && localStorage.getItem('daysRemain') !== '' && localStorage.getItem('daysRemain') !== null) {
