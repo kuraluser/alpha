@@ -98,7 +98,7 @@ public class KeycloakDynamicConfigResolver implements KeycloakConfigResolver {
   }
 
   /**
-   * Metho to get realm
+   * Method to get realm
    *
    * @return Realm value
    */

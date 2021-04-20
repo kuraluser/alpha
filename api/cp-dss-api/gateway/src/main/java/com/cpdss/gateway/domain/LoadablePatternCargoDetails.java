@@ -18,4 +18,5 @@ public class LoadablePatternCargoDetails {
   private String tankName;
   private Long tankId;
   private String fillingRatio;
+  private String temperature;
 }

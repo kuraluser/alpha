@@ -3,6 +3,7 @@ package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.math.BigDecimal;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -60,4 +61,5 @@ public class LoadableQuantityCommingleCargoDetails {
   private String rdgUllage;
   private String correctionFactor;
   private String slopQuantity;
+  private BigDecimal actualQuantity;
 }
