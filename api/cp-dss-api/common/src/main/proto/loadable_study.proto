@@ -208,6 +208,7 @@ message LoadicatorDataRequest {
 	string processId = 1;
 	repeated LoadicatorPatternDetails loadicatorPatternDetails= 2;
 	int64 loadableStudyId = 3;
+	bool isPattern = 4;
 }
 message LoadicatorDataReply {
 	string processId = 1;
@@ -376,6 +377,7 @@ message LoadablePlanComments {
 	string userName = 2;
 	string dataAndTime = 3;
 	string comment = 4;
+	string createdBy = 5;
 }
 
 message LoadablePlanBallastDetails {
