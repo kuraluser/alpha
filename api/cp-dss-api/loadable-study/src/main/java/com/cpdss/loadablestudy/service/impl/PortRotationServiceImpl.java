@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.service.impl;
 
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.cpdss.loadablestudy.service.PortRotationService;
@@ -30,6 +31,11 @@ public class PortRotationServiceImpl implements PortRotationService {
     List<PortRotationIdAndPortId> id =
         loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(lStudy.getId(), true);
     return id;
+  }
+
+  @Override
+  public LoadableStudyPortRotation findLoadableStudyPortRotationById(Long id) {
+    return loadableStudyPortRotationRepository.findByIdAndIsActive(id, true);
   }
 
   @Override
