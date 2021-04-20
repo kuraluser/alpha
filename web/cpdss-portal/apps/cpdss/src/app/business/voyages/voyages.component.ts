@@ -59,6 +59,8 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
+    this.ngxSpinnerService.show();
+    this.getPagePermission();
     this.permissionStart = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStart'], false);
     this.permissionStop = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStop'], false);
     this.first = 0;
@@ -69,7 +71,6 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     this.columns = this.voyageListTransformationService.getVoyageListDatatableColumns(this.permissionStart, this.permissionStop);
     this.getVoyageLists$.pipe(
       switchMap(() => {
-        this.ngxSpinnerService.show();
         return this.voyageListApiService.getVoyageList(this.vesselId, this.pageState, this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[0]), this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[1]))
       })
     ).subscribe((voyageLIstResponse: IVoyageListResponse) => {
@@ -79,6 +80,16 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     });
     this.pageState = <IDataStateChange>{};
     this.getVoyageLists$.next();
+  }
+
+  
+  /**
+   * Get page permission
+   *
+   * @memberof VoyagesComponent
+   */
+   getPagePermission() {
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyagesComponent']);
   }
 
   /**
@@ -116,7 +127,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
           if (voyage?.cargos?.length) {
             voyage.cargo = voyage.cargos.map(e => e.name).join(", ");
           }
-          voyage.isStart = voyage.status === 'Active' ? false : true;
+          voyage.isStart = voyage.status === 'Active' ? false : (voyage.status === 'Closed' ? false : true);
           voyage.isStop = voyage.status === 'Active' ? true : false;
           return voyage;
         });

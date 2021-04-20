@@ -8,10 +8,14 @@ import { VoyageApiService } from './services/voyage-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageStatus } from './models/voyage-status.model';
 import { VoyageStatusTransformationService } from './services/voyage-status-transformation.service';
-import { QUANTITY_UNIT } from '../../shared/models/common.model';
+
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../shared/services/permissions/permissions.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { IPermission } from '../../shared/models/user-profile.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT  } from '../../shared/models/common.model';
+
 /**
  * Component for voyage status
  */
@@ -35,6 +39,8 @@ export class VoyageStatusComponent implements OnInit {
   voyageStatusResponse: IVoyageStatus;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit') ?? AppConfigurationService.settings.baseUnit;
   VOYAGE_STATUS = VOYAGE_STATUS;
+  newVoyagePermissionContext: IPermissionContext;
+  editPortRotationPermissionContext: IPermissionContext;
 
   get selectedVoyage(): Voyage {
     return this._selectedVoyage;
@@ -54,15 +60,28 @@ export class VoyageStatusComponent implements OnInit {
     public voyageStatusTransformationService: VoyageStatusTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    public portRotationService: PortRotationService) { }
+    public portRotationService: PortRotationService,
+    public permissionsService: PermissionsService) { }
 
   ngOnInit() {
+    this.getPagePermission();
     this.ngxSpinnerService.show();
     this.display = false;
     this.showData = false;
     this.getVesselInfo();
     this.ngxSpinnerService.hide();
   }
+
+  /**
+   * Get page permission
+   *
+   * @memberof VoyageStatusComponent
+   */
+    getPagePermission() {
+      this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']);
+      this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
+      this.editPortRotationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['StatusEditPortRotation'], actions: [PERMISSION_ACTION.VIEW] };
+    }
 
   /**
    * Get vessel details

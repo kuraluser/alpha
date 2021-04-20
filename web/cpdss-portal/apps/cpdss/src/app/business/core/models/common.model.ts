@@ -240,6 +240,7 @@ export interface IPort {
     timezone?: string;
     timezoneOffsetVal?: string;
     timezoneAbbreviation?: string;
+    portOrder?: number;
 }
 
 /**

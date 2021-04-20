@@ -121,7 +121,8 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
       this.totalRecords = roleDetailsRes.totalElements;
       const roles = roleDetailsRes.roles;
       if(this.totalRecords &&  !roles?.length) {
-        this.currentPage -= 1; 
+        this.loading = true;
+        this.currentPage = this.currentPage ? this.currentPage - 1 :  0; 
         this.pageState['page'] =  this.currentPage;
         this.getUserDetails$.next();
       }
@@ -136,7 +137,8 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
    */
   async onDeleteRow(event) {
     const roleId = event.data?.id;
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'USER_ROLE_DELETE_SUMMARY', detail: 'USER_ROLE_DELETE_DETAILS', data: { confirmLabel: 'USER_ROLE_DELETE_CONFIRM_LABEL', rejectLabel: 'USER_ROLE_DELETE_REJECT_LABEL' } });
+    const deleteDetails =  event.data.isUserMapped ? 'USER_MAPPED_ROLE_DELETE_SUMMARY' : 'USER_ROLE_DELETE_DETAILS'
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'USER_ROLE_DELETE_SUMMARY', detail: deleteDetails , data: { confirmLabel: 'USER_ROLE_DELETE_CONFIRM_LABEL', rejectLabel: 'USER_ROLE_DELETE_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
         const translationKeys = await this.translateService.get(['ROLE_DELETE_SUCCESSFULLY', 'ROLE_DELETED_SUCCESS']).toPromise();

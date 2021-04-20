@@ -27,7 +27,7 @@
                 <button class="btn btn-main mr-10" id="edit-port-rotation-popup-cancel" (click)="cancel()">{{
                     'CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
                 <button class="btn btn-main" type="submit" id="edit-port-rotation-popup-submit"
-                    (click)="saveEditPortRotation()">{{
+                    (click)="saveEditPortRotation()" *cpdssPortalPermission="editPortRotationPermissionContext">{{
                     'SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
             </div>
         </div>

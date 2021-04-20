@@ -39,7 +39,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   @Input()
   get loadableStudyList(): LoadableStudy[] { return this._loadableStudyList; }
   set loadableStudyList(loadableStudyList: LoadableStudy[]) {
-    this._loadableStudyList = loadableStudyList;
+    this._loadableStudyList = loadableStudyList.filter(loadable => ![4, 5].includes(loadable?.statusId));
   }
 
   @Input()

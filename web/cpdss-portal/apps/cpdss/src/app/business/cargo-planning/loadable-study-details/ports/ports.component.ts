@@ -154,7 +154,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       }, 500);
     }
     this.portsListSaved = [];
-    this.portsLists.forEach(row => {
+    this.portsLists?.forEach(row => {
       this.portsListSaved.push(JSON.parse(JSON.stringify(row)))
     })
     this.ngxSpinnerService.hide();
@@ -656,6 +656,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       const invalidFormControls = this.findInvalidControlsRecursive(form);
       invalidFormControls.forEach((key) => {
         this.portsLists[i][key].isEditMode = true;
+        this.portsLists[i].isAdd = true;
       });
       this.updateValuesIfBunkering(this.portsLists[i], form, i)
       form.markAllAsTouched();
@@ -743,7 +744,7 @@ export class PortsComponent implements OnInit, OnDestroy {
    * @memberof PortRotationRibbonComponent
    */
   convertDateTimeWithZone(dateTime: Date | string, timeZoneId: number): string{
-    const selectedTimeZone: ITimeZone = this.timeZoneList.find(tz => (tz.id === timeZoneId));
+    const selectedTimeZone: ITimeZone = this.timeZoneList?.find(tz => (tz.id === timeZoneId));
     const formatOptions: IDateTimeFormatOptions = {
       portLocalFormat: true,
       portTimeZoneOffset: selectedTimeZone?.offsetValue,

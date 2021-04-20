@@ -5,7 +5,7 @@
     "CargoNominationComponent" : "CARGOPLANNING_CARGONOMINATION",
     "PortsComponent" : "CARGOPLANNING_PORTS",
     "OnHandQuantityComponent" : "CARGOPLANNING_ONHANDQUANTITITES",
-    "LoadableQuantityComponent" : "LOADABLE_QUANTITY",
+    "LoadableQuantityComponent" : "CARGOPLANNING_LOADABLE_QUANTITY",
     "LoadablePatternHistoryComponent": "CARGOPLANNING_PATTERN_HISTORY",
     "SynopticalComponent": "SYNOPTICAL",
     "AdminComponent": "ADMIN",
@@ -25,5 +25,9 @@
     "OperationsComponent": "OPERATIONS",
     "LoadingComponent": "OPERATIONS_LOADING",
     "DischargingComponent": "OPERATIONS_DISCHARGING",
-    "BunkeringComponent": "OPERATIONS_BUNKERING"
+    "BunkeringComponent": "OPERATIONS_BUNKERING",
+    "OnBoardQuantityComponent": "CARGOPLANNING_ONBOARDQUANTITIES",
+    "NewVoyage": "STATUS_NEW_VOYAGE",
+    "CargoCommingle": "CARGO_NOMINATION_COMMINGLE",
+    "StatusEditPortRotation": "STATUS_EDIT_PORT_ROTAION"
 }

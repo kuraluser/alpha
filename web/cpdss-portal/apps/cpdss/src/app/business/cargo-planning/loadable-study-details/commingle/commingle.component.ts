@@ -105,8 +105,8 @@ export class CommingleComponent implements OnInit {
  * @memberof CommingleComponent
  */
   ngOnInit() {
-    this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT] };
-    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], true);
+    this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoCommingle'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT] };
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoCommingle'], true);
     this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 50, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
     this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.createVolumeMaximisationFormGroup();
@@ -139,7 +139,7 @@ export class CommingleComponent implements OnInit {
         return {...this.cargos.find((item) => (item.id === itm.cargoId) && item),
         ...itm}
       });
-      this.disableAddNewBtn = (this.cargoNominationsCargo.length <=2 && this.commingleCargo.cargoGroups.length <=2) ? true : false;
+      this.disableAddNewBtn = (this.cargoNominationsCargo.length <=2 && this.commingleCargo?.cargoGroups?.length <=2) ? true : false;
       this.cargoNominationsCargo1 = this.cargoNominationsCargo;
       this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo;

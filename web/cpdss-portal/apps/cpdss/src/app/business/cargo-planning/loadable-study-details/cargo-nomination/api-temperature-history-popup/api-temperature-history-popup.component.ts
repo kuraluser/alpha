@@ -6,12 +6,10 @@ import { PermissionsService } from './../../../../../shared/services/permissions
 import { AppConfigurationService } from './../../../../../shared/services/app-configuration/app-configuration.service';
 import { LoadableStudyDetailsApiService } from '../../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
-import { TimeZoneTransformationService } from './../../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 import { IPermission } from './../../../../../shared/models/user-profile.model';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
 import { IApiTempPortHistory, IApiTempMonthWiseHistory, IApiTempPopupData, ICargoApiTempHistoryResponse, IMonths } from '../../../models/cargo-planning.model';
-import { IDateTimeFormatOptions } from './../../../../../shared/models/common.model';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -71,7 +69,6 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     private fb: FormBuilder,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
-    private timeZoneTransformationService: TimeZoneTransformationService,
     private userPermissionService: PermissionsService,
     private ngxSpinnerService: NgxSpinnerService
   ) { }
@@ -92,11 +89,10 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     if (cargoApiTempHistoryDetails.responseStatus.status === '200') {
       const responsePortHistory: IApiTempPortHistory[] = cargoApiTempHistoryDetails.portHistory;
       if (responsePortHistory?.length) {
-      const dateFormatOptions: IDateTimeFormatOptions = { utcFormat: true };
       const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo];
         this.apiTempHistoryData = responsePortHistory.map(historyObj => {
           const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId);
-          const formattedDate = this.timeZoneTransformationService.formatDateTime(historyObj.loadedDate, dateFormatOptions).split('00:00 ').join('');
+          const formattedDate = historyObj.loadedDate.split(' ')[0];
           return Object.assign(historyObj, { loadingPortName: loadingPort?.name, loadedDate: formattedDate });
         });
       } else {
@@ -151,7 +147,6 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
         this.monthWiseGridColData = groupedByYear;
       }
     }
-    this.hideMonthWiseGrid = false;
   }
 
   /**
@@ -206,6 +201,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     this.filteredMonthwiseHistory = [];
     this.monthWithPreccedingSucceedingArr = [];
     this.uniqueYears = [];
+    this.hideMonthWiseGrid = true;
     this.visible = false;
     this.visibleChange.emit(this.visible);
   }
