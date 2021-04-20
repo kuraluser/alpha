@@ -206,10 +206,8 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
-import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -307,7 +305,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired private AlgoErrorsRepository algoErrorsRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
-  
+
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
@@ -339,6 +337,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private JsonDataRepository jsonDataRepository;
   @Autowired private JsonTypeRepository jsonTypeRepository;
+  @Autowired LoadablePlanService loadablePlanService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -347,7 +346,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String COMMINGLE = "COM";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
-  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm"; 
+  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
@@ -1411,7 +1410,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<Long> existingCargoPortIds) {
 
     Long portId = null;
-    if (existingCargoPortIds != null && existingCargoPortIds.size()>0) {
+    if (existingCargoPortIds != null && existingCargoPortIds.size() > 0) {
       portId = existingCargoPortIds.stream().findFirst().get();
     }
 
@@ -1702,22 +1701,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         builder.addLoadingPortDetails(loadingPortDetailBuilder);
                       });
             }
-            
+
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
-            	CargoNominationPortDetails cargoNominationPortDetail = cargoNomination.getCargoNominationPortDetails().iterator().next();
-            	if(cargoNomination.getCargoXId() != null && cargoNominationPortDetail.getPortId() != null) {
-            		
-                   	List<ApiTempHistory> apiTempHistories = apiTempHistoryRepository.
-                   			findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(cargoNominationPortDetail.getPortId(), cargoNomination.getCargoXId() , true);
-                	if(!CollectionUtils.isEmpty(apiTempHistories)) {
-                		ApiTempHistory apiTempHistory = apiTempHistories.get(0);
-                		Optional.ofNullable(apiTempHistory.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                		Optional.ofNullable(apiTempHistory.getTemp()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                	}else {
-                    	Optional.ofNullable(cargoNomination.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                		Optional.ofNullable(cargoNomination.getTemperature()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                    }
-            	}
+              CargoNominationPortDetails cargoNominationPortDetail =
+                  cargoNomination.getCargoNominationPortDetails().iterator().next();
+              if (cargoNomination.getCargoXId() != null
+                  && cargoNominationPortDetail.getPortId() != null) {
+
+                List<ApiTempHistory> apiTempHistories =
+                    apiTempHistoryRepository
+                        .findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
+                            cargoNominationPortDetail.getPortId(),
+                            cargoNomination.getCargoXId(),
+                            true);
+                if (!CollectionUtils.isEmpty(apiTempHistories)) {
+                  ApiTempHistory apiTempHistory = apiTempHistories.get(0);
+                  Optional.ofNullable(apiTempHistory.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(apiTempHistory.getTemp())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                } else {
+                  Optional.ofNullable(cargoNomination.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(cargoNomination.getTemperature())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                }
+              }
             }
             Optional.ofNullable(cargoNomination.getMaxTolerance())
                 .ifPresent(maxTolerance -> builder.setMaxTolerance(String.valueOf(maxTolerance)));
@@ -3620,12 +3629,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanQuantity> loadablePlanQuantities =
                   loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              LoadablePlanBuilder.buildLoadablePlanQuantity(
+              loadablePlanService.buildLoadablePlanQuantity(
                   loadablePlanQuantities, loadablePatternBuilder);
               List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
                   loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              LoadablePlanBuilder.buildLoadablePlanCommingleDetails(
+              loadablePlanService.buildLoadablePlanCommingleDetails(
                   loadablePlanCommingleDetails, loadablePatternBuilder);
               List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
                   loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
@@ -3633,7 +3642,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanStowageDetailsTemp> ballstTempList =
                   this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
                       loadablePlanBallastDetails, true);
-              LoadablePlanBuilder.buildBallastGridDetails(
+              loadablePlanService.buildBallastGridDetails(
                   loadablePlanBallastDetails, ballstTempList, loadablePatternBuilder);
               // <--DSS-2016!-->
 
@@ -7391,7 +7400,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
-          LoadablePlanBuilder.setTempBallastDetails(lpbd, ballstTempList, builder);
+          loadablePlanService.setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
   }
