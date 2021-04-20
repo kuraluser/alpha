@@ -3551,6 +3551,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
     Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+    Optional.ofNullable(lqccd.getActualQuantity())
+        .ifPresent(item -> builder.setActualQuantity(valueOf(item)));
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -4665,13 +4667,15 @@ public class LoadableStudyService {
           voyageStatusResponse.setCargoQuantities(synopticalRecord.get().getCargos());
           // group on-board-quantities by cargo for Cargo conditions
           List<Cargo> cargoConditions = new ArrayList<>();
+
           synopticalRecord.get().getCargos().stream()
+              .filter(cargo -> !cargo.getIsCommingleCargo())
               .collect(
                   Collectors.groupingBy(
                       synopticalCargoRecord ->
-                          synopticalCargoRecord.getCargoId() != null
-                              ? synopticalCargoRecord.getCargoId()
-                              : Long.valueOf("0"),
+                          synopticalCargoRecord.getAbbreviation() != null
+                              ? synopticalCargoRecord.getAbbreviation()
+                              : "",
                       Collectors.collectingAndThen(
                           Collectors.reducing(
                               (index, accum) ->
@@ -4687,7 +4691,46 @@ public class LoadableStudyService {
                                       index.getCorrectedUllage(),
                                       index.getApi(),
                                       index.getSg(),
-                                      index.getIsCommingleCargo())),
+                                      index.getIsCommingleCargo(),
+                                      index.getGrade())),
+                          Optional::get)))
+              .forEach(
+                  (id, synopticalCargoRecord) -> {
+                    if (synopticalCargoRecord.getCargoId() != null) {
+                      Cargo cargo = new Cargo();
+                      cargo.setAbbreviation(synopticalCargoRecord.getAbbreviation());
+                      cargo.setId(synopticalCargoRecord.getCargoId());
+                      cargo.setPlannedWeight(synopticalCargoRecord.getPlannedWeight());
+                      cargo.setActualWeight(synopticalCargoRecord.getActualWeight());
+                      cargoConditions.add(cargo);
+                    }
+                  });
+
+          synopticalRecord.get().getCargos().stream()
+              .filter(cargo -> cargo.getIsCommingleCargo())
+              .collect(
+                  Collectors.groupingBy(
+                      synopticalCargoRecord ->
+                          synopticalCargoRecord.getGrade() != null
+                              ? synopticalCargoRecord.getGrade()
+                              : "",
+                      Collectors.collectingAndThen(
+                          Collectors.reducing(
+                              (index, accum) ->
+                                  new SynopticalCargoBallastRecord(
+                                      index.getTankId(),
+                                      index.getTankName(),
+                                      index.getActualWeight().add(accum.getActualWeight()),
+                                      index.getPlannedWeight().add(accum.getPlannedWeight()),
+                                      index.getCapacity(),
+                                      index.getAbbreviation(),
+                                      index.getCargoId(),
+                                      index.getColorCode(),
+                                      index.getCorrectedUllage(),
+                                      index.getApi(),
+                                      index.getSg(),
+                                      index.getIsCommingleCargo(),
+                                      index.getGrade())),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {

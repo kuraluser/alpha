@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -126,5 +127,5 @@ public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
   private Long portRotationXid;
 
   @Column(name = "actual_quantity")
-  private Long actualQuantity;
+  private BigDecimal actualQuantity;
 }

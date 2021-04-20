@@ -450,6 +450,7 @@ message LoadableQuantityCommingleCargoDetails {
  	 string rdgUllage = 27;
      string correctionFactor = 28;
       string slopQuantity = 29;
+     string actualQuantity=30;
 }
 
 message LoadableQuantityCargoDetails {
