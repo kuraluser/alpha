@@ -131,6 +131,7 @@ import com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest;
 import com.cpdss.loadablestudy.domain.LoadicatorAlgoResponse;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetails;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetailsResults;
+import com.cpdss.loadablestudy.domain.LoadicatorResultDetails;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.domain.UllageUpdateRequest;
@@ -206,6 +207,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -337,7 +339,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private JsonDataRepository jsonDataRepository;
   @Autowired private JsonTypeRepository jsonTypeRepository;
-  @Autowired LoadablePlanService loadablePlanService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -474,6 +475,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private static final Long CLOSE_VOYAGE_STATUS = 2L;
   private static final Long OPEN_VOYAGE_STATUS = 1L;
+
+  private static final String DEFAULT_USER_NAME = "UNKNOWN";
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -2956,7 +2959,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
+        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -3629,12 +3632,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanQuantity> loadablePlanQuantities =
                   loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              loadablePlanService.buildLoadablePlanQuantity(
+              LoadablePlanBuilder.buildLoadablePlanQuantity(
                   loadablePlanQuantities, loadablePatternBuilder);
               List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
                   loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              loadablePlanService.buildLoadablePlanCommingleDetails(
+              LoadablePlanBuilder.buildLoadablePlanCommingleDetails(
                   loadablePlanCommingleDetails, loadablePatternBuilder);
               List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
                   loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
@@ -3642,7 +3645,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanStowageDetailsTemp> ballstTempList =
                   this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
                       loadablePlanBallastDetails, true);
-              loadablePlanService.buildBallastGridDetails(
+              LoadablePlanBuilder.buildBallastGridDetails(
                   loadablePlanBallastDetails, ballstTempList, loadablePatternBuilder);
               // <--DSS-2016!-->
 
@@ -4756,7 +4759,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
+        //         this.saveLoadicatorInfo(
+        //             loadablePatternOpt.get().getLoadableStudy(),
+        //             request.getProcesssId(),
+        //             request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -4980,12 +4986,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.buildLoadicatorUrlRequest(request, loadicator);
       ObjectMapper objectMapper = new ObjectMapper();
 
-      objectMapper.writeValue(
-          new File(this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
-          loadicator);
+      if (request.getIsPattern()) {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_pattern_"
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
+                    + ".json"),
+            loadicator);
+      } else {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+            loadicator);
+      }
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
-      this.saveloadicatorDataForSynopticalTable(algoResponse);
+      this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
           LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
           algoResponse.getProcessId(),
@@ -5016,7 +5033,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    *
    * @param algoResponse
    */
-  private void saveloadicatorDataForSynopticalTable(LoadicatorAlgoResponse algoResponse) {
+  private void saveloadicatorDataForSynopticalTable(
+      LoadicatorAlgoResponse algoResponse, Boolean isPattern) {
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
     for (LoadicatorPatternDetailsResults patternDetails :
         algoResponse.getLoadicatorResultsPatternWise()) {
@@ -5024,36 +5042,52 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .getLoadicatorResultDetails()
           .forEach(
               result -> {
-                SynopticalTableLoadicatorData entity = new SynopticalTableLoadicatorData();
-                entity.setLoadablePatternId(patternDetails.getLoadablePatternId());
-                entity.setSynopticalTable(
-                    this.synopticalTableRepository.getOne(result.getSynopticalId()));
-                entity.setActive(true);
-                entity.setBlindSector(
-                    isEmpty(result.getDeflection())
-                        ? null
-                        : new BigDecimal(result.getDeflection()));
-                entity.setCalculatedDraftAftPlanned(
-                    isEmpty(result.getCalculatedDraftAftPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedDraftAftPlanned()));
-                entity.setCalculatedDraftFwdPlanned(
-                    isEmpty(result.getCalculatedDraftFwdPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
-                entity.setCalculatedDraftMidPlanned(
-                    isEmpty(result.getCalculatedDraftMidPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedDraftMidPlanned()));
-                entity.setCalculatedTrimPlanned(
-                    isEmpty(result.getCalculatedTrimPlanned())
-                        ? null
-                        : new BigDecimal(result.getCalculatedTrimPlanned()));
-                entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
-                entities.add(entity);
+                if (isPattern) {
+                  this.synopticalTableLoadicatorDataRepository
+                      .deleteBySynopticalTableAndLoadablePatternId(
+                          this.synopticalTableRepository.getOne(result.getSynopticalId()),
+                          patternDetails.getLoadablePatternId());
+                }
+                entities.add(
+                    this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
               });
     }
     this.synopticalTableLoadicatorDataRepository.saveAll(entities);
+  }
+
+  /**
+   * Create SynopticalTableLoadicatorData entities
+   *
+   * @param patternDetails
+   * @param result
+   * @return SynopticalTableLoadicatorData
+   */
+  private SynopticalTableLoadicatorData createSynopticalTableLoadicatorDataEntity(
+      LoadicatorPatternDetailsResults patternDetails, LoadicatorResultDetails result) {
+    SynopticalTableLoadicatorData entity = new SynopticalTableLoadicatorData();
+    entity.setLoadablePatternId(patternDetails.getLoadablePatternId());
+    entity.setSynopticalTable(this.synopticalTableRepository.getOne(result.getSynopticalId()));
+    entity.setActive(true);
+    entity.setBlindSector(
+        isEmpty(result.getDeflection()) ? null : new BigDecimal(result.getDeflection()));
+    entity.setCalculatedDraftAftPlanned(
+        isEmpty(result.getCalculatedDraftAftPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftAftPlanned()));
+    entity.setCalculatedDraftFwdPlanned(
+        isEmpty(result.getCalculatedDraftFwdPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
+    entity.setCalculatedDraftMidPlanned(
+        isEmpty(result.getCalculatedDraftMidPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftMidPlanned()));
+    entity.setCalculatedTrimPlanned(
+        isEmpty(result.getCalculatedTrimPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedTrimPlanned()));
+    entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    return entity;
   }
 
   /**
@@ -5064,18 +5098,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator) {
     loadicator.setProcessId(request.getProcessId());
     loadicator.setLoadicatorPatternDetails(new ArrayList<>());
-    request
-        .getLoadicatorPatternDetailsList()
-        .forEach(
-            patternDetails -> {
-              LoadicatorPatternDetails patterns = new LoadicatorPatternDetails();
-              patterns.setLoadablePatternId(patternDetails.getLoadablePatternId());
-              patterns.setLdTrim(this.createLdTrim(patternDetails.getLDtrimList()));
-              patterns.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
-              patterns.setLdIntactStability(
-                  this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
-              loadicator.getLoadicatorPatternDetails().add(patterns);
-            });
+    if (request.getIsPattern()) {
+      com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails patternDetails =
+          request.getLoadicatorPatternDetails(0);
+      LoadicatorPatternDetails pattern = new LoadicatorPatternDetails();
+      pattern.setLoadablePatternId(patternDetails.getLoadablePatternId());
+      pattern.setLdTrim(this.createLdTrim(patternDetails.getLDtrimList()));
+      pattern.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
+      pattern.setLdIntactStability(
+          this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+      loadicator.setLoadicatorPatternDetail(pattern);
+    } else {
+      request
+          .getLoadicatorPatternDetailsList()
+          .forEach(
+              patternDetails -> {
+                LoadicatorPatternDetails patterns = new LoadicatorPatternDetails();
+                patterns.setLoadablePatternId(patternDetails.getLoadablePatternId());
+                patterns.setLdTrim(this.createLdTrim(patternDetails.getLDtrimList()));
+                patterns.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
+                patterns.setLdIntactStability(
+                    this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+                loadicator.getLoadicatorPatternDetails().add(patterns);
+              });
+    }
   }
 
   /**
@@ -7363,10 +7409,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               com.cpdss.common.generated.LoadableStudy.LoadablePlanComments.newBuilder();
           Optional.ofNullable(lpc.getId()).ifPresent(builder::setId);
           Optional.ofNullable(lpc.getComments()).ifPresent(builder::setComment);
+          Optional.ofNullable(lpc.getCreatedBy()).ifPresent(builder::setCreatedBy);
           Optional.ofNullable(
                   DateTimeFormatter.ofPattern(DATE_FORMAT).format(lpc.getCreatedDateTime()))
               .ifPresent(builder::setDataAndTime);
-          builder.setUserName("Uttam Kumar"); // ToDo - replace it with the value taken from cache
+          // Username set at gateway as Keycloack is at gateway layer
+          builder.setUserName(
+              DEFAULT_USER_NAME); // ToDo - replace it with the value taken from cache
           replyBuilder.addLoadablePlanComments(builder);
         });
   }
@@ -7400,7 +7449,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
-          loadablePlanService.setTempBallastDetails(lpbd, ballstTempList, builder);
+          LoadablePlanBuilder.setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
   }
@@ -8346,7 +8395,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       entity.setCreatedBy(Long.toString(request.getUser()));
 
       entity.setIsActive(true);
-      entity = this.loadablePlanCommentsRepository.save(entity);
+      this.loadablePlanCommentsRepository.save(entity);
 
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
@@ -8415,11 +8464,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param loadableStudyEntity
    * @param processId
    */
-  public void saveLoadicatorInfo(LoadableStudy loadableStudyEntity, String processId) {
+  public void saveLoadicatorInfo(
+      LoadableStudy loadableStudyEntity, String processId, Long patternId) {
     LoadicatorRequest.Builder loadicatorRequestBuilder = LoadicatorRequest.newBuilder();
     try {
-      List<LoadablePattern> loadablePatterns =
-          this.loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+      List<LoadablePattern> loadablePatterns = null;
+      if (patternId == 0) {
+        loadablePatterns =
+            this.loadablePatternRepository.findByLoadableStudyAndIsActive(
+                loadableStudyEntity, true);
+        loadicatorRequestBuilder.setIsPattern(false);
+      } else {
+        Optional<LoadablePattern> lpOpt =
+            this.loadablePatternRepository.findByIdAndIsActive(patternId, true);
+        loadablePatterns =
+            lpOpt.isPresent() ? new ArrayList<LoadablePattern>(Arrays.asList(lpOpt.get())) : null;
+        loadicatorRequestBuilder.setIsPattern(true);
+      }
       if (null == loadablePatterns) {
         throw new GenericServiceException(
             "No loadable patterns found for this loadable study",
@@ -8541,7 +8602,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(stowagePlanBuilder::setProvisionalConstant);
     Optional.ofNullable(vessel.getDeadweightConstant())
         .ifPresent(stowagePlanBuilder::setDeadweightConstant);
-    stowagePlanBuilder.setPortId(synopticalEntity.getLoadableStudyPortRotation().getId());
+    stowagePlanBuilder.setPortId(synopticalEntity.getLoadableStudyPortRotation().getPortXId());
     stowagePlanBuilder.setStowageId(pattern.getId());
     stowagePlanBuilder.setStatus(STOWAGE_STATUS);
     stowagePlanBuilder.setBookingListId(loadableStudyEntity.getId());
@@ -8550,7 +8611,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .filter(
                 port ->
                     Long.valueOf(port.getId())
-                        .equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
+                        .equals(synopticalEntity.getLoadableStudyPortRotation().getPortXId()))
             .findAny();
     if (portDetail.isPresent()) {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);

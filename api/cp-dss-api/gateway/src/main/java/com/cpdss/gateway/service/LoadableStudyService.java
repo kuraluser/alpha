@@ -1560,9 +1560,6 @@ public class LoadableStudyService {
                       loadablePatternCargoDetail -> {
                         LoadablePatternCargoDetails loadablePatternCargoDetails =
                             new LoadablePatternCargoDetails();
-
-                        // Optional.ofNullable(loadablePatternCargoDetail.get)
-
                         Optional.ofNullable(loadablePatternCargoDetail.getPriority())
                             .ifPresent(
                                 priority -> loadablePatternCargoDetails.setPriority(priority));
@@ -1610,9 +1607,6 @@ public class LoadableStudyService {
 
                         Optional.ofNullable(loadablePatternCargoDetail.getApi())
                             .ifPresent(api -> loadablePatternCargoDetails.setApi(api));
-
-                        Optional.ofNullable(loadablePatternCargoDetail.getTemperature())
-                            .ifPresent(var -> loadablePatternCargoDetails.setTemperature(var));
 
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
@@ -1704,13 +1698,7 @@ public class LoadableStudyService {
               cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
               // Dummy value till actual from Alog
               cargoDetails.setTimeRequiredForLoading("0");
-              if (!lqcd.getLoadingPortsList().isEmpty()) {
-                List portNames =
-                    lqcd.getLoadingPortsList().stream()
-                        .map(var -> var.getName())
-                        .collect(Collectors.toList());
-                cargoDetails.setLoadingPorts(portNames);
-              }
+              cargoDetails.setLoadingPorts(Arrays.asList("x"));
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
@@ -2575,9 +2563,6 @@ public class LoadableStudyService {
       dto.setTankName(detail.getTankName());
       dto.setApi(
           isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
-
-      // add Temperature
-
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
@@ -3175,10 +3160,6 @@ public class LoadableStudyService {
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       rec.setIsCommingleCargo(
           isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
-      rec.setTemperature(
-          isEmpty(protoRec.getTemperature())
-              ? BigDecimal.ZERO
-              : new BigDecimal(protoRec.getTemperature()));
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -3537,8 +3518,6 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
-    Optional.ofNullable(lpqcd.getCargoNominationId())
-        .ifPresent(qunatityBuilder::setCargoNominationId);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -4708,8 +4687,7 @@ public class LoadableStudyService {
                                       index.getCorrectedUllage(),
                                       index.getApi(),
                                       index.getSg(),
-                                      index.getIsCommingleCargo(),
-                                      index.getTemperature())),
+                                      index.getIsCommingleCargo())),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {
