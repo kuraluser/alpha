@@ -1619,7 +1619,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<CargoNomination> cargoNominationList =
           this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
               request.getLoadableStudyId(), true);
-      buildCargoNominationReply(cargoNominationList, replyBuilder);
+      
+      List<ApiTempHistory> apiTempHistories = apiTempHistoryRepository.findByOrderByCreatedDateTimeDesc();
+      
+      buildCargoNominationReply(cargoNominationList, apiTempHistories, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
@@ -1674,6 +1677,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private void buildCargoNominationReply(
       List<CargoNomination> cargoNominationList,
+      List<ApiTempHistory> apiTempHistoriesAll, 
       com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder
           cargoNominationReplyBuilder) {
     if (!CollectionUtils.isEmpty(cargoNominationList)) {
@@ -1739,6 +1743,42 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             Optional.ofNullable(cargoNomination.getSegregationXId())
                 .ifPresent(builder::setSegregationId);
             cargoNominationReplyBuilder.addCargoNominations(builder);
+            
+            
+            if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
+            	
+            	
+            	apiTempHistoriesAll.forEach(apiTempHistory->{
+            		
+            		 CargoHistoryDetail.Builder cargoBuilder = CargoHistoryDetail.newBuilder();
+            		
+            		 Optional.ofNullable(apiTempHistory.getCargoId())
+                     		.ifPresent(cargoBuilder::setCargoId);
+            		 
+            		 Optional.ofNullable(apiTempHistory.getVesselId())
+              			.ifPresent(cargoBuilder::setVesselId);
+            		 
+            		 Optional.ofNullable(apiTempHistory.getLoadingPortId())
+           				.ifPresent(cargoBuilder::setLoadingPortId);
+            		 
+            		 if(apiTempHistory.getApi() != null) {
+            			 Optional.ofNullable(apiTempHistory.getApi().toString())
+            				.ifPresent(cargoBuilder::setApi); 
+            		 }
+            		 
+            		
+            		 if(apiTempHistory.getTemp() != null) {
+            			 Optional.ofNullable(apiTempHistory.getTemp().toString())
+         				.ifPresent(cargoBuilder::setTemperature);
+            		 }
+            		
+            		
+            		 cargoNominationReplyBuilder.addCargoHistory(cargoBuilder);
+            	});
+            	
+            	
+            }
+            
           });
     }
   }
