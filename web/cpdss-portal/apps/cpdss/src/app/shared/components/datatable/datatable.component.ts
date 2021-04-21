@@ -538,7 +538,7 @@ export class DatatableComponent implements OnInit {
           _option = {
             id: DATATABLE_ACTION.DUPLICATE,
             label: label,
-            icon: 'duplicate-icon',
+            icon: 'action-btn pi pi-clone',
             command: () => {
               this.onDuplicate();
             }

@@ -576,8 +576,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       quantity: this.fb.control({ value: Number(cargoNomination.quantity.value), disabled: true }),
       api: this.fb.control(cargoNomination.api.value, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
       temperature: this.fb.control(cargoNomination.temperature.value, [Validators.required, numberValidator(2, 3)]),
-      minTolerance: this.fb.control(cargoNomination.minTolerance.value, [Validators.required, Validators.max(0), Validators.min(-25)]),
-      maxTolerance: this.fb.control(cargoNomination.maxTolerance.value, [Validators.required, Validators.max(25), Validators.min(0)]),
+      minTolerance: this.fb.control(cargoNomination.minTolerance.value, [Validators.required, Validators.max(0), Validators.min(-25), numberValidator(2, 2)]),
+      maxTolerance: this.fb.control(cargoNomination.maxTolerance.value, [Validators.required, Validators.max(25), Validators.min(0), numberValidator(2, 2)]),
       segregation: this.fb.control(cargoNomination.segregation.value, Validators.required),
     });
   }

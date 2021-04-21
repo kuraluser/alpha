@@ -29,6 +29,7 @@ import { DraftConditionComponent } from './draft-condition/draft-condition.compo
 import { ListConditionComponent } from './list-condition/list-condition.component';
 import { TrimConditionComponent } from './trim-condition/trim-condition.component';
 import { TooltipModule } from 'primeng/tooltip';
+import { PermissionDirectiveModule } from '../../shared/directives/permission/permission-directive.module';
 
 /**
  * Module for new voyage-status
@@ -56,7 +57,8 @@ import { TooltipModule } from 'primeng/tooltip';
     TooltipModule,
     PortRotationRibbonModule,
     NewVoyagePopupModule,
-    EditPortRotationPopupModule
+    EditPortRotationPopupModule,
+    PermissionDirectiveModule
   ],
   providers: [
     VoyageApiService,

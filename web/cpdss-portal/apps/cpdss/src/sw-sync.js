@@ -379,12 +379,14 @@
       const syncView = await syncResponse.json();
       if (syncView.responseStatus.status === '200') { 
         if (syncView.loadableStudyStatusId === 12) {
+          clearInterval(timer);
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-validation-success';
           sync.statusId = syncView.loadableStudyStatusId;
           notifyClients(sync);
         } else if (syncView.loadableStudyStatusId === 13) {
+          clearInterval(timer);
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-validation-failed';

@@ -31,7 +31,6 @@ export class NewVoyagePopupComponent implements OnInit {
   newVoyageModel!: NewVoyageModel;
   isLoading: boolean;
   isSubmitted: boolean;
-  isExisting = false;
   errorMessages: any;
   date: Date;
   globalTimeZones: ITimeZone[];
@@ -103,7 +102,7 @@ export class NewVoyagePopupComponent implements OnInit {
     }
     catch (error) {
       if (error.error.errorCode === 'ERR-RICO-100') {
-        this.isExisting = true;
+        this.newVoyageForm.controls['voyageNo'].setErrors({'duplicate': true});
         this.messageService.add({ severity: 'error', summary: translationKeys['VOYAGE_CREATE_ERROR'], detail: translationKeys['VOYAGE_ALREADY_EXIST'] });
       }
       this.ngxSpinnerService.hide();
@@ -146,6 +145,7 @@ export class NewVoyagePopupComponent implements OnInit {
    */
   trimVoyageNo() {
     this.newVoyageForm.controls['voyageNo'].setValue((this.newVoyageForm.get('voyageNo').value).trim());
+    this.newVoyageForm.controls['voyageNo'].setErrors(null);
   }
 
   /**

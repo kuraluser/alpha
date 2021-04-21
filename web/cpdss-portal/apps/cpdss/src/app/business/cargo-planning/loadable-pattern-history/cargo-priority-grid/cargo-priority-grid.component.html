@@ -15,8 +15,8 @@
                             [ngClass]="rowData?.isCommingle ? 'commingle' : ''"
                             [ngStyle]="!rowData?.isCommingle && {'background': rowData?.cargoColor}">{{rowData[col.field]}}</span>
                         <span *ngIf="col.field === 'quantity'">{{rowData[col.field].toFixed(2)}}</span>
-                        <span class="badge-custom" *ngIf="col.field === 'difference'"
-                            [ngClass]="(rowData?.quantity - rowData?.orderedQuantity) >= 0 ? 'success' : 'error'">
+                        <span  *ngIf="col.field === 'difference'"
+                            [ngClass]="(rowData?.quantity - rowData?.orderedQuantity) !== 0 ? ((rowData?.quantity - rowData?.orderedQuantity) > 0 ? 'badge-custom success' : 'badge-custom error') : ''">
                             {{(rowData?.quantity - rowData?.orderedQuantity).toFixed(2)}}
                         </span>
                     </td>
@@ -27,7 +27,7 @@
                     <td *ngIf="showTotalDifference"></td>
                     <td>{{totalHeader | translate}}</td>
                     <td>{{totalQuantity.toFixed(2)}}</td>
-                    <td *ngIf="showTotalDifference"><span class="badge-custom"  [ngClass]="totalDifference >= 0 ? 'success' : 'error'">
+                    <td *ngIf="showTotalDifference"><span  [ngClass]="totalDifference !== 0 ? (totalDifference > 0 ? 'badge-custom success' : 'badge-custom error') : ''">
                             {{totalDifference.toFixed(2)}} </span></td>
                 </tr>
             </ng-template>

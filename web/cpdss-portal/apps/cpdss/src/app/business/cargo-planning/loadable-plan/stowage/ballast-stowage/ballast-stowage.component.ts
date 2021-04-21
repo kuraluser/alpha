@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { NgxSpinnerService } from 'ngx-spinner';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 
 import { IBallastStowageDetails } from '../../../../core/models/common.model';
 import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
@@ -103,7 +105,9 @@ export class BallastStowageComponent implements OnInit {
     private loadablePlanTransformationService: LoadablePlanTransformationService,
     private fb: FormBuilder,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadablePlanApiService: LoadablePlanApiService) { }
+    private loadablePlanApiService: LoadablePlanApiService,
+    private translateService: TranslateService,
+    private messageService: MessageService) { }
 
   /**
    * Component lifecycle ngOnit
@@ -150,9 +154,15 @@ export class BallastStowageComponent implements OnInit {
    * @param {IPortsEvent} event
    * @memberof BallastStowageComponent
   */
-  public cancelStowageEdit() {
-    this.buttonStatus = 0;
-    this.editMode = null;
+  async cancelStowageEdit() {
+    if(this.ballastForm.valid) {
+      this.buttonStatus = 0;
+      this.editMode = null;
+    } else {
+      const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST','LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST'] });
+    }
+    
   }
 
   /**
@@ -189,7 +199,7 @@ export class BallastStowageComponent implements OnInit {
   * enable or disable commnets popup
   *
   * @param {boolean} status
-  * @memberof StowageComponent
+  * @memberof BallastStowageComponent
   */
   commentsPopup(status: boolean) {
     this.validateAndSave.emit(true);
@@ -199,7 +209,7 @@ export class BallastStowageComponent implements OnInit {
   /**
   * view algo error message
   *
-  * @memberof StowageComponent
+  * @memberof BallastStowageComponent
   */
    public viewError() {
     this.viewErrorMessage.emit(true);

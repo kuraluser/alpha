@@ -27,7 +27,8 @@ export interface ILoadablePlanResponse {
     caseNumber: string,
     loadableStudyStatusId: number;
     loadablePatternStatusId: number,
-    voyageStatusId: number
+    voyageStatusId: number,
+    validated: boolean;
 }
 
 

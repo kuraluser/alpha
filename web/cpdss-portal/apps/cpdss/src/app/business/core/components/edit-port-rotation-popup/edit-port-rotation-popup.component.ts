@@ -6,6 +6,8 @@ import { IEditPortRotationModel, Voyage } from '../../models/common.model';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { IPortList, IPortsDetailsResponse } from '../../models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT  } from '../../../../shared/models/common.model';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component class of EditPortRotation
@@ -34,6 +36,7 @@ export class EditPortRotationPopupComponent implements OnInit {
   isFutureDate = true;
   voyageName: string;
   isPortVisited = false;
+  editPortRotationPermissionContext: IPermissionContext;
 
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private editPortRotationApiService: PortRotationService,
@@ -47,6 +50,7 @@ export class EditPortRotationPopupComponent implements OnInit {
    * @memberof EditPortRotationPopupComponent
    */
   async ngOnInit(): Promise<void> {
+    this.getPermission();
     this.showPopUp = true;
     this.ngxSpinnerService.show();
     this.voyageName = this.voyageDetails?.voyageNo;
@@ -60,8 +64,16 @@ export class EditPortRotationPopupComponent implements OnInit {
     }));
     this.portListOriginal = JSON.parse(JSON.stringify(this.portList));
     this.ngxSpinnerService.hide();
-
   }
+
+  /**
+   * permission details
+   * @memberof VoyageStatusComponent
+   */
+  getPermission() {
+    this.editPortRotationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['StatusEditPortRotation'], actions: [PERMISSION_ACTION.VIEW , PERMISSION_ACTION.EDIT] };
+  }
+
   /**
    * Save edit port rotaion
    */

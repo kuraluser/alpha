@@ -43,7 +43,7 @@ export class LoadableStudyDetailsTransformationService {
   portValidity$ = this._portValiditySource.asObservable();
   ohqValidity$ = this._ohqValiditySource.asObservable();
   obqValidity$ = this._obqValiditySource.asObservable();
-  obqUpdate$ = this._ohqUpdate.asObservable();
+  ohqUpdate$ = this._ohqUpdate.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
   constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
@@ -581,7 +581,7 @@ export class LoadableStudyDetailsTransformationService {
    * @memberof LoadableStudyDetailsTransformationService
    */
   getLoadableStudyGridColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
-    let columns: IDataTableColumn[] =  [
+    let columns: IDataTableColumn[] = [
       {
         field: 'name',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_NAME',
@@ -601,7 +601,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldValue: 'status'
       }
     ];
-    if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
@@ -862,7 +862,6 @@ export class LoadableStudyDetailsTransformationService {
       };
       columns = [...columns, action];
     }
-
     return columns;
   }
 
@@ -905,11 +904,11 @@ export class LoadableStudyDetailsTransformationService {
             _ports.layCanTo = "";
           }
         } else if (key === 'eta') {
-          const newEta = moment(port.eta.value.slice(0, 17)).format('DD-MM-YYYY HH:mm');
-          _ports.eta = this.timeZoneTransformationService.revertZoneTimetoUTC(newEta, port.port.value?.timezoneOffsetVal);
+          const newEta = moment(port.eta?.value?.slice(0, 17)).format('DD-MM-YYYY HH:mm');
+          port.eta?.value ? _ports.eta = this.timeZoneTransformationService.revertZoneTimetoUTC(newEta, port.port?.value?.timezoneOffsetVal) : _ports.eta = "";
         } else if (key === 'etd') {
-          const newEtd = moment(port.etd.value.slice(0, 17)).format('DD-MM-YYYY HH:mm');
-          _ports.etd = this.timeZoneTransformationService.revertZoneTimetoUTC(newEtd, port.port.value?.timezoneOffsetVal);
+          const newEtd = moment(port.etd?.value?.slice(0, 17)).format('DD-MM-YYYY HH:mm');
+          port.etd?.value ? _ports.etd = this.timeZoneTransformationService.revertZoneTimetoUTC(newEtd, port.port?.value?.timezoneOffsetVal) : _ports.etd = "";
         }
         else {
           if (key !== 'layCanFrom' && key !== 'layCanTo') {
@@ -1095,12 +1094,12 @@ export class LoadableStudyDetailsTransformationService {
    */
   setOHQValidity(ohqPorts: ILoadableOHQStatus[]) {
     this.ohqPortsValidity = ohqPorts;
-    if(!ohqPorts.length){
+    if (!ohqPorts.length) {
       this._ohqValiditySource.next(false);
       return
     }
-    for(let i = 0; i < ohqPorts.length; i++){
-      if(!ohqPorts[i].isPortRotationOhqComplete){
+    for (let i = 0; i < ohqPorts.length; i++) {
+      if (!ohqPorts[i].isPortRotationOhqComplete) {
         this._ohqValiditySource.next(false);
         return
       }
@@ -1115,9 +1114,9 @@ export class LoadableStudyDetailsTransformationService {
    * @memberof LoadableStudyDetailsTransformationService
    */
   setOHQPortValidity(id: number, isPortRotationOhqComplete: boolean) {
-    if(typeof isPortRotationOhqComplete !== 'undefined'){
+    if (typeof isPortRotationOhqComplete !== 'undefined') {
       const i = this.ohqPortsValidity.findIndex(port => port.id === id);
-      if(i >= 0){
+      if (i >= 0) {
         this.ohqPortsValidity[i].isPortRotationOhqComplete = isPortRotationOhqComplete;
         this.setOHQValidity(this.ohqPortsValidity)
       }
@@ -1132,11 +1131,27 @@ export class LoadableStudyDetailsTransformationService {
    */
   getOHQPortValidity(id: number): boolean {
     const i = this.ohqPortsValidity.findIndex(port => port.id === id);
-    if(i >= 0){
+    if (i >= 0) {
       return this.ohqPortsValidity[i].isPortRotationOhqComplete;
     } else {
       return false;
     }
+  }
+
+  /**
+  * Add missing ports from the provided array
+  *
+  * @param {boolean} isValid
+  * @memberof LoadableStudyDetailsTransformationService
+  */
+  addMissingOhqPorts(ohqPorts: IPort[]) {
+    ohqPorts.forEach(ohqPort => {
+      const i = this.ohqPortsValidity.findIndex(port => port.id === ohqPort.id);
+      if (i < 0) {
+        this.ohqPortsValidity.push({ id: ohqPort.id, isPortRotationOhqComplete: false })
+        this._ohqValiditySource.next(false);
+      }
+    })
   }
 
   /**
