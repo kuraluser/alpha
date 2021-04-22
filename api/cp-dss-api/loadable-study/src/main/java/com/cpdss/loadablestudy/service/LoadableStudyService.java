@@ -351,6 +351,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String DATE_TIME_FORMAT_LAST_MODIFIED = "dd-MM-yyyy HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long BUNKERING_OPERATION_ID = 3L;
@@ -795,12 +796,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
                           entity.getId(), true);
                   if (!algoStatus.isEmpty()) {
+                    DateTimeFormatter dateTimeFormatterLastModified =
+                        DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_LAST_MODIFIED);
+
                     builder.setLoadableStudyStatusLastModifiedTime(
-                        algoStatus.stream()
-                            .reduce((f, s) -> s)
-                            .orElse(null)
-                            .getLastModifiedDateTime()
-                            .toString()); // getting the last algo status
+                        dateTimeFormatterLastModified.format(
+                            algoStatus.stream()
+                                .reduce((f, s) -> s)
+                                .orElse(null)
+                                .getLastModifiedDateTime())); // getting the last algo status
                   } else {
                     builder.setLoadableStudyStatusLastModifiedTime("0");
                   }
@@ -3199,6 +3203,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePlanStowageBallastDetails.setIsActive(true);
     loadablePlanStowageBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
     loadablePlanStowageBallastDetails.setSg(lpbd.getSg());
+    loadablePlanStowageBallastDetails.setCorrectedUllage(lpbd.getCorrectedLevel());
+    loadablePlanStowageBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
+    loadablePlanStowageBallastDetails.setRdgUllage(lpbd.getRdgLevel());
     loadablePlanStowageBallastDetailsRepository.save(loadablePlanStowageBallastDetails);
   }
 
@@ -3293,6 +3300,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanBallastDetails.setIsActive(true);
           loadablePlanBallastDetails.setLoadablePattern(loadablePattern);
           loadablePlanBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
+          loadablePlanBallastDetails.setCorrectedLevel(lpbd.getCorrectedLevel());
+          loadablePlanBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
           loadablePlanBallastDetailsRepository.save(loadablePlanBallastDetails);
         });
   }
@@ -4204,7 +4213,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
     Optional.ofNullable(algoResponse.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
     Optional.ofNullable(algoResponse.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
-    Optional.ofNullable(algoResponse.getFillingRatio()).ifPresent(builder::setFillingRatio);
     Optional.ofNullable(algoResponse.getQuantityMt()).ifPresent(builder::setWeight);
     Optional.ofNullable(request.getLoadablePlanStowageDetails().getIsBallast())
         .ifPresent(builder::setIsBallast);
@@ -4254,10 +4262,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(algoResponse.getCorrectionFactor())
             ? null
             : new BigDecimal(algoResponse.getCorrectionFactor()));
-    stowageTemp.setFillingRatio(
-        isEmpty(algoResponse.getFillingRatio())
-            ? null
-            : new BigDecimal(algoResponse.getFillingRatio()));
+
     stowageTemp.setQuantity(
         isEmpty(algoResponse.getQuantityMt())
             ? null
@@ -4300,7 +4305,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private UllageUpdateRequest prepareUllageUpdateRequest(UpdateUllageRequest request) {
     UllageUpdateRequest algoRequest = new UllageUpdateRequest();
-    algoRequest.setCorrectedUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
+    algoRequest.setRdgUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
     algoRequest.setId(request.getLoadablePlanStowageDetails().getId());
     algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
     return algoRequest;

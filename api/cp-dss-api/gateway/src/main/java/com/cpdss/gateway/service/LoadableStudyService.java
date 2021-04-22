@@ -3490,6 +3490,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
     Optional.ofNullable(lpbd.getTankId()).ifPresent(builder::setTankId);
     Optional.ofNullable(lpbd.getRdgLevel()).ifPresent(builder::setRdgLevel);
+    Optional.ofNullable(lpbd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+    Optional.ofNullable(lpbd.getCorrectedUllage()).ifPresent(builder::setCorrectedLevel);
     detailsBuilder.addLoadablePlanBallastDetails(builder.build());
   }
 
@@ -3554,7 +3556,6 @@ public class LoadableStudyService {
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.newBuilder();
     Optional.ofNullable(lqccd.getApi()).ifPresent(builder::setApi);
-    Optional.ofNullable(lqccd.getGrade()).ifPresent(builder::setGrade);
     Optional.ofNullable(lqccd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
     Optional.ofNullable(lqccd.getCargo1MT()).ifPresent(builder::setCargo1MT);
     Optional.ofNullable(lqccd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
@@ -3723,6 +3724,7 @@ public class LoadableStudyService {
     response.setDate(grpcReply.getDate());
     response.setVoyageStatusId(grpcReply.getVoyageStatusId());
     response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    response.setValidated(grpcReply.getValidated());
   }
 
   /**
@@ -4486,10 +4488,12 @@ public class LoadableStudyService {
     requestBuilder.setVoyageId(voyageId);
     ConfirmPlanReply grpcReply = this.confirmPlanStatusReply(requestBuilder);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+
       throw new GenericServiceException(
           "Failed in confirmPlanStatus from grpc service",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     confirmPlanStatusResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -4522,11 +4526,13 @@ public class LoadableStudyService {
      * grpcRequest); UpdateUllageReply grpcReply =
      * this.updateUllage(grpcRequest.build()); if
      * (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) { throw new
-     * GenericServiceException( "Failed to get response  for  from grpc service",
+     * GenericServiceException("Failed in confirmPlanStatus from grpc service",
      * grpcReply.getResponseStatus().getCode(),
-     * HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode(
-     * )))); } return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+     * HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().
+     * getHttpStatusCode()))); } return this.buildeUpdateUllageResponse(grpcReply,
+     * correlationId);
      */
+
     return this.buildeUpdateUllageResponseTemp(correlationId);
   }
 

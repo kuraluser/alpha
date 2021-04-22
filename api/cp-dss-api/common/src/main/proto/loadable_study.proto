@@ -385,7 +385,7 @@ message LoadablePlanBallastDetails {
  	int64 tankId = 2;
  	string rdgLevel = 3;
 	string correctionFactor = 4;
-	string correctedLevel = 5;
+	string correctedLevel = 5; //same as corrected ullage
 	string metricTon = 6; //quantity
 	string cubicMeter = 7;
 	string percentage = 8;
