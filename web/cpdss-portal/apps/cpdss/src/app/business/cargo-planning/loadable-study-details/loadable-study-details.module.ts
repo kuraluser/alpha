@@ -33,6 +33,7 @@ import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/uni
 import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -64,7 +65,8 @@ import { TableModule } from 'primeng/table';
     NumberDirectiveModule,
     UnitDropdownModule,
     QuantityPipeModule,
-    TableModule
+    TableModule,
+    TooltipModule
   ],
   providers: [
     LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe

@@ -76,6 +76,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   cargos: ICargo[];
   patternLoaded = false;
   baseUnit = AppConfigurationService.settings.baseUnit;
+  loadablePlanPermissionContext: IPermissionContext;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -97,24 +98,40 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async ngOnInit(): Promise<void> {
-    const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], false);
-    this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
-    this.activatedRoute.paramMap.subscribe(params => {
-      this.isViewPattern = Number(params.get('isViewPattern')) === 0 ? true : false;
-      this.vesselId = Number(params.get('vesselId'));
-      this.voyageId = Number(params.get('voyageId'));
-      this.loadableStudyId = Number(params.get('loadableStudyId'));
-      localStorage.setItem("vesselId", this.vesselId.toString())
-      localStorage.setItem("voyageId", this.voyageId.toString())
-      localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
-      localStorage.removeItem("loadablePatternId")
-      if (this.isViewPattern) {
-        this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    this.activatedRoute.paramMap.subscribe(async params => {
+      const permission = await this.getPagePermission();
+      if(permission.view) {
+        this.isViewPattern = Number(params.get('isViewPattern')) === 0 ? true : false;
+        this.vesselId = Number(params.get('vesselId'));
+        this.voyageId = Number(params.get('voyageId'));
+        this.loadableStudyId = Number(params.get('loadableStudyId'));
+        localStorage.setItem("vesselId", this.vesselId.toString())
+        localStorage.setItem("voyageId", this.voyageId.toString())
+        localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
+        localStorage.removeItem("loadablePatternId")
+        if (this.isViewPattern) {
+          this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+        }
+        this.getCargos();
+        this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
       }
-      this.getCargos();
-      this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
     });
   }
+
+  
+  /**
+* Get page permission
+*
+* @memberof LoadablePatternHistoryComponent
+*/
+async getPagePermission() {
+  const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], true);
+  this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], true);
+  this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
+  this.loadablePlanPermissionContext =  { key: AppConfigurationService.settings.permissionMapping['LoadablePlanComponent'], actions: [PERMISSION_ACTION.VIEW] };
+  return loadablePatternPermission;
+}
+
 
   /**
    * Method to fetch all voyages in the vessel
@@ -322,7 +339,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
 
       return pattern;
     });
-    this.loadablePatterns = JSON.parse(JSON.stringify(loadablePatterns));
+    if(loadablePatterns){
+      this.loadablePatterns = JSON.parse(JSON.stringify(loadablePatterns));
+    }
   }
 
   /**

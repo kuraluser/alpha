@@ -390,7 +390,7 @@
             <button class="btn btn-main mr-10" id="lodable_quantity_cancel"
                 (click)="cancel()">{{'LOADABLE_QUANTITY_CANCEL' | translate}}
             </button>
-            <ng-container *ngIf="isEditable">
+            <ng-container *ngIf="isEditable && ports">
                 <button class="btn btn-main" type="submit" id="lodable_quantity_submit" form="fg_loadableQunatity"
                     *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{ buttonLabel | translate}}</button>
             </ng-container>

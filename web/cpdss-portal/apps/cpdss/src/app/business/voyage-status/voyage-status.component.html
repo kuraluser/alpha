@@ -12,10 +12,12 @@
             </div>
             <div class="col">
                 <a class="btn btn-link icon-btn plus-icon-rounded ml-15" (click)="showDialog()"
-                    id="show-popup">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
-                <a class="btn btn-link icon-btn pencil-icon" *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE"
-                    (click)="showEditPortRotation()" id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' |
+                    id="show-popup" *cpdssPortalPermission="newVoyagePermissionContext">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
+                    <ng-container *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
+                <a class="btn btn-link icon-btn pencil-icon" 
+                    (click)="showEditPortRotation()" id="show-edit-port-rotation-popup" *cpdssPortalPermission="editPortRotationPermissionContext">{{'EDIT_PORT_ROTATION' |
                     translate}}</a>
+                </ng-container>
                 <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
             </div>
             <div class="pr-15">

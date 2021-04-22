@@ -54,7 +54,12 @@ export class AccessDeniedComponent implements OnInit {
   * @memberof AccessDeniedComponent
  */
   goBackToHome() {
-    this.router.navigate(['/']);
+    if(localStorage.getItem('_USER_PERMISSIONS')) {
+      this.router.navigate(['/']);
+    } else {
+      window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
+    }
+    
   }
 
   /**

@@ -18,7 +18,15 @@
 
             </div>
             <div class="ml-auto pr-15">
-                <button class="btn btn-main" id="confirm_plan" [disabled]="!confirmPlanPermission || confirmButtonStatus" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">
+                <ng-container *ngIf="!validationPending;else refPending">
+                    <ng-container [ngSwitch]="loadablePatternValidationStatus">  
+                        <span class="badge badge-sucess" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_SUCCESS">{{'LOADABLE_PLAN_ULLAGE_VERIFIED' | translate}}</span>  
+                        <span class="badge badge-danger" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_FAILED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_FAILED' | translate}}</span>  
+                        <span class="badge badge-info" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_STARTED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_IN_PROGESS' | translate}}</span>  
+                    </ng-container> 
+                </ng-container>
+                <ng-template #refPending><span class="badge badge-muted">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_PENDING' | translate}}</span></ng-template>
+                <button class="btn btn-main" id="confirm_plan" [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">
                     <span class="pi pi-check check-rounded" *ngIf="loadableStudyStatus"></span>
                     {{loadableStudyStatus ? ('LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |translate) : ('LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |translate)}}
                 </button>
@@ -41,7 +49,7 @@
                 [cargoTankDetails]="cargoTankDetails" [ballastDetails]="loadablePlanBallastDetails"
                 [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
                 [loadableStudyId]="loadableStudyId" [voyage]="selectedVoyage" [loadableStudy]="loadableStudy" [loadablePatternValidationStatus]="loadablePatternValidationStatus"
-                [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup">
+                [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup" (ullageUpdate)="validationPending = $event">
             </cpdss-portal-stowage>
         </div>
         <div>

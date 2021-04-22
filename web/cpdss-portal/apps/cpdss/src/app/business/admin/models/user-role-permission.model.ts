@@ -121,6 +121,7 @@ export interface IRoleDetails {
     id: number;
     name: string;
     description: string;
+    isUserMapped: boolean;
 }
 
 /**

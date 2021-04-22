@@ -142,7 +142,14 @@ export class TimeZoneTransformationService {
     const dateTimeWithAbbr = [addedPortTZ, abbreviation, convertedPortTZ.slice(dateTimeSplitIndex)].join('');
     return dateTimeWithAbbr;
   }
-
+  
+  /**
+   * Function to map the configuration dateformat with calender format 
+   * 
+   * @param {string} dateTimeFormat
+   * @return {*} 
+   * @memberof TimeZoneTransformationService
+   */
   getMappedConfigurationDateFormat(dateTimeFormat: string){
     const mappedFormat = [...this.dateTimeFormatArray].find(format => (format.dateFormat === dateTimeFormat));
     return mappedFormat.calenderFormat;

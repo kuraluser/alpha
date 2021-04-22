@@ -207,10 +207,8 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
-import com.cpdss.loadablestudy.service.builder.LoadablePlanBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -308,7 +306,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired private AlgoErrorsRepository algoErrorsRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
-  
+
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
@@ -341,6 +339,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private JsonDataRepository jsonDataRepository;
   @Autowired private JsonTypeRepository jsonTypeRepository;
 
+  @Autowired private LoadablePlanService loadablePlanService;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
@@ -348,9 +348,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String COMMINGLE = "COM";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
-  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm"; 
+  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String DATE_TIME_FORMAT_LAST_MODIFIED = "dd-MM-yyyy HH:mm";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long BUNKERING_OPERATION_ID = 3L;
@@ -476,6 +477,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private static final Long CLOSE_VOYAGE_STATUS = 2L;
   private static final Long OPEN_VOYAGE_STATUS = 1L;
+
+  private static final String DEFAULT_USER_NAME = "UNKNOWN";
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -793,12 +796,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
                           entity.getId(), true);
                   if (!algoStatus.isEmpty()) {
+                    DateTimeFormatter dateTimeFormatterLastModified =
+                        DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_LAST_MODIFIED);
+
                     builder.setLoadableStudyStatusLastModifiedTime(
-                        algoStatus.stream()
-                            .reduce((f, s) -> s)
-                            .orElse(null)
-                            .getLastModifiedDateTime()
-                            .toString()); // getting the last algo status
+                        dateTimeFormatterLastModified.format(
+                            algoStatus.stream()
+                                .reduce((f, s) -> s)
+                                .orElse(null)
+                                .getLastModifiedDateTime())); // getting the last algo status
                   } else {
                     builder.setLoadableStudyStatusLastModifiedTime("0");
                   }
@@ -1412,7 +1418,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<Long> existingCargoPortIds) {
 
     Long portId = null;
-    if (existingCargoPortIds != null && existingCargoPortIds.size()>0) {
+    if (existingCargoPortIds != null && existingCargoPortIds.size() > 0) {
       portId = existingCargoPortIds.stream().findFirst().get();
     }
 
@@ -1617,7 +1623,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<CargoNomination> cargoNominationList =
           this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
               request.getLoadableStudyId(), true);
-      buildCargoNominationReply(cargoNominationList, replyBuilder);
+      
+      List<ApiTempHistory> apiTempHistories = apiTempHistoryRepository.findByOrderByCreatedDateTimeDesc();
+      
+      buildCargoNominationReply(cargoNominationList, apiTempHistories, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
@@ -1672,6 +1681,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private void buildCargoNominationReply(
       List<CargoNomination> cargoNominationList,
+      List<ApiTempHistory> apiTempHistoriesAll, 
       com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder
           cargoNominationReplyBuilder) {
     if (!CollectionUtils.isEmpty(cargoNominationList)) {
@@ -1703,22 +1713,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         builder.addLoadingPortDetails(loadingPortDetailBuilder);
                       });
             }
-            
+
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
-            	CargoNominationPortDetails cargoNominationPortDetail = cargoNomination.getCargoNominationPortDetails().iterator().next();
-            	if(cargoNomination.getCargoXId() != null && cargoNominationPortDetail.getPortId() != null) {
-            		
-                   	List<ApiTempHistory> apiTempHistories = apiTempHistoryRepository.
-                   			findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(cargoNominationPortDetail.getPortId(), cargoNomination.getCargoXId() , true);
-                	if(!CollectionUtils.isEmpty(apiTempHistories)) {
-                		ApiTempHistory apiTempHistory = apiTempHistories.get(0);
-                		Optional.ofNullable(apiTempHistory.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                		Optional.ofNullable(apiTempHistory.getTemp()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                	}else {
-                    	Optional.ofNullable(cargoNomination.getApi()).ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                		Optional.ofNullable(cargoNomination.getTemperature()).ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                    }
-            	}
+              CargoNominationPortDetails cargoNominationPortDetail =
+                  cargoNomination.getCargoNominationPortDetails().iterator().next();
+              if (cargoNomination.getCargoXId() != null
+                  && cargoNominationPortDetail.getPortId() != null) {
+
+                List<ApiTempHistory> apiTempHistories =
+                    apiTempHistoryRepository
+                        .findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
+                            cargoNominationPortDetail.getPortId(),
+                            cargoNomination.getCargoXId(),
+                            true);
+                if (!CollectionUtils.isEmpty(apiTempHistories)) {
+                  ApiTempHistory apiTempHistory = apiTempHistories.get(0);
+                  Optional.ofNullable(apiTempHistory.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(apiTempHistory.getTemp())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                } else {
+                  Optional.ofNullable(cargoNomination.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(cargoNomination.getTemperature())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+                }
+              }
             }
             Optional.ofNullable(cargoNomination.getMaxTolerance())
                 .ifPresent(maxTolerance -> builder.setMaxTolerance(String.valueOf(maxTolerance)));
@@ -1727,6 +1747,42 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             Optional.ofNullable(cargoNomination.getSegregationXId())
                 .ifPresent(builder::setSegregationId);
             cargoNominationReplyBuilder.addCargoNominations(builder);
+            
+            
+            if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
+            	
+            	
+            	apiTempHistoriesAll.forEach(apiTempHistory->{
+            		
+            		 CargoHistoryDetail.Builder cargoBuilder = CargoHistoryDetail.newBuilder();
+            		
+            		 Optional.ofNullable(apiTempHistory.getCargoId())
+                     		.ifPresent(cargoBuilder::setCargoId);
+            		 
+            		 Optional.ofNullable(apiTempHistory.getVesselId())
+              			.ifPresent(cargoBuilder::setVesselId);
+            		 
+            		 Optional.ofNullable(apiTempHistory.getLoadingPortId())
+           				.ifPresent(cargoBuilder::setLoadingPortId);
+            		 
+            		 if(apiTempHistory.getApi() != null) {
+            			 Optional.ofNullable(apiTempHistory.getApi().toString())
+            				.ifPresent(cargoBuilder::setApi); 
+            		 }
+            		 
+            		
+            		 if(apiTempHistory.getTemp() != null) {
+            			 Optional.ofNullable(apiTempHistory.getTemp().toString())
+         				.ifPresent(cargoBuilder::setTemperature);
+            		 }
+            		
+            		
+            		 cargoNominationReplyBuilder.addCargoHistory(cargoBuilder);
+            	});
+            	
+            	
+            }
+            
           });
     }
   }
@@ -3147,6 +3203,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePlanStowageBallastDetails.setIsActive(true);
     loadablePlanStowageBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
     loadablePlanStowageBallastDetails.setSg(lpbd.getSg());
+    loadablePlanStowageBallastDetails.setCorrectedUllage(lpbd.getCorrectedLevel());
+    loadablePlanStowageBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
+    loadablePlanStowageBallastDetails.setRdgUllage(lpbd.getRdgLevel());
     loadablePlanStowageBallastDetailsRepository.save(loadablePlanStowageBallastDetails);
   }
 
@@ -3241,6 +3300,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanBallastDetails.setIsActive(true);
           loadablePlanBallastDetails.setLoadablePattern(loadablePattern);
           loadablePlanBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
+          loadablePlanBallastDetails.setCorrectedLevel(lpbd.getCorrectedLevel());
+          loadablePlanBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
           loadablePlanBallastDetailsRepository.save(loadablePlanBallastDetails);
         });
   }
@@ -3621,12 +3682,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanQuantity> loadablePlanQuantities =
                   loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              LoadablePlanBuilder.buildLoadablePlanQuantity(
+              loadablePlanService.buildLoadablePlanQuantity(
                   loadablePlanQuantities, loadablePatternBuilder);
               List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
                   loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
-              LoadablePlanBuilder.buildLoadablePlanCommingleDetails(
+              loadablePlanService.buildLoadablePlanCommingleDetails(
                   loadablePlanCommingleDetails, loadablePatternBuilder);
               List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
                   loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
@@ -3634,7 +3695,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               List<LoadablePlanStowageDetailsTemp> ballstTempList =
                   this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
                       loadablePlanBallastDetails, true);
-              LoadablePlanBuilder.buildBallastGridDetails(
+              loadablePlanService.buildBallastGridDetails(
                   loadablePlanBallastDetails, ballstTempList, loadablePatternBuilder);
               // <--DSS-2016!-->
 
@@ -4152,7 +4213,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
     Optional.ofNullable(algoResponse.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
     Optional.ofNullable(algoResponse.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
-    Optional.ofNullable(algoResponse.getFillingRatio()).ifPresent(builder::setFillingRatio);
     Optional.ofNullable(algoResponse.getQuantityMt()).ifPresent(builder::setWeight);
     Optional.ofNullable(request.getLoadablePlanStowageDetails().getIsBallast())
         .ifPresent(builder::setIsBallast);
@@ -4202,10 +4262,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(algoResponse.getCorrectionFactor())
             ? null
             : new BigDecimal(algoResponse.getCorrectionFactor()));
-    stowageTemp.setFillingRatio(
-        isEmpty(algoResponse.getFillingRatio())
-            ? null
-            : new BigDecimal(algoResponse.getFillingRatio()));
+
     stowageTemp.setQuantity(
         isEmpty(algoResponse.getQuantityMt())
             ? null
@@ -4248,7 +4305,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private UllageUpdateRequest prepareUllageUpdateRequest(UpdateUllageRequest request) {
     UllageUpdateRequest algoRequest = new UllageUpdateRequest();
-    algoRequest.setCorrectedUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
+    algoRequest.setRdgUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
     algoRequest.setId(request.getLoadablePlanStowageDetails().getId());
     algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
     return algoRequest;
@@ -4748,10 +4805,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-//         this.saveLoadicatorInfo(
-//             loadablePatternOpt.get().getLoadableStudy(),
-//             request.getProcesssId(),
-//             request.getLoadablePatternId());
+        //         this.saveLoadicatorInfo(
+        //             loadablePatternOpt.get().getLoadableStudy(),
+        //             request.getProcesssId(),
+        //             request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -4976,13 +5033,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ObjectMapper objectMapper = new ObjectMapper();
 
       if (request.getIsPattern()) {
-    	  objectMapper.writeValue(
-    	          new File(this.rootFolder + "/json/loadicator_pattern_" + request.getLoadicatorPatternDetails(0).getLoadablePatternId() + ".json"),
-    	          loadicator);
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_pattern_"
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
+                    + ".json"),
+            loadicator);
       } else {
-    	  objectMapper.writeValue(
-    	          new File(this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
-    	          loadicator);
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+            loadicator);
       }
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
@@ -7393,10 +7455,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               com.cpdss.common.generated.LoadableStudy.LoadablePlanComments.newBuilder();
           Optional.ofNullable(lpc.getId()).ifPresent(builder::setId);
           Optional.ofNullable(lpc.getComments()).ifPresent(builder::setComment);
+          Optional.ofNullable(lpc.getCreatedBy()).ifPresent(builder::setCreatedBy);
           Optional.ofNullable(
                   DateTimeFormatter.ofPattern(DATE_FORMAT).format(lpc.getCreatedDateTime()))
               .ifPresent(builder::setDataAndTime);
-          builder.setUserName("Uttam Kumar"); // ToDo - replace it with the value taken from cache
+          // Username set at gateway as Keycloack is at gateway layer
+          builder.setUserName(
+              DEFAULT_USER_NAME); // ToDo - replace it with the value taken from cache
           replyBuilder.addLoadablePlanComments(builder);
         });
   }
@@ -7430,7 +7495,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
-          LoadablePlanBuilder.setTempBallastDetails(lpbd, ballstTempList, builder);
+          loadablePlanService.setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
   }
@@ -8376,7 +8441,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       entity.setCreatedBy(Long.toString(request.getUser()));
 
       entity.setIsActive(true);
-      entity = this.loadablePlanCommentsRepository.save(entity);
+      this.loadablePlanCommentsRepository.save(entity);
 
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {

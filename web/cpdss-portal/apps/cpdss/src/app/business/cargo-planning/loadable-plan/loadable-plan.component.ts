@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , OnDestroy } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -38,7 +38,7 @@ import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
   templateUrl: './loadable-plan.component.html',
   styleUrls: ['./loadable-plan.component.scss']
 })
-export class LoadablePlanComponent implements OnInit {
+export class LoadablePlanComponent implements OnInit , OnDestroy {
 
   get cargoTanks(): ICargoTank[][] {
     return this._cargoTanks;
@@ -74,7 +74,8 @@ export class LoadablePlanComponent implements OnInit {
   set frontBallastTanks(tanks: IBallastTank[][]) {
     this._frontBallastTanks = tanks?.map(group => group.map(tank => this.loadablePlanTransformationService.formatBallastTanks(tank, this.loadablePlanBallastDetails)));
   }
-
+  
+  readonly validateAndSaveStatus = VALIDATION_AND_SAVE_STATUS;
   voyageId: number;
   loadableStudyId: number;
   loadableStudy: LoadableStudy;
@@ -100,6 +101,7 @@ export class LoadablePlanComponent implements OnInit {
   public isVoyageClosed: boolean;
   public errorMessage: IAlgoError[];
   public errorPopup: boolean;
+  public validationPending: boolean;
   timeZoneList: ITimeZone[];
 
   private _cargoTanks: ICargoTank[][];
@@ -130,8 +132,8 @@ export class LoadablePlanComponent implements OnInit {
     * @memberof LoadablePlanComponent
   */
   ngOnInit(): void {
-    this.listenEvents();
     this.getPagePermission();
+    this.listenEvents();
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
@@ -161,6 +163,15 @@ export class LoadablePlanComponent implements OnInit {
     navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
   }
 
+  /**
+   * remove event listener
+   *
+   * @memberof LoadablePlanComponent
+  */
+  ngOnDestroy() {
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
+  }
+
   
     /**
    * Handler for service worker message event
@@ -178,6 +189,7 @@ export class LoadablePlanComponent implements OnInit {
       }
     } else if (event.data.type === 'loadable-pattern-validation-failed') {
       if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
         this.validationFailed();
         this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED;
         this.getAlgoErrorMessage(true);
@@ -185,6 +197,7 @@ export class LoadablePlanComponent implements OnInit {
 
     } else if (event.data.type === 'loadable-pattern-validation-success') {
       if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+        navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
         this.validationCompleted();
         this.getLoadablePlanDetails();
         this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS;
@@ -380,6 +393,7 @@ export class LoadablePlanComponent implements OnInit {
     }
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
     this.setProcessingLoadableStudyActions();
+    this.validationPending = !loadablePlanRes.validated;
     this.ngxSpinnerService.hide();
   }
 
@@ -460,30 +474,39 @@ export class LoadablePlanComponent implements OnInit {
       return;
     }
     this.ngxSpinnerService.show();
-    const result = await this.loadablePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
-    this.ngxSpinnerService.hide();
-    let detail;
-    if (result.confirmed) {
-      detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
-    } else {
-      detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
-    }
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
-      if (response) {
-        const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
-        try {
-          const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
-          if (confirmResult.responseStatus.status === '200') {
-            this.loadableStudyStatus = true;
-          }
-        } catch (errorResponse) {
-          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
-            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR','LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS']).toPromise();
+    
+    try {
+      const result = await this.loadablePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+      this.ngxSpinnerService.hide();
+      let detail;
+      if (result.confirmed) {
+        detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
+      } else {
+        detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
+      }
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
+      this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
+        if (response) {
+          try {
+            const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+            if (confirmResult.responseStatus.status === '200') {
+              this.loadableStudyStatus = true;
+            }
+          } catch (errorResponse) {
+            if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+              this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
+            }
           }
         }
+      })
+    } catch(error) {
+      if (error.error.errorCode === 'ERR-RICO-115') {
+        this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS'], detail: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS'] });
+        this.ngxSpinnerService.hide();
       }
-    })
+    }
+    
   }
 
   /**

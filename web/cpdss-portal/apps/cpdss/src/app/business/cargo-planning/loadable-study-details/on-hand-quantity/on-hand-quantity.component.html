@@ -21,7 +21,7 @@
                                         *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">
                                         {{port?.name}} 
                                         <span *ngIf="!loadableStudyDetailsTransformationService.getOHQPortValidity(port.id)"
-                                         class="error-icon">!</span>
+                                         class="error-icon" pTooltip="{{'INCOMPLETE'|translate}}">!</span>
                                     </li>
                                 </ul>
                             </div>

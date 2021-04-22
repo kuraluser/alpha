@@ -10,7 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { IPermissionContext, PERMISSION_ACTION , ISubTotal } from '../../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, ISubTotal } from '../../../../shared/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
@@ -93,15 +93,13 @@ export class LoadableQuantityComponent implements OnInit {
     const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id).toPromise();
     const portList = portsData?.portList;
     if (portList) {
-      let ports = await this.getPorts();
-      ports = ports.filter(item => {
-        return (portList.some(port => port.portId === item.id)) && item;
-      })
-
-      const map = new Map();
-      ports.forEach(item => map.set(item.id, item));
-      portList.forEach(item => map.set(item.portId, { ...map.get(item.portId), ...item }));
-      this.ports = Array.from(map.values());
+      const ports = await this.getPorts();
+      this.ports = portList?.map((portlist) => {
+        return { ...ports?.find((port) => port.id === portlist.portId), id: portlist?.id, portId: portlist?.portId, portOrder: portlist?.portOrder };
+      });
+      this.ports.sort((a, b) => {
+        return a.portOrder - b.portOrder;
+      });
       this.selectedPort = this.ports[0];
       this.portRotationId = this.selectedPort?.id;
     }
@@ -433,9 +431,9 @@ export class LoadableQuantityComponent implements OnInit {
   getSubTotal() {
     let subTotal = 0;
     if (this.caseNo === 1 || this.caseNo === 2) {
-      const data:ISubTotal = {
+      const data: ISubTotal = {
         dwt: this.loadableQuantityForm.get('dwt').value,
-        sagCorrection:this.loadableQuantityForm.get('safCorrection').value,
+        sagCorrection: this.loadableQuantityForm.get('safCorrection').value,
         foOnboard: this.loadableQuantityForm.get('foOnboard').value,
         doOnboard: this.loadableQuantityForm.get('doOnboard').value,
         freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
@@ -447,14 +445,14 @@ export class LoadableQuantityComponent implements OnInit {
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
 
-      
+
       this.getTotalLoadableQuantity();
     }
     else {
-      const data:ISubTotal = {
+      const data: ISubTotal = {
         dwt: this.loadableQuantityForm.get('dwt').value,
-        sagCorrection:this.loadableQuantityForm.get('safCorrection').value,
-        sgCorrection:this.loadableQuantityForm.get('sgCorrection').value,
+        sagCorrection: this.loadableQuantityForm.get('safCorrection').value,
+        sgCorrection: this.loadableQuantityForm.get('sgCorrection').value,
         foOnboard: this.loadableQuantityForm.get('foOnboard').value,
         doOnboard: this.loadableQuantityForm.get('doOnboard').value,
         freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,

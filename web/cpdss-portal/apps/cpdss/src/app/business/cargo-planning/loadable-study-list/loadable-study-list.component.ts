@@ -66,6 +66,7 @@ export class LoadableStudyListComponent implements OnInit {
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
+    this.getPagePermission();
     this.activatedRoute.params.subscribe(async params => {
       this.voyageId = params.id ? Number(params.id) : 0;
       this.ngxSpinnerService.show();
@@ -78,11 +79,21 @@ export class LoadableStudyListComponent implements OnInit {
       this.selectedVoyage = this.voyages[0];
       this.showLoadableStudyList();
     });
-    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
-    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    
     this.loading = false;
 
   }
+
+    /**
+  * Get page permission
+  *
+  * @memberof LoadableStudyListComponent
+  */
+  getPagePermission() {
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], true);
+    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+  }
+
   /**
   * Take the user to particular loadable study
   */

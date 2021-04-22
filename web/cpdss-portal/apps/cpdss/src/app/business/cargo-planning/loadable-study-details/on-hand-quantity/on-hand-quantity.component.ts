@@ -57,7 +57,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
   }
 
   get selectedPortOHQTankDetails() {
@@ -69,7 +69,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.formatOHQTankDetail(ohqTankDetail);
       return _ohqTankDetail;
     });
-    this.loadableStudyDetailsTransformationService.setOHQPortValidity(this.selectedPort.id, this.ohqForm?.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
+    this.loadableStudyDetailsTransformationService.setOHQPortValidity(this.selectedPort.id, this.ohqGroupValidity(this._selectedPortOHQTankDetails));
   }
 
   get tanks(): IBunkerTank[][] {
@@ -180,8 +180,9 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     const result = await this.loadableStudyDetailsApiService.getOHQPortRotation(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     if (result?.portList) {
       this.ohqPorts = result?.portList?.map((ohqPort) => {
-        return {...this.ports?.find((port) => port.id === ohqPort.portId), id: ohqPort?.id, portId: ohqPort?.portId};
+        return { ...this.ports?.find((port) => port.id === ohqPort.portId), id: ohqPort?.id, portId: ohqPort?.portId };
       });
+      this.loadableStudyDetailsTransformationService.addMissingOhqPorts(this.ohqPorts)
       this.selectedPort = this.ohqPorts[0];
       await this.getPortOHQDetails(this.selectedPort?.id);
       const hasPendingUpdates = await this.checkForPendingUpdates();
@@ -356,7 +357,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     }
 
     event.data.arrivalVolume = event?.data?.density?.value ? event?.data?.arrivalQuantity?.value / event?.data?.density?.value : 0;
-    event.data.departureVolume = event?.data?.density?.value ? event?.data.departureQuantity?.value / event?.data?.density?.value : 0;   
+    event.data.departureVolume = event?.data?.density?.value ? event?.data.departureQuantity?.value / event?.data?.density?.value : 0;
 
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
     if (fromGroup.valid) {
@@ -419,7 +420,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       this.selectedTankFormGroup.get(event?.field).setValue(Number((this.field(event?.index, event?.field)).value));
     }
     this.ohqForm.updateValueAndValidity();
-    this.loadableStudyDetailsTransformationService.setOHQPortValidity(this.selectedPort.id,this.ohqForm.valid && this.ohqGroupValidity(this.selectedPortOHQTankDetails));
+    this.loadableStudyDetailsTransformationService.setOHQPortValidity(this.selectedPort.id, this.ohqGroupValidity(this.selectedPortOHQTankDetails));
     this.tanks = [...this.tanks];
     this.rearTanks = [...this.rearTanks];
     this.ngxSpinnerService.hide();
@@ -448,7 +449,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       if (index !== -1) {
         this.selectedPortOHQTankDetails[index].processing = false;
         if (event?.data?.responseStatus?.status === '200') {
-          this.loadableStudyDetailsTransformationService.ohqUpdated(event);
+          this.loadableStudyDetailsTransformationService.ohqUpdated(this.selectedPort);
           this.selectedPortOHQTankDetails[index].id = event.data.id;
           this.selectedPortOHQTankDetails[index].processing = false;
           this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
@@ -457,7 +458,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       if (event?.data?.responseStatus?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['OHQ_UPDATE_ERROR'], detail: translationKeys['OHQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }
-      if(event?.data?.responseStatus?.status === '401' && event?.data?.errorCode === '210'){
+      if (event?.data?.responseStatus?.status === '401' && event?.data?.errorCode === '210') {
         this.globalErrorHandler.sessionOutMessage();
       }
     }
@@ -639,12 +640,19 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   ohqGroupValidity(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[], fuelTypeId: number = null): boolean {
     const key = ['density', 'arrivalQuantity', 'departureQuantity'];
     for (let index = 0; index < this.listData.fuelTypes.length; index++) {
+      const groupId = this.listData.fuelTypes[index].id;
+      if (fuelTypeId && groupId === fuelTypeId) {
+        continue;
+      }
       for (let i = 0; i < key.length; i++) {
-        const groupId = this.listData.fuelTypes[index].id;
-        if(fuelTypeId && groupId === fuelTypeId){
-          continue;
-        }
-        const total = selectedPortOHQTankDetails?.reduce((a, b) => a + (b.fuelTypeId === groupId ? b[key[i]]?.value || 0 : 0), 0);
+        const total = selectedPortOHQTankDetails?.reduce((a, b) => {
+          if (b.fuelTypeId === groupId && b[key[i]]?.value){
+            return a + Number(b[key[i]].value)
+          }
+          else{
+            return a
+          }
+        }, 0);
         if (!total) {
           return false;
         }

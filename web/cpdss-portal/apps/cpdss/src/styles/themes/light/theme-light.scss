@@ -930,7 +930,7 @@ a{
   border-right: 2px dashed $text-primary;
 }
 .p-component-overlay{
-  background: rgba($pop-up-overlay, 0.6)!important;
+  background: rgba($body-bg, 0.6)!important;
 }
 .p-datatable .p-datatable-tbody > tr:first-child > td{
   border-top: 2px solid $table-border !important;
@@ -1265,4 +1265,11 @@ header{
 }
 .voyage-end{
   background: url($images-theme + 'voyage-end.png') no-repeat center center;
+}
+
+.colorpicker-custom.empty::-webkit-color-swatch{
+  background: $body-bg!important;
+}
+.action-btn {
+  color: $main-head!important;
 }

@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
 import { PortRotationService } from '../../services/port-rotation.service';
 import { OrderListModule } from 'primeng/orderlist';
+import { PermissionDirectiveModule } from '../../../../shared/directives/permission/permission-directive.module';
 
 /**
  *  Module for port ribbon component
@@ -16,6 +17,7 @@ import { OrderListModule } from 'primeng/orderlist';
     TranslateModule,
     DialogModule,
     OrderListModule,
+    PermissionDirectiveModule
   ],
   providers: [PortRotationService],
   exports: [EditPortRotationPopupComponent]

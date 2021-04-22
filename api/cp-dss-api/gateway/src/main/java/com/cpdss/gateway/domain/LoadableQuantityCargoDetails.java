@@ -56,5 +56,7 @@ public class LoadableQuantityCargoDetails {
 
   private String slopQuantity;
   private String timeRequiredForLoading;
+
+  @JsonInclude(Include.NON_NULL)
   private List<String> loadingPorts;
 }

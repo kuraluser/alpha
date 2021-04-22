@@ -36,7 +36,8 @@ export class VoyageService {
       voyageNo: {
         'required': 'VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR',
         'maxlength': 'NEW_VOYAGE_POPUP_CHARACTER_LIMIT',
-        'specialCharacter': 'NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED'
+        'specialCharacter': 'NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED',
+        'duplicate': 'NEW_VOYAGE_ALREADY_EXIST'
       },
       start_date: {
         'required': 'VOYAGE_POPUP_START_DATE_REQUIRED_ERROR',

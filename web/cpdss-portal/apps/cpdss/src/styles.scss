@@ -2396,3 +2396,10 @@ tr:hover{
 textarea{
   resize: none;
 }
+
+.error-pop-up{ 
+  width: 720px;
+  .p-datatable .p-datatable-tbody > tr:first-child > td{
+    border-top: 0!important;
+  }
+}

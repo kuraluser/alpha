@@ -377,6 +377,7 @@ message LoadablePlanComments {
 	string userName = 2;
 	string dataAndTime = 3;
 	string comment = 4;
+	string createdBy = 5;
 }
 
 message LoadablePlanBallastDetails {
@@ -384,7 +385,7 @@ message LoadablePlanBallastDetails {
  	int64 tankId = 2;
  	string rdgLevel = 3;
 	string correctionFactor = 4;
-	string correctedLevel = 5;
+	string correctedLevel = 5; //same as corrected ullage
 	string metricTon = 6; //quantity
 	string cubicMeter = 7;
 	string percentage = 8;
@@ -449,6 +450,7 @@ message LoadableQuantityCommingleCargoDetails {
  	 string rdgUllage = 27;
      string correctionFactor = 28;
       string slopQuantity = 29;
+     string actualQuantity=30;
 }
 
 message LoadableQuantityCargoDetails {
@@ -475,6 +477,7 @@ message LoadableQuantityCargoDetails {
 	 int32 loadingOrder = 21;
 	 string slopQuantity = 22;
 	 int64 cargoNominationId = 23;
+	 repeated LoadingPortDetail loadingPorts = 24;
 }
 
 message ConfirmPlanRequest {
@@ -703,6 +706,7 @@ message CargoNominationReply {
 	ResponseStatus responseStatus = 1;
 	int64 cargoNominationId = 2;
 	repeated CargoNominationDetail cargoNominations = 3;
+	repeated CargoHistoryDetail cargoHistory = 4;
 }
 
 
@@ -922,6 +926,7 @@ message LoadablePatternCargoDetails {
  	string tankName = 10;
  	string maxTolerence = 11;
  	string minTolerence = 12;
+	string temperature = 13;
 }
 
 message LoadablePatternRequest {
@@ -1031,6 +1036,7 @@ message SynopticalCargoRecord{
 	string capacity = 10;
 	string api = 11;	
 	bool isCommingleCargo=12;
+	string temperature = 13;
 }
 
 message SynopticalOhqRecord{

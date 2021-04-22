@@ -14,5 +14,5 @@ public class UllageUpdateResponse {
 
   private String quantityMt;
 
-  private String fillingRatio;
+  private String obsM3;
 }
