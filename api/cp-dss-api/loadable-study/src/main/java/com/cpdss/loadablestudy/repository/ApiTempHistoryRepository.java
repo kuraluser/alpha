@@ -26,6 +26,6 @@ public interface ApiTempHistoryRepository
 
   Page<ApiTempHistory> findAllByLoadedDateBetween(
       Pageable pageable, LocalDateTime fromDate, LocalDateTime toDate);
-  
-  public List<ApiTempHistory>  findByOrderByCreatedDateTimeDesc();
+
+  public List<ApiTempHistory> findByOrderByCreatedDateTimeDesc();
 }

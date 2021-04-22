@@ -586,7 +586,7 @@ public class LoadableStudyService {
     CargoRequest cargoRequest =
         CargoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
     CargoReply cargoReply = cargoInfoServiceBlockingStub.getCargoInfo(cargoRequest);
-    
+
     // Retrieve cargo Nominations from cargo nomination table
     CargoNominationRequest cargoNominationRequest =
         CargoNominationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
@@ -600,18 +600,19 @@ public class LoadableStudyService {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    
+
     if (cargoReply != null
-            && cargoReply.getResponseStatus() != null
-            && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-          buildCargoNominationResponseWithCargo(cargoNominationResponse, cargoNominationReply, cargoReply);
-        } else {
-          throw new GenericServiceException(
-              "Error in calling cargo service",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        && cargoReply.getResponseStatus() != null
+        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      buildCargoNominationResponseWithCargo(
+          cargoNominationResponse, cargoNominationReply, cargoReply);
+    } else {
+      throw new GenericServiceException(
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    
+
     // Retrieve segregation List
     ValveSegregationRequest valveSegregationRequest =
         ValveSegregationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
@@ -731,7 +732,9 @@ public class LoadableStudyService {
    * @return
    */
   private CargoNominationResponse buildCargoNominationResponseWithCargo(
-      CargoNominationResponse cargoNominationResponse,  CargoNominationReply cargoNominationReply,CargoReply cargoReply) {
+      CargoNominationResponse cargoNominationResponse,
+      CargoNominationReply cargoNominationReply,
+      CargoReply cargoReply) {
     if (cargoReply != null && !cargoReply.getCargosList().isEmpty()) {
       List<Cargo> cargoList = new ArrayList<>();
       cargoReply
@@ -749,19 +752,19 @@ public class LoadableStudyService {
     }
     return cargoNominationResponse;
   }
-  
-  private void setApiTempFromApiHistory(Cargo cargo, List<CargoHistoryDetail> cargoHistoryList) {
-	  
-	  cargoHistoryList.forEach(it->{
-		  if(it.getCargoId() == cargo.getId()) {
-			  cargo.setApi(it.getApi());
-        	  cargo.setTemp(it.getTemperature());
-		  }else {
-			  cargo.setApi(null);
-        	  cargo.setTemp(null);
-		  }
-	  });
 
+  private void setApiTempFromApiHistory(Cargo cargo, List<CargoHistoryDetail> cargoHistoryList) {
+
+    cargoHistoryList.forEach(
+        it -> {
+          if (it.getCargoId() == cargo.getId()) {
+            cargo.setApi(it.getApi());
+            cargo.setTemp(it.getTemperature());
+          } else {
+            cargo.setApi(null);
+            cargo.setTemp(null);
+          }
+        });
   }
 
   /**

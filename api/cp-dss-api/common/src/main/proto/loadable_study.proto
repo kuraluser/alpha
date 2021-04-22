@@ -370,6 +370,7 @@ message LoadablePlanDetailsReply {
   	int64 id = 14;
   	int64 loadablePatternStatusId = 15;
   	int64 voyageStatusId = 16;
+  	bool validated = 17;
 }
 
 message LoadablePlanComments {
