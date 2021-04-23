@@ -858,10 +858,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           OhqPorts.Builder ohqPortsBuilder = OhqPorts.newBuilder();
           portRotations.forEach(
               port -> {
-                ohqPortsBuilder.setId(port.getId());
-                Optional.ofNullable(port.getIsPortRotationOhqComplete())
-                    .ifPresent(ohqPortsBuilder::setIsPortRotationOhqComplete);
-                builder.addOhqPorts(ohqPortsBuilder.build());
+            	  if (port.isActive()) {
+                  	ohqPortsBuilder.setId(port.getId());
+                      Optional.ofNullable(port.getIsPortRotationOhqComplete())
+                          .ifPresent(ohqPortsBuilder::setIsPortRotationOhqComplete);
+                      builder.addOhqPorts(ohqPortsBuilder.build());
+                  }
               });
         }
         replyBuilder.addLoadableStudies(builder.build());
@@ -1519,7 +1521,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       List<LoadableStudyPortRotation> entityList =
           this.loadableStudyPortRotationRepository
-              .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
+              .findByLoadableStudyAndIsActiveOrderByPortOrder(
                   loadableStudyOpt.get(), true);
       for (LoadableStudyPortRotation entity : entityList) {
         replyBuilder.addPorts(
@@ -2310,7 +2312,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         List<LoadableStudyPortRotation> ports =
             this.loadableStudyPortRotationRepository
-                .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
+                .findByLoadableStudyAndIsActiveOrderByPortOrder(
                     loadableStudy.get(), true);
         if (ports.isEmpty()) {
           log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
@@ -4378,7 +4380,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
     List<LoadableStudyPortRotation> entityList =
         this.loadableStudyPortRotationRepository
-            .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
+            .findByLoadableStudyAndIsActiveOrderByPortOrder(
                 loadablePattern.getLoadableStudy(), true);
     Long lastLoadingRotationId =
         getLastPortRotationId(
