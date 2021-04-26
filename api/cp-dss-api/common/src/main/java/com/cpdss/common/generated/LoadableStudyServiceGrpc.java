@@ -2788,6 +2788,58 @@ public final class LoadableStudyServiceGrpc {
     return getFetchAllAlgoErrorsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
+          com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
+      getGetCargoHistoryByCargoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoHistoryByCargo",
+      requestType = com.cpdss.common.generated.LoadableStudy.LatestCargoRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LatestCargoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
+          com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
+      getGetCargoHistoryByCargoMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
+            com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
+        getGetCargoHistoryByCargoMethod;
+    if ((getGetCargoHistoryByCargoMethod = LoadableStudyServiceGrpc.getGetCargoHistoryByCargoMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetCargoHistoryByCargoMethod =
+                LoadableStudyServiceGrpc.getGetCargoHistoryByCargoMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetCargoHistoryByCargoMethod =
+              getGetCargoHistoryByCargoMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
+                          com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetCargoHistoryByCargo"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LatestCargoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LatestCargoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetCargoHistoryByCargo"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoHistoryByCargoMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3279,6 +3331,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getFetchAllAlgoErrorsMethod(), responseObserver);
     }
 
+    /** */
+    public void getCargoHistoryByCargo(
+        com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCargoHistoryByCargoMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -3669,6 +3729,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoErrors,
                       com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
                       this, METHODID_FETCH_ALL_ALGO_ERRORS)))
+          .addMethod(
+              getGetCargoHistoryByCargoMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
+                      com.cpdss.common.generated.LoadableStudy.LatestCargoReply>(
+                      this, METHODID_GET_CARGO_HISTORY_BY_CARGO)))
           .build();
     }
   }
@@ -4290,6 +4357,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCargoHistoryByCargo(
+        com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -4688,6 +4766,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
       return blockingUnaryCall(
           getChannel(), getFetchAllAlgoErrorsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LatestCargoReply getCargoHistoryByCargo(
+        com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetCargoHistoryByCargoMethod(), getCallOptions(), request);
     }
   }
 
@@ -5183,6 +5268,15 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
+        getCargoHistoryByCargo(
+            com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -5240,6 +5334,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_JSON = 52;
   private static final int METHODID_SAVE_ALGO_ERRORS = 53;
   private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 54;
+  private static final int METHODID_GET_CARGO_HISTORY_BY_CARGO = 55;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5635,6 +5730,13 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>)
                   responseObserver);
           break;
+        case METHODID_GET_CARGO_HISTORY_BY_CARGO:
+          serviceImpl.getCargoHistoryByCargo(
+              (com.cpdss.common.generated.LoadableStudy.LatestCargoRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LatestCargoReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -5754,6 +5856,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveJsonMethod())
                       .addMethod(getSaveAlgoErrorsMethod())
                       .addMethod(getFetchAllAlgoErrorsMethod())
+                      .addMethod(getGetCargoHistoryByCargoMethod())
                       .build();
         }
       }
