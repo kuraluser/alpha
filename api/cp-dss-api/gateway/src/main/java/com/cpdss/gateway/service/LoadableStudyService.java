@@ -1628,6 +1628,9 @@ public class LoadableStudyService {
                         Optional.ofNullable(loadablePatternCargoDetail.getApi())
                             .ifPresent(api -> loadablePatternCargoDetails.setApi(api));
 
+                        Optional.ofNullable(loadablePatternCargoDetail.getTemperature())
+                            .ifPresent(api -> loadablePatternCargoDetails.setTemperature(api));
+
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
@@ -2589,6 +2592,9 @@ public class LoadableStudyService {
       dto.setTankName(detail.getTankName());
       dto.setApi(
           isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
+      if (detail.getTemperature() != null && detail.getTemperature().length() > 0) {
+        dto.setTemperature(new BigDecimal(detail.getTemperature()));
+      }
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
@@ -3186,6 +3192,9 @@ public class LoadableStudyService {
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       rec.setIsCommingleCargo(
           isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
+      if (protoRec.getTemperature() != null && protoRec.getTemperature().length() > 0) {
+        rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
+      }
       list.add(rec);
     }
     synopticalRecord.setCargos(list);

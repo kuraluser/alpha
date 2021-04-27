@@ -3802,6 +3802,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
           Optional.ofNullable(lpq.getEstimatedApi())
               .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
+          Optional.ofNullable(lpq.getEstimatedTemperature())
+              .ifPresent(
+                  temp -> loadablePatternCargoDetailsBuilder.setTemperature(String.valueOf(temp)));
 
           loadablePatternCargoDetailsBuilder.setIsCommingle(false);
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
@@ -7023,6 +7026,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
           Optional.ofNullable(tankDataOpt.get().getApi())
               .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
+          Optional.ofNullable(tankDataOpt.get().getTemperature())
+              .ifPresent(temp -> cargoBuilder.setTemperature(valueOf(temp)));
         }
       }
       if (!isEmpty(cargoBuilder.getActualWeight())) {
