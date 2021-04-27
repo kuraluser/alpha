@@ -55,4 +55,7 @@ public class LoadablePlanDetailsResponse {
 
   @JsonInclude(Include.NON_NULL)
   private Long voyageStatusId;
+
+  @JsonInclude(Include.NON_NULL)
+  private Boolean validated;
 }

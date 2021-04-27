@@ -169,6 +169,25 @@ service LoadableStudyService {
 	rpc SaveAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 
 	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
+	
+	rpc GetCargoHistoryByCargo(LatestCargoRequest) returns(LatestCargoReply) {}
+}
+
+message LatestCargoRequest{
+	int64 vesselId = 1;
+	int64 portId = 2;
+	int64 cargoId = 3;
+}
+
+message LatestCargoReply{
+
+	int64 vesselId = 1;
+	int64 portId = 2;
+	int64 cargoId = 3;
+	string api = 4;
+    string temperature = 5;
+    ResponseStatus responseStatus = 6;
+
 }
 
 message UpdateUllageRequest {
@@ -370,6 +389,7 @@ message LoadablePlanDetailsReply {
   	int64 id = 14;
   	int64 loadablePatternStatusId = 15;
   	int64 voyageStatusId = 16;
+  	bool validated = 17;
 }
 
 message LoadablePlanComments {
