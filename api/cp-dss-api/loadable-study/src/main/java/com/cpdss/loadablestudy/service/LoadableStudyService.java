@@ -2998,7 +2998,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        //        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -4799,10 +4799,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-                 this.saveLoadicatorInfo(
-                     loadablePatternOpt.get().getLoadableStudy(),
-                     request.getProcesssId(),
-                     request.getLoadablePatternId());
+        //                 this.saveLoadicatorInfo(
+        //                     loadablePatternOpt.get().getLoadableStudy(),
+        //                     request.getProcesssId(),
+        //                     request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -8690,8 +8690,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     synopticalWiseList.forEach(
         patternCargo -> {
           if (stowagePlanBuilder.getStowageId() == patternCargo.getLoadablePatternId()) {
-        	  this.buildLoadicatorStowagePlanDetails(
-                      patternCargo, stowagePlanBuilder, cargoReply, vesselReply);
+            this.buildLoadicatorStowagePlanDetails(
+                patternCargo, stowagePlanBuilder, cargoReply, vesselReply);
           }
         });
   }
@@ -8737,7 +8737,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional.ofNullable(cargoDetail.get().getCrudeType())
           .ifPresent(stowageDetailsBuilder::setCargoName);
     }
-    
+
     stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
   }
 

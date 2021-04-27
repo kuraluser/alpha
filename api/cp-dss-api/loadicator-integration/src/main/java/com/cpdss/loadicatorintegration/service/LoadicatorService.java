@@ -96,7 +96,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       }
 
       this.stowagePlanRepository.saveAll(stowagePlanList);
-      
+
       this.updateStowageDetails(stowagePlanList);
 
       if (this.getStatus(stowagePlanList)) {
@@ -123,16 +123,19 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
+
   @Transactional(propagation = Propagation.REQUIRED)
   private void updateStowageDetails(List<StowagePlan> stowagePlanList) {
-	  stowagePlanList.forEach(stowagePlan -> {
-    	  Optional<CargoData> cargoDataOpt = this.cargoDataRepository.findByStowagePlan(stowagePlan);
-    	  if (cargoDataOpt.isPresent()) {
-    		  this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(stowagePlan, cargoDataOpt.get().getCargoId());  
-//    		  this.stowageDetailsRepository.deleteDuplicatesFromStowageDetails();
-    	  }
-      });
+    stowagePlanList.forEach(
+        stowagePlan -> {
+          Optional<CargoData> cargoDataOpt =
+              this.cargoDataRepository.findByStowagePlan(stowagePlan);
+          if (cargoDataOpt.isPresent()) {
+            this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
+                stowagePlan, cargoDataOpt.get().getCargoId());
+            //    		  this.stowageDetailsRepository.deleteDuplicatesFromStowageDetails();
+          }
+        });
   }
 
   public LoadicatorDataReply getLoadicatorDatas(LoadicatorDataRequest loadableStudyrequest) {
@@ -140,7 +143,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   }
 
   private Set<CargoData> buildCargoDataSet(
-      com.cpdss.common.generated.Loadicator.StowagePlan plan, StowagePlan entity, AtomicLong cargoId) {
+      com.cpdss.common.generated.Loadicator.StowagePlan plan,
+      StowagePlan entity,
+      AtomicLong cargoId) {
     Set<CargoData> set = new HashSet<>();
     for (CargoInfo cargo : plan.getCargoInfoList()) {
       CargoData cargoData = new CargoData();
