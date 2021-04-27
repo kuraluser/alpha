@@ -32,6 +32,8 @@ import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
+import com.cpdss.common.generated.LoadableStudy.LatestCargoReply;
+import com.cpdss.common.generated.LoadableStudy.LatestCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
@@ -269,7 +271,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-  @Value("${loadablestudy.attachement.rootFolder}")
+@Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
   @Value("${algo.loadablestudy.api.url}")
@@ -9817,4 +9819,40 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
+  
+  @Override
+	public void getCargoHistoryByCargo(LatestCargoRequest request, StreamObserver<LatestCargoReply> responseObserver) {
+	  
+	  LatestCargoReply.Builder replyBuilder = LatestCargoReply.newBuilder();
+	  try {
+		  
+		  List<ApiTempHistory> apiHistories = apiTempHistoryRepository.
+				  findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(request.getPortId(),request.getCargoId());
+		  if(apiHistories!=null && apiHistories.size()> 0) {
+			  ApiTempHistory apiTempHistory = apiHistories.get(0);
+			  replyBuilder.setVesselId(request.getVesselId())
+			              .setPortId(request.getPortId())
+			              .setCargoId(request.getCargoId())
+			              .setApi(String.valueOf(apiTempHistory.getApi()))
+			              .setTemperature(String.valueOf(apiTempHistory.getTemp()));
+			  
+			  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+		  }else {
+			  replyBuilder.setVesselId(request.getVesselId())
+              .setPortId(request.getPortId())
+              .setCargoId(request.getCargoId());
+              replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+		  }
+		 
+		  
+	  }catch (Exception e) {
+	      log.error("Exception when latest api temp against port data", e);
+	      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+	    } finally {
+	      responseObserver.onNext(replyBuilder.build());
+	      responseObserver.onCompleted();
+	    }
+
+	}
+
 }
