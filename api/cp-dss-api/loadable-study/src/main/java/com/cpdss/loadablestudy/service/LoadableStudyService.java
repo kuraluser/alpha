@@ -255,6 +255,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -1902,9 +1903,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       entity =
           this.loadableStudyPortRotationRepository.save(
               this.createPortRotationEntity(entity, request));
-      loadableStudyOpt.get().setIsPortsComplete(request.getIsPortsComplete());
-      this.loadableStudyRepository.save(loadableStudyOpt.get());
-
+      
+//      loadableStudyOpt.get().setIsPortsComplete(request.getIsPortsComplete());
+//      this.loadableStudyRepository.save(loadableStudyOpt.get());
+      this.loadableStudyRepository.updateLoadableStudyIsPortsComplete(loadableStudyOpt.get().getId(), request.getIsPortsComplete());
       replyBuilder.setPortRotationId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {

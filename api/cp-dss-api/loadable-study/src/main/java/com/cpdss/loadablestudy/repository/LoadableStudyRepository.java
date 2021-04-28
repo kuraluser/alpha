@@ -34,4 +34,9 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   public LoadableStudy findByVoyageAndNameIgnoreCaseAndIsActive(
       Voyage voyage, String name, boolean isActive);
+  
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadableStudy LS SET LS.isPortsComplete = ?2 WHERE LS.id = ?1")
+  public void updateLoadableStudyIsPortsComplete(Long loadableStudyId, Boolean isPortsComplete);
 }
