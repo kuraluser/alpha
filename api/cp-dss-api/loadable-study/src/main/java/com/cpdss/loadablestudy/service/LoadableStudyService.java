@@ -3584,6 +3584,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  /**
+   * This validation based on DSS-1860 If the ETA/ETD/Lay are empty for a LS, then this retunr value
+   * must false.
+   *
+   * @return
+   */
+  private boolean validateLoadableStudyForConfimPlan(LoadableStudy ls) {
+    boolean status = true;
+    Map<Long, Boolean> validationStack = new HashMap<>();
+    if (ls.getPortRotations() != null && !ls.getPortRotations().isEmpty()) {
+      for (LoadableStudyPortRotation pr : ls.getPortRotations()) {
+        if (pr.getId() > 0) {
+          if (pr.getEta() == null || pr.getEtd() == null || !isLayCanValid(pr)) {
+            validationStack.put(pr.getId(), false);
+          }
+        }
+      }
+    }
+    log.info(
+        "Loadable Study, Validate Plan status - {}, LS Id - {}",
+        validationStack.isEmpty(),
+        ls.getId());
+    if (!validationStack.isEmpty()) {
+      log.info("Loadable Study, Invalid Port Rotaion Ids - {}", validationStack.keySet());
+    }
+    return validationStack.isEmpty();
+  }
+
+  private boolean isLayCanValid(LoadableStudyPortRotation lsPr) {
+    List ids =
+        Arrays.asList(LOADING_OPERATION_ID, STS_LOADING_OPERATION_ID, STS_DISCHARGING_OPERATION_ID);
+    if (ids.contains(lsPr.getOperation().getId())) {
+      if (lsPr.getLayCanTo() == null || lsPr.getLayCanFrom() == null) return false;
+      else return true;
+    }
+    return true;
+  }
+
   @Override
   public void getLoadablePatternDetails(
       LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
@@ -3600,6 +3638,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
+        boolean status = this.validateLoadableStudyForConfimPlan(loadableStudy.get());
+        builder.setConfirmPlanEligibility(status);
         com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePatternBuilder =
             com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
         List<LoadablePattern> loadablePatterns =
