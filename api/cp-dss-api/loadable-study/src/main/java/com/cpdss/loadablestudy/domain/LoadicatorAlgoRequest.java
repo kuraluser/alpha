@@ -10,4 +10,5 @@ public class LoadicatorAlgoRequest {
   private String processId;
   private List<LoadicatorPatternDetails> loadicatorPatternDetails;
   private LoadicatorPatternDetails loadicatorPatternDetail;
+  private LoadableStudy loadableStudy;
 }

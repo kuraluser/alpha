@@ -240,7 +240,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-@Value("${loadablestudy.attachement.rootFolder}")
+  @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
   @Value("${algo.loadablestudy.api.url}")
@@ -4773,10 +4773,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-        //                 this.saveLoadicatorInfo(
-        //                     loadablePatternOpt.get().getLoadableStudy(),
-        //                     request.getProcesssId(),
-        //                     request.getLoadablePatternId());
+        //        this.saveLoadicatorInfo(
+        //                loadablePatternOpt.get().getLoadableStudy(),
+        //                request.getProcesssId(),
+        //                request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -5136,6 +5136,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadicator.getLoadicatorPatternDetails().add(patterns);
               });
     }
+
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    Optional<LoadableStudy> loadableStudyOpt =
+        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (loadableStudyOpt.isPresent()) {
+      ModelMapper modelMapper = new ModelMapper();
+      buildLoadableStudy(
+          request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+    }
+
+    loadicator.setLoadableStudy(loadableStudy);
   }
 
   /**
@@ -9865,40 +9877,41 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
-  
+
   @Override
-	public void getCargoHistoryByCargo(LatestCargoRequest request, StreamObserver<LatestCargoReply> responseObserver) {
-	  
-	  LatestCargoReply.Builder replyBuilder = LatestCargoReply.newBuilder();
-	  try {
-		  
-		  List<ApiTempHistory> apiHistories = apiTempHistoryRepository.
-				  findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(request.getPortId(),request.getCargoId());
-		  if(apiHistories!=null && apiHistories.size()> 0) {
-			  ApiTempHistory apiTempHistory = apiHistories.get(0);
-			  replyBuilder.setVesselId(request.getVesselId())
-			              .setPortId(request.getPortId())
-			              .setCargoId(request.getCargoId())
-			              .setApi(String.valueOf(apiTempHistory.getApi()))
-			              .setTemperature(String.valueOf(apiTempHistory.getTemp()));
-			  
-			  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-		  }else {
-			  replyBuilder.setVesselId(request.getVesselId())
-              .setPortId(request.getPortId())
-              .setCargoId(request.getCargoId());
-              replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-		  }
-		 
-		  
-	  }catch (Exception e) {
-	      log.error("Exception when latest api temp against port data", e);
-	      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
-	    } finally {
-	      responseObserver.onNext(replyBuilder.build());
-	      responseObserver.onCompleted();
-	    }
+  public void getCargoHistoryByCargo(
+      LatestCargoRequest request, StreamObserver<LatestCargoReply> responseObserver) {
 
-	}
+    LatestCargoReply.Builder replyBuilder = LatestCargoReply.newBuilder();
+    try {
 
+      List<ApiTempHistory> apiHistories =
+          apiTempHistoryRepository.findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(
+              request.getPortId(), request.getCargoId());
+      if (apiHistories != null && apiHistories.size() > 0) {
+        ApiTempHistory apiTempHistory = apiHistories.get(0);
+        replyBuilder
+            .setVesselId(request.getVesselId())
+            .setPortId(request.getPortId())
+            .setCargoId(request.getCargoId())
+            .setApi(String.valueOf(apiTempHistory.getApi()))
+            .setTemperature(String.valueOf(apiTempHistory.getTemp()));
+
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder
+            .setVesselId(request.getVesselId())
+            .setPortId(request.getPortId())
+            .setCargoId(request.getCargoId());
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+
+    } catch (Exception e) {
+      log.error("Exception when latest api temp against port data", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }
