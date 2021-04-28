@@ -240,7 +240,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-@Value("${loadablestudy.attachement.rootFolder}")
+  @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
   @Value("${algo.loadablestudy.api.url}")
@@ -3584,6 +3584,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  /**
+   * This validation based on DSS-1860 If the ETA/ETD/Lay are empty for a LS, then this retunr value
+   * must false.
+   *
+   * @return
+   */
+  private boolean validateLoadableStudyForConfimPlan(LoadableStudy ls) {
+    boolean status = true;
+    Map<Long, Boolean> validationStack = new HashMap<>();
+    if (ls.getPortRotations() != null && !ls.getPortRotations().isEmpty()) {
+      for (LoadableStudyPortRotation pr : ls.getPortRotations()) {
+        if (pr.getId() > 0) {
+          if (pr.getEta() == null || pr.getEtd() == null || !isLayCanValid(pr)) {
+            validationStack.put(pr.getId(), false);
+          }
+        }
+      }
+    }
+    log.info(
+        "Loadable Study, Validate Plan status - {}, LS Id - {}",
+        validationStack.isEmpty(),
+        ls.getId());
+    if (!validationStack.isEmpty()) {
+      log.info("Loadable Study, Invalid Port Rotaion Ids - {}", validationStack.keySet());
+    }
+    return validationStack.isEmpty();
+  }
+
+  private boolean isLayCanValid(LoadableStudyPortRotation lsPr) {
+    List ids =
+        Arrays.asList(LOADING_OPERATION_ID, STS_LOADING_OPERATION_ID, STS_DISCHARGING_OPERATION_ID);
+    if (ids.contains(lsPr.getOperation().getId())) {
+      if (lsPr.getLayCanTo() == null || lsPr.getLayCanFrom() == null) return false;
+      else return true;
+    }
+    return true;
+  }
+
   @Override
   public void getLoadablePatternDetails(
       LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
@@ -3600,6 +3638,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
+        boolean status = this.validateLoadableStudyForConfimPlan(loadableStudy.get());
+        builder.setConfirmPlanEligibility(status);
         com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePatternBuilder =
             com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
         List<LoadablePattern> loadablePatterns =
@@ -9865,40 +9905,41 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
-  
+
   @Override
-	public void getCargoHistoryByCargo(LatestCargoRequest request, StreamObserver<LatestCargoReply> responseObserver) {
-	  
-	  LatestCargoReply.Builder replyBuilder = LatestCargoReply.newBuilder();
-	  try {
-		  
-		  List<ApiTempHistory> apiHistories = apiTempHistoryRepository.
-				  findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(request.getPortId(),request.getCargoId());
-		  if(apiHistories!=null && apiHistories.size()> 0) {
-			  ApiTempHistory apiTempHistory = apiHistories.get(0);
-			  replyBuilder.setVesselId(request.getVesselId())
-			              .setPortId(request.getPortId())
-			              .setCargoId(request.getCargoId())
-			              .setApi(String.valueOf(apiTempHistory.getApi()))
-			              .setTemperature(String.valueOf(apiTempHistory.getTemp()));
-			  
-			  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-		  }else {
-			  replyBuilder.setVesselId(request.getVesselId())
-              .setPortId(request.getPortId())
-              .setCargoId(request.getCargoId());
-              replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-		  }
-		 
-		  
-	  }catch (Exception e) {
-	      log.error("Exception when latest api temp against port data", e);
-	      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
-	    } finally {
-	      responseObserver.onNext(replyBuilder.build());
-	      responseObserver.onCompleted();
-	    }
+  public void getCargoHistoryByCargo(
+      LatestCargoRequest request, StreamObserver<LatestCargoReply> responseObserver) {
 
-	}
+    LatestCargoReply.Builder replyBuilder = LatestCargoReply.newBuilder();
+    try {
 
+      List<ApiTempHistory> apiHistories =
+          apiTempHistoryRepository.findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(
+              request.getPortId(), request.getCargoId());
+      if (apiHistories != null && apiHistories.size() > 0) {
+        ApiTempHistory apiTempHistory = apiHistories.get(0);
+        replyBuilder
+            .setVesselId(request.getVesselId())
+            .setPortId(request.getPortId())
+            .setCargoId(request.getCargoId())
+            .setApi(String.valueOf(apiTempHistory.getApi()))
+            .setTemperature(String.valueOf(apiTempHistory.getTemp()));
+
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder
+            .setVesselId(request.getVesselId())
+            .setPortId(request.getPortId())
+            .setCargoId(request.getCargoId());
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+
+    } catch (Exception e) {
+      log.error("Exception when latest api temp against port data", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

@@ -917,6 +917,7 @@ message LoadablePatternReply {
 	repeated TankList ballastRearTanks = 6;
  	string loadablePatternCreatedDate = 7;
  	string loadableStudyName = 8;
+ 	bool confirmPlanEligibility = 9;
 }
 
 message LoadablePattern {
