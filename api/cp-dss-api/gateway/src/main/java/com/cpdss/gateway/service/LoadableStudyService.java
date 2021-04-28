@@ -1544,6 +1544,8 @@ public class LoadableStudyService {
       Long vesselId,
       String correlationId) {
     LoadablePatternResponse loadablePatternResponse = new LoadablePatternResponse();
+    loadablePatternResponse.setConfirmPlanEligibility(
+        loadablePatternReply.getConfirmPlanEligibility());
     loadablePatternResponse.setLoadableStudyName(loadablePatternReply.getLoadableStudyName());
     loadablePatternResponse.setLoadablePatternCreatedDate(
         loadablePatternReply.getLoadablePatternCreatedDate());

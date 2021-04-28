@@ -17,4 +17,6 @@ public class LoadablePatternResponse {
   private List<List<VesselTank>> frontBallastTanks;
   private List<List<VesselTank>> centerBallastTanks;
   private List<List<VesselTank>> rearBallastTanks;
+
+  private boolean confirmPlanEligibility;
 }
