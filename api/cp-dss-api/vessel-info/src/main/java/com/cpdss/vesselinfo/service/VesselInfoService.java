@@ -24,12 +24,16 @@ import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
+import com.cpdss.common.generated.VesselInfo.VesselTankOrder;
+import com.cpdss.common.generated.VesselInfo.VesselTankRequest;
+import com.cpdss.common.generated.VesselInfo.VesselTankResponse;
 import com.cpdss.common.generated.VesselInfo.VesselTankTCG;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.domain.VesselInfo;
+import com.cpdss.vesselinfo.domain.VesselTankDetails;
 import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
 import com.cpdss.vesselinfo.entity.DraftCondition;
 import com.cpdss.vesselinfo.entity.HydrostaticTable;
@@ -1239,6 +1243,38 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception in getVesselInfoByPaging")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getVesselInfoBytankIds(
+      VesselTankRequest request, StreamObserver<VesselTankResponse> responseObserver) {
+    VesselTankResponse.Builder replyBuilder = VesselTankResponse.newBuilder();
+    try {
+      List<Long> tankIds = new ArrayList<>(request.getTankIdsList());
+      List<VesselTankDetails> tankResp = vesselTankRepository.findTankDetailsByTankIds(tankIds);
+      if (!tankResp.isEmpty()) {
+        log.info("Tank list size {}", tankResp.size());
+        for (VesselTankDetails var1 : tankResp) {
+          VesselTankOrder.Builder builder = VesselTankOrder.newBuilder();
+          builder.setTankId(var1.getTankId());
+          builder.setShortName(var1.getShortName());
+          builder.setTankDisplayOrder(var1.getTankDisplayOrder());
+          builder.setTankName(var1.getTankName());
+          replyBuilder.addVesselTankOrder(builder);
+        }
+      }
+    } catch (Exception e) {
+      log.error("Exception in get VesselInfo By tank Ids", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in getVesselInfoBytankIds")
               .setStatus(FAILED)
               .build());
     } finally {

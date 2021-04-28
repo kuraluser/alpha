@@ -30,6 +30,8 @@ service VesselInfoService {
 	}
 
 	rpc GetVesselInfoByPaging(VesselRequestWithPaging) returns (VesselReply){}
+
+	rpc GetVesselInfoBytankIds(VesselTankRequest) returns (VesselTankResponse){}
 }
 
 message VesselRequestWithPaging{
@@ -297,4 +299,17 @@ message VesselReply {
 		string trim4 = 13;
 		string trim5 = 14;
 		string trim6 = 15;
+	}
+	message VesselTankRequest {
+		repeated int64  tankIds = 1;
+	}
+	message VesselTankOrder {
+		string tankName = 1;
+		int64 tankId = 2;
+		string shortName = 3;
+		int32 tankDisplayOrder = 4;
+	}
+	message VesselTankResponse {
+		repeated VesselTankOrder vesselTankOrder = 1;
+		ResponseStatus responseStatus = 2;
 	}
