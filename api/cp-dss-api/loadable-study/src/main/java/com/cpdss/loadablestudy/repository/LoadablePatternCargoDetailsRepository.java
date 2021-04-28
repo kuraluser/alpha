@@ -32,4 +32,8 @@ public interface LoadablePatternCargoDetailsRepository
   @Query(
       "SELECT DISTINCT lp.portRotationId FROM LoadablePatternCargoDetails lp WHERE lp.cargoNominationId =?1 AND lp.isActive = true")
   List<Long> findAllPortRotationIdByCargoNomination(Long var1);
+
+  @Query(
+      "FROM LoadablePatternCargoDetails lp WHERE lp.loadablePatternId = ?1 AND lp.portId = ?2 and lp.isActive = true")
+  List<LoadablePatternCargoDetails> findAllByPatternIdAndPortId(Long var1, Long var2);
 }

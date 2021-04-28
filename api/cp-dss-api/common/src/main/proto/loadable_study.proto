@@ -885,7 +885,7 @@ message OnBoardQuantityDetail{
 	string density=14;
 	bool loadOnTop = 15;
     bool isObqComplete=17;
-	
+	string temperature = 18;
 }
 
 message OnBoardQuantityReply{

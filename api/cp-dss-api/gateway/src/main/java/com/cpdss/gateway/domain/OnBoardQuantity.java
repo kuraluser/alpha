@@ -53,4 +53,6 @@ public class OnBoardQuantity {
   private Boolean loadOnTop;
 
   private Boolean isObqComplete;
+
+  private BigDecimal temperature = BigDecimal.ZERO;
 }

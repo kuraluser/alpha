@@ -37,5 +37,5 @@ public class SynopticalCargoBallastRecord {
 
   private String grade;
 
-  private BigDecimal temperature;
+  private BigDecimal temperature = BigDecimal.ZERO;
 }
