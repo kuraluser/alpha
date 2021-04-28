@@ -4913,7 +4913,6 @@ class LoadableStudyServiceTest {
     response.setCorrectedUllage(NUMERICAL_TEST_VALUE);
     response.setQuantityMt(NUMERICAL_TEST_VALUE);
     response.setCorrectionFactor(NUMERICAL_TEST_VALUE);
-    response.setFillingRatio(NUMERICAL_TEST_VALUE);
     return response;
   }
 

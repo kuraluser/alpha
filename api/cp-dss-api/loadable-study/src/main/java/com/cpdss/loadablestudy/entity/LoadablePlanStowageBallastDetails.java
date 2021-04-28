@@ -57,4 +57,10 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "port_rotation_xid")
   private Long portRotationId;
+
+  @Column(name = "rdg_ullage")
+  private String rdgUllage;
+
+  @Column(name = "correction_factor")
+  private String correctionFactor;
 }

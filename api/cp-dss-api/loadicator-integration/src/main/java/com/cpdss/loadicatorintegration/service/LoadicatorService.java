@@ -24,9 +24,11 @@ import com.cpdss.loadicatorintegration.entity.LoadicatorTrim;
 import com.cpdss.loadicatorintegration.entity.OtherTankDetails;
 import com.cpdss.loadicatorintegration.entity.StowageDetails;
 import com.cpdss.loadicatorintegration.entity.StowagePlan;
+import com.cpdss.loadicatorintegration.repository.CargoDataRepository;
 import com.cpdss.loadicatorintegration.repository.LoadicatorIntactStabilityRepository;
 import com.cpdss.loadicatorintegration.repository.LoadicatorStrengthRepository;
 import com.cpdss.loadicatorintegration.repository.LoadicatorTrimRepository;
+import com.cpdss.loadicatorintegration.repository.StowageDetailsRepository;
 import com.cpdss.loadicatorintegration.repository.StowagePlanRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
@@ -37,11 +39,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Log4j2
@@ -52,6 +57,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   @Autowired private LoadicatorTrimRepository loadicatorTrimRepository;
   @Autowired private LoadicatorStrengthRepository loadicatorStrengthRepository;
   @Autowired private LoadicatorIntactStabilityRepository loadicatorIntactStabilityRepository;
+  @Autowired private CargoDataRepository cargoDataRepository;
+  @Autowired private StowageDetailsRepository stowageDetailsRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -65,6 +72,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     com.cpdss.common.generated.Loadicator.LoadicatorReply.Builder replyBuilder =
         LoadicatorReply.newBuilder();
     try {
+      AtomicLong cargoId = new AtomicLong(0L);
       List<StowagePlan> stowagePlanList = new ArrayList<>();
       for (com.cpdss.common.generated.Loadicator.StowagePlan plan :
           request.getStowagePlanDetailsList()) {
@@ -82,12 +90,15 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         }
         if (!plan.getCargoInfoList().isEmpty()) {
           entity.setCargoData(new HashSet<>());
-          entity.getCargoData().addAll(this.buildCargoDataSet(plan, entity));
+          entity.getCargoData().addAll(this.buildCargoDataSet(plan, entity, cargoId));
         }
         stowagePlanList.add(entity);
       }
 
       this.stowagePlanRepository.saveAll(stowagePlanList);
+
+      this.updateStowageDetails(stowagePlanList);
+
       if (this.getStatus(stowagePlanList)) {
 
         LoadicatorDataRequest loadableStudyrequest =
@@ -113,16 +124,33 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     }
   }
 
+  @Transactional(propagation = Propagation.REQUIRED)
+  private void updateStowageDetails(List<StowagePlan> stowagePlanList) {
+    stowagePlanList.forEach(
+        stowagePlan -> {
+          Optional<CargoData> cargoDataOpt =
+              this.cargoDataRepository.findByStowagePlan(stowagePlan);
+          if (cargoDataOpt.isPresent()) {
+            this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
+                stowagePlan, cargoDataOpt.get().getCargoId());
+            //    		  this.stowageDetailsRepository.deleteDuplicatesFromStowageDetails();
+          }
+        });
+  }
+
   public LoadicatorDataReply getLoadicatorDatas(LoadicatorDataRequest loadableStudyrequest) {
     return this.loadableStudyService.getLoadicatorData(loadableStudyrequest);
   }
 
   private Set<CargoData> buildCargoDataSet(
-      com.cpdss.common.generated.Loadicator.StowagePlan plan, StowagePlan entity) {
+      com.cpdss.common.generated.Loadicator.StowagePlan plan,
+      StowagePlan entity,
+      AtomicLong cargoId) {
     Set<CargoData> set = new HashSet<>();
     for (CargoInfo cargo : plan.getCargoInfoList()) {
       CargoData cargoData = new CargoData();
       cargoData.setApi(StringUtils.isEmpty(cargo.getApi()) ? null : new BigDecimal(cargo.getApi()));
+      cargoData.setCargoId(cargoId.incrementAndGet());
       cargoData.setCargoName(
           StringUtils.isEmpty(cargo.getCargoName()) ? null : cargo.getCargoName());
       cargoData.setCargoAbbrev(

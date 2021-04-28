@@ -4,16 +4,20 @@ package com.cpdss.gateway.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.CargoHistoryReply;
+import com.cpdss.common.generated.LoadableStudy.LatestCargoReply;
+import com.cpdss.common.generated.LoadableStudy.LatestCargoRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.CargoHistory;
 import com.cpdss.gateway.domain.CargoHistoryResponse;
+import com.cpdss.gateway.domain.LatestApiTempCargoResponse;
 import com.cpdss.gateway.service.redis.RedisMasterSyncService;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -351,5 +355,43 @@ public class LoadableStudyCargoService {
       cargoHistoryResponse.setTotalElements(reply.getTotal());
     }
     return cargoHistoryResponse;
+  }
+
+  public LatestApiTempCargoResponse getCargoHistoryByPortAndCargo(
+      @Min(value = 1, message = "400") Long vesselId,
+      @Min(value = 1, message = "400") Long portId,
+      @Min(value = 1, message = "400") Long cargoId)
+      throws GenericServiceException {
+
+    LatestCargoRequest.Builder builder = LatestCargoRequest.newBuilder();
+    builder.setVesselId(vesselId).setPortId(portId).setCargoId(cargoId);
+
+    LatestCargoRequest latestCargoRequest = builder.build();
+    LatestCargoReply latestCargoReply =
+        loadableStudyServiceBlockingStub.getCargoHistoryByCargo(latestCargoRequest);
+
+    if (!SUCCESS.equals(latestCargoReply.getResponseStatus().getStatus())) {
+      if (!StringUtils.isEmpty(latestCargoReply.getResponseStatus().getCode())) {
+        throw new GenericServiceException(
+            "GenericServiceException getCargoHistoryByCargo "
+                + latestCargoReply.getResponseStatus().getMessage(),
+            latestCargoReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(
+                Integer.valueOf(latestCargoReply.getResponseStatus().getHttpStatusCode())));
+      } else {
+        throw new GenericServiceException(
+            "GenericServiceException getCargoHistoryByCargo",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+    return LatestApiTempCargoResponse.builder()
+        .vesselId(latestCargoReply.getVesselId())
+        .loadingPortId(latestCargoReply.getPortId())
+        .cargoId(latestCargoReply.getCargoId())
+        .api(latestCargoReply.getApi())
+        .temperature(latestCargoReply.getTemperature())
+        .build();
   }
 }

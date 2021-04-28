@@ -10,5 +10,8 @@ public class UllageUpdateRequest {
 
   private Long tankId;
 
-  private String correctedUllage;
+  private String rdgUllage;
+  private String trim;
+  private String api;
+  private String temp;
 }

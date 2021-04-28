@@ -586,16 +586,7 @@ public class LoadableStudyService {
     CargoRequest cargoRequest =
         CargoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
     CargoReply cargoReply = cargoInfoServiceBlockingStub.getCargoInfo(cargoRequest);
-    if (cargoReply != null
-        && cargoReply.getResponseStatus() != null
-        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-      buildCargoNominationResponseWithCargo(cargoNominationResponse, cargoReply);
-    } else {
-      throw new GenericServiceException(
-          "Error in calling cargo service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
+
     // Retrieve cargo Nominations from cargo nomination table
     CargoNominationRequest cargoNominationRequest =
         CargoNominationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
@@ -609,6 +600,19 @@ public class LoadableStudyService {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
+
+    if (cargoReply != null
+        && cargoReply.getResponseStatus() != null
+        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      buildCargoNominationResponseWithCargo(
+          cargoNominationResponse, cargoNominationReply, cargoReply);
+    } else {
+      throw new GenericServiceException(
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+
     // Retrieve segregation List
     ValveSegregationRequest valveSegregationRequest =
         ValveSegregationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
@@ -728,7 +732,9 @@ public class LoadableStudyService {
    * @return
    */
   private CargoNominationResponse buildCargoNominationResponseWithCargo(
-      CargoNominationResponse cargoNominationResponse, CargoReply cargoReply) {
+      CargoNominationResponse cargoNominationResponse,
+      CargoNominationReply cargoNominationReply,
+      CargoReply cargoReply) {
     if (cargoReply != null && !cargoReply.getCargosList().isEmpty()) {
       List<Cargo> cargoList = new ArrayList<>();
       cargoReply
@@ -737,7 +743,7 @@ public class LoadableStudyService {
               cargoDetail -> {
                 Cargo cargo = new Cargo();
                 cargo.setId(cargoDetail.getId());
-                cargo.setApi(cargoDetail.getApi());
+                setApiTempFromApiHistory(cargo, cargoNominationReply.getCargoHistoryList());
                 cargo.setAbbreviation(cargoDetail.getAbbreviation());
                 cargo.setName(cargoDetail.getCrudeType());
                 cargoList.add(cargo);
@@ -745,6 +751,20 @@ public class LoadableStudyService {
       cargoNominationResponse.setCargos(cargoList);
     }
     return cargoNominationResponse;
+  }
+
+  private void setApiTempFromApiHistory(Cargo cargo, List<CargoHistoryDetail> cargoHistoryList) {
+
+    cargoHistoryList.forEach(
+        it -> {
+          if (it.getCargoId() == cargo.getId()) {
+            cargo.setApi(it.getApi());
+            cargo.setTemp(it.getTemperature());
+          } else {
+            cargo.setApi(null);
+            cargo.setTemp(null);
+          }
+        });
   }
 
   /**
@@ -1524,6 +1544,8 @@ public class LoadableStudyService {
       Long vesselId,
       String correlationId) {
     LoadablePatternResponse loadablePatternResponse = new LoadablePatternResponse();
+    loadablePatternResponse.setConfirmPlanEligibility(
+        loadablePatternReply.getConfirmPlanEligibility());
     loadablePatternResponse.setLoadableStudyName(loadablePatternReply.getLoadableStudyName());
     loadablePatternResponse.setLoadablePatternCreatedDate(
         loadablePatternReply.getLoadablePatternCreatedDate());
@@ -1607,6 +1629,9 @@ public class LoadableStudyService {
 
                         Optional.ofNullable(loadablePatternCargoDetail.getApi())
                             .ifPresent(api -> loadablePatternCargoDetails.setApi(api));
+
+                        Optional.ofNullable(loadablePatternCargoDetail.getTemperature())
+                            .ifPresent(api -> loadablePatternCargoDetails.setTemperature(api));
 
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
@@ -2569,6 +2594,9 @@ public class LoadableStudyService {
       dto.setTankName(detail.getTankName());
       dto.setApi(
           isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
+      if (detail.getTemperature() != null && detail.getTemperature().length() > 0) {
+        dto.setTemperature(new BigDecimal(detail.getTemperature()));
+      }
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
@@ -3166,6 +3194,9 @@ public class LoadableStudyService {
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       rec.setIsCommingleCargo(
           isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
+      if (protoRec.getTemperature() != null && protoRec.getTemperature().length() > 0) {
+        rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
+      }
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -3473,6 +3504,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
     Optional.ofNullable(lpbd.getTankId()).ifPresent(builder::setTankId);
     Optional.ofNullable(lpbd.getRdgLevel()).ifPresent(builder::setRdgLevel);
+    Optional.ofNullable(lpbd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+    Optional.ofNullable(lpbd.getCorrectedUllage()).ifPresent(builder::setCorrectedLevel);
     detailsBuilder.addLoadablePlanBallastDetails(builder.build());
   }
 
@@ -3537,7 +3570,6 @@ public class LoadableStudyService {
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.newBuilder();
     Optional.ofNullable(lqccd.getApi()).ifPresent(builder::setApi);
-    Optional.ofNullable(lqccd.getGrade()).ifPresent(builder::setGrade);
     Optional.ofNullable(lqccd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
     Optional.ofNullable(lqccd.getCargo1MT()).ifPresent(builder::setCargo1MT);
     Optional.ofNullable(lqccd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
@@ -3706,6 +3738,7 @@ public class LoadableStudyService {
     response.setDate(grpcReply.getDate());
     response.setVoyageStatusId(grpcReply.getVoyageStatusId());
     response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    response.setValidated(grpcReply.getValidated());
   }
 
   /**
@@ -4469,10 +4502,12 @@ public class LoadableStudyService {
     requestBuilder.setVoyageId(voyageId);
     ConfirmPlanReply grpcReply = this.confirmPlanStatusReply(requestBuilder);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+
       throw new GenericServiceException(
           "Failed in confirmPlanStatus from grpc service",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     confirmPlanStatusResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -4505,11 +4540,13 @@ public class LoadableStudyService {
      * grpcRequest); UpdateUllageReply grpcReply =
      * this.updateUllage(grpcRequest.build()); if
      * (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) { throw new
-     * GenericServiceException( "Failed to get response  for  from grpc service",
+     * GenericServiceException("Failed in confirmPlanStatus from grpc service",
      * grpcReply.getResponseStatus().getCode(),
-     * HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode(
-     * )))); } return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+     * HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().
+     * getHttpStatusCode()))); } return this.buildeUpdateUllageResponse(grpcReply,
+     * correlationId);
      */
+
     return this.buildeUpdateUllageResponseTemp(correlationId);
   }
 
