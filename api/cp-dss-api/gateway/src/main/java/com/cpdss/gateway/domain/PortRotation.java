@@ -54,4 +54,6 @@ public class PortRotation {
   private Boolean isPortRotationOhqComplete;
 
   private Long portTimezoneId = 0l;
+
+  private String operationType;
 }

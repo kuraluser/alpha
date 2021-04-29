@@ -1135,6 +1135,7 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setEtdActual(valueOf(request.getEtdActual())));
     Optional.ofNullable(request.getIsPortsComplete())
         .ifPresent(item -> builder.setIsPortsComplete(item));
+    Optional.ofNullable(request.getOperationType()).ifPresent(builder::setOperationType);
     List<String> referer = headers.get("Referer");
     if (referer != null && referer.get(0).contains(VOYAGE_STATUS_URI)) {
       builder.setIsLandingPage(true);
@@ -4096,15 +4097,15 @@ public class LoadableStudyService {
     SynopticalTableResponse response = new SynopticalTableResponse();
     Map<Long, String> failedRecords = new HashMap<Long, String>();
     List<Thread> workers = new ArrayList<>();
-    Set<Long> portIds =
+    Set<Long> porRotationtIds =
         request.getSynopticalRecords().stream()
-            .map(SynopticalRecord::getPortId)
+            .map(SynopticalRecord::getPortRotationId)
             .collect(Collectors.toSet());
-    CountDownLatch latch = new CountDownLatch(portIds.size());
-    for (Long portId : portIds) {
+    CountDownLatch latch = new CountDownLatch(porRotationtIds.size());
+    for (Long portRotationId : porRotationtIds) {
       SynopticalTableRequest grpcRequest =
           this.buildSynopticalTableRequest(
-              portId, request, loadableStudyId, loadablePatternId, correlationId);
+              portRotationId, request, loadableStudyId, loadablePatternId, correlationId);
       workers.add(
           new Thread(
               () -> this.saveSynopticalTable(grpcRequest, correlationId, failedRecords, latch)));
@@ -4173,7 +4174,7 @@ public class LoadableStudyService {
    * @throws GenericServiceException
    */
   private SynopticalTableRequest buildSynopticalTableRequest(
-      Long portId,
+      Long portRotationId,
       com.cpdss.gateway.domain.SynopticalTableRequest request,
       Long loadableStudyId,
       Long loadablePatternId,
@@ -4185,7 +4186,7 @@ public class LoadableStudyService {
     builder.setLoadablePatternId(loadablePatternId);
     List<SynopticalRecord> records =
         request.getSynopticalRecords().stream()
-            .filter(rec -> rec.getPortId().equals(portId))
+            .filter(rec -> rec.getPortRotationId().equals(portRotationId))
             .collect(Collectors.toList());
     if (records.size() != 2) {
       throw new GenericServiceException(
