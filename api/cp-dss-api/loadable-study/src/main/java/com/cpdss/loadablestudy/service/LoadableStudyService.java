@@ -775,7 +775,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             algoStatus.stream()
                                 .reduce((f, s) -> s)
                                 .orElse(null)
-                                .getLastModifiedDateTime())); // getting the last algo status
+                                .getLastModifiedDateTime())); // getting
+                    // the
+                    // last
+                    // algo
+                    // status
                   } else {
                     builder.setLoadableStudyStatusLastModifiedTime("0");
                   }
@@ -2969,7 +2973,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        //        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -4813,10 +4817,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-        //                 this.saveLoadicatorInfo(
-        //                     loadablePatternOpt.get().getLoadableStudy(),
-        //                     request.getProcesssId(),
-        //                     request.getLoadablePatternId());
+        // this.saveLoadicatorInfo(
+        // loadablePatternOpt.get().getLoadableStudy(),
+        // request.getProcesssId(),
+        // request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -8488,20 +8492,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     !StringUtils.isEmpty(request.getDistanceBetweenPorts())
                         ? new BigDecimal(request.getDistanceBetweenPorts())
                         : null);
-                if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equalsIgnoreCase(record.getOperationType())) {
-                  record.setEtaActual(
-                      isEmpty(request.getEtaActual())
-                          ? null
-                          : LocalDateTime.from(
-                              DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
-                                  .parse(request.getEtaActual())));
-                } else {
-                  record.setEtdActual(
-                      isEmpty(request.getEtdActual())
-                          ? null
-                          : LocalDateTime.from(
-                              DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
-                                  .parse(request.getEtdActual())));
+                if (record.getOperationType().equals(request.getOperationType())) {
+                  if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(record.getOperationType())) {
+                    record.setEtaActual(
+                        isEmpty(request.getEtaActual())
+                            ? null
+                            : LocalDateTime.from(
+                                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
+                                    .parse(request.getEtaActual())));
+                  } else {
+                    record.setEtdActual(
+                        isEmpty(request.getEtdActual())
+                            ? null
+                            : LocalDateTime.from(
+                                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
+                                    .parse(request.getEtdActual())));
+                  }
                 }
               });
     }

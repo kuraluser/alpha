@@ -763,6 +763,7 @@ message PortRotationDetail{
 	bool isPortsComplete=18;
 	int64 portTimezoneId = 19;
 	bool isLandingPage=20;
+	string operationType=21;
 }
 
 message Operation{
