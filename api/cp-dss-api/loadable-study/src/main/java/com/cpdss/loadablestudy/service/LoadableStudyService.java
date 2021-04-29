@@ -139,39 +139,7 @@ import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.domain.UllageUpdateRequest;
 import com.cpdss.loadablestudy.domain.UllageUpdateResponse;
-import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
-import com.cpdss.loadablestudy.entity.ApiTempHistory;
-import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
-import com.cpdss.loadablestudy.entity.CargoOperation;
-import com.cpdss.loadablestudy.entity.JsonData;
-import com.cpdss.loadablestudy.entity.JsonType;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
-import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanComments;
-import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
-import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
-import com.cpdss.loadablestudy.entity.LoadableQuantity;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.OnBoardQuantity;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
-import com.cpdss.loadablestudy.entity.StabilityParameters;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.entity.VoyageHistory;
-import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
@@ -210,6 +178,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -3625,6 +3594,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  /**
+   * This validation based on DSS-1860 If the ETA/ETD/Lay are empty for a LS, then this retunr value
+   * must false.
+   *
+   * @return
+   */
+  private boolean validateLoadableStudyForConfimPlan(LoadableStudy ls) {
+    boolean status = true;
+    Map<Long, Boolean> validationStack = new HashMap<>();
+    if (ls.getPortRotations() != null && !ls.getPortRotations().isEmpty()) {
+      for (LoadableStudyPortRotation pr : ls.getPortRotations()) {
+        if (pr.getId() > 0) {
+          if (pr.getEta() == null || pr.getEtd() == null || !isLayCanValid(pr)) {
+            validationStack.put(pr.getId(), false);
+          }
+        }
+      }
+    }
+    log.info(
+        "Loadable Study, Validate Plan status - {}, LS Id - {}",
+        validationStack.isEmpty(),
+        ls.getId());
+    if (!validationStack.isEmpty()) {
+      log.info("Loadable Study, Invalid Port Rotaion Ids - {}", validationStack.keySet());
+    }
+    return validationStack.isEmpty();
+  }
+
+  private boolean isLayCanValid(LoadableStudyPortRotation lsPr) {
+    List ids =
+        Arrays.asList(LOADING_OPERATION_ID, STS_LOADING_OPERATION_ID, STS_DISCHARGING_OPERATION_ID);
+    if (ids.contains(lsPr.getOperation().getId())) {
+      if (lsPr.getLayCanTo() == null || lsPr.getLayCanFrom() == null) return false;
+      else return true;
+    }
+    return true;
+  }
+
   @Override
   public void getLoadablePatternDetails(
       LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
@@ -3641,6 +3648,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
+        boolean status = this.validateLoadableStudyForConfimPlan(loadableStudy.get());
+        builder.setConfirmPlanEligibility(status);
         com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePatternBuilder =
             com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
         List<LoadablePattern> loadablePatterns =
@@ -3861,6 +3870,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
           Optional.ofNullable(lpq.getEstimatedApi())
               .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
+          Optional.ofNullable(lpq.getEstimatedTemperature())
+              .ifPresent(
+                  temp -> loadablePatternCargoDetailsBuilder.setTemperature(String.valueOf(temp)));
 
           loadablePatternCargoDetailsBuilder.setIsCommingle(false);
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
@@ -5754,6 +5766,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<CargoHistory> cargoHistories = null;
     List<OnBoardQuantityDetail> obqDetailList = new ArrayList<>();
     List<VesselTankDetail> modifieableList = new ArrayList<>(vesselTanksList);
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailsList = null;
     Collections.sort(modifieableList, Comparator.comparing(VesselTankDetail::getTankDisplayOrder));
     for (VesselTankDetail tank : modifieableList) {
       OnBoardQuantityDetail.Builder builder = OnBoardQuantityDetail.newBuilder();
@@ -5780,8 +5793,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         // lazy loading the cargo history
         if (null == cargoHistories) {
-          cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
+          // cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
+          cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage, request.getPortId());
         }
+
+        Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargo =
+            cargoDetailsList.stream()
+                .filter(var -> var.getTankId().equals(tank.getTankId()))
+                .findAny();
+        if (lpCargo.isPresent()) {
+          Optional.ofNullable(lpCargo.get().getCargoId()).ifPresent(builder::setCargoId);
+          Optional.ofNullable(lpCargo.get().getColorCode()).ifPresent(builder::setColorCode);
+          Optional.ofNullable(lpCargo.get().getAbbreviation()).ifPresent(builder::setAbbreviation);
+          Optional.ofNullable(lpCargo.get().getApi())
+              .ifPresent(v -> builder.setDensity(valueOf(v)));
+          Optional.ofNullable(lpCargo.get().getActualQuantity())
+              .ifPresent(v -> builder.setWeight(valueOf(v)));
+          Optional.ofNullable(lpCargo.get().getTemperature())
+              .ifPresent(v -> builder.setTemperature(valueOf(v)));
+        }
+        /*
         Optional<CargoHistory> cargoHistoryOpt =
             cargoHistories.stream().filter(e -> e.getTankId().equals(tank.getTankId())).findAny();
         if (cargoHistoryOpt.isPresent()) {
@@ -5792,11 +5823,60 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(dto.getQuantity())
               .ifPresent(item -> builder.setWeight(valueOf(item)));
           Optional.ofNullable(dto.getApi()).ifPresent(item -> builder.setDensity(valueOf(item)));
-        }
+        }*/
       }
       obqDetailList.add(builder.build());
     }
     return obqDetailList;
+  }
+
+  /**
+   * Cargo Deatils of Previous closed voyage's confirmed loadable study's pattern's details,
+   *
+   * @return
+   */
+  private List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails>
+      findCargoDetailsForPrevVoyage(Voyage voyage, Long portId) {
+
+    if (voyage.getVoyageStartDate() != null && voyage.getVoyageEndDate() != null) {
+      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+      Voyage previousVoyage =
+          this.voyageRepository
+              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true, voyageStatus);
+      if (previousVoyage != null) {
+        Optional<LoadableStudyStatus> confimredLSStatus =
+            loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
+        Optional<LoadableStudy> confirmedLS =
+            previousVoyage.getLoadableStudies().stream()
+                .filter(
+                    var ->
+                        var.getLoadableStudyStatus()
+                            .getId()
+                            .equals(confimredLSStatus.get().getId()))
+                .findFirst();
+        if (confirmedLS.isPresent()) {
+          log.info(
+              "Get On-Board-Quantity, previous voyage, LS id - {}, name - {}",
+              confirmedLS.get().getId(),
+              confirmedLS.get().getName());
+          Optional<LoadablePattern> confirmedLP =
+              loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+                  confirmedLS.get(), confimredLSStatus.get().getId(), true);
+          if (confirmedLP.isPresent()) {
+            List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargos =
+                loadablePatternCargoDetailsRepository.findAllByPatternIdAndPortId(
+                    confirmedLP.get().getId(), portId);
+            return lpCargos.stream()
+                .filter(
+                    var ->
+                        var.getOperationType().equals(LoadableStudiesConstants.OPERATION_TYPE_DEP))
+                .collect(Collectors.toList());
+          }
+        }
+      }
+    }
+    return new ArrayList<>();
   }
 
   /**
@@ -7014,6 +7094,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
           Optional.ofNullable(tankDataOpt.get().getApi())
               .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
+          Optional.ofNullable(tankDataOpt.get().getTemperature())
+              .ifPresent(temp -> cargoBuilder.setTemperature(valueOf(temp)));
         }
       }
       if (!isEmpty(cargoBuilder.getActualWeight())) {
