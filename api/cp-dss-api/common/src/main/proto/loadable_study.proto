@@ -416,6 +416,8 @@ message LoadablePlanBallastDetails {
 	string inertia = 13;
 	string tankName = 14;
 	string colorCode = 15;
+	string tankShortName = 16;
+	int32 tankDisplayOrder = 17;
 }
 
 message LoadablePlanStowageDetails {

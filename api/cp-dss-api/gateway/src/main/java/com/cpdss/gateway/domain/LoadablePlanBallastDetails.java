@@ -49,4 +49,6 @@ public class LoadablePlanBallastDetails {
 
   private String quantityMT; // for saving result
   private String fillingRatio; // for saving result
+  private String tankShortName;
+  private Integer tankDisplayOrder;
 }

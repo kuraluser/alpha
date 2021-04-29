@@ -272,7 +272,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-@Value("${loadablestudy.attachement.rootFolder}")
+  @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
   @Value("${algo.loadablestudy.api.url}")
@@ -7436,8 +7436,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
         loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
             loadablePatternOpt.get(), true);
-    buildBallastGridDetails(loadablePlanBallastDetails, replyBuilder);
-
+    List<Long> ballanstTankIds =
+        loadablePlanBallastDetails.stream()
+            .map(LoadablePlanBallastDetails::getTankId)
+            .collect(Collectors.toList());
+    VesselInfo.VesselTankRequest replyBallastTankBuilder =
+        VesselInfo.VesselTankRequest.newBuilder().addAllTankIds(ballanstTankIds).build();
+    VesselInfo.VesselTankResponse vesselBallastReply =
+        this.getVesselTankDetailsByTankIds(replyBallastTankBuilder);
+    buildBallastGridDetails(loadablePlanBallastDetails, replyBuilder, vesselBallastReply);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails>
+        modifieableBallastList = new ArrayList<>(replyBuilder.getLoadablePlanBallastDetailsList());
+    Collections.sort(
+        modifieableBallastList,
+        Comparator.comparing(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails
+                ::getTankDisplayOrder));
+    replyBuilder.clearLoadablePlanBallastDetails();
+    replyBuilder.addAllLoadablePlanBallastDetails(modifieableBallastList);
     List<LoadablePlanComments> loadablePlanComments =
         loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
             loadablePatternOpt.get(), true);
@@ -7508,10 +7524,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * @param loadablePlanBallastDetails
    * @param replyBuilder void
+   * @param vesselBallastReply
    */
   private void buildBallastGridDetails(
       List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
-      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+      LoadablePlanDetailsReply.Builder replyBuilder,
+      VesselInfo.VesselTankResponse vesselBallastReply) {
     List<LoadablePlanStowageDetailsTemp> ballstTempList =
         this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
             loadablePlanBallastDetails, true);
@@ -7534,6 +7552,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
+          VesselInfo.VesselTankOrder vesselTankOrder =
+              vesselBallastReply.getVesselTankOrderList().stream()
+                  .filter(tankData -> (tankData.getTankId() == lpbd.getTankId()))
+                  .findFirst()
+                  .get();
+          Optional.ofNullable(vesselTankOrder.getShortName()).ifPresent(builder::setTankShortName);
+          Optional.ofNullable(vesselTankOrder.getTankDisplayOrder())
+              .ifPresent(builder::setTankDisplayOrder);
           loadablePlanService.setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });

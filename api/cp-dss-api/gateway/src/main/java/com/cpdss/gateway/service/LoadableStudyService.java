@@ -3860,6 +3860,8 @@ public class LoadableStudyService {
               details.setVcg(lpbd.getVcg());
               details.setTankName(lpbd.getTankName());
               details.setColorCode(lpbd.getColorCode());
+              details.setTankShortName(lpbd.getTankShortName());
+              details.setTankDisplayOrder(lpbd.getTankDisplayOrder());
               response.getLoadablePlanBallastDetails().add(details);
             });
   }

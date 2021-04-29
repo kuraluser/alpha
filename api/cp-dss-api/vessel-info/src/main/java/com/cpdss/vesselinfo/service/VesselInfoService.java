@@ -1263,8 +1263,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         for (VesselTankDetails var1 : tankResp) {
           VesselTankOrder.Builder builder = VesselTankOrder.newBuilder();
           builder.setTankId(var1.getTankId());
-          builder.setShortName(var1.getShortName());
-          builder.setTankDisplayOrder(var1.getTankDisplayOrder());
+          builder.setShortName(var1.getShortName() != null ? var1.getShortName() : null);
+          builder.setTankDisplayOrder(
+              var1.getTankDisplayOrder() != null ? var1.getTankDisplayOrder() : 0);
           builder.setTankName(var1.getTankName());
           replyBuilder.addVesselTankOrder(builder);
         }
