@@ -8750,6 +8750,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (portDetail.isPresent()) {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
     }
+    stowagePlanBuilder.setSynopticalId(synopticalEntity.getId());
   }
 
   /**
