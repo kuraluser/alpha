@@ -49,4 +49,10 @@ public class LoadablePlanBallastDetails {
 
   private String quantityMT; // for saving result
   private String fillingRatio; // for saving result
+
+  @JsonInclude(Include.NON_NULL)
+  private String tankShortName;
+
+  @JsonInclude(Include.NON_NULL)
+  private Integer tankDisplayOrder;
 }

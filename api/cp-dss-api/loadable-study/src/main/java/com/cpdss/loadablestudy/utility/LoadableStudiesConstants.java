@@ -6,6 +6,9 @@ public class LoadableStudiesConstants {
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
 
+  public static final String OPERATION_TYPE_ARR = "ARR";
+  public static final String OPERATION_TYPE_DEP = "DEP";
+
   public static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
 
   public static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
@@ -27,4 +30,7 @@ public class LoadableStudiesConstants {
   public static final Long TRANSIT_OPERATION_ID = 4L;
   public static final Long STS_LOADING_OPERATION_ID = 5L;
   public static final Long STS_DISCHARGING_OPERATION_ID = 6L;
+
+  public static final Long LS_STATUS_PENDING = 1l;
+  public static final Long LS_STATUS_CONFIRMED = 2l;
 }

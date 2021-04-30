@@ -28,9 +28,7 @@ public interface ApiTempHistoryRepository
       Pageable pageable, LocalDateTime fromDate, LocalDateTime toDate);
 
   public List<ApiTempHistory> findByOrderByCreatedDateTimeDesc();
-  
-  public List<ApiTempHistory>  findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(
-	      Long loadingPortId, Long cargoId);
-  
-  
+
+  public List<ApiTempHistory> findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(
+      Long loadingPortId, Long cargoId);
 }
