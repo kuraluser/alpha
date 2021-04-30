@@ -1135,7 +1135,7 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setEtdActual(valueOf(request.getEtdActual())));
     Optional.ofNullable(request.getIsPortsComplete())
         .ifPresent(item -> builder.setIsPortsComplete(item));
-    Optional.ofNullable(request.getOperationType()).ifPresent(builder::setOperationType);
+    Optional.ofNullable(request.getType()).ifPresent(builder::setOperationType);
     List<String> referer = headers.get("Referer");
     if (referer != null && referer.get(0).contains(VOYAGE_STATUS_URI)) {
       builder.setIsLandingPage(true);
