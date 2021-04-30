@@ -1912,6 +1912,8 @@ public class LoadableStudyService {
               details.setCargoNominationId(lpsdl.getCargoNominationId());
               details.setCorrectionFactor(lpsdl.getCorrectionFactor());
               details.setCorrectedUllage(lpsdl.getCorrectedUllage());
+              details.setTankShortName(lpsdl.getTankShortName());
+              details.setTankDisplayOrder(lpsdl.getTankDisplayOrder());
               loadablePlanStowageDetails.add(details);
             });
     return loadablePlanStowageDetails;
@@ -3859,6 +3861,8 @@ public class LoadableStudyService {
               details.setVcg(lpbd.getVcg());
               details.setTankName(lpbd.getTankName());
               details.setColorCode(lpbd.getColorCode());
+              details.setTankShortName(lpbd.getTankShortName());
+              details.setTankDisplayOrder(lpbd.getTankDisplayOrder());
               response.getLoadablePlanBallastDetails().add(details);
             });
   }
@@ -3930,6 +3934,8 @@ public class LoadableStudyService {
               loadablePlanStowageDetails.setId(lpsd.getId());
               loadablePlanStowageDetails.setColorCode(lpsd.getColorCode());
               loadablePlanStowageDetails.setIsCommingle(lpsd.getIsCommingle());
+              loadablePlanStowageDetails.setTankShortName(lpsd.getTankShortName());
+              loadablePlanStowageDetails.setTankDisplayOrder(lpsd.getTankDisplayOrder());
               response.getLoadablePlanStowageDetails().add(loadablePlanStowageDetails);
             });
   }

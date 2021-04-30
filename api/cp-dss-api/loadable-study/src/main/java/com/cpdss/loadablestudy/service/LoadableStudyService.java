@@ -113,6 +113,7 @@ import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
@@ -1655,6 +1656,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   public VesselReply getVesselDetailsById(VesselRequest replyBuilder) {
     return this.vesselInfoGrpcService.getVesselDetailsById(replyBuilder);
+  }
+
+  public VesselInfo.VesselTankResponse getVesselTankDetailsByTankIds(
+      VesselInfo.VesselTankRequest replyBuilder) {
+    return this.vesselInfoGrpcService.getVesselInfoBytankIds(replyBuilder);
   }
 
   private void buildCargoNominationReply(
@@ -3686,9 +3692,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   replyBuilder =
                       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
                           .newBuilder();
-              buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder);
-              loadablePatternBuilder.addAllLoadablePlanStowageDetails(
-                  replyBuilder.getLoadablePlanStowageDetailsList());
+              List<Long> tankIds =
+                  loadablePlanStowageDetails.stream()
+                      .map(LoadablePlanStowageDetails::getTankId)
+                      .collect(Collectors.toList());
+              VesselInfo.VesselTankRequest replyTankBuilder =
+                  VesselInfo.VesselTankRequest.newBuilder().addAllTankIds(tankIds).build();
+              VesselInfo.VesselTankResponse vesselReply =
+                  this.getVesselTankDetailsByTankIds(replyTankBuilder);
+              buildLoadablePlanStowageCargoDetails(
+                  loadablePlanStowageDetails, replyBuilder, vesselReply);
+              List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+                  modifieableList =
+                      new ArrayList<>(replyBuilder.getLoadablePlanStowageDetailsList());
+              Collections.sort(
+                  modifieableList,
+                  Comparator.comparing(
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                          ::getTankDisplayOrder));
+              loadablePatternBuilder.addAllLoadablePlanStowageDetails(modifieableList);
 
               // <--DSS-2016-->
               List<LoadablePlanQuantity> loadablePlanQuantities =
@@ -7578,8 +7600,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
         loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
             loadablePatternOpt.get(), true);
-    buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder);
+    List<Long> tankIds =
+        loadablePlanStowageDetails.stream()
+            .map(LoadablePlanStowageDetails::getTankId)
+            .collect(Collectors.toList());
+    VesselInfo.VesselTankRequest replyTankBuilder =
+        VesselInfo.VesselTankRequest.newBuilder().addAllTankIds(tankIds).build();
+    VesselInfo.VesselTankResponse vesselReply =
+        this.getVesselTankDetailsByTankIds(replyTankBuilder);
 
+    buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder, vesselReply);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails> modifieableList =
+        new ArrayList<>(replyBuilder.getLoadablePlanStowageDetailsList());
+    Collections.sort(
+        modifieableList,
+        Comparator.comparing(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                ::getTankDisplayOrder));
+    replyBuilder.clearLoadablePlanStowageDetails();
+    replyBuilder.addAllLoadablePlanStowageDetails(modifieableList);
     replyBuilder.addAllTanks(
         this.groupTanks(
             vesselReplyCargoBallastTanks.getVesselTanksList().stream()
@@ -7594,8 +7633,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
         loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
             loadablePatternOpt.get(), true);
-    buildBallastGridDetails(loadablePlanBallastDetails, replyBuilder);
-
+    List<Long> ballanstTankIds =
+        loadablePlanBallastDetails.stream()
+            .map(LoadablePlanBallastDetails::getTankId)
+            .collect(Collectors.toList());
+    VesselInfo.VesselTankRequest replyBallastTankBuilder =
+        VesselInfo.VesselTankRequest.newBuilder().addAllTankIds(ballanstTankIds).build();
+    VesselInfo.VesselTankResponse vesselBallastReply =
+        this.getVesselTankDetailsByTankIds(replyBallastTankBuilder);
+    buildBallastGridDetails(loadablePlanBallastDetails, replyBuilder, vesselBallastReply);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails>
+        modifieableBallastList = new ArrayList<>(replyBuilder.getLoadablePlanBallastDetailsList());
+    Collections.sort(
+        modifieableBallastList,
+        Comparator.comparing(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails
+                ::getTankDisplayOrder));
+    replyBuilder.clearLoadablePlanBallastDetails();
+    replyBuilder.addAllLoadablePlanBallastDetails(modifieableBallastList);
     List<LoadablePlanComments> loadablePlanComments =
         loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
             loadablePatternOpt.get(), true);
@@ -7666,10 +7721,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * @param loadablePlanBallastDetails
    * @param replyBuilder void
+   * @param vesselBallastReply
    */
   private void buildBallastGridDetails(
       List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
-      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+      LoadablePlanDetailsReply.Builder replyBuilder,
+      VesselInfo.VesselTankResponse vesselBallastReply) {
     List<LoadablePlanStowageDetailsTemp> ballstTempList =
         this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
             loadablePlanBallastDetails, true);
@@ -7692,6 +7749,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
+          VesselInfo.VesselTankOrder vesselTankOrder =
+              vesselBallastReply.getVesselTankOrderList().stream()
+                  .filter(tankData -> (tankData.getTankId() == lpbd.getTankId()))
+                  .findFirst()
+                  .get();
+          Optional.ofNullable(vesselTankOrder.getShortName()).ifPresent(builder::setTankShortName);
+          Optional.ofNullable(vesselTankOrder.getTankDisplayOrder())
+              .ifPresent(builder::setTankDisplayOrder);
           loadablePlanService.setTempBallastDetails(lpbd, ballstTempList, builder);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
@@ -7790,7 +7855,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private void buildLoadablePlanStowageCargoDetails(
       List<LoadablePlanStowageDetails> loadablePlanStowageDetails,
-      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder,
+      VesselInfo.VesselTankResponse vesselTankData) {
     List<LoadablePlanStowageDetailsTemp> tempStowageDetails =
         this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsInAndIsActive(
             loadablePlanStowageDetails, true);
@@ -7816,6 +7882,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
           this.setTempStowageDetails(lpsd, tempStowageDetails, builder);
           builder.setIsCommingle(false);
+          VesselInfo.VesselTankOrder vesselTankOrder =
+              vesselTankData.getVesselTankOrderList().stream()
+                  .filter(tankData -> (tankData.getTankId() == lpsd.getTankId()))
+                  .findFirst()
+                  .get();
+          Optional.ofNullable(vesselTankOrder.getShortName()).ifPresent(builder::setTankShortName);
+          Optional.ofNullable(vesselTankOrder.getTankDisplayOrder())
+              .ifPresent(builder::setTankDisplayOrder);
           replyBuilder.addLoadablePlanStowageDetails(builder);
         });
   }
