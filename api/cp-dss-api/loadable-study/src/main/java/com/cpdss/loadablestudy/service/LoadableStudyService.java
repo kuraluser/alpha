@@ -576,8 +576,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         this.isPatternGeneratedOrConfirmed(loadableQuantity.getLoadableStudyXId());
 
-        loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
-        loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
+        loadableQuantity.setConstant(
+            StringUtils.isEmpty(loadableQuantityRequest.getConstant())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getConstant()));
+        loadableQuantity.setDeadWeight(
+            StringUtils.isEmpty(loadableQuantityRequest.getDwt())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getDwt()));
+
         loadableQuantity.setDisplacementAtDraftRestriction(
             StringUtils.isEmpty(loadableQuantityRequest.getDisplacmentDraftRestriction())
                 ? null
@@ -586,14 +593,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             StringUtils.isEmpty(loadableQuantityRequest.getDistanceFromLastPort())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
+
         loadableQuantity.setEstimatedDOOnBoard(
-            new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstDOOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
+
         loadableQuantity.setEstimatedFOOnBoard(
-            new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstFOOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
         loadableQuantity.setEstimatedFWOnBoard(
-            new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstFreshWaterOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
         loadableQuantity.setEstimatedSagging(
-            new BigDecimal(loadableQuantityRequest.getEstSagging()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstSagging())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstSagging()));
 
         loadableQuantity.setEstimatedSeaDensity(
             StringUtils.isEmpty(loadableQuantityRequest.getEstSeaDensity())
@@ -605,9 +622,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
 
-        loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
+        loadableQuantity.setOtherIfAny(
+            StringUtils.isEmpty(loadableQuantityRequest.getOtherIfAny())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
         loadableQuantity.setSaggingDeduction(
-            new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
+            StringUtils.isEmpty(loadableQuantityRequest.getSaggingDeduction())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
 
         loadableQuantity.setSgCorrection(
             StringUtils.isEmpty(loadableQuantityRequest.getSgCorrection())
@@ -615,8 +637,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 : new BigDecimal(loadableQuantityRequest.getSgCorrection()));
 
         loadableQuantity.setTotalQuantity(
-            new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
-        loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
+            StringUtils.isEmpty(loadableQuantityRequest.getTotalQuantity())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
+        loadableQuantity.setTpcatDraft(
+            StringUtils.isEmpty(loadableQuantityRequest.getTpc())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getTpc()));
+
         loadableQuantity.setVesselAverageSpeed(
             StringUtils.isEmpty(loadableQuantityRequest.getVesselAverageSpeed())
                 ? null
