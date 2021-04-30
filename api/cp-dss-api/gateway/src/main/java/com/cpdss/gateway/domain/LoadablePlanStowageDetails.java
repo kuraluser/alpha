@@ -41,6 +41,9 @@ public class LoadablePlanStowageDetails {
   @JsonInclude(Include.NON_NULL)
   private Boolean isCommingle;
 
+  @JsonInclude(Include.NON_NULL)
   private String tankShortName;
+
+  @JsonInclude(Include.NON_NULL)
   private Integer tankDisplayOrder;
 }
