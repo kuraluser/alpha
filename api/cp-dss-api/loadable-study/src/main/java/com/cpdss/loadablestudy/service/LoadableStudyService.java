@@ -5825,7 +5825,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         // lazy loading the cargo history
         if (null == cargoDetailsList) {
           // cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
-          cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage, request.getPortId());
+          cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage);
         }
 
         Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargo =
@@ -5867,14 +5867,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return
    */
   private List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails>
-      findCargoDetailsForPrevVoyage(Voyage voyage, Long portId) {
+      findCargoDetailsForPrevVoyage(Voyage currentVoyage) {
 
-    if (voyage.getVoyageStartDate() != null && voyage.getVoyageEndDate() != null) {
+    if (currentVoyage.getVoyageStartDate() != null && currentVoyage.getVoyageEndDate() != null) {
       VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
       Voyage previousVoyage =
           this.voyageRepository
               .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true, voyageStatus);
+                  currentVoyage.getVoyageStartDate(),
+                  currentVoyage.getVesselXId(),
+                  true,
+                  voyageStatus);
       if (previousVoyage != null) {
         Optional<LoadableStudyStatus> confimredLSStatus =
             loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
