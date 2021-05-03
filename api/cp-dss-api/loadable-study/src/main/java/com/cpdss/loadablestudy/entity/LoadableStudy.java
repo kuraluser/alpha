@@ -113,4 +113,10 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "is_discharge_ports_complete")
   private Boolean isDischargePortsComplete;
+  
+  @Column(name = "feedback_loop")
+  private Boolean feedbackLoop;
+  
+  @Column(name = "feedback_loop_count")
+  private Integer feedbackLoopCount;
 }
