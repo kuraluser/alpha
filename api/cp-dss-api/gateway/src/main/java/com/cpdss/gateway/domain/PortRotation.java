@@ -55,5 +55,5 @@ public class PortRotation {
 
   private Long portTimezoneId = 0l;
 
-  private String operationType;
+  private String type;
 }
