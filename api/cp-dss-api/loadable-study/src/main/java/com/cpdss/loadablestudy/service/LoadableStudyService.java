@@ -5823,7 +5823,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(item -> builder.setDensity(item.toString()));
       } else {
         // lazy loading the cargo history
-        if (null == cargoHistories) {
+        if (null == cargoDetailsList) {
           // cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
           cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage, request.getPortId());
         }
@@ -5896,13 +5896,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   confirmedLS.get(), confimredLSStatus.get().getId(), true);
           if (confirmedLP.isPresent()) {
             List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargos =
-                loadablePatternCargoDetailsRepository.findAllByPatternIdAndPortId(
-                    confirmedLP.get().getId(), portId);
-            return lpCargos.stream()
-                .filter(
-                    var ->
-                        var.getOperationType().equals(LoadableStudiesConstants.OPERATION_TYPE_DEP))
-                .collect(Collectors.toList());
+                loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+                    confirmedLP.get().getId(), true);
+            log.info(
+                "Get On-Board-Quantity, Cargo Deatils for LP - {}, size - {}",
+                confirmedLP.get().getId(),
+                lpCargos.size());
+            List dep =
+                lpCargos.stream()
+                    .filter(
+                        var ->
+                            var.getOperationType()
+                                .equals(LoadableStudiesConstants.OPERATION_TYPE_DEP))
+                    .collect(Collectors.toList());
+            log.info(
+                "Get On-Board-Quantity, Cargo Deatils DEP Condition for LP - {}, size - {}",
+                confirmedLP.get().getId(),
+                dep.size());
+            return dep;
           }
         }
       }
