@@ -579,8 +579,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         this.isPatternGeneratedOrConfirmed(loadableQuantity.getLoadableStudyXId());
 
-        loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
-        loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
+        loadableQuantity.setConstant(
+            StringUtils.isEmpty(loadableQuantityRequest.getConstant())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getConstant()));
+        loadableQuantity.setDeadWeight(
+            StringUtils.isEmpty(loadableQuantityRequest.getDwt())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getDwt()));
+
         loadableQuantity.setDisplacementAtDraftRestriction(
             StringUtils.isEmpty(loadableQuantityRequest.getDisplacmentDraftRestriction())
                 ? null
@@ -589,14 +596,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             StringUtils.isEmpty(loadableQuantityRequest.getDistanceFromLastPort())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
+
         loadableQuantity.setEstimatedDOOnBoard(
-            new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstDOOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
+
         loadableQuantity.setEstimatedFOOnBoard(
-            new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstFOOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
         loadableQuantity.setEstimatedFWOnBoard(
-            new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstFreshWaterOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
         loadableQuantity.setEstimatedSagging(
-            new BigDecimal(loadableQuantityRequest.getEstSagging()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstSagging())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstSagging()));
 
         loadableQuantity.setEstimatedSeaDensity(
             StringUtils.isEmpty(loadableQuantityRequest.getEstSeaDensity())
@@ -608,9 +625,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
 
-        loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
+        loadableQuantity.setOtherIfAny(
+            StringUtils.isEmpty(loadableQuantityRequest.getOtherIfAny())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
         loadableQuantity.setSaggingDeduction(
-            new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
+            StringUtils.isEmpty(loadableQuantityRequest.getSaggingDeduction())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
 
         loadableQuantity.setSgCorrection(
             StringUtils.isEmpty(loadableQuantityRequest.getSgCorrection())
@@ -618,8 +640,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 : new BigDecimal(loadableQuantityRequest.getSgCorrection()));
 
         loadableQuantity.setTotalQuantity(
-            new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
-        loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
+            StringUtils.isEmpty(loadableQuantityRequest.getTotalQuantity())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
+        loadableQuantity.setTpcatDraft(
+            StringUtils.isEmpty(loadableQuantityRequest.getTpc())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getTpc()));
+
         loadableQuantity.setVesselAverageSpeed(
             StringUtils.isEmpty(loadableQuantityRequest.getVesselAverageSpeed())
                 ? null
@@ -5795,9 +5823,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(item -> builder.setDensity(item.toString()));
       } else {
         // lazy loading the cargo history
-        if (null == cargoHistories) {
+        if (null == cargoDetailsList) {
           // cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
-          cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage, request.getPortId());
+          cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage);
         }
 
         Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargo =
@@ -5839,14 +5867,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return
    */
   private List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails>
-      findCargoDetailsForPrevVoyage(Voyage voyage, Long portId) {
+      findCargoDetailsForPrevVoyage(Voyage currentVoyage) {
 
-    if (voyage.getVoyageStartDate() != null && voyage.getVoyageEndDate() != null) {
+    if (currentVoyage.getVoyageStartDate() != null && currentVoyage.getVoyageEndDate() != null) {
       VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
       Voyage previousVoyage =
           this.voyageRepository
               .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true, voyageStatus);
+                  currentVoyage.getVoyageStartDate(),
+                  currentVoyage.getVesselXId(),
+                  true,
+                  voyageStatus);
       if (previousVoyage != null) {
         Optional<LoadableStudyStatus> confimredLSStatus =
             loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
@@ -5868,13 +5899,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   confirmedLS.get(), confimredLSStatus.get().getId(), true);
           if (confirmedLP.isPresent()) {
             List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargos =
-                loadablePatternCargoDetailsRepository.findAllByPatternIdAndPortId(
-                    confirmedLP.get().getId(), portId);
-            return lpCargos.stream()
-                .filter(
-                    var ->
-                        var.getOperationType().equals(LoadableStudiesConstants.OPERATION_TYPE_DEP))
-                .collect(Collectors.toList());
+                loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+                    confirmedLP.get().getId(), true);
+            log.info(
+                "Get On-Board-Quantity, Cargo Deatils for LP - {}, size - {}",
+                confirmedLP.get().getId(),
+                lpCargos.size());
+            List dep =
+                lpCargos.stream()
+                    .filter(
+                        var ->
+                            var.getOperationType()
+                                .equals(LoadableStudiesConstants.OPERATION_TYPE_DEP))
+                    .collect(Collectors.toList());
+            log.info(
+                "Get On-Board-Quantity, Cargo Deatils DEP Condition for LP - {}, size - {}",
+                confirmedLP.get().getId(),
+                dep.size());
+            return dep;
           }
         }
       }
