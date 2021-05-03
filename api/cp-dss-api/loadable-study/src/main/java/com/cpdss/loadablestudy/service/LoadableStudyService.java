@@ -3011,7 +3011,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        //        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -4872,10 +4872,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                 });
-         this.saveLoadicatorInfo(
-         loadablePatternOpt.get().getLoadableStudy(),
-         request.getProcesssId(),
-         request.getLoadablePatternId());
+        // this.saveLoadicatorInfo(
+        // loadablePatternOpt.get().getLoadableStudy(),
+        // request.getProcesssId(),
+        // request.getLoadablePatternId());
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -5116,46 +5116,53 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
 
-	  if (!request.getIsPattern()) {
-		  if (algoResponse.getFeedbackLoop() != null && algoResponse.getFeedbackLoop()) {
-			  if (algoResponse.getFeedbackLoopCount() == 1) {
-				  log.info("I2R Algorithm has started feedback loop for loadable study " + request.getLoadableStudyId()); 
-			  } else {
-				  log.info("Feedback loop count: " + algoResponse.getFeedbackLoopCount());
-			  }
-			  this.loadableStudyRepository
-			  	.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(true, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
-			  Optional<LoadableStudy> loadableStudyOpt = this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-			  if (loadableStudyOpt.isPresent()) {
-				  this.loadableStudyRepository.updateLoadableStudyStatus(LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, loadableStudyOpt.get().getId());
-				  log.info("Deleting existing patterns");
-				  this.loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true)
-				  	.forEach(loadablePattern -> {
-				  		log.info("Deleting loadable pattern " + loadablePattern.getId());
-				  		this.loadablePatternRepository.deleteLoadablePattern(loadablePattern.getId());
-				  		this.deleteExistingPlanDetails(loadablePattern);
-				  	});
-			  } else {
-				  log.error("Loadable Study not found in database");
-				  throw new Exception("Loadable Study not found in database");
-			  }
-		   } else {
-			   this.loadableStudyRepository
-			   	.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(false, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
-			   this.loadableStudyRepository.updateLoadableStudyStatus(LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, request.getLoadableStudyId());
-			   this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-			      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-			          LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-			          algoResponse.getProcessId(),
-			          true);
-		   }
-	  } else {
-		  this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-	      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-	          LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-	          algoResponse.getProcessId(),
-	          true);
-	  }
+      if (!request.getIsPattern()) {
+        if (algoResponse.getFeedbackLoop() != null && algoResponse.getFeedbackLoop()) {
+          if (algoResponse.getFeedbackLoopCount() == 1) {
+            log.info(
+                "I2R Algorithm has started feedback loop for loadable study "
+                    + request.getLoadableStudyId());
+          } else {
+            log.info("Feedback loop count: " + algoResponse.getFeedbackLoopCount());
+          }
+          this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
+              true, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
+          Optional<LoadableStudy> loadableStudyOpt =
+              this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+          if (loadableStudyOpt.isPresent()) {
+            this.loadableStudyRepository.updateLoadableStudyStatus(
+                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, loadableStudyOpt.get().getId());
+            log.info("Deleting existing patterns");
+            this.loadablePatternRepository
+                .findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true)
+                .forEach(
+                    loadablePattern -> {
+                      log.info("Deleting loadable pattern " + loadablePattern.getId());
+                      this.loadablePatternRepository.deleteLoadablePattern(loadablePattern.getId());
+                      this.deleteExistingPlanDetails(loadablePattern);
+                    });
+          } else {
+            log.error("Loadable Study not found in database");
+            throw new Exception("Loadable Study not found in database");
+          }
+        } else {
+          this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
+              false, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
+          this.loadableStudyRepository.updateLoadableStudyStatus(
+              LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, request.getLoadableStudyId());
+          this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+              algoResponse.getProcessId(),
+              true);
+        }
+      } else {
+        this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+            algoResponse.getProcessId(),
+            true);
+      }
       replyBuilder =
           LoadicatorDataReply.newBuilder()
               .setResponseStatus(
@@ -5186,26 +5193,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorAlgoResponse algoResponse, Boolean isPattern) {
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
     if (isPattern) {
-    	algoResponse.getLoadicatorResults().getLoadicatorResultDetails()
-    	.forEach(result -> {
-    		this.synopticalTableLoadicatorDataRepository
-            .deleteBySynopticalTableAndLoadablePatternId(
-                this.synopticalTableRepository.getOne(result.getSynopticalId()),
-                algoResponse.getLoadicatorResults().getLoadablePatternId());
-    		entities.add(
-                    this.createSynopticalTableLoadicatorDataEntity(algoResponse.getLoadicatorResults(), result));
-    	});
+      algoResponse
+          .getLoadicatorResults()
+          .getLoadicatorResultDetails()
+          .forEach(
+              result -> {
+                this.synopticalTableLoadicatorDataRepository
+                    .deleteBySynopticalTableAndLoadablePatternId(
+                        this.synopticalTableRepository.getOne(result.getSynopticalId()),
+                        algoResponse.getLoadicatorResults().getLoadablePatternId());
+                entities.add(
+                    this.createSynopticalTableLoadicatorDataEntity(
+                        algoResponse.getLoadicatorResults(), result));
+              });
     } else {
-    	for (LoadicatorPatternDetailsResults patternDetails :
-            algoResponse.getLoadicatorResultsPatternWise()) {
-          patternDetails
-              .getLoadicatorResultDetails()
-              .forEach(
-                  result -> {
-                    entities.add(
-                        this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
-                  });
-        }
+      for (LoadicatorPatternDetailsResults patternDetails :
+          algoResponse.getLoadicatorResultsPatternWise()) {
+        patternDetails
+            .getLoadicatorResultDetails()
+            .forEach(
+                result -> {
+                  entities.add(
+                      this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
+                });
+      }
     }
     this.synopticalTableLoadicatorDataRepository.saveAll(entities);
   }
