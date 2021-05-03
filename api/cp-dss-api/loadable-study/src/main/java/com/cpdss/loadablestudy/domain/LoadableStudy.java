@@ -1,11 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
+import com.cpdss.common.utils.JsonParser;
 import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
 @Data
+@JsonParser
 public class LoadableStudy {
   private Long id;
   private Long voyageId;
