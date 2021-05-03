@@ -1656,7 +1656,7 @@ class LoadableStudyServiceTest {
     LoadablePlanDetails planDetails = new LoadablePlanDetails();
     planDetails.setLoadablePlanPortWiseDetails(createLoadablePlanPortWiseDetails());
     planDetails.setCaseNumber(1);
-    planDetails.setStabilityParameters(createStabilityParameters());
+    // planDetails.setStabilityParameters(createStabilityParameters());
     loadablePlanDetails.add(planDetails);
     return loadablePlanDetails;
   }

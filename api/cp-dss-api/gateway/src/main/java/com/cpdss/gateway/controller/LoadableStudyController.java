@@ -1622,7 +1622,7 @@ public class LoadableStudyController {
    */
   @GetMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patten/{loadablePatternId}/algo-errors")
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-pattern/{loadablePatternId}/algo-errors")
   public AlgoErrorResponse getAlgoError(
       @PathVariable Long loadablePatternId, @RequestHeader HttpHeaders headers)
       throws CommonRestException {

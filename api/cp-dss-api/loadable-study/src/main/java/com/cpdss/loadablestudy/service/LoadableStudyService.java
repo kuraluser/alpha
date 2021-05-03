@@ -2963,12 +2963,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
           LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
       if (request.getLoadablePlanDetailsList().isEmpty()) {
+        log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, request.getProcesssId(), true);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
       } else {
-
         Long lastLoadingPort =
             getLastPort(
                 loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
@@ -4237,7 +4237,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       UllageUpdateResponse algoResponse =
-          this.callAlgoUllageUpdateApi(this.prepareUllageUpdateRequest(request));
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
       this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
       replyBuilder.setLoadablePlanStowageDetails(
           this.buildUpdateUllageReply(algoResponse, request));
@@ -4366,13 +4367,29 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * Prepare ullage upate request for algo
    *
    * @param request
+   * @param loadablePattern
    * @return
    */
-  private UllageUpdateRequest prepareUllageUpdateRequest(UpdateUllageRequest request) {
+  private UllageUpdateRequest prepareUllageUpdateRequest(
+      UpdateUllageRequest request, LoadablePattern loadablePattern) {
     UllageUpdateRequest algoRequest = new UllageUpdateRequest();
     algoRequest.setRdgUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
     algoRequest.setId(request.getLoadablePlanStowageDetails().getId());
     algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
+    algoRequest.setApi(request.getLoadablePlanStowageDetails().getApi());
+    algoRequest.setTemp(request.getLoadablePlanStowageDetails().getTemperature());
+    Optional<SynopticalTable> synopticalTableOpt =
+        synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            getLastPortRotationId(
+                loadablePattern.getLoadableStudy(),
+                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID)),
+            SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+            true);
+    if (synopticalTableOpt.isPresent()) {
+      // algoRequest.setTrim(String.valueOf(synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalTableOpt.get(), loadablePattern.getId(), true).getCalculatedTrimPlanned()));
+      algoRequest.setTrim(
+          "0"); // ToDo - replace with above code once loaicator implementaion is done.
+    }
     return algoRequest;
   }
 
