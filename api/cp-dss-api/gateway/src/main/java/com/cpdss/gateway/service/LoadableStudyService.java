@@ -77,6 +77,7 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
@@ -178,7 +179,6 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.keycloak.common.VerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -3382,7 +3382,7 @@ public class LoadableStudyService {
       LoadablePlanRequest loadablePlanRequest,
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
-    request.setProcesssId(loadablePlanRequest.getProcessId());
+    Optional.ofNullable(loadablePlanRequest.getProcessId()).ifPresent(request::setProcesssId);
     loadablePlanRequest
         .getLoadablePlanDetails()
         .forEach(
@@ -3464,11 +3464,11 @@ public class LoadableStudyService {
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
 
-              Optional.ofNullable(lpd.getStabilityParameters())
-                  .ifPresent(
-                      stabilityParameter ->
-                          planBuilder.setStabilityParameters(
-                              buildStabilityParamter(stabilityParameter)));
+              /*
+               * Optional.ofNullable(lpd.getStabilityParameters()) .ifPresent(
+               * stabilityParameter -> planBuilder.setStabilityParameters(
+               * buildStabilityParamter(stabilityParameter)));
+               */
 
               request.addLoadablePlanDetails(planBuilder);
             });
@@ -4413,29 +4413,25 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getComment()).ifPresent(builder::setComment);
     Users usersEntity;
     // Get user
-    try {
-      usersEntity =
-          this.getUsersEntity(
-              keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).getSubject());
-    } catch (VerificationException e) {
-      throw new GenericServiceException(
-          "Invalid token", CommonErrorCodes.E_HTTP_INVALID_TOKEN, HttpStatusCode.UNAUTHORIZED);
-    }
-
-    // Exit on user not found
-    if (null == usersEntity) {
-      throw new GenericServiceException(
-          "User not found", CommonErrorCodes.E_CPDSS_INVALID_USER, HttpStatusCode.NOT_FOUND);
-    }
-
-    builder.setUser(usersEntity.getId());
-    SaveCommentReply reply = this.saveComment(builder.build());
-    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "failed to save comment",
-          reply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.parseInt(reply.getResponseStatus().getCode())));
-    }
+    /*
+     * try { usersEntity = this.getUsersEntity(
+     * keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).
+     * getSubject()); } catch (VerificationException e) { throw new
+     * GenericServiceException( "Invalid token",
+     * CommonErrorCodes.E_HTTP_INVALID_TOKEN, HttpStatusCode.UNAUTHORIZED); }
+     *
+     * // Exit on user not found if (null == usersEntity) { throw new
+     * GenericServiceException( "User not found",
+     * CommonErrorCodes.E_CPDSS_INVALID_USER, HttpStatusCode.NOT_FOUND); }
+     *
+     * builder.setUser(usersEntity.getId()); SaveCommentReply reply =
+     * this.saveComment(builder.build()); if
+     * (!SUCCESS.equals(reply.getResponseStatus().getStatus())) { throw new
+     * GenericServiceException( "failed to save comment",
+     * reply.getResponseStatus().getCode(),
+     * HttpStatusCode.valueOf(Integer.parseInt(reply.getResponseStatus().getCode()))
+     * ); }
+     */
     SaveCommentResponse response = new SaveCommentResponse();
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -4541,20 +4537,21 @@ public class LoadableStudyService {
       UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
       throws GenericServiceException {
     log.info("Inside updateUllageRequest in gateway micro service");
-    /*
-     * UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
-     * buildUpdateUllageRequest(updateUllageRequest, loadablePatternId,
-     * grpcRequest); UpdateUllageReply grpcReply =
-     * this.updateUllage(grpcRequest.build()); if
-     * (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) { throw new
-     * GenericServiceException("Failed in confirmPlanStatus from grpc service",
-     * grpcReply.getResponseStatus().getCode(),
-     * HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().
-     * getHttpStatusCode()))); } return this.buildeUpdateUllageResponse(grpcReply,
-     * correlationId);
-     */
 
-    return this.buildeUpdateUllageResponseTemp(correlationId);
+    UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
+    buildUpdateUllageRequest(updateUllageRequest, loadablePatternId, grpcRequest);
+    UpdateUllageReply grpcReply = this.updateUllage(grpcRequest.build());
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed in confirmPlanStatus from grpc service",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
+    }
+
+    return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+
+    // return this.buildeUpdateUllageResponse(correlationId);
   }
 
   private UpdateUllage buildeUpdateUllageResponse(
@@ -4619,6 +4616,9 @@ public class LoadableStudyService {
     builder.setIsBallast(updateUllageRequest.getIsBallast());
     Optional.ofNullable(updateUllageRequest.getCorrectedUllage())
         .ifPresent(ullage -> builder.setCorrectedUllage(valueOf(ullage)));
+    builder.setApi(updateUllageRequest.getApi());
+    builder.setTemperature(updateUllageRequest.getTemperature());
+    builder.setSg(updateUllageRequest.getSg());
     grpcRequest.setLoadablePlanStowageDetails(builder.build());
   }
 
@@ -4858,17 +4858,17 @@ public class LoadableStudyService {
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadablePatternId(loadablePatternId);
     request.setValidated(patternValidateResultRequest.getValidated());
+
     if (patternValidateResultRequest.getValidated()) {
       LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();
       loadablePlanRequest.setLoadablePlanDetails(
           Arrays.asList(patternValidateResultRequest.getLoadablePlanDetails()));
-      loadablePlanRequest.setProcessId(patternValidateResultRequest.getProcessId());
       buildLoadablePlanDetails(loadablePlanRequest, request);
     } else {
       if (null != patternValidateResultRequest.getErrors())
         buildAlgoError(patternValidateResultRequest.getErrors(), request);
     }
-
+    request.setProcesssId(patternValidateResultRequest.getProcessId());
     AlgoReply algoReply = this.patternValidateResult(request);
     if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

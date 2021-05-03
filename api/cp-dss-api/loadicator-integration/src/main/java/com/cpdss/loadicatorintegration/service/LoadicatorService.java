@@ -30,6 +30,7 @@ import com.cpdss.loadicatorintegration.repository.LoadicatorStrengthRepository;
 import com.cpdss.loadicatorintegration.repository.LoadicatorTrimRepository;
 import com.cpdss.loadicatorintegration.repository.StowageDetailsRepository;
 import com.cpdss.loadicatorintegration.repository.StowagePlanRepository;
+import io.grpc.Context;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       this.updateStowageDetails(stowagePlanList);
 
       if (this.getStatus(stowagePlanList)) {
-
+        log.info("Loadicator check completed");
         LoadicatorDataRequest loadableStudyrequest =
             this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
 
@@ -139,7 +140,15 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   }
 
   public LoadicatorDataReply getLoadicatorDatas(LoadicatorDataRequest loadableStudyrequest) {
-    return this.loadableStudyService.getLoadicatorData(loadableStudyrequest);
+    try {
+      return Context.current()
+          .fork()
+          .call(() -> this.loadableStudyService.getLoadicatorData(loadableStudyrequest));
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return this.loadableStudyService.getLoadicatorData(loadableStudyrequest);
+    }
   }
 
   private Set<CargoData> buildCargoDataSet(

@@ -34,6 +34,11 @@ public class RolesSpecification implements Specification<Roles> {
       //      Exact match
       return builder.equal(root.get(criteria.getKey()), criteria.getValue());
     } else if (criteria.getOperation().equalsIgnoreCase("like")) {
+      if (criteria.getValue() instanceof String) {
+        String val = (String) criteria.getValue();
+        return builder.like(
+            builder.upper(root.<String>get(criteria.getKey())), "%" + val.toUpperCase() + "%");
+      }
       //      Partial match
       return builder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
     }

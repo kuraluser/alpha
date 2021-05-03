@@ -11,4 +11,5 @@ public class PatternValidateResultRequest {
   private Boolean validated;
   private LoadablePlanDetails loadablePlanDetails;
   private List<AlgoError> errors;
+  private Boolean hasLoadicator;
 }
