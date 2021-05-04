@@ -17,6 +17,7 @@ import org.reflections.Reflections;
 public class ParserUtil {
 
   static String packageName = null;
+  static Set<String> classRegister = new HashSet<>();
 
   public static void parserMain(String packageName) {
     ParserUtil.packageName = packageName;
@@ -43,11 +44,22 @@ public class ParserUtil {
     writeToFile(errorData, "build/" + fileName + "fai.json");
   }
 
+  private static boolean validateClassRegister(String vl) {
+    return classRegister.contains(vl);
+  }
+
   private static Object getFillWithData(Class<?> tClass, String[] args)
       throws InvocationTargetException, InstantiationException, IllegalAccessException {
-    // class object is done
-    Constructor<?>[] constructors = tClass.getConstructors();
 
+    if (!validateClassRegister(tClass.getName())
+        && tClass.getPackage().getName().equalsIgnoreCase(packageName)) {
+      classRegister.add(tClass.getName());
+    } else if (validateClassRegister(tClass.getName())
+        && tClass.getPackage().getName().equalsIgnoreCase(packageName)) {
+      return null;
+    }
+
+    Constructor<?>[] constructors = tClass.getConstructors();
     Object classObject = null;
     for (Constructor cst : constructors) {
       Type consPrams[] = cst.getGenericParameterTypes();
@@ -74,8 +86,13 @@ public class ParserUtil {
       for (Field field : classFields) {
         Class<?> fieldClassType = field.getType();
         Object val = getDummyValueForClass(fieldClassType, args, field);
-        // log.info("Class name {}, field name {}, dummyValue {}", tClass.getName(),
-        // field.getName(), val);
+        BeanUtils.setProperty(classObject, field.getName(), val);
+      }
+      Class<?> superclass = tClass.getSuperclass();
+      Field[] parentFields = superclass.getDeclaredFields();
+      for (Field field : parentFields) {
+        Class<?> fieldClassType = field.getType();
+        Object val = getDummyValueForClass(fieldClassType, args, field);
         BeanUtils.setProperty(classObject, field.getName(), val);
       }
     }
@@ -85,7 +102,7 @@ public class ParserUtil {
   private static Object getDummyValueForClass(Class aClass, String[] args, Field field)
       throws IllegalAccessException, InvocationTargetException, InstantiationException {
     if (aClass.getName().equalsIgnoreCase(String.class.getName())) {
-      return "dummyValue";
+      return "dummy-value";
     } else if (aClass.getName().equalsIgnoreCase(CharSequence.class.getName())) {
       return "dummy";
     } else if (aClass.getName().equalsIgnoreCase(Character.class.getName())) {
