@@ -5305,6 +5305,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadicator.getLoadicatorPatternDetails().add(patterns);
               });
     }
+
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    Optional<LoadableStudy> loadableStudyOpt =
+        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (loadableStudyOpt.isPresent()) {
+      ModelMapper modelMapper = new ModelMapper();
+      buildLoadableStudy(
+          request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+    }
+
+    loadicator.setLoadableStudy(loadableStudy);
   }
 
   /**
