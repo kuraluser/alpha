@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.entity;
 
+import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.util.Set;
@@ -29,6 +30,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@CPDSSJsonParser
 public class LoadableStudy extends EntityDoc {
 
   @Column(name = "vessel_xid")

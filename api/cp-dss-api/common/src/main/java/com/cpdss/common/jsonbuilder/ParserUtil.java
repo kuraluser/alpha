@@ -1,5 +1,5 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.common.utils;
+package com.cpdss.common.jsonbuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -22,7 +22,7 @@ public class ParserUtil {
   public static void parserMain(String packageName) {
     ParserUtil.packageName = packageName;
     Reflections reflections = new Reflections(packageName);
-    Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(JsonParser.class);
+    Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(CPDSSJsonParser.class);
     log.info("Total class with @Entity annotation {}", annotated.size());
 
     Map<String, Object> mapData = new HashMap<>();
