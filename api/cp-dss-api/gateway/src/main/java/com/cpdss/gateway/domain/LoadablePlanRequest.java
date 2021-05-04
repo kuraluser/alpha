@@ -11,4 +11,6 @@ public class LoadablePlanRequest {
   private List<LoadablePlanDetails> loadablePlanDetails;
   private List<AlgoError> errors;
   private Long loadablePatternId;
+  private Boolean validated;
+  private Boolean hasLoadicator;
 }

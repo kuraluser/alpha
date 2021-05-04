@@ -338,6 +338,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
+  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED = 16L;
+  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
@@ -2963,12 +2965,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
           LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
       if (request.getLoadablePlanDetailsList().isEmpty()) {
+        log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, request.getProcesssId(), true);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
       } else {
-
         Long lastLoadingPort =
             getLastPort(
                 loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
@@ -3009,7 +3011,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        //        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -4237,7 +4239,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       UllageUpdateResponse algoResponse =
-          this.callAlgoUllageUpdateApi(this.prepareUllageUpdateRequest(request));
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
       this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
       replyBuilder.setLoadablePlanStowageDetails(
           this.buildUpdateUllageReply(algoResponse, request));
@@ -4366,13 +4369,29 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * Prepare ullage upate request for algo
    *
    * @param request
+   * @param loadablePattern
    * @return
    */
-  private UllageUpdateRequest prepareUllageUpdateRequest(UpdateUllageRequest request) {
+  private UllageUpdateRequest prepareUllageUpdateRequest(
+      UpdateUllageRequest request, LoadablePattern loadablePattern) {
     UllageUpdateRequest algoRequest = new UllageUpdateRequest();
     algoRequest.setRdgUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
     algoRequest.setId(request.getLoadablePlanStowageDetails().getId());
     algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
+    algoRequest.setApi(request.getLoadablePlanStowageDetails().getApi());
+    algoRequest.setTemp(request.getLoadablePlanStowageDetails().getTemperature());
+    Optional<SynopticalTable> synopticalTableOpt =
+        synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            getLastPortRotationId(
+                loadablePattern.getLoadableStudy(),
+                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID)),
+            SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+            true);
+    if (synopticalTableOpt.isPresent()) {
+      // algoRequest.setTrim(String.valueOf(synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalTableOpt.get(), loadablePattern.getId(), true).getCalculatedTrimPlanned()));
+      algoRequest.setTrim(
+          "0"); // ToDo - replace with above code once loaicator implementaion is done.
+    }
     return algoRequest;
   }
 
@@ -5113,11 +5132,54 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
-      this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-          LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-          algoResponse.getProcessId(),
-          true);
+
+      if (!request.getIsPattern()) {
+        if (algoResponse.getFeedbackLoop() != null && algoResponse.getFeedbackLoop()) {
+          if (algoResponse.getFeedbackLoopCount() == 1) {
+            log.info(
+                "I2R Algorithm has started feedback loop for loadable study "
+                    + request.getLoadableStudyId());
+          } else {
+            log.info("Feedback loop count: " + algoResponse.getFeedbackLoopCount());
+          }
+          this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
+              true, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
+          Optional<LoadableStudy> loadableStudyOpt =
+              this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+          if (loadableStudyOpt.isPresent()) {
+            this.loadableStudyRepository.updateLoadableStudyStatus(
+                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, loadableStudyOpt.get().getId());
+            log.info("Deleting existing patterns");
+            this.loadablePatternRepository
+                .findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true)
+                .forEach(
+                    loadablePattern -> {
+                      log.info("Deleting loadable pattern " + loadablePattern.getId());
+                      this.loadablePatternRepository.deleteLoadablePattern(loadablePattern.getId());
+                      this.deleteExistingPlanDetails(loadablePattern);
+                    });
+          } else {
+            log.error("Loadable Study not found in database");
+            throw new Exception("Loadable Study not found in database");
+          }
+        } else {
+          this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
+              false, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
+          this.loadableStudyRepository.updateLoadableStudyStatus(
+              LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, request.getLoadableStudyId());
+          this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+              algoResponse.getProcessId(),
+              true);
+        }
+      } else {
+        this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+            algoResponse.getProcessId(),
+            true);
+      }
       replyBuilder =
           LoadicatorDataReply.newBuilder()
               .setResponseStatus(
@@ -5147,21 +5209,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void saveloadicatorDataForSynopticalTable(
       LoadicatorAlgoResponse algoResponse, Boolean isPattern) {
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
-    for (LoadicatorPatternDetailsResults patternDetails :
-        algoResponse.getLoadicatorResultsPatternWise()) {
-      patternDetails
+    if (isPattern) {
+      algoResponse
+          .getLoadicatorResults()
           .getLoadicatorResultDetails()
           .forEach(
               result -> {
-                if (isPattern) {
-                  this.synopticalTableLoadicatorDataRepository
-                      .deleteBySynopticalTableAndLoadablePatternId(
-                          this.synopticalTableRepository.getOne(result.getSynopticalId()),
-                          patternDetails.getLoadablePatternId());
-                }
+                this.synopticalTableLoadicatorDataRepository
+                    .deleteBySynopticalTableAndLoadablePatternId(
+                        this.synopticalTableRepository.getOne(result.getSynopticalId()),
+                        algoResponse.getLoadicatorResults().getLoadablePatternId());
                 entities.add(
-                    this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
+                    this.createSynopticalTableLoadicatorDataEntity(
+                        algoResponse.getLoadicatorResults(), result));
               });
+    } else {
+      for (LoadicatorPatternDetailsResults patternDetails :
+          algoResponse.getLoadicatorResultsPatternWise()) {
+        patternDetails
+            .getLoadicatorResultDetails()
+            .forEach(
+                result -> {
+                  entities.add(
+                      this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
+                });
+      }
     }
     this.synopticalTableLoadicatorDataRepository.saveAll(entities);
   }
