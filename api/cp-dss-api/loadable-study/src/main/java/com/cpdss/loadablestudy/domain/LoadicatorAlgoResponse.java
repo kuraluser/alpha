@@ -9,5 +9,7 @@ import lombok.Data;
 public class LoadicatorAlgoResponse {
   private String processId;
   private List<LoadicatorPatternDetailsResults> loadicatorResultsPatternWise;
-  private LoadicatorPatternDetailsResults loadicatorResult;
+  private LoadicatorPatternDetailsResults loadicatorResults;
+  private Boolean feedbackLoop;
+  private Integer feedbackLoopCount;
 }

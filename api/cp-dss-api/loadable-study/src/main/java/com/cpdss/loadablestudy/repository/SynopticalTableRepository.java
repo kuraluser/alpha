@@ -42,4 +42,9 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
 
   Page<SynopticalTable> findByloadableStudyPortRotation(
       LoadableStudyPortRotation lsPr, Pageable pageable);
+
+  @Query(
+      "FROM SynopticalTable WHERE loadableStudyPortRotation.id = ?1 AND operationType = ?2 AND isActive = ?3")
+  public Optional<SynopticalTable> findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+      Long portRotationId, String operationType, Boolean isActive);
 }

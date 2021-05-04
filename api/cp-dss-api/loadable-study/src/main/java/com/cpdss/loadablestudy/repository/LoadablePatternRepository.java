@@ -54,4 +54,9 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
       "FROM LoadablePattern where loadableStudy.loadableStudyStatus.id = ?1 and loadableStudy=?2  and isActive = ?3")
   public List<LoadablePattern> findLoadablePatterns(
       Long loadableStudyStatusId, LoadableStudy loadableStudy, boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadablePattern LP SET LP.isActive = false WHERE LP.id = ?1")
+  public void deleteLoadablePattern(Long id);
 }
