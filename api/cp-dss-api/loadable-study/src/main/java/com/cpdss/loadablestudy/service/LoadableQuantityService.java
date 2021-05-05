@@ -84,6 +84,7 @@ public class LoadableQuantityService {
     BigDecimal boileWaterOnBoard = BigDecimal.ZERO;
     String draftRestriction1 = "";
     String seaWaterDensity = "";
+    String dwtValue = "";
 
     if (!portRIds.isEmpty() && portRIds.get(portRotationId) != null) {
       boolean isLoadingPort = true;
@@ -104,6 +105,11 @@ public class LoadableQuantityService {
             portRotation.getSeaWaterDensity() != null
                 ? String.valueOf(portRotation.getSeaWaterDensity())
                 : "";
+        // GRPC call to Vessel Info
+        dwtValue =
+            String.valueOf(
+                this.getDWTByVesselId(
+                    loadableStudy.get().getVesselXId(), portRotation.getMaxDraft()));
       }
 
       List<OnHandQuantity> onHandQuantityList =
@@ -199,12 +205,6 @@ public class LoadableQuantityService {
     loadableStudy.ifPresent(study -> lastUpdateTimeList.add(study.getLastModifiedDateTime()));
     LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
     lastUpdatedTime = formatter.format(maxOne);
-
-    // GRPC call to Vessel Info
-    String dwtValue =
-        String.valueOf(
-            this.getDWTByVesselId(
-                loadableStudy.get().getVesselXId(), loadableStudy.get().getDraftMark()));
 
     if (!loadableQuantity.isPresent()) {
       com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest =
