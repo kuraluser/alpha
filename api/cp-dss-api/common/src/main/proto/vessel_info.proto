@@ -32,6 +32,8 @@ service VesselInfoService {
 	rpc GetVesselInfoByPaging(VesselRequestWithPaging) returns (VesselReply){}
 
 	rpc GetVesselInfoBytankIds(VesselTankRequest) returns (VesselTankResponse){}
+
+	rpc GetDWTFromVesselByVesselId(VesselDWTRequest) returns (VesselDWTResponse);
 }
 
 message VesselRequestWithPaging{
@@ -312,4 +314,16 @@ message VesselReply {
 	message VesselTankResponse {
 		repeated VesselTankOrder vesselTankOrder = 1;
 		ResponseStatus responseStatus = 2;
+	}
+
+	message VesselDWTRequest{
+		int64 vesselId = 1;
+		string draftValue = 2;
+	}
+
+	message VesselDWTResponse{
+		int64 vesselId = 1;
+		int64  companyId = 2;
+		string dwtResult = 3;
+		ResponseStatus responseStatus = 4;
 	}
