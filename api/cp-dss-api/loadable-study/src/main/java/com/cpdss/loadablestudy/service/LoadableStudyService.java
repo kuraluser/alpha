@@ -5095,7 +5095,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             request.getLoadableStudyId(),
             LOADABLE_STUDY_REQUEST,
             objectMapper.writeValueAsString(loadableStudy));
-        callToEnvoyWriter(loadableStudy);
+        /**
+         * **Calling EW for communication server
+         */
+       // callToEnvoyWriter(loadableStudy);
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
