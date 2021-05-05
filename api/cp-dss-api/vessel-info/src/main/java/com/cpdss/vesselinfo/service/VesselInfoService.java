@@ -65,6 +65,7 @@ import com.cpdss.vesselinfo.repository.VesselTankTcgRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -105,6 +106,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private StationValuesRepository stationValuesRepository;
   @Autowired private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
   @Autowired private UllageTableDataRepository ullageTableDataRepository;
+  @Autowired HydrostaticService hydrostaticService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -1282,5 +1284,64 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  @Override
+  public void getDWTFromVesselByVesselId(
+      com.cpdss.common.generated.VesselInfo.VesselDWTRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.VesselDWTResponse> responseObserver) {
+    com.cpdss.common.generated.VesselInfo.VesselDWTResponse.Builder builder =
+        com.cpdss.common.generated.VesselInfo.VesselDWTResponse.newBuilder();
+    try {
+      Long vesselId = request.getVesselId();
+      BigDecimal draft =
+          request.getDraftValue().length() > 0
+              ? new BigDecimal(request.getDraftValue())
+              : BigDecimal.ZERO;
+      DecimalFormat df = new DecimalFormat("#.##");
+
+      if (vesselId > 0) {
+        Vessel vessel = vesselRepository.findByIdAndIsActive(vesselId, true);
+        List<HydrostaticTable> tables =
+            hydrostaticService.fetchAllDataByDraftAndVessel(
+                vessel, new BigDecimal(df.format(draft)));
+        Optional<HydrostaticTable> hydrostaticTable = tables.stream().findFirst();
+        if (hydrostaticTable.isPresent()) {
+          BigDecimal lightWeight =
+              vessel.getLightweight() != null ? vessel.getLightweight() : BigDecimal.ZERO;
+          BigDecimal displacement =
+              hydrostaticTable.get().getDisplacement() != null
+                  ? hydrostaticTable.get().getDisplacement()
+                  : BigDecimal.ZERO;
+          BigDecimal dwt = this.getDWTFromVesselAndDraft(displacement, lightWeight);
+          builder.setDwtResult(String.valueOf(dwt));
+        }
+        builder.setVesselId(vessel.getId());
+        builder.setCompanyId(vessel.getCompanyXId());
+      }
+      log.info(
+          "Vessel Info, DWT for vessel - {}, Vessel Id {}, Draft {}",
+          builder.getDwtResult(),
+          vesselId,
+          draft);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception in Calculate DWT from Vessel", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in Calculate DWT from Vessel")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  // calculation for DWT
+  // dwt = displacement - light weight
+  private BigDecimal getDWTFromVesselAndDraft(BigDecimal var1, BigDecimal var2) {
+    return var1.subtract(var2);
   }
 }

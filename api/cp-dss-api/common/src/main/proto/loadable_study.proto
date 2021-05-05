@@ -325,11 +325,12 @@ message LDIntactStability {
 }
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
-	repeated LoadablePlanDetails loadablePlanDetails = 2;
-	int64 loadableStudyId = 3;
-	bool validated = 4;
-	repeated AlgoErrors algoErrors = 5;
-	int64 loadablePatternId = 6;
+	bool hasLodicator =2;
+	repeated LoadablePlanDetails loadablePlanDetails = 3;
+	int64 loadableStudyId = 4;
+	bool validated = 5;
+	repeated AlgoErrors algoErrors = 6;
+	int64 loadablePatternId = 7;
 	
 }
 
@@ -390,6 +391,7 @@ message LoadablePlanDetailsReply {
   	int64 loadablePatternStatusId = 15;
   	int64 voyageStatusId = 16;
   	bool validated = 17;
+  	StabilityParameter stabilityParameter =18;
 }
 
 message LoadablePlanComments {
