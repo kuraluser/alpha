@@ -20,6 +20,7 @@ import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselDetail.Builder;
+import com.cpdss.common.generated.VesselInfo.VesselIdResponse;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
@@ -1343,5 +1344,52 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   // dwt = displacement - light weight
   private BigDecimal getDWTFromVesselAndDraft(BigDecimal var1, BigDecimal var2) {
     return var1.subtract(var2);
+  }
+
+  @Override
+  public void getVesselInfoByVesselId(
+      com.cpdss.common.generated.VesselInfo.VesselIdRequest request,
+      StreamObserver<VesselIdResponse> responseObserver) {
+    VesselIdResponse.Builder replyBuilder = VesselIdResponse.newBuilder();
+    try {
+      VesselInfo vesselDetails =
+          vesselRepository.findVesselDetailsByVesselId(request.getVesselId(), true);
+      if (null == vesselDetails) {
+        log.error("Vessel does not exist");
+        throw new GenericServiceException(
+            "Vessel with given id does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      } else {
+        if (null != vesselDetails) {
+          VesselDetail.Builder builder = VesselDetail.newBuilder();
+
+          Optional.ofNullable(vesselDetails.getId()).ifPresent(item -> builder.setId(item));
+          Optional.ofNullable(vesselDetails.getName()).ifPresent(item -> builder.setName(item));
+          Optional.ofNullable(vesselDetails.getImoNumber())
+              .ifPresent(item -> builder.setImoNumber(item));
+          Optional.ofNullable(vesselDetails.getTypeOfShip())
+              .ifPresent(item -> builder.setTypeOfShip(item));
+          Optional.ofNullable(vesselDetails.getCode()).ifPresent(item -> builder.setCode(item));
+          Optional.ofNullable(vesselDetails.getDeadweightConstant())
+              .ifPresent(item -> builder.setDeadweightConstant(item.toString()));
+          Optional.ofNullable(vesselDetails.getProvisionalConstant())
+              .ifPresent(item -> builder.setProvisionalConstant(item.toString()));
+          replyBuilder.setVesselDetail(builder.build());
+          replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        }
+      }
+    } catch (GenericServiceException e) {
+      log.error("Exception in getVesselInfoByVesselId", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in getVesselInfoByVesselId")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

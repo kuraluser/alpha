@@ -10,6 +10,8 @@ import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.EnvoyWriter;
+import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
@@ -179,7 +181,9 @@ import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -465,6 +469,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @GrpcClient("loadicatorService")
   private LoadicatorServiceBlockingStub loadicatorService;
+
+  @GrpcClient("envoyWriterService")
+  private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
 
   private static final Long LOADABLE_STUDY_REQUEST = 1L;
 
@@ -5088,7 +5095,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             request.getLoadableStudyId(),
             LOADABLE_STUDY_REQUEST,
             objectMapper.writeValueAsString(loadableStudy));
-
+        callToEnvoyWriter(loadableStudy);
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
@@ -5148,6 +5155,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void callToEnvoyWriter(com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy)
+      throws GenericServiceException {
+    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    String loadableStudyJson = null;
+    try {
+      VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
+      loadableStudyJson = ow.writeValueAsString(loadableStudy);
+      EnvoyWriter.LoadableStudyJson.Builder loadableStudyValue =
+          EnvoyWriter.LoadableStudyJson.newBuilder();
+      loadableStudyValue.setLoadableStudy(loadableStudyJson);
+      loadableStudyValue.setImoNumber(vesselReply.getImoNumber());
+      loadableStudyValue.setVesselId(vesselReply.getId());
+      this.envoyWriterGrpcService.getLoadableStudy(loadableStudyValue.build());
+
+    } catch (JsonProcessingException e) {
+      log.error("Exception when when calling EnvoyWriter  ", e);
     }
   }
 
@@ -9571,6 +9597,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     return vesselReply;
   }
 
+  private VesselDetail getVesselDetailsForEnvoy(Long vesselId) throws GenericServiceException {
+    VesselInfo.VesselIdRequest replyBuilder =
+        VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build();
+    VesselInfo.VesselIdResponse vesselResponse = this.getVesselInfoByVesselId(replyBuilder);
+    if (!SUCCESS.equalsIgnoreCase(vesselResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error in calling vessel service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+
+    return vesselResponse.getVesselDetail();
+  }
   /**
    * Get cargo deatils
    *
@@ -9610,6 +9649,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   public VesselReply getVesselDetailByVesselId(VesselRequest replyBuilder) {
     return this.vesselInfoGrpcService.getVesselDetailByVesselId(replyBuilder);
+  }
+
+  public VesselInfo.VesselIdResponse getVesselInfoByVesselId(
+      VesselInfo.VesselIdRequest replyBuilder) {
+    return this.vesselInfoGrpcService.getVesselInfoByVesselId(replyBuilder);
   }
 
   private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
