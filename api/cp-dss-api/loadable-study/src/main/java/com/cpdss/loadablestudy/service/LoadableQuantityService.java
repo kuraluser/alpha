@@ -14,6 +14,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import java.math.BigDecimal;
@@ -43,9 +44,20 @@ public class LoadableQuantityService {
 
   @Autowired PortRotationService portRotationService;
 
+  @Autowired LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
+  /**
+   * Fetch Loadable quantity for LS Id and Port Rotation Id
+   *
+   * @param builder - GRPC Builder
+   * @param loadableStudyId - Long
+   * @param portRotationId - Long
+   * @return LoadableQuantityResponse
+   * @throws GenericServiceException
+   */
   public LoadableQuantityResponse.Builder loadableQuantityByPortId(
       LoadableQuantityResponse.Builder builder, Long loadableStudyId, Long portRotationId)
       throws GenericServiceException {
@@ -214,15 +226,14 @@ public class LoadableQuantityService {
     LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
     lastUpdatedTime = formatter.format(maxOne);
 
+    String dwtValue =
+        String.valueOf(
+            this.getDWTByVesselId(
+                loadableStudy.get().getVesselXId(), loadableStudy.get().getDraftMark()));
+    String seaWaterDensity =
+        String.valueOf(this.getSeaWaterDensityByPortRotationId(portRotationId));
+
     if (!loadableQuantity.isPresent()) {
-      /*
-      // DSS-2129
-      if (Optional.ofNullable(loadableStudy.get().getDraftRestriction()).isPresent()) {
-          draftRestictoin = loadableStudy.get().getDraftRestriction().toString();
-      } else if (Optional.ofNullable(loadableStudy.get().getDraftMark()).isPresent()) {
-          draftRestictoin = loadableStudy.get().getDraftMark().toString();
-      }
-      */
       com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest =
           com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.newBuilder()
               .setDisplacmentDraftRestriction(
@@ -232,7 +243,7 @@ public class LoadableQuantityService {
               .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
               .setTpc(vesselReply.getVesselLoadableQuantityDetails().getTpc())
               .setDraftRestriction(draftRestictoin)
-              .setDwt(vesselReply.getVesselLoadableQuantityDetails().getDwt())
+              .setDwt(dwtValue)
               .setEstFOOnBoard(String.valueOf(foOnboard))
               .setEstDOOnBoard(String.valueOf(doOnboard))
               .setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard))
@@ -260,8 +271,6 @@ public class LoadableQuantityService {
                   loadableQuantityRequest.setDraftRestriction(draftRestriction.toString()));
       Optional.ofNullable(loadableQuantity.get().getDistanceFromLastPort())
           .ifPresent(dist -> loadableQuantityRequest.setDistanceFromLastPort(dist.toString()));
-      Optional.ofNullable(loadableQuantity.get().getDeadWeight())
-          .ifPresent(deadWeight -> loadableQuantityRequest.setDwt(deadWeight.toString()));
 
       loadableQuantityRequest.setEstFOOnBoard(String.valueOf(foOnboard));
       loadableQuantityRequest.setEstDOOnBoard(String.valueOf(doOnboard));
@@ -270,9 +279,11 @@ public class LoadableQuantityService {
 
       Optional.ofNullable(loadableQuantity.get().getEstimatedSagging())
           .ifPresent(estSagging -> loadableQuantityRequest.setEstSagging(estSagging.toString()));
-      Optional.ofNullable(loadableQuantity.get().getEstimatedSeaDensity())
-          .ifPresent(
-              estSeaDensity -> loadableQuantityRequest.setEstSeaDensity(estSeaDensity.toString()));
+
+      // DSS-2608
+      loadableQuantityRequest.setEstSeaDensity(seaWaterDensity);
+      loadableQuantityRequest.setDwt(dwtValue);
+
       Optional.ofNullable(loadableQuantity.get().getOtherIfAny())
           .ifPresent(otherIfAny -> loadableQuantityRequest.setOtherIfAny(otherIfAny.toString()));
       Optional.ofNullable(loadableQuantity.get().getSaggingDeduction())
@@ -335,5 +346,43 @@ public class LoadableQuantityService {
 
   public VesselInfo.VesselReply getVesselDetailsById(VesselInfo.VesselRequest replyBuilder) {
     return this.vesselInfoGrpcService.getVesselDetailsById(replyBuilder);
+  }
+
+  /**
+   * Fetch from Port Rotation Table, by Id
+   *
+   * @param portRotationId
+   * @return
+   */
+  private BigDecimal getSeaWaterDensityByPortRotationId(Long portRotationId) {
+    BigDecimal bigDecimal =
+        loadableStudyPortRotationRepository.findSeaWaterDensityByIdAndIsActive(
+            portRotationId, true);
+    return bigDecimal;
+  }
+
+  /**
+   * Fetch From Vessel Service, DWT = displacement - lightWeight
+   *
+   * @return
+   */
+  private BigDecimal getDWTByVesselId(Long vesselId, BigDecimal draftMark) {
+    VesselInfo.VesselDWTRequest request =
+        VesselInfo.VesselDWTRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setDraftValue(String.valueOf(draftMark))
+            .build();
+    VesselInfo.VesselDWTResponse response =
+        vesselInfoGrpcService.getDWTFromVesselByVesselId(request);
+    if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.info(
+          "Failed to fetch DWT for vessel, Error - {}", response.getResponseStatus().getMessage());
+      return BigDecimal.ZERO;
+    } else {
+      log.info("Loadable Quantity, DWT value from vessel-info {}", response.getDwtResult());
+    }
+    return response.getDwtResult().length() > 0
+        ? new BigDecimal(response.getDwtResult())
+        : BigDecimal.ZERO;
   }
 }

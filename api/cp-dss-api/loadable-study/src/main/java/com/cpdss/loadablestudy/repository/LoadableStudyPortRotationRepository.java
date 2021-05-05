@@ -6,6 +6,7 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -141,4 +142,6 @@ public interface LoadableStudyPortRotationRepository
   @Query(
       "select var.id as id, var.portXId as portId from LoadableStudyPortRotation var where var.loadableStudy.id = ?1 and var.isActive = ?2")
   List<PortRotationIdAndPortId> findAllIdAndPortIdsByLSId(Long loadableStudyId, boolean isActive);
+
+  BigDecimal findSeaWaterDensityByIdAndIsActive(Long id, boolean isActive);
 }
