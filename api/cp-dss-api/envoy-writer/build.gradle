@@ -1,9 +1,24 @@
+//Environment variables
+ext{
+    dbHost = System.getenv('DB_HOST') ?: ""
+    dbName = System.getenv('DB_NAME') ?: ""
+    dbUser = System.getenv('DB_USER') ?: ""
+    dbPassword = System.getenv('DB_PASSWORD') ?: ""
+    grpcPort = System.getenv('GRPC_PORT') ?: ""
+	algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
+	hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+}
+
 appConfig {
-  grpcServer = 'y'
+  grpc = 'y'
   logging = 'y'
-  javaMainClass = "com.cpdss.envoywriter.Application"
+  javaMainClass = "com.cpdss.envoywriter.Application"appName = 'loadable-study'
+  persistence = 'springData'
+  dataBase = 'postgres'
+  devTools = 'y'
 }
 
 dependencies {
     implementation project(':common')
+    compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
 }
