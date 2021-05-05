@@ -56,7 +56,7 @@ public class LoadableQuantityService {
    * @param loadableStudyId - Long
    * @param portRotationId - Long
    * @return LoadableQuantityResponse
-   * @throws GenericServiceException
+   * @throws GenericServiceException - CP DSS Exception
    */
   public LoadableQuantityResponse.Builder loadableQuantityByPortId(
       LoadableQuantityResponse.Builder builder, Long loadableStudyId, Long portRotationId)
@@ -75,123 +75,96 @@ public class LoadableQuantityService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    log.info("Loadable Quantity, LS Id {}, Port Rotation Id {}", loadableStudyId, portRotationId);
 
     Map<Long, Long> portRIds = portRotationService.getPortRotationIdAndPortIds(loadableStudy.get());
     BigDecimal foOnboard = BigDecimal.ZERO;
     BigDecimal doOnboard = BigDecimal.ZERO;
     BigDecimal freshWaterOnBoard = BigDecimal.ZERO;
     BigDecimal boileWaterOnBoard = BigDecimal.ZERO;
-    String draftRestictoin = "";
+    String draftRestriction1 = "";
+    String seaWaterDensity = "";
 
     if (!portRIds.isEmpty() && portRIds.get(portRotationId) != null) {
-
-      boolean isLoadingPort = true; // DSS-2129
+      boolean isLoadingPort = true;
       LoadableStudyPortRotation portRotation =
           portRotationService.findLoadableStudyPortRotationById(portRotationId);
       if (portRotation != null) {
-        if (portRotation.getOperation().getId().equals(LOADING_OPERATION_ID)) {
-          isLoadingPort = true;
-        } else if (portRotation.getOperation().getId().equals(DISCHARGING_OPERATION_ID)
+        // If Operation Type 1 (Loading port) ?, then isLoadingPort is already TRUE.
+        if (portRotation.getOperation().getId().equals(DISCHARGING_OPERATION_ID)
             || portRotation.getOperation().getId().equals(TRANSIT_OPERATION_ID)) {
           isLoadingPort = false;
         }
-        draftRestictoin =
+        log.info(
+            "Loadable Quantity, Port Rotation Operation Type - {}",
+            portRotation.getOperation().getId());
+        draftRestriction1 =
             portRotation.getMaxDraft() != null ? String.valueOf(portRotation.getMaxDraft()) : "";
+        seaWaterDensity =
+            portRotation.getSeaWaterDensity() != null
+                ? String.valueOf(portRotation.getSeaWaterDensity())
+                : "";
       }
 
       List<OnHandQuantity> onHandQuantityList =
           this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
       if (!onHandQuantityList.isEmpty()) {
+        foOnboard =
+            onHandQuantityList.stream()
+                .filter(
+                    ohq ->
+                        null != ohq.getFuelTypeXId()
+                            && null != ohq.getPortRotation()
+                            && ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
+                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getIsActive())
+                .map(
+                    isLoadingPort
+                        ? OnHandQuantity::getDepartureQuantity
+                        : OnHandQuantity::getArrivalQuantity)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        doOnboard =
+            onHandQuantityList.stream()
+                .filter(
+                    ohq ->
+                        null != ohq.getFuelTypeXId()
+                            && null != ohq.getPortRotation()
+                            && ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
+                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getIsActive())
+                .map(
+                    isLoadingPort
+                        ? OnHandQuantity::getDepartureQuantity
+                        : OnHandQuantity::getArrivalQuantity)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        freshWaterOnBoard =
+            onHandQuantityList.stream()
+                .filter(
+                    ohq ->
+                        null != ohq.getFuelTypeXId()
+                            && null != ohq.getPortRotation()
+                            && ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getIsActive())
+                .map(
+                    isLoadingPort
+                        ? OnHandQuantity::getDepartureQuantity
+                        : OnHandQuantity::getArrivalQuantity)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        boileWaterOnBoard =
+            onHandQuantityList.stream()
+                .filter(
+                    ohq ->
+                        ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                            && null != ohq.getPortRotation()
+                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getIsActive())
+                .map(
+                    isLoadingPort
+                        ? OnHandQuantity::getDepartureQuantity
+                        : OnHandQuantity::getArrivalQuantity)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (isLoadingPort) {
-          foOnboard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          null != ohq.getFuelTypeXId()
-                              && null != ohq.getPortRotation()
-                              && ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getDepartureQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-          doOnboard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          null != ohq.getFuelTypeXId()
-                              && null != ohq.getPortRotation()
-                              && ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getDepartureQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-          freshWaterOnBoard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          null != ohq.getFuelTypeXId()
-                              && null != ohq.getPortRotation()
-                              && ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getDepartureQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-          boileWaterOnBoard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                              && null != ohq.getPortRotation()
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getDepartureQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-        } else {
-          foOnboard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          null != ohq.getFuelTypeXId()
-                              && null != ohq.getPortRotation()
-                              && ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getArrivalQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-          doOnboard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          null != ohq.getFuelTypeXId()
-                              && null != ohq.getPortRotation()
-                              && ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getArrivalQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-          freshWaterOnBoard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          null != ohq.getFuelTypeXId()
-                              && null != ohq.getPortRotation()
-                              && ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getArrivalQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-          boileWaterOnBoard =
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                              && null != ohq.getPortRotation()
-                              && ohq.getPortRotation().getId().equals(portRotationId)
-                              && ohq.getIsActive())
-                  .map(OnHandQuantity::getArrivalQuantity)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add);
-        }
         log.info(
             "Loadable Quantity, values of FO/DO/FW/BW - {}/{}/{}/{}",
             foOnboard,
@@ -201,6 +174,7 @@ public class LoadableQuantityService {
       }
     }
 
+    // GRPC call to Vessel Info
     VesselInfo.VesselRequest replyBuilder =
         VesselInfo.VesselRequest.newBuilder()
             .setVesselId(loadableStudy.get().getVesselXId())
@@ -226,12 +200,11 @@ public class LoadableQuantityService {
     LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
     lastUpdatedTime = formatter.format(maxOne);
 
+    // GRPC call to Vessel Info
     String dwtValue =
         String.valueOf(
             this.getDWTByVesselId(
                 loadableStudy.get().getVesselXId(), loadableStudy.get().getDraftMark()));
-    String seaWaterDensity =
-        String.valueOf(this.getSeaWaterDensityByPortRotationId(portRotationId));
 
     if (!loadableQuantity.isPresent()) {
       com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest =
@@ -242,8 +215,9 @@ public class LoadableQuantityService {
                   vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight())
               .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
               .setTpc(vesselReply.getVesselLoadableQuantityDetails().getTpc())
-              .setDraftRestriction(draftRestictoin)
+              .setDraftRestriction(draftRestriction1)
               .setDwt(dwtValue)
+              .setEstSeaDensity(seaWaterDensity)
               .setEstFOOnBoard(String.valueOf(foOnboard))
               .setEstDOOnBoard(String.valueOf(doOnboard))
               .setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard))
@@ -252,8 +226,11 @@ public class LoadableQuantityService {
               .setPortRotationId(portRotationId)
               .build();
       builder.setLoadableQuantityRequest(loadableQuantityRequest);
+      log.info(
+          "Loadable Quantity, LQ Not found for LS id {}, Port Rotation Id {}",
+          loadableStudyId,
+          portRotationId);
     } else {
-
       com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.Builder
           loadableQuantityRequest =
               com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.newBuilder();
@@ -336,6 +313,11 @@ public class LoadableQuantityService {
               foConsumptionPerDay ->
                   loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
       builder.setLoadableQuantityRequest(loadableQuantityRequest);
+      log.info(
+          "Loadable Quantity, LQ Id {}, LS Id {}, Port Rotation Id {}",
+          loadableQuantity.get().getId(),
+          loadableStudyId,
+          portRotationId);
     }
     builder.setResponseStatus(
         com.cpdss.common.generated.LoadableStudy.StatusReply.newBuilder()
@@ -346,19 +328,6 @@ public class LoadableQuantityService {
 
   public VesselInfo.VesselReply getVesselDetailsById(VesselInfo.VesselRequest replyBuilder) {
     return this.vesselInfoGrpcService.getVesselDetailsById(replyBuilder);
-  }
-
-  /**
-   * Fetch from Port Rotation Table, by Id
-   *
-   * @param portRotationId
-   * @return
-   */
-  private BigDecimal getSeaWaterDensityByPortRotationId(Long portRotationId) {
-    BigDecimal bigDecimal =
-        loadableStudyPortRotationRepository.findSeaWaterDensityByIdAndIsActive(
-            portRotationId, true);
-    return bigDecimal;
   }
 
   /**
