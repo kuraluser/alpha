@@ -3016,9 +3016,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePattern, lpd);
                 });
-        if (request.getHasLodicator()) {
-          // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+    if (request.getHasLodicator()) {
+           this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         }
+
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -4462,9 +4463,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
             true);
     if (synopticalTableOpt.isPresent()) {
-      // algoRequest.setTrim(String.valueOf(synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalTableOpt.get(), loadablePattern.getId(), true).getCalculatedTrimPlanned()));
-      algoRequest.setTrim(
-          "0"); // ToDo - replace with above code once loaicator implementaion is done.
+       algoRequest.setTrim(String.valueOf(synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalTableOpt.get(), loadablePattern.getId(), true).getCalculatedTrimPlanned()));
+     // algoRequest.setTrim(
+      //    "0"); // ToDo - replace with above code once loaicator implementaion is done.
     }
     return algoRequest;
   }
@@ -4965,13 +4966,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePatternOpt.get(), lpd);
                 });
-        if (request.getHasLodicator()) {
-          /*this.saveLoadicatorInfo(
+ if (request.getHasLodicator()) {
+          this.saveLoadicatorInfo(
           loadablePatternOpt.get().getLoadableStudy(),
           request.getProcesssId(),
-          request.getLoadablePatternId());*/
+          request.getLoadablePatternId());
         }
-
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
