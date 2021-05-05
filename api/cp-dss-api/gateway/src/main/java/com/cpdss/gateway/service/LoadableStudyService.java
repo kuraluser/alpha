@@ -3354,6 +3354,7 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
+    request.setHasLodicator(false);
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
@@ -3423,6 +3424,13 @@ public class LoadableStudyService {
                                 lpbd -> {
                                   buildLoadablePlanBallstDetails(lpbd, detailsBuilderDeparture);
                                 });
+
+                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                            .ifPresent(
+                                stabilityParameter ->
+                                    detailsBuilderDeparture.setStabilityParameter(
+                                        buildStabilityParamter(stabilityParameter)));
+
                         portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
 
                         LoadablePlanDetailsReply.Builder detailsBuilderArrival =
@@ -3455,6 +3463,13 @@ public class LoadableStudyService {
                                 lpbd -> {
                                   buildLoadablePlanBallstDetails(lpbd, detailsBuilderArrival);
                                 });
+
+                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                            .ifPresent(
+                                stabilityParameter ->
+                                    detailsBuilderArrival.setStabilityParameter(
+                                        buildStabilityParamter(stabilityParameter)));
+
                         portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
 
                         portWiseBuilder.setPortId(lppwd.getPortId());

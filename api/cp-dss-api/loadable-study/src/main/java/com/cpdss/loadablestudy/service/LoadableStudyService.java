@@ -2980,10 +2980,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 lpd -> {
                   LoadablePattern loadablePattern =
                       saveloadablePattern(lpd, loadableStudyOpt.get());
+
                   Optional<LoadablePlanPortWiseDetails> lppwdOptional =
                       lpd.getLoadablePlanPortWiseDetailsList().stream()
                           .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
                           .findAny();
+
                   if (lppwdOptional.isPresent()) {
                     saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
                     saveLoadablePlanCommingleCargo(
@@ -3005,13 +3007,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePattern);
                   }
+
                   saveLoadableQuantityCommingleCargoPortwiseDetails(
                       lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
                   saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
+                  saveStabilityParameterForNonLodicator(
+                      request.getHasLodicator(), loadablePattern, lpd);
                 });
-        //        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        if (request.getHasLodicator()) {
+          // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        }
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -3052,6 +3059,72 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void saveStabilityParameterForNonLodicator(
+      boolean hasLodicator, LoadablePattern loadablePattern, LoadablePlanDetails lpd) {
+
+    if (!hasLodicator) {
+      for (LoadablePlanPortWiseDetails portWiseDetails : lpd.getLoadablePlanPortWiseDetailsList()) {
+        LoadablePlanDetailsReply arrivalCondition = portWiseDetails.getArrivalCondition();
+        if (Optional.ofNullable(arrivalCondition).isPresent()) {
+          saveLodicatorDataForSynoptical(
+              loadablePattern, arrivalCondition, lpd, "ARR", portWiseDetails.getPortRotationId());
+        }
+
+        LoadablePlanDetailsReply departureCondition = portWiseDetails.getDepartureCondition();
+        if (Optional.ofNullable(departureCondition).isPresent()) {
+          saveLodicatorDataForSynoptical(
+              loadablePattern, departureCondition, lpd, "DEP", portWiseDetails.getPortRotationId());
+        }
+      }
+    }
+  }
+
+  private void saveLodicatorDataForSynoptical(
+      LoadablePattern loadablePattern,
+      LoadablePlanDetailsReply arrivalCondition,
+      LoadablePlanDetails lpd,
+      String portType,
+      Long portRotationId) {
+
+    SynopticalTableLoadicatorData synopticalTableLoadicatorData =
+        new SynopticalTableLoadicatorData();
+
+    LoadableStudyPortRotation lsPortRotOption =
+        loadableStudyPortRotationRepository.getOne(portRotationId);
+
+    Optional<SynopticalTable> synData =
+        synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            lsPortRotOption.getId(), portType, true);
+
+    if (synData.isPresent()) {
+      StabilityParameter stabilityParameter = arrivalCondition.getStabilityParameter();
+      synopticalTableLoadicatorData.setLoadablePatternId(loadablePattern.getId());
+
+      synopticalTableLoadicatorData.setCalculatedDraftFwdPlanned(
+          isEmpty(stabilityParameter.getForwardDraft())
+              ? null
+              : new BigDecimal(stabilityParameter.getForwardDraft()));
+
+      synopticalTableLoadicatorData.setCalculatedDraftMidPlanned(
+          isEmpty(stabilityParameter.getMeanDraft())
+              ? null
+              : new BigDecimal(stabilityParameter.getMeanDraft()));
+
+      synopticalTableLoadicatorData.setCalculatedDraftAftPlanned(
+          isEmpty(stabilityParameter.getAfterDraft())
+              ? null
+              : new BigDecimal(stabilityParameter.getAfterDraft()));
+
+      synopticalTableLoadicatorData.setCalculatedTrimPlanned(
+          isEmpty(stabilityParameter.getTrim())
+              ? null
+              : new BigDecimal(stabilityParameter.getTrim()));
+      synopticalTableLoadicatorData.setActive(true);
+      synopticalTableLoadicatorData.setSynopticalTable(synData.get());
+      synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
     }
   }
 
@@ -3117,7 +3190,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .correctedUllage(it.getCorrectedUllage())
                     .rdgUllage(it.getRdgUllage())
                     .portRotationXid(portRotationXid)
-                    .actualQuantity(new BigDecimal(it.getActualQuantity()))
+                    // .actualQuantity(it.getActualQuantity()!=  null ? new
+                    // BigDecimal(it.getActualQuantity()): null)
                     .build();
 
             loadablePlanCommingleDetailsPortwiseRepository.save(
@@ -4888,11 +4962,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   // saveStabilityParameters(loadablePatternOpt.get(), lpd, lastLoadingPort);
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
+                  saveStabilityParameterForNonLodicator(
+                      request.getHasLodicator(), loadablePatternOpt.get(), lpd);
                 });
-        // this.saveLoadicatorInfo(
-        // loadablePatternOpt.get().getLoadableStudy(),
-        // request.getProcesssId(),
-        // request.getLoadablePatternId());
+        if (request.getHasLodicator()) {
+          /*this.saveLoadicatorInfo(
+          loadablePatternOpt.get().getLoadableStudy(),
+          request.getProcesssId(),
+          request.getLoadablePatternId());*/
+        }
+
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
@@ -4974,6 +5053,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePlanBallastDetailsRepository.deleteLoadablePlanBallastDetails(
         false, loadablePattern.getId());
     loadablePlanStowageBallastDetailsRepository.deleteLoadablePlanStowageBallastDetails(
+        false, loadablePattern.getId());
+    synopticalTableLoadicatorDataRepository.deleteByLoadablePatternId(
         false, loadablePattern.getId());
   }
 

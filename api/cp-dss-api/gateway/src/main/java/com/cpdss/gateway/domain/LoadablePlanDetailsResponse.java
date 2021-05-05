@@ -59,5 +59,6 @@ public class LoadablePlanDetailsResponse {
   @JsonInclude(Include.NON_NULL)
   private Boolean validated;
 
+  @JsonInclude(Include.NON_NULL)
   private StabilityParameter stabilityParameters;
 }
