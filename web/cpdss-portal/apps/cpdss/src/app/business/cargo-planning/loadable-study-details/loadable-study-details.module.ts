@@ -35,6 +35,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 
+
 /**
  * Routing Module for Loadable Study Details Screen
  *

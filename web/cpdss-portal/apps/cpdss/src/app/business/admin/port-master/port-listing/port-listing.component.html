@@ -1,0 +1,19 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h5 class="main-head inline-block">{{'PORT_MASTER_PORT_LISTING' | translate}}</h5>
+        </div>
+        <div class="col text-right">
+            <a id="add_user" [routerLink]="['/business/admin/port-listing/add-port']"
+                class="btn btn-link icon-btn plus-icon-rounded float-right">{{'PORT_MASTER_ADD_PORT_DETAILS'|
+                translate}}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 role-listing-wrapper">
+            <cpdss-portal-datatable *ngIf="portsInfo" (columnClick)="onRowSelect($event)" [filterable]="true"
+                [columns]="columns" [value]="portsInfo">
+            </cpdss-portal-datatable>
+        </div>
+    </div>
+</div>

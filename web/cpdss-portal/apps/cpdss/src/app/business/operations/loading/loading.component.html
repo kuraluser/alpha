@@ -8,7 +8,7 @@
 </div>
 <div class="row">
     <div class="col text-center">
-        <a (click)="currentTab ='LOADING_INFO'" [ngClass]="{'active' : currentTab ==='LOADING_INFO'}" class="tab-btn">
+        <a (click)="currentTab = OPERATION_TAB.INFORMATION" [ngClass]="{'active' : currentTab === OPERATION_TAB.INFORMATION}" class="tab-btn">
             Loading Information
             <div class="pt-5">
                 <div class="tab-status-icon pi pi-check completed">
@@ -16,7 +16,7 @@
                 Complete
             </div>
         </a>
-        <a (click)="currentTab ='LOADING_INSTRUCTION'" [ngClass]="{'active' : currentTab ==='LOADING_INSTRUCTION'}"  class="tab-btn">
+        <a (click)="currentTab = OPERATION_TAB.INSTRUCTION" [ngClass]="{'active' : currentTab === OPERATION_TAB.INSTRUCTION}"  class="tab-btn">
             Loading Instructions
             <div class="pt-5">
                 <div class="tab-status-icon pi pi-check completed">
@@ -27,7 +27,7 @@
         <a  class="btn btn-main">
             Generate Loading Plan
         </a>
-        <a  class="tab-btn">
+        <a (click)="currentTab = OPERATION_TAB.SEQUENCE" [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE}" class="tab-btn">
             Loading Sequence
             <div class="pt-5">
                 <div class="tab-status-icon pi pi-check completed">
@@ -45,8 +45,9 @@
         </a>
     </div>
 </div>
-<div class="row" *ngIf="currentTab === 'LOADING_INFO'">
-    <div class="col-4">
+<div class="row" *ngIf="currentTab === OPERATION_TAB.INFORMATION">
+    <cpdss-portal-loading-information></cpdss-portal-loading-information>
+    <!-- <div class="col-4">
         <div class="row">
             <div class="col">
                 <h5>Loading Details</h5>
@@ -94,15 +95,22 @@
                 <h5>selected cargo type topping off sequence</h5>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
 
-<div class="row" *ngIf="currentTab === 'LOADING_INSTRUCTION'">
+<div class="row" *ngIf="currentTab === OPERATION_TAB.INSTRUCTION">
+    //TODO: Need to crate seperate component for loading instruction
     <div class="col-4">
         <cpdss-portal-instruction-side-panel [panelList]="panelList" (selectedInstructionChange)="sidePanelInstructionChange($event)"></cpdss-portal-instruction-side-panel>
     </div>
     <div class="col-8">
         <cpdss-portal-instruction-check-list [instructionList]="instructionList"></cpdss-portal-instruction-check-list>
+    </div>
+</div>
+
+<div class="row" *ngIf="currentTab === OPERATION_TAB.SEQUENCE">
+    <div class="col">
+        <cpdss-portal-loading-sequence></cpdss-portal-loading-sequence>
     </div>
 </div>

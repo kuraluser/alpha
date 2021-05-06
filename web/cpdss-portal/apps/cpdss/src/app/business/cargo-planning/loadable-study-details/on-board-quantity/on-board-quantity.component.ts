@@ -580,8 +580,8 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       if (obqTankDetail.api.value) {
         const _prevQuantitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
         
-          obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
-          obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value.toFixed(2)) : 0;
+          obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value , '' , -1);
+          obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value) : 0;
           const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, obqTankDetail?.api?.value);
           obqTankDetail.volume = volume ?? 0;
 

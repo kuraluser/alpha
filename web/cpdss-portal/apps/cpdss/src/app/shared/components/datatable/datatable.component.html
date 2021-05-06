@@ -109,7 +109,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
                 <tr formGroupName="{{rowIndex}}" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex"
-                    [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="rowData?.id !== 0 && rowIndex">
+                    [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="tableRowReOrder ? (rowData?.id !== 0 && rowIndex) : ''">
                     <td *ngIf="progress">
                         <i class="pi" [ngClass]="{'pi-spin pi-spinner row-loader': rowData['processing']}"></i>
                     </td>
@@ -135,7 +135,7 @@
                             [pEditableColumnField]="col.field" [pEditableColumnRowIndex]="rowIndex"
                             (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
-                                (keyup)="onFocus($event, rowData, col, colIndex)"
+                                (keyup)="onFocus($event, rowData, col, colIndex, rowIndex)"
                                 id="{{'cell'+col.field + '_' + rowIndex}}">
 
                                 <ng-container *ngIf="!lazy;else lazyRef">
@@ -210,7 +210,8 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
-                                        <span>{{rowData[col.field]?.value | number:
+                                        <span (click)="onCellValueClick($event, rowData, rowIndex, col)">{{
+                                            col?.numberType === 'quantity' ? (rowData[col.field]?.value | quantityDecimalFormat: col.unit) : rowData[col.field]?.value | number:
                                             col?.numberFormat}}{{rowData[col.field]?.value? col.fieldSuffix
                                             : ''}}
                                             <i *ngIf="rowData[col.field]?.value && col.fieldValueIcon"
@@ -300,9 +301,9 @@
                                         <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
                                             [disabled]="disabledField(rowIndex, col.field)"
                                             [hidden]="disabledField(rowIndex, col.field)"
-                                            (onSelect)="onDateRangeSelect($event, rowIndex, col.field, rowData)"
-                                            (onClose)="onDateRangeSelect($event, rowIndex, col.field, rowData)"
-                                            (onClearClick)="onClearDateRange($event, rowIndex, col.field,rowData)"
+                                            (onSelect)="onDateRangeSelect($event, rowIndex, col, rowData)"
+                                            (onClose)="onDateRangeSelect($event, rowIndex, col, rowData)"
+                                            (onClearClick)="onClearDateRange($event, rowIndex, col.field, rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
                                             id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false"
@@ -364,7 +365,7 @@
 
                     </td>
                     <td *ngFor="let col of columns; let i = index">
-                        {{getTotal(col, i)}}
+                        {{getTotal(col, i) | quantityDecimalFormat}}
                     </td>
                 </tr>
             </ng-template>

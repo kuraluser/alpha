@@ -27,14 +27,8 @@ import { FocusTrapModule } from 'primeng/focustrap';
 import { tokenAuthCPDSSInitializer } from "../app/shared/utils/token-auth.cpdss.init";
 
 let providers: any = [
-  // TODO: To be removed after testing
-  /* {
-    provide: APP_INITIALIZER,
-    useFactory: (appConfigService: AppConfigurationService) => () => appConfigService.load(),
-    deps: [AppConfigurationService, ActivatedRoute], multi: true
-  }, */
   { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
-  { provide: ErrorHandler, useClass: GlobalErrorHandler },
+  { provide: ErrorHandler, useClass: GlobalErrorHandler }
 ];
 
 if (environment.name === 'shore') {
@@ -42,7 +36,7 @@ if (environment.name === 'shore') {
   { provide: APP_INITIALIZER, useFactory: keycloakCPDSSInitializer, multi: true, deps: [KeycloakService, HttpClient, AppConfigurationService, ActivatedRoute, GlobalErrorHandler] },
   ]
 } else {
-  providers = [...providers, 
+  providers = [...providers,
     { provide: APP_INITIALIZER, useFactory: tokenAuthCPDSSInitializer, multi: true, deps: [HttpClient, AppConfigurationService, ActivatedRoute] },
     ]
 }

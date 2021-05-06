@@ -10,7 +10,11 @@
 
         <tr>
             <td *ngFor="let col of columns">
-                {{rowData[col.field] |   translate}}
+                <ng-container [ngSwitch]="col.fieldType">
+                    <ng-container *ngSwitchCase="fieldType.NUMBER">{{rowData[col.field] | number: rowData[col?.numberFormat]}}</ng-container>
+                    <ng-container *ngSwitchDefault>{{rowData[col.field] |   translate}}</ng-container>
+                </ng-container>
+                
             </td>
         </tr>
     </ng-template>

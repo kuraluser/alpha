@@ -4,6 +4,8 @@ import { CargoTankLayoutComponent } from './cargo-tank-layout.component';
 import { TooltipModule } from 'primeng/tooltip';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import { TranslateModule } from '@ngx-translate/core';
+import { QuantityDecimalFormatPipeModule } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+
 
 /**
  * Module for cargo tank layout component
@@ -17,7 +19,8 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     TooltipModule,
     OverlayPanelModule,
-    TranslateModule
+    TranslateModule,
+    QuantityDecimalFormatPipeModule
   ],
   exports: [CargoTankLayoutComponent]
 })

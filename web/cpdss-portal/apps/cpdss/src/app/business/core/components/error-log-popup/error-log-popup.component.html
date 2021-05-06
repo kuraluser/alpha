@@ -1,6 +1,6 @@
-<p-dialog [header]="header" [(visible)]="visible"  styleClass="error-pop-up" (onHide)="closePopup()" [modal]="true"
+<p-dialog [header]="header | translate" [(visible)]="visible"  styleClass="error-pop-up" (onHide)="closePopup()" [modal]="true"
 [draggable]="false" [responsive]="true">
-    <p *ngIf="subHeading" class="text-danger">{{subHeading}}</p>
+    <p *ngIf="subHeading" class="text-danger">{{subHeading | translate}}</p>
     <p-table [value]="errorMessage" styleClass="body-header-row-span-table">
         <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
             <tr>

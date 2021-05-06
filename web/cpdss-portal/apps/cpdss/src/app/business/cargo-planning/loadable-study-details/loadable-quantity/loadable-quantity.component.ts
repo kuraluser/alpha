@@ -60,7 +60,7 @@ export class LoadableQuantityComponent implements OnInit {
   buttonLabel: string;
   isNoTpc = false;
   isNoDwt = false;
-  isNoArrivalMaxDraft = false;
+  isNoArrivalMaxDraft = null;
   isNodisplacement = false;
   isNoLwt = false;
   isNoConstant = false;
@@ -152,7 +152,7 @@ export class LoadableQuantityComponent implements OnInit {
       if (this.caseNo === 3) {
         this.loadableQuantityForm.addControl('displacement', this.fb.control(''));
         this.loadableQuantityForm.addControl('lwt', this.fb.control(''));
-        this.loadableQuantityForm.addControl('estSeaDensity', this.fb.control('', [Validators.required, numberValidator(3, 1), Validators.min(0)]));
+        this.loadableQuantityForm.addControl('estSeaDensity', this.fb.control('', [Validators.required, numberValidator(4, 1), Validators.min(0)]));
         this.loadableQuantityForm.addControl('sgCorrection', this.fb.control('', [Validators.required, numberValidator(5, 7)]));
       }
 
@@ -173,7 +173,9 @@ export class LoadableQuantityComponent implements OnInit {
     } if (this.loadableQuantity.dwt === '') {
       this.isNoDwt = true;
     } if (this.loadableQuantity.draftRestriction === '') {
-      this.isNoArrivalMaxDraft = true;
+      this.isNoArrivalMaxDraft = { required: true };
+    } else {
+      this.isNoArrivalMaxDraft = null;
     }
     if (this.loadableQuantity.displacmentDraftRestriction === '') {
       this.isNodisplacement = true;
@@ -511,7 +513,7 @@ export class LoadableQuantityComponent implements OnInit {
   }
   /**
    *
-   * @param type 
+   * @param type
    * Get form control value to label
    */
   getControlLabel(type: string) {
@@ -533,7 +535,7 @@ export class LoadableQuantityComponent implements OnInit {
   }
 
   /**
- * Get form control of loadableQuantityForm 
+ * Get form control of loadableQuantityForm
  *
  *
  * @param {string} formControlName

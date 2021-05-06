@@ -250,7 +250,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   async onCellValueClick(event: ICargoNominationEvent) {
     this.ngxSpinnerService.show();
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
-    if (event.field === 'loadingPorts') {
+    if (event.field === 'loadingPorts' || event.field === 'quantity') {
       if (event.data?.cargo?.value) {
         const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
         event.data.cargo.value.ports = result?.ports;
@@ -322,13 +322,23 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.cargoNominations[valueIndex]['loadingPortsNameArray'] = null;
       this.cargoNominations[valueIndex]['quantity'].value = null;
       this.updateField(event.index, 'abbreviation', event.data.cargo.value.abbreviation);
-      this.updateField(event.index, 'api', event.data.cargo.value.api);
+      this.updateField(event.index, 'api', null);
+      this.updateField(event.index, 'temperature', null);
       this.updateField(event.index, 'loadingPorts', null);
       this.updateField(event.index, 'quantity', null);
       const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
       event.data.cargo.value.ports = result?.ports;
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
+    } else if (event.field === 'loadingPorts'){
+      const cargoId = event.data.cargo.value.id;
+      const ports = event.data.loadingPorts.value;
+      const portId = ports[ports.length - 1].id
+      const result = await this.loadableStudyDetailsApiService.getApiFromCargoPorts(this.vesselId, portId, cargoId).toPromise();
+      this.updateField(event.index, 'api', result.api);
+      this.updateField(event.index, 'temperature', result.temperature);
+      this.cargoNominations[valueIndex]['api'].value = result.api;
+      this.cargoNominations[valueIndex]['temperature'].value = result.temperature;
     }
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
@@ -359,7 +369,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       }
     }
     this.updateFormValidity();
-    this.setDisableUnitChange()
+    this.setDisableUnitChange();
+    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 
   /**
@@ -436,6 +447,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+      this.loadableStudyDetailsTransformationService.setPortValidity(false);
       if (res) {
         this.cargoNominations[valueIndex].isAdd = false;
         for (const key in this.cargoNominations[valueIndex]) {

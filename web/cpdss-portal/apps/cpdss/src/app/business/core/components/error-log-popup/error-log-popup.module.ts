@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { ErrorLogPopupComponent }  from '../error-log-popup/error-log-popup.component';
 
@@ -10,7 +11,8 @@ import { ErrorLogPopupComponent }  from '../error-log-popup/error-log-popup.comp
   imports: [
     CommonModule,
     DialogModule,
-    TableModule
+    TableModule,
+    TranslateModule
   ],
   exports: [ErrorLogPopupComponent]
 })

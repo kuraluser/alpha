@@ -52,6 +52,8 @@ export interface IDataTableColumn {
     fieldValue?: string;
     fieldHeaderTooltipIcon?: string;
     fieldHeaderTooltipText?: string;
+    unit?: string;
+    numberType?: string;
 }
 
 /**

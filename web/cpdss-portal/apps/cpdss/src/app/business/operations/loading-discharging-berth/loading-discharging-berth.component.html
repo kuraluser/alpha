@@ -1,0 +1,129 @@
+<!-- <form [formGroup]="formGroup" id="fg_load_discharge_details" (ngSubmit)="onSubmit()">
+    <div class="container-fluid">
+        <div class="row item-row-wrapper">  
+            <div class="col">
+                
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Intial loading rate'}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Max loading rate'}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Min Deballast rate'}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Max Deballast rate'}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Sunrise/Sunset'}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                        /
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Start Time'}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Time Allowed(Initial/Max/Final)'}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                        /
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+                        /
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
+                        (change)="change()" [readonly]="false">
+
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="loading_ratio"
+                        class="col no-left-padding">{{'Intial loading rate'}}</label>
+                    <div class="col dropdown-load_discharge_details">
+                        <p-dropdown #dd id="loading_ratio" styleClass="form-control" [filter]="true"
+                            [options]="[]" formControlName="loadingRatio" optionLabel="name" (click)="clearFilter(dd)"
+                            placeholder="{{'Enter initial loading rate'}}"
+                            [readonly]="false" resetFilterOnHide="true">
+                        </p-dropdown>
+                    </div>
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form> -->

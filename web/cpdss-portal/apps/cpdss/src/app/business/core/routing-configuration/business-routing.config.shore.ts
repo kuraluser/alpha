@@ -9,7 +9,8 @@ export class BusinessRoutingConfig {
                 path: '',
                 component: BusinessComponent,
                 children: [
-                    ...BusinessRoutingCommonConfig.getRoutesForEnvironment(),                  
+                    ...BusinessRoutingCommonConfig.getRoutesForEnvironment(),
+                    { path: 'fleet', loadChildren: () => import('../../fleet/fleet.module').then(m => m.FleetModule) },
                     { path: 'voyages', loadChildren: () => import('../../voyages/voyages.module').then(m => m.VoyagesModule) }
                 ]
             }

@@ -36,14 +36,20 @@ export class CargoPriorityGridComponent implements OnInit {
       this.totalQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
         return Number(a) + Number(b?.quantity);
       }, 0);
-      this.totalDifference = loadablePatternCargoDetails.reduce(function (a, b) {
-        return Number(a) + Number(b?.quantity - b?.orderedQuantity);
+      const totalQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
+        return Number(a) + Number(b?.quantity);
       }, 0);
+      const totalOrderedQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
+        return Number(a) + Number(b?.orderedQuantity);
+      }, 0);
+      this.totalDifference = (totalQuantity/totalOrderedQuantity) * 100;
     }
   }
 
   totalQuantity = 0;
   totalDifference = 0;
+
+  unit:string;
 
   private _loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
 
@@ -56,7 +62,7 @@ export class CargoPriorityGridComponent implements OnInit {
   * @memberof CargoPriorityGridComponent
   */
   ngOnInit(): void {
-
+    this.unit = localStorage.getItem('unit');
   }
 
   /**

@@ -13,7 +13,7 @@
                     <th *ngIf="rowData?.header" [attr.rowspan]="rowData.rowspan">{{rowData.header | translate}}</th>
                     <th>{{rowData.subHeader | translate}}</th>
                     <ng-container *ngFor="let col of columns;let index = index">
-                            <td>{{loadablePlanSynopticRecord[rowData.field]}}</td>
+                            <td>{{loadablePlanSynopticRecord[rowData.field] | number}}</td>
                     </ng-container>
                     </tr>
             </ng-template>
