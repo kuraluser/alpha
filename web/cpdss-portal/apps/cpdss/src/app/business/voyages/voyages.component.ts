@@ -12,6 +12,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { IPermission } from '../../shared/models/user-profile.model';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT  } from '../../shared/models/common.model';
 
 /**
  * Component class for voyages compoent
@@ -41,7 +42,10 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   defaultDate: Date;
   isStart: boolean;
   display: boolean;
+  newVoyagePermissionContext: IPermissionContext;
 
+  filterDateError = null;
+  errorMessages: any;
   public loading: boolean;
   public totalRecords: number;
   public currentPage: number;
@@ -59,6 +63,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
+    this.errorMessages = this.voyageListTransformationService.setValidationErrorMessage();
     this.ngxSpinnerService.show();
     this.getPagePermission();
     this.permissionStart = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStart'], false);
@@ -90,6 +95,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
    */
    getPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyagesComponent']);
+    this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['VoyageHistoryNewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
   }
 
   /**
@@ -165,8 +171,12 @@ export class VoyagesComponent implements OnInit, OnDestroy {
  */
   onDateRangeSelect(event) {
     if (this.filterDates[0] && this.filterDates[1]) {
+      this.filterDateError = null;
       this.dateRangeFilter.hideOverlay();
       this.reloadVoyageHistory();
+    }
+    else if(this.filterDates[0] && !this.filterDates[1]){
+      this.filterDateError = { 'toDate': true };
     }
   }
 
@@ -177,6 +187,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   * @memberof VoyagesComponent
   */
   resetDateFilter(event) {
+    this.filterDateError = null;
     this.filterDates = null;
     this.reloadVoyageHistory();
   }

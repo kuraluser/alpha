@@ -1267,8 +1267,51 @@ header{
   background: url($images-theme + 'voyage-end.png') no-repeat center center;
 }
 
-.colorpicker-custom.empty::-webkit-color-swatch{
+.colorpicker-custom.empty.ng-invalid::-webkit-color-swatch{
   background: $body-bg!important;
+}
+@media (max-width: 1600px){
+ 
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern{
+    border-top: 28px solid $tank-ohq-border!important; 
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern{
+    border-right: 82px solid transparent;
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after{
+    border-top: 28px solid $body-bg;
+    top: -29px
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after, .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern:after, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern:after{
+    border-right: 82px solid transparent;
+  }
+  .ship-rear-pattern .rear-tank-pattern .rear-tank-ullage-and-percentage{
+    left: 20%;
+  }
+}
+@media (max-width: 1400px){
+ 
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern{
+    border-top: 23px solid $tank-ohq-border!important; 
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern{
+    border-right: 62px solid transparent;
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after{
+    border-top: 22px solid $body-bg;
+    top: -24px
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after, .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern:after, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern:after, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern:after{
+    border-right: 62px solid transparent;
+  }
+
+}
+
+.badge-info{
+  background: $main-head;
+}
+.badge-muted{
+  background: $muted;
 }
 .action-btn {
   color: $main-head!important;

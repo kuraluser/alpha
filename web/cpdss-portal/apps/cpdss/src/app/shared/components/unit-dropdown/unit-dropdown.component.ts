@@ -38,7 +38,7 @@ export class UnitDropdownComponent implements OnInit {
       this.setSelected(unit)
       this.unitChange.emit({ unit: this.selectedUnit.value })
     } else {
-      this.setSelected(AppConfigurationService.settings.baseUnit)
+      this.setSelected(AppConfigurationService.settings.defaultWeightUnit)
       this.setUnit();
     }
   }

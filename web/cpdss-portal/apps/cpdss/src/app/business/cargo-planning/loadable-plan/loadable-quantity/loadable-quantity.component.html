@@ -43,14 +43,14 @@
                 <ng-template pTemplate="footer">
                     <tr>
                         <td colspan="3">{{'LOADABLE_QUANTITY_TOTAL' | translate}}</td>
-                        <td>{{total?.orderedQuantity | number :'1.0-2'}}</td>
-                        <td>{{total?.orderBbls60f | number :'1.0-2'}}</td>
+                        <td>{{total?.orderedQuantity | quantityDecimalFormat: 'MT'}}</td>
+                        <td>{{total?.orderBbls60f | quantityDecimalFormat: 'BBLS'}}</td>
                         <td colspan="2"></td>
-                        <td>{{total?.loadableBblsdbs | number :'1.0-2'}}</td>
-                        <td>{{total?.loadableBbls60f | number :'1.0-2'}}</td>
-                        <td>{{total?.loadableLT | number :'1.2-2'}}</td>
-                        <td>{{total?.loadableMT | number :'1.2-2'}}</td>
-                        <td>{{total?.loadableKL | number :'1.2-2'}}</td>
+                        <td>{{total?.loadableBblsdbs | quantityDecimalFormat: 'OBSBBLS'}}</td>
+                        <td>{{total?.loadableBbls60f | quantityDecimalFormat: 'BBLS'}}</td>
+                        <td>{{total?.loadableLT | quantityDecimalFormat: 'LT'}}</td>
+                        <td>{{total?.loadableMT | quantityDecimalFormat: 'MT'}}</td>
+                        <td>{{total?.loadableKL | quantityDecimalFormat: 'KL'}}</td>
                         <td><span class="badge-custom" [ngClass]="total?.differencePercentage >= 0  ? 'success' : 'error'">{{total?.differencePercentage | number :'1.2-2'}} %</span></td>
                     </tr>
                 </ng-template>
@@ -62,3 +62,4 @@
             <cpdss-portal-commingled-cargo-details [loadableQuantityCargoDetails]="loadableQuantityCommingleCargoDetails"></cpdss-portal-commingled-cargo-details>
     </div>
     </div>
+

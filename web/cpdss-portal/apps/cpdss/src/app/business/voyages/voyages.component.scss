@@ -3,5 +3,9 @@
     height: auto;
 }
 .calender-control-multi-date{
+    display: flex;
     max-width: 220px;
+    div, span{
+align-self: center;
+    }
 }

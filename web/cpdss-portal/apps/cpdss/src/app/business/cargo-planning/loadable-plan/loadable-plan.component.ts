@@ -38,7 +38,7 @@ import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
   templateUrl: './loadable-plan.component.html',
   styleUrls: ['./loadable-plan.component.scss']
 })
-export class LoadablePlanComponent implements OnInit , OnDestroy {
+export class LoadablePlanComponent implements OnInit  {
 
   get cargoTanks(): ICargoTank[][] {
     return this._cargoTanks;
@@ -133,7 +133,6 @@ export class LoadablePlanComponent implements OnInit , OnDestroy {
   */
   ngOnInit(): void {
     this.getPagePermission();
-    this.listenEvents();
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
@@ -163,16 +162,6 @@ export class LoadablePlanComponent implements OnInit , OnDestroy {
     navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
   }
 
-  /**
-   * remove event listener
-   *
-   * @memberof LoadablePlanComponent
-  */
-  ngOnDestroy() {
-    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
-  }
-
-  
     /**
    * Handler for service worker message event
    *
@@ -390,6 +379,8 @@ export class LoadablePlanComponent implements OnInit , OnDestroy {
     this.loadablePatternValidationStatus = loadablePlanRes.loadablePatternStatusId;
     if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
       this.getAlgoErrorMessage(false);
+    } else if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED) {
+      this.listenEvents();
     }
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
     this.setProcessingLoadableStudyActions();

@@ -12,7 +12,7 @@
     properties: ""
   });
 
-  const isOpen = await db.open();
+  const isOpen = await db?.open();
   if (isOpen) {
      // Code for calling sync function in interval .Please dont remove this code
     setInterval(async () => {
@@ -54,7 +54,14 @@
 
   // Function to get token from index DB
   async function getToken() {
-    return await db.properties.get('token');
+    try {
+      return await db?.properties?.get('token');
+    } catch (error) {
+      const isOpen = await db?.open();
+      if (isOpen) {
+        return await getToken();
+      }
+    }
   }
 
 
@@ -70,8 +77,8 @@
     await db.cargoNominations.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
         const timeStamp = Date.now - 60000;
-        //Get all primary keys with storekey
-        const primaryKey = await db.cargoNominations.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
+        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
+        const primaryKey = await db.cargoNominations.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
 
         if (primaryKey?.length) {
           //Get last update record of particular store key
@@ -150,8 +157,8 @@
     await db.ports.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
         const timeStamp = Date.now - 60000;
-        //Get all primary keys with storekey
-        const primaryKey = await db.ports.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
+        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
+        const primaryKey = await db.ports.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
 
         //Get last update record of particular store key
         const port = await db.ports.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
@@ -229,8 +236,8 @@
     await db.ohq.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
         const timeStamp = Date.now - 60000;
-        //Get all primary keys with storekey
-        const primaryKey = await db.ohq.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
+        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
+        const primaryKey = await db.ohq.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
 
         if (primaryKey?.length) {
           //Get last update record of particular store key
@@ -284,8 +291,8 @@
     await db.obq.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
         const timeStamp = Date.now - 60000;
-        //Get all primary keys with storekey
-        const primaryKey = await db.obq.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
+        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
+        const primaryKey = await db.obq.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
 
         if (primaryKey?.length) {
           //Get last update record of particular store key
@@ -377,7 +384,7 @@
         headers: headers
       });
       const syncView = await syncResponse.json();
-      if (syncView.responseStatus.status === '200') { 
+      if (syncView.responseStatus.status === '200') {
         if (syncView.loadableStudyStatusId === 12) {
           clearInterval(timer);
           const sync = {};
@@ -403,7 +410,7 @@
       if (syncView.responseStatus.status === '500') {
         clearInterval(timer);
       }
-    }, 3500);
+    }, 5000);
   }
 
   async function checkLoadableStudyStatus(data) {

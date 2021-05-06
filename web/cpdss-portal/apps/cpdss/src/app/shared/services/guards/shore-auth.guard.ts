@@ -20,7 +20,7 @@ export class ShoreAuthGuard extends KeycloakAuthGuard {
     public async isAccessAllowed(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
         // Force the user to log in if currently unauthenticated.
-        if (!this.authenticated) {
+        if (!this.authenticated || this.keycloak.isTokenExpired()) {
             window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
         }
 
@@ -30,21 +30,12 @@ export class ShoreAuthGuard extends KeycloakAuthGuard {
             /* setTimeout(() => {
                 this.router.navigate(['business']);
             }, 500); */
+          return true;
         }
         else {
             window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
         }
-
-        // Get the roles required from the route.
-        const requiredRoles = route.data.roles;
-
-        // Allow the user to to proceed if no additional roles are required to access the route.
-        if (!(requiredRoles instanceof Array) || requiredRoles.length === 0) {
-            return true;
-        }
-
-        // Allow the user to proceed if all the required roles are present.
-        return requiredRoles.every((role) => this.roles.includes(role));
+        return false;
     }
 
 }

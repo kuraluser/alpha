@@ -24,7 +24,7 @@
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
             <div class="pr-15">
-                {{portRotationService.voyageDistance? portRotationService.voyageDistance :
+                {{portRotationService.voyageDistance? (portRotationService.voyageDistance | number) :
                 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
         </div>

@@ -7,6 +7,13 @@ ext{
     grpcPort = System.getenv('GRPC_PORT') ?: ""
 	keycloakURL = System.getenv('KEYCLOAK_URL')?:""
 	hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+	cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:"" 
+        redisPassword = System.getenv('REDIS_PASSWORD')?:"" 
+        keycloakAdminUsername = System.getenv('KEYCLOAK_ADMIN_USER_NAME')?:""
+        keycloakAdminPassword = System.getenv('KEYCLOAK_ADMIN_PASSWORD')?:""
+        keycloakAdminClientId = System.getenv('KEYCLOAK_ADMIN_CLIENT_ID')?:""
+	shipjwtSecret = System.getenv('SHIP_JWT_SECRET')?:""
+    shipjwtValidity = System.getenv('SHIP_JWT_VALIDITY')?:""
 }
 
 appConfig {
@@ -38,7 +45,7 @@ appConfig {
         }
 	  dns = ['8.8.8.8']	
       environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 
-	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'KEYCLOAK_URL': keycloakURL]
+	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'KEYCLOAK_URL': keycloakURL, 'CPDSS_BUILD_ENV': cpdssBuildEnv, 'REDIS_PASSWORD': redisPassword, 'KEYCLOAK_ADMIN_USER_NAME': keycloakAdminUsername, 'KEYCLOAK_ADMIN_PASSWORD': keycloakAdminPassword, 'KEYCLOAK_ADMIN_CLIENT_ID': keycloakAdminClientId, 'SHIP_JWT_SECRET': shipjwtSecret, 'SHIP_JWT_VALIDITY': shipjwtValidity]
   }
   javaMainClass = "com.cpdss.gateway.Application"
   keyvaluestore = 'y'

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { IDataTableColumn , DATATABLE_FIELD_TYPE  } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -30,11 +30,9 @@ export class CargoDetailsComponent implements OnInit {
   }
 
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
-    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit;
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit??AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
-    if (this.prevQuantitySelectedUnit) {
-      this.convertQuantityToSelectedUnit();
-    }
+    this.convertQuantityToSelectedUnit();    
   }
 
   columns: IDataTableColumn[];
@@ -44,7 +42,8 @@ export class CargoDetailsComponent implements OnInit {
   totalActual = 0;
   isTotalPositive = true;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
-
+  readonly fieldType = DATATABLE_FIELD_TYPE;
+  
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoQuantities: ICargoQuantities[];
 
@@ -87,21 +86,21 @@ export class CargoDetailsComponent implements OnInit {
 
     this.newCargoList?.map(cargoList => {
       const plannedWeight = this.quantityPipe.transform(cargoList.plannedWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoList?.api);
-      cargoList.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
+      cargoList.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
       const actualWeight = this.quantityPipe.transform(cargoList.actualWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoList?.api);
-      cargoList.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
+      cargoList.actualWeight = actualWeight ? Number(actualWeight) : 0;
 
       this.totalPlanned = cargoList.plannedWeight + this.totalPlanned;
       const difference = cargoList.actualWeight - cargoList.plannedWeight;
       this.totalActual = cargoList.actualWeight + this.totalActual;
-      cargoList.difference = difference ? Number(difference.toFixed(2)) : 0;
+      cargoList.difference = difference ? Number(difference) : 0;
       this.totalDifference = difference + this.totalDifference;
       difference > 0 ? cargoList.isPositive = true : cargoList.isPositive = false;
     });
 
-    this.totalPlanned = this.totalPlanned ? Number(this.totalPlanned.toFixed(2)) : 0;
-    this.totalActual = this.totalActual ? Number(this.totalActual.toFixed(2)) : 0;
-    this.totalDifference = this.totalDifference ? Number(this.totalDifference.toFixed(2)) : 0;
+    this.totalPlanned = this.totalPlanned ? Number(this.totalPlanned) : 0;
+    this.totalActual = this.totalActual ? Number(this.totalActual) : 0;
+    this.totalDifference = this.totalDifference ? Number(this.totalDifference) : 0;
     this.totalDifference > 0 ? this.isTotalPositive = true : this.isTotalPositive = false;
   }
 

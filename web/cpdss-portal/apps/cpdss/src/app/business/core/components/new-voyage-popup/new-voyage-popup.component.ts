@@ -128,7 +128,7 @@ export class NewVoyagePopupComponent implements OnInit {
   }
 
   /**
-   * Save button click 
+   * Save button click
    */
   saveNewVoyagePopup() {
     this.isSubmitted = true;
@@ -141,7 +141,7 @@ export class NewVoyagePopupComponent implements OnInit {
   }
 
   /**
-   * Trim blank space entered as the first character in voyage no. field 
+   * Trim blank space entered as the first character in voyage no. field
    */
   trimVoyageNo() {
     this.newVoyageForm.controls['voyageNo'].setValue((this.newVoyageForm.get('voyageNo').value).trim());
@@ -176,7 +176,7 @@ export class NewVoyagePopupComponent implements OnInit {
   }
 
   /**
-  * Get form control of newVoyageForm 
+  * Get form control of newVoyageForm
   *
   *
   * @param {string} formControlName

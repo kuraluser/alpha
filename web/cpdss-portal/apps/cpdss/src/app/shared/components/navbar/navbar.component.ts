@@ -122,6 +122,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'subMenu': [
           { 'name': 'User Role Permission', 'subMenuLink': '/business/admin/user-role-permission', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false },
           { 'name': 'User', 'subMenuLink': '/business/admin/user-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false },
+          { 'name': 'Port Master', 'subMenuLink': '/business/admin/port-listing','permissionMapping': AppConfigurationService.settings.permissionMapping['PortListingComponent'],'isVisible': false },          
         ],
       },
       {
@@ -134,6 +135,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'subMenu': [
           { 'name': 'Loading', 'subMenuLink': '/business/operations/loading', 'permissionMapping': AppConfigurationService.settings.permissionMapping['LoadingComponent'], 'isVisible': false }
         ],
+      },
+      {
+        'menu': 'FLEET',
+        'menuIcon': '',
+        'menuLink': 'fleet',
+        'routerLinkActive': 'fleet',
+        'subMenu': [],
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['FleetComponent']
       },
       /*
       {
@@ -152,12 +162,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       },
       {
         'menu': 'ADMIN',
-        'menuIcon': 'voyages',
-        'menuLink': 'admin',
-        'subMenu': []
-      },
-      {
-        'menu': 'FLEET',
         'menuIcon': 'voyages',
         'menuLink': 'admin',
         'subMenu': []

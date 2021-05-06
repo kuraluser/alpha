@@ -1002,12 +1002,12 @@ input[type=number] {
     }
     &.color{
       > div{
-      position: static;
+      position: relative;
       padding-right: 0;
       .error-icon{
-        position: relative;
-        margin-left: 8px;
-        top: -5px;
+        position: absolute;
+        right: -10px;
+        top: -2px;
       }
       }
     }
@@ -2001,7 +2001,7 @@ width: 50px !important;
 }
 
 .column-max-tol, .column-min-tol{
-  width: 150px!important;
+  width: 110px!important;
 }
 .column-segregation{
   width: 120px!important;
@@ -2123,7 +2123,7 @@ width: 50px !important;
   white-space: normal;
 }
 
-.stability-popup, .commingle-cargo-details-popup{
+.stability-popup, .commingle-cargo-details-popup, .port-rotation-pop-up{
   width: 720px;
   .p-datatable table {
     table-layout: auto !important;
@@ -2131,6 +2131,10 @@ width: 50px !important;
       width: auto !important;
     }
   }
+}
+
+.port-rotation-pop-up{
+  width: 1000px !important;
 }
 
 .commingle-composition-percentage, .commingle-composition-quantity {
@@ -2401,5 +2405,46 @@ textarea{
   width: 720px;
   .p-datatable .p-datatable-tbody > tr:first-child > td{
     border-top: 0!important;
+  }
+}
+@media (max-width: 1600px){
+  .loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
+    padding-left: 80px;
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern{
+    width: 80px;
+  }
+
+}
+
+@media (max-width: 1400px){
+  .loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
+    padding-left: 60px;
+  }
+  .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern{
+    width: 60px;
+  }
+
+}
+.carousel-card{
+  .p-calendar .p-inputtext{
+    padding: 0 8px;
+    margin-bottom: 2px;
+    height: 22px;
+  }
+  .error-icon{
+    margin-left: 2px;
+  }
+} 
+
+#countryMap
+{
+  .ol-viewport{
+    .ol-uncollapsible
+    {
+      ul{
+        display: none;
+      }
+    }
   }
 }
