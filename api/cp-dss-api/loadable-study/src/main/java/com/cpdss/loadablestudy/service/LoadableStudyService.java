@@ -8955,6 +8955,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       entity.setIsActive(true);
       this.loadablePlanCommentsRepository.save(entity);
+      if (entity.getId() != null) {
+        SaveCommentRequest.Builder comment = SaveCommentRequest.newBuilder();
+        comment.setComment(entity.getComments());
+        comment.setCommentId(entity.getId());
+        comment.setCreateDate(
+            DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT).format(entity.getCreatedDateTime()));
+        comment.setUpdateDate(
+            DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT)
+                .format(entity.getLastModifiedDateTime()));
+        // comment.setUser(entity.getCreatedBy());
+      }
 
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
