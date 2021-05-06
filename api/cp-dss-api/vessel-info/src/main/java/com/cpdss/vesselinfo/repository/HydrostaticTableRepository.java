@@ -6,6 +6,7 @@ import com.cpdss.vesselinfo.entity.HydrostaticTable;
 import com.cpdss.vesselinfo.entity.Vessel;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,4 +20,8 @@ public interface HydrostaticTableRepository
   public List<BigDecimal> getTPCFromDraf(Long vesselId, BigDecimal draft, Boolean isActive);
 
   public List<HydrostaticTable> findByVesselAndIsActive(Vessel vessel, Boolean isActive);
+
+  Optional<HydrostaticTable> findFirstByVesselOrderByDraftDesc(Vessel vessel);
+
+  Optional<HydrostaticTable> findFirstByVesselOrderByDraftAsc(Vessel vessel);
 }
