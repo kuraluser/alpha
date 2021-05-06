@@ -3575,6 +3575,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
+    Optional.ofNullable(lpqcd.getCargoNominationId())
+        .ifPresent(qunatityBuilder::setCargoNominationId);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
