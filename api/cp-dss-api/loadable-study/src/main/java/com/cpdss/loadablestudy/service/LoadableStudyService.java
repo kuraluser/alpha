@@ -1753,12 +1753,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
                   Optional.ofNullable(apiTempHistory.getTemp())
                       .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                } else {
-                  Optional.ofNullable(cargoNomination.getApi())
-                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                  Optional.ofNullable(cargoNomination.getTemperature())
-                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
                 }
+                Optional.ofNullable(cargoNomination.getApi())
+                    .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                Optional.ofNullable(cargoNomination.getTemperature())
+                    .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
               }
             }
             Optional.ofNullable(cargoNomination.getMaxTolerance())
@@ -3023,8 +3022,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePattern, lpd);
                 });
-    if (request.getHasLodicator()) {
-           this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        if (request.getHasLodicator()) {
+          this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         }
 
         loadableStudyRepository.updateLoadableStudyStatus(
@@ -4470,8 +4469,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
             true);
     if (synopticalTableOpt.isPresent()) {
-       algoRequest.setTrim(String.valueOf(synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalTableOpt.get(), loadablePattern.getId(), true).getCalculatedTrimPlanned()));
-     // algoRequest.setTrim(
+      algoRequest.setTrim(
+          String.valueOf(
+              synopticalTableLoadicatorDataRepository
+                  .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                      synopticalTableOpt.get(), loadablePattern.getId(), true)
+                  .getCalculatedTrimPlanned()));
+      // algoRequest.setTrim(
       //    "0"); // ToDo - replace with above code once loaicator implementaion is done.
     }
     return algoRequest;
@@ -4973,11 +4977,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePatternOpt.get(), lpd);
                 });
- if (request.getHasLodicator()) {
+        if (request.getHasLodicator()) {
           this.saveLoadicatorInfo(
-          loadablePatternOpt.get().getLoadableStudy(),
-          request.getProcesssId(),
-          request.getLoadablePatternId());
+              loadablePatternOpt.get().getLoadableStudy(),
+              request.getProcesssId(),
+              request.getLoadablePatternId());
         }
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
@@ -5095,10 +5099,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             request.getLoadableStudyId(),
             LOADABLE_STUDY_REQUEST,
             objectMapper.writeValueAsString(loadableStudy));
-        /**
-         * **Calling EW for communication server
-         */
-       // callToEnvoyWriter(loadableStudy);
+        /** **Calling EW for communication server */
+        // callToEnvoyWriter(loadableStudy);
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
