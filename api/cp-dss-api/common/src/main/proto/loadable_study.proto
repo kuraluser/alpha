@@ -784,6 +784,7 @@ message PortRotationReply{
 	repeated PortRotationDetail ports=2;
 	repeated Operation operations=3;
 	int64 portRotationId = 4;
+	int64 lastModifiedPort = 5;
 }
 
 message LoadableQuantityResponse {
