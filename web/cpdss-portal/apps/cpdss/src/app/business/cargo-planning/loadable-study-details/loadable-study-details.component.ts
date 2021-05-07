@@ -132,7 +132,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.loadableQuantityNew = '0';
         this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
         this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
-        this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+        this.tabPermission();
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       });
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessage();
@@ -238,11 +238,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.loadableStudyDetailsTransformationService.setPortValidity(this.selectedLoadableStudy.isPortsComplete)
       this.loadableStudyDetailsTransformationService.setOHQValidity(this.selectedLoadableStudy.ohqPorts ?? [])
       this.loadableStudyDetailsTransformationService.setObqValidity(this.selectedLoadableStudy.isObqComplete)
-
-      if (sessionStorage.getItem('loadableStudyInfo')) {
-        this.displayLoadableQuntity = true;
-        sessionStorage.removeItem('loadableStudyInfo');
-      }
     } else {
       this.selectedLoadableStudy = null;
     }
@@ -374,6 +369,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isPatternGenerated = true;
         this.selectedLoadableStudy.statusId = 3;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_GENERATED;
       }
       this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
     }
@@ -455,6 +451,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts.push(event.itemValue);
       this.updatingDischargingPort();
     }
+    this.loadableStudyDetailsTransformationService.setPortValidity(false);
   }
 
   /**
@@ -736,8 +733,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
+      const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
       const data: ISubTotal = {
-        dwt: loadableQuantity.dwt,
+        dwt: dwt,
         sagCorrection: loadableQuantity.saggingDeduction,
         sgCorrection: loadableQuantity.sgCorrection,
         foOnboard: loadableQuantity.estFOOnBoard,
@@ -911,16 +909,21 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (this.selectedLoadableStudy?.statusId === 4) {
       const dateString = this.selectedLoadableStudy?.loadableStudyStatusLastModifiedTime;
       const dateTimeParts = dateString?.split(' ');
-      const timeParts = dateTimeParts[1].split(':');
-      const dateParts = dateTimeParts[0].split('-');
-      const modifiedDate = new Date(Number(dateParts[2]), parseInt(dateParts[1], 10) - 1, Number(dateParts[0]), Number(timeParts[0]), Number(timeParts[1]));
-      const addFiveMinute = new Date(modifiedDate.getTime() + AppConfigurationService.settings.processingTimeout);
-      const now = new Date();
-      if (addFiveMinute < now) {
-        return false;
-      } else {
+      const timeParts = dateTimeParts[1]?.split(':');
+      const dateParts = dateTimeParts[0]?.split('-');
+      if(dateParts?.length){
+        const modifiedDate = new Date(Number(dateParts[2]), parseInt(dateParts[1], 10) - 1, Number(dateParts[0]), Number(timeParts[0]), Number(timeParts[1]));
+        const addFiveMinute = new Date(modifiedDate.getTime() + AppConfigurationService.settings.processingTimeout);
+        const now = new Date();
+        if (addFiveMinute < now) {
+          return false;
+        } else {
+          return true;
+        }
+      }else{
         return true;
       }
+
     }
   }
 }

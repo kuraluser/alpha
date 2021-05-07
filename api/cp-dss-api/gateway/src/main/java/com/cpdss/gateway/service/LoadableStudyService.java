@@ -3575,6 +3575,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
+    Optional.ofNullable(lpqcd.getCargoNominationId())
+        .ifPresent(qunatityBuilder::setCargoNominationId);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -4447,7 +4449,25 @@ public class LoadableStudyService {
      * HttpStatusCode.valueOf(Integer.parseInt(reply.getResponseStatus().getCode()))
      * ); }
      */
+
+    SaveCommentReply grpcReply = this.saveComment(builder.build());
+    if (!grpcReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.info(
+          "Failed to save comment LP id {}, Comment {}", loadablePatternId, request.getComment());
+      throw new GenericServiceException(
+          "Faield to save comment for Loadable pattern - " + loadablePatternId,
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
+    }
     SaveCommentResponse response = new SaveCommentResponse();
+    if (grpcReply.getComment() != null) {
+      LoadablePlanComments comment = new LoadablePlanComments();
+      comment.setComment(grpcReply.getComment().getComment());
+      comment.setId(grpcReply.getComment().getCommentId());
+      comment.setDataAndTime(grpcReply.getComment().getCreateDate());
+      response.setComment(comment);
+    }
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;

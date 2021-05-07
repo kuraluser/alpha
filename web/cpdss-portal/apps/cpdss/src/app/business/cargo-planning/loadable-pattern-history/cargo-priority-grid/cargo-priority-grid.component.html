@@ -14,10 +14,11 @@
                         <span class="badge-custom" *ngIf="col.field === 'cargoAbbreviation'"
                             [ngClass]="rowData?.isCommingle ? 'commingle' : ''"
                             [ngStyle]="!rowData?.isCommingle && {'background': rowData?.cargoColor}">{{rowData[col.field]}}</span>
-                        <span *ngIf="col.field === 'quantity'">{{rowData[col.field].toFixed(2)}}</span>
+                        <span *ngIf="col.field === 'quantity'">{{rowData[col.field] | quantityDecimalFormat}}</span>
                         <span  *ngIf="col.field === 'difference'"
-                            [ngClass]="(rowData?.quantity - rowData?.orderedQuantity) !== 0 ? ((rowData?.quantity - rowData?.orderedQuantity) > 0 ? 'badge-custom success' : 'badge-custom error') : ''">
-                            {{(rowData?.quantity - rowData?.orderedQuantity).toFixed(2)}}
+                            [ngClass]="(rowData?.quantity / rowData?.orderedQuantity) !== 0 ? ((rowData?.quantity / rowData?.orderedQuantity) > 0 ? 'badge-custom success' : 'badge-custom error') : ''"
+                            [pTooltip]="(((rowData?.quantity / rowData?.orderedQuantity) * 100) | number : '1.2-2')+'%'" tooltipPosition="top">
+                            {{((rowData?.quantity / rowData?.orderedQuantity) * 100) | number : '1.2-2'}}%
                         </span>
                     </td>
                 </tr>
@@ -26,9 +27,10 @@
                 <tr class="p-selectable-row">
                     <td *ngIf="showTotalDifference"></td>
                     <td>{{totalHeader | translate}}</td>
-                    <td>{{totalQuantity.toFixed(2)}}</td>
-                    <td *ngIf="showTotalDifference"><span  [ngClass]="totalDifference !== 0 ? (totalDifference > 0 ? 'badge-custom success' : 'badge-custom error') : ''">
-                            {{totalDifference.toFixed(2)}} </span></td>
+                    <td>{{totalQuantity| quantityDecimalFormat}}</td>
+                    <td *ngIf="showTotalDifference"><span  [ngClass]="totalDifference !== 0 ? (totalDifference > 0 ? 'badge-custom success' : 'badge-custom error') : ''"
+                        [pTooltip]="(totalDifference | number :  '1.2-2')+'%'" tooltipPosition="top">
+                            {{totalDifference | number :  '1.2-2'}}% </span></td>
                 </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">

@@ -4,7 +4,12 @@
     {{'API_TEMP_HISTORY_POPUP_HEADING'|translate}} - {{apiTempHistoryPopupData.cargoName}}
   </p-header>
 
-  <p class="text-secondary"> {{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS' | translate}} </p>
+  <p class="text-secondary">
+    {{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS' | translate}}
+    <span class="header-info-pop-up pull-right pt-0">
+      <span class="info-icon mr-5">!</span>{{'DATES_UTC_NOTIFICATION' | translate}}
+    </span>
+  </p>
   <cpdss-portal-datatable *ngIf="apiTempHistoryData" [tableId]="'apiTemperatureHistory'"
     [columns]="apiTempHistoryColumns" [scrollable]="false" [value]="apiTempHistoryData"></cpdss-portal-datatable>
 

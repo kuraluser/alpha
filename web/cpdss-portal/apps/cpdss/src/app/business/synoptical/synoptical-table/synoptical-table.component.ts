@@ -334,7 +334,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
-          validators: ['dddd.ddd.+']
+          validators: ['dddd.dddd.+'],
+          numberFormat: '1.4-4'
         }],
         editable: true,
       },
@@ -1842,8 +1843,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
+      const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
       const data:ISubTotal = {
-        dwt: loadableQuantity.dwt,
+        dwt: dwt,
         sagCorrection:loadableQuantity.saggingDeduction,
         sgCorrection:loadableQuantity.sgCorrection,
         foOnboard: loadableQuantity.estFOOnBoard,

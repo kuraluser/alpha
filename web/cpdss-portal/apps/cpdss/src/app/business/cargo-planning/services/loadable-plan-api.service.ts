@@ -124,7 +124,7 @@ export class LoadablePlanApiService {
   * Get api for algo error response
   */
   getAlgoErrorDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<IAlgoResponse> {
-    return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern-details/${loadablePatternId}/algo-errors`);
+    return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern/${loadablePatternId}/algo-errors`);
   }
 }
 

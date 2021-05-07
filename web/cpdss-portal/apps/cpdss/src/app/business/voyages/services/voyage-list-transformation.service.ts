@@ -200,4 +200,16 @@ export class VoyageListTransformationService {
       return day + '-' + month + '-' + date.getFullYear();
     }
   }
+
+    /**
+   * Set validation Error to form control
+   * @memberof VoyageListTransformationService
+  */
+  setValidationErrorMessage() {
+    return {
+      filterDateRange: {
+        'toDate': 'VOYAGE_LIST_DATE_RANGE_TO_DATE_ERROR'
+      }
+    }
+  }
 }

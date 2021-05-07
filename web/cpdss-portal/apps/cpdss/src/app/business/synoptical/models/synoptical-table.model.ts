@@ -50,7 +50,8 @@ export interface SynopticField {
     min?: {
         fieldKey?:string,
         value?:string
-    }
+    },
+    numberFormat?: string;
 }
 
 /**

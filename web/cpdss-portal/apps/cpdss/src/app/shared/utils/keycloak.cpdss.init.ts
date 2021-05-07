@@ -17,7 +17,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
     return async (): Promise<any> => {
         const appSettings: IAppConfiguration = await appConfig.load();
         const logoutUrl = window.location.protocol + '//' + window.location.hostname + appSettings.redirectPath;
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 const logoKey = 'logoUrl';
@@ -55,7 +55,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     config: keycloakConfig,
                     initOptions: {
                         onLoad: 'check-sso',
-                        // TODO: Code commented as per requested by Suhail 
+                        // TODO: Code commented as per requested by Suhail
                         //silentCheckSsoRedirectUri: window.location.origin + appSettings?.path + '/assets/keycloak/silent-check-sso.html',
                         checkLoginIframe: false
                     },
@@ -78,8 +78,6 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                                     SecurityService.setAuthToken(keycloakInstance.token);
                                     SecurityService.initPropertiesDB(keycloakInstance.token);
                                     return keycloakInstance.token;
-                                } else {
-                                    globalErrorHandler.sessionOutMessage();
                                 }
                             } else {
                                 globalErrorHandler.sessionOutMessage();

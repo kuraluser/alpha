@@ -1141,12 +1141,16 @@ message LoadableStudyAttachmentReply{
 
 message SaveCommentReply {
 	ResponseStatus responseStatus = 1;
+		SaveCommentRequest comment = 2;
 }
 
 message SaveCommentRequest{
 	int64 loadablePatternId=1;
 	string comment =2;
 	int64 user=3;
+	int64 commentId = 4;
+	string createDate = 5;
+	string updateDate = 6;
 }
 
 message SaveLoadOnTopRequest{

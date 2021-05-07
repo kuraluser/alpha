@@ -1,5 +1,5 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ICargo, QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
@@ -8,7 +8,8 @@ import { IBallastStowageDetails, IBallastTank, ICargoTank, ITankOptions, TANKTYP
 import { ILoadableQuantityCargo } from '../../models/cargo-planning.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service'
-import { QuantityPipe } from 'apps/cpdss/src/app/shared/pipes/quantity/quantity.pipe';
+import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
+import { QuantityDecimalFormatPipe } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'
 
 /**
  * Component class of pattern view more popup
@@ -57,7 +58,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   baseUnit = AppConfigurationService.settings.baseUnit;
 
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
   ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM', showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
 
   private _loadablePlanBallastDetails: IBallastStowageDetails[];
@@ -65,7 +66,8 @@ export class PatternViewMorePopUpComponent implements OnInit {
   constructor(private router: Router,
     private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService,
     private _decimalPipe: DecimalPipe,
-    private quantityPipe: QuantityPipe) { }
+    private quantityPipe: QuantityPipe,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
 
   /**
   * Component lifecycle ngOnit
@@ -171,14 +173,25 @@ export class PatternViewMorePopUpComponent implements OnInit {
   updateCargoTobeLoadedData() {
     this.cargoTobeLoaded = this.selectedLoadablePattern.loadableQuantityCargoDetails?.map(loadable => {
       if (loadable) {
-        loadable.apiTemp = (Number(loadable.estimatedAPI).toFixed(2)).toString() + (loadable.estimatedTemp ? "/" + (Number(loadable.estimatedTemp).toFixed(2)).toString() : '');
-        loadable.minMaxTolerance = loadable.minTolerence + (loadable.maxTolerence ? "/" + loadable.maxTolerence : '');
+        const api = this.loadableStudyPatternTransformationService.decimalConvertion(this._decimalPipe, loadable.estimatedAPI, '1.2-2');
+        const temp = this.loadableStudyPatternTransformationService.decimalConvertion(this._decimalPipe, loadable.estimatedTemp, '1.2-2');
+        const minTolerence = this.loadableStudyPatternTransformationService.decimalConvertion(this._decimalPipe, loadable.minTolerence, '0.2-2');
+        const maxTolerence = this.loadableStudyPatternTransformationService.decimalConvertion(this._decimalPipe, loadable.maxTolerence, '0.2-2');
+
+
+        loadable.apiTemp = api + (loadable.estimatedTemp ? "/" + temp : '');
+        loadable.minMaxTolerance = minTolerence ? minTolerence : '' + (loadable.maxTolerence ? "/" + maxTolerence : '');
         loadable.differencePercentage = loadable.differencePercentage ? (loadable.differencePercentage.includes('%') ? loadable.differencePercentage : loadable.differencePercentage + '%') : '';
-        loadable.grade = this.fingCargo(loadable)
-        const orderedQuantity = this.quantityPipe.transform(loadable?.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.orderedQuantity = orderedQuantity.toFixed(2).toString();
-        const loadableMT = this.quantityPipe.transform(loadable?.loadableMT, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.loadableMT = loadableMT.toFixed(2);
+        loadable.grade = this.fingCargo(loadable);
+
+        const orderedQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
+        loadable.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity, this.currentQuantitySelectedUnit);
+
+        const loadableMT = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
+        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadableMT, this.currentQuantitySelectedUnit);
+
+        loadable.slopQuantity = this.loadableStudyPatternTransformationService.decimalConvertion(this._decimalPipe, this.loadableStudyPatternTransformationService.convertToNumber(loadable.slopQuantity), '1.2-2');
+
         loadable.loadingPort = loadable?.loadingPorts?.join(',');
       }
       return loadable;
@@ -201,35 +214,37 @@ export class PatternViewMorePopUpComponent implements OnInit {
     return cargoDetail.name;
   }
 
-   /**
-   * Handler for unit change event
-   *
-   * @param {*} event
-   * @memberof PatternViewMorePopUpComponent
-   */
-    onUnitChange() {
-      this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit;
-      this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-      if (this.prevQuantitySelectedUnit) {
-        this.convertQuantityToSelectedUnit();
-      }
+  /**
+  * Handler for unit change event
+  *
+  * @param {*} event
+  * @memberof PatternViewMorePopUpComponent
+  */
+  onUnitChange() {
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
+    this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+    if (this.prevQuantitySelectedUnit) {
+      this.convertQuantityToSelectedUnit();
     }
+  }
 
-     /**
-   * Method to convert to selected unit
-   *
-   * @memberof PatternViewMorePopUpComponent
-   */
+  /**
+* Method to convert to selected unit
+*
+* @memberof PatternViewMorePopUpComponent
+*/
   convertQuantityToSelectedUnit() {
     this.updateLoadablePlanStowageData();
     this.updateLoadablePatternCargoDetails();
     this.cargoTobeLoaded = this.cargoTobeLoaded?.map(loadable => {
       if (loadable) {
-        const orderedQuantity = this.quantityPipe.transform(loadable?.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.orderedQuantity = orderedQuantity.toFixed(2).toString();
-        const loadableMT = this.quantityPipe.transform(loadable?.loadableMT, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.loadableMT = loadableMT.toFixed(2);
-      } 
+        const orderedQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
+        loadable.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity, this.currentQuantitySelectedUnit);
+
+        const loadableMT = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
+        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadableMT, this.currentQuantitySelectedUnit);
+
+      }
       return loadable;
     })
   }
@@ -239,11 +254,11 @@ export class PatternViewMorePopUpComponent implements OnInit {
    *
    * @memberof PatternViewMorePopUpComponent
    */
-  updateLoadablePlanStowageData(){
+  updateLoadablePlanStowageData() {
     this.selectedLoadablePattern.loadablePlanStowageDetails = this.selectedLoadablePattern.loadablePlanStowageDetails?.map(loadableStowage => {
       if (loadableStowage) {
         const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit, this.currentQuantitySelectedUnit, loadableStowage?.api);
-        loadableStowage.quantity = Number(quantity?.toFixed(2));
+        loadableStowage.quantity = Number(quantity);
       }
       return loadableStowage;
     })
@@ -256,11 +271,11 @@ export class PatternViewMorePopUpComponent implements OnInit {
    *
    * @memberof PatternViewMorePopUpComponent
    */
-  updateLoadablePatternCargoDetails(){
-    this.selectedLoadablePattern.loadablePatternCargoDetails =  this.selectedLoadablePattern.loadablePatternCargoDetails?.map(cargoDetail => {
+  updateLoadablePatternCargoDetails() {
+    this.selectedLoadablePattern.loadablePatternCargoDetails = this.selectedLoadablePattern.loadablePatternCargoDetails?.map(cargoDetail => {
       if (cargoDetail) {
         const quantity = this.quantityPipe.transform(cargoDetail?.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoDetail?.api);
-        cargoDetail.quantity = Number(quantity?.toFixed(2));
+        cargoDetail.quantity = Number(quantity);
       }
       return cargoDetail;
     })

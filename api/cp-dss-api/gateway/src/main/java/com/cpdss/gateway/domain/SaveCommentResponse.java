@@ -6,5 +6,6 @@ import lombok.Data;
 
 @Data
 public class SaveCommentResponse {
+  private LoadablePlanComments comment;
   private CommonSuccessResponse responseStatus;
 }

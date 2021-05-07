@@ -50,6 +50,7 @@ export class IBunkerConditions {
 export class IBunkerConditionParameterList {
     parameters: string;
     value: number;
+    numberFormat?: string;
 }
 
 

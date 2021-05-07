@@ -3,7 +3,7 @@
         <div class="col">
             <h5 class="secondary-text heading-border clearfix pt-15 pb-10" style="line-height: 20px;"> 2
                 {{'LOADABLE_PLAN_STOWAGE_HEADER' | translate}} <button class="btn btn-main pull-right"
-                    id="btn_callNewLoadableStudyPopup">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
+                    id="btn_callNewLoadableStudyPopup" (click)="navigateToLoadablePattern()">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_PATTERNS_LABEL' |
             translate}}</button></h5>
         </div>
 
@@ -77,4 +77,4 @@
     [loadableStudyId]="loadableStudyId" [(visible)]="openSaveStowagePopup">
 </cpdss-portal-save-stowage-popup>
 
-<cpdss-portal-error-log-popup [(visible)]="errorPopup" [header]="'ERROR'" [subHeading]="'The entered value will not be saved due to the below issues. Please recheck the values'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>
+<cpdss-portal-error-log-popup [(visible)]="errorPopup"  (visibleChange)="viewError($event)" [header]="'ALGO_ERROR_MESSAGE_HEADING'" [subHeading]="'ALGO_ERROR_MESSAGE_SUB_HEADING'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>

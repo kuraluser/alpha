@@ -201,6 +201,7 @@ export interface IBallastStowageDetails {
     fullCapacityCubm?: string;
     api?:number;
     temperature?: number;
+    tankShortName: string;
 }
 
 /**

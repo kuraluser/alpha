@@ -14,7 +14,9 @@ import { EditPortRotationPopupModule } from '../core/components/edit-port-rotati
 
 
 @NgModule({
-  declarations: [OperationsComponent],
+  declarations: [
+    OperationsComponent,
+  ],
   imports: [
     CommonModule,
     DropdownModule,

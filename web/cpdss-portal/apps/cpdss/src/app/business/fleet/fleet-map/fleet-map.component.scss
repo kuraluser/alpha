@@ -1,0 +1,20 @@
+.map {
+  width: 100%;
+  height: calc(100vh - 70px);
+}
+
+.port-popup {
+  min-width: 300px;
+  width: auto;
+  height: 120px;
+  padding: 1%;
+  z-index: 999;
+  border-radius: 10px;
+  background-color: #d5d7da;
+  font-size: 12px;
+  position: absolute;
+  padding: 10px;
+  border: 1px solid black;
+  margin-top: -40px;
+  margin-left: 25px;
+}

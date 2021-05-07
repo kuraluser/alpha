@@ -133,9 +133,10 @@
                         </div>
                     </ng-container>
                     <ng-template #noEdit>
-                        <span>
-                            {{column[field.key]}}
-                        </span>
+                        <ng-container [ngSwitch]="field.type">
+                            <ng-container *ngSwitchCase="fieldType.NUMBER">{{column[field.key] | number: field.numberFormat}}</ng-container>
+                            <ng-container *ngSwitchDefault>{{column[field.key]}}</ng-container>
+                        </ng-container>
                     </ng-template>
                 </ng-container>
             </td>
