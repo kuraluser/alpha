@@ -7937,7 +7937,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder.setLoadablePatternStatusId(
           status.get(status.size() - 1).getLoadableStudyStatus().getId());
     }
-
+    replyBuilder.setLoadableStudyStatusId(loadablePattern.getLoadableStudyStatus());
     if (stowageDetailsTempRepository
         .findByLoadablePatternAndIsActive(loadablePattern, true)
         .isEmpty()) replyBuilder.setValidated(true);
