@@ -8962,11 +8962,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         comment.setComment(entity.getComments());
         comment.setCommentId(entity.getId());
         comment.setCreateDate(
-            DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT).format(entity.getCreatedDateTime()));
+            DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getCreatedDateTime()));
         comment.setUpdateDate(
-            DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT)
-                .format(entity.getLastModifiedDateTime()));
-        // comment.setUser(entity.getCreatedBy());
+            DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getLastModifiedDateTime()));
+        try {
+          comment.setUser(Long.valueOf(entity.getCreatedBy()));
+        } catch (Exception e) {
+          log.error(
+              "Failed to parse user id {}, error - {}", entity.getCreatedBy(), e.getMessage());
+        }
+        comment.build();
+        replyBuilder.setComment(comment);
+        log.info(
+            "Save Comment, saved for Pattern id {}, Comment {}",
+            request.getLoadablePatternId(),
+            entity.getComments());
       }
 
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());

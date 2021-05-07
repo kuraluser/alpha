@@ -209,6 +209,8 @@ public class LoadableStudyService {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
+  @Autowired UserService userService;
+
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
 
@@ -4428,28 +4430,6 @@ public class LoadableStudyService {
     SaveCommentRequest.Builder builder = SaveCommentRequest.newBuilder();
     builder.setLoadablePatternId(loadablePatternId);
     Optional.ofNullable(request.getComment()).ifPresent(builder::setComment);
-    Users usersEntity;
-    // Get user
-    /*
-     * try { usersEntity = this.getUsersEntity(
-     * keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).
-     * getSubject()); } catch (VerificationException e) { throw new
-     * GenericServiceException( "Invalid token",
-     * CommonErrorCodes.E_HTTP_INVALID_TOKEN, HttpStatusCode.UNAUTHORIZED); }
-     *
-     * // Exit on user not found if (null == usersEntity) { throw new
-     * GenericServiceException( "User not found",
-     * CommonErrorCodes.E_CPDSS_INVALID_USER, HttpStatusCode.NOT_FOUND); }
-     *
-     * builder.setUser(usersEntity.getId()); SaveCommentReply reply =
-     * this.saveComment(builder.build()); if
-     * (!SUCCESS.equals(reply.getResponseStatus().getStatus())) { throw new
-     * GenericServiceException( "failed to save comment",
-     * reply.getResponseStatus().getCode(),
-     * HttpStatusCode.valueOf(Integer.parseInt(reply.getResponseStatus().getCode()))
-     * ); }
-     */
-
     SaveCommentReply grpcReply = this.saveComment(builder.build());
     if (!grpcReply.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.info(
@@ -4466,6 +4446,9 @@ public class LoadableStudyService {
       comment.setComment(grpcReply.getComment().getComment());
       comment.setId(grpcReply.getComment().getCommentId());
       comment.setDataAndTime(grpcReply.getComment().getCreateDate());
+      comment.setUserName(
+          this.userService.getUserNameFromUserId(
+              String.valueOf(grpcReply.getComment().getUser()), authorizationToken));
       response.setComment(comment);
     }
     response.setResponseStatus(
