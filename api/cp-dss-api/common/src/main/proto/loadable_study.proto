@@ -392,6 +392,7 @@ message LoadablePlanDetailsReply {
   	int64 voyageStatusId = 16;
   	bool validated = 17;
   	StabilityParameter stabilityParameter =18;
+  	int64 loadableStudyStatusId = 19;
 }
 
 message LoadablePlanComments {
