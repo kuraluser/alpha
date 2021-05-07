@@ -3846,6 +3846,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
               builder.addLoadablePattern(loadablePatternBuilder);
               loadablePatternBuilder.clearLoadablePlanStowageDetails();
+              loadablePatternBuilder.clearLoadableQuantityCargoDetails();
             });
 
         VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
