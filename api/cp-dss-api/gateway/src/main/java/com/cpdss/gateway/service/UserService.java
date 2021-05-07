@@ -28,6 +28,7 @@ import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UserStatusRepository;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.security.ship.ShipJwtService;
 import com.cpdss.gateway.security.ship.ShipUserContext;
 import java.time.LocalDateTime;
@@ -54,6 +55,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -87,6 +89,9 @@ public class UserService {
 
   @Autowired(required = false)
   private PasswordEncoder passwordEncoder;
+
+  @Autowired(required = false)
+  private KeycloakDynamicConfigResolver keycloakDynamicConfigResolver;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -1049,5 +1054,68 @@ public class UserService {
       usersExist = true;
     }
     return usersExist;
+  }
+
+  /**
+   * Generic getter for user name, In tables we keep user Id as String.
+   *
+   * @param id
+   * @param authorizationToken
+   * @return
+   * @throws GenericServiceException
+   */
+  public String getUserNameFromUserId(String id, String authorizationToken) {
+
+    Users users = null;
+    Long userId = null;
+
+    try {
+      // user id required
+      if (id == null || id.length() <= 0) {
+        return null;
+      }
+      userId = Long.valueOf(id);
+    } catch (Exception e) {
+      log.error("Get User Name,Failed to parse user id '{}' to Long", id);
+      return null;
+    }
+
+    // Case 1: Shore api, request must have a keycloak token
+    if (authorizationToken != null && authorizationToken.length() > 0) {
+      try {
+        users =
+            this.getUsersEntity(
+                keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).getSubject());
+        String fullName =
+            (users.getFirstName() != null ? users.getFirstName() : "")
+                + " "
+                + (users.getLastName() != null ? users.getLastName() : "");
+        log.info("Get User Name, from keycloak token - {}", fullName.trim());
+        return fullName.trim();
+      } catch (VerificationException e) {
+        log.error("Get User Name, Failed to parse token - VerificationException, ", e.getMessage());
+      } catch (Exception e) {
+        log.error("Get User Name, Failed to parse token - Exception, ", e.getMessage());
+      }
+    }
+    // Case 2: Ship api, find name from user's Table
+    if (users == null) {
+      users = usersRepository.findByIdAndIsActive(userId, true);
+      if (users != null) {
+        log.info("Get User Name, from users DB username - {}", users.getUsername().trim());
+        return users
+            .getUsername()
+            .toUpperCase(); // username, because we don't keep First name for Ship user.
+      }
+    }
+    log.error(
+        "Get User Name, Failed User Id - {}, isToken avilable - {}",
+        userId,
+        !StringUtils.isEmpty(authorizationToken));
+    return null;
+  }
+
+  public Users getUsersEntity(String keyCloakId) {
+    return this.usersRepository.findByKeycloakIdAndIsActive(keyCloakId, true);
   }
 }
