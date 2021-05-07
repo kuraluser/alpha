@@ -965,6 +965,7 @@ public class LoadableStudyService {
       op.setOperationName(operation.getOperationName());
       response.getOperations().add(op);
     }
+    response.setLastModifiedPortId(Long.valueOf(grpcReply.getLastModifiedPort()));
     return response;
   }
 

@@ -1536,6 +1536,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       for (CargoOperation entity : operationEntityList) {
         replyBuilder.addOperations(this.createOperationDetail(entity));
       }
+
+      // Last modified port rotation
+      if (loadableStudyOpt.isPresent()) {
+        Optional<LoadableQuantity> lq =
+            loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
+                loadableStudyOpt.get());
+        if (lq.isPresent()) {
+          replyBuilder.setLastModifiedPort(lq.get().getLoadableStudyPortRotation().getId());
+        }
+      }
+
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
