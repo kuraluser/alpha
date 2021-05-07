@@ -302,7 +302,7 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onCellValueClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn) {
-    event.stopPropagation(); // Please dont remove this line
+    //event.stopPropagation(); // Please dont remove this line
     const control = this.field(rowIndex, col.field);
     control.markAsTouched();
     control.updateValueAndValidity();
@@ -623,7 +623,7 @@ export class DatatableComponent implements OnInit {
     if (col?.filterByServer) {
       this._first = 0;
       this._currentPage = 0;
-      this.filterObject[col.filterField] = this.formatDateTime(value);
+      this.filterObject[col.filterField] = value ? this.formatDateTime(value) : '';
       const data = this.setStateValue('filter');
       this.firstChange.emit(this._first);
       this.currentPageChange.emit(this._currentPage);
@@ -873,10 +873,10 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   filterData($event, col) {
+    this.filterObject[col.filterField] = ($event.target.value).trim();
     if (col?.filterByServer) {
       this._first = 0;
-      this._currentPage = 0;
-      this.filterObject[col.filterField] = ($event.target.value).trim();
+      this._currentPage = 0;      
       const data = this.setStateValue('filter');
       this.firstChange.emit(this._first);
       this.currentPageChange.emit(this._currentPage);

@@ -139,16 +139,16 @@
                     [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"
                     (cargoNominationUpdate)="cargoNominationUpdate($event)"  ></cpdss-portal-cargo-nomination>
                 <cpdss-portal-ports
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudyId && loadableStudies && loadableQuantityNew && portsTabPermission?.view" [permission]="portsTabPermission" [voyage]="selectedVoyage"
+                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && portsTabPermission?.view" [permission]="portsTabPermission" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy">
                 </cpdss-portal-ports>
                 <cpdss-portal-on-hand-quantity
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies && loadableQuantityNew && (ohqTabPermission?.view || ohqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
+                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (ohqTabPermission?.view || ohqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
                     [permission]="ohqTabPermission" [loadableStudy]="selectedLoadableStudy">
                 </cpdss-portal-on-hand-quantity>
                 <cpdss-portal-on-board-quantity
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
+                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
                     [loadableStudy]="selectedLoadableStudy" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
@@ -161,7 +161,7 @@
                             <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
                             <p-multiSelect id="discharge_ports" [ngModel]="dischargingPorts" [options]="ports"
                                 optionLabel="name" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
-                                (onChange)="onDischargePortChange($event)" [selectionLimit]="5"
+                                (onChange)="onDischargePortChange($event)" [selectionLimit]="5" resetFilterOnHide="true"
                                 [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                             </p-multiSelect>
                             <span class="col error-column" *ngIf="!isSelectedDischargePort">

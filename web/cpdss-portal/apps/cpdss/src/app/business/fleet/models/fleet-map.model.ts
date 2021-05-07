@@ -26,10 +26,23 @@ export interface IFleetVoyagePorts {
 export interface IFleetVessel {
     id: number;
     voyageName: string;
+    voyageStart?: string;
+    voyageEnd?: string;
     vesselName: string;
     flagImage: string;
     atd: string;
     eta: string;
     imoNo: number;
     voyagePorts?: IFleetVoyagePorts[];
+}
+
+/**
+ * interface for vessel-card event emitter
+ *
+ * @export
+ * @interface IFleetVesselCardEvent
+ */
+export interface IFleetVesselCardEvent {
+    vesselId: number;
+    originalEvent: MouseEvent;
 }

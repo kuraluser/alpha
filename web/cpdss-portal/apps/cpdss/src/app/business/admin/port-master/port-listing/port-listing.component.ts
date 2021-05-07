@@ -4,6 +4,7 @@ import { PortMasterTransformationService } from '../../services/port-master-tran
 import { PortMasterApiService } from '../../services/port-master-api.service';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { IPort } from 'apps/cpdss/src/app/shared/models/common.model';
 
 
 /**
@@ -21,10 +22,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class PortListingComponent implements OnInit {
 
   public columns: IDataTableColumn[];
-  public portsInfo: any[];
+  public portsInfo: IPort[];
 
-  constructor(private portMasterTransformationService: PortMasterTransformationService, 
-    private portMasterApiService: PortMasterApiService, private router: Router,private ngxSpinnerService: NgxSpinnerService) { }
+  constructor(private portMasterTransformationService: PortMasterTransformationService,
+    private portMasterApiService: PortMasterApiService,
+    private router: Router, private ngxSpinnerService: NgxSpinnerService) { }
 
   /**
    * Component lifecycle ngOninit
@@ -32,19 +34,21 @@ export class PortListingComponent implements OnInit {
    */
   async ngOnInit() {
     this.ngxSpinnerService.show();
-    this.portsInfo = await this.portMasterApiService.getPortsList();
+    this.portMasterApiService.getPorts().subscribe((result) => {
+      this.portsInfo = result;
+      this.ngxSpinnerService.hide();
+    });
     this.columns = this.portMasterTransformationService.getPortListDatatableColumns();
-    this.ngxSpinnerService.hide();
   }
 
- 
- /**
-  * Method to navigate to add port component on row selection
-  * @param {selectedPort}
-  * @memberof PortListingComponent
-  */
 
- onRowSelect(selectedPort) {
+  /**
+   * Method to navigate to add port component on row selection
+   * @param {selectedPort}
+   * @memberof PortListingComponent
+   */
+
+  onRowSelect(selectedPort) {
     this.router.navigate([`/business/admin/port-listing/add-port/${selectedPort.data.portId}`]);
   }
 

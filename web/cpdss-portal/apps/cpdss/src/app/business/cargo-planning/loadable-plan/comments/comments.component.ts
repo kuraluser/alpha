@@ -6,7 +6,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 
-import { ILoadablePlanCommentsDetails, ISaveComment , VALIDATION_AND_SAVE_STATUS } from '../../models/loadable-plan.model';
+import { ILoadablePlanCommentsDetails, ISaveComment , VALIDATION_AND_SAVE_STATUS , ICommentResponse } from '../../models/loadable-plan.model';
 import { IResponse } from '../../../../shared/models/common.model';
 
 import { LoadablePlanApiService } from '../../services/loadable-plan-api.service';
@@ -111,11 +111,13 @@ export class CommentsComponent implements OnInit {
       }
       const userProfile = SecurityService.getUserProfile();
       this.ngxSpinnerService.show();
-      const response:IResponse = await this.loadablePlanApiService.saveComments(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId , comments).toPromise();
+      const response:ICommentResponse = await this.loadablePlanApiService.saveComments(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId , comments).toPromise();
       this.ngxSpinnerService.hide();
       if(response.responseStatus.status === '200') {
         this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS'], detail: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS'] });
-        this.loadablePlanTransformationService.commentsSaved();
+        const commentDetails: ILoadablePlanCommentsDetails  = response.comment;
+        commentDetails['dataAndTime'] = this.timeZoneTransformationService.formatDateTime(commentDetails.dataAndTime, {utcFormat: true});
+        this.commentsDetails.unshift(commentDetails);
         this.commentForm.reset();
         this.formError = false;
       }

@@ -7,7 +7,7 @@
         </div>
         <div class="col calender-control-multi-date pt-5">
             <p-calendar [(ngModel)]="filterDates" selectionMode="range" [showButtonBar]="true" [readonlyInput]="true"
-                inputId="range" dateFormat="dd-mm-yy" (onSelect)="onDateRangeSelect($event)"
+                inputId="range" dateFormat="dd-M-yy" (onSelect)="onDateRangeSelect($event)"
                 (onClearClick)="resetDateFilter($event)"
                 placeholder="{{ 'VOYAGE_LIST_DATE_RANGE_PLACEHOLDER'| translate }}" id="voyage_date_range_filter"
                 #dateRangeFilter></p-calendar>
