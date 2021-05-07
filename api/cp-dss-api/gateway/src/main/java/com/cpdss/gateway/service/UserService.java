@@ -55,6 +55,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -1092,18 +1093,25 @@ public class UserService {
         log.info("Get User Name, from keycloak token - {}", fullName.trim());
         return fullName.trim();
       } catch (VerificationException e) {
-        log.error("Get User Name,Failed to parse Keycloak token", e);
-        e.printStackTrace();
+        log.error("Get User Name, Failed to parse token - VerificationException, ", e.getMessage());
+      } catch (Exception e) {
+        log.error("Get User Name, Failed to parse token - Exception, ", e.getMessage());
       }
     }
     // Case 2: Ship api, find name from user's Table
-    else {
+    if (users == null) {
       users = usersRepository.findByIdAndIsActive(userId, true);
-      log.info("Get User Name, from users DB username - {}", users.getUsername().trim());
-      return users
-          .getUsername()
-          .toUpperCase(); // username, because we don't keep First name for Ship user.
+      if (users != null) {
+        log.info("Get User Name, from users DB username - {}", users.getUsername().trim());
+        return users
+            .getUsername()
+            .toUpperCase(); // username, because we don't keep First name for Ship user.
+      }
     }
+    log.error(
+        "Get User Name, Failed User Id - {}, isToken avilable - {}",
+        userId,
+        !StringUtils.isEmpty(authorizationToken));
     return null;
   }
 
