@@ -134,7 +134,6 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           if (cargoDataOpt.isPresent()) {
             this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
                 stowagePlan, cargoDataOpt.get().getCargoId());
-            //    		  this.stowageDetailsRepository.deleteDuplicatesFromStowageDetails();
           }
         });
   }
