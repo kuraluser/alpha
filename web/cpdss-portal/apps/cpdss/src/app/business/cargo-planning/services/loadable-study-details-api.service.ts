@@ -112,6 +112,18 @@ export class LoadableStudyDetailsApiService {
     getAllCargoPorts(cargoId: number): Observable<ICargoPortsResponse> {
         return this.commonApiService.get<ICargoPortsResponse>(`cargos/${cargoId}/ports`);
     }
+    /**
+     * Method to get latest api and temp based on cargo and port
+     *
+     * @param {number} vesselId
+     * @param {number} portId
+     * @param {number} cargoId
+     * @returns {Observable<any>}
+     * @memberof LoadableStudyDetailsApiService
+     */
+    getApiFromCargoPorts(vesselId: number, portId: number, cargoId: number): Observable<any> {
+    return this.commonApiService.get<any>(`vessels/${vesselId}/ports/${portId}/cargos/${cargoId}/cargo-history`);
+    }
 
     /**
      * Set discharging ports for loadable study
@@ -296,11 +308,11 @@ export class LoadableStudyDetailsApiService {
         }
         let newValue;
         if (temp) {
-            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString());
+            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString(), -1);
         } else {
-            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString());
+            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString() , '' , -1);
         }
-        return Number(newValue.toFixed(2));
+        return Number(newValue);
     }
 
     /* Save load on top is enable or not for loadable study

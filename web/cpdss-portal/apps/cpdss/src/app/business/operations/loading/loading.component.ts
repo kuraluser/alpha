@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { OPERATION_TAB } from '../models/operations.model';
 
+/**
+ * Component class for loading component
+ *
+ * @export
+ * @class LoadingComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'cpdss-portal-loading',
   templateUrl: './loading.component.html',
@@ -7,7 +15,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoadingComponent implements OnInit {
 
-  currentTab: any = 'LOADING_INFO';  // 'LOADING_INSTRUCTION';
+  currentTab: OPERATION_TAB = OPERATION_TAB.SEQUENCE;
+  OPERATION_TAB = OPERATION_TAB;
+
   constructor() { }
   instructionList = [];
   instructionData = [];

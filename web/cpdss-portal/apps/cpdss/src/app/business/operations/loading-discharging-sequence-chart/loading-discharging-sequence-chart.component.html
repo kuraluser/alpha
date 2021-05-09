@@ -1,0 +1,25 @@
+<div class="row" (mousemove)="synchronizeTooltips($event)" (touchmove)="synchronizeTooltips($event)"
+  (touchstart)="synchronizeTooltips($event)">
+  <div class="col-12">
+    <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
+      *ngIf="sequenceGanttChart && sequenceChartSeries" [options]="sequenceGanttChart"
+      [callbackFunction]="sequenceGanttChartCallback" style="width: 100%; display: flex; padding: 10px">
+    </highcharts-chart>
+  </div>
+  <div class="col-12">
+    <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
+      *ngIf="rateGanttChart && rateChartSeries" [options]="rateGanttChart"
+      style="width: 100%; display: flex; padding: 10px">
+    </highcharts-chart>
+  </div>
+  <div class="col-12">
+    <highcharts-chart [Highcharts]="Highcharts" *ngIf="flowRateAreaChart && flowRateChartSeries"
+      [options]="flowRateAreaChart" style="width: 100%; display: flex; padding: 10px">
+    </highcharts-chart>
+  </div>
+  <div class="col-12">
+    <highcharts-chart [Highcharts]="Highcharts" *ngIf="stabilityGanttChart && stabilityChartSeries"
+      [options]="stabilityGanttChart" style="width: 100%; display: flex; padding: 10px">
+    </highcharts-chart>
+  </div>
+</div>

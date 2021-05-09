@@ -38,8 +38,9 @@ export class ServiceWorkerService {
    * @memberof ServiceWorkerService
    */
   async initSubscriptions() {
-    const translationKeys = await this.translateService.get(['SERVICE_WORKER_ACTIVATION', 'SERVICE_WORKER_ACTIVATED_SUCCESSFULLY']).toPromise();
-    this.updates.activated.subscribe(event => {
+    this.updates.activated.subscribe(async event => {
+      //Show success alert when service worker is activate
+      const translationKeys = await this.translateService.get(['SERVICE_WORKER_ACTIVATION', 'SERVICE_WORKER_ACTIVATED_SUCCESSFULLY']).toPromise();
       this.messageService.add({ severity: 'success', summary: translationKeys['SERVICE_WORKER_ACTIVATION'], detail: translationKeys['SERVICE_WORKER_ACTIVATED_SUCCESSFULLY'] });
     });
   }
@@ -73,21 +74,24 @@ export class ServiceWorkerService {
       this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
         if (response) {
           this.ngxSpinnerService.show();
-          this.updates.activateUpdate().then(() => {
-            // TODO: delete existing db logic
-            this.cpdssDb?.delete().then(async () => {
-              console.log("Database successfully deleted");
-              const isOpen  = await this.cpdssDb.open();
-              if(isOpen) {
+          // TODO: delete existing db logic
+          this.cpdssDb?.delete().then(async () => {
+            console.log("Database successfully deleted");
+            const isOpen = await this.cpdssDb.open();
+            if (isOpen) {
+              //If opened set token in indexed db
+              this.updates.activateUpdate().then(() => {
                 SecurityService.initPropertiesDB(localStorage.getItem('token'));
-              }
-            }).catch((err) => {
-              console.error("Could not delete database");
-            }).finally(() => {
-              console.error("Service worker Reload");
-              this.ngxSpinnerService.hide();
-              document.location.reload();
-            });
+                console.error("Service worker Reload");
+                this.ngxSpinnerService.hide();
+                document.location.reload();
+              });
+            }
+          }).catch((err) => {
+            console.error("Could not delete database");
+            console.error("Service worker Reload");
+            this.ngxSpinnerService.hide();
+            document.location.reload();
           });
         }
       });

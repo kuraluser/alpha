@@ -209,6 +209,8 @@ public class LoadableStudyService {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
+  @Autowired UserService userService;
+
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
 
@@ -963,6 +965,7 @@ public class LoadableStudyService {
       op.setOperationName(operation.getOperationName());
       response.getOperations().add(op);
     }
+    response.setLastModifiedPortId(Long.valueOf(grpcReply.getLastModifiedPort()));
     return response;
   }
 
@@ -3354,6 +3357,7 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
+    request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
@@ -3423,6 +3427,13 @@ public class LoadableStudyService {
                                 lpbd -> {
                                   buildLoadablePlanBallstDetails(lpbd, detailsBuilderDeparture);
                                 });
+
+                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                            .ifPresent(
+                                stabilityParameter ->
+                                    detailsBuilderDeparture.setStabilityParameter(
+                                        buildStabilityParamter(stabilityParameter)));
+
                         portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
 
                         LoadablePlanDetailsReply.Builder detailsBuilderArrival =
@@ -3455,6 +3466,13 @@ public class LoadableStudyService {
                                 lpbd -> {
                                   buildLoadablePlanBallstDetails(lpbd, detailsBuilderArrival);
                                 });
+
+                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                            .ifPresent(
+                                stabilityParameter ->
+                                    detailsBuilderArrival.setStabilityParameter(
+                                        buildStabilityParamter(stabilityParameter)));
+
                         portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
 
                         portWiseBuilder.setPortId(lppwd.getPortId());
@@ -3463,12 +3481,6 @@ public class LoadableStudyService {
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
-
-              /*
-               * Optional.ofNullable(lpd.getStabilityParameters()) .ifPresent(
-               * stabilityParameter -> planBuilder.setStabilityParameters(
-               * buildStabilityParamter(stabilityParameter)));
-               */
 
               request.addLoadablePlanDetails(planBuilder);
             });
@@ -3560,6 +3572,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
+    Optional.ofNullable(lpqcd.getCargoNominationId())
+        .ifPresent(qunatityBuilder::setCargoNominationId);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3742,6 +3756,7 @@ public class LoadableStudyService {
     response.setVoyageStatusId(grpcReply.getVoyageStatusId());
     response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
     response.setValidated(grpcReply.getValidated());
+    response.setLoadableStudyStatusId(grpcReply.getLoadableStudyStatusId());
   }
 
   /**
@@ -4411,28 +4426,27 @@ public class LoadableStudyService {
     SaveCommentRequest.Builder builder = SaveCommentRequest.newBuilder();
     builder.setLoadablePatternId(loadablePatternId);
     Optional.ofNullable(request.getComment()).ifPresent(builder::setComment);
-    Users usersEntity;
-    // Get user
-    /*
-     * try { usersEntity = this.getUsersEntity(
-     * keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).
-     * getSubject()); } catch (VerificationException e) { throw new
-     * GenericServiceException( "Invalid token",
-     * CommonErrorCodes.E_HTTP_INVALID_TOKEN, HttpStatusCode.UNAUTHORIZED); }
-     *
-     * // Exit on user not found if (null == usersEntity) { throw new
-     * GenericServiceException( "User not found",
-     * CommonErrorCodes.E_CPDSS_INVALID_USER, HttpStatusCode.NOT_FOUND); }
-     *
-     * builder.setUser(usersEntity.getId()); SaveCommentReply reply =
-     * this.saveComment(builder.build()); if
-     * (!SUCCESS.equals(reply.getResponseStatus().getStatus())) { throw new
-     * GenericServiceException( "failed to save comment",
-     * reply.getResponseStatus().getCode(),
-     * HttpStatusCode.valueOf(Integer.parseInt(reply.getResponseStatus().getCode()))
-     * ); }
-     */
+    SaveCommentReply grpcReply = this.saveComment(builder.build());
+    if (!grpcReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.info(
+          "Failed to save comment LP id {}, Comment {}", loadablePatternId, request.getComment());
+      throw new GenericServiceException(
+          "Faield to save comment for Loadable pattern - " + loadablePatternId,
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
+    }
     SaveCommentResponse response = new SaveCommentResponse();
+    if (grpcReply.getComment() != null) {
+      LoadablePlanComments comment = new LoadablePlanComments();
+      comment.setComment(grpcReply.getComment().getComment());
+      comment.setId(grpcReply.getComment().getCommentId());
+      comment.setDataAndTime(grpcReply.getComment().getCreateDate());
+      comment.setUserName(
+          this.userService.getUserNameFromUserId(
+              String.valueOf(grpcReply.getComment().getUser()), authorizationToken));
+      response.setComment(comment);
+    }
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;

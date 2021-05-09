@@ -23,6 +23,7 @@ public class LoadablePlanDetailsResponse {
   private String voyageNumber;
 
   private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
+
   private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
 
   @JsonInclude(Include.NON_NULL)
@@ -59,5 +60,9 @@ public class LoadablePlanDetailsResponse {
   @JsonInclude(Include.NON_NULL)
   private Boolean validated;
 
+  @JsonInclude(Include.NON_NULL)
   private StabilityParameter stabilityParameters;
+
+  @JsonInclude(Include.NON_NULL)
+  private Long loadableStudyStatusId;
 }

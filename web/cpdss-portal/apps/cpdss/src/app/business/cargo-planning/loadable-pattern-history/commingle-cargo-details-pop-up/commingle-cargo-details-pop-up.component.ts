@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
@@ -43,7 +44,8 @@ export class CommingleCargoDetailsPopUpComponent implements OnInit {
     private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService,
     private loadablePatternApiService: LoadablePatternHistoryApiService,
     private ngxSpinnerService: NgxSpinnerService,
-    private quantityPipe: QuantityPipe) { }
+    private quantityPipe: QuantityPipe,
+    private _decimalPipe: DecimalPipe) { }
 
   /**
    * Component lifecycle ngOnit
@@ -89,14 +91,14 @@ export class CommingleCargoDetailsPopUpComponent implements OnInit {
   convertQuantityToSelectedUnit() {
     const comingleCargoDetailsData = this.comingleCargoDetailsData.map((cargo: ICommingleCargoDetailsResponse) => {
       const cargo1Quantity = this.quantityPipe.transform(cargo.cargo1Quantity, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, cargo?.api);
-      cargo.cargo1Quantity = cargo1Quantity ? Number(cargo1Quantity.toFixed(2)) : 0;
+      cargo.cargo1Quantity = cargo1Quantity ? Number(cargo1Quantity) : 0;
       const cargo2Quantity = this.quantityPipe.transform(cargo.cargo2Quantity, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, cargo?.api);
-      cargo.cargo2Quantity = cargo1Quantity ? Number(cargo2Quantity.toFixed(2)) : 0;
+      cargo.cargo2Quantity = cargo1Quantity ? Number(cargo2Quantity) : 0;
       const quantity = this.quantityPipe.transform(cargo.quantity, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, cargo?.api);
-      cargo.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
+      cargo.quantity = quantity ? Number(quantity) : 0;
       return cargo;
     });
 
-    this.comingleCargoDetailsData = [this.loadableStudyPatternTransformationService.formatCommingleDetail(comingleCargoDetailsData[0])];
+    this.comingleCargoDetailsData = [this.loadableStudyPatternTransformationService.formatCommingleDetail(this._decimalPipe , comingleCargoDetailsData[0])];
   }
 }

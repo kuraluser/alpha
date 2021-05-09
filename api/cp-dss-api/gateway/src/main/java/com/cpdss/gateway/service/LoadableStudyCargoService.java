@@ -219,7 +219,15 @@ public class LoadableStudyCargoService {
         || cargoHistoryResponse.getCargoHistory().isEmpty()) {
       return cargoHistoryResponse;
     }
-    List<CargoHistory> sortingList = new ArrayList<>(cargoHistoryResponse.getCargoHistory());
+    List<CargoHistory> sortingList =
+        cargoHistoryResponse.getCargoHistory().stream()
+            .filter(
+                vl ->
+                    (vl.getLoadingPortName() != null
+                        && vl.getVesselName() != null
+                        && vl.getGrade() != null))
+            .collect(Collectors.toList());
+
     cargoHistoryResponse.getCargoHistory().clear();
     if (sortKey.equalsIgnoreCase("vesselName")) {
       if (order.equalsIgnoreCase("asc"))

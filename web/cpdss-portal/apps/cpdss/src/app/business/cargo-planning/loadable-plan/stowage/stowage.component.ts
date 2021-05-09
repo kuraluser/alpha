@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { DATATABLE_EDITMODE } from '../../../../shared/components/datatable/datatable.model';
@@ -137,7 +138,8 @@ export class StowageComponent implements OnInit {
   }
 
   @Output() errorMessageDisplayChange = new EventEmitter<boolean>();
-  @Output() ullageUpdate = new EventEmitter<boolean>()
+  @Output() ullageUpdate = new EventEmitter<boolean>();
+  @Output() registerEvents = new EventEmitter<boolean>();
 
   readonly tankType = TANKTYPE;
   readonly validateAndSaveStatus = VALIDATION_AND_SAVE_STATUS;
@@ -175,6 +177,7 @@ export class StowageComponent implements OnInit {
   constructor(
     private loadablePlanTransformationService: LoadablePlanTransformationService,
     private fb: FormBuilder,
+    private router: Router,
     private permissionsService: PermissionsService,
     private ngxSpinnerService: NgxSpinnerService,
     private loadablePlanApiService: LoadablePlanApiService,
@@ -196,8 +199,10 @@ export class StowageComponent implements OnInit {
     this.buttonStatus = 0;
     this.isPermissionAvaliable = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['EditStowage'], false).view;
     this.cargoGridColumns = this.loadablePlanTransformationService.getCargoDatatableColumns();
-    this.loadablePlanTransformationService.savedComments$.subscribe(() => {
-      this.validateAndSave();
+    this.loadablePlanTransformationService.savedComments$.subscribe((value: string) => {
+      if(value === 'savedCommentsPopup') {
+        this.validateAndSave();
+      }
     })
   }
 
@@ -230,11 +235,13 @@ export class StowageComponent implements OnInit {
       this.showGrid = !this.showGrid;
       this.buttonStatus = 0;
       this.editMode = null;
+    } else {
+      this.showGrid = true
     }
   }
 
   /**
-   * Method to check form valid or not 
+   * Method to check form valid or not
    * @returns {boolean}
    * @memberof StowageComponent
   */
@@ -243,10 +250,14 @@ export class StowageComponent implements OnInit {
     const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
     if (this.selectedTab === this.tankType.CARGO && !this.isFormValid('cargoTanks')) {
       status = true;
-      this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO'] });
+      if(this.showGrid) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO'] });
+      }
     } else if (this.selectedTab === this.tankType.BALLAST && !this.isFormValid('ballastTanks')) {
       status = true;
-      this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST'] });
+      if(this.showGrid) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST'] });
+      }
     }
     return !status;
   }
@@ -314,7 +325,7 @@ export class StowageComponent implements OnInit {
       correctedUllage: this.fb.control(cargo?.correctedUllage?.value),
       fillingRatio: this.fb.control(cargo?.fillingRatio?.value),
       tankName: this.fb.control(cargo?.tankName),
-      rdgUllage: this.fb.control(cargo?.rdgUllage?.value, [Validators.required, numberValidator(3, 3, false), tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage')]),
+      rdgUllage: this.fb.control(cargo?.rdgUllage?.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage')]),
       correctionFactor: this.fb.control(cargo?.correctionFactor?.value),
       observedM3: this.fb.control(cargo?.observedM3?.value, [tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage')]),
       observedBarrels: this.fb.control(cargo?.observedBarrels?.value),
@@ -356,7 +367,10 @@ export class StowageComponent implements OnInit {
           id: event.data.id,
           tankId: event.data.tankId,
           correctedUllage: event.data.rdgUllage['_value'],
-          isBallast: false
+          isBallast: false,
+          api: event.data.api['_value'],
+          temperature: event.data.temperature['_value'],
+          sg: ''
         }
         const translationKeys = await this.translateService.get(['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS']).toPromise();
         try {
@@ -419,7 +433,10 @@ export class StowageComponent implements OnInit {
         id: event.data.id,
         tankId: event.data.tankId,
         correctedUllage: event.data.rdgLevel['_value'],
-        isBallast: true
+        isBallast: true,
+        api: "",
+        temperature: "",
+        sg: event.data.sg['_value']
       }
       const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS']).toPromise();
       try {
@@ -469,7 +486,7 @@ export class StowageComponent implements OnInit {
   }
 
   /**
-   * check form valid or not 
+   * check form valid or not
    *
    * @param {string} formGroup
    * @memberof StowageComponent
@@ -497,7 +514,10 @@ export class StowageComponent implements OnInit {
       }
       const result: IValidateAndSaveResponse = await this.loadablePlanApiService.validateAndSave(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, {}).toPromise();
       if (result.responseStatus.status === '200') {
+        this.buttonStatus = 0;
+        this.editMode = null;
         data.processId = result.processId;
+        this.registerEvents.emit(true);
         navigator.serviceWorker.controller.postMessage({ type: 'validate-and-save', data });
       }
       this.ngxSpinnerService.hide();
@@ -567,7 +587,7 @@ export class StowageComponent implements OnInit {
     return this.fb.group({
       id: this.fb.control(ballast?.id),
       cubicMeter: this.fb.control(ballast.cubicMeter.value, [tankCapacityValidator('cubicMeter', ballast.fullCapacityCubm, 'rdgLevel')]),
-      rdgLevel: this.fb.control(ballast?.rdgLevel?.value, [Validators.required, numberValidator(3, 3, false)]),
+      rdgLevel: this.fb.control(ballast?.rdgLevel?.value, [Validators.required, numberValidator(6, 3, false)]),
     });
   }
 
@@ -596,5 +616,13 @@ export class StowageComponent implements OnInit {
   public viewError(status: boolean) {
     this.errorPopup = status;
     this.errorMessageDisplayChange.emit(status)
+  }
+
+  /**
+  * navigation to patterns
+  * @memberof StowageComponent
+  */
+  public navigateToLoadablePattern() {
+    this.router.navigate([`/business/cargo-planning/loadable-pattern-history/1/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities } from '../models/voyage-status.model';
-import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { IDataTableColumn , DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -89,9 +89,9 @@ export class VoyageStatusTransformationService {
           if (cargoTankQuantities[index]?.tankId === cargoTank[groupIndex][tankIndex]?.id) {
             cargoTank[groupIndex][tankIndex].commodity = cargoTankQuantities[index];
             const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
-            cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
+            cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
-            cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
+            cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;
             cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, cargoTank[groupIndex][tankIndex].commodity?.api);
             cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex])
             break;
@@ -110,9 +110,9 @@ export class VoyageStatusTransformationService {
   getColumnFields() {
     this.columns = [
       { field: 'abbreviation', header: 'VOYAGE_STATUS_CARGO_CONDITION_GRADES' },
-      { field: 'plannedWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_PLANNED' },
-      { field: 'actualWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_Actual' },
-      { field: 'difference', header: 'VOYAGE_STATUS_CARGO_CONDITION_DIFFERENCE' }
+      { field: 'plannedWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_PLANNED' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'actualWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_Actual' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'difference', header: 'VOYAGE_STATUS_CARGO_CONDITION_DIFFERENCE' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER}
     ];
 
     return this.columns

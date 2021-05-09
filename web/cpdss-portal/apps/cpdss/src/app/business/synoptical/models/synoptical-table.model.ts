@@ -50,7 +50,8 @@ export interface SynopticField {
     min?: {
         fieldKey?:string,
         value?:string
-    }
+    },
+    numberFormat?: string;
 }
 
 /**
@@ -58,6 +59,7 @@ export interface SynopticField {
 */
 export interface SynopticalColumn {
     fields?: SynopticField[];
+    view?: boolean;
     header: string;
     expandable?: boolean;
     editable?: boolean;

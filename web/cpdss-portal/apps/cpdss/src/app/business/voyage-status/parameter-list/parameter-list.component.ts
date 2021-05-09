@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { DecimalPipe } from'@angular/common'
+import { IDataTableColumn , DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { IBunkerConditionParameterList, IBunkerConditions, ICargoConditions, ICargoQuantities } from '../models/voyage-status.model';
 /**
  * Component class of ParameterListComponent
@@ -20,13 +21,15 @@ export class ParameterListComponent implements OnInit {
     this._cargoConditions = cargoConditions;
     this.getParameterList();
   }
+  
+  readonly fieldType = DATATABLE_FIELD_TYPE;
   cols: IDataTableColumn[];
   parameterList: IBunkerConditionParameterList[] = [];
   totalActual = 0;
 
   private _cargoConditions: ICargoConditions[];
 
-  constructor() { }
+  constructor(private _decimalPipe: DecimalPipe) { }
   /**
    * Component lifecycle ngOnit
    *
@@ -35,7 +38,7 @@ export class ParameterListComponent implements OnInit {
   ngOnInit(): void {
     this.cols = [
       { field: 'parameters', header: 'VOYAGE_STATUS_CARGO_PARAMETER_LIST' },
-      { field: 'value', header: 'VOYAGE_STATUS_CARGO_VALUE' }
+      { field: 'value', header: 'VOYAGE_STATUS_CARGO_VALUE' , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: 'numberFormat'}
     ];
   }
 
@@ -49,12 +52,14 @@ export class ParameterListComponent implements OnInit {
       this.totalActual = cargoList.actualWeight + this.totalActual;
 
     })
+    
     this.parameterList.push({ parameters: 'VOYAGE_STATUS_PARAMETER_LIST_TOTAL_CARGO_MT', value: this.totalActual })
     let oilWeight = 0;
     oilWeight = this.bunkerConditions?.fuelOilWeight + this.bunkerConditions?.dieselOilWeight;
     this.parameterList.push({ parameters: 'VOYAGE_STATUS_PARAMETER_LIST_FUEL_AND_DIESEL', value: oilWeight })
     for (const [key, value] of Object.entries(this.bunkerConditions)) {
       let newKey = null;
+      let numberFormat = '';
       switch (key) {
         case "ballastWeight":
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_BALLAST_WEIGHT";
@@ -69,6 +74,7 @@ export class ParameterListComponent implements OnInit {
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_OTHERS_WEIGHT";
           break;
         case "specificGravity":
+          numberFormat =  '1.4-4';
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_SPECIFIC_GRAVITY";
           break;
         case "totalDwtWeight":
@@ -78,7 +84,7 @@ export class ParameterListComponent implements OnInit {
           break;
       }
       if (newKey) {
-        this.parameterList.push({ parameters: newKey, value: value })
+        this.parameterList.push({ parameters: newKey, value: value , numberFormat: numberFormat})
       }
     }
   }

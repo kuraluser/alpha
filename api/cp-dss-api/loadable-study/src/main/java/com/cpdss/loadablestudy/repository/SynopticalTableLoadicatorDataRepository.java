@@ -22,4 +22,9 @@ public interface SynopticalTableLoadicatorDataRepository
       "UPDATE SynopticalTableLoadicatorData stld SET stld.isActive = false WHERE stld.synopticalTable = ?1 AND stld.loadablePatternId = ?2 AND stld.isActive = true")
   public void deleteBySynopticalTableAndLoadablePatternId(
       SynopticalTable synopticalTable, Long loadablePatternId);
+
+  @Modifying
+  @Query(
+      "UPDATE SynopticalTableLoadicatorData stld SET stld.isActive = ?1 WHERE stld.loadablePatternId = ?2")
+  public void deleteByLoadablePatternId(boolean isActive, Long loadablePatternId);
 }

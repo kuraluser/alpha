@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
 import { Observable, of } from 'rxjs';
 import { IResponse } from '../../../shared/models/common.model';
+import { environment } from '../../../../environments/environment';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
 import { ILoadablePatternsResponse, ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
@@ -9,7 +12,9 @@ import { saveAs } from 'file-saver';
 export class LoadableStudyListApiService {
   loadableStudyList: LoadableStudy[];
 
-  constructor(private commonApiService: CommonApiService) { }
+  constructor(
+    private commonApiService: CommonApiService,
+    private http: HttpClient) { }
 
 
   /**
@@ -82,7 +87,8 @@ export class LoadableStudyListApiService {
   * @param {number} attachmentId
   * @memberof LoadableStudyListApiService
   */
-  downloadAttachment(vesselId: number, voyageId: number, loadableStudyId: number, attachmentId: number) {
-    saveAs(`${self.location.origin}/api/cloud/vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`)
+  downloadAttachment(vesselId: number, voyageId: number, loadableStudyId: number, attachmentId: number) : Observable<any>{
+    const url = environment.name === 'shore' ?  '/api/cloud' : '/api/ship';
+    return this.http.get<any>(`${self.location.origin}${url}/vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`, {responseType: 'blob' as 'json'});
   }
 }  

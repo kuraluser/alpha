@@ -173,9 +173,6 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
           if (result.responseStatus.status === "200") {
             if (this.isEdit) {
-              if(this.isLoadlineChanged()){
-                sessionStorage.setItem('loadableStudyInfo', JSON.stringify({ voyageId: this.voyage.id, vesselId: this.vesselInfoList?.id }))
-              }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
@@ -251,9 +248,14 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   //open selected file
-  openFile(index, fileID = null) {
+  openFile(index, fileID = null , file?: any) {
+    const fileName = file?.name ? file?.name : file?.fileName
     if (fileID) {
-      this.loadableStudyListApiService.downloadAttachment(this.vesselInfoList?.id, this.voyage.id, this.selectedLoadableStudy?.id, fileID);
+      this.loadableStudyListApiService.downloadAttachment(this.vesselInfoList?.id, this.voyage.id, this.selectedLoadableStudy?.id, fileID).subscribe((data) => {
+        const blob = new Blob([data], { type: data.type })
+        const fileurl = window.URL.createObjectURL(blob)
+        saveAs(fileurl, fileName)
+      });
     } else {
       const blob = new Blob([this.uploadedFiles[index]], { type: this.uploadedFiles[index].type })
       const fileurl = window.URL.createObjectURL(blob)

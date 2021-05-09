@@ -18,6 +18,7 @@ export interface ILoadablePatternResponse {
     frontBallastTanks: IBallastTank[][];
     centerBallastTanks: IBallastTank[][];
     rearBallastTanks: IBallastTank[][];
+    confirmPlanEligibility: boolean;
 }
 
 

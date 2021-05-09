@@ -21,7 +21,7 @@
         <tr>
             <ng-container *ngFor="let col of columns">
                 <th class="text-uppercase" *ngIf="col.field === 'header'"> {{rowData[col.field] | translate}}</th>
-                <td *ngIf="col.field !== 'header'">{{rowData[col.field]}}{{'VOYAGE_STATUS_DRAFT_CONDITION_UNIT' | translate}}</td>
+                <td *ngIf="col.field !== 'header'">{{rowData[col.field] | number}}{{'VOYAGE_STATUS_DRAFT_CONDITION_UNIT' | translate}}</td>
             </ng-container>
         </tr>
     </ng-template>

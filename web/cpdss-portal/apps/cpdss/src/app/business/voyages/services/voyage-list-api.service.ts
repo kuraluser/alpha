@@ -27,7 +27,9 @@ export class VoyageListApiService {
    */
   getVoyageList(vesselId: number, options: IDataStateChange, fromStartDate?: string, toStartDate?: string): Observable<IVoyageListResponse> {
     const filterString = options?.filter ? Object.keys(options?.filter).map(function (key) {
-      return "" + key + "=" + options?.filter[key]; // line break for wrapping only
+      if(options?.filter[key]){
+        return "" + key + "=" + options?.filter[key]; // line break for wrapping only
+      }
     }).join("&") : '';
     const params = `${fromStartDate && toStartDate ? `fromStartDate=${fromStartDate}&toStartDate=${toStartDate}` : ''}&pageSize=${options.pageSize ? options.pageSize : this.pageSize}&pageNo=${options.page ? options.page : this.page}${options.sortBy ? `&sortBy=${options.sortBy}` : ''}${options.orderBy ? `&orderBy=${options.orderBy}` : ''}${filterString ? '&'+filterString : ''}`
     return this.commonApiService.get<IVoyageListResponse>(`vessels/${vesselId}/voyagelist?${params}`);

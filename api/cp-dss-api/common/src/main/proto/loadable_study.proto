@@ -325,11 +325,12 @@ message LDIntactStability {
 }
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
-	repeated LoadablePlanDetails loadablePlanDetails = 2;
-	int64 loadableStudyId = 3;
-	bool validated = 4;
-	repeated AlgoErrors algoErrors = 5;
-	int64 loadablePatternId = 6;
+	bool hasLodicator =2;
+	repeated LoadablePlanDetails loadablePlanDetails = 3;
+	int64 loadableStudyId = 4;
+	bool validated = 5;
+	repeated AlgoErrors algoErrors = 6;
+	int64 loadablePatternId = 7;
 	
 }
 
@@ -390,6 +391,8 @@ message LoadablePlanDetailsReply {
   	int64 loadablePatternStatusId = 15;
   	int64 voyageStatusId = 16;
   	bool validated = 17;
+  	StabilityParameter stabilityParameter =18;
+  	int64 loadableStudyStatusId = 19;
 }
 
 message LoadablePlanComments {
@@ -781,6 +784,7 @@ message PortRotationReply{
 	repeated PortRotationDetail ports=2;
 	repeated Operation operations=3;
 	int64 portRotationId = 4;
+	int64 lastModifiedPort = 5;
 }
 
 message LoadableQuantityResponse {
@@ -1139,12 +1143,16 @@ message LoadableStudyAttachmentReply{
 
 message SaveCommentReply {
 	ResponseStatus responseStatus = 1;
+		SaveCommentRequest comment = 2;
 }
 
 message SaveCommentRequest{
 	int64 loadablePatternId=1;
 	string comment =2;
 	int64 user=3;
+	int64 commentId = 4;
+	string createDate = 5;
+	string updateDate = 6;
 }
 
 message SaveLoadOnTopRequest{

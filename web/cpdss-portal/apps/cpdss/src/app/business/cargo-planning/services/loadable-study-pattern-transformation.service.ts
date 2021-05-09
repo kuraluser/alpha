@@ -67,12 +67,14 @@ export class LoadableStudyPatternTransformationService {
   * @returns {ICommingleDetails}
   * @memberof LoadableStudyPatternTransformationService
   */
-  formatCommingleDetail(commingleDetail: ICommingleDetails): ICommingleDetails {
-    commingleDetail.cargoQuantity = commingleDetail.cargo1Quantity + '\n' + commingleDetail.cargo2Quantity;
+  formatCommingleDetail(decimalPipe: any ,commingleDetail: ICommingleDetails): ICommingleDetails {
+    commingleDetail.quantity = this.decimalConvertion(decimalPipe , commingleDetail.quantity , '1.2-2');
+    commingleDetail.api = this.decimalConvertion(decimalPipe , commingleDetail.api , '1.2-2');
+    commingleDetail.temperature = this.decimalConvertion(decimalPipe , commingleDetail.temperature , '1.2-2');
+    commingleDetail.cargoQuantity = this.decimalConvertion(decimalPipe , commingleDetail.cargo1Quantity , '1.2-2') + '\n' + this.decimalConvertion(decimalPipe , commingleDetail.cargo2Quantity , '1.2-2');
     commingleDetail.cargoPercentage = commingleDetail.cargo1Abbrivation + '-' + commingleDetail.cargo1Percentage + '%\n' + commingleDetail.cargo2Abbrivation + '-' + commingleDetail.cargo2Percentage + '%';
     return commingleDetail;
   }
-
 
     /**
 * Method for setting priority case grid columns
@@ -269,6 +271,15 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
 */
   decimalConvertion(_decimalPipe: any, value: string | number, decimalType: string) {
     return _decimalPipe.transform(value, decimalType);
+  }
+
+  /**
+   * parse number from formatted string
+   * @returns {number}
+  */
+  convertToNumber(value: string) {
+    value = value?.replace(/,/g, '');
+    return Number(value)
   }
 }
 

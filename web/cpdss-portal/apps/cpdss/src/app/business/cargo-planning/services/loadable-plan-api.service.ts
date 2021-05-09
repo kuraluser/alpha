@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ILoadablePlanResponse, ISaveComment, IUpdateUllageModel , IUpdatedUllageResponse  , IAlgoResponse , IValidateAndSaveStowage , IUpdatedRdgLevelResponse } from '../models/loadable-plan.model';
+import { ILoadablePlanResponse, ISaveComment, IUpdateUllageModel , IUpdatedUllageResponse  , IAlgoResponse , IValidateAndSaveStowage , IUpdatedRdgLevelResponse , ICommentResponse } from '../models/loadable-plan.model';
 import { ICargoResponseModel , IValidateAndSaveResponse } from '../../../shared/models/common.model';
 import { IResponse, IConfirmStatusResponse } from '../../../shared/models/common.model';
 
@@ -54,8 +54,8 @@ export class LoadablePlanApiService {
  * @param {number} loadablePatternId
  * Save Comments
  */
-  saveComments(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number, loadableQuantity: ISaveComment): Observable<IResponse> {
-    return this.commonApiService.post<ISaveComment, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patten/${loadablePatternId}/comment`, loadableQuantity);
+  saveComments(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number, loadableQuantity: ISaveComment): Observable<ICommentResponse> {
+    return this.commonApiService.post<ISaveComment, ICommentResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patten/${loadablePatternId}/comment`, loadableQuantity);
   }
 
   /**
@@ -124,7 +124,7 @@ export class LoadablePlanApiService {
   * Get api for algo error response
   */
   getAlgoErrorDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<IAlgoResponse> {
-    return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern-details/${loadablePatternId}/algo-errors`);
+    return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern/${loadablePatternId}/algo-errors`);
   }
 }
 

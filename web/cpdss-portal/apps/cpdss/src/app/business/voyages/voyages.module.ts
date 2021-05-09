@@ -13,6 +13,8 @@ import { DatePopUpComponent } from './date-pop-up/date-pop-up.component';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { NewVoyagePopupModule } from '../core/components/new-voyage-popup/new-voyage-popup.module';
+import { PermissionDirectiveModule } from '../../shared/directives/permission/permission-directive.module';
+import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
 
 /**
  * CPDSS app main module. All voyages list logic will be inside this module
@@ -31,7 +33,9 @@ import { NewVoyagePopupModule } from '../core/components/new-voyage-popup/new-vo
     CalendarModule,
     DialogModule,
     TooltipModule,
-    NewVoyagePopupModule
+    NewVoyagePopupModule,
+    PermissionDirectiveModule,
+    ValidationErrorModule
   ],
   exports: [DatePopUpComponent],
   providers: [ VoyageListTransformationService, VoyageListApiService ]

@@ -10,6 +10,7 @@ import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValue
 import { IOperations, IPort, IPortList, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
 import { ILoadableOHQStatus } from '../models/loadable-study-list.model';
 import * as moment from 'moment';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
@@ -57,12 +58,13 @@ export class LoadableStudyDetailsTransformationService {
    */
   formatCargoNomination(cargoNomination: ICargoNominationValueObject): ICargoNominationValueObject {
     cargoNomination.storeKey = cargoNomination.storeKey ?? uuid4();
+    const unit = <QUANTITY_UNIT>localStorage.getItem('unit');
     if (cargoNomination.loadingPorts.value?.length) {
       cargoNomination.quantity.value = 0;
       cargoNomination.loadingPorts.value.map(port => {
         cargoNomination.quantity.value += Number(port.quantity);
       });
-      cargoNomination.quantity.value = Number(cargoNomination.quantity.value.toFixed(2));
+      cargoNomination.quantity.value = Number(cargoNomination.quantity.value);
       cargoNomination.loadingPortsNameArray = cargoNomination.loadingPorts.value.map(lport => lport.name);
       const portLength = cargoNomination.loadingPorts.value.length;
       if (portLength > 1) {
@@ -207,7 +209,7 @@ export class LoadableStudyDetailsTransformationService {
         filter: true,
         filterPlaceholder: 'SEARCH_ABBREVIATION',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'abbreviation.value',
         fieldPlaceholder: 'ENTER_ABBREVIATION',
         errorMessages: {
@@ -244,8 +246,8 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterField: 'quantity.value',
         fieldPlaceholder: 'ENTER_QUANTITY',
-        numberFormat: '1.0-2',
         showTotal: true,
+        numberType: 'quantity',
         fieldHeaderClass: 'column-qty',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
@@ -300,6 +302,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'ENTER_API_EST',
         fieldClass: 'api',
         fieldHeaderClass: 'column-api',
+        numberFormat: '1.2-2',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'min': 'CARGO_NOMINATION_API_MIN_ERROR'
@@ -318,6 +321,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'ENTER_TEMP_EST',
         fieldClass: 'temperature',
         fieldHeaderClass: 'column-temp',
+        numberFormat: '1.2-2',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }
@@ -465,10 +469,12 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'api',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API',
+        numberFormat: '1.2-2'
       },
       {
         field: 'temperature',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
+        numberFormat: '1.2-2'
       }
     ]
   }
@@ -636,8 +642,9 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IPortsValueObject}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getPortAsValueObject(port: IPortList, isNewValue = true, isEditable = true, listData: IPortAllDropdownData): IPortsValueObject {
+  getPortAsValueObject(port: IPortList, isNewValue = true, isEditable = true, listData: IPortAllDropdownData , portEtaEtdPermission: IPermission): IPortsValueObject {
     const _port = <IPortsValueObject>{};
+    const isEtaEtadEdtitable = this.isEtaEtdViewable(portEtaEtdPermission,isNewValue);
     const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
     const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
     const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING || operationObj.id === OPERATIONS.DISCHARGING) : true;
@@ -654,12 +661,27 @@ export class LoadableStudyDetailsTransformationService {
     _port.layCanTo = new ValueObject<string>(port.layCanTo?.trim(), true, isNewValue, false, isEditable);
     _port.maxDraft = new ValueObject<number>(port.maxDraft, true, isNewValue, false, isEditable);
     _port.maxAirDraft = new ValueObject<number>(port.maxAirDraft, true, isNewValue, false, isEditable);
-    _port.eta = new ValueObject<string>(port.eta, true, isNewValue, false, isEditable);
-    _port.etd = new ValueObject<string>(port.etd, true, isNewValue, false, isEditable);
+    _port.eta = new ValueObject<string>(port.eta, true, isNewValue, false, isEtaEtadEdtitable);
+    _port.etd = new ValueObject<string>(port.etd, true, isNewValue, false, isEtaEtadEdtitable);
     _port.isAdd = isNewValue;
     _port.isActionsEnabled = isEdit;
     _port.isDelete = false;
     return _port;
+  }
+
+    /**
+  * Method for initializing ports row
+  *
+  * @private
+  * @param {boolean} isAdd
+  * @returns {boolean}
+  * @memberof LoadableStudyDetailsTransformationService
+  */
+  isEtaEtdViewable(portEtaEtdPermission: IPermission ,isAdd: boolean) {
+    return (portEtaEtdPermission?.view || portEtaEtdPermission?.view === undefined) && 
+    ( (isAdd && (portEtaEtdPermission?.add || portEtaEtdPermission?.add === undefined)) || 
+      (!isAdd  && (portEtaEtdPermission?.edit || portEtaEtdPermission?.edit === undefined))
+    ) ? true : false;
   }
 
 
@@ -669,7 +691,7 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  getPortDatatableColumns(permission: IPermission, portEtaEtdPermission:IPermission , loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     const minDate = new Date();
     let columns: IDataTableColumn[] = [
       {
@@ -738,6 +760,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'seaWaterDensity',
         header: 'WATER DENSITY (T/M3)',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.4-4' ,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT_WATER_DENSITY',
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
@@ -758,7 +781,7 @@ export class LoadableStudyDetailsTransformationService {
         minDate: minDate,
         fieldPlaceholder: 'CHOOSE_LAY_CAN',
         fieldClass: 'lay-can',
-        dateFormat: 'dd-mm-yy',
+        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         fieldHeaderTooltipIcon: 'pi-info-circle',
         fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
         errorMessages: {
@@ -777,6 +800,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'maxDraft.value',
         fieldPlaceholder: 'ENTER_MAX_DRAFT',
+        numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_DRAFT_REQUIRED_ERROR',
           'min': 'PORT_MAX_DRAFT_MIN_ERROR'
@@ -792,58 +816,66 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'maxAirDraft.value',
         fieldPlaceholder: 'ENTER_MAX_AIR_DRAFT',
+        numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR',
           'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR'
         }
       },
-      {
-        field: 'eta',
-        header: 'ETA',
-        fieldHeaderClass: 'column-eta',
-        fieldType: DATATABLE_FIELD_TYPE.DATETIME,
-        filter: true,
-        filterPlaceholder: 'SEARCH_PORT_ETA',
-        filterType: DATATABLE_FILTER_TYPE.DATE,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'eta.value',
-        fieldPlaceholder: 'CHOOSE_ETA',
-        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
-        minDate: minDate,
-        fieldClass: 'eta',
-        fieldHeaderTooltipIcon: 'pi-info-circle',
-        fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
-        errorMessages: {
-          'required': 'PORT_ETA_REQUIRED_ERROR',
-          'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
-          'failedCompare': 'PORT_ETA_COMPARE_ERROR',
-          'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR'
-        }
-      },
-      {
-        field: 'etd',
-        header: 'ETD',
-        fieldHeaderClass: 'column-etd',
-        fieldType: DATATABLE_FIELD_TYPE.DATETIME,
-        filter: true,
-        filterPlaceholder: 'SEARCH_PORT_ETD',
-        filterType: DATATABLE_FILTER_TYPE.DATE,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'etd.value',
-        fieldPlaceholder: 'CHOOSE_ETD',
-        minDate: minDate,
-        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
-        fieldClass: 'etd',
-        fieldHeaderTooltipIcon: 'pi-info-circle',
-        fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
-        errorMessages: {
-          'required': 'PORT_ETD_REQUIRED_ERROR',
-          'notInRange': 'PORT_ETD_NOT_IN_DATE_RANGE',
-          'failedCompare': 'PORT_ETD_COMPARE_ERROR',
-          'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
-        }
-      }
+    
     ];
+
+    if(portEtaEtdPermission?.view || portEtaEtdPermission?.view === undefined) {
+      const etaEtd = [
+        {
+          field: 'eta',
+          header: 'ETA',
+          fieldHeaderClass: 'column-eta',
+          fieldType: DATATABLE_FIELD_TYPE.DATETIME,
+          filter: true,
+          filterPlaceholder: 'SEARCH_PORT_ETA',
+          filterType: DATATABLE_FILTER_TYPE.DATE,
+          filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+          filterField: 'eta.value',
+          fieldPlaceholder: 'CHOOSE_ETA',
+          dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
+          minDate: minDate,
+          fieldClass: 'eta',
+          fieldHeaderTooltipIcon: 'pi-info-circle',
+          fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
+          errorMessages: {
+            'required': 'PORT_ETA_REQUIRED_ERROR',
+            'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
+            'failedCompare': 'PORT_ETA_COMPARE_ERROR',
+            'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR'
+          }
+        },
+        {
+          field: 'etd',
+          header: 'ETD',
+          fieldHeaderClass: 'column-etd',
+          fieldType: DATATABLE_FIELD_TYPE.DATETIME,
+          filter: true,
+          filterPlaceholder: 'SEARCH_PORT_ETD',
+          filterType: DATATABLE_FILTER_TYPE.DATE,
+          filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+          filterField: 'etd.value',
+          fieldPlaceholder: 'CHOOSE_ETD',
+          minDate: minDate,
+          dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
+          fieldClass: 'etd',
+          fieldHeaderTooltipIcon: 'pi-info-circle',
+          fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
+          errorMessages: {
+            'required': 'PORT_ETD_REQUIRED_ERROR',
+            'notInRange': 'PORT_ETD_NOT_IN_DATE_RANGE',
+            'failedCompare': 'PORT_ETD_COMPARE_ERROR',
+            'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
+          }
+        }
+      ]
+      columns = [...columns, ...etaEtd];
+    }
 
     if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
@@ -897,8 +929,10 @@ export class LoadableStudyDetailsTransformationService {
           _ports.operationId = port[key].value?.id;
         } else if (key === 'layCan') {
           if (port[key].value) {
-            _ports.layCanFrom = port[key].value.split('to')[0].trim();
-            _ports.layCanTo = port[key].value.split('to')[1].trim();
+            const layCanFrom = moment(port[key].value.split('to')[0].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).endOf('d').format('DD-MM-YYYY HH:mm');
+            _ports.layCanFrom = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanFrom, port.port?.value?.timezoneOffsetVal)?.slice(0, 10);
+            const layCanTo = moment(port[key].value.split('to')[1].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).startOf('d').format('DD-MM-YYYY HH:mm');
+            _ports.layCanTo = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanTo, port.port?.value?.timezoneOffsetVal)?.slice(0, 10) ;
           } else {
             _ports.layCanFrom = "";
             _ports.layCanTo = "";
@@ -1248,7 +1282,8 @@ export class LoadableStudyDetailsTransformationService {
           'max': 'COMMINGLE_QUANTITY_MAX_LIMIT',
           'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE',
           'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT'
-        }
+        },
+        numberType:'quantity'
       }
     ];
 
@@ -1396,7 +1431,8 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'OBQ_MIN_VALUE',
           'groupTotal': 'OBQ_GROUP_TOTAL',
           'max': "OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
-        }
+        },
+        numberType: 'quantity'
       }
     ]
   }
@@ -1550,6 +1586,9 @@ export class LoadableStudyDetailsTransformationService {
       },
       totalQuantity: {
         'required': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED"'
+      },
+      arrivalMaxDraft: {
+        'required': 'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED'
       }
     }
   }

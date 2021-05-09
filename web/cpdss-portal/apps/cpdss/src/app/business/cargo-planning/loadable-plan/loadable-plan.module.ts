@@ -25,7 +25,8 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module'
 import { TooltipModule } from 'primeng/tooltip';
-
+import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 /**
  * Module for loadable plan
  *
@@ -47,9 +48,10 @@ import { TooltipModule } from 'primeng/tooltip';
     DialogModule,
     ErrorLogPopupModule,
     ValidationErrorModule,
-    TooltipModule
+    TooltipModule,
+    QuantityDecimalFormatPipeModule
   ],
-  providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe, LoadableStudyListApiService ],
+  providers: [QuantityDecimalFormatPipe , LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe, LoadableStudyListApiService ],
   exports: [
     LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent
   ]

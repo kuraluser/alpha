@@ -50,7 +50,7 @@
                     {{'PATTERN_VIEW_MORE_BALLAST_TOTAL' | translate}}
                 </div>
                 <div class="col">
-                    {{totalBallast.toFixed(2)}}
+                    {{totalBallast | number :'1.2-2'}}
                 </div>
             </div>
             <cpdss-portal-synoptical-grid

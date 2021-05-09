@@ -1,0 +1,18 @@
+<p-dialog header="{{'PORT_ROTATION_POPUP_HEADER'| translate}}" [(visible)]="visible" styleClass="port-rotation-pop-up" (onHide)="closePopup(false)" [modal]="true"
+    [draggable]="false" [responsive]="true">
+    <div>
+        <cpdss-portal-datatable *ngIf="portLoaded" [tableId]="'port-roration-popup'" [form]="portsForm" [columns]="columns"
+            [value]="ports" [editMode]="true" [listData]="listData" [scrollable]="false" (editComplete)="onEditComplete($event)">
+        </cpdss-portal-datatable>
+    </div>
+    <p-footer >
+        <div class="row" *ngIf="portLoaded">
+            <div class="col-sm-12 text-right">
+                <button type="button" class="btn btn-main" (click)="savePort()"
+                    id="port-rotation-up-save" [disabled]="!portsForm.valid">{{'PORT_ROTATION_POPUP_SAVE_BUTTON' |
+                    translate}}</button>
+
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>

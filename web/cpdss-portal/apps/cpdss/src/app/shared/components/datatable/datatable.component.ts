@@ -9,6 +9,7 @@ import { Paginator } from 'primeng/paginator';
 import { DecimalPipe } from '@angular/common';
 import { Dropdown } from 'primeng/dropdown';
 import * as moment from 'moment';
+import { QUANTITY_UNIT } from '../../models/common.model';
 import { TimeZoneTransformationService } from '../../services/time-zone-conversion/time-zone-transformation.service';
 import { IDateTimeFormatOptions } from '../../models/common.model';
 import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
@@ -301,7 +302,7 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onCellValueClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn) {
-    event.stopPropagation(); // Please dont remove this line
+    //event.stopPropagation(); // Please dont remove this line
     const control = this.field(rowIndex, col.field);
     control.markAsTouched();
     control.updateValueAndValidity();
@@ -328,12 +329,13 @@ export class DatatableComponent implements OnInit {
    * @param col 
    * @param colIndex 
    */
-  onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number) {
+  onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
     if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
       const prevField = this.columns[colIndex - 1].field;
       if (prevField && rowData[prevField]) {
-        rowData[prevField].isEditMode = false
+        const control = this.field(rowIndex, prevField);
+        rowData[prevField].isEditMode = !control.valid;
       }
       rowData[col.field].isEditMode = true;
     }
@@ -621,7 +623,7 @@ export class DatatableComponent implements OnInit {
     if (col?.filterByServer) {
       this._first = 0;
       this._currentPage = 0;
-      this.filterObject[col.filterField] = this.formatDateTime(value);
+      this.filterObject[col.filterField] = value ? this.formatDateTime(value) : '';
       const data = this.setStateValue('filter');
       this.firstChange.emit(this._first);
       this.currentPageChange.emit(this._currentPage);
@@ -693,13 +695,19 @@ export class DatatableComponent implements OnInit {
   /**
   * Range date selected
   */
-  onDateRangeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+  onDateRangeSelect(event, formGroupIndex: number, col, rowData: Object) {
+    const formControlName: string = col.field;
     const formControl = this.field(formGroupIndex, formControlName);
     if (formControl?.value[0] && formControl?.value[1]) {
-      if (formControl?.value[0] === formControl?.value[1]) {
+      if (formControl?.value[0]?.toDateString() === formControl?.value[1]?.toDateString()) {
         formControl.setErrors({ 'datesEqual': true });
       } else {
-        rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
+        if (col?.dateFormat && col?.dateFormat === this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)) {
+          const laycanFormat: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
+          rowData[formControlName].value = this.timeZoneTransformationService.formatDateTime(formControl?.value[0], laycanFormat) + ' to ' + this.timeZoneTransformationService.formatDateTime(formControl?.value[1], laycanFormat);
+        } else {
+          rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
+        }
         rowData[formControlName].isEditMode = false;
         this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
       }
@@ -804,13 +812,14 @@ export class DatatableComponent implements OnInit {
       return "Total"
     else if (col.showTotal && col.fieldType === this.fieldType.NUMBER) {
       let total = 0;
+      const unit = col.unit ? col.unit : <QUANTITY_UNIT>localStorage.getItem('unit');
       this.value.forEach(row => {
         if (row[col.field]) {
           const value = row[col.field].value ?? 0;
           total += value
         }
       })
-      return this.decimalPipe.transform(total.toFixed(2), col?.numberFormat);
+      return total;
     }
     return ""
   }
@@ -864,10 +873,10 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   filterData($event, col) {
+    this.filterObject[col.filterField] = ($event.target.value).trim();
     if (col?.filterByServer) {
       this._first = 0;
-      this._currentPage = 0;
-      this.filterObject[col.filterField] = ($event.target.value).trim();
+      this._currentPage = 0;      
       const data = this.setStateValue('filter');
       this.firstChange.emit(this._first);
       this.currentPageChange.emit(this._currentPage);

@@ -77,6 +77,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
   patternLoaded = false;
   baseUnit = AppConfigurationService.settings.baseUnit;
   loadablePlanPermissionContext: IPermissionContext;
+  showPortRotationPopup = false;
+  selectedLoadablePatternId: number;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -98,9 +100,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async ngOnInit(): Promise<void> {
+    const permission = await this.getPagePermission();
     this.activatedRoute.paramMap.subscribe(async params => {
-      const permission = await this.getPagePermission();
-      if(permission.view) {
+      if (permission.view) {
         this.isViewPattern = Number(params.get('isViewPattern')) === 0 ? true : false;
         this.vesselId = Number(params.get('vesselId'));
         this.voyageId = Number(params.get('voyageId'));
@@ -118,19 +120,19 @@ export class LoadablePatternHistoryComponent implements OnInit {
     });
   }
 
-  
+
   /**
 * Get page permission
 *
 * @memberof LoadablePatternHistoryComponent
 */
-async getPagePermission() {
-  const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], true);
-  this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], true);
-  this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
-  this.loadablePlanPermissionContext =  { key: AppConfigurationService.settings.permissionMapping['LoadablePlanComponent'], actions: [PERMISSION_ACTION.VIEW] };
-  return loadablePatternPermission;
-}
+  async getPagePermission() {
+    const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], true);
+    
+    this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
+    this.loadablePlanPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePlanComponent'], actions: [PERMISSION_ACTION.VIEW] };
+    return loadablePatternPermission;
+  }
 
 
   /**
@@ -154,7 +156,7 @@ async getPagePermission() {
     this.ngxSpinnerService.show();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
-    if(this.loadableStudies.length) {
+    if (this.loadableStudies.length) {
       this.setProcessingLoadableStudyActions(0, 0);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
     } else {
@@ -162,12 +164,12 @@ async getPagePermission() {
     }
   }
 
-   /**
-   * Enable/ Disable actions of currently processing/processed loadable study
-   *
-   * @param {*} event
-   * @memberof LoadablePatternHistoryComponent
-   */
+  /**
+  * Enable/ Disable actions of currently processing/processed loadable study
+  *
+  * @param {*} event
+  * @memberof LoadablePatternHistoryComponent
+  */
   setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
     const loadableStudies = this.loadableStudies.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
@@ -250,7 +252,7 @@ async getPagePermission() {
       this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
       this.patternLoaded = true;
     }
-      this.ngxSpinnerService.hide();
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -304,7 +306,7 @@ async getPagePermission() {
    * @memberof LoadablePatternHistoryComponent
    */
   onUnitChange() {
-    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit;
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit??AppConfigurationService.settings.baseUnit
     this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     if (this.prevQuantitySelectedUnit) {
       this.convertQuantityToSelectedUnit();
@@ -320,9 +322,9 @@ async getPagePermission() {
     const loadablePatterns = this.loadablePatterns?.map(pattern => {
       const loadablePatternCargoDetails = pattern.loadablePatternCargoDetails.map(cargo => {
         const orderedQuantity = this.quantityPipe.transform(cargo.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
-        cargo.orderedQuantity = orderedQuantity ? Number(orderedQuantity.toFixed(2)) : 0;
+        cargo.orderedQuantity = orderedQuantity ? orderedQuantity : 0;
         const quantity = this.quantityPipe.transform(cargo.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
-        cargo.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
+        cargo.quantity = quantity ? quantity : 0;
         const difference = cargo.orderedQuantity - cargo.quantity;
         cargo.difference = difference ? Number(difference.toFixed(2)) : 0;
         return cargo;
@@ -331,7 +333,7 @@ async getPagePermission() {
       const loadablePlanStowageDetails = pattern.loadablePlanStowageDetails?.map(loadableStowage => {
         if (loadableStowage) {
           const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api);
-          loadableStowage.quantity = Number(quantity?.toFixed(2));
+          loadableStowage.quantity = Number(quantity);
         }
         return loadableStowage;
       })
@@ -339,7 +341,7 @@ async getPagePermission() {
 
       return pattern;
     });
-    if(loadablePatterns){
+    if (loadablePatterns) {
       this.loadablePatterns = JSON.parse(JSON.stringify(loadablePatterns));
     }
   }
@@ -378,6 +380,22 @@ async getPagePermission() {
         }
       }
     })
+  }
+
+
+  /**
+ * Handler for confirm plan button
+ *
+ * @param {number} loadablePatternId
+ * @memberof LoadablePatternHistoryComponent
+ */
+  onConfirmPlanClick(loadablePatternId: number) {
+    if (this.loadablePatternResponse.confirmPlanEligibility) {
+      this.confirmPlan(loadablePatternId);
+    } else {
+      this.selectedLoadablePatternId = loadablePatternId;
+      this.showPortRotationPopup = true;
+    }
   }
 
   /**
@@ -445,16 +463,30 @@ async getPagePermission() {
     this.viewMore = emittedValue;
   }
 
-    /**
-    * Method to get cargos
-    *
-    * @memberof LoadablePatternHistoryComponent
-  */
-     async getCargos() {
-      const cargos: ICargoResponseModel = await this.loadablePatternApiService.getCargos().toPromise();
-      if (cargos.responseStatus.status === '200') {
-        this.cargos = cargos.cargos;
-      }
+  /**
+  * Method to get cargos
+  *
+  * @memberof LoadablePatternHistoryComponent
+*/
+  async getCargos() {
+    const cargos: ICargoResponseModel = await this.loadablePatternApiService.getCargos().toPromise();
+    if (cargos.responseStatus.status === '200') {
+      this.cargos = cargos.cargos;
     }
-  
+  }
+
+
+  /**
+  * Method to close port rotation pop up
+  *
+  * @memberof LoadablePatternHistoryComponent
+  */
+  closePortRotationPopup(e) {
+    this.showPortRotationPopup = e.hide;
+    if (e.success) {
+      this.loadablePatternResponse.confirmPlanEligibility = false;
+      this.confirmPlan(this.selectedLoadablePatternId);
+    }
+  }
+
 }

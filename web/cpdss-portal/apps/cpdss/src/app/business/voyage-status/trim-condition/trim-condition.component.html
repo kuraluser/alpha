@@ -5,11 +5,11 @@
                 <div class="col">
                     <div class="row">
                         <div class="col text-secondary pt-25">{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</div>
-                        <div class="col text-center pt-10">{{'VOYAGE_STATUS_TRIM' | translate}} <h5 class="text-secondary"> {{trim}}{{'VOYAGE_STATUS_TRIM_UNIT'| translate}}</h5></div>
+                        <div class="col text-center pt-10">{{'VOYAGE_STATUS_TRIM' | translate}} <h5 class="text-secondary"> {{trim | number}}{{'VOYAGE_STATUS_TRIM_UNIT'| translate}}</h5></div>
                     </div>
                 </div>
                 <div class="col text-center sag">
-                    {{(hogSag < 0 ? 'VOYAGE_STATUS_HOG' : 'VOYAGE_STATUS_SAG') | translate}} <h5 class="text-secondary">{{hogSag}}{{'VOYAGE_STATUS_HOGSAG_UNIT' | translate}}</h5> 
+                    {{(hogSag < 0 ? 'VOYAGE_STATUS_HOG' : 'VOYAGE_STATUS_SAG') | translate}} <h5 class="text-secondary">{{hogSag | number}}{{'VOYAGE_STATUS_HOGSAG_UNIT' | translate}}</h5> 
                 </div>
                 <div class="col"></div>
             </div>

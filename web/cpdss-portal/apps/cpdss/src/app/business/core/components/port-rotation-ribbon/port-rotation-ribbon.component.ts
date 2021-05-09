@@ -147,7 +147,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   /**
    * Method to select port
-   * @param port 
+   * @param port
    */
   onClickPort(port: IEditPortRotation) {
     const portDetails: IVoyagePortDetails = {
@@ -177,8 +177,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   /**
    * Enable editing
-   * @param port 
-   * @param field 
+   * @param port
+   * @param field
    */
   editPort(event, port: IEditPortRotation, field: string) {
     if (![VOYAGE_STATUS.CLOSE].includes(this.voyageDetails?.statusId)) {
@@ -215,7 +215,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
   /**
    * Method to delete port
-   * @param port 
+   * @param port
    */
   async deleteRow(port) {
     const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_DELETED_SUCCESSFULLY', 'PORT_ROTATION_DELETE_ERROR', 'PORT_ROTATION_DELETE_STATUS_ERROR']).toPromise();
@@ -238,7 +238,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** 
+  /**
    * Initialize port rotation form
    *
    * @private
@@ -272,7 +272,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   /**
    * Save port details
-   * @param port 
+   * @param port
    */
 
   async save(port: IEditPortRotation) {
@@ -284,11 +284,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY', 'PORT_ROTATION_RIBBON_INVALID', 'PORT_ROTATION_RIBBON_INVALID_DATA', 'PORT_ROTATION_UPDATE_ERROR', 'PORT_ROTATION_UPDATE_STATUS_ERROR']).toPromise();
     if (form.valid) {
       if (port.type === 'Arrival') {
-        const newEtaActual = this.formatDate(form.controls['date'].value) + ' ' + this.formatDate(null, form.controls['time'].value);
+        const newEtaActual = this.timeZoneTransformationService.formatDateTime(form.controls['date'].value) + ' ' + this.timeZoneTransformationService.formatDateTime(form.controls['time'].value, {customFormat: 'HH:mm'});
         port.etaActual = this.convertToPortBasedTimeZone(newEtaActual, port?.portTimezoneId, 'portToUTC');
       }
       else {
-        const newEtdActual = this.formatDate(form.controls['date'].value) + ' ' + this.formatDate(null, form.controls['time'].value);
+        const newEtdActual = this.timeZoneTransformationService.formatDateTime(form.controls['date'].value) + ' ' + this.timeZoneTransformationService.formatDateTime(form.controls['time'].value, {customFormat: 'HH:mm'});
         port.etdActual = this.convertToPortBasedTimeZone(newEtdActual, port?.portTimezoneId, 'portToUTC');
         port.distanceBetweenPorts = form.controls['distance'].value;
       }
@@ -323,7 +323,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get form control of portRotationForm 
+   * Get form control of portRotationForm
    *
    *
    * @param {string} formControlName
@@ -358,7 +358,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   * @private
   * @param {number} formGroupIndex
   * @returns {FormGroup}
-  * @memberof PortRotationRibbonComponent 
+  * @memberof PortRotationRibbonComponent
   */
   private row(formGroupIndex: number): FormGroup {
     const formGroup = <FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(formGroupIndex);
@@ -443,41 +443,10 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * Format date and time
-  */
-  formatDate(date: Date, time?) {
-    if (time) {
-      const hour = time.getHours();
-      const minute = time.getMinutes();
-      let hourString = hour.toString()
-      let timeString = minute.toString();
-      if (hour < 10) {
-        hourString = '0' + hour;
-      }
-      if (minute < 10) {
-        timeString = '0' + minute;
-      }
-      return hourString + ':' + timeString;
-    } else {
-      const month = date?.getMonth() + 1;
-      const day = date.getDate();
-      let monthString = month.toString();
-      let dayString = day.toString();
-      if (month < 10) {
-        monthString = '0' + month;
-      }
-      if (day < 10) {
-        dayString = '0' + day;
-      }
-      return dayString + '-' + monthString + '-' + date.getFullYear();
-    }
-  }
-
-  /**
    * Method called when focusing out of the input
-   * @param event 
-   * @param port 
-   * @param type 
+   * @param event
+   * @param port
+   * @param type
    */
   onBlur(event, port, type) {
     const form = this.row(this.portList.indexOf(port));

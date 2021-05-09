@@ -6,7 +6,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12 role-listing-wrapper">
+        <div class="col-12 user-listing-wrapper">
             <cpdss-portal-datatable *ngIf="userList" [filterable]="true" [tableId]="'user_list'" [columns]="columns" [value]="userList"
                [form]="userForm" (columnClick)="viewUserDetails($event,'VIEW')" (deleteRow)="onDeleteRow($event)" (buttonClick)="resetPassword($event)" (editRow)="editUser($event, 'EDIT')"></cpdss-portal-datatable>
 
