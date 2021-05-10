@@ -20,21 +20,21 @@ public final class EnvoyWriterServiceGrpc {
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson,
+          com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest,
           com.cpdss.common.generated.EnvoyWriter.WriterReply>
       getGetLoadableStudyMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetLoadableStudy",
-      requestType = com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.class,
+      requestType = com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest.class,
       responseType = com.cpdss.common.generated.EnvoyWriter.WriterReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson,
+          com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest,
           com.cpdss.common.generated.EnvoyWriter.WriterReply>
       getGetLoadableStudyMethod() {
     io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson,
+            com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest,
             com.cpdss.common.generated.EnvoyWriter.WriterReply>
         getGetLoadableStudyMethod;
     if ((getGetLoadableStudyMethod = EnvoyWriterServiceGrpc.getGetLoadableStudyMethod) == null) {
@@ -44,7 +44,7 @@ public final class EnvoyWriterServiceGrpc {
           EnvoyWriterServiceGrpc.getGetLoadableStudyMethod =
               getGetLoadableStudyMethod =
                   io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson,
+                      .<com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest,
                           com.cpdss.common.generated.EnvoyWriter.WriterReply>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
@@ -52,7 +52,7 @@ public final class EnvoyWriterServiceGrpc {
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson
+                              com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
                                   .getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
@@ -113,7 +113,7 @@ public final class EnvoyWriterServiceGrpc {
 
     /** */
     public void getLoadableStudy(
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson request,
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply>
             responseObserver) {
       asyncUnimplementedUnaryCall(getGetLoadableStudyMethod(), responseObserver);
@@ -126,7 +126,7 @@ public final class EnvoyWriterServiceGrpc {
               getGetLoadableStudyMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
-                      com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson,
+                      com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest,
                       com.cpdss.common.generated.EnvoyWriter.WriterReply>(
                       this, METHODID_GET_LOADABLE_STUDY)))
           .build();
@@ -148,7 +148,7 @@ public final class EnvoyWriterServiceGrpc {
 
     /** */
     public void getLoadableStudy(
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson request,
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply>
             responseObserver) {
       asyncUnaryCall(
@@ -174,7 +174,7 @@ public final class EnvoyWriterServiceGrpc {
 
     /** */
     public com.cpdss.common.generated.EnvoyWriter.WriterReply getLoadableStudy(
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson request) {
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableStudyMethod(), getCallOptions(), request);
     }
@@ -196,7 +196,8 @@ public final class EnvoyWriterServiceGrpc {
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.EnvoyWriter.WriterReply>
-        getLoadableStudy(com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson request) {
+        getLoadableStudy(
+            com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyMethod(), getCallOptions()), request);
     }
@@ -223,7 +224,7 @@ public final class EnvoyWriterServiceGrpc {
       switch (methodId) {
         case METHODID_GET_LOADABLE_STUDY:
           serviceImpl.getLoadableStudy(
-              (com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson) request,
+              (com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply>)
                   responseObserver);
           break;

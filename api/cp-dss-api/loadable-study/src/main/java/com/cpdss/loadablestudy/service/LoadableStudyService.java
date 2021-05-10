@@ -5100,7 +5100,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             LOADABLE_STUDY_REQUEST,
             objectMapper.writeValueAsString(loadableStudy));
         /** **Calling EW for communication server */
-        // callToEnvoyWriter(loadableStudy);
+        EnvoyWriter.WriterReply ewReply = callToEnvoyWriter(loadableStudy);
+        if (!SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          throw new GenericServiceException(
+              "Failed to pass toWriterReply",
+              ewReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
+        }
+        this.loadableStudyRepository.updateLoadableStudyUUIDAndSeqNo(
+            ewReply.getLsUUID(), ewReply.getSequenceNo(), request.getLoadableStudyId());
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
@@ -5163,23 +5171,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  private void callToEnvoyWriter(com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy)
-      throws GenericServiceException {
+  private EnvoyWriter.WriterReply callToEnvoyWriter(
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) throws GenericServiceException {
     ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String loadableStudyJson = null;
     try {
       VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
       loadableStudyJson = ow.writeValueAsString(loadableStudy);
-      EnvoyWriter.LoadableStudyJson.Builder loadableStudyValue =
-          EnvoyWriter.LoadableStudyJson.newBuilder();
+      EnvoyWriter.WriterLoadableStudyRequest.Builder loadableStudyValue =
+          EnvoyWriter.WriterLoadableStudyRequest.newBuilder();
       loadableStudyValue.setLoadableStudy(loadableStudyJson);
       loadableStudyValue.setImoNumber(vesselReply.getImoNumber());
       loadableStudyValue.setVesselId(vesselReply.getId());
-      this.envoyWriterGrpcService.getLoadableStudy(loadableStudyValue.build());
+      return this.envoyWriterGrpcService.getLoadableStudy(loadableStudyValue.build());
 
     } catch (JsonProcessingException e) {
       log.error("Exception when when calling EnvoyWriter  ", e);
     }
+    return null;
   }
 
   /**

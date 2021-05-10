@@ -10,9 +10,9 @@ public final class EnvoyWriter {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
 
-  public interface LoadableStudyJsonOrBuilder
+  public interface WriterLoadableStudyRequestOrBuilder
       extends
-      // @@protoc_insertion_point(interface_extends:LoadableStudyJson)
+      // @@protoc_insertion_point(interface_extends:WriterLoadableStudyRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -48,18 +48,19 @@ public final class EnvoyWriter {
      */
     long getVesselId();
   }
-  /** Protobuf type {@code LoadableStudyJson} */
-  public static final class LoadableStudyJson extends com.google.protobuf.GeneratedMessageV3
+  /** Protobuf type {@code WriterLoadableStudyRequest} */
+  public static final class WriterLoadableStudyRequest
+      extends com.google.protobuf.GeneratedMessageV3
       implements
-      // @@protoc_insertion_point(message_implements:LoadableStudyJson)
-      LoadableStudyJsonOrBuilder {
+      // @@protoc_insertion_point(message_implements:WriterLoadableStudyRequest)
+      WriterLoadableStudyRequestOrBuilder {
     private static final long serialVersionUID = 0L;
-    // Use LoadableStudyJson.newBuilder() to construct.
-    private LoadableStudyJson(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use WriterLoadableStudyRequest.newBuilder() to construct.
+    private WriterLoadableStudyRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
 
-    private LoadableStudyJson() {
+    private WriterLoadableStudyRequest() {
       loadableStudy_ = "";
       imoNumber_ = "";
     }
@@ -67,7 +68,7 @@ public final class EnvoyWriter {
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-      return new LoadableStudyJson();
+      return new WriterLoadableStudyRequest();
     }
 
     @java.lang.Override
@@ -75,7 +76,7 @@ public final class EnvoyWriter {
       return this.unknownFields;
     }
 
-    private LoadableStudyJson(
+    private WriterLoadableStudyRequest(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -132,17 +133,18 @@ public final class EnvoyWriter {
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-      return com.cpdss.common.generated.EnvoyWriter.internal_static_LoadableStudyJson_descriptor;
+      return com.cpdss.common.generated.EnvoyWriter
+          .internal_static_WriterLoadableStudyRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.cpdss.common.generated.EnvoyWriter
-          .internal_static_LoadableStudyJson_fieldAccessorTable
+          .internal_static_WriterLoadableStudyRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.class,
-              com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.Builder.class);
+              com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest.class,
+              com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest.Builder.class);
     }
 
     public static final int LOADABLESTUDY_FIELD_NUMBER = 1;
@@ -277,11 +279,11 @@ public final class EnvoyWriter {
       if (obj == this) {
         return true;
       }
-      if (!(obj instanceof com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson)) {
+      if (!(obj instanceof com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest)) {
         return super.equals(obj);
       }
-      com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson other =
-          (com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson) obj;
+      com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest other =
+          (com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest) obj;
 
       if (!getLoadableStudy().equals(other.getLoadableStudy())) return false;
       if (!getImoNumber().equals(other.getImoNumber())) return false;
@@ -308,71 +310,72 @@ public final class EnvoyWriter {
       return hash;
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         java.io.InputStream input) throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
           PARSER, input, extensionRegistry);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseDelimitedFrom(
-        java.io.InputStream input) throws java.io.IOException {
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseDelimitedFrom(
-        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
           PARSER, input, extensionRegistry);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         com.google.protobuf.CodedInputStream input) throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parseFrom(
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -390,7 +393,7 @@ public final class EnvoyWriter {
     }
 
     public static Builder newBuilder(
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson prototype) {
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
 
@@ -405,27 +408,29 @@ public final class EnvoyWriter {
       Builder builder = new Builder(parent);
       return builder;
     }
-    /** Protobuf type {@code LoadableStudyJson} */
+    /** Protobuf type {@code WriterLoadableStudyRequest} */
     public static final class Builder
         extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
         implements
-        // @@protoc_insertion_point(builder_implements:LoadableStudyJson)
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJsonOrBuilder {
+        // @@protoc_insertion_point(builder_implements:WriterLoadableStudyRequest)
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-        return com.cpdss.common.generated.EnvoyWriter.internal_static_LoadableStudyJson_descriptor;
+        return com.cpdss.common.generated.EnvoyWriter
+            .internal_static_WriterLoadableStudyRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return com.cpdss.common.generated.EnvoyWriter
-            .internal_static_LoadableStudyJson_fieldAccessorTable
+            .internal_static_WriterLoadableStudyRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.class,
-                com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.Builder.class);
+                com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest.class,
+                com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest.Builder.class);
       }
 
-      // Construct using com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.newBuilder()
+      // Construct using
+      // com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -453,17 +458,20 @@ public final class EnvoyWriter {
 
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-        return com.cpdss.common.generated.EnvoyWriter.internal_static_LoadableStudyJson_descriptor;
+        return com.cpdss.common.generated.EnvoyWriter
+            .internal_static_WriterLoadableStudyRequest_descriptor;
       }
 
       @java.lang.Override
-      public com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson getDefaultInstanceForType() {
-        return com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.getDefaultInstance();
+      public com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+            .getDefaultInstance();
       }
 
       @java.lang.Override
-      public com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson build() {
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson result = buildPartial();
+      public com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest build() {
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -471,9 +479,9 @@ public final class EnvoyWriter {
       }
 
       @java.lang.Override
-      public com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson buildPartial() {
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson result =
-            new com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson(this);
+      public com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest buildPartial() {
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest result =
+            new com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest(this);
         result.loadableStudy_ = loadableStudy_;
         result.imoNumber_ = imoNumber_;
         result.vesselId_ = vesselId_;
@@ -518,17 +526,20 @@ public final class EnvoyWriter {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson) {
-          return mergeFrom((com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson) other);
+        if (other instanceof com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest) {
+          return mergeFrom(
+              (com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest) other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson other) {
-        if (other == com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson.getDefaultInstance())
-          return this;
+      public Builder mergeFrom(
+          com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest other) {
+        if (other
+            == com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+                .getDefaultInstance()) return this;
         if (!other.getLoadableStudy().isEmpty()) {
           loadableStudy_ = other.loadableStudy_;
           onChanged();
@@ -555,12 +566,13 @@ public final class EnvoyWriter {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson parsedMessage = null;
+        com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage =
-              (com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson) e.getUnfinishedMessage();
+              (com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest)
+                  e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -767,42 +779,45 @@ public final class EnvoyWriter {
         return super.mergeUnknownFields(unknownFields);
       }
 
-      // @@protoc_insertion_point(builder_scope:LoadableStudyJson)
+      // @@protoc_insertion_point(builder_scope:WriterLoadableStudyRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:LoadableStudyJson)
-    private static final com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:WriterLoadableStudyRequest)
+    private static final com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+        DEFAULT_INSTANCE;
 
     static {
-      DEFAULT_INSTANCE = new com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson();
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest();
     }
 
-    public static com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson getDefaultInstance() {
+    public static com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+        getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<LoadableStudyJson> PARSER =
-        new com.google.protobuf.AbstractParser<LoadableStudyJson>() {
+    private static final com.google.protobuf.Parser<WriterLoadableStudyRequest> PARSER =
+        new com.google.protobuf.AbstractParser<WriterLoadableStudyRequest>() {
           @java.lang.Override
-          public LoadableStudyJson parsePartialFrom(
+          public WriterLoadableStudyRequest parsePartialFrom(
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws com.google.protobuf.InvalidProtocolBufferException {
-            return new LoadableStudyJson(input, extensionRegistry);
+            return new WriterLoadableStudyRequest(input, extensionRegistry);
           }
         };
 
-    public static com.google.protobuf.Parser<LoadableStudyJson> parser() {
+    public static com.google.protobuf.Parser<WriterLoadableStudyRequest> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<LoadableStudyJson> getParserForType() {
+    public com.google.protobuf.Parser<WriterLoadableStudyRequest> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson getDefaultInstanceForType() {
+    public com.cpdss.common.generated.EnvoyWriter.WriterLoadableStudyRequest
+        getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
   }
@@ -826,6 +841,32 @@ public final class EnvoyWriter {
     com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
     /** <code>.ResponseStatus responseStatus = 1;</code> */
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>string lsUUID = 2;</code>
+     *
+     * @return The lsUUID.
+     */
+    java.lang.String getLsUUID();
+    /**
+     * <code>string lsUUID = 2;</code>
+     *
+     * @return The bytes for lsUUID.
+     */
+    com.google.protobuf.ByteString getLsUUIDBytes();
+
+    /**
+     * <code>string sequenceNo = 3;</code>
+     *
+     * @return The sequenceNo.
+     */
+    java.lang.String getSequenceNo();
+    /**
+     * <code>string sequenceNo = 3;</code>
+     *
+     * @return The bytes for sequenceNo.
+     */
+    com.google.protobuf.ByteString getSequenceNoBytes();
   }
   /** Protobuf type {@code WriterReply} */
   public static final class WriterReply extends com.google.protobuf.GeneratedMessageV3
@@ -838,7 +879,10 @@ public final class EnvoyWriter {
       super(builder);
     }
 
-    private WriterReply() {}
+    private WriterReply() {
+      lsUUID_ = "";
+      sequenceNo_ = "";
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -884,6 +928,20 @@ public final class EnvoyWriter {
                   responseStatus_ = subBuilder.buildPartial();
                 }
 
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lsUUID_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                sequenceNo_ = s;
                 break;
               }
             default:
@@ -943,6 +1001,76 @@ public final class EnvoyWriter {
       return getResponseStatus();
     }
 
+    public static final int LSUUID_FIELD_NUMBER = 2;
+    private volatile java.lang.Object lsUUID_;
+    /**
+     * <code>string lsUUID = 2;</code>
+     *
+     * @return The lsUUID.
+     */
+    public java.lang.String getLsUUID() {
+      java.lang.Object ref = lsUUID_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lsUUID_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lsUUID = 2;</code>
+     *
+     * @return The bytes for lsUUID.
+     */
+    public com.google.protobuf.ByteString getLsUUIDBytes() {
+      java.lang.Object ref = lsUUID_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lsUUID_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SEQUENCENO_FIELD_NUMBER = 3;
+    private volatile java.lang.Object sequenceNo_;
+    /**
+     * <code>string sequenceNo = 3;</code>
+     *
+     * @return The sequenceNo.
+     */
+    public java.lang.String getSequenceNo() {
+      java.lang.Object ref = sequenceNo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sequenceNo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string sequenceNo = 3;</code>
+     *
+     * @return The bytes for sequenceNo.
+     */
+    public com.google.protobuf.ByteString getSequenceNoBytes() {
+      java.lang.Object ref = sequenceNo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        sequenceNo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -960,6 +1088,12 @@ public final class EnvoyWriter {
       if (responseStatus_ != null) {
         output.writeMessage(1, getResponseStatus());
       }
+      if (!getLsUUIDBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, lsUUID_);
+      }
+      if (!getSequenceNoBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, sequenceNo_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -971,6 +1105,12 @@ public final class EnvoyWriter {
       size = 0;
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      if (!getLsUUIDBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, lsUUID_);
+      }
+      if (!getSequenceNoBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, sequenceNo_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -992,6 +1132,8 @@ public final class EnvoyWriter {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
+      if (!getLsUUID().equals(other.getLsUUID())) return false;
+      if (!getSequenceNo().equals(other.getSequenceNo())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1007,6 +1149,10 @@ public final class EnvoyWriter {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
+      hash = (37 * hash) + LSUUID_FIELD_NUMBER;
+      hash = (53 * hash) + getLsUUID().hashCode();
+      hash = (37 * hash) + SEQUENCENO_FIELD_NUMBER;
+      hash = (53 * hash) + getSequenceNo().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1150,6 +1296,10 @@ public final class EnvoyWriter {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
         }
+        lsUUID_ = "";
+
+        sequenceNo_ = "";
+
         return this;
       }
 
@@ -1181,6 +1331,8 @@ public final class EnvoyWriter {
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
+        result.lsUUID_ = lsUUID_;
+        result.sequenceNo_ = sequenceNo_;
         onBuilt();
         return result;
       }
@@ -1235,6 +1387,14 @@ public final class EnvoyWriter {
           return this;
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
+        }
+        if (!other.getLsUUID().isEmpty()) {
+          lsUUID_ = other.lsUUID_;
+          onChanged();
+        }
+        if (!other.getSequenceNo().isEmpty()) {
+          sequenceNo_ = other.sequenceNo_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1385,6 +1545,158 @@ public final class EnvoyWriter {
         return responseStatusBuilder_;
       }
 
+      private java.lang.Object lsUUID_ = "";
+      /**
+       * <code>string lsUUID = 2;</code>
+       *
+       * @return The lsUUID.
+       */
+      public java.lang.String getLsUUID() {
+        java.lang.Object ref = lsUUID_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lsUUID_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lsUUID = 2;</code>
+       *
+       * @return The bytes for lsUUID.
+       */
+      public com.google.protobuf.ByteString getLsUUIDBytes() {
+        java.lang.Object ref = lsUUID_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lsUUID_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lsUUID = 2;</code>
+       *
+       * @param value The lsUUID to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLsUUID(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lsUUID_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lsUUID = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLsUUID() {
+
+        lsUUID_ = getDefaultInstance().getLsUUID();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lsUUID = 2;</code>
+       *
+       * @param value The bytes for lsUUID to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLsUUIDBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lsUUID_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sequenceNo_ = "";
+      /**
+       * <code>string sequenceNo = 3;</code>
+       *
+       * @return The sequenceNo.
+       */
+      public java.lang.String getSequenceNo() {
+        java.lang.Object ref = sequenceNo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sequenceNo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string sequenceNo = 3;</code>
+       *
+       * @return The bytes for sequenceNo.
+       */
+      public com.google.protobuf.ByteString getSequenceNoBytes() {
+        java.lang.Object ref = sequenceNo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          sequenceNo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string sequenceNo = 3;</code>
+       *
+       * @param value The sequenceNo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSequenceNo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        sequenceNo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sequenceNo = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSequenceNo() {
+
+        sequenceNo_ = getDefaultInstance().getSequenceNo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sequenceNo = 3;</code>
+       *
+       * @param value The bytes for sequenceNo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSequenceNoBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        sequenceNo_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1438,9 +1750,9 @@ public final class EnvoyWriter {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-      internal_static_LoadableStudyJson_descriptor;
+      internal_static_WriterLoadableStudyRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_LoadableStudyJson_fieldAccessorTable;
+      internal_static_WriterLoadableStudyRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_WriterReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -1454,14 +1766,15 @@ public final class EnvoyWriter {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\022envoy-writer.proto\032\014common.proto\"O\n\021Lo"
-          + "adableStudyJson\022\025\n\rloadableStudy\030\001 \001(\t\022\021"
-          + "\n\timoNumber\030\002 \001(\t\022\020\n\010vesselId\030\003 \001(\003\"6\n\013W"
-          + "riterReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res"
-          + "ponseStatus2L\n\022EnvoyWriterService\0226\n\020Get"
-          + "LoadableStudy\022\022.LoadableStudyJson\032\014.Writ"
-          + "erReply\"\000B\036\n\032com.cpdss.common.generatedP"
-          + "\000b\006proto3"
+      "\n\022envoy-writer.proto\032\014common.proto\"X\n\032Wr"
+          + "iterLoadableStudyRequest\022\025\n\rloadableStud"
+          + "y\030\001 \001(\t\022\021\n\timoNumber\030\002 \001(\t\022\020\n\010vesselId\030\003"
+          + " \001(\003\"Z\n\013WriterReply\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\022\016\n\006lsUUID\030\002 \001(\t\022\022\n\n"
+          + "sequenceNo\030\003 \001(\t2U\n\022EnvoyWriterService\022?"
+          + "\n\020GetLoadableStudy\022\033.WriterLoadableStudy"
+          + "Request\032\014.WriterReply\"\000B\036\n\032com.cpdss.com"
+          + "mon.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1469,10 +1782,11 @@ public final class EnvoyWriter {
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
             });
-    internal_static_LoadableStudyJson_descriptor = getDescriptor().getMessageTypes().get(0);
-    internal_static_LoadableStudyJson_fieldAccessorTable =
+    internal_static_WriterLoadableStudyRequest_descriptor =
+        getDescriptor().getMessageTypes().get(0);
+    internal_static_WriterLoadableStudyRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-            internal_static_LoadableStudyJson_descriptor,
+            internal_static_WriterLoadableStudyRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudy", "ImoNumber", "VesselId",
             });
@@ -1481,7 +1795,7 @@ public final class EnvoyWriter {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_WriterReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus",
+              "ResponseStatus", "LsUUID", "SequenceNo",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

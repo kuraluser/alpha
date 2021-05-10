@@ -13,7 +13,7 @@ public class EnvoyWriterService extends EnvoyWriterServiceGrpc.EnvoyWriterServic
 
   @Override
   public void getLoadableStudy(
-      EnvoyWriter.LoadableStudyJson request,
+      EnvoyWriter.WriterLoadableStudyRequest request,
       StreamObserver<EnvoyWriter.WriterReply> responseObserver) {
     log.info("Inside getLoadableStudy service");
     String imoNumber = request.getImoNumber();
