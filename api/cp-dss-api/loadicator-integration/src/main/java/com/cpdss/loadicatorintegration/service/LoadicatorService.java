@@ -46,6 +46,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -60,6 +61,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   @Autowired private LoadicatorIntactStabilityRepository loadicatorIntactStabilityRepository;
   @Autowired private CargoDataRepository cargoDataRepository;
   @Autowired private StowageDetailsRepository stowageDetailsRepository;
+
+  @Autowired private ThreadPoolTaskExecutor taskExecutor;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -100,17 +103,24 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
       this.updateStowageDetails(stowagePlanList);
 
-      if (this.getStatus(stowagePlanList)) {
-        log.info("Loadicator check completed");
-        LoadicatorDataRequest loadableStudyrequest =
-            this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
+      this.taskExecutor.execute(
+          () -> {
+            try {
+              this.getStatus(stowagePlanList, request.getIsPattern());
+            } catch (InterruptedException e) {
+              log.error("Encounted error while checking loadicator status");
+              replyBuilder.setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage("Encounted error while checking loadicator status")
+                      .setStatus(FAILED)
+                      .build());
+            }
+          });
 
-        this.getLoadicatorDatas(loadableStudyrequest);
-
-        replyBuilder
-            .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
-            .build();
-      }
+      replyBuilder
+          .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
+          .build();
     } catch (Exception e) {
       log.error("Error saving stowage plan", e);
       replyBuilder.setResponseStatus(
@@ -312,7 +322,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     return stowagePlan;
   }
 
-  public boolean getStatus(List<StowagePlan> stowagePlans) throws InterruptedException {
+  public void getStatus(List<StowagePlan> stowagePlans, Boolean isPattern)
+      throws InterruptedException {
     boolean status = false;
     do {
       log.info("Checking loadicator status");
@@ -324,9 +335,13 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
+        log.info("Loadicator check completed");
+        LoadicatorDataRequest loadableStudyrequest =
+            this.sendLoadicatorData(stowagePlanList, isPattern);
+
+        this.getLoadicatorDatas(loadableStudyrequest);
       }
     } while (!status);
-    return status;
   }
 
   /**
