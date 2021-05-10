@@ -2285,6 +2285,9 @@ public class LoadableStudyService {
             cargoNomination.setId(cargoNominationDetail.getId());
             cargoNomination.setColor(cargoNominationDetail.getColor());
             cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+            if (cargoNominationDetail.getApiEst().length() > 0) {
+              cargoNomination.setApi(new BigDecimal(cargoNominationDetail.getApiEst()));
+            }
             if (!CollectionUtils.isEmpty(cargoNominationDetail.getLoadingPortDetailsList())) {
               List<LoadingPort> loadingPortList = new ArrayList<>();
               cargoNominationDetail

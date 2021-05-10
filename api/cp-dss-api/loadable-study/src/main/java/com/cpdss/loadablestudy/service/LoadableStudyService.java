@@ -1728,6 +1728,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             Optional.ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             Optional.ofNullable(cargoNomination.getAbbreviation())
                 .ifPresent(builder::setAbbreviation);
+            Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
             // build inner loadingPort details object
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
               cargoNomination
