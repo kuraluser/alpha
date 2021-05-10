@@ -342,8 +342,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
-  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED = 16L;
-  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
