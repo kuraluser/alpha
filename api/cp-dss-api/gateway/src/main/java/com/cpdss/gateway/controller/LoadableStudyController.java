@@ -1993,6 +1993,23 @@ public class LoadableStudyController {
     }
   }
 
+  @GetMapping(value = "test")
+  public void test(@RequestHeader HttpHeaders headers) throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      this.loadableStudyService.test();
+
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
   @GetMapping(value = "/vessels/{vesselId}/ports/{portId}/cargos/{cargoId}/cargo-history")
   public LatestApiTempCargoResponse getLatestTempApiByCargo(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,

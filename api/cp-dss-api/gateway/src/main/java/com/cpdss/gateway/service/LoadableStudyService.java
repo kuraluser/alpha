@@ -9,6 +9,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
+import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
@@ -208,6 +210,9 @@ public class LoadableStudyService {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("envoywritersrvice")
+  private EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
 
   @Autowired UserService userService;
 
@@ -5624,5 +5629,12 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     return buildErrorResponse(grpcReply, correlationId);
+  }
+
+  /** @return Object */
+  public Object test() {
+    LoadableStudyJson.Builder error = LoadableStudyJson.newBuilder();
+    this.envoyWriterGrpcService.getLoadableStudy(error.build());
+    return null;
   }
 }
