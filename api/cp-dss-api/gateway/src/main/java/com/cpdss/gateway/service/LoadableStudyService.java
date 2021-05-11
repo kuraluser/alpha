@@ -4457,8 +4457,7 @@ public class LoadableStudyService {
       comment.setId(grpcReply.getComment().getCommentId());
       comment.setDataAndTime(grpcReply.getComment().getCreateDate());
       comment.setUserName(
-          this.userService.getUserNameFromUserId(
-              String.valueOf(grpcReply.getComment().getUser()), authorizationToken));
+          this.userService.getUserNameFromUserId(String.valueOf(grpcReply.getComment().getUser())));
       response.setComment(comment);
     }
     response.setResponseStatus(
