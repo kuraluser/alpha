@@ -86,6 +86,14 @@ public class LoadableQuantityService {
     String seaWaterDensity = "";
     String dwtValue = "";
 
+    if (portRotationId == 0) {
+      // GRPC call to Vessel Info
+      dwtValue =
+          String.valueOf(
+              this.getDWTByVesselId(
+                  loadableStudy.get().getVesselXId(), loadableStudy.get().getDraftMark()));
+    }
+
     if (!portRIds.isEmpty() && portRIds.get(portRotationId) != null) {
       boolean isLoadingPort = true;
       LoadableStudyPortRotation portRotation =
