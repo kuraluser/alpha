@@ -57,6 +57,12 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
 
   @Transactional
   @Modifying
-  @Query("UPDATE LoadablePattern LP SET LP.isActive = false WHERE LP.id = ?1")
+  @Query("UPDATE LoadablePattern SET isActive = false WHERE id = ?1")
   public void deleteLoadablePattern(Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadablePattern SET feedbackLoop = ?1, feedbackLoopCount = ?2 WHERE id = ?3")
+  public void updateLoadablePatternFeedbackLoopAndFeedbackLoopCount(
+      Boolean feedbackLoop, Integer feedbackLoopCount, Long id);
 }
