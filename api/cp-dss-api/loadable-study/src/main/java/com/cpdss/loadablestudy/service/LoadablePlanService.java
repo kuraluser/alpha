@@ -15,6 +15,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +67,11 @@ public class LoadablePlanService {
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           Optional.ofNullable(lpq.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
 
+          if (lpq.getCargoXId() != null) {
+            log.info("Loadable Plan Quantity, Cargo Id {}", lpq.getCargoXId());
+          }
           try { // collect port names - for each LQ
-            this.setLoadingPortForLoadableQuantityCargoDetails(lpq, builder);
+            this.setLoadingPortNameFromCargoOperation(lpq, builder);
           } catch (Exception e) {
             log.info("Loadable Pattern Details, Failed to fetch Port Info ", e);
           }
@@ -178,6 +182,39 @@ public class LoadablePlanService {
     }
   }
 
+  boolean setLoadingPortNameFromCargoOperation(
+      LoadablePlanQuantity lpQuantity, LoadableStudy.LoadableQuantityCargoDetails.Builder builder) {
+    Optional<CargoNomination> cN =
+        cargoNominationRepository.findByIdAndIsActive(lpQuantity.getCargoNominationId(), true);
+    if (cN.isPresent()) {
+      if (cN.get().getCargoXId().equals(lpQuantity.getCargoXId())) {
+        Set<CargoNominationPortDetails> cnPD = cN.get().getCargoNominationPortDetails();
+        if (!cnPD.isEmpty()) {
+          for (CargoNominationPortDetails var1 : cnPD) {
+            if (var1.getPortId() != null) {
+              LoadableStudy.LoadingPortDetail.Builder a =
+                  this.fetchPortNameFromPortService(var1.getPortId());
+              builder.addLoadingPorts(a);
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * As we are getting duplicate Port Name, this logic not Using.
+   *
+   * <p>Reason for duplicate, every time vessel reach and leave from port, a record will add to
+   * LPCD. So each record is consider as, arrival and departure condition. We cannot find the
+   * loading ports. So, we user cargo nomination for the Find Loading ports. See above:
+   * setLoadingPortNameFromCargoOperation(vl1, vl2)
+   *
+   * @param lpQuantity
+   * @param builder
+   * @return
+   */
   boolean setLoadingPortForLoadableQuantityCargoDetails(
       LoadablePlanQuantity lpQuantity, LoadableStudy.LoadableQuantityCargoDetails.Builder builder) {
     LoadableStudy.LoadingPortDetail.Builder portsBuilder =
@@ -188,6 +225,7 @@ public class LoadablePlanService {
     List<Long> lpPortRotationIds =
         lpCargoDetailsRepository.findAllPortRotationIdByCargoNomination(
             lpQuantity.getCargoNominationId());
+    log.info("Port Rotation Ids From Loadable Plan Quantity, Size {}", lpPortRotationIds.size());
     if (!lpPortRotationIds.isEmpty()) { // all unique, because it fetch by distinct query
       for (Long id : lpPortRotationIds) {
         LoadableStudyPortRotation lsPR = portRotationRepository.findByIdAndIsActive(id, true);
@@ -213,8 +251,7 @@ public class LoadablePlanService {
       if (portInfo.isPresent()) {
         LoadableStudy.LoadingPortDetail.Builder portsBuilder =
             LoadableStudy.LoadingPortDetail.newBuilder();
-        log.info(
-            "Port name received from ports, id - {} name -{}", portId, portInfo.get().getName());
+        log.info("Port Info Service, port id {} and name {}", portId, portInfo.get().getName());
         portsBuilder.setName(portInfo.get().getName()).setPortId(portInfo.get().getId()).build();
         return portsBuilder;
       }

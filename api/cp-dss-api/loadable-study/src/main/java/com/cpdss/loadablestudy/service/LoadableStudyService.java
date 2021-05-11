@@ -3739,11 +3739,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
     }
     log.info(
-        "Loadable Study, Validate Plan status - {}, LS Id - {}",
+        "Loadable Study, Validate Plan, status - {}, LS Id - {}",
         validationStack.isEmpty(),
         ls.getId());
     if (!validationStack.isEmpty()) {
-      log.info("Loadable Study, Invalid Port Rotaion Ids - {}", validationStack.keySet());
+      log.info(
+          "Loadable Study, Validate Plan, Invalid Port Rotaion Ids - {}", validationStack.keySet());
     }
     return validationStack.isEmpty();
   }
@@ -3781,6 +3782,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         List<LoadablePattern> loadablePatterns =
             loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
                 loadableStudy.get(), true);
+        log.info(
+            "Loadable Patterns, Found {} loadaple patterns for LS {}, Id {}",
+            loadablePatterns.size(),
+            loadableStudy.get().getName(),
+            loadableStudy.get().getId());
         loadablePatterns.forEach(
             loadablePattern -> {
               loadablePatternBuilder.setLoadablePatternId(loadablePattern.getId());
@@ -3836,9 +3842,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePatternBuilder.addAllLoadablePlanStowageDetails(modifieableList);
 
               // <--DSS-2016-->
+              // loadableQuantityCargoDetails in json response
               List<LoadablePlanQuantity> loadablePlanQuantities =
                   loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
+              log.info(
+                  "Loadable Patters, Loadable Plan Quantity Size {}",
+                  loadablePlanQuantities.size());
               loadablePlanService.buildLoadablePlanQuantity(
                   loadablePlanQuantities, loadablePatternBuilder);
               List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
