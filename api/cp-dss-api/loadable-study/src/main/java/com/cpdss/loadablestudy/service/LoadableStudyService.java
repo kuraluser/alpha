@@ -342,13 +342,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
-  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED = 16L;
-  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
   private static final Long LOADABLE_PATTERN_VALIDATION_STARTED_ID = 14L;
   private static final Long LOADABLE_PATTERN_VALIDATION_COMPLETED_ID = 15L;
+
+  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED = 16L;
+  private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
+  private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
+  private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_ENDED = 19L;
+
   private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
@@ -474,8 +478,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
 
   private static final Long LOADABLE_STUDY_REQUEST = 1L;
-
+  private static final Long LOADABLE_STUDY_LOADICATOR_REQUEST = 3L;
+  private static final Long LOADABLE_STUDY_LOADICATOR_RESPONSE = 4L;
   private static final Long LOADABLE_PATTERN_EDIT_REQUEST = 5L;
+  private static final Long LOADABLE_PATTERN_EDIT_LOADICATOR_REQUEST = 7L;
+  private static final Long LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE = 8L;
 
   private static final String TYPE_DEPARTURE = "Departure";
 
@@ -5251,63 +5258,81 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorAlgoRequest loadicator = new LoadicatorAlgoRequest();
       this.buildLoadicatorUrlRequest(request, loadicator);
       ObjectMapper objectMapper = new ObjectMapper();
-
-      if (request.getIsPattern()) {
-        objectMapper.writeValue(
-            new File(
-                this.rootFolder
-                    + "/json/loadicator_pattern_"
-                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
-                    + ".json"),
-            loadicator);
-      } else {
-        objectMapper.writeValue(
-            new File(
-                this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
-            loadicator);
-      }
+      this.saveLoadicatorAlgoRequest(request, loadicator, objectMapper);
       LoadicatorAlgoResponse algoResponse =
           restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
-
-      if (!request.getIsPattern()) {
-        if (algoResponse.getFeedbackLoop() != null && algoResponse.getFeedbackLoop()) {
-          if (algoResponse.getFeedbackLoopCount() == 1) {
+      this.saveLoadicatorAlgoResponse(request, algoResponse, objectMapper);
+      if (algoResponse.getFeedbackLoop() != null) {
+        if (!request.getIsPattern()) {
+          if (algoResponse.getFeedbackLoop()) {
             log.info(
                 "I2R Algorithm has started feedback loop for loadable study "
                     + request.getLoadableStudyId());
+            this.updateFeedbackLoopParameters(
+                request.getLoadableStudyId(),
+                false,
+                true,
+                algoResponse.getFeedbackLoopCount(),
+                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED);
+            Optional<LoadableStudy> loadableStudyOpt =
+                this.loadableStudyRepository.findByIdAndIsActive(
+                    request.getLoadableStudyId(), true);
+            if (loadableStudyOpt.isPresent()) {
+              log.info("Deleting existing patterns");
+              this.loadablePatternRepository
+                  .findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true)
+                  .forEach(
+                      loadablePattern -> {
+                        log.info("Deleting loadable pattern " + loadablePattern.getId());
+                        this.loadablePatternRepository.deleteLoadablePattern(
+                            loadablePattern.getId());
+                        this.deleteExistingPlanDetails(loadablePattern);
+                      });
+            } else {
+              log.error("Loadable Study not found in database");
+              throw new Exception("Loadable Study not found in database");
+            }
           } else {
-            log.info("Feedback loop count: " + algoResponse.getFeedbackLoopCount());
-          }
-          this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
-              true, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
-          Optional<LoadableStudy> loadableStudyOpt =
-              this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-          if (loadableStudyOpt.isPresent()) {
-            this.loadableStudyRepository.updateLoadableStudyStatus(
-                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, loadableStudyOpt.get().getId());
-            log.info("Deleting existing patterns");
-            this.loadablePatternRepository
-                .findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true)
-                .forEach(
-                    loadablePattern -> {
-                      log.info("Deleting loadable pattern " + loadablePattern.getId());
-                      this.loadablePatternRepository.deleteLoadablePattern(loadablePattern.getId());
-                      this.deleteExistingPlanDetails(loadablePattern);
-                    });
-          } else {
-            log.error("Loadable Study not found in database");
-            throw new Exception("Loadable Study not found in database");
+            log.info("Feedback Loop ended for loadable study " + request.getLoadableStudyId());
+            this.updateFeedbackLoopParameters(
+                request.getLoadableStudyId(),
+                false,
+                false,
+                algoResponse.getFeedbackLoopCount(),
+                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED);
+            this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+            loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+                algoResponse.getProcessId(),
+                true);
           }
         } else {
-          this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
-              false, algoResponse.getFeedbackLoopCount(), request.getLoadableStudyId());
-          this.loadableStudyRepository.updateLoadableStudyStatus(
-              LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED, request.getLoadableStudyId());
-          this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-              LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-              algoResponse.getProcessId(),
-              true);
+          if (algoResponse.getFeedbackLoop()) {
+            log.info(
+                "I2R Algorithm has started feedback loop for loadable pattern "
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId());
+            this.updateFeedbackLoopParameters(
+                request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+                true,
+                true,
+                algoResponse.getFeedbackLoopCount(),
+                LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED);
+          } else {
+            log.info(
+                "Feedback loop ended for loadable pattern "
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId());
+            this.updateFeedbackLoopParameters(
+                request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+                true,
+                false,
+                algoResponse.getFeedbackLoopCount(),
+                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED);
+            this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+            loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+                algoResponse.getProcessId(),
+                true);
+          }
         }
       } else {
         this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
@@ -5334,6 +5359,107 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Update Feedback Loop parameters for loadable study/ loadable pattern
+   *
+   * @param id
+   * @param isPattern
+   * @param feedbackLoop
+   * @param feedbackLoopCount
+   * @param status
+   */
+  private void updateFeedbackLoopParameters(
+      Long id, Boolean isPattern, Boolean feedbackLoop, Integer feedbackLoopCount, Long status) {
+    if (isPattern) {
+      this.loadablePatternRepository.updateLoadablePatternStatus(status, id);
+      this.loadablePatternRepository.updateLoadablePatternFeedbackLoopAndFeedbackLoopCount(
+          feedbackLoop, feedbackLoopCount, id);
+    } else {
+      this.loadableStudyRepository.updateLoadableStudyStatus(status, id);
+      this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
+          feedbackLoop, feedbackLoopCount, id);
+    }
+  }
+
+  /**
+   * Save Loadicator ALGO request
+   *
+   * @param request
+   * @param loadicator
+   * @param objectMapper
+   */
+  private void saveLoadicatorAlgoRequest(
+      LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator, ObjectMapper objectMapper) {
+    log.info("Saving Loadicator ALGO request to database");
+    try {
+      if (request.getIsPattern()) {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_pattern_"
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
+                    + ".json"),
+            loadicator);
+        this.saveJsonToDatabase(
+            request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+            LOADABLE_PATTERN_EDIT_LOADICATOR_REQUEST,
+            objectMapper.writeValueAsString(loadicator));
+      } else {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+            loadicator);
+        this.saveJsonToDatabase(
+            request.getLoadableStudyId(),
+            LOADABLE_STUDY_LOADICATOR_REQUEST,
+            objectMapper.writeValueAsString(loadicator));
+      }
+    } catch (Exception e) {
+      log.error("Encountered error while saving loadicator request json");
+    }
+  }
+
+  /**
+   * Save Loadicator ALGO reponse
+   *
+   * @param request
+   * @param response
+   * @param objectMapper
+   */
+  private void saveLoadicatorAlgoResponse(
+      LoadicatorDataRequest request, LoadicatorAlgoResponse response, ObjectMapper objectMapper) {
+    log.info("Saving Loadicator ALGO response to database");
+    try {
+      if (request.getIsPattern()) {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_algo_response_pattern_"
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
+                    + ".json"),
+            response);
+        this.saveJsonToDatabase(
+            request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+            LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE,
+            objectMapper.writeValueAsString(response));
+      } else {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_algo_response_"
+                    + request.getLoadableStudyId()
+                    + ".json"),
+            response);
+        this.saveJsonToDatabase(
+            request.getLoadableStudyId(),
+            LOADABLE_STUDY_LOADICATOR_RESPONSE,
+            objectMapper.writeValueAsString(response));
+      }
+    } catch (Exception e) {
+      log.error("Encountered error while saving loadicator response json");
     }
   }
 
