@@ -5112,6 +5112,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (loadableStudyOpt.isPresent()) {
         this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+        this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
         ModelMapper modelMapper = new ModelMapper();
         com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
             new com.cpdss.loadablestudy.domain.LoadableStudy();
@@ -5191,6 +5192,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
+    List<LoadableQuantity> lQs =
+        loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(ls.getId(), true);
+    if (lQs.isEmpty()) {
+      log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
+      throw new GenericServiceException(
+          "No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
+          CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 

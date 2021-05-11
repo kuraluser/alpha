@@ -2470,9 +2470,9 @@ public class LoadableStudyService {
         new LoadablePatternDetailsResponse();
     loadablePatternDetailsResponse.setId(loadablePatternCommingleDetailsReply.getId());
     loadablePatternDetailsResponse.setApi(loadablePatternCommingleDetailsReply.getApi());
-    loadablePatternDetailsResponse.setCargo1Abbrivation(
+    loadablePatternDetailsResponse.setCargo1Abbreviation(
         loadablePatternCommingleDetailsReply.getCargo1Abbrivation());
-    loadablePatternDetailsResponse.setCargo2Abbrivation(
+    loadablePatternDetailsResponse.setCargo2Abbreviation(
         loadablePatternCommingleDetailsReply.getCargo2Abbrivation());
     loadablePatternDetailsResponse.setCargo1Percentage(
         loadablePatternCommingleDetailsReply.getCargo1Percentage());
@@ -2518,6 +2518,17 @@ public class LoadableStudyService {
     AlgoReply reply = this.generateLoadablePatterns(request);
 
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      if (reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_LS_INVALID_LQ)) {
+        log.info("Generate Pattern Failed on Lodable Quantity Validation");
+        throw new GenericServiceException(
+            "Generate pattern failed, On Invalid Loadable Quantity",
+            reply.getResponseStatus().getCode(),
+            reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_LS_INVALID_LQ)
+                ? HttpStatusCode.INTERNAL_SERVER_ERROR
+                : HttpStatusCode.valueOf(
+                    Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+      }
+
       throw new GenericServiceException(
           "failed to call algo",
           reply.getResponseStatus().getCode(),
