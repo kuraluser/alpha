@@ -2,9 +2,12 @@
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
@@ -2450,6 +2453,57 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+      getGetLoadablePlanReportMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadablePlanReport",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+      getGetLoadablePlanReportMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+        getGetLoadablePlanReportMethod;
+    if ((getGetLoadablePlanReportMethod = LoadableStudyServiceGrpc.getGetLoadablePlanReportMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePlanReportMethod =
+                LoadableStudyServiceGrpc.getGetLoadablePlanReportMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadablePlanReportMethod =
+              getGetLoadablePlanReportMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadablePlanReport"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetLoadablePlanReport"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePlanReportMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
           com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
       getGetAlgoErrorsMethod;
@@ -3275,6 +3329,21 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetVoyagesMethod(), responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Generate loadable plan excel report
+     * </pre>
+     */
+    public void getLoadablePlanReport(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadablePlanReportMethod(), responseObserver);
+    }
+
     /** */
     public void getAlgoErrors(
         com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
@@ -3680,6 +3749,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                       com.cpdss.common.generated.LoadableStudy.VoyageListReply>(
                       this, METHODID_GET_VOYAGES)))
+          .addMethod(
+              getGetLoadablePlanReportMethod(),
+              asyncServerStreamingCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>(
+                      this, METHODID_GET_LOADABLE_PLAN_REPORT)))
           .addMethod(
               getGetAlgoErrorsMethod(),
               asyncUnaryCall(
@@ -4283,6 +4359,24 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetVoyagesMethod(), getCallOptions()), request, responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Generate loadable plan excel report
+     * </pre>
+     */
+    public void getLoadablePlanReport(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+            responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getGetLoadablePlanReportMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
     /** */
     public void getAlgoErrors(
         com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
@@ -4720,6 +4814,20 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.VoyageListReply getVoyages(
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return blockingUnaryCall(getChannel(), getGetVoyagesMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Generate loadable plan excel report
+     * </pre>
+     */
+    public java.util.Iterator<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+        getLoadablePlanReport(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request) {
+      return blockingServerStreamingCall(
+          getChannel(), getGetLoadablePlanReportMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -5327,14 +5435,15 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_COMMENT = 45;
   private static final int METHODID_SAVE_LOAD_ON_TOP = 46;
   private static final int METHODID_GET_VOYAGES = 47;
-  private static final int METHODID_GET_ALGO_ERRORS = 48;
-  private static final int METHODID_SAVE_VOYAGE_STATUS = 49;
-  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 50;
-  private static final int METHODID_GET_ALL_CARGO_HISTORY = 51;
-  private static final int METHODID_SAVE_JSON = 52;
-  private static final int METHODID_SAVE_ALGO_ERRORS = 53;
-  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 54;
-  private static final int METHODID_GET_CARGO_HISTORY_BY_CARGO = 55;
+  private static final int METHODID_GET_LOADABLE_PLAN_REPORT = 48;
+  private static final int METHODID_GET_ALGO_ERRORS = 49;
+  private static final int METHODID_SAVE_VOYAGE_STATUS = 50;
+  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 51;
+  private static final int METHODID_GET_ALL_CARGO_HISTORY = 52;
+  private static final int METHODID_SAVE_JSON = 53;
+  private static final int METHODID_SAVE_ALGO_ERRORS = 54;
+  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 55;
+  private static final int METHODID_GET_CARGO_HISTORY_BY_CARGO = 56;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5685,6 +5794,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageListReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_PLAN_REPORT:
+          serviceImpl.getLoadablePlanReport(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>)
+                  responseObserver);
+          break;
         case METHODID_GET_ALGO_ERRORS:
           serviceImpl.getAlgoErrors(
               (com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest) request,
@@ -5849,6 +5965,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveCommentMethod())
                       .addMethod(getSaveLoadOnTopMethod())
                       .addMethod(getGetVoyagesMethod())
+                      .addMethod(getGetLoadablePlanReportMethod())
                       .addMethod(getGetAlgoErrorsMethod())
                       .addMethod(getSaveVoyageStatusMethod())
                       .addMethod(getGetCargoApiTempHistoryMethod())

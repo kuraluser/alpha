@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class LoadablePlanRequest {
   private String processId;
-  private boolean hasLodicator;
   private List<LoadablePlanDetails> loadablePlanDetails;
   private List<AlgoError> errors;
   private Long loadablePatternId;

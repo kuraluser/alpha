@@ -12,4 +12,5 @@ public class PortDetails {
   private String averageTideHeight;
   private String tideHeight;
   private String densitySeaWater;
+  private String countryName;
 }
