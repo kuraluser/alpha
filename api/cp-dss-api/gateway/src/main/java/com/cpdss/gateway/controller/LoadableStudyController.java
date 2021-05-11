@@ -70,8 +70,10 @@ import javax.validation.constraints.Size;
 import javax.websocket.server.PathParam;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -108,6 +110,8 @@ public class LoadableStudyController {
   @Autowired private AlgoErrorService algoErrorService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
+  private static final String LOADABLE_PLAN_REPORT_FILE_NAME =
+      "MOL_Stowage_Plan_Before_Loading.xlsx";
 
   /**
    * API for save voyage
@@ -2005,6 +2009,53 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error when getAlgoError", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * API to get loadable plan report
+   *
+   * @return Loadable Plan Report in .xlsx format
+   * @throws CommonRestException Exception object
+   */
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patten/{loadablePatternId}/report",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public HttpEntity<ByteArrayResource> getLoadablePlanReport(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable Long loadableStudyId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId)
+      throws CommonRestException {
+
+    try {
+      //    Set file download headers
+      HttpHeaders header = new HttpHeaders();
+      header.setContentType(new MediaType("application", "force-download"));
+      header.set(
+          HttpHeaders.CONTENT_DISPOSITION,
+          "attachment; filename=" + LOADABLE_PLAN_REPORT_FILE_NAME);
+
+      //      Send file
+      return new HttpEntity<>(
+          new ByteArrayResource(
+              loadableStudyService.downloadLoadablePlanReport(
+                  vesselId, loadableStudyId, loadablePatternId)),
+          header);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in getLoadablePlanReport method", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception in getLoadablePlanReport method", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

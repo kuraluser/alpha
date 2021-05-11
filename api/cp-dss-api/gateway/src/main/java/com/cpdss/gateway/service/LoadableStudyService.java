@@ -5381,6 +5381,47 @@ public class LoadableStudyService {
     return voyages;
   }
 
+  /**
+   * Method to download loadable report
+   *
+   * @return loadable report byte array
+   */
+  public byte[] downloadLoadablePlanReport(
+      Long vesselId, Long loadableStudyId, Long loadablePatternId) throws GenericServiceException {
+
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest loadablePlanReportRequest =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setLoadableStudyId(loadableStudyId)
+            .setLoadablePatternId(loadablePatternId)
+            .build();
+
+    //    Get loadable plan report
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply loadablePlanReportReply =
+        getLoadablePlanReport(loadablePlanReportRequest);
+
+    if (!SUCCESS.equals(loadablePlanReportReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to generate loadable plan report",
+          loadablePlanReportReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.parseInt(loadablePlanReportReply.getResponseStatus().getCode())));
+    }
+    return loadablePlanReportReply.getData().toByteArray();
+  }
+
+  /**
+   * Method to get loadable plan report
+   *
+   * @param loadablePlanReportRequest request object
+   * @return LoadablePlanReportReply object
+   */
+  public com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply getLoadablePlanReport(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest
+          loadablePlanReportRequest) {
+    return loadableStudyServiceBlockingStub.getLoadablePlanReport(loadablePlanReportRequest).next();
+  }
+
   public VoyageActionResponse saveVoyageStatus(VoyageActionRequest request, String correlationId)
       throws NumberFormatException, GenericServiceException {
 
