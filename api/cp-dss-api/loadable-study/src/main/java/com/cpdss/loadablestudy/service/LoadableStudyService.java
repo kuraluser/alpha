@@ -1988,6 +1988,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       }
       LoadableStudyPortRotation entity = null;
+      boolean portEdited = false;
       if (request.getId() == 0) {
         entity = new LoadableStudyPortRotation();
         entity.setLoadableStudy(loadableStudyOpt.get());
@@ -2003,6 +2004,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         entity = portRoationOpt.get();
+        if (!entity.getPortXId().equals(request.getPortId())) {
+          portEdited = true;
+        }
       }
       if (!request.getIsLandingPage()) {
         this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
@@ -2010,6 +2014,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       entity =
           this.loadableStudyPortRotationRepository.save(
               this.createPortRotationEntity(entity, request));
+      if (portEdited) {
+        this.synopticalTableRepository.deleteByPortRotationId(entity.getId());
+        this.buildPortsInfoSynopticalTable(entity, request.getOperationId(), request.getPortId());
+      }
       loadableStudyOpt.get().setIsPortsComplete(request.getIsPortsComplete());
       this.loadableStudyRepository.save(loadableStudyOpt.get());
 

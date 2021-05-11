@@ -4308,6 +4308,7 @@ public class LoadableStudyService {
             .ifPresent(item -> builder.setPlannedWeight(valueOf(item)));
         Optional.ofNullable(cargo.getActualWeight())
             .ifPresent(item -> builder.setActualWeight(valueOf(item)));
+        Optional.ofNullable(cargo.getIsCommingleCargo()).ifPresent(builder::setIsCommingleCargo);
         recordBuilder.addCargo(builder.build());
       }
     }
