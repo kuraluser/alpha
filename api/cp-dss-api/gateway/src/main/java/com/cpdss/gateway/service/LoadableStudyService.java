@@ -965,6 +965,7 @@ public class LoadableStudyService {
       op.setOperationName(operation.getOperationName());
       response.getOperations().add(op);
     }
+    response.setLastModifiedPortId(Long.valueOf(grpcReply.getLastModifiedPort()));
     return response;
   }
 
@@ -2284,6 +2285,9 @@ public class LoadableStudyService {
             cargoNomination.setId(cargoNominationDetail.getId());
             cargoNomination.setColor(cargoNominationDetail.getColor());
             cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+            if (cargoNominationDetail.getApiEst().length() > 0) {
+              cargoNomination.setApi(new BigDecimal(cargoNominationDetail.getApiEst()));
+            }
             if (!CollectionUtils.isEmpty(cargoNominationDetail.getLoadingPortDetailsList())) {
               List<LoadingPort> loadingPortList = new ArrayList<>();
               cargoNominationDetail
@@ -3356,7 +3360,7 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
-    request.setHasLodicator(false);
+    request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
@@ -3480,12 +3484,6 @@ public class LoadableStudyService {
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
-
-              /*
-               * Optional.ofNullable(lpd.getStabilityParameters()) .ifPresent(
-               * stabilityParameter -> planBuilder.setStabilityParameters(
-               * buildStabilityParamter(stabilityParameter)));
-               */
 
               request.addLoadablePlanDetails(planBuilder);
             });
@@ -3761,6 +3759,7 @@ public class LoadableStudyService {
     response.setVoyageStatusId(grpcReply.getVoyageStatusId());
     response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
     response.setValidated(grpcReply.getValidated());
+    response.setLoadableStudyStatusId(grpcReply.getLoadableStudyStatusId());
   }
 
   /**

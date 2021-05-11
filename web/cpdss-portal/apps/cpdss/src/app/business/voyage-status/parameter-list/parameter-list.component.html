@@ -9,7 +9,7 @@
     <ng-template pTemplate="body" let-rowData let-columns="columns">
 
         <tr>
-            <td *ngFor="let col of columns">
+            <td *ngFor="let col of columns" class="text-uppercase">
                 <ng-container [ngSwitch]="col.fieldType">
                     <ng-container *ngSwitchCase="fieldType.NUMBER">{{rowData[col.field] | number: rowData[col?.numberFormat]}}</ng-container>
                     <ng-container *ngSwitchDefault>{{rowData[col.field] |   translate}}</ng-container>

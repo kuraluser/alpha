@@ -208,20 +208,20 @@ export class PortRotationPopupTransformationService {
     const _ports = portsLists.map((port) => {
       const portObject = portValueObject.find(portObj => portObj.id === port.id);
       if (portObject?.layCan?.value) {
-        const layCanFrom = moment(portObject?.layCan?.value.split('to')[0].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).endOf('d').format(AppConfigurationService.settings?.dateFormat);
+        const layCanFrom = moment(portObject?.layCan?.value.split('to')[0].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).endOf('d').format('DD-MM-YYYY HH:mm');
         port.layCanFrom = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanFrom, portObject.port?.value?.timezoneOffsetVal)?.slice(0, 10);
-        const layCanTo = moment(portObject?.layCan?.value.split('to')[1].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).startOf('d').format(AppConfigurationService.settings?.dateFormat);
+        const layCanTo = moment(portObject?.layCan?.value.split('to')[1].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).startOf('d').format('DD-MM-YYYY HH:mm');
         port.layCanTo = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanTo, portObject.port?.value?.timezoneOffsetVal)?.slice(0, 10);
       } else {
         port.layCanFrom = "";
         port.layCanTo = "";
       }
       if (portObject?.eta?.value) {
-        const newEta = moment(portObject.eta?.value?.slice(0, 17)).format(AppConfigurationService.settings?.dateFormat);
+        const newEta = moment(portObject.eta?.value?.slice(0, 17)).format('DD-MM-YYYY HH:mm');
         portObject.eta?.value ? port.eta = this.timeZoneTransformationService.revertZoneTimetoUTC(newEta, portObject.port?.value?.timezoneOffsetVal) : port.eta = "";
       }
       if (portObject?.etd?.value) {
-        const newEtd = moment(portObject.etd?.value?.slice(0, 17)).format(AppConfigurationService.settings?.dateFormat);
+        const newEtd = moment(portObject.etd?.value?.slice(0, 17)).format('DD-MM-YYYY HH:mm');
         portObject.etd?.value ? port.etd = this.timeZoneTransformationService.revertZoneTimetoUTC(newEtd, portObject.port?.value?.timezoneOffsetVal) : port.etd = "";
       }
       return port;

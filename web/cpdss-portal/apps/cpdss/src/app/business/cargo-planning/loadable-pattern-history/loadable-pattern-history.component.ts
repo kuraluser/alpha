@@ -128,7 +128,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
 */
   async getPagePermission() {
     const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], true);
-    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], true);
+    
     this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
     this.loadablePlanPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePlanComponent'], actions: [PERMISSION_ACTION.VIEW] };
     return loadablePatternPermission;

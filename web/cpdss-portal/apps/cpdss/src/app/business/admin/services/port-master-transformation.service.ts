@@ -65,82 +65,82 @@ export class PortMasterTransformationService {
   getPortListDatatableColumns(): IDataTableColumn[] {
     return [
       {
-        field: 'portName',
+        field: 'name',
         header: 'PORT_MASTER_PORT_NAME',
         filter: true,
         filterPlaceholder: 'PORT_MASTER_SEARCH_PORT_NAME',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'portName',
+        filterField: 'name',
         sortable: true,
-        sortField: 'portName'
+        sortField: 'name'
       },
       {
-        field: 'portCode',
+        field: 'code',
         header: 'PORT_MASTER_PORT_CODE',
         filter: true,
         filterPlaceholder: 'PORT_MASTER_SEARCH_PORT_CODE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'portCode',
+        filterField: 'code',
         sortable: true,
-        sortField: 'portCode'
-      },
-      {
-        field: 'country',
-        header: 'PORT_MASTER_COUNTRY',
-        filter: true,
-        filterPlaceholder: 'PORT_MASTER_SEARCH_COUNTRY',
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'country',
-        sortable: true,
-        sortField: 'country'
-      },
-      {
-        field: 'timeZone',
+        sortField: 'code'
+      }
+      // {
+      //   field: 'country',                                   //This will be needed later when more fields are added to the api.
+      //   header: 'PORT_MASTER_COUNTRY',
+      //   filter: true,
+      //   filterPlaceholder: 'PORT_MASTER_SEARCH_COUNTRY',          
+      //   filterType: DATATABLE_FILTER_TYPE.TEXT,
+      //   filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+      //   filterField: 'country',
+      //   sortable: true,
+      //   sortField: 'country'
+      // },
+      , {
+        field: 'timezone',
         header: 'PORT_MASTER_TIMEZONE',
         filter: true,
         filterPlaceholder: 'PORT_MASTER_SEARCH TIMEZONE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'timeZone',
+        filterField: 'timezone',
         sortable: true,
-        sortField: 'timeZone'
+        sortField: 'timezone'
       },
       {
-        field: 'densityOfWater',
+        field: 'waterDensity',
         header: 'PORTMASTER_DENSITY_OF_WATER',
         filter: true,
         filterPlaceholder: 'PORT_MASTER_SEARCH_DENSITY_OF_WATER',
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'densityOfWater',
+        filterField: 'waterDensity',
         sortable: true,
-        sortField: 'densityOfWater'
-      },
-      {
-        field: 'temperature',
-        header: 'PORT_MASTER_TEMPERATURE',
-        filter: true,
-        filterPlaceholder: 'PORT_MASTER_SEARCH_TEMPERATURE',
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'temperature',
-        sortable: true,
-        sortField: 'temperature'
-      },
-      {
-        field: 'maximumDraft',
-        header: 'PORT_MASTER_MAXIMUM DRAFT',
-        filter: true,
-        filterPlaceholder: 'PORT_MASTER_SEARCH_MAXIMUM_DRAFT',
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'maximumDraft',
-        sortable: true,
-        sortField: 'maximumDraft'
+        sortField: 'waterDensity'
       }
+      // {
+      //   field: 'temperature',
+      //   header: 'PORT_MASTER_TEMPERATURE',                            //This will be required when more fields are added to the api.
+      //   filter: true,
+      //   filterPlaceholder: 'PORT_MASTER_SEARCH_TEMPERATURE',
+      //   filterType: DATATABLE_FILTER_TYPE.TEXT,
+      //   filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+      //   filterField: 'temperature',
+      //   sortable: true,
+      //   sortField: 'temperature'
+      // },
+      // {
+      //   field: 'maximumDraft',
+      //   header: 'PORT_MASTER_MAXIMUM DRAFT',                        //This will be required when more fields are added to the api.
+      //   filter: true,
+      //   filterPlaceholder: 'PORT_MASTER_SEARCH_MAXIMUM_DRAFT',
+      //   filterType: DATATABLE_FILTER_TYPE.TEXT,
+      //   filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+      //   filterField: 'maximumDraft',
+      //   sortable: true,
+      //   sortField: 'maximumDraft'
+      // }
     ]
   }
 

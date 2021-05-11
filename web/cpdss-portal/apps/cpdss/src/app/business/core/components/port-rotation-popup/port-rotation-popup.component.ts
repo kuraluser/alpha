@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { IDataTableColumn } from 'apps/cpdss/src/app/shared/components/datatable/datatable.model';
-import { IDateTimeFormatOptions, ITimeZone } from 'apps/cpdss/src/app/shared/models/common.model';
-import { IPermission } from 'apps/cpdss/src/app/shared/models/user-profile.model';
-import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
-import { PermissionsService } from 'apps/cpdss/src/app/shared/services/permissions/permissions.service';
-import { TimeZoneTransformationService } from 'apps/cpdss/src/app/shared/services/time-zone-conversion/time-zone-transformation.service';
+import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { IDateTimeFormatOptions, ITimeZone } from '../../../../shared/models/common.model';
+import { IPermission } from '../../../../shared/models/user-profile.model';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import * as moment from 'moment';
 import { portDateCompareValidator } from '../../../cargo-planning/directives/validator/port-date-compare-validator.directive';
 import { portDateRangeValidator } from '../../../cargo-planning/directives/validator/port-daterange-validator.directive';
@@ -202,7 +202,7 @@ export class PortRotationPopupComponent implements OnInit {
  */
   dateStringToDate(dateTime: string, layCan?: boolean): Date {
     if (dateTime) {
-      const _dateTime = layCan ? moment(dateTime, AppConfigurationService.settings?.dateFormat.split(' ')[0]).format(AppConfigurationService.settings.dateFormat) : moment(dateTime.slice(0, 17)).format(AppConfigurationService.settings.dateFormat);
+      const _dateTime = layCan ? moment(dateTime, AppConfigurationService.settings?.dateFormat.split(' ')[0]).format('DD-MM-YYYY HH:mm') : moment(dateTime.slice(0, 17)).format('DD-MM-YYYY HH:mm');
       const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
       return this.timeZoneTransformationService.formatDateTime(_dateTime, formatOptions);
     }

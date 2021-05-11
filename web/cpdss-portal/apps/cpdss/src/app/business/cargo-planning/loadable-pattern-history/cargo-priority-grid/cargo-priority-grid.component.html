@@ -16,9 +16,9 @@
                             [ngStyle]="!rowData?.isCommingle && {'background': rowData?.cargoColor}">{{rowData[col.field]}}</span>
                         <span *ngIf="col.field === 'quantity'">{{rowData[col.field] | quantityDecimalFormat}}</span>
                         <span  *ngIf="col.field === 'difference'"
-                            [ngClass]="(rowData?.quantity / rowData?.orderedQuantity) !== 0 ? ((rowData?.quantity / rowData?.orderedQuantity) > 0 ? 'badge-custom success' : 'badge-custom error') : ''"
-                            [pTooltip]="(((rowData?.quantity / rowData?.orderedQuantity) * 100) | number : '1.2-2')+'%'" tooltipPosition="top">
-                            {{((rowData?.quantity / rowData?.orderedQuantity) * 100) | number : '1.2-2'}}%
+                            [ngClass]="((rowData?.quantity - rowData?.orderedQuantity) / rowData?.orderedQuantity) !== 0 ? (((rowData?.quantity - rowData?.orderedQuantity) / rowData?.orderedQuantity) > 0 ? 'badge-custom success' : 'badge-custom error') : ''"
+                            [pTooltip]="((((rowData?.quantity - rowData?.orderedQuantity) / rowData?.orderedQuantity) * 100) | number : '1.2-2')+'%'" tooltipPosition="top">
+                            {{(((rowData?.quantity - rowData?.orderedQuantity) / rowData?.orderedQuantity) * 100) | number : '1.2-2'}}%
                         </span>
                     </td>
                 </tr>

@@ -50,7 +50,7 @@ body{
         background: $success-bg;
         &:before{
           display: inline-block;
-          color: $hover-color;
+          color: $tab-check;
         }
       }
     }
@@ -588,7 +588,7 @@ div{
 }
 .error-icon{
   background: $validation-icon-bg;
-  color: $hover-color;
+  color: $active-color;
 }
 .cargo-nomination-table{
   .p-datatable-thead{
@@ -615,15 +615,18 @@ a{
 }
 
 .badge-custom{
-  color: $hover-color;
+  color: $active-color;
   &.error{
     background:$red;
+    color: $active-color;
     }
     &.success{
     background:$green;
+    color: $active-color;
     }
     &.commingle{
     background:$commingle;
+    color: $active-color;
     }
 }
 .tanks-inner-outer-ohq{
@@ -670,7 +673,7 @@ a{
       }
       &.active{
         background: $login-btn;
-        color: $hover-color;
+        color: $active-color;
       }
   }
 }
@@ -947,13 +950,13 @@ a{
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show > .btn-secondary.dropdown-toggle{
-  color: $hover-color!important;
+  color: $active-color!important;
 }
 
 .btn-secondary{
-  color: $hover-color!important;
+  color: $active-color!important;
   &:hover{
-    color: $hover-color!important;
+    color: $active-color!important;
   }
 }
 
@@ -965,6 +968,9 @@ a{
 
 tr:hover a{
   color: $hover-color!important;
+}
+tr:hover a.btn-secondary{
+  color: $active-color!important;
 }
 
 .confirmation-wrapper{
@@ -1240,7 +1246,7 @@ header{
   }
   .notification-count{
     background: $red;
-    color: $hover-color;
+    color: $active-color;
   }
 }
 

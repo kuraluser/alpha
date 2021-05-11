@@ -85,7 +85,7 @@
                             (onSelect)="onDateSelect($event,col, col?.filterField, col?.filterMatchMode)"
                             keepInvalid="true"
                             (onInput)="onDateFilter($event.target.value, col, col?.filterField, col?.filterMatchMode)"
-                            (onClearClick)="datatable.filter('', col?.filterField, 'contains')" [showButtonBar]="true"
+                            (onClearClick)="onDateSelect(null,col, col?.filterField, col?.filterMatchMode)" [showButtonBar]="true"
                             styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
                             [readonlyInput]="false" dateFormat="{{col.dateFormat ? col.dateFormat : 'dd-mm-yy'}}" id="{{col.field+'_filter'}}">
                         </p-calendar>
@@ -214,7 +214,7 @@
                                             col?.numberType === 'quantity' ? (rowData[col.field]?.value | quantityDecimalFormat: col.unit) : rowData[col.field]?.value | number:
                                             col?.numberFormat}}{{rowData[col.field]?.value? col.fieldSuffix
                                             : ''}}
-                                            <i *ngIf="rowData[col.field]?.value && col.fieldValueIcon"
+                                            <i *ngIf="rowData[col.field].value!=='null' && rowData[col.field]?.value!=='undefined' && col.fieldValueIcon"
                                                 class="{{col.fieldValueIcon}}"
                                                 (click)="onCellValueClick($event, rowData, rowIndex, col)"></i></span>
                                     </ng-container>
@@ -353,7 +353,7 @@
                                     </ng-container>
                                 </ng-container>
                                 <span *ngSwitchDefault>
-                                    {{rowData[col.field]}}</span>
+                                    {{col?.numberFormat ? (rowData[col.field] | number: col?.numberFormat) : rowData[col.field]}}</span>
                             </div>
                         </td>
                     </ng-template>
@@ -378,10 +378,12 @@
             </ng-template>
         </p-table>
         <ng-container *ngIf="paginator">
-            <p-paginator [first]="first" currentPageReportTemplate={{currentPageReportTemplate}}
-                [showJumpToPageDropdown]="false" #paginator [showCurrentPageReport]="true" [rows]="rows"
-                [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage">
-            </p-paginator>
+            <span [hidden]="!totalRecords">
+                <p-paginator [first]="first" currentPageReportTemplate={{currentPageReportTemplate}}
+                    [showJumpToPageDropdown]="false" #paginator [showCurrentPageReport]="true" [rows]="rows"
+                    [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage">
+                </p-paginator>
+            </span>
         </ng-container>
 
     </div>
