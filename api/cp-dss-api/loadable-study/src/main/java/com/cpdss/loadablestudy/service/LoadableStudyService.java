@@ -11815,8 +11815,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
         && ((SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
+                && prEntity.getEta() != null
                 && prEntity.getEta().toString().equals(record.getEtaEtdEstimated()))
             || (SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(entity.getOperationType())
+                && prEntity.getEtd() != null
                 && prEntity.getEtd().toString().equals(record.getEtaEtdEstimated())))) {
 
       throw new GenericServiceException(
