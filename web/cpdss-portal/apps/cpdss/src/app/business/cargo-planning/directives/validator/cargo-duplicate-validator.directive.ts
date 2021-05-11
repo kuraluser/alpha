@@ -13,7 +13,7 @@ export function CargoDuplicateValidator(field, dependentField): ValidatorFn {
         if(control?.value && control?.parent?.value[dependentField]){
             const data = control?.parent?.value;
             data[field] = control.value;
-            const found = dataTableArray.filter(cargoData => (cargoData?.cargo1?.cargoId === data?.cargo1?.cargoId  &&  cargoData?.cargo2?.cargoId === data?.cargo2?.cargoId ) || (cargoData?.cargo2?.cargoId === data?.cargo1?.cargoId  &&  cargoData?.cargo1?.cargoId === data?.cargo2?.cargoId ));
+            const found = dataTableArray.filter(cargoData => (cargoData?.cargo1?.cargoId === data?.cargo1?.cargoId && cargoData?.cargo1?.color === data?.cargo1?.color  &&  cargoData?.cargo2?.cargoId === data?.cargo2?.cargoId && cargoData?.cargo2?.color === data?.cargo2?.color ) || (cargoData?.cargo2?.cargoId === data?.cargo1?.cargoId &&cargoData?.cargo2?.color === data?.cargo1?.color  &&  cargoData?.cargo1?.cargoId === data?.cargo2?.cargoId && cargoData?.cargo1?.color === data?.cargo2?.color ));
             if(found.length > 1){
                 return { duplicate: true };
             }else{

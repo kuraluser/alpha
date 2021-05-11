@@ -1766,7 +1766,7 @@ public final class EnvoyWriter {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\022envoy-writer.proto\032\014common.proto\"X\n\032Wr"
+      "\n\022envoy_writer.proto\032\014common.proto\"X\n\032Wr"
           + "iterLoadableStudyRequest\022\025\n\rloadableStud"
           + "y\030\001 \001(\t\022\021\n\timoNumber\030\002 \001(\t\022\020\n\010vesselId\030\003"
           + " \001(\003\"Z\n\013WriterReply\022\'\n\016responseStatus\030\001 "

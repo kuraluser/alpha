@@ -433,8 +433,12 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.portsLists[valueIndex]['layCanTo'].value = layCanTo;
       this.updateField(event.index, 'layCanFrom', this.dateStringToDate(layCanFrom, true));
       this.updateField(event.index, 'layCanTo', this.dateStringToDate(layCanTo, true));
-      this.updateValidityAndEditMode(index, 'eta');
-      this.updateValidityAndEditMode(index, 'etd');
+      if(this.portsLists[valueIndex]['eta'].value){
+        this.updateValidityAndEditMode(index, 'eta');
+      }
+      if(this.portsLists[valueIndex]['etd'].value){
+        this.updateValidityAndEditMode(index, 'etd');
+      }
     }
     if (event.field === 'etd') {
       for (let i = 0; i < this.portsLists.length; i++) {
@@ -606,6 +610,17 @@ export class PortsComponent implements OnInit, OnDestroy {
  * @memberof PortsComponent
  */
   async onRowReorder(event) {
+    const isPortOrderCorrect = this.isPortOrderCorrect(event.dropIndex);
+    
+    
+    if(!isPortOrderCorrect) {
+      const dropData = this.portsLists[event.dropIndex];
+      this.portsLists.splice(event.dropIndex, 1);
+      this.portsLists.splice(event.dragIndex, 0 , dropData);
+      const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS','PORT_ROTATION_INFO']).toPromise();
+      this.messageService.add({ severity: 'info', summary: translationKeys['PORT_ROTATION_INFO'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS'] });
+      return;
+    }
     this.ngxSpinnerService.show();
     if (this.portsLists[event.dragIndex]?.id !== 0 && this.portsLists[event.dropIndex]?.id !== 0) {
       for (let i = 0; i < this.portsLists.length; i++) {
@@ -627,6 +642,29 @@ export class PortsComponent implements OnInit, OnDestroy {
       }, 500);
     }
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+ * Event handler for row re order complete event
+ *
+ * @memberof PortsComponent
+ */
+  isPortOrderCorrect(dropIndex) {
+    let isPortOrderCorrect = true;
+    if (this.portsLists[dropIndex]?.operation?.value?.operationName === 'Loading') {
+      for (let i = dropIndex; 0 <= i; i--) {
+        if (this.portsLists[i]?.operation?.value?.operationName === 'Discharging') {
+          isPortOrderCorrect = false;
+        }
+      }
+    } else if (this.portsLists[dropIndex]?.operation?.value?.operationName === 'Discharging') {
+      for (let i = dropIndex; i < this.portsLists?.length; i++) {
+        if (this.portsLists[i]?.operation?.value?.operationName === 'Loading') {
+          isPortOrderCorrect = false;
+        }
+      }
+    }
+    return isPortOrderCorrect;
   }
 
   /**
@@ -793,7 +831,7 @@ export class PortsComponent implements OnInit, OnDestroy {
    */
   dateStringToDate(dateTime: string, layCan?: boolean): Date {
     if (dateTime) {
-      const _dateTime = layCan ? moment(dateTime, AppConfigurationService.settings?.dateFormat.split(' ')[0]).format(AppConfigurationService.settings?.dateFormat) : moment(dateTime.slice(0, 17)).format(AppConfigurationService.settings?.dateFormat);
+      const _dateTime = layCan ? moment(dateTime, AppConfigurationService.settings?.dateFormat.split(' ')[0]).format('DD-MM-YYYY HH:mm') : moment(dateTime.slice(0, 17)).format('DD-MM-YYYY HH:mm');
       const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
       return this.timeZoneTransformationService.formatDateTime(_dateTime, formatOptions);
     }

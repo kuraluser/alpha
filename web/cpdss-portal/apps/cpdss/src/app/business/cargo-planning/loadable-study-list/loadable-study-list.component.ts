@@ -91,7 +91,7 @@ export class LoadableStudyListComponent implements OnInit {
   */
   getPagePermission() {
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], true);
-    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewLoadableStudy'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.VIEW] };
   }
 
   /**

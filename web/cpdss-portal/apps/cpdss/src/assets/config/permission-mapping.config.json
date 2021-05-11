@@ -33,5 +33,9 @@
     "VoyageHistoryNewVoyage" :"VOYAGE_HISTORY_NEW_VOYAGE",
     "PortTabEtaEtd": "PORTS_ETA/ETD",
     "FleetComponent": "FLEET",
-    "PortListingComponent":"PORT_LISTING"
+    "PortListingComponent":"PORT_LISTING",
+    "SynopticalTableETA/ETD": "SYNOPTICAL_TABLE_EDA/ETD",
+    "SynopticalTableTimeOfSunrise": "SYNOPTICAL_TABLE_TIME_OFSUNRISE",
+    "SynopticalTableTimeOfSunset": "SYNOPTICAL_TABLE_TIME_OFSUNSET",
+    "NewLoadableStudy":"CARGOPLANNING_NEW_LOADABLE_STUDY"
 }

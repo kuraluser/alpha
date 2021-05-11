@@ -209,7 +209,7 @@ export class LoadableStudyDetailsTransformationService {
         filter: true,
         filterPlaceholder: 'SEARCH_ABBREVIATION',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'abbreviation.value',
         fieldPlaceholder: 'ENTER_ABBREVIATION',
         errorMessages: {
@@ -469,10 +469,12 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'api',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API',
+        numberFormat: '1.2-2'
       },
       {
         field: 'temperature',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
+        numberFormat: '1.2-2'
       }
     ]
   }
@@ -927,9 +929,9 @@ export class LoadableStudyDetailsTransformationService {
           _ports.operationId = port[key].value?.id;
         } else if (key === 'layCan') {
           if (port[key].value) {
-            const layCanFrom = moment(port[key].value.split('to')[0].trim(), 'DD-MMM-YYYY').endOf('d').format('DD-MM-YYYY HH:mm');
+            const layCanFrom = moment(port[key].value.split('to')[0].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).endOf('d').format('DD-MM-YYYY HH:mm');
             _ports.layCanFrom = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanFrom, port.port?.value?.timezoneOffsetVal)?.slice(0, 10);
-            const layCanTo = moment(port[key].value.split('to')[1].trim(), 'DD-MMM-YYYY').startOf('d').format('DD-MM-YYYY HH:mm');
+            const layCanTo = moment(port[key].value.split('to')[1].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).startOf('d').format('DD-MM-YYYY HH:mm');
             _ports.layCanTo = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanTo, port.port?.value?.timezoneOffsetVal)?.slice(0, 10) ;
           } else {
             _ports.layCanFrom = "";

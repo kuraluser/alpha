@@ -46,8 +46,8 @@
                   <div class="row">
                     <div class="col">
                       <p-calendar appendTo="body" inputId="start_date" formControlName="start_date"
-                        dateFormat="dd-mm-yy" #startDateTime [minDate]="date" showTime="true"
-                        [hideOnDateTimeSelect]="false">
+                        dateFormat="dd-M-yy" #startDateTime [minDate]="date" showTime="true"
+                        [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(startDateTime)" (onInput)="onDateSelect(startDateTime)">
                         <p-footer>
                           <button class="btn btn-main"
                             (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
@@ -96,7 +96,7 @@
                   <div class="row">
                     <div class="col">
                       <p-calendar appendTo="body" inputId="end_date" formControlName="end_date" dateFormat="dd-mm-yy"
-                        #endDateTime [minDate]="date" showTime="true" [hideOnDateTimeSelect]="false">
+                        #endDateTime [minDate]="date" showTime="true" [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(endDateTime)" (onInput)="onDateSelect(endDateTime)">
                         <p-footer>
                           <button class="btn btn-main"
                             (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'

@@ -103,6 +103,7 @@ class LoadableStudyControllerTest {
   private static final String DRAFT_MARK_LITERAL = "draftMark";
   private static final String LOAD_LINE_ID_LITERAL = "loadLineXId";
   private static final Long TEST_LODABLE_STUDY_ID = 1L;
+  private static final Long TEST_LODABLE_PATTERN_ID = 1L;
   private static final BigDecimal TEST_BIGDECIMAL_VALUE = new BigDecimal(100);
   // API URLS
   private static final String CLOUD_API_URL_PREFIX = "/api/cloud";
@@ -168,10 +169,16 @@ class LoadableStudyControllerTest {
       SHIP_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
   private static final String SAVE_ON_HAND_QUANTITIES_API_URL =
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities/{id}";
+  private static final String GET_LOADABLE_PLAN_REPORT_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patten/{loadablePatternId}/report";
   private static final String SAVE_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
   private static final String SAVE_ON_HAND_QUANTITIES_SHIP_API_URL =
       SHIP_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
+  private static final String GET_LOADABLE_PLAN_REPORT_COULD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_LOADABLE_PLAN_REPORT_API_URL;
+  private static final String GET_LOADABLE_PLAN_REPORT_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_LOADABLE_PLAN_REPORT_API_URL;
 
   private static final String GENERATE_LOADABLE_PATTERN_API_URL =
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/generate-loadable-patterns";
@@ -1755,6 +1762,85 @@ class LoadableStudyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk());
+  }
+
+  /**
+   * GetLoadablePlanReportException positive test
+   *
+   * @param url URL value
+   * @throws Exception exception object
+   */
+  @ValueSource(
+      strings = {GET_LOADABLE_PLAN_REPORT_COULD_API_URL, GET_LOADABLE_PLAN_REPORT_SHIP_API_URL})
+  @ParameterizedTest
+  void testGetLoadablePlanReportPositive(String url) throws Exception {
+    when(loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+        .thenReturn(new byte[1]);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    url,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    TEST_LODABLE_STUDY_ID,
+                    TEST_LODABLE_PATTERN_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * GetLoadablePlanReportException exception test
+   *
+   * @param url URL value
+   * @throws Exception exception object
+   */
+  @ValueSource(
+      strings = {GET_LOADABLE_PLAN_REPORT_COULD_API_URL, GET_LOADABLE_PLAN_REPORT_SHIP_API_URL})
+  @ParameterizedTest
+  void testGetLoadablePlanReportException(String url) throws Exception {
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    url,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    TEST_LODABLE_STUDY_ID,
+                    TEST_LODABLE_PATTERN_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * GetLoadablePlanReportException exception test
+   *
+   * @param url URL value
+   * @throws Exception exception object
+   */
+  @ValueSource(
+      strings = {GET_LOADABLE_PLAN_REPORT_COULD_API_URL, GET_LOADABLE_PLAN_REPORT_SHIP_API_URL})
+  @ParameterizedTest
+  void testGetLoadablePlanReportGenericServiceException(String url) throws Exception {
+    Exception ex =
+        new GenericServiceException(
+            "Failed to generate loadable plan report", "400", HttpStatusCode.BAD_REQUEST);
+    when(loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    url,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    TEST_LODABLE_STUDY_ID,
+                    TEST_LODABLE_PATTERN_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isBadRequest());
   }
 
   private String createVoyageStatusRequest() throws JsonProcessingException {

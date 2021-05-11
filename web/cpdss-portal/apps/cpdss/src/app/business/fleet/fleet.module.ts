@@ -9,6 +9,7 @@ import { FleetRoutingModule } from './fleet-routing.module';
 import { FleetComponent } from './fleet.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { FleetMapComponent } from './fleet-map/fleet-map.component';
+import { FleetVesselCardComponent } from './fleet-vessel-card/fleet-vessel-card.component';
 
 /**
  * Module will import all the dependencies for Fleet module
@@ -17,7 +18,7 @@ import { FleetMapComponent } from './fleet-map/fleet-map.component';
  * @class FleetModule
  */
 @NgModule({
-  declarations: [FleetComponent, FleetMapComponent],
+  declarations: [FleetComponent, FleetMapComponent, FleetVesselCardComponent],
   imports: [
     CommonModule,
     FormsModule,

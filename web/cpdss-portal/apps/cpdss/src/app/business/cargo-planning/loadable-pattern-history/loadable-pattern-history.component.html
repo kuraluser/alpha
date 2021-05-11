@@ -53,13 +53,13 @@
                                 *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main confirmed mr-10"
+                            <button class="btn btn-main confirmed"
                                 *ngIf="loadablePattern?.loadableStudyStatusId === 2" [disabled]="true">
                                 <span class="pi pi-check check-rounded"></span>
                                 {{'LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |
                                 translate}}</button>
-                            <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
-                                {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button>
+                            <!-- <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
+                                {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button> -->
                         </div>
                     </div>
                 </div>

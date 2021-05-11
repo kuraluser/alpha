@@ -55,7 +55,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -497,8 +496,10 @@ public class UserService {
                 user.setLastName(userEntity.getLastName());
                 user.setUsername(userEntity.getUsername());
                 user.setDesignation(userEntity.getDesignation());
-                if (null != userEntity.getRoles()) {
-                  user.setRole(userEntity.getRoles().getName());
+                List<RoleUserMapping> mapping =
+                    this.roleUserMappingRepository.findByUsersAndIsActive(userEntity, true);
+                if (!mapping.isEmpty()) {
+                  user.setRole(mapping.get(0).getRoles().getName());
                 }
                 user.setDefaultUser(userEntity.getIsShipUser());
                 userList.add(user);
@@ -527,8 +528,10 @@ public class UserService {
               user.setLastName(keycloakUser.getLastName());
               user.setUsername(keycloakUser.getUsername());
               user.setDesignation(userEntity.getDesignation());
-              if (null != userEntity.getRoles()) {
-                user.setRole(userEntity.getRoles().getName());
+              List<RoleUserMapping> mapping =
+                  this.roleUserMappingRepository.findByUsersAndIsActive(userEntity, true);
+              if (!mapping.isEmpty()) {
+                user.setRole(mapping.get(0).getRoles().getName());
               }
               user.setDefaultUser(userEntity.getIsShipUser());
               userList.add(user);
@@ -815,6 +818,7 @@ public class UserService {
     UserResponse response = new UserResponse();
     if (this.isShip()) {
       Users entity = null;
+      boolean roleEdited = false;
       if (0 != request.getId()) {
         entity = this.usersRepository.findByIdAndIsActive(request.getId(), true);
         if (null == entity) {
@@ -823,6 +827,15 @@ public class UserService {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
+        List<RoleUserMapping> roleUserMappings =
+            this.roleUserMappingRepository.findByUsersAndIsActive(entity, true);
+        if (roleUserMappings.isEmpty() && request.getRoleId() != 0L) {
+          roleEdited = true;
+        } else if (!roleUserMappings.get(0).getRoles().getId().equals(request.getRoleId())) {
+          roleEdited = true;
+          this.roleUserMappingRepository.deleteRolesByUser(entity.getId());
+        }
+
       } else {
         this.validateShipMaxUserCount();
         entity = new Users();
@@ -836,7 +849,6 @@ public class UserService {
       entity.setFirstName(request.getFirstName());
       entity.setLastName(request.getLastName());
       entity.setDesignation(request.getDesignation());
-      entity.setRoles(this.rolesRepository.getOne(request.getRoleId()));
 
       // Update user status
       UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
@@ -846,6 +858,15 @@ public class UserService {
         entity.setLoginSuspended(request.getIsLoginSuspended());
       }
       entity = this.usersRepository.save(entity);
+
+      // insert roles either if role edited or new row
+      if (roleEdited || request.getId() == 0) {
+        RoleUserMapping mapping = new RoleUserMapping();
+        mapping.setUsers(entity);
+        mapping.setRoles(this.rolesRepository.getOne(request.getRoleId()));
+        mapping.setIsActive(true);
+        this.roleUserMappingRepository.save(mapping);
+      }
 
       // Update notification
       NotificationStatus notificationStatus =
@@ -1064,7 +1085,7 @@ public class UserService {
    * @return
    * @throws GenericServiceException
    */
-  public String getUserNameFromUserId(String id, String authorizationToken) {
+  public String getUserNameFromUserId(String id) {
 
     Users users = null;
     Long userId = null;
@@ -1079,39 +1100,32 @@ public class UserService {
       log.error("Get User Name,Failed to parse user id '{}' to Long", id);
       return null;
     }
+    users = usersRepository.findByIdAndIsActive(userId, true);
 
-    // Case 1: Shore api, request must have a keycloak token
-    if (authorizationToken != null && authorizationToken.length() > 0) {
+    // get user details from cache, using keycloak id from user table
+    // return from UserCachingService is -> KeycloakUser
+    // Case 1: Shore api, find keycloak id from user table, then find details from cache
+    if (users != null && users.getKeycloakId() != null) {
       try {
-        users =
-            this.getUsersEntity(
-                keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).getSubject());
+        KeycloakUser user = userCachingService.getUser(users.getKeycloakId());
         String fullName =
-            (users.getFirstName() != null ? users.getFirstName() : "")
+            (user.getFirstName() != null ? user.getFirstName() : "")
                 + " "
-                + (users.getLastName() != null ? users.getLastName() : "");
+                + (user.getLastName() != null ? user.getLastName() : "");
         log.info("Get User Name, from keycloak token - {}", fullName.trim());
         return fullName.trim();
-      } catch (VerificationException e) {
-        log.error("Get User Name, Failed to parse token - VerificationException, ", e.getMessage());
       } catch (Exception e) {
         log.error("Get User Name, Failed to parse token - Exception, ", e.getMessage());
       }
     }
     // Case 2: Ship api, find name from user's Table
-    if (users == null) {
-      users = usersRepository.findByIdAndIsActive(userId, true);
-      if (users != null) {
-        log.info("Get User Name, from users DB username - {}", users.getUsername().trim());
-        return users
-            .getUsername()
-            .toUpperCase(); // username, because we don't keep First name for Ship user.
-      }
+    if (users != null && users.getIsShipUser()) {
+      log.info("Get User Name, from users DB username - {}", users.getUsername().trim());
+      return users
+          .getUsername()
+          .toUpperCase(); // username, because we don't keep First name for Ship user.
     }
-    log.error(
-        "Get User Name, Failed User Id - {}, isToken avilable - {}",
-        userId,
-        !StringUtils.isEmpty(authorizationToken));
+    log.error("Get User Name, Failed User Id - {}", userId);
     return null;
   }
 

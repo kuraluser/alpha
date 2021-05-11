@@ -82,7 +82,6 @@ export class PatternViewMorePopUpComponent implements OnInit {
     this.updateCargoTobeLoadedData();
     this.updateLoadablePlanStowageData();
     this.updateBallastTankData();
-    this.updateLoadablePatternCargoDetails();
   }
 
 

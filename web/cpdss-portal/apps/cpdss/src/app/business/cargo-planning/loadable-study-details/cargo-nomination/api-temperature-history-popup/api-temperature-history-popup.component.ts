@@ -10,6 +10,7 @@ import { LoadableStudyDetailsTransformationService } from '../../../services/loa
 import { IPermission } from './../../../../../shared/models/user-profile.model';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
 import { IApiTempPortHistory, IApiTempMonthWiseHistory, IApiTempPopupData, ICargoApiTempHistoryResponse, IMonths } from '../../../models/cargo-planning.model';
+import * as moment from 'moment';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -92,7 +93,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
       const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo];
         this.apiTempHistoryData = responsePortHistory.map(historyObj => {
           const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId);
-          const formattedDate = historyObj.loadedDate.split(' ')[0];
+          const formattedDate = historyObj.loadedDate.split(' ')[0] ? moment(historyObj.loadedDate.split(' ')[0], 'DD-MM-YYYY').format(AppConfigurationService.settings?.dateFormat.split(' ')[0]) : '';
           return Object.assign(historyObj, { loadingPortName: loadingPort?.name, loadedDate: formattedDate });
         });
       } else {

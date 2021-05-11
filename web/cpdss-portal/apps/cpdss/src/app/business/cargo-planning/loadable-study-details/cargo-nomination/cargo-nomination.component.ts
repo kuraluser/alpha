@@ -820,8 +820,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   async onUnitChangeBlocked() {
-    const translationKeys = await this.translateService.get(['UNIT_CHANGE_API_ERROR']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['UNIT_CHANGE_API_ERROR'], detail: translationKeys['UNIT_CHANGE_API_ERROR'] });
+    const translationKeys = await this.translateService.get(['UNIT_CHANGE_API_ERROR','UNIT_CHANGE_API_ERROR_DETAILS']).toPromise();
+    this.messageService.add({ severity: 'error', summary: translationKeys['UNIT_CHANGE_API_ERROR'], detail: translationKeys['UNIT_CHANGE_API_ERROR_DETAILS'] });
 
   }
 

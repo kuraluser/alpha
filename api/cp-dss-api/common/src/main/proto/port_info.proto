@@ -65,6 +65,7 @@ message PortDetail {
 	string timezoneOffsetVal = 20;
 	int64 timezoneId = 21;
 	string timezoneAbbreviation = 22;
+	string countryName = 23;
 }
 
 message PortReply {
