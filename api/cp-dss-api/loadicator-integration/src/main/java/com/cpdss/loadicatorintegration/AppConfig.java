@@ -8,6 +8,7 @@ import com.cpdss.common.springdata.SpringDataConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
@@ -15,11 +16,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class AppConfig {
 
   @Bean
-  public ThreadPoolTaskExecutor taskExecutor() {
-    ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
-    pool.setCorePoolSize(5);
-    pool.setMaxPoolSize(10);
-    pool.setWaitForTasksToCompleteOnShutdown(true);
-    return pool;
+  public SimpleAsyncTaskExecutor taskExecutor() {
+    return new SimpleAsyncTaskExecutor();
   }
 }
