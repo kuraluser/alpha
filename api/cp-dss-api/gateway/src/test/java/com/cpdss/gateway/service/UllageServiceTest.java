@@ -58,7 +58,7 @@ public class UllageServiceTest {
     ullage.setTankId(anyLong());
     ullage.setCorrectedUllage(new BigDecimal(anyLong()));
     ullage.setCorrectionFactor(new BigDecimal(anyLong()));
-    ullage.setFillingRatio(new BigDecimal(anyLong()));
+    ullage.setFillingRatio(anyString());
     ullage.setIsBallast(isBallast);
     ullage.setQuantityMt(new BigDecimal(anyLong()));
     return ullage;

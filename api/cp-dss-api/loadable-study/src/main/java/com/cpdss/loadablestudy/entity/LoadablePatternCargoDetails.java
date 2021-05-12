@@ -66,7 +66,7 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "cargo_nomination_xid")
   private Long cargoNominationId;
-  
+
   @Column(name = "filling_ratio")
   private String fillingRatio;
 }

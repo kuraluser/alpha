@@ -4512,7 +4512,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             : new BigDecimal(request.getLoadablePlanStowageDetails().getCorrectedUllage()));
     stowageTemp.setIsBallast(request.getLoadablePlanStowageDetails().getIsBallast());
     stowageTemp.setLoadablePattern(loadablePattern);
-    stowageTemp.setFillingRatio(isEmpty(algoResponse.getFillingRatio()) ? null : new BigDecimal(algoResponse.getFillingRatio()));
+    stowageTemp.setFillingRatio(
+        isEmpty(algoResponse.getFillingRatio())
+            ? null
+            : new BigDecimal(algoResponse.getFillingRatio()));
     this.stowageDetailsTempRepository.save(stowageTemp);
   }
 
@@ -7275,11 +7278,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.setSynopticalTableLoadicatorData(
               synopticalEntity, request.getLoadablePatternId(), builder);
           this.setBallastDetails(
-              request,
-              synopticalEntity,
-              builder,
-              ballastDetails,
-              sortedTankList);
+              request, synopticalEntity, builder, ballastDetails, sortedTankList);
         }
         if (synopticalEntity.getPortXid() != null && synopticalEntity.getPortXid() > 0) {
           this.setPortDetailForSynoptics(synopticalEntity, builder);
@@ -7318,7 +7317,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param paatternId
    */
   private void setBallastDetails(
-	  SynopticalTableRequest request,
+      SynopticalTableRequest request,
       SynopticalTable synopticalEntity,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder,
       List<LoadablePlanStowageBallastDetails> ballastDetails,
@@ -7356,8 +7355,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Optional.ofNullable(ballast.getColorCode())
             .ifPresent(colorCode -> ballastBuilder.setColorCode(colorCode));
         Optional.ofNullable(ballast.getFillingPercentage())
-        .ifPresent(fillingRatio -> ballastBuilder.setFillingRatio(fillingRatio));
-        
+            .ifPresent(fillingRatio -> ballastBuilder.setFillingRatio(fillingRatio));
+
       } else {
         log.info(
             "Ballast details not available for the tank: {}, pattern: {}",
@@ -7662,7 +7661,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
             Optional.ofNullable(commingleTankDataOpt.get().getApi())
                 .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
-            ofNullable(commingleTankDataOpt.get().getFillingRatio()).ifPresent(cargoBuilder::setFillingRatio);
+            ofNullable(commingleTankDataOpt.get().getFillingRatio())
+                .ifPresent(cargoBuilder::setFillingRatio);
           }
         }
       }
