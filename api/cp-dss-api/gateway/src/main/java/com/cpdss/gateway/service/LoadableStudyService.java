@@ -2848,6 +2848,7 @@ public class LoadableStudyService {
               : new BigDecimal(ballast.getCorrectedUllage()));
       record.setSg(ballast.getSpGravity());
       record.setColorCode(ballast.getColorCode());
+      record.setFillingRatio(ballast.getFillingRatio());
       list.add(record);
     }
     synopticalRecord.setBallastPlannedTotal(BigDecimal.ZERO);
@@ -3222,6 +3223,7 @@ public class LoadableStudyService {
       if (protoRec.getTemperature() != null && protoRec.getTemperature().length() > 0) {
         rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
       }
+      rec.setFillingRatio(protoRec.getFillingRatio());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -4602,10 +4604,7 @@ public class LoadableStudyService {
         isEmpty(grpcReply.getLoadablePlanStowageDetails().getWeight())
             ? null
             : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getWeight()));
-    response.setFillingRatio(
-        isEmpty(grpcReply.getLoadablePlanStowageDetails().getFillingRatio())
-            ? null
-            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getFillingRatio()));
+    response.setFillingRatio(grpcReply.getLoadablePlanStowageDetails().getFillingRatio());
     response.setIsBallast(grpcReply.getLoadablePlanStowageDetails().getIsBallast());
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -4617,7 +4616,7 @@ public class LoadableStudyService {
     response.setCorrectedUllage(new BigDecimal("10"));
     response.setCorrectionFactor(new BigDecimal("10"));
     response.setQuantityMt(new BigDecimal("10"));
-    response.setFillingRatio(new BigDecimal("10"));
+    response.setFillingRatio("10");
     response.setIsBallast(true);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -4700,6 +4699,7 @@ public class LoadableStudyService {
             .setLoadableStudyId(loadableStudyId)
             .setVesselId(vesselId)
             .setPortId(portId)
+            .setOperationType(voyageStatusRequest.getOperationType())
             .build();
     SynopticalTableReply synopticalTableReply =
         loadableStudyServiceBlockingStub.getSynopticalDataByPortId(synopticalTableRequest);
@@ -4772,7 +4772,8 @@ public class LoadableStudyService {
                                       index.getSg(),
                                       index.getIsCommingleCargo(),
                                       index.getGrade(),
-                                      index.getTemperature())),
+                                      index.getTemperature(),
+                                      null)),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {
