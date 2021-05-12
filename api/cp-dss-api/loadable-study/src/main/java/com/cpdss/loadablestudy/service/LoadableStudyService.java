@@ -11522,7 +11522,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
       }
       this.voyageRepository.save(voyageEntity);
-
+      try {
+        this.updateApiTempWithCargoNominations(voyageEntity);
+      } catch (Exception e) {
+        log.info("Voyage Close, update api-temp - Failed {} - {}", e.getMessage(), e);
+      }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 
     } catch (GenericServiceException e) {
@@ -11545,6 +11549,60 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * This operation can work async, Data is adding to Api-History Table
+   *
+   * <p>Data means, the active loadable-pattern (cargo, port, api, temp etc)
+   *
+   * @param voyageId - Long
+   */
+  public void updateApiTempWithCargoNominations(Voyage voyage) {
+    Optional<LoadableStudy> loadableStudy =
+        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+            voyage, CONFIRMED_STATUS_ID, true);
+    if (loadableStudy.isPresent()) {
+      log.info("Voyage Close, update api-temp - ls id {}", loadableStudy.get().getId());
+      Optional<LoadablePattern> pattern =
+          loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+              loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+      if (pattern.isPresent()) {
+        log.info("Voyage Close, update api-temp - lp id {}", pattern.get().getId());
+        List<CargoNomination> nominations =
+            cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+                loadableStudy.get().getId(), true);
+        log.info("Voyage Close, cargo nomination size - {}", nominations.size());
+        for (CargoNomination nomi : nominations) {
+          for (CargoNominationPortDetails cnPd : nomi.getCargoNominationPortDetails()) {
+            ApiTempHistory apiHis =
+                this.buildApiTempHistoryByPortId(voyage.getVesselXId(), nomi, cnPd.getPortId());
+            this.saveApiTempWithPortDetails(apiHis);
+          }
+        }
+      }
+    }
+  }
+
+  public void saveApiTempWithPortDetails(ApiTempHistory apiTempHistory) {
+    apiTempHistoryRepository.save(apiTempHistory);
+    log.info("Voyage Close, new api-history - {}", apiTempHistory.getId());
+  }
+
+  private ApiTempHistory buildApiTempHistoryByPortId(
+      Long vesselId, CargoNomination cargoNomination, Long portId) {
+    return ApiTempHistory.builder()
+        .vesselId(vesselId)
+        .cargoId(cargoNomination.getCargoXId())
+        .loadingPortId(portId)
+        .loadedDate(cargoNomination.getLastModifiedDateTime())
+        .year(cargoNomination.getLastModifiedDateTime().getYear())
+        .month(cargoNomination.getLastModifiedDateTime().getMonth().getValue())
+        .date(cargoNomination.getLastModifiedDateTime().getDayOfMonth())
+        .api(cargoNomination.getApi())
+        .isActive(true)
+        .temp(cargoNomination.getTemperature())
+        .build();
   }
 
   /** Fetch the api and temp history for cargo and port ids if available */
