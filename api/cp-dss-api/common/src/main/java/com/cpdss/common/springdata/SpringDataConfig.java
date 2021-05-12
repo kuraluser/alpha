@@ -2,13 +2,11 @@
 package com.cpdss.common.springdata;
 
 import com.cpdss.common.exception.SpringDataInitException;
-import com.cpdss.common.utils.AppContext;
 import com.cpdss.common.utils.Utils;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
@@ -195,16 +193,6 @@ public class SpringDataConfig {
    */
   @Bean
   public AuditorAware<String> auditorProvider() {
-    String userIdentifier = "unknown";
-    // To-Do Need to move to Spring Security interceptor
-    //    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //    if (authentication != null) {
-    //      userIdentifier = authentication.getName();
-    //    }
-    if (AppContext.getCurrentUserId() != null) {
-      userIdentifier = AppContext.getCurrentUserId();
-    }
-    final String id = userIdentifier;
-    return () -> Optional.ofNullable(id);
+    return new AuditorAwareImpl();
   }
 }

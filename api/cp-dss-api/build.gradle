@@ -13,10 +13,10 @@ plugins {
   id "io.freefair.lombok" version "5.1.0" apply false
   id "com.diffplug.gradle.spotless" version "3.28.0" apply false
   id 'com.google.cloud.tools.jib' version '2.6.0' apply false
-  id 'com.github.rico.common' version '2.14' apply false
-  id 'com.github.rico.ro-app' version '2.14' apply false
-  id 'com.github.rico.dockerRun' version '2.14' apply false
-  id 'com.github.rico.swarm' version '2.14' apply false
+  id 'com.github.rico.common' version '3.7' apply false
+  id 'com.github.rico.ro-app' version '3.7' apply false
+  id 'com.github.rico.dockerRun' version '3.7' apply false
+  id 'com.github.rico.swarm' version '3.7' apply false
 }
 
 ext {
@@ -67,7 +67,7 @@ subprojects {
   
   //apply to all sub project except common
   if (!it.name.startsWith('common')) {
-  
+    apply plugin: 'application'
     apply plugin: 'com.github.rico.ro-app'
 	apply plugin: 'org.springframework.boot'
 
