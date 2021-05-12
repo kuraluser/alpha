@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+import "google/protobuf/timestamp.proto";
+// import common definitions like ResponseStatus
+import "common.proto";
+
+service TaskManagerService {
+	rpc ScheduleTask (ScheduleTaskRequest) returns (TaskManagerReply) {
+	}
+	rpc DeleteScheduleTask (ScheduleTaskDeleteRequest) returns (TaskManagerReply) {
+    }
+}
+
+message ScheduleTaskRequest {
+	string taskName = 1;
+	string taskURI = 2;
+	google.protobuf.Timestamp taskStartDateTime = 3;
+	google.protobuf.Timestamp taskEndDateTime = 4;
+	string taskType = 5;
+	oneof taskInterval {
+	  string cronExpression =6;
+	  int32 taskFrequency = 7;
+	}
+	map<string, string> taskReqParam = 8;
+}
+
+message ScheduleTaskDeleteRequest {
+	string taskName = 1;
+}
+
+message TaskManagerReply {
+	ResponseStatus responseStatus = 1;
+}

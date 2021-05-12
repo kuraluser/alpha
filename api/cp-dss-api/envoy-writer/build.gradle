@@ -10,9 +10,10 @@ ext{
 }
 
 appConfig {
+  appName = 'envoy-writer'
   grpc = 'y'
   logging = 'y'
-  javaMainClass = "com.cpdss.envoywriter.Application"appName = 'loadable-study'
+  javaMainClass = "com.cpdss.envoywriter.Application"
   persistence = 'springData'
   dataBase = 'postgres'
   devTools = 'y'

@@ -61,6 +61,9 @@ public class SpringDataConfig {
   @Value("${ro.db.showSQL:false}")
   private boolean showSQL;
 
+  @Value("${ro.db.auto.generate:false}")
+  private boolean autoGenerate;
+
   @Autowired
   @Qualifier("multitenancy")
   private boolean isMultenant;
@@ -155,7 +158,9 @@ public class SpringDataConfig {
       throws SQLException {
     LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
     HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-    //    vendorAdapter.setGenerateDdl(true);
+    if(this.autoGenerate) {
+      vendorAdapter.setGenerateDdl(true);
+    }
     if (this.isMultenant && dataBaseType.equals("postgres")) {
       Map<String, Object> jpaPropertiesMap = new HashMap<>();
       jpaPropertiesMap.put(Environment.MULTI_TENANT, MultiTenancyStrategy.SCHEMA);

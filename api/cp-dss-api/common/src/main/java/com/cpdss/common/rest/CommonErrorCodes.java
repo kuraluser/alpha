@@ -5,7 +5,9 @@ public interface CommonErrorCodes {
 
   int ERROR_CODE_LENGTH = 5;
   String ERRORCODE_PATTERN = "^ERR-\\w+-\\d{" + ERROR_CODE_LENGTH + "}$";
-
+  String E_HTTP_CONFLICT = "409";
+  String E_HTTP_INTERNAL_SERVER_ERROR = "500";
+  String E_HTTP_NOT_FOUND = "404";
   String E_HTTP_MISSING_SERVLET_REQ_PARAM = "203";
   String E_HTTP_BINDING_ERR = "207";
   String E_HTTP_TYPE_MISMATCH = "205";
