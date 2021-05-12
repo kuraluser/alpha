@@ -2529,7 +2529,7 @@ public class LoadableStudyService {
             "Generate pattern failed, On Invalid Loadable Quantity",
             reply.getResponseStatus().getCode(),
             reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_LS_INVALID_LQ)
-                ? HttpStatusCode.INTERNAL_SERVER_ERROR
+                ? HttpStatusCode.BAD_REQUEST
                 : HttpStatusCode.valueOf(
                     Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
       }
