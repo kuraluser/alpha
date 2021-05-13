@@ -2133,6 +2133,18 @@ public final class PortInfo {
      */
     com.google.protobuf.ByteString
         getTimezoneAbbreviationBytes();
+
+    /**
+     * <code>string countryName = 23;</code>
+     * @return The countryName.
+     */
+    java.lang.String getCountryName();
+    /**
+     * <code>string countryName = 23;</code>
+     * @return The bytes for countryName.
+     */
+    com.google.protobuf.ByteString
+        getCountryNameBytes();
   }
   /**
    * Protobuf type {@code PortDetail}
@@ -2167,6 +2179,7 @@ public final class PortInfo {
       timezone_ = "";
       timezoneOffsetVal_ = "";
       timezoneAbbreviation_ = "";
+      countryName_ = "";
     }
 
     @java.lang.Override
@@ -2327,6 +2340,12 @@ public final class PortInfo {
               java.lang.String s = input.readStringRequireUtf8();
 
               timezoneAbbreviation_ = s;
+              break;
+            }
+            case 186: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              countryName_ = s;
               break;
             }
             default: {
@@ -3101,6 +3120,42 @@ public final class PortInfo {
       }
     }
 
+    public static final int COUNTRYNAME_FIELD_NUMBER = 23;
+    private volatile java.lang.Object countryName_;
+    /**
+     * <code>string countryName = 23;</code>
+     * @return The countryName.
+     */
+    public java.lang.String getCountryName() {
+      java.lang.Object ref = countryName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        countryName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string countryName = 23;</code>
+     * @return The bytes for countryName.
+     */
+    public com.google.protobuf.ByteString
+        getCountryNameBytes() {
+      java.lang.Object ref = countryName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        countryName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3181,6 +3236,9 @@ public final class PortInfo {
       if (!getTimezoneAbbreviationBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 22, timezoneAbbreviation_);
       }
+      if (!getCountryNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 23, countryName_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3258,6 +3316,9 @@ public final class PortInfo {
       if (!getTimezoneAbbreviationBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, timezoneAbbreviation_);
       }
+      if (!getCountryNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, countryName_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3317,6 +3378,8 @@ public final class PortInfo {
           != other.getTimezoneId()) return false;
       if (!getTimezoneAbbreviation()
           .equals(other.getTimezoneAbbreviation())) return false;
+      if (!getCountryName()
+          .equals(other.getCountryName())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3374,6 +3437,8 @@ public final class PortInfo {
           getTimezoneId());
       hash = (37 * hash) + TIMEZONEABBREVIATION_FIELD_NUMBER;
       hash = (53 * hash) + getTimezoneAbbreviation().hashCode();
+      hash = (37 * hash) + COUNTRYNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getCountryName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3551,6 +3616,8 @@ public final class PortInfo {
 
         timezoneAbbreviation_ = "";
 
+        countryName_ = "";
+
         return this;
       }
 
@@ -3599,6 +3666,7 @@ public final class PortInfo {
         result.timezoneOffsetVal_ = timezoneOffsetVal_;
         result.timezoneId_ = timezoneId_;
         result.timezoneAbbreviation_ = timezoneAbbreviation_;
+        result.countryName_ = countryName_;
         onBuilt();
         return result;
       }
@@ -3731,6 +3799,10 @@ public final class PortInfo {
         }
         if (!other.getTimezoneAbbreviation().isEmpty()) {
           timezoneAbbreviation_ = other.timezoneAbbreviation_;
+          onChanged();
+        }
+        if (!other.getCountryName().isEmpty()) {
+          countryName_ = other.countryName_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -5338,6 +5410,82 @@ public final class PortInfo {
   checkByteStringIsUtf8(value);
         
         timezoneAbbreviation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object countryName_ = "";
+      /**
+       * <code>string countryName = 23;</code>
+       * @return The countryName.
+       */
+      public java.lang.String getCountryName() {
+        java.lang.Object ref = countryName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          countryName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string countryName = 23;</code>
+       * @return The bytes for countryName.
+       */
+      public com.google.protobuf.ByteString
+          getCountryNameBytes() {
+        java.lang.Object ref = countryName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          countryName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string countryName = 23;</code>
+       * @param value The countryName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCountryName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        countryName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string countryName = 23;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCountryName() {
+        
+        countryName_ = getDefaultInstance().getCountryName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string countryName = 23;</code>
+       * @param value The bytes for countryName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCountryNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        countryName_ = value;
         onChanged();
         return this;
       }
@@ -10258,7 +10406,7 @@ public final class PortInfo {
       "rtRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId" +
       "\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableStud" +
       "yId\030\004 \001(\003\"6\n\025PortRequestWithPaging\022\016\n\006of" +
-      "fset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\320\003\n\nPortDetail" +
+      "fset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\345\003\n\nPortDetail" +
       "\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\014\n\004code\030\003 \001(\t" +
       "\022\024\n\014waterDensity\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t" +
       "\022\023\n\013maxAirDraft\030\006 \001(\t\022\031\n\021averageTideHeig" +
@@ -10270,28 +10418,29 @@ public final class PortInfo {
       "sunriseTime\030\021 \001(\t\022\022\n\nsunsetTime\030\022 \001(\t\022\020\n" +
       "\010timezone\030\023 \001(\t\022\031\n\021timezoneOffsetVal\030\024 \001" +
       "(\t\022\022\n\ntimezoneId\030\025 \001(\003\022\034\n\024timezoneAbbrev" +
-      "iation\030\026 \001(\t\"P\n\tPortReply\022\'\n\016responseSta" +
-      "tus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(" +
-      "\0132\013.PortDetail\".\n\033GetPortInfoByCargoIdRe" +
-      "quest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByC" +
-      "argoIdReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re" +
-      "sponseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail" +
-      "\"\022\n\020PortEmptyRequest\"S\n\010Timezone\022\n\n\002id\030\001" +
-      " \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offsetValue\030\003 " +
-      "\001(\t\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020TimezoneRes" +
-      "ponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Response" +
-      "Status\022\034\n\ttimezones\030\002 \003(\0132\t.Timezone2\221\003\n" +
-      "\017PortInfoService\022)\n\013GetPortInfo\022\014.PortRe" +
-      "quest\032\n.PortReply\"\000\022R\n\024GetPortInfoByCarg" +
-      "oId\022\034.GetPortInfoByCargoIdRequest\032\032.GetP" +
-      "ortInfoByCargoIdReply\"\000\022B\n\024GetPortInfoBy" +
-      "PortIds\022\034.GetPortInfoByPortIdsRequest\032\n." +
-      "PortReply\"\000\022G\n\031GetPortInfoDetailsForAlgo" +
-      "\022\034.GetPortInfoByPortIdsRequest\032\n.PortRep" +
-      "ly\"\000\0225\n\013GetTimezone\022\021.PortEmptyRequest\032\021" +
-      ".TimezoneResponse\"\000\022;\n\023GetPortInfoByPagi" +
-      "ng\022\026.PortRequestWithPaging\032\n.PortReply\"\000" +
-      "B\036\n\032com.cpdss.common.generatedP\000b\006proto3"
+      "iation\030\026 \001(\t\022\023\n\013countryName\030\027 \001(\t\"P\n\tPor" +
+      "tReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons" +
+      "eStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\".\n\033G" +
+      "etPortInfoByCargoIdRequest\022\017\n\007cargoId\030\001 " +
+      "\001(\003\"`\n\031GetPortInfoByCargoIdReply\022\'\n\016resp" +
+      "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005por" +
+      "ts\030\002 \003(\0132\013.PortDetail\"\022\n\020PortEmptyReques" +
+      "t\"S\n\010Timezone\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 " +
+      "\001(\t\022\023\n\013offsetValue\030\003 \001(\t\022\024\n\014abbreviation" +
+      "\030\004 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016responseSt" +
+      "atus\030\001 \001(\0132\017.ResponseStatus\022\034\n\ttimezones" +
+      "\030\002 \003(\0132\t.Timezone2\221\003\n\017PortInfoService\022)\n" +
+      "\013GetPortInfo\022\014.PortRequest\032\n.PortReply\"\000" +
+      "\022R\n\024GetPortInfoByCargoId\022\034.GetPortInfoBy" +
+      "CargoIdRequest\032\032.GetPortInfoByCargoIdRep" +
+      "ly\"\000\022B\n\024GetPortInfoByPortIds\022\034.GetPortIn" +
+      "foByPortIdsRequest\032\n.PortReply\"\000\022G\n\031GetP" +
+      "ortInfoDetailsForAlgo\022\034.GetPortInfoByPor" +
+      "tIdsRequest\032\n.PortReply\"\000\0225\n\013GetTimezone" +
+      "\022\021.PortEmptyRequest\032\021.TimezoneResponse\"\000" +
+      "\022;\n\023GetPortInfoByPaging\022\026.PortRequestWit" +
+      "hPaging\032\n.PortReply\"\000B\036\n\032com.cpdss.commo" +
+      "n.generatedP\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -10321,7 +10470,7 @@ public final class PortInfo {
     internal_static_PortDetail_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_PortDetail_descriptor,
-        new java.lang.String[] { "Id", "Name", "Code", "WaterDensity", "MaxDraft", "MaxAirDraft", "AverageTideHeight", "TideHeight", "HwTideFrom", "HwTideTo", "LwTideFrom", "LwTideTo", "HwTideTimeFrom", "HwTideTimeTo", "LwTideTimeFrom", "LwTideTimeTo", "SunriseTime", "SunsetTime", "Timezone", "TimezoneOffsetVal", "TimezoneId", "TimezoneAbbreviation", });
+        new java.lang.String[] { "Id", "Name", "Code", "WaterDensity", "MaxDraft", "MaxAirDraft", "AverageTideHeight", "TideHeight", "HwTideFrom", "HwTideTo", "LwTideFrom", "LwTideTo", "HwTideTimeFrom", "HwTideTimeTo", "LwTideTimeFrom", "LwTideTimeTo", "SunriseTime", "SunsetTime", "Timezone", "TimezoneOffsetVal", "TimezoneId", "TimezoneAbbreviation", "CountryName", });
     internal_static_PortReply_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_PortReply_fieldAccessorTable = new

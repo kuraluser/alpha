@@ -20,6 +20,9 @@ import { TimeZoneTransformationService } from '../../../shared/services/time-zon
 import { IDateTimeFormatOptions, ITimeZone } from '../../../shared/models/common.model';
 import * as moment from 'moment';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { PERMISSION_ACTION } from '../../../shared/models/common.model';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
  * Component class of synoptical table
@@ -40,7 +43,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   cols: SynopticalColumn[];
   maxSubRowLevel = 2;
   editDateFormat :string;
-  
+  etaEtdPermision: IPermission;
+  timeOfSunrisePermission: IPermission;
+  timeOfSunsetPermission: IPermission;
 
 
   listData = {};
@@ -77,6 +82,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private translateService: TranslateService,
     private timeZoneTransformationService: TimeZoneTransformationService,
+    private permissionsService: PermissionsService
   ) {
   }
 
@@ -87,6 +93,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   async ngOnInit() {
+    this.getPagePermission();
     this.today.setSeconds(0, 0);
     this.initActionSubscriptions();
     this.globalTimeZones = await this.timeZoneTransformationService.getTimeZoneList().toPromise();
@@ -101,7 +108,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               if (route.loadablePatternId) {
                 this.synopticalService.loadablePatternId = Number(route.loadablePatternId);
               }
-              if (this.synopticalService?.selectedLoadableStudy?.status === "Confirmed"  && !this.synopticalService?.selectedLoadablePattern) 
+              if (this.synopticalService?.selectedLoadableStudy?.status === "Confirmed"  && !this.synopticalService?.loadablePatternId) 
                {  
                  await this.synopticalService.setSelectedLoadableStudy();
                }
@@ -116,6 +123,17 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       })
       this.editDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)
   }
+
+   /**
+   * Get page permission
+   *
+   * @memberof SynopticalComponent
+   */
+    getPagePermission() {
+      this.etaEtdPermision = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['SynopticalTableETA/ETD'], false);
+      this.timeOfSunrisePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['SynopticalTableTimeOfSunrise'] , false);
+      this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['SynopticalTableTimeOfSunset'] , false);
+    }
 
   /**
   * Component lifecycle ngOnDestroy
@@ -287,6 +305,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       },
       {
         header: 'ETA/ETD',
+        view: this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined,
         toolTip :"PORT_TIME_ZONE_NOTIFICATION",
         subHeaders: [{
           header: '',
@@ -296,18 +315,20 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'etaEtdPlanned',
                 type: this.fieldType.DATETIME,
-                validators: ['required']
+                validators: (this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) && 
+                (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined) ? ['required'] : []
               }],
-              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode() && (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined),
             },
             {
               header: "Actual",
               fields: [{
                 key: 'etaEtdActual',
                 type: this.fieldType.DATETIME,
-                validators: ['required']
+                validators: ((this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) && 
+                  (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined)) ? ['required'] : []
               }],
-              editable: this.checkIfConfirmed(),
+              editable: this.checkIfConfirmed() && (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined),
             },
           ]
         }
@@ -315,19 +336,21 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       },
       {
         header: 'Time of Sunrise',
+        view: this.timeOfSunrisePermission?.view || this.timeOfSunrisePermission?.view === undefined,
         fields: [{
           key: 'timeOfSunrise',
           type: this.fieldType.TIME
         }],
-        editable: true,
+        editable: (this.timeOfSunrisePermission?.edit || this.timeOfSunrisePermission?.edit === undefined),
       },
       {
         header: 'Time of Sunset',
+        view: this.timeOfSunsetPermission?.view || this.timeOfSunsetPermission?.view === undefined,
         fields: [{
           key: 'timeOfSunset',
           type: this.fieldType.TIME
         }],
-        editable: true,
+        editable: (this.timeOfSunsetPermission?.edit || this.timeOfSunsetPermission?.edit === undefined),
       },
       {
         header: 'Seawater Specific Gravity (T/m3)',
@@ -1623,6 +1646,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @memberof SynopticalTableComponent
   */
   setColValue(column: SynopticalColumn, record, index: number) {
+    if(!column.dynamicKey && column.expandedFields){
+      column.expandedFields.forEach( expandedCol => {
+        this.setColValue(expandedCol, record, index)
+      })
+    }
     if (column.dynamicKey) {
       const values = [];
       const fieldKey = column.dynamicKey

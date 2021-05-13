@@ -282,7 +282,7 @@ a {
 }
 
 .btn {
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .icon-btn {
@@ -295,7 +295,7 @@ a {
 
 .pencil-icon {
   width: 18px;
-  height: 14px;
+  height: 16px;
   display: inline-block;
   background-position: center left;
 }
@@ -655,7 +655,7 @@ h5{
 }
 
 .p-datatable .p-datatable-tbody > tr > td, .p-datatable .p-datatable-tbody > tr > th{
-  padding: 11px 5px;
+  padding: 9px 5px;
   cursor: pointer;
 }
 
@@ -825,7 +825,7 @@ tr{
   display: inline-block;
 }
 .column-class{
-  width: 130px!important;
+  width: 145px!important;
 }
 .column-sl{
   width: 50px!important;
@@ -838,8 +838,8 @@ tr{
 }
 .icon-api-temp{
   display: inline-block;
-  width: 19px;
-  height: 16px;
+  width: 21px;
+  height: 18px;
   vertical-align: bottom;
   cursor: pointer;
 }
@@ -885,7 +885,7 @@ input[type=number] {
 }
 
 .loading-port-pop-up{
-  width: 370px;
+  width: 390px;
 }
 
 .tab-status-icon{
@@ -928,8 +928,8 @@ input[type=number] {
 }
 
 .delete-icon{
-  width: 14px;
-  height: 16px;
+  width: 15px;
+  height: 18px;
   display: inline-block;
 }
 .p-datatable .p-sortable-column:focus{
@@ -1250,7 +1250,7 @@ td.sl div{
 }
 .header-info-pop-up{
   display: block;
-  font-size: 11px;
+  font-size: 13px;
   padding-top: 5px;
   font-style: italic;
 }
@@ -1266,7 +1266,7 @@ td.sl div{
 }
 
 .commingle-pop-up{
-  width: 720px;
+  width: 760px;
 }
 
 .p-multiselect-label{
@@ -1599,19 +1599,21 @@ th{
 .table-pattern{
   &.p-datatable .p-datatable-tbody > tr > td{
     padding:  2px 3px;
-    font-size: 10px;
+    font-size: 11px;
     &:last-child{
       border-right: 0;
     }
   }
   &.p-datatable .p-datatable-thead > tr > th{
     padding:  2px 3px;
+    font-size: 11px;
     &:last-child{
       border-right: 0;
     }
   }
   &.p-datatable .p-datatable-tfoot > tr > td{
     padding: 2px 3px!important;
+    font-size: 11px;
   }
   table{
     table-layout: auto!important;
@@ -1997,11 +1999,11 @@ width: 50px !important;
   width: 120px!important;
 }
 .column-api, .column-temp{
-  width: 90px!important;
+  width: 105px!important;
 }
 
 .column-max-tol, .column-min-tol{
-  width: 110px!important;
+  width: 115px!important;
 }
 .column-segregation{
   width: 120px!important;
@@ -2319,13 +2321,14 @@ tr:hover{
 .table-pattern-view-more{
   &.p-datatable .p-datatable-tbody > tr > td, &.p-datatable .p-datatable-tbody > tr > th{
     padding:  2px 3px;
-    font-size: 10px;
+    font-size: 11px;
     &:last-child{
       border-right: 0;
     }
   }
     &.p-datatable .p-datatable-thead > tr > th{
       padding:  2px 3px;
+      font-size: 11px;
       &:last-child{
         border-right: 0;
       }
@@ -2345,7 +2348,10 @@ tr:hover{
   }
 
   .column-planned-start-date, .column-planned-end-date, .column-actual-start-date{
-    width: 150px!important;
+    width: 170px!important;
+  }
+  .column-actual-end-date{
+    width: 170px!important;
   }
 
   .voyage-start{
@@ -2446,5 +2452,15 @@ textarea{
         display: none;
       }
     }
+  }
+}
+::placeholder, ::-webkit-input-placeholder{
+  font-size: 11px;
+}
+
+.pattern-view-more-popup .tank-outer-pattern{
+  height: 270px;
+  &.loadable-plan-stowage{
+    height: 270px;
   }
 }

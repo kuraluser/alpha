@@ -15,7 +15,7 @@ import { OPERATION_TAB } from '../models/operations.model';
 })
 export class LoadingComponent implements OnInit {
 
-  currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
+  currentTab: OPERATION_TAB = OPERATION_TAB.SEQUENCE;
   OPERATION_TAB = OPERATION_TAB;
 
   constructor() { }

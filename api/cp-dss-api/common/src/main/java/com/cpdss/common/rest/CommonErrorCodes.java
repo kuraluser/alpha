@@ -43,4 +43,7 @@ public interface CommonErrorCodes {
   String E_CPDSS_PASSWORD_EXPIRED = "124";
 
   String E_CPDSS_OPERATION_NOT_ALLOWED = "114";
+
+  //  5XX – Server Error
+  String E_CPDSS_LS_INVALID_LQ = "521";
 }

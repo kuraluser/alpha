@@ -401,6 +401,19 @@ export enum VALIDATION_AND_SAVE_STATUS {
     errorDetails: string[]
  }
 
+ /**
+ * Interface for comment response
+ *
+ * @export
+ * @interface ICommentResponse
+ */
+ export interface ICommentResponse {
+    responseStatus: IResponseStatus;
+    comment: ILoadablePlanCommentsDetails
+ }
+
+
+
 
 
  

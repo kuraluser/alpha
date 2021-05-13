@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AdminModule } from '../admin.module';
+import { Observable, of} from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { IPort,IPortsResponse } from '../../../../app/shared/models/common.model'
+
 
 
 /**
@@ -15,48 +20,33 @@ import { AdminModule } from '../admin.module';
 
 export class PortMasterApiService {
 
-   selectedPortLocation : any;  
-  constructor() { }
+  selectedPortLocation: any;
+  private _ports: IPort[];
+
+  constructor(private commonApiService: CommonApiService) { }
 
   /**
-   * Method to get ports list 
+   * Method to get ports list
+   *
+   * @return {*}  {Observable<IPort[]>}
+   * @memberof PortMasterApiService
+   */
+  getPorts(): Observable<IPort[]> {
+    if (this._ports) {
+      return of(this._ports);
+    } else {
+      return this.commonApiService.get<IPortsResponse>('ports').pipe(map((response) => {
+        this._ports = response?.ports;
+        return this._ports;
+      }));
+    }
+  }
+  /**
+   * Method to get country list
    * @return {*} 
    * @memberof PortMasterApiService
    */
-
-  getPortsList() {
-    return [                               //TODO -has to be replaced with actual api call later
-      {
-        portId :"9",
-        portName: "5 West",
-        portCode: "FEW",
-        country: "India",
-        timeZone: "UTC",
-        densityOfWater: "1.025",
-        temperature: "10",
-        maximumDraft: "3"
-      },
-      {
-        portId :"10",
-        portName: "RAS TANURA",
-        portCode: "RAS",
-        country: "India",
-        timeZone: "UTC",
-        densityOfWater: ".025",
-        temperature: "20",
-        maximumDraft: "2"
-      }
-    ]
-
-  }
-
- /**
-  * Method to get country list
-  * @return {*} 
-  * @memberof PortMasterApiService
-  */
- async getCountryList()
-  {
+  async getCountryList() {
     return await [
       { name: "India" },                 //TODO-has to be replaced with actual api call later
       { name: "Australia" }

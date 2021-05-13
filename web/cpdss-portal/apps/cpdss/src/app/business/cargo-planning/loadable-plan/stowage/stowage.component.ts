@@ -199,8 +199,10 @@ export class StowageComponent implements OnInit {
     this.buttonStatus = 0;
     this.isPermissionAvaliable = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['EditStowage'], false).view;
     this.cargoGridColumns = this.loadablePlanTransformationService.getCargoDatatableColumns();
-    this.loadablePlanTransformationService.savedComments$.subscribe(() => {
-      this.validateAndSave();
+    this.loadablePlanTransformationService.savedComments$.subscribe((value: string) => {
+      if(value === 'savedCommentsPopup') {
+        this.validateAndSave();
+      }
     })
   }
 

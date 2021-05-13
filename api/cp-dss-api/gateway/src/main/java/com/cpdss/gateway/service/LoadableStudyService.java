@@ -9,6 +9,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
+import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
@@ -208,6 +210,11 @@ public class LoadableStudyService {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("envoywritersrvice")
+  private EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
+
+  @Autowired UserService userService;
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -963,6 +970,7 @@ public class LoadableStudyService {
       op.setOperationName(operation.getOperationName());
       response.getOperations().add(op);
     }
+    response.setLastModifiedPortId(Long.valueOf(grpcReply.getLastModifiedPort()));
     return response;
   }
 
@@ -2282,6 +2290,9 @@ public class LoadableStudyService {
             cargoNomination.setId(cargoNominationDetail.getId());
             cargoNomination.setColor(cargoNominationDetail.getColor());
             cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+            if (cargoNominationDetail.getApiEst().length() > 0) {
+              cargoNomination.setApi(new BigDecimal(cargoNominationDetail.getApiEst()));
+            }
             if (!CollectionUtils.isEmpty(cargoNominationDetail.getLoadingPortDetailsList())) {
               List<LoadingPort> loadingPortList = new ArrayList<>();
               cargoNominationDetail
@@ -2464,9 +2475,9 @@ public class LoadableStudyService {
         new LoadablePatternDetailsResponse();
     loadablePatternDetailsResponse.setId(loadablePatternCommingleDetailsReply.getId());
     loadablePatternDetailsResponse.setApi(loadablePatternCommingleDetailsReply.getApi());
-    loadablePatternDetailsResponse.setCargo1Abbrivation(
+    loadablePatternDetailsResponse.setCargo1Abbreviation(
         loadablePatternCommingleDetailsReply.getCargo1Abbrivation());
-    loadablePatternDetailsResponse.setCargo2Abbrivation(
+    loadablePatternDetailsResponse.setCargo2Abbreviation(
         loadablePatternCommingleDetailsReply.getCargo2Abbrivation());
     loadablePatternDetailsResponse.setCargo1Percentage(
         loadablePatternCommingleDetailsReply.getCargo1Percentage());
@@ -2512,6 +2523,17 @@ public class LoadableStudyService {
     AlgoReply reply = this.generateLoadablePatterns(request);
 
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      if (reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_LS_INVALID_LQ)) {
+        log.info("Generate Pattern Failed on Lodable Quantity Validation");
+        throw new GenericServiceException(
+            "Generate pattern failed, On Invalid Loadable Quantity",
+            reply.getResponseStatus().getCode(),
+            reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_LS_INVALID_LQ)
+                ? HttpStatusCode.INTERNAL_SERVER_ERROR
+                : HttpStatusCode.valueOf(
+                    Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+      }
+
       throw new GenericServiceException(
           "failed to call algo",
           reply.getResponseStatus().getCode(),
@@ -3354,7 +3376,7 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
-    request.setHasLodicator(false);
+    request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
@@ -3479,12 +3501,6 @@ public class LoadableStudyService {
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
 
-              /*
-               * Optional.ofNullable(lpd.getStabilityParameters()) .ifPresent(
-               * stabilityParameter -> planBuilder.setStabilityParameters(
-               * buildStabilityParamter(stabilityParameter)));
-               */
-
               request.addLoadablePlanDetails(planBuilder);
             });
   }
@@ -3575,6 +3591,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getMaxTolerence()).ifPresent(qunatityBuilder::setMaxTolerence);
     Optional.ofNullable(lpqcd.getMinTolerence()).ifPresent(qunatityBuilder::setMinTolerence);
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
+    Optional.ofNullable(lpqcd.getCargoNominationId())
+        .ifPresent(qunatityBuilder::setCargoNominationId);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3757,6 +3775,7 @@ public class LoadableStudyService {
     response.setVoyageStatusId(grpcReply.getVoyageStatusId());
     response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
     response.setValidated(grpcReply.getValidated());
+    response.setLoadableStudyStatusId(grpcReply.getLoadableStudyStatusId());
   }
 
   /**
@@ -4289,6 +4308,7 @@ public class LoadableStudyService {
             .ifPresent(item -> builder.setPlannedWeight(valueOf(item)));
         Optional.ofNullable(cargo.getActualWeight())
             .ifPresent(item -> builder.setActualWeight(valueOf(item)));
+        Optional.ofNullable(cargo.getIsCommingleCargo()).ifPresent(builder::setIsCommingleCargo);
         recordBuilder.addCargo(builder.build());
       }
     }
@@ -4426,28 +4446,6 @@ public class LoadableStudyService {
     SaveCommentRequest.Builder builder = SaveCommentRequest.newBuilder();
     builder.setLoadablePatternId(loadablePatternId);
     Optional.ofNullable(request.getComment()).ifPresent(builder::setComment);
-    Users usersEntity;
-    // Get user
-    /*
-     * try { usersEntity = this.getUsersEntity(
-     * keycloakDynamicConfigResolver.parseKeycloakToken(authorizationToken).
-     * getSubject()); } catch (VerificationException e) { throw new
-     * GenericServiceException( "Invalid token",
-     * CommonErrorCodes.E_HTTP_INVALID_TOKEN, HttpStatusCode.UNAUTHORIZED); }
-     *
-     * // Exit on user not found if (null == usersEntity) { throw new
-     * GenericServiceException( "User not found",
-     * CommonErrorCodes.E_CPDSS_INVALID_USER, HttpStatusCode.NOT_FOUND); }
-     *
-     * builder.setUser(usersEntity.getId()); SaveCommentReply reply =
-     * this.saveComment(builder.build()); if
-     * (!SUCCESS.equals(reply.getResponseStatus().getStatus())) { throw new
-     * GenericServiceException( "failed to save comment",
-     * reply.getResponseStatus().getCode(),
-     * HttpStatusCode.valueOf(Integer.parseInt(reply.getResponseStatus().getCode()))
-     * ); }
-     */
-
     SaveCommentReply grpcReply = this.saveComment(builder.build());
     if (!grpcReply.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.info(
@@ -4464,6 +4462,8 @@ public class LoadableStudyService {
       comment.setComment(grpcReply.getComment().getComment());
       comment.setId(grpcReply.getComment().getCommentId());
       comment.setDataAndTime(grpcReply.getComment().getCreateDate());
+      comment.setUserName(
+          this.userService.getUserNameFromUserId(String.valueOf(grpcReply.getComment().getUser())));
       response.setComment(comment);
     }
     response.setResponseStatus(
@@ -5397,6 +5397,47 @@ public class LoadableStudyService {
     return voyages;
   }
 
+  /**
+   * Method to download loadable report
+   *
+   * @return loadable report byte array
+   */
+  public byte[] downloadLoadablePlanReport(
+      Long vesselId, Long loadableStudyId, Long loadablePatternId) throws GenericServiceException {
+
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest loadablePlanReportRequest =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setLoadableStudyId(loadableStudyId)
+            .setLoadablePatternId(loadablePatternId)
+            .build();
+
+    //    Get loadable plan report
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply loadablePlanReportReply =
+        getLoadablePlanReport(loadablePlanReportRequest);
+
+    if (!SUCCESS.equals(loadablePlanReportReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to generate loadable plan report",
+          loadablePlanReportReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.parseInt(loadablePlanReportReply.getResponseStatus().getCode())));
+    }
+    return loadablePlanReportReply.getData().toByteArray();
+  }
+
+  /**
+   * Method to get loadable plan report
+   *
+   * @param loadablePlanReportRequest request object
+   * @return LoadablePlanReportReply object
+   */
+  public com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply getLoadablePlanReport(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest
+          loadablePlanReportRequest) {
+    return loadableStudyServiceBlockingStub.getLoadablePlanReport(loadablePlanReportRequest).next();
+  }
+
   public VoyageActionResponse saveVoyageStatus(VoyageActionRequest request, String correlationId)
       throws NumberFormatException, GenericServiceException {
 
@@ -5599,5 +5640,12 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     return buildErrorResponse(grpcReply, correlationId);
+  }
+
+  /** @return Object */
+  public Object test() {
+    LoadableStudyJson.Builder error = LoadableStudyJson.newBuilder();
+    this.envoyWriterGrpcService.getLoadableStudy(error.build());
+    return null;
   }
 }

@@ -81,7 +81,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
   ngOnInit(): void {
     this.duplicateLoadableStudy = <LoadableStudy>{};
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
-    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewLoadableStudy'], actions: [PERMISSION_ACTION.VIEW] };
     this.getGridColumns();
   }
 

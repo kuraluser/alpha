@@ -19,7 +19,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
  */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
-    comments = "Source: envoy-writer.proto")
+    comments = "Source: envoy_writer.proto")
 public final class EnvoyWriterServiceGrpc {
 
   private EnvoyWriterServiceGrpc() {}

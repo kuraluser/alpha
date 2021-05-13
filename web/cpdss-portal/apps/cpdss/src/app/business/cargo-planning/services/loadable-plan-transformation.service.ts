@@ -584,8 +584,8 @@ export class LoadablePlanTransformationService {
   /**
    * comments saved
   */
-  commentsSaved() {
-    this.savedComments.next();
+  commentsSaved(comments: string) {
+    this.savedComments.next(comments);
   }
 
 }

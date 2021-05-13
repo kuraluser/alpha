@@ -59,6 +59,7 @@ export interface SynopticField {
 */
 export interface SynopticalColumn {
     fields?: SynopticField[];
+    view?: boolean;
     header: string;
     expandable?: boolean;
     editable?: boolean;

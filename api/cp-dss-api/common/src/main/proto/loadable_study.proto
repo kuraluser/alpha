@@ -150,19 +150,23 @@ service LoadableStudyService {
 	
 	rpc GetVoyages (VoyageRequest) returns (VoyageListReply) {
 	}
-	
+
+	//	Generate loadable plan excel report
+	rpc GetLoadablePlanReport (LoadablePlanReportRequest) returns (stream LoadablePlanReportReply) {
+	}
+
 	rpc GetAlgoErrors (AlgoErrorRequest) returns (AlgoErrorReply) {
 	}
 	
 	rpc SaveVoyageStatus(SaveVoyageStatusRequest) returns (SaveVoyageStatusReply){
 	}
-	
+
 	rpc GetCargoApiTempHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
 	}
-	
+
 	rpc GetAllCargoHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
 	}
-	
+
 	rpc SaveJson (JsonRequest) returns (StatusReply) {
 	}
 
@@ -392,6 +396,7 @@ message LoadablePlanDetailsReply {
   	int64 voyageStatusId = 16;
   	bool validated = 17;
   	StabilityParameter stabilityParameter =18;
+  	int64 loadableStudyStatusId = 19;
 }
 
 message LoadablePlanComments {
@@ -473,7 +478,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 int32 loadingOrder = 23;
 	 int64 tankId = 24;
 	 string fillingRatio = 25;
-	 string correctedUllage = 26; 
+	 string correctedUllage = 26;
  	 string rdgUllage = 27;
      string correctionFactor = 28;
       string slopQuantity = 29;
@@ -718,7 +723,7 @@ message CargoNominationDetail {
 	string tempEst = 12;
 	int64 segregationId = 13;
 	bool isCargoNominationComplete=14;
-	
+
 }
 
 message CargoNominationRequest {
@@ -744,9 +749,9 @@ message PortRotationRequest{
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
 	repeated PortRotationDetail portRotationDetails = 6;
-	int64 dischargingCargoId=7;	
+	int64 dischargingCargoId=7;
     bool isDischargingPortsComplete=8;
-	
+
 }
 
 message PortRotationDetail{
@@ -783,6 +788,7 @@ message PortRotationReply{
 	repeated PortRotationDetail ports=2;
 	repeated Operation operations=3;
 	int64 portRotationId = 4;
+	int64 lastModifiedPort = 5;
 }
 
 message LoadableQuantityResponse {
@@ -1167,6 +1173,20 @@ message DischargingPortDetail{
 message CargoDetails{
 	int64 cargoId = 1;
 	string name=3;
+}
+
+// Request object for loadable plan report
+message LoadablePlanReportRequest {
+	int64 vesselId = 1;
+	int64 loadablePatternId = 2;
+	int64 loadableStudyId = 3;
+}
+
+// Response object for loadable plan report
+message LoadablePlanReportReply {
+	StatusReply responseStatus = 1;
+	bytes data = 2;
+	int32 size = 3;
 }
 
 message SaveVoyageStatusRequest{

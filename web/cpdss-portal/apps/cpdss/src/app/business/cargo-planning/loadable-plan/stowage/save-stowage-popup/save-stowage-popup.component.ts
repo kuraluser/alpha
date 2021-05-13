@@ -87,7 +87,7 @@ export class SaveStowagePopupComponent implements OnInit {
       const response: IResponse = await this.loadablePlanApiService.saveComments(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, comment).toPromise();
       if (response?.responseStatus?.status === "200") {
         this.closePopup();
-        this.loadablePlanTransformationService.commentsSaved();
+        this.loadablePlanTransformationService.commentsSaved('savedCommentsPopup');
         this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS'], detail: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS'] });
       }
       this.ngxSpinnerService.hide();

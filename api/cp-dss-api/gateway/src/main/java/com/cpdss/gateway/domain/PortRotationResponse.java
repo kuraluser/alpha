@@ -23,4 +23,6 @@ public class PortRotationResponse {
   private List<Operation> operations;
 
   private Long id;
+
+  private Long lastModifiedPortId = 0L;
 }

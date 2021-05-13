@@ -179,6 +179,9 @@ public class PortInfoService extends PortInfoServiceImplBase {
             portDetail.setTimezoneAbbreviation(port.getTimezone().getAbbreviation());
           }
 
+          Optional.ofNullable(port.getCountry())
+              .ifPresent(item -> portDetail.setCountryName(port.getCountry().getName()));
+
           if (!port.getBerthInfoSet().isEmpty()) {
             BerthInfo maxDraftBerthInfo =
                 Collections.max(port.getBerthInfoSet(), byMaxDraftComparator);

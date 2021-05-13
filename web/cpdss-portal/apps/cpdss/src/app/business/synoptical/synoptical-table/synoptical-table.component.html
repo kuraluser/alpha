@@ -26,9 +26,11 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded">
+            <ng-container *ngIf="rowData?.view || rowData?.view === undefined">
             <ng-container
                 *ngTemplateOutlet="row;context:{rowData:rowData, columns:columns, rowIndex:rowIndex, expanded: expanded, subRowLevel: 0, headers: []}">
             </ng-container>
+        </ng-container>
         </ng-template>
         <ng-template #row let-rowData="rowData" let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded"
             let-subRowLevel="subRowLevel" let-headers="headers">

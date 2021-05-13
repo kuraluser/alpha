@@ -1,21 +1,28 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.envoywriter.service;
 
-import com.cpdss.common.generated.EnvoyWriter;
-import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
-import io.grpc.stub.StreamObserver;
+import static com.cpdss.envoywriter.common.Utility.*;
+
+import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
+import com.cpdss.common.generated.EnvoyWriter.WriterReply;
+import com.cpdss.common.generated.EnvoyWriter.WriterReply.Builder;
 import lombok.extern.log4j.Log4j2;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
-@GrpcService
-public class EnvoyWriterService extends EnvoyWriterServiceGrpc.EnvoyWriterServiceImplBase {
+@Transactional
+@Service
+public class EnvoyWriterService {
 
-  @Override
-  public void getLoadableStudy(
-      EnvoyWriter.LoadableStudyJson request,
-      StreamObserver<EnvoyWriter.WriterReply> responseObserver) {
-    log.info("Inside getLoadableStudy service");
-    String imoNumber = request.getImoNumber();
+  @Value("${cpdss.communication.salt}")
+  private String salt;
+
+  public WriterReply passDataToCommunicationServer(LoadableStudyJson request, Builder builder) {
+
+    String encryptedString = encrypt(request.getLoadableStudy(), request.getImoNumber(), salt);
+
+    return builder.build();
   }
 }

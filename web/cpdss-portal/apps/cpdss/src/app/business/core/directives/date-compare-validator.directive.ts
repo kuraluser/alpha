@@ -9,7 +9,7 @@ export function dateCompareValidator(field, compareOperation): ValidatorFn {
         if (!control.root || !control.parent) {
             return null;
         }
-        if (control.parent?.value[field]) {
+        if (control.parent?.value[field] && control.value) {
             const compareDate = new Date(control.parent?.value[field]);
             const checkDate = new Date(control.value)
             if (compareOperation === '<') {

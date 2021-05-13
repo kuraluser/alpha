@@ -42,7 +42,7 @@ export class CargoPriorityGridComponent implements OnInit {
       const totalOrderedQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
         return Number(a) + Number(b?.orderedQuantity);
       }, 0);
-      this.totalDifference = (totalQuantity/totalOrderedQuantity) * 100;
+      this.totalDifference = ((totalQuantity - totalOrderedQuantity)/totalOrderedQuantity) * 100;
     }
   }
 

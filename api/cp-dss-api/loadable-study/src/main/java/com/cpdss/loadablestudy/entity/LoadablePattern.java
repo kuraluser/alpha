@@ -40,6 +40,12 @@ public class LoadablePattern extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
+  @Column(name = "feed_back_loop")
+  private Boolean feedbackLoop;
+
+  @Column(name = "feed_back_loop_count")
+  private Integer feedbackLoopCount;
+
   @OneToMany(mappedBy = "loadablePatternXId")
   private Collection<LoadablePlan> loadablePlanCollection;
 

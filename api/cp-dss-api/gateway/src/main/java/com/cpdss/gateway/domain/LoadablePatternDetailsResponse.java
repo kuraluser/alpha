@@ -9,8 +9,8 @@ import lombok.Data;
 public class LoadablePatternDetailsResponse {
   private Long id;
   private String tankShortName;
-  private String cargo1Abbrivation;
-  private String cargo2Abbrivation;
+  private String cargo1Abbreviation;
+  private String cargo2Abbreviation;
   private String grade;
   private String quantity;
   private String api;

@@ -364,7 +364,8 @@
 	"COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER": "Select Cargo 1",
 	"COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER": "Select Cargo 2",
 	"LOADABLE_QUANTITY_ERROR": "Please enter a valid number",
-	"UNIT_CHANGE_API_ERROR": "Cannot change unit without valid api and temperature",
+	"UNIT_CHANGE_API_ERROR": "Error",
+	"UNIT_CHANGE_API_ERROR_DETAILS": "Cannot change unit without valid api and temperature",
 	"TOTAL_QUANTITY_ERROR": "Error",
 	"TOTAL_QUANTITY_INFO": "Info",
 	"TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity should not be greater than loadable quantity",
@@ -728,7 +729,7 @@
 	"SHIP_LANDING_TYPE": "Type",
 	"ROLE_NAME_MAX_LENGTH": "Maximum allowed character length is 10",
 	"VOYAGE_STATUS_PARAMETER_LIST_FUEL_AND_DIESEL": "FO + DO",
-	"VOYAGE_STATUS_PARAMETER_LIST_BALLAST_WEIGHT": "Ballast Weight",
+	"VOYAGE_STATUS_PARAMETER_LIST_BALLAST_WEIGHT": "Ballast",
 	"VOYAGE_STATUS_PARAMETER_LIST_DISPLACEMENT": "Displacement",
 	"VOYAGE_STATUS_PARAMETER_LIST_FREASH_WATER_WEIGHT": "Fresh Water",
 	"VOYAGE_STATUS_PARAMETER_LIST_OTHERS_WEIGHT": "Others",
@@ -1011,5 +1012,9 @@
 	"PORT_MASTER_SELECT_PORT_LOCATION":"Select port location",
 	"PORT_MASTER_DELETE_BERTH":"Delete Berth",
 	"PORT_MASTER_ADD_BERTH":"Add Berth",
-	"PORT_MASTER_OK":"Ok"
+	"PORT_MASTER_OK":"Ok",
+	"FLEET_POPUP_PORT_OF":"Port of",
+	"PORT_ROTATION_ERROR_DETAILS": "Discharge port cannot be added before loading",
+	"PORT_ROTATION_INFO": "info"
+
 }

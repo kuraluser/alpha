@@ -1,4 +1,5 @@
 appConfig {
+  appName = 'discharging-plan'
   grpcServer = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
