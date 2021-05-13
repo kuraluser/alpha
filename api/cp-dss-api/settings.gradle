@@ -8,4 +8,7 @@
  */
 
 rootProject.name = 'cp-dss-api'
+
+includeBuild 'E:\\ProjectFolders\\Intellij2020-jdk11\\ro-app'
+
 include "common", "gateway", "loadable-study", "loadable-plan", "vessel-info", "cargo-info", "port-info", "loading-plan", "discharging-plan", "user-authorization", "company-info", "envoy-reader", "admin-support", "envoy-writer","loadicator-integration"

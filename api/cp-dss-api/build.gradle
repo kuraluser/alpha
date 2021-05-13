@@ -2,7 +2,6 @@
 buildscript {
    repositories {
      mavenCentral()
-     jcenter()
    }
 }
 
@@ -12,7 +11,7 @@ plugins {
   id "name.remal.sonarlint" version "1.0.200" apply false
   id "io.freefair.lombok" version "5.1.0" apply false
   id "com.diffplug.gradle.spotless" version "3.28.0" apply false
-  id 'com.google.cloud.tools.jib' version '2.6.0' apply false
+  id 'com.google.cloud.tools.jib' version '2.7.1' apply false
   id 'com.github.rico.common' version '3.7' apply false
   id 'com.github.rico.ro-app' version '3.7' apply false
   id 'com.github.rico.dockerRun' version '3.7' apply false
@@ -26,6 +25,7 @@ ext {
 
 //Compile only libraries for common application
 project(':common') {
+  apply plugin: 'java'
   apply plugin: 'java-library'
   apply plugin: 'com.github.rico.common'
 }
@@ -37,11 +37,9 @@ subprojects {
   version = '0.0.1-SNAPSHOT'
 
   repositories {
-    jcenter()
     mavenCentral()
   }
-  
-  apply plugin: 'java'
+
   apply plugin: 'name.remal.sonarlint'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'io.freefair.lombok'
@@ -73,8 +71,8 @@ subprojects {
 
    }
   
-  sourceCompatibility = '1.8'
-  targetCompatibility = '1.8'
+  sourceCompatibility = '11'
+  targetCompatibility = '11'
  
  configurations {
     all {
