@@ -397,6 +397,8 @@ message LoadablePlanDetailsReply {
   	bool validated = 17;
   	StabilityParameter stabilityParameter =18;
   	int64 loadableStudyStatusId = 19;
+  	string totalLoadableQuantity = 20;
+  	int64 lastModifiedPort = 21;
 }
 
 message LoadablePlanComments {

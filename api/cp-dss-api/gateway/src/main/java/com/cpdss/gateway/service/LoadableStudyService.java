@@ -3218,8 +3218,9 @@ public class LoadableStudyService {
       rec.setApi(isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
-      rec.setIsCommingleCargo(
-          isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
+      //      rec.setIsCommingleCargo(
+      //          isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
+      rec.setIsCommingleCargo(protoRec.getIsCommingleCargo());
       if (protoRec.getTemperature() != null && protoRec.getTemperature().length() > 0) {
         rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
       }
@@ -3759,6 +3760,11 @@ public class LoadableStudyService {
     buildLoadableStudyBallastDetails(response, grpcReply);
     buildSynopticalTableDetails(response, loadableStudyId, vesselId, loadablePatternId);
     buildLoadablePlanComments(response, grpcReply);
+    response.setLoadableQuantity(
+        isEmpty(grpcReply.getTotalLoadableQuantity())
+            ? null
+            : new BigDecimal(grpcReply.getTotalLoadableQuantity()));
+    response.setLastModifiedPort(grpcReply.getLastModifiedPort());
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
@@ -4007,6 +4013,7 @@ public class LoadableStudyService {
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
@@ -4782,6 +4789,9 @@ public class LoadableStudyService {
                       cargo.setId(synopticalCargoRecord.getCargoId());
                       cargo.setPlannedWeight(synopticalCargoRecord.getPlannedWeight());
                       cargo.setActualWeight(synopticalCargoRecord.getActualWeight());
+                      cargo.setAbbreviation(synopticalCargoRecord.getAbbreviation());
+                      cargo.setApi(synopticalCargoRecord.getApi().toString());
+                      cargo.setTemp(synopticalCargoRecord.getTemperature().toString());
                       cargoConditions.add(cargo);
                     }
                   });
