@@ -7676,38 +7676,54 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(tankDataOpt.get().getTemperature())
               .ifPresent(temp -> cargoBuilder.setTemperature(valueOf(temp)));
           ofNullable(tankDataOpt.get().getFillingRatio()).ifPresent(cargoBuilder::setFillingRatio);
-        } else {
-          Optional<LoadablePlanComminglePortwiseDetails> commingleTankDataOpt =
-              portSpecificCommingleCargoDetails.stream()
-                  .filter(cargo -> cargo.getTankId().equals(tank.getTankId()))
+        }
+
+        Optional<LoadablePlanComminglePortwiseDetails> commingleTankDataOpt =
+            portSpecificCommingleCargoDetails.stream()
+                .filter(cargo -> cargo.getTankId().equals(tank.getTankId()))
+                .findAny();
+        if (commingleTankDataOpt.isPresent()) {
+          cargoBuilder.setIsCommingleCargo(true);
+          BigDecimal cargo1Mt = null;
+          BigDecimal cargo2Mt = null;
+
+          if (!isEmpty(commingleTankDataOpt.get().getCargo1Mt())) {
+            cargo1Mt = new BigDecimal(commingleTankDataOpt.get().getCargo1Mt());
+          }
+
+          if (!isEmpty(commingleTankDataOpt.get().getCargo2Mt())) {
+            cargo2Mt = new BigDecimal(commingleTankDataOpt.get().getCargo2Mt());
+          }
+
+          BigDecimal plannedQuantity = cargo1Mt.add(cargo2Mt);
+
+          Optional.ofNullable(plannedQuantity)
+              .ifPresent(item -> cargoBuilder.setPlannedWeight(valueOf(item)));
+
+          Optional.ofNullable(commingleTankDataOpt.get().getActualQuantity())
+              .ifPresent(item -> cargoBuilder.setActualWeight(valueOf(item)));
+
+          Optional.ofNullable(commingleTankDataOpt.get().getCorrectedUllage())
+              .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
+          Optional.ofNullable(commingleTankDataOpt.get().getApi())
+              .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
+          ofNullable(commingleTankDataOpt.get().getFillingRatio())
+              .ifPresent(cargoBuilder::setFillingRatio);
+
+          List<LoadablePlanCommingleDetails> commingleDetails =
+              this.loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+                  commingleTankDataOpt.get().getLoadablePattern(), true);
+
+          Optional<LoadablePlanCommingleDetails> lpcd =
+              commingleDetails.stream()
+                  .filter(
+                      comDetail ->
+                          comDetail.getTankId().equals(commingleTankDataOpt.get().getTankId()))
                   .findAny();
-          if (commingleTankDataOpt.isPresent()) {
-            cargoBuilder.setIsCommingleCargo(true);
-            BigDecimal cargo1Mt = null;
-            BigDecimal cargo2Mt = null;
 
-            if (!isEmpty(commingleTankDataOpt.get().getCargo1Mt())) {
-              cargo1Mt = new BigDecimal(commingleTankDataOpt.get().getCargo1Mt());
-            }
-
-            if (!isEmpty(commingleTankDataOpt.get().getCargo2Mt())) {
-              cargo2Mt = new BigDecimal(commingleTankDataOpt.get().getCargo2Mt());
-            }
-
-            BigDecimal plannedQuantity = cargo1Mt.add(cargo2Mt);
-
-            Optional.ofNullable(plannedQuantity)
-                .ifPresent(item -> cargoBuilder.setPlannedWeight(valueOf(item)));
-
-            Optional.ofNullable(commingleTankDataOpt.get().getActualQuantity())
-                .ifPresent(item -> cargoBuilder.setActualWeight(valueOf(item)));
-
-            Optional.ofNullable(commingleTankDataOpt.get().getCorrectedUllage())
-                .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
-            Optional.ofNullable(commingleTankDataOpt.get().getApi())
-                .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
-            ofNullable(commingleTankDataOpt.get().getFillingRatio())
-                .ifPresent(cargoBuilder::setFillingRatio);
+          if (lpcd.isPresent()) {
+            Optional.ofNullable(lpcd.get().getGrade())
+                .ifPresent(grade -> cargoBuilder.setCargoAbbreviation(grade));
           }
         }
       }
@@ -8166,6 +8182,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     buildLoadablePlanDetails(replyBuilder, loadablePatternOpt.get());
 
+    Optional<LoadableQuantity> lq =
+        loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
+            loadablePatternOpt.get().getLoadableStudy());
+    if (lq.isPresent()) {
+      ofNullable(lq.get().getTotalQuantity())
+          .ifPresent(
+              totalQuantity -> replyBuilder.setTotalLoadableQuantity(totalQuantity.toString()));
+      ofNullable(lq.get().getLoadableStudyPortRotation().getId())
+          .ifPresent(replyBuilder::setLastModifiedPort);
+    }
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 
@@ -8424,6 +8450,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .ifPresent(item -> builder.setFillingRatio(valueOf(item)));
       Optional.ofNullable(tempStowage.getQuantity())
           .ifPresent(item -> builder.setWeight(valueOf(item)));
+      Optional.ofNullable(tempStowage.getRdgUllage())
+          .ifPresent(item -> builder.setRdgUllage(valueOf(item)));
     }
   }
 
