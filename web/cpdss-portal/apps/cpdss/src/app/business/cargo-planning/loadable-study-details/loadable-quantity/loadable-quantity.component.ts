@@ -100,8 +100,8 @@ export class LoadableQuantityComponent implements OnInit {
       this.ports.sort((a, b) => {
         return a.portOrder - b.portOrder;
       });
-      this.selectedPort = this.ports[0];
-      this.portRotationId = this.selectedPort?.id;
+      this.selectedPort = this.ports.find(port => port.id === portsData?.lastModifiedPortId);
+      this.portRotationId = portsData?.lastModifiedPortId;
     }
     this.getLoadableQuantity();
   }

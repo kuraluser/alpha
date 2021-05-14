@@ -23,10 +23,8 @@
                             tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}</li>
                     </ul>
                 </p-overlayPanel>
-                <div class="tank-btn-rounded"
-                       
-                        *ngIf="options?.showTooltip" (mouseover)="tank?.commodity && op.toggle($event)"
-                        (mouseout)="tank?.commodity && op.toggle($event)"></div>
+                <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseenter)="tank?.commodity && op.toggle($event)"
+                        (mouseleave)="tank?.commodity && op.toggle($event)"></div>
                 <div class="tank-name">
 
                     {{tank?.shortName}}
@@ -58,9 +56,9 @@
                                 tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}</li>
                         </ul>
                     </p-overlayPanel>
-                    <div class="tank-btn-rounded" 
-                            *ngIf="options?.showTooltip" (mouseover)="tank?.commodity && op.toggle($event)"
-                        (mouseout)="tank?.commodity && op.toggle($event)"></div>
+                    <div class="tank-btn-rounded"
+                            *ngIf="options?.showTooltip" (mouseenter)="tank?.commodity && op.toggle($event)"
+                        (mouseleave)="tank?.commodity && op.toggle($event)"></div>
                     <div class="tank-name">
 
                         {{tank?.shortName}}

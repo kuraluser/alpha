@@ -37,8 +37,7 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="start_date_label"
-              class="col-md-3 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
+            <label for="start_date_label" class="col-md-3 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
               translate}}</label>
             <div class="col-9">
               <div class="row">
@@ -46,11 +45,11 @@
                   <div class="row">
                     <div class="col">
                       <p-calendar appendTo="body" inputId="start_date" formControlName="start_date"
-                        dateFormat="dd-M-yy" #startDateTime [minDate]="date" showTime="true"
-                        [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(startDateTime)" (onInput)="onDateSelect(startDateTime)">
+                        dateFormat="{{createVoyageDateFormat}}" #startDateTime [minDate]="date" showTime="true"
+                        [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(startDateTime)"
+                        (onInput)="onDateSelect(startDateTime)">
                         <p-footer>
-                          <button class="btn btn-main"
-                            (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                          <button class="btn btn-main" (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                             | translate}}</button>
                         </p-footer>
                       </p-calendar>
@@ -95,11 +94,12 @@
                 <div class="col-6">
                   <div class="row">
                     <div class="col">
-                      <p-calendar appendTo="body" inputId="end_date" formControlName="end_date" dateFormat="dd-mm-yy"
-                        #endDateTime [minDate]="date" showTime="true" [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(endDateTime)" (onInput)="onDateSelect(endDateTime)">
+                      <p-calendar appendTo="body" inputId="end_date" formControlName="end_date"
+                        dateFormat="{{createVoyageDateFormat}}" #endDateTime [minDate]="date" showTime="true"
+                        [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(endDateTime)"
+                        (onInput)="onDateSelect(endDateTime)">
                         <p-footer>
-                          <button class="btn btn-main"
-                            (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                          <button class="btn btn-main" (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                             | translate}}</button>
                         </p-footer>
                       </p-calendar>

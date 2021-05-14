@@ -64,8 +64,8 @@ export class ShipLandingTanksComponent implements OnInit {
 
   readonly tankType = TANKTYPE;
 
-  cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation' };
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation', fillingPercentageField: 'percentageFilled' };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit, fillingPercentageField: 'percentageFilled' };
   ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity', weightUnit: AppConfigurationService.settings.baseUnit };
   
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;

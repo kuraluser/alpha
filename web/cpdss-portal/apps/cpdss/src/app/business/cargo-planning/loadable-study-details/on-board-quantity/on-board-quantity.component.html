@@ -21,18 +21,18 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col" *ngIf="obqForm"> 
+                        <div class="col" *ngIf="obqForm">
                             <form [formGroup]="obqForm">
                                 <div class="form-group row">
                                     <div class="col table-responsive-custom cargo-nomination-table obq" [ngClass]="{'datatable-loading': dataTableLoading }" #obqDatatable>
-                                       
+
                                             <cpdss-portal-datatable [tableId]="'obq'" [form]="obqForm"
                                                 [columns]="columns" [value]="selectedPortOBQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
                                                 [selectionMode]="selectionMode" [loading]="dataTableLoading" [progress]="progress" (editComplete)="onEditComplete($event)"
-                                                (rowSelection)="onRowSelection($event)" [selection]="selectedTank">
+                                                (rowSelection)="onRowSelection($event)" [selection]="selectedTank" (filter)="onFilter($event)" (sort)="onSort($event)">
                                             </cpdss-portal-datatable>
-                                        
+
                                     </div>
                                 </div>
                             </form>

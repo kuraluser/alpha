@@ -1,4 +1,4 @@
-<div *ngIf="portRotationForm && portCarousel?.length" [formGroup]="portRotationForm" class="row pt-10">
+<div *ngIf="portRotationForm && portCarousel?.length" [formGroup]="portRotationForm" class="row pt-10 carousel-wrapper">
     <div formArrayName="portsData" class="col pl-0 pr-0" *ngIf="portList">
         <p-carousel [value]="portCarousel" [numVisible]="numVisible" [numScroll]="1">
             <ng-template let-port pTemplate="item">

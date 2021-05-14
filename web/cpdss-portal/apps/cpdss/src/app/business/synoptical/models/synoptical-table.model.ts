@@ -52,6 +52,8 @@ export interface SynopticField {
         value?:string
     },
     numberFormat?: string;
+    numberType?: string;
+    unit?: string;
 }
 
 /**
@@ -70,7 +72,7 @@ export interface SynopticalColumn {
     dynamicKey?: string;
     colSpan?: number;
     betweenPorts?: boolean;
-    toolTip ?: string
+    toolTip ?: string;
 }
 
 /**

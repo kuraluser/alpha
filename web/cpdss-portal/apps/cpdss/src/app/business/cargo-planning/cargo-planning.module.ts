@@ -7,6 +7,8 @@ import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.mod
 import { LoadableStudyListApiService } from './services/loadable-study-list-api.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NumberDirectiveModule } from '../../shared/directives/number-directive/number-directive.module';
+import { QuantityDecimalFormatPipe } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { QuantityDecimalFormatPipeModule } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
  * Module class Cargo Planning module 
@@ -22,8 +24,9 @@ import { NumberDirectiveModule } from '../../shared/directives/number-directive/
     ReactiveFormsModule,
     CargoPlanningRoutingModule,
     VesselInfoModule,
-    NumberDirectiveModule
+    NumberDirectiveModule,
+    QuantityDecimalFormatPipeModule
   ],
-  providers: [LoadableStudyListApiService]
+  providers: [LoadableStudyListApiService, QuantityDecimalFormatPipe]
 })
 export class CargoPlanningModule { }

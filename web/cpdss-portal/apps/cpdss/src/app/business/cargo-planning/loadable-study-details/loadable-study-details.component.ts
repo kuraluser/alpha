@@ -4,7 +4,7 @@ import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.mo
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT } from '../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT , IAlgoResponse , IAlgoError } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -77,9 +77,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   ohqTabPermission: IPermission;
   obqTabPermissionContext: IPermissionContext;
   obqTabPermission: IPermission;
-  loadableQuantityPermissionContext: IPermissionContext;
-  displayCommingle: boolean;
   loadableQuantityPermission: IPermission;
+  displayCommingle: boolean;
   showCommingleButton = false;
   addCommingleBtnPermissionContext: IPermissionContext;
   errorMesages: any;
@@ -91,6 +90,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isPatternGenerated = false;
   isGenerateClicked = false;
   isPatternOpenOrNoplan = false;
+  showLoadableQuantityButton = false;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
   generateBtnPermissionContext: IPermission;
@@ -100,6 +100,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   obqComplete: boolean;
   addComminglePermission: IPermission;
   loadablePatternHistoryPermission: IPermission;
+  errorPopup: boolean;
+  errorMessage: IAlgoError[];
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -168,7 +170,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
     this.loadableQuantityPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
-    this.loadableQuantityPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
     this.obqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], false);
     this.obqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
@@ -235,10 +236,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.setProcessingLoadableStudyActions(0, 0);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
       this.isDischargePortAvailable();
+      if(this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION) {
+        this.getAlgoErrorMessage(false);
+      }
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
       this.loadableStudyDetailsTransformationService.setPortValidity(this.selectedLoadableStudy.isPortsComplete)
       this.loadableStudyDetailsTransformationService.setOHQValidity(this.selectedLoadableStudy.ohqPorts ?? [])
-      this.loadableStudyDetailsTransformationService.setObqValidity(this.selectedLoadableStudy.isObqComplete)
+      this.loadableStudyDetailsTransformationService.setObqValidity(this.selectedLoadableStudy.isObqComplete);
+      this.loadableStudyDetailsTransformationService.portUpdated();
     } else {
       this.selectedLoadableStudy = null;
     }
@@ -275,9 +280,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
     } else {
       const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(vesselId, voyageId, this.loadableStudyId).toPromise();
-      const portRotationId = portsData.portList ? portsData.portList[0].id : 0;
+      const portRotationId = portsData.portList ? portsData.lastModifiedPortId : 0;
 
-      const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
+      const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId ? portRotationId : 0).toPromise();
       if (loadableQuantityResult.responseStatus.status === "200") {
         loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
         if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
@@ -326,14 +331,21 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.onCargoNominationChange();
       })
-    let portsData;
-    if (this.vesselId && this.voyageId && this.loadableStudyId) {
-      portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
-    }
-    const portRotationId = portsData?.portList ? portsData.portList[0].id : 0;
+      let portRotationId;
+      this.loadableStudyDetailsTransformationService.portUpdate$?.pipe(
+        switchMap(() => {
+          return  this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId);
+        })
+      ).subscribe((portResult) => {
+        if (portResult.responseStatus.status === "200") {
+          portRotationId = portResult?.lastModifiedPortId;
+          this.loadableStudyDetailsTransformationService.ohqUpdated();
+        }
+      });
+
     this.loadableStudyDetailsTransformationService.ohqUpdate$?.pipe(
-      switchMap((event: any) => {
-        return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.loadableStudyId, event?.id ? event?.id : 0);
+      switchMap(() => {
+        return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.loadableStudyId, portRotationId);
       })
     ).subscribe((loadableQuantityResult) => {
       if (loadableQuantityResult.responseStatus.status === "200") {
@@ -379,6 +391,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.isPatternOpenOrNoplan = false;
         this.isPatternGenerated = false;
         this.isGenerateClicked = false;
+        this.getAlgoErrorMessage(true);
         this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION;
         this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_NO_SOLUTION;
       }
@@ -393,6 +406,28 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
     }
     this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
+  }
+
+    /**
+  * Get algo error response
+  * @returns {Promise<IAlgoResponse>}
+  * @memberof LoadablePlanComponent
+  */
+  async getAlgoErrorMessage(status: boolean) {
+    const algoError: IAlgoResponse = await this.loadableStudyDetailsApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
+    if(algoError.responseStatus.status === '200') {
+      this.errorMessage = algoError.algoErrors;
+      this.errorPopup = status;
+    }
+  }
+
+    /**
+  * view algo error message
+  * @param {boolean} status
+  * @memberof LoadablePlanComponent
+  */
+  public viewError(status: boolean) {
+    this.errorPopup = status;
   }
 
   /**
@@ -605,6 +640,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     }
 
   }
+
+
+  /**
+ * Port update event haandler get value from commingle button
+ */
+   async portUpdate(event) {
+      this.showLoadableQuantityButton = event;
+   }
 
   /**
  * Take the user to particular pattern history
@@ -831,10 +874,11 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       selectedLoadableStudyName: selectedLoadableStudyName,
       processId: null
     }
-    this.isGenerateClicked = true;
+    
     try {
       const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
       if (res.responseStatus.status === '200') {
+        this.isGenerateClicked = true;
         this.selectedLoadableStudy.statusId = 4;
         this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING;
         data.processId = res.processId;
@@ -852,6 +896,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR'], life: 10000 });
+      }
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-521') {
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_STATUS_ERROR']).toPromise();
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_STATUS_ERROR'], life: 10000 });
       }
     }
     this.ngxSpinnerService.hide();

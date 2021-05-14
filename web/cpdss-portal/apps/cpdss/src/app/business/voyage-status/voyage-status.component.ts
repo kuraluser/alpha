@@ -65,11 +65,9 @@ export class VoyageStatusComponent implements OnInit {
 
   ngOnInit() {
     this.getPagePermission();
-    this.ngxSpinnerService.show();
     this.display = false;
     this.showData = false;
     this.getVesselInfo();
-    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -89,12 +87,14 @@ export class VoyageStatusComponent implements OnInit {
    * @memberof VoyageStatusComponent
    */
   async getVesselInfo() {
+    this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
     if (this.vesselInfo?.id) {
       localStorage.setItem("vesselId", this.vesselInfo?.id.toString())
       this.getVoyageInfo(this.vesselInfo?.id);
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -189,7 +189,7 @@ export class VoyageStatusComponent implements OnInit {
 
   /**
    * Emit port data from port rotation ribbon
-   * @param portData 
+   * @param portData
    */
   getPortDetails(portData: IVoyagePortDetails) {
     this.selectedPortDetails = portData;

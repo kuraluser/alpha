@@ -449,7 +449,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       if (index !== -1) {
         this.selectedPortOHQTankDetails[index].processing = false;
         if (event?.data?.responseStatus?.status === '200') {
-          this.loadableStudyDetailsTransformationService.ohqUpdated(this.selectedPort);
+          this.loadableStudyDetailsTransformationService.portUpdated();
           this.selectedPortOHQTankDetails[index].id = event.data.id;
           this.selectedPortOHQTankDetails[index].processing = false;
           this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
@@ -478,7 +478,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get form control of form 
+   * Get form control of form
    *
    * @param {number} formGroupIndex
    * @param {string} formControlName
@@ -607,12 +607,12 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
    * @memberof OnHandQuantityComponent
    */
   onFilter(event: IDataTableFilterEvent) {
-    this.ngxSpinnerService.show();
+    this.dataTableLoading = true;
     const selectedPortOHQTankDetailsAsValue = this.getSelectedPortOHQTankDetailsAsValue(this.selectedPortOHQTankDetails);
     const ohqTankDetailsArray = event?.filteredValue?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails, selectedPortOHQTankDetailsAsValue));
-    this.ohqForm.controls.dataTable = this.fb.array([...ohqTankDetailsArray]);
+    this.ohqForm.setControl('dataTable', this.fb.array([...ohqTankDetailsArray]));
     this.ohqForm.controls.dataTable.updateValueAndValidity();
-    this.ngxSpinnerService.hide();
+    this.dataTableLoading = false;
   }
 
   /**
@@ -622,12 +622,12 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
    * @memberof OnHandQuantityComponent
    */
   onSort(event: IDataTableSortEvent) {
-    this.ngxSpinnerService.show();
+    this.dataTableLoading = true;
     const selectedPortOHQTankDetailsAsValue = this.getSelectedPortOHQTankDetailsAsValue(this.selectedPortOHQTankDetails);
     const ohqTankDetailsArray = event?.data?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails, selectedPortOHQTankDetailsAsValue));
-    this.ohqForm.controls.dataTable = this.fb.array([...ohqTankDetailsArray]);
+    this.ohqForm.setControl('dataTable', this.fb.array([...ohqTankDetailsArray]));
     this.ohqForm.controls.dataTable.updateValueAndValidity();
-    this.ngxSpinnerService.hide();
+    this.dataTableLoading = false;
   }
 
   /**

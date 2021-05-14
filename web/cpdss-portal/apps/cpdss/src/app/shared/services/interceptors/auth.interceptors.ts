@@ -52,7 +52,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
       });
     }
-    const token: string = keycloakInstance?.token ?? SecurityService.getAuthToken();
+    const token: string = SecurityService.getAuthToken();
     if(token) {
       // Add token to request header
       request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });

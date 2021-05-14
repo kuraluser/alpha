@@ -7,7 +7,7 @@
             [editMode]="editMode" [listData]="listData" (cellValueClick)="onCellValueClick($event)"
             (editComplete)="onEditComplete($event)" [filterable]="true" (duplicateRow)="onDuplicate($event)"
             (deleteRow)="onDeleteRow($event)" (sort)="onSort($event)"
-            (filter)="onFilter($event)" (buttonClick)="onRowSave($event)">
+            (filter)="onFilter($event)" (buttonClick)="onRowSave($event)" (columnClick)="onColumnClick($event)">
           </cpdss-portal-datatable>
       </div>
     </div>

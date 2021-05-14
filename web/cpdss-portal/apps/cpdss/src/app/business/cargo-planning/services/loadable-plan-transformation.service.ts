@@ -5,7 +5,7 @@ import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/mod
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly,  ICargoTankDetailValueObject, ISynopticalRecordArrangeModel , IBallastTankDetailValueObject } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT, ValueObject , ISubTotal } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
@@ -27,8 +27,10 @@ export class LoadablePlanTransformationService {
   private quantityPipe: QuantityPipe = new QuantityPipe();
   public baseUnit = AppConfigurationService.settings.baseUnit;
   private savedComments = new Subject();
+  private editBallastStatus = new Subject();
 
   public savedComments$ = this.savedComments.asObservable();
+  public editBallastStatus$ = this.editBallastStatus.asObservable();
   constructor(private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
 
   /**
@@ -358,7 +360,8 @@ export class LoadablePlanTransformationService {
         numberFormat: '1.0-6',
         errorMessages: {
           'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED',
-          'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR'
+          'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR',
+          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
         }
       },
       {
@@ -378,7 +381,7 @@ export class LoadablePlanTransformationService {
         field: 'observedM3',
         header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_M3',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberFormat: AppConfigurationService.settings.quantityNumberFormatKL,
         editable: false,
       },
       {
@@ -399,7 +402,7 @@ export class LoadablePlanTransformationService {
         field: 'weight',
         header: 'LOADABLE_PLAN_CARGO_GRID_WEIGHT',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
         editable: false,
       },
       {
@@ -413,14 +416,14 @@ export class LoadablePlanTransformationService {
         field: 'api',
         header: 'LOADABLE_PLAN_CARGO_GRID_API',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberFormat: '1.2-2',
         editable: false,
       },
       {
         field: 'temperature',
         header: 'LOADABLE_PLAN_CARGO_GRID_TEMPERATURE',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberFormat: '1.2-2',
         editable: false,
       },
     ]
@@ -443,7 +446,8 @@ export class LoadablePlanTransformationService {
         numberFormat: '1.0-6',
         errorMessages: {
           'required': 'LOADABLE_PLAN_BALLAST_CARGO_GRID_RDG_ULG_REQUIRED',
-          'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR'
+          'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR',
+          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
         }
       },
       { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
@@ -516,20 +520,19 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.portId = synopticalRecord.portId;
     _synopticalRecord.portName = synopticalRecord.portName;
     _synopticalRecord.etaEtdPlanned = synopticalRecord.etaEtdPlanned;
-
-    _synopticalRecord.plannedFOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFOTotal, '0.0-2');
-    _synopticalRecord.plannedDOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedDOTotal, '1.0-2');
-    _synopticalRecord.plannedFWTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFWTotal, '1.0-2');
-    _synopticalRecord.othersPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.othersPlanned, '1.0-2');
-    _synopticalRecord.totalDwtPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.totalDwtPlanned, '1.0-2');
-    _synopticalRecord.displacementPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.displacementPlanned, '1.0-2');
+    _synopticalRecord.plannedFOTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedFOTotal,QUANTITY_UNIT.MT);
+    _synopticalRecord.plannedDOTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedDOTotal,QUANTITY_UNIT.MT);
+    _synopticalRecord.plannedFWTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedFWTotal,QUANTITY_UNIT.MT);
+    _synopticalRecord.othersPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.othersPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.totalDwtPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.totalDwtPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.displacementPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.displacementPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, '1.4-4');
-    _synopticalRecord.cargoPlannedTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.cargoPlannedTotal, '1.0-2');
-    _synopticalRecord.ballastPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.ballastPlanned, '1.0-2');
+    _synopticalRecord.cargoPlannedTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.cargoPlannedTotal,QUANTITY_UNIT.MT);
+    _synopticalRecord.ballastPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.ballastPlanned,QUANTITY_UNIT.MT);
 
-    _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.0-2') + 'm';
-    _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.0-2') + 'm';
-    _synopticalRecord.finalDraftMid = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftMid, '1.0-2') + 'm';
+    _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.2-2') + 'm';
+    _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.2-2') + 'm';
+    _synopticalRecord.finalDraftMid = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftMid, '1.2-2') + 'm';
     _synopticalRecord.calculatedTrimPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord?.calculatedTrimPlanned, '1.0-2') + 'm';
     return _synopticalRecord;
   }
@@ -586,6 +589,28 @@ export class LoadablePlanTransformationService {
   */
   commentsSaved(comments: string) {
     this.savedComments.next(comments);
+  }
+
+  /**
+   * edit stowage bellast status
+   * @param { any } value
+  */
+  ballastEditStatus(value: any) {
+    this.editBallastStatus.next(value);
+  }
+
+    /**
+ * Method for calculating  subtotal
+ *
+ * @param {ISubTotal} data
+ * @returns {number}
+ * @memberof LoadablePlanTransformationService
+ */
+  getSubTotal(data: ISubTotal): Number {
+    const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection ? data.sgCorrection : 0) - Number(data.foOnboard)
+      - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.boilerWaterOnboard) - Number(data.ballast)
+      - Number(data.constant) - Number(data.others);
+    return Number(subTotal);
   }
 
 }

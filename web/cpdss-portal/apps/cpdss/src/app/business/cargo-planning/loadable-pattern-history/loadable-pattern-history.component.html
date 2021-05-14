@@ -23,7 +23,7 @@
         </div>
 
     </div>
-    <div [ngClass]="{'sidebar-collapsed': !openSidePane , 'content-outer': isViewPattern}" class="pattern-history">
+    <div *ngIf="voyages" [ngClass]="{'sidebar-collapsed': !openSidePane , 'content-outer': isViewPattern}" class="pattern-history">
         <div class="sidebar  relative" *ngIf="isViewPattern">
             <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
             <div class="sidebar-content">

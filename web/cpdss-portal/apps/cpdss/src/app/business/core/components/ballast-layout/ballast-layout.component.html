@@ -46,7 +46,7 @@
                         </p-overlayPanel>
                         <div class="tank-name">
                             <div class="tank-btn-rounded" *ngIf="options?.showTooltip"
-                                (mouseover)="tank && op.toggle($event)" (mouseout)="tank && op.toggle($event)"></div>
+                                (mouseenter)="tank && op.toggle($event)" (mouseleave)="tank && op.toggle($event)"></div>
                             {{tank?.shortName}}
                         </div>
                         <ng-container *ngIf="tank?.commodity">
@@ -99,7 +99,7 @@
                     </p-overlayPanel>
                     <div class="tank-name">
                         <div class="tank-btn-rounded" *ngIf="options?.showTooltip"
-                            (mouseover)="tank && op.toggle($event)" (mouseout)="tank && op.toggle($event)"></div>
+                            (mouseenter)="tank && op.toggle($event)" (mouseleave)="tank && op.toggle($event)"></div>
                         {{tank?.shortName}}
                     </div>
                     <ng-container *ngIf="tank?.commodity">
@@ -116,9 +116,6 @@
             </div>
         </ng-container>
     </div>
-    <!-- <div class="rear-tank-wrapper">
-        
-    </div> -->
     <div class="tank-inner-wrapper-pattern">
         <div class="tank-column-pattern" *ngFor="let group of tanks"
             [ngStyle]="{'width':getTankGroupWidthPercentage(tanks[0],group,tanks[tanks.length-1])}">
@@ -151,10 +148,9 @@
                         </ng-container>
                     </ul>
                 </p-overlayPanel>
-                <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
-                (mouseout)="tank && op.toggle($event)"></div>
+                <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseenter)="tank && op.toggle($event)"
+                (mouseleave)="tank && op.toggle($event)"></div>
                 <h5 class="tank-name">
-                   
                     {{tank?.shortName}}
                 </h5>
                 <ng-container *ngIf="tank?.commodity">

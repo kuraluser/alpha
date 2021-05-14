@@ -11,6 +11,7 @@ import { first } from 'rxjs/operators';
 import { IPort, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../../core/models/common.model';
 import { IPermission } from '../../../../../shared/models/user-profile.model';
 import { LoadableStudy } from '../../../models/loadable-study-list.model';
+import { QuantityDecimalService } from '../../../../../shared/services/quantity-decimal/quantity-decimal.service';
 
 /**
  * Component class for loading ports popup
@@ -80,7 +81,8 @@ export class LoadingPortsPopupComponent implements OnInit {
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationAlertService: ConfirmationAlertService,
+    private quantityDecimalService: QuantityDecimalService) { }
 
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
@@ -166,8 +168,8 @@ export class LoadingPortsPopupComponent implements OnInit {
       this.closePopup();
     } else {
       if (this.loadingPortsFrom.controls.dataTable?.errors?.required) {
-        const detail = await this.translateService.get('CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR').toPromise();
-        this.messageService.add({ severity: 'error', detail: detail });
+        const translationKeys = await this.translateService.get(['CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR_DETAILS' , 'CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR']).toPromise();
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR'], detail: translationKeys['CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR_DETAILS'] });
       }
 
       this.loadingPortsFrom.markAllAsTouched();
@@ -185,9 +187,10 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   private initLoadingPortFormGroup(loadingPort: ILoadingPortValueObject) {
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal();
     return this.fb.group({
       name: this.fb.control(loadingPort.name.value, Validators.required),
-      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(.01), numberValidator(2, 7, false)])
+      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(.01), numberValidator(quantityDecimal, 7, false)])
     });
   }
 

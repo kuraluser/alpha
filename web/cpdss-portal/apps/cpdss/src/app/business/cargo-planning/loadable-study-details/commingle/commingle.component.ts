@@ -21,7 +21,7 @@ import { first } from 'rxjs/operators';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
-
+import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service' 
 /**
  * Component class of commingle pop up
  *
@@ -95,6 +95,7 @@ export class CommingleComponent implements OnInit {
     private permissionsService: PermissionsService,
     private confirmationAlertService: ConfirmationAlertService,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
+    private quantityDecimalService: QuantityDecimalService
   ) { }
 
 
@@ -138,15 +139,28 @@ export class CommingleComponent implements OnInit {
         itm.loadingPorts = this.loadableStudyDetailsApiService.cargoNominations[index].loadingPorts.value
         return {
           ...this.cargos.find((item) => (item.id === itm.cargoId) && item),
+          api: this.loadableStudyDetailsApiService.cargoNominations[index].api?.value,
           ...itm
         }
       });
+
+     
+      let cargoGroupsTemp = this.commingleCargo?.cargoGroups?.filter((item) => {
+        let cargoIds = this.cargoNominationsCargo?.map(cargoNominationCargo => cargoNominationCargo.cargoId);
+        if (cargoIds.includes(item.cargo1Id) && cargoIds?.includes(item.cargo2Id)) {
+          return item;
+        }
+      })
+
+      if (this.commingleCargo) {
+        this.commingleCargo.cargoGroups = cargoGroupsTemp;
+      }
       this.cargoNominationsCargo1 = this.cargoNominationsCargo;
       this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo;
       this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.listData.percentage = this.percentage;
-      if (this.commingleCargo) {
+      if (this.commingleCargo && this.commingleCargo.cargoGroups.length) {
         this.isVolumeMaximum = this.commingleCargo.purposeId === 1 ? true : false;
         this.selectedCargo1 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargoNomination1Id);
         this.selectedCargo2 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargoNomination2Id);
@@ -202,6 +216,7 @@ export class CommingleComponent implements OnInit {
    * select purpose of commingle
    */
   selectPurpose(event) {
+
     if (event) {
       event?.value?.id === 1 ? this.isVolumeMaximum = true : this.isVolumeMaximum = false;
     }
@@ -251,10 +266,7 @@ export class CommingleComponent implements OnInit {
         }]
       }
       try {
-        if (!this.commingleForm.value.cargo1 || !this.commingleForm.value.cargo2) {
-          this.messageService.add({ severity: 'warn', summary: translationKeys['COMMINGLE_MANUAL_SAVE_WARNING'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
-          this.close();
-         } else {
+
           const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
           if (result.responseStatus.status === '200') {
             if (this.commingleForm.value.cargo1 && this.commingleForm.value.cargo2) {
@@ -264,7 +276,7 @@ export class CommingleComponent implements OnInit {
             }
             this.close();
           }
-        }
+        
         
       } catch (errorResponse) {
         if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
@@ -333,6 +345,7 @@ export class CommingleComponent implements OnInit {
    * @param commingle 
    */
   private initCommingleManualFormGroup(commingle: ICommingleValueObject) {
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal();
     return this.fb.group({
       cargo1: this.fb.control(commingle?.cargo1?.value, [Validators.required, CargoDuplicateValidator('cargo1', 'cargo2')]),
       cargo2: this.fb.control(commingle?.cargo2?.value, [Validators.required, CargoDuplicateValidator('cargo2', 'cargo1')]),
@@ -340,7 +353,7 @@ export class CommingleComponent implements OnInit {
       cargo2pct: this.fb.control(commingle?.cargo2IdPct?.value?.id, [Validators.required]),
       cargo1IdPct: this.fb.control(commingle?.cargo1IdPct?.value, [Validators.required, PercentageValidator('cargo2IdPct')]),
       cargo2IdPct: this.fb.control(commingle?.cargo2IdPct?.value, [Validators.required, PercentageValidator('cargo1IdPct')]),
-      quantity: this.fb.control(commingle?.quantity?.value, [Validators.required, numberValidator(2, 7), Validators.min(1), commingleQuantityValidator()]),
+      quantity: this.fb.control(commingle?.quantity?.value, [Validators.required, numberValidator(quantityDecimal, 7), Validators.min(0.01), commingleQuantityValidator()]),
 
     });
   }
@@ -471,10 +484,6 @@ export class CommingleComponent implements OnInit {
 
       }
       try {
-        if (!this.manualCommingleList?.length) {
-          this.close();
-          this.messageService.add({ severity: 'warn', summary: translationKeys['COMMINGLE_MANUAL_SAVE_WARNING'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
-        } else {
           const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
           if (result.responseStatus.status === '200') {
             if (this.manualCommingleList?.length) {
@@ -484,7 +493,6 @@ export class CommingleComponent implements OnInit {
             }
           }
           this.close();
-        }
       } catch (errorResponse) {
         if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
           this.messageService.add({ severity: 'error', summary: translationKeys['COMMINGLE_SAVE_ERROR'], detail: translationKeys['COMMINGLE_SAVE_STATUS_ERROR'], life: 10000 });
@@ -517,7 +525,7 @@ export class CommingleComponent implements OnInit {
    */
   updateCommingleFormValue() {
     if (this.isVolumeMaximum) {
-      if (this.commingleCargo.purposeId === 1) {
+      if (this.commingleCargo?.purposeId === 1) {
         this.commingleForm.controls['preferredTanks'].clearValidators();
         this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
         this.commingleForm.patchValue({
@@ -542,6 +550,10 @@ export class CommingleComponent implements OnInit {
       }
     }
     else {
+      if (this.manualCommingleList && this.manualCommingleList?.length) {
+        this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]),
+        this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
+      }
       this.commingleForm.controls['cargo1'].clearValidators();
       this.commingleForm.controls['cargo2'].clearValidators();
       this.commingleForm.controls['cargo1'].updateValueAndValidity();
@@ -657,7 +669,7 @@ export class CommingleComponent implements OnInit {
     row.cargo2.value.loadingPorts.forEach(port => {
       port.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(port.quantity, unitFrom, unitTo, netApi)
     });
-    row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, unitTo, netApi)
+    row.quantity.value = Number(this.loadableStudyDetailsApiService.convertToNumber(this.loadableStudyDetailsApiService.decimalQuantiy(row.quantity.value, unitFrom, unitTo, netApi)));
     return row;
   }
 

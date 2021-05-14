@@ -90,6 +90,7 @@ export interface ITank {
     commodity?: any;
     gridColumn?: string;
     percentageFilled?: string;
+    fillingRatio?: string;
 }
 
 /**
@@ -166,6 +167,7 @@ export enum TANKTYPE {
  * @interface ILoadableCargo
  */
 export interface ILoadableCargo {
+    percentageFilled?: string;
     cargoAbbreviation?: string;
     colorCode?: string;
     tankId?: number;
@@ -202,6 +204,7 @@ export interface IBallastStowageDetails {
     api?:number;
     temperature?: number;
     tankShortName: string;
+    fillingRatio?: string;
 }
 
 /**
@@ -276,6 +279,7 @@ export interface IPortsDetailsResponse {
     portList: IPortList[];
     operations: IOperations[];
     portId?: number;
+    lastModifiedPortId?: number;
 }
 
 /**
@@ -455,3 +459,25 @@ export class NewVoyageResponseModel implements IResponse {
     correlationId?: string;
     voyageId: number;
 }
+
+ /**
+ * Interface for algo response
+ *
+ * @export
+ * @interface IAlgoResponse
+ */
+  export interface IAlgoResponse {
+    responseStatus: IResponseStatus;
+    algoErrors: IAlgoError[]
+ }
+
+ /**
+ * Interface for algo error
+ *
+ * @export
+ * @interface IAlgoError
+ */
+ export interface IAlgoError {
+    errorHeading: string,
+    errorDetails: string[]
+ }

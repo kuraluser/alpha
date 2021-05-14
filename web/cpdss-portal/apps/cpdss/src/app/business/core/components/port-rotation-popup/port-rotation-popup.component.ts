@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { IDataTableColumn, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { IDateTimeFormatOptions, ITimeZone } from '../../../../shared/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
@@ -209,10 +209,10 @@ export class PortRotationPopupComponent implements OnInit {
   }
 
   /**
-   * Method to get validators of a key
-   *
-   * @memberof PortRotationPopupComponent
-   */
+ * Method to get validators of a key
+ *
+ * @memberof PortRotationPopupComponent
+ */
   getValidators(key, index: number, isRequired: boolean) {
     const required = isRequired ? [Validators.required] : []
     switch (key) {
@@ -256,6 +256,7 @@ export class PortRotationPopupComponent implements OnInit {
  */
   async onEditComplete(event: IPortsEvent) {
     const index = event.index;
+    const form = this.row(index);
     if (event.field === 'layCan') {
       const layCanFrom = event.data.layCan.value.split('to')[0].trim()
       const layCanTo = event.data.layCan.value.split('to')[1].trim()
@@ -275,6 +276,9 @@ export class PortRotationPopupComponent implements OnInit {
       for (let i = 0; i < this.ports.length; i++) {
         this.updateValidityAndEditMode(i, 'etd')
       }
+    }
+    if (event.field === 'eta' || event.field === 'etd') {
+      this.updateValuesIfBunkering(event.data, form, index);
     }
   }
 
@@ -342,4 +346,74 @@ export class PortRotationPopupComponent implements OnInit {
     }
     this.ngxSpinnerService.hide();
   }
+
+  /**
+ * Handler for datatable sort event
+ *
+ * @param {IDataTableSortEvent} event
+ * @memberof PortRotationPopupComponent
+ */
+  onSort(event: IDataTableSortEvent) {
+    this.ngxSpinnerService.show();
+    const portListArray = event?.data?.map((ports, index) => this.initPortsFormGroup(ports, index));
+    this.portsForm.controls.dataTable = this.fb.array([...portListArray]);
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+* Method for fetching form group
+*
+* @private
+* @param {number} formGroupIndex
+* @returns {FormGroup}
+* @memberof PortRotationPopupComponent
+*/
+  private row(formGroupIndex: number): FormGroup {
+    const formGroup = <FormGroup>(<FormArray>this.portsForm.get('dataTable')).at(formGroupIndex);
+    return formGroup;
+  }
+
+
+  /**
+* Method to update eta and etd if port is bunkering
+*
+* @memberof PortRotationPopupComponent
+*/
+  updateValuesIfBunkering(data, form, index) {
+    if (!this.portRotationPopupTransformationService.isEtaEtdViewable(this.portEtaEtdPermission)) {
+      return;
+    }
+    if (data && data.operation?.value?.id === OPERATIONS.BUNKERING && data.port.value) {
+      const portId = Number(data.port.value.id);
+      if (index > 0) {
+        const row = this.ports[index - 1]
+        if (row.port?.value?.id === portId && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING].includes(row.operation?.value?.id)) {
+          const loadingPortData = row;
+          const loadingPortForm = this.row(Number(loadingPortData.slNo - 1));
+          form.controls.eta.setValue(loadingPortForm.value.eta ?? null);
+          form.controls.etd.setValue(loadingPortForm.value.etd ?? null);
+          form.controls.eta.disable();
+          form.controls.etd.disable();
+          this.ports[index].eta.value = loadingPortData.eta.value ? loadingPortData.eta.value : '';
+          this.ports[index].etd.value = loadingPortData.etd.value ? loadingPortData.etd.value : '';
+          this.ports[index].eta.isEditable = false;
+          this.ports[index].etd.isEditable = false;
+          this.updateValidityAndEditMode(index, 'eta');
+          this.updateValidityAndEditMode(index, 'etd');
+          return;
+        }
+      }
+    }
+    if (form.controls.eta.disabled && form.controls.etd.disabled) {
+      form.controls.eta.enable();
+      form.controls.etd.enable();
+      form.controls.eta.markAsTouched();
+      form.controls.etd.markAsTouched();
+      this.ports[index].eta.isEditable = true;
+      this.ports[index].etd.isEditable = true;
+      this.updateValidityAndEditMode(index, 'eta');
+      this.updateValidityAndEditMode(index, 'etd');
+    }
+  }
+
 }

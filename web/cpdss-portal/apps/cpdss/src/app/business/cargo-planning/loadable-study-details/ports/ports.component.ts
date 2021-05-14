@@ -1,5 +1,5 @@
 import { AppConfigurationService } from './../../../../shared/services/app-configuration/app-configuration.service';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -20,7 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { first } from 'rxjs/operators';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
-import { IDateTimeFormatOptions, ITimeZone } from './../../../../shared/models/common.model';
+import { IDateTimeFormatOptions, ITimeZone, ValueObject } from './../../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import * as moment from 'moment';
@@ -70,6 +70,8 @@ export class PortsComponent implements OnInit, OnDestroy {
     this.editMode = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
   }
 
+  @Output() portUpdate = new EventEmitter<boolean>();
+  
   // public fields
   editMode: DATATABLE_EDITMODE;
   OPERATIONS: OPERATIONS;
@@ -101,12 +103,12 @@ export class PortsComponent implements OnInit, OnDestroy {
     private globalErrorHandler: GlobalErrorHandler,
     private permissionsService: PermissionsService) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.getTimeZoneList();
     this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortTabEtaEtd'], false);
     this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.portEtaEtdPermission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
-    this.getTimeZoneList();
   }
 
   ngOnDestroy() {
@@ -230,10 +232,13 @@ export class PortsComponent implements OnInit, OnDestroy {
       dataTable: this.fb.array([...portListArray])
     });
     this.portsLists = _portsLists;
-    this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
+    setTimeout(() => {
+      this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
     this.updatePortOrder();
     this.ngxSpinnerService.hide();
     this.updateFormValidity(portListArray);
+    }, 500);
+
   }
 
 
@@ -299,9 +304,10 @@ export class PortsComponent implements OnInit, OnDestroy {
       const index = this.portsLists?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.portsLists[index].processing = false;
-        if (event?.data?.status === '200') {
+        if (event?.data?.responseStatus?.status === '200') {
           this.portsLists[index].id = event.data.id;
           this.portsLists = [...this.portsLists];
+          this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
         }
       }
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
@@ -367,7 +373,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   async onEditComplete(event: IPortsEvent) {
     const index = event.index;
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
-    if ((event.field === 'port' || event.field === 'operation') && !event.data?.isAdd && !this.portsListSaved[index]['isAdd']) {
+    if ((event.field === 'port' || event.field === 'operation') && !event.data?.isAdd && !this.portsListSaved[valueIndex]['isAdd']) {
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORT_CHANGE_CONFIRM_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORT_CHANGE_CONFIRM_LABEL', rejectLabel: 'PORT_CHANGE_REJECT_LABEL' } });
       this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
         if (response) {
@@ -427,17 +433,19 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.updateValuesIfBunkering(event.data, form, index);
     }
     if (event.field === 'layCan') {
-      const layCanFrom = event.data.layCan.value.split('to')[0].trim()
-      const layCanTo = event.data.layCan.value.split('to')[1].trim()
-      this.portsLists[valueIndex]['layCanFrom'].value = layCanFrom;
-      this.portsLists[valueIndex]['layCanTo'].value = layCanTo;
-      this.updateField(event.index, 'layCanFrom', this.dateStringToDate(layCanFrom, true));
-      this.updateField(event.index, 'layCanTo', this.dateStringToDate(layCanTo, true));
-      if(this.portsLists[valueIndex]['eta'].value){
-        this.updateValidityAndEditMode(index, 'eta');
-      }
-      if(this.portsLists[valueIndex]['etd'].value){
-        this.updateValidityAndEditMode(index, 'etd');
+      if (event.data.layCan.value.includes('to')) {
+        const layCanFrom = event.data.layCan.value.split('to')[0].trim()
+        const layCanTo = event.data.layCan.value.split('to')[1].trim()
+        this.portsLists[valueIndex]['layCanFrom'].value = layCanFrom;
+        this.portsLists[valueIndex]['layCanTo'].value = layCanTo;
+        this.updateField(event.index, 'layCanFrom', this.dateStringToDate(layCanFrom, true));
+        this.updateField(event.index, 'layCanTo', this.dateStringToDate(layCanTo, true));
+        if (this.portsLists[valueIndex]['eta'].value) {
+          this.updateValidityAndEditMode(index, 'eta');
+        }
+        if (this.portsLists[valueIndex]['etd'].value) {
+          this.updateValidityAndEditMode(index, 'etd');
+        }
       }
     }
     if (event.field === 'etd') {
@@ -463,6 +471,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       if (row.valid && !event.data?.isAdd && row.touched) {
         event.data.processing = true;
         if (this.portsLists[rowIndex]?.id !== 0) {
+          this.portUpdate.emit(true);
           const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
           if (res) {
             row.markAsUntouched();
@@ -471,12 +480,13 @@ export class PortsComponent implements OnInit, OnDestroy {
                 this.portsLists[rowIndex][key].isEditMode = false;
               }
             }
+            this.portUpdate.emit(false);
           }
         }
       }
     });
     this.portsLists = [...this.portsLists];
-    this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
+    this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => item?.isAdd).length <= 0);
 
   }
 
@@ -510,8 +520,11 @@ export class PortsComponent implements OnInit, OnDestroy {
     const form = this.row(event.index);
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (form.valid) {
+      this.portUpdate.emit(true);
       const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
       if (res) {
+        this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
+        this.loadableStudyDetailsTransformationService.portUpdated();
         this.portsLists[valueIndex].isAdd = false;
 
         for (const key in this.portsLists[valueIndex]) {
@@ -521,6 +534,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         }
         this.portsLists = [...this.portsLists];
         this.portsForm.updateValueAndValidity();
+        this.portUpdate.emit(false);
         this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
       }
 
@@ -566,31 +580,49 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.getPorts();
     }
     if (event?.data?.isDelete) {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
-      const subscription = this.confirmationAlertService.confirmAlert$
-        .subscribe(async (response) => {
-          if (response) {
-            if (event?.data?.isAdd) {
-              this.portsLists.splice(event.index, 1);
-              this.portsLists = [...this.portsLists];
-            } else {
-              const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
-              const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
-              if (res) {
-                this.portsLists.splice(event.index, 1);
-                this.portsLists = [...this.portsLists];
-              }
+      if (!event?.data?.isAdd) {
+        this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
+        const subscription = this.confirmationAlertService.confirmAlert$
+          .subscribe(async (response) => {
+            if (response) {
+              await this.removePortFromList(event);
             }
-            const formArray = <FormArray>this.portsForm.get('dataTable');
-            formArray.removeAt(event.index)
-            setTimeout(() => {
-              this.updateFormValidity(formArray)
-            }, 500);
-          }
-          subscription.unsubscribe();
-        });
+            subscription.unsubscribe();
+          });
+      }
+      else {
+        await this.removePortFromList(event);
+      }
     }
   }
+
+
+  /**
+   * Method to remove port from list
+   *
+   * @param {*} event
+   * @memberof PortsComponent
+   */
+  async removePortFromList(event) {
+    if (event?.data?.isAdd) {
+      this.portsLists.splice(event.index, 1);
+      this.portsLists = [...this.portsLists];
+    } else {
+      const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
+      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
+      if (res) {
+        this.portsLists.splice(event.index, 1);
+        this.portsLists = [...this.portsLists];
+      }
+    }
+    const formArray = <FormArray>this.portsForm.get('dataTable');
+    formArray.removeAt(event.index)
+    setTimeout(() => {
+      this.updateFormValidity(formArray)
+    }, 500);
+  }
+
+
 
   /**
  * Update latest Port Order
@@ -611,13 +643,13 @@ export class PortsComponent implements OnInit, OnDestroy {
  */
   async onRowReorder(event) {
     const isPortOrderCorrect = this.isPortOrderCorrect(event.dropIndex);
-    
-    
+
+
     if(!isPortOrderCorrect) {
       const dropData = this.portsLists[event.dropIndex];
       this.portsLists.splice(event.dropIndex, 1);
-      this.portsLists.splice(event.dragIndex, 0 , dropData);
-      const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS','PORT_ROTATION_INFO']).toPromise();
+      this.portsLists.splice(event.dragIndex, 0, dropData);
+      const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS', 'PORT_ROTATION_INFO']).toPromise();
       this.messageService.add({ severity: 'info', summary: translationKeys['PORT_ROTATION_INFO'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS'] });
       return;
     }
@@ -674,10 +706,10 @@ export class PortsComponent implements OnInit, OnDestroy {
    * @memberof PortsComponent
    */
   onFilter(event: IDataTableFilterEvent) {
-    this.ngxSpinnerService.show();
+    this.dataTableLoading = true;
     const portListArray = event?.filteredValue?.map((ports, index) => this.initPortsFormGroup(ports, index));
-    this.portsForm.controls.dataTable = this.fb.array([...portListArray]);
-    this.ngxSpinnerService.hide();
+    this.portsForm.setControl('dataTable', this.fb.array([...portListArray]));
+    this.dataTableLoading = false;
   }
 
   /**
@@ -687,10 +719,10 @@ export class PortsComponent implements OnInit, OnDestroy {
    * @memberof PortsComponent
    */
   onSort(event: IDataTableSortEvent) {
-    this.ngxSpinnerService.show();
+    this.dataTableLoading = true;
     const portListArray = event?.data?.map((ports, index) => this.initPortsFormGroup(ports, index));
-    this.portsForm.controls.dataTable = this.fb.array([...portListArray]);
-    this.ngxSpinnerService.hide();
+    this.portsForm.setControl('dataTable', this.fb.array([...portListArray]));
+    this.dataTableLoading = false;
   }
 
   /**
@@ -704,6 +736,9 @@ export class PortsComponent implements OnInit, OnDestroy {
       const invalidFormControls = this.findInvalidControlsRecursive(form);
       if (invalidFormControls.length) {
         if (form.value.hasOwnProperty('layCan') && form.value.layCan === null) {
+          this.portsLists[i]['layCan'].isEditMode = true;
+        }
+        if (form.value.layCan === undefined) {
           this.portsLists[i]['layCan'].isEditMode = true;
         }
         if (form.value.eta === undefined) {
@@ -737,7 +772,8 @@ export class PortsComponent implements OnInit, OnDestroy {
     if (field) {
       field.updateValueAndValidity();
       field.markAsTouched();
-      this.portsLists[index][key].isEditMode = field.invalid && field.enabled;
+      const row = this.portsLists[index]
+      row[key].isEditMode = field.invalid && field.enabled || row.isAdd;
     }
   }
 
