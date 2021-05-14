@@ -939,10 +939,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           OhqPorts.Builder ohqPortsBuilder = OhqPorts.newBuilder();
           portRotations.forEach(
               port -> {
-                ohqPortsBuilder.setId(port.getId());
-                Optional.ofNullable(port.getIsPortRotationOhqComplete())
-                    .ifPresent(ohqPortsBuilder::setIsPortRotationOhqComplete);
-                builder.addOhqPorts(ohqPortsBuilder.build());
+                if (port.isActive()) {
+                  ohqPortsBuilder.setId(port.getId());
+                  Optional.ofNullable(port.getIsPortRotationOhqComplete())
+                      .ifPresent(ohqPortsBuilder::setIsPortRotationOhqComplete);
+                  builder.addOhqPorts(ohqPortsBuilder.build());
+                }
               });
         }
         replyBuilder.addLoadableStudies(builder.build());
@@ -1374,6 +1376,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             });
       }
     }
+
+    // Set port ordering after deletion
+    this.setPortOrdering(loadableStudy);
+
     // remove loading portIds from request which are already available in port
     // rotation for the
     // specific loadable study
@@ -1397,7 +1403,43 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
+
+      // Set port ordering after updation
+      this.setPortOrdering(loadableStudy);
     }
+  }
+
+  private void setPortOrdering(LoadableStudy loadableStudy) {
+    AtomicLong portOrder = new AtomicLong(0L);
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            loadableStudy, true);
+    loadableStudyPortRotations.stream()
+        .filter(portRotation -> portRotation.getOperation().getId() == 1L)
+        .forEach(
+            portRotation -> {
+              portRotation.setPortOrder(portOrder.incrementAndGet());
+              this.loadableStudyPortRotationRepository.save(portRotation);
+            });
+
+    loadableStudyPortRotations.stream()
+        .filter(
+            portRotation ->
+                (portRotation.getOperation().getId() != 1L)
+                    && (portRotation.getOperation().getId() != 2L))
+        .forEach(
+            portRotation -> {
+              portRotation.setPortOrder(portOrder.incrementAndGet());
+              this.loadableStudyPortRotationRepository.save(portRotation);
+            });
+
+    loadableStudyPortRotations.stream()
+        .filter(portRotation -> portRotation.getOperation().getId() == 2L)
+        .forEach(
+            portRotation -> {
+              portRotation.setPortOrder(portOrder.incrementAndGet());
+              this.loadableStudyPortRotationRepository.save(portRotation);
+            });
   }
 
   /**
@@ -1583,9 +1625,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
       List<LoadableStudyPortRotation> entityList =
-          this.loadableStudyPortRotationRepository
-              .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
-                  loadableStudyOpt.get(), true);
+          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+              loadableStudyOpt.get(), true);
       for (LoadableStudyPortRotation entity : entityList) {
         replyBuilder.addPorts(
             this.createPortDetail(
@@ -2018,8 +2059,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.synopticalTableRepository.deleteByPortRotationId(entity.getId());
         this.buildPortsInfoSynopticalTable(entity, request.getOperationId(), request.getPortId());
       }
-      loadableStudyOpt.get().setIsPortsComplete(request.getIsPortsComplete());
-      this.loadableStudyRepository.save(loadableStudyOpt.get());
+      this.loadableStudyRepository.updateLoadableStudyIsPortsComplete(
+          loadableStudyOpt.get().getId(), request.getIsPortsComplete());
+
+      // set port order after update
+      this.setPortOrdering(loadableStudyOpt.get());
 
       replyBuilder.setPortRotationId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -2107,6 +2151,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
         }
       }
+
+      // Set port ordering after updation
+      this.setPortOrdering(loadableStudy);
+
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving discharging ports", e);
@@ -2422,9 +2470,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
         List<LoadableStudyPortRotation> ports =
-            this.loadableStudyPortRotationRepository
-                .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
-                    loadableStudy.get(), true);
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+                loadableStudy.get(), true);
         if (ports.isEmpty()) {
           log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
           portRotationReplyBuilder.setResponseStatus(
@@ -4665,9 +4712,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadablePattern loadablePattern,
       LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
     List<LoadableStudyPortRotation> entityList =
-        this.loadableStudyPortRotationRepository
-            .findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(
-                loadablePattern.getLoadableStudy(), true);
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            loadablePattern.getLoadableStudy(), true);
     Long lastLoadingRotationId =
         getLastPortRotationId(
             loadablePattern.getLoadableStudy(),
@@ -7115,9 +7161,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<SynopticalTable> synopticalTableList =
-          this.synopticalTableRepository
-              .findByLoadableStudyXIdAndIsActiveOrderByOperationAndPortOrder(
-                  request.getLoadableStudyId(), true);
+          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
+              request.getLoadableStudyId(), true);
       if (!synopticalTableList.isEmpty()) {
         VesselReply vesselReply =
             this.getSynopticalTableVesselData(request, loadableStudyOpt.get());
