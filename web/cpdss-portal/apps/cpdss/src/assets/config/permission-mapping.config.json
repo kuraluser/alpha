@@ -29,5 +29,13 @@
     "OnBoardQuantityComponent": "CARGOPLANNING_ONBOARDQUANTITIES",
     "NewVoyage": "STATUS_NEW_VOYAGE",
     "CargoCommingle": "CARGO_NOMINATION_COMMINGLE",
-    "StatusEditPortRotation": "STATUS_EDIT_PORT_ROTAION"
+    "StatusEditPortRotation": "STATUS_EDIT_PORT_ROTAION",
+    "VoyageHistoryNewVoyage" :"VOYAGE_HISTORY_NEW_VOYAGE",
+    "PortTabEtaEtd": "PORTS_ETA/ETD",
+    "FleetComponent": "FLEET",
+    "PortListingComponent":"PORT_LISTING",
+    "SynopticalTableETA/ETD": "SYNOPTICAL_TABLE_EDA/ETD",
+    "SynopticalTableTimeOfSunrise": "SYNOPTICAL_TABLE_TIME_OFSUNRISE",
+    "SynopticalTableTimeOfSunset": "SYNOPTICAL_TABLE_TIME_OFSUNSET",
+    "NewLoadableStudy":"CARGOPLANNING_NEW_LOADABLE_STUDY"
 }

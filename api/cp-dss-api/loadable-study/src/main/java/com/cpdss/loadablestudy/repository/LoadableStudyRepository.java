@@ -34,6 +34,13 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   public LoadableStudy findByVoyageAndNameIgnoreCaseAndIsActive(
       Voyage voyage, String name, boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadableStudy LS SET LS.feedbackLoop = ?1, LS.feedbackLoopCount = ?2 WHERE id = ?3")
+  public void updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
+      Boolean feedbackLoop, Integer feedbackLoopCount, Long id);
   
   @Transactional
   @Modifying

@@ -12,6 +12,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { NumberDirectiveModule } from '../../directives/number-directive/number-directive.module';
 import { PaginatorModule } from 'primeng/paginator';
 import { TooltipModule } from 'primeng/tooltip';
+import { QuantityDecimalFormatPipeModule } from '../../pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
  * Module for DataTable
@@ -33,7 +34,8 @@ import { TooltipModule } from 'primeng/tooltip';
     CalendarModule,
     PaginatorModule,
     NumberDirectiveModule,
-    TooltipModule
+    TooltipModule,
+    QuantityDecimalFormatPipeModule
   ],
   exports: [DatatableComponent],
   providers: [DecimalPipe]

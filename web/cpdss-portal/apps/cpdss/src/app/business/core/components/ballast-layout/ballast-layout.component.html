@@ -27,7 +27,7 @@
                                 <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
                                     <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                                     <li class="col-7">
-                                        {{tank?.commodity[options?.ullageField] ? tank?.commodity[options?.ullageField] : 0}}
+                                        {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.0-2') : 0}}
                                         {{options?.ullageUnit}}</li>
                                     <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                                     <li class="col-7">
@@ -35,7 +35,7 @@
                                     </li>
                                     <li class="col-5">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                                     <li class="col-7">
-                                        {{tank?.commodity[options?.weightField]? tank?.commodity[options?.weightField] : 0}} {{options?.weightUnit}}
+                                        {{tank?.commodity[options?.weightField]? (tank?.commodity[options?.weightField] | number :'1.2-2') : 0}} {{options?.weightUnit}}
                                     </li>
                                     <li class="col-5">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
                                     <li class="col-7">{{tank?.commodity? options?.fillingPercentageField ?
@@ -51,7 +51,7 @@
                         </div>
                         <ng-container *ngIf="tank?.commodity">
                             <span *ngIf="options?.showUllage"
-                                class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
+                                class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.0-2'}}
                                 {{options?.ullageUnit}}</span>
                             <span *ngIf="options?.showFillingPercentage"
                                 class="tank-filling-percentage">{{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>
@@ -80,7 +80,7 @@
                             <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
                                 <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                                 <li class="col-7">
-                                    {{tank?.commodity[options?.ullageField] ? tank?.commodity[options?.ullageField] : 0}}
+                                    {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.0-2') : 0}}
                                     {{options?.ullageUnit}}</li>
                                 <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                                 <li class="col-7">
@@ -88,7 +88,7 @@
                                 </li>
                                 <li class="col-5">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                                 <li class="col-7">
-                                    {{tank?.commodity[options?.weightField]? tank?.commodity[options?.weightField]: 0}} {{options?.weightUnit}}
+                                    {{tank?.commodity[options?.weightField]? (tank?.commodity[options?.weightField] | number :'1.2-2'): 0}} {{options?.weightUnit}}
                                 </li>
                                 <li class="col-5">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
                                 <li class="col-7">{{tank?.commodity? options?.fillingPercentageField ?
@@ -105,10 +105,10 @@
                     <ng-container *ngIf="tank?.commodity">
 
                         <div *ngIf="options?.showFillingPercentage" class="tank-filling-percentage">
-                            {{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%
+                            {{options?.fillingPercentageField ? (tank?.commodity[options?.fillingPercentageField] | number :'1.2-2') : (tank?.percentageFilled | number :'1.2-2')}}%
                         </div>
                         <span *ngIf="options?.showUllage"
-                            class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
+                            class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.0-2'}}
                             {{options?.ullageUnit}}</span>
 
                     </ng-container>
@@ -134,7 +134,7 @@
                         <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
                             <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                             <li class="col-7">
-                                {{tank?.commodity[options?.ullageField] ? tank?.commodity[options?.ullageField] : 0}}
+                                {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.0-2' ) : 0}}
                                 {{options?.ullageUnit}}</li>
                             <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                             <li class="col-7">
@@ -142,11 +142,11 @@
                             </li>
                             <li class="col-5">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                             <li class="col-7">
-                                {{tank?.commodity[options?.weightField]? tank?.commodity[options?.weightField]: 0}} {{options?.weightUnit}}
+                                {{tank?.commodity[options?.weightField]? (tank?.commodity[options?.weightField] | number :'1.2-2'): 0}} {{options?.weightUnit}}
                             </li>
                             <li class="col-5">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
                             <li class="col-7">{{tank?.commodity? options?.fillingPercentageField ?
-                            tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled : 0}}%
+                            (tank?.commodity[options?.fillingPercentageField]| number :'1.2-2') : (tank?.percentageFilled | number :'1.2-2') : 0}}%
                             </li>
                         </ng-container>
                     </ul>
@@ -159,7 +159,7 @@
                 </h5>
                 <ng-container *ngIf="tank?.commodity">
                     <span *ngIf="options?.showUllage"
-                        class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
+                        class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.0-2' }}
                         {{options?.ullageUnit}}</span>
                     <span *ngIf="options?.showFillingPercentage"
                         class="tank-filling-percentage">{{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>

@@ -26,6 +26,9 @@ import { StabilityPopUpComponent } from './stability-pop-up/stability-pop-up.com
 import { PatternViewMorePopUpComponent } from './pattern-view-more-pop-up/pattern-view-more-pop-up.component';
 import { SynopticalGridComponent } from './pattern-view-more-pop-up/synoptical-grid/synoptical-grid.component';
 import { BallastLayoutModule } from '../../core/components/ballast-layout/ballast-layout.module';
+import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { PortRotationPopupModule } from '../../core/components/port-rotation-popup/port-rotation-popup.module';
 
 /**
  * Routing Module for Loadable Pattern History Screen
@@ -51,9 +54,11 @@ import { BallastLayoutModule } from '../../core/components/ballast-layout/ballas
     TooltipModule,
     UnitDropdownModule,
     QuantityPipeModule,
-    BallastLayoutModule
+    BallastLayoutModule,
+    QuantityDecimalFormatPipeModule,
+    PortRotationPopupModule
   ],
   exports: [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent, StabilityPopUpComponent],
-  providers: [QuantityPipe]
+  providers: [QuantityPipe, QuantityDecimalFormatPipe]
 })
 export class LoadablePatternHistoryModule { }

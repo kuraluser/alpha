@@ -132,7 +132,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.loadableQuantityNew = '0';
         this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
         this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
-        this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+        this.tabPermission();
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       });
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessage();
@@ -156,7 +156,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   setPagePermissionContext() {
-    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], true);
+    
 
     this.cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
     this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW] };
@@ -234,15 +234,11 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (this.loadableStudies.length) {
       this.setProcessingLoadableStudyActions(0, 0);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+      this.isDischargePortAvailable();
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
       this.loadableStudyDetailsTransformationService.setPortValidity(this.selectedLoadableStudy.isPortsComplete)
       this.loadableStudyDetailsTransformationService.setOHQValidity(this.selectedLoadableStudy.ohqPorts ?? [])
       this.loadableStudyDetailsTransformationService.setObqValidity(this.selectedLoadableStudy.isObqComplete)
-
-      if (sessionStorage.getItem('loadableStudyInfo')) {
-        this.displayLoadableQuntity = true;
-        sessionStorage.removeItem('loadableStudyInfo');
-      }
     } else {
       this.selectedLoadableStudy = null;
     }
@@ -273,6 +269,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts = [];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
+    
     // if no loadable study is selected set 1st loadable study as selected one and reload
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
@@ -289,7 +286,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         }
         this.loadableQuantityModel = loadableQuantityResult;
       }
-
     }
     this.ngxSpinnerService.hide();
   }
@@ -374,6 +370,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isPatternGenerated = true;
         this.selectedLoadableStudy.statusId = 3;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_GENERATED;
       }
       this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
     }
@@ -455,6 +452,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts.push(event.itemValue);
       this.updatingDischargingPort();
     }
+    this.loadableStudyDetailsTransformationService.setPortValidity(false);
   }
 
   /**
@@ -621,19 +619,43 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @param {*} event
    * @memberof LoadableStudyDetailsComponent
    */
-  onLoadableStudyChange(event) {
+  async onLoadableStudyChange(event) {
     if (event) {
+      this.ngxSpinnerService.show();
       this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
       this.loadableStudyDetailsTransformationService.setOHQValidity([]);
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
       this.isGenerateClicked = false;
-      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
-      this.initSubsciptions();
-      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselId, this.voyageId).toPromise();
+      this.loadableStudies = result?.loadableStudies ?? [];
+      if (this.loadableStudies.length) { 
+        this.selectedLoadableStudy = this.loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === this.loadableStudyId) : this.loadableStudies[0];
+      }
       this.tabPermission();
+      this.ngxSpinnerService.hide();
       this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+    }
+  }
+
+  /**
+   * is discharge port available
+   *
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async isDischargePortAvailable() {
+    this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
+    if (!this.dischargingPorts) {
+      this.dischargingPorts = [];
+    }
+    this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
+    if(this.selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length) {
+      this.messageService.clear();
+      const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
+      this.isSelectedDischargePort = false;
+      this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS'] });
     }
   }
 
@@ -736,8 +758,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
+      const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
       const data: ISubTotal = {
-        dwt: loadableQuantity.dwt,
+        dwt: dwt,
         sagCorrection: loadableQuantity.saggingDeduction,
         sgCorrection: loadableQuantity.sgCorrection,
         foOnboard: loadableQuantity.estFOOnBoard,
@@ -911,16 +934,21 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (this.selectedLoadableStudy?.statusId === 4) {
       const dateString = this.selectedLoadableStudy?.loadableStudyStatusLastModifiedTime;
       const dateTimeParts = dateString?.split(' ');
-      const timeParts = dateTimeParts[1].split(':');
-      const dateParts = dateTimeParts[0].split('-');
-      const modifiedDate = new Date(Number(dateParts[2]), parseInt(dateParts[1], 10) - 1, Number(dateParts[0]), Number(timeParts[0]), Number(timeParts[1]));
-      const addFiveMinute = new Date(modifiedDate.getTime() + AppConfigurationService.settings.processingTimeout);
-      const now = new Date();
-      if (addFiveMinute < now) {
-        return false;
-      } else {
+      const timeParts = dateTimeParts[1]?.split(':');
+      const dateParts = dateTimeParts[0]?.split('-');
+      if(dateParts?.length){
+        const modifiedDate = new Date(Number(dateParts[2]), parseInt(dateParts[1], 10) - 1, Number(dateParts[0]), Number(timeParts[0]), Number(timeParts[1]));
+        const addFiveMinute = new Date(modifiedDate.getTime() + AppConfigurationService.settings.processingTimeout);
+        const now = new Date();
+        if (addFiveMinute < now) {
+          return false;
+        } else {
+          return true;
+        }
+      }else{
         return true;
       }
+
     }
   }
 }

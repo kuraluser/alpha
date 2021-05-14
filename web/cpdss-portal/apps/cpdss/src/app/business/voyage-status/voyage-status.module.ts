@@ -30,6 +30,8 @@ import { ListConditionComponent } from './list-condition/list-condition.componen
 import { TrimConditionComponent } from './trim-condition/trim-condition.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { PermissionDirectiveModule } from '../../shared/directives/permission/permission-directive.module';
+import { QuantityDecimalFormatPipeModule } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+import { QuantityDecimalFormatPipe } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 
 /**
  * Module for new voyage-status
@@ -58,13 +60,15 @@ import { PermissionDirectiveModule } from '../../shared/directives/permission/pe
     PortRotationRibbonModule,
     NewVoyagePopupModule,
     EditPortRotationPopupModule,
-    PermissionDirectiveModule
+    PermissionDirectiveModule,
+    QuantityDecimalFormatPipeModule
   ],
   providers: [
     VoyageApiService,
     VoyageStatusTransformationService,
     QuantityPipe,
-    PortRotationService
+    PortRotationService,
+    QuantityDecimalFormatPipe
   ]
 })
 export class VoyageStatusModule { }

@@ -9,6 +9,7 @@ import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model'
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -28,10 +29,10 @@ export class LoadablePlanTransformationService {
   private savedComments = new Subject();
 
   public savedComments$ = this.savedComments.asObservable();
-  constructor() { }
+  constructor(private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
 
   /**
-  * 
+  *
   * Get loadable quantity table header
   * @returns {IDataTableColumn[]}
   */
@@ -59,7 +60,7 @@ export class LoadablePlanTransformationService {
 
 
   /**
-* 
+*
 * GetCommingled Cargo Table Column
 * @returns {IDataTableColumn[]}
 */
@@ -89,7 +90,7 @@ export class LoadablePlanTransformationService {
   }
 
   /**
-  * 
+  *
   * Get loadable quantity table header
   * @returns {IDataTableColumn[]}
   */
@@ -130,32 +131,32 @@ export class LoadablePlanTransformationService {
   }
 
   /**
-  * 
+  *
   * Get Formated Loadable Quantity Data
   * @returns {ILoadableQuantityCargo}
-  * @param loadableQuantityObject 
+  * @param loadableQuantityObject
   */
   public getFormatedLoadableQuantityData(_decimalPipe: any, loadableQuantity: ILoadableQuantityCargo): ILoadableQuantityCargo {
     const _loadableQuantityDetails = loadableQuantity;
     _loadableQuantityDetails.estimatedAPI = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedAPI, '1.2-2');
     _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedTemp, '1.2-2');
-    _loadableQuantityDetails.orderBbls60f = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'orderedQuantity'), '1.0-2');
-    _loadableQuantityDetails.orderBblsdbs = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'orderedQuantity'), '1.0-2');
-    _loadableQuantityDetails.orderedQuantity = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.orderedQuantity, '1.0-2');
+    _loadableQuantityDetails.orderBbls60f = this.quantityDecimalFormatPipe.transform(this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'orderedQuantity'), QUANTITY_UNIT.BBLS);
+    _loadableQuantityDetails.orderBblsdbs = _decimalPipe.transform(this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'orderedQuantity'));
+    _loadableQuantityDetails.orderedQuantity = this.quantityDecimalFormatPipe.transform(_loadableQuantityDetails.orderedQuantity, QUANTITY_UNIT.MT);
     _loadableQuantityDetails.minTolerence = _loadableQuantityDetails.minTolerence + '%';
     _loadableQuantityDetails.maxTolerence = _loadableQuantityDetails.maxTolerence + '%';
-    _loadableQuantityDetails.loadableBbls60f = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'loadableMT'), '1.0-2');
-    _loadableQuantityDetails.loadableBblsdbs = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'loadableMT'), '1.0-2');
-    _loadableQuantityDetails.loadableKL = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.KL, 'loadableMT'), '1.2-2');
-    _loadableQuantityDetails.loadableLT = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.LT, 'loadableMT'), '1.2-2');
-    _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableMT, '1.2-2');
+    _loadableQuantityDetails.loadableBbls60f = this.quantityDecimalFormatPipe.transform(this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'loadableMT'),QUANTITY_UNIT.BBLS);
+    _loadableQuantityDetails.loadableBblsdbs = this.quantityDecimalFormatPipe.transform(this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'loadableMT'), QUANTITY_UNIT.OBSBBLS);
+    _loadableQuantityDetails.loadableKL = this.quantityDecimalFormatPipe.transform(this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.KL, 'loadableMT'), QUANTITY_UNIT.KL);
+    _loadableQuantityDetails.loadableLT = this.quantityDecimalFormatPipe.transform(this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.LT, 'loadableMT'), QUANTITY_UNIT.LT);
+    _loadableQuantityDetails.loadableMT = this.quantityDecimalFormatPipe.transform(_loadableQuantityDetails.loadableMT,QUANTITY_UNIT.MT);
     _loadableQuantityDetails.differencePercentageValue = Number(_loadableQuantityDetails.differencePercentage.replace('%', ''))
     _loadableQuantityDetails.differencePercentage = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.differencePercentageValue, '1.2-2') + '%';
     return loadableQuantity;
   }
 
   /**
-  * 
+  *
   * Get Formated Loadable Quantity Data
   * @returns {decimal converted value us number}
   */
@@ -164,10 +165,10 @@ export class LoadablePlanTransformationService {
   }
 
   /**
-  * 
+  *
   * Get Formated Loadable Quantity Data
   * @returns { ICommingleCargoDispaly }
-  * @param loadablePlanCommingleCargoDetails  
+  * @param loadablePlanCommingleCargoDetails
   */
   public getFormatedLoadableCommingleCargo(_decimalPipe: any, loadablePlanCommingleCargoDetails: ILoadableQuantityCommingleCargo): ICommingleCargoDispaly {
     const _loadablePlanCommingleCargoDetails = <ICommingleCargoDispaly>{};
@@ -175,23 +176,27 @@ export class LoadablePlanTransformationService {
     _loadablePlanCommingleCargoDetails.tankName = loadablePlanCommingleCargoDetails.tankName;
     _loadablePlanCommingleCargoDetails.grade = loadablePlanCommingleCargoDetails.grade;
     _loadablePlanCommingleCargoDetails.quantityBLS = this.decimalConvertion(_decimalPipe, this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.BBLS, 'quantity'), '1.2-2');
-    _loadablePlanCommingleCargoDetails.quantity = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.quantity, '1.2-2');
+    _loadablePlanCommingleCargoDetails.quantity = this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.quantity, QUANTITY_UNIT.MT);
     _loadablePlanCommingleCargoDetails.temp = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.temp, '1.2-2');
+    loadablePlanCommingleCargoDetails.cargo1Bbls60f = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.BBLS, 'cargo1MT')?.toString();
+    loadablePlanCommingleCargoDetails.cargo2Bbls60f = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.BBLS, 'cargo2MT')?.toString();
+    loadablePlanCommingleCargoDetails.cargo1Bblsdbs = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.OBSBBLS, 'cargo1MT')?.toString();
+    loadablePlanCommingleCargoDetails.cargo2Bblsdbs = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.OBSBBLS, 'cargo2MT')?.toString();
     _loadablePlanCommingleCargoDetails.cargoPercentage = loadablePlanCommingleCargoDetails.cargo1Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo1Percentage + '%' + '<br>' + loadablePlanCommingleCargoDetails.cargo2Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo2Percentage + '%';
-    _loadablePlanCommingleCargoDetails.cargoBblsdbs = loadablePlanCommingleCargoDetails.cargo1Bblsdbs + '<br>' + loadablePlanCommingleCargoDetails.cargo2Bblsdbs;
-    _loadablePlanCommingleCargoDetails.cargoBbls60f = loadablePlanCommingleCargoDetails.cargo1Bbls60f + '<br>' + loadablePlanCommingleCargoDetails.cargo2Bbls60f;
+    _loadablePlanCommingleCargoDetails.cargoBblsdbs =  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo1Bblsdbs, QUANTITY_UNIT.OBSBBLS) + '<br>' +  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo2Bblsdbs, QUANTITY_UNIT.OBSBBLS);
+    _loadablePlanCommingleCargoDetails.cargoBbls60f =  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo1Bbls60f, QUANTITY_UNIT.BBLS) + '<br>' +  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo2Bbls60f, QUANTITY_UNIT.BBLS);
     _loadablePlanCommingleCargoDetails.cargo1LT = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.LT, 'cargo1MT');
     _loadablePlanCommingleCargoDetails.cargo2LT = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.LT, 'cargo2MT');
     _loadablePlanCommingleCargoDetails.cargo1KL = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.KL, 'cargo1MT');
     _loadablePlanCommingleCargoDetails.cargo2KL = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.KL, 'cargo2MT');
-    _loadablePlanCommingleCargoDetails.cargoMT = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.cargo1MT, '1.2-2') + '<br>' + this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.cargo2MT, '1.2-2');
-    _loadablePlanCommingleCargoDetails.cargoLT = this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo1LT, '1.2-2') + '<br>' + this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo2LT, '1.2-2');
-    _loadablePlanCommingleCargoDetails.cargoKL = this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo1KL, '1.2-2') + '<br>' + this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo2KL, '1.2-2');
+    _loadablePlanCommingleCargoDetails.cargoMT = this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo1MT, QUANTITY_UNIT.MT) + '<br>' + this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo2MT, QUANTITY_UNIT.MT);
+    _loadablePlanCommingleCargoDetails.cargoLT = this.quantityDecimalFormatPipe.transform(_loadablePlanCommingleCargoDetails.cargo1LT, QUANTITY_UNIT.LT) + '<br>' + this.quantityDecimalFormatPipe.transform( _loadablePlanCommingleCargoDetails.cargo2LT, QUANTITY_UNIT.LT);
+    _loadablePlanCommingleCargoDetails.cargoKL = this.quantityDecimalFormatPipe.transform(_loadablePlanCommingleCargoDetails.cargo1KL, QUANTITY_UNIT.KL) + '<br>' + this.quantityDecimalFormatPipe.transform( _loadablePlanCommingleCargoDetails.cargo2KL, QUANTITY_UNIT.KL);
     return _loadablePlanCommingleCargoDetails;
   }
 
   /**
-  * 
+  *
    * Method for formatting cargo tanks data
    *
    * @param {ICargoTank[][]} cargoTank
@@ -258,6 +263,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.correctedUllage = cargoTankDetail.correctedUllage;
     _cargoTankDetail.tankName = cargoTankDetail.tankName;
     _cargoTankDetail.rdgUllage = cargoTankDetail.rdgUllage;
+    _cargoTankDetail.tankShortName = cargoTankDetail.tankShortName;
     _cargoTankDetail.correctionFactor = cargoTankDetail.correctionFactor;
     _cargoTankDetail.api = cargoTankDetail.api;
     _cargoTankDetail.temperature = cargoTankDetail.temperature;
@@ -292,6 +298,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.correctedUllage = new ValueObject<number>(cargoTankDetail?.correctedUllage, true, false);
     _cargoTankDetail.fillingRatio = new ValueObject<number>(Number(cargoTankDetail?.fillingRatio), true, false);
     _cargoTankDetail.tankName = cargoTankDetail?.tankName;
+    _cargoTankDetail.tankShortName = cargoTankDetail?.tankShortName;
     _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, isNewValue);
     _cargoTankDetail.correctionFactor = new ValueObject<number>(cargoTankDetail?.correctionFactor, true, false);
     _cargoTankDetail.observedM3 = new ValueObject<number>(unitConvertedTankDetails.observedM3, true, false);
@@ -332,7 +339,7 @@ export class LoadablePlanTransformationService {
   getCargoDatatableColumns(): IDataTableColumn[] {
     return [
       {
-        field: 'tankName',
+        field: 'tankShortName',
         header: 'LOADABLE_PLAN_CARGO_GRID_TANK',
         editable: false,
         fieldHeaderClass: 'column-tank-name'
@@ -348,7 +355,7 @@ export class LoadablePlanTransformationService {
         fieldPlaceholder: 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_PLACEHOLDER',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldHeaderClass: 'column-rdg-ullage',
-        numberFormat: '1.0-2',
+        numberFormat: '1.0-6',
         errorMessages: {
           'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR'
@@ -427,13 +434,13 @@ export class LoadablePlanTransformationService {
    */
    getBallastDatatableColumns(): IDataTableColumn[] {
     return [
-      { field: 'tankName', header: 'STOWAGE_BALLAST_TANK', editable: false , fieldType: DATATABLE_FIELD_TYPE.TEXT},
+      { field: 'tankShortName', header: 'STOWAGE_BALLAST_TANK'},
       {
         field: 'rdgLevel',
         header: 'STOWAGE_BALLAST_RDG_LEVEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'LOADABLE_PLAN_BALLAST_GRID_RDG_ULG_PLACEHOLDER',
-        numberFormat: '1.0-2',
+        numberFormat: '1.0-6',
         errorMessages: {
           'required': 'LOADABLE_PLAN_BALLAST_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR'
@@ -444,7 +451,7 @@ export class LoadablePlanTransformationService {
       { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
       { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
       { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER}
+      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.4-4',}
     ]
   }
 
@@ -472,6 +479,7 @@ export class LoadablePlanTransformationService {
       _ballastTankDetail.sg = new ValueObject<string>(ballastTankDetail?.sg, true, false);
       _ballastTankDetail.fullCapacityCubm = ballastTankDetail.fullCapacityCubm;
       _ballastTankDetail.isAdd = isNewValue;
+      _ballastTankDetail.tankShortName = ballastTankDetail.tankShortName;
       return _ballastTankDetail;
     }
 
@@ -485,21 +493,21 @@ export class LoadablePlanTransformationService {
     }
 
   /**
-  * 
+  *
   * calculate percentage
-  * @returns {number} 
+  * @returns {number}
   * @param { number } fullCapacityCubm
-  * @param { number } cubicMeter 
+  * @param { number } cubicMeter
   */
   calculatePercentage(cubicMeter: number, fullCapacityCubm: number) {
     return Number((cubicMeter / fullCapacityCubm * 100));
   }
 
   /**
-  * 
+  *
   * Get Formated ETA/ETD Data
   * @returns {ISynopticalRecordArrangeModel}
-  * @param { ILoadablePlanSynopticalRecord } synopticalRecord 
+  * @param { ILoadablePlanSynopticalRecord } synopticalRecord
   */
   public getFormatedEtaEtdData(_decimalPipe: any, synopticalRecord: ILoadablePlanSynopticalRecord): ISynopticalRecordArrangeModel {
     const _synopticalRecord = <ISynopticalRecordArrangeModel>{};
@@ -515,7 +523,7 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.othersPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.othersPlanned, '1.0-2');
     _synopticalRecord.totalDwtPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.totalDwtPlanned, '1.0-2');
     _synopticalRecord.displacementPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.displacementPlanned, '1.0-2');
-    _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, '1.0-2');
+    _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, '1.4-4');
     _synopticalRecord.cargoPlannedTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.cargoPlannedTotal, '1.0-2');
     _synopticalRecord.ballastPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.ballastPlanned, '1.0-2');
 
@@ -527,57 +535,57 @@ export class LoadablePlanTransformationService {
   }
 
   /**
-  * 
+  *
   * Convert Loadable Quantity to other units
   * @returns {number}
-  * @param { ILoadableQuantityCargo } _loadableQuantityDetails 
-  * @param { QUANTITY_UNIT } unitTo 
-  * @param { string } key 
+  * @param { ILoadableQuantityCargo } _loadableQuantityDetails
+  * @param { QUANTITY_UNIT } unitTo
+  * @param { string } key
   */
   convertQuantityLoadable(_loadableQuantityDetails: ILoadableQuantityCargo, unitTo: QUANTITY_UNIT, key: string) {
     return this.quantityPipe.transform(_loadableQuantityDetails[key], this.baseUnit, unitTo, _loadableQuantityDetails.estimatedAPI, _loadableQuantityDetails.estimatedTemp)
   }
 
   /**
-  * 
+  *
   * Convert Commingle Quantity to other units
   * @returns {number}
-  * @param { ILoadableQuantityCargo } _loadableQuantityDetails 
-  * @param { QUANTITY_UNIT } unitTo 
-  * @param { string } key 
+  * @param { ILoadableQuantityCargo } _loadableQuantityDetails
+  * @param { QUANTITY_UNIT } unitTo
+  * @param { string } key
   */
   convertQuantityCommingle(loadablePlanCommingleCargoDetails: ILoadableQuantityCommingleCargo, unitTo: QUANTITY_UNIT, key: string) {
     return this.quantityPipe.transform(loadablePlanCommingleCargoDetails[key], this.baseUnit, unitTo, loadablePlanCommingleCargoDetails.api, loadablePlanCommingleCargoDetails.temp)
   }
 
   /**
-  * 
+  *
   * Convert Cargo Quantity to other units
   * @returns {number}
-  * @param { ICargoTankDetail } cargoDetails 
-  * @param { QUANTITY_UNIT } unitTo 
-  * @param { string } key 
+  * @param { ICargoTankDetail } cargoDetails
+  * @param { QUANTITY_UNIT } unitTo
+  * @param { string } key
   */
   convertQuantityCargo(cargoDetails: ICargoTankDetail, unitTo: QUANTITY_UNIT, key: string) {
     return this.quantityPipe.transform(cargoDetails[key], this.baseUnit, unitTo, cargoDetails.api, cargoDetails.temperature)
   }
 
   /**
-  * 
+  *
   * Convert Ballast Quantity to other units
   * @returns {number}
-  * @param { IBallastStowageDetails } ballast 
-  * @param { QUANTITY_UNIT } unitTo 
+  * @param { IBallastStowageDetails } ballast
+  * @param { QUANTITY_UNIT } unitTo
   */
   convertQuantityBallast(ballast: IBallastStowageDetails, unitTo: QUANTITY_UNIT) {
     return this.quantityPipe.transform(ballast.metricTon, this.baseUnit, unitTo, ballast.sg)
   }
 
   /**
-   * comments saved 
+   * comments saved
   */
-  commentsSaved() {
-    this.savedComments.next();
+  commentsSaved(comments: string) {
+    this.savedComments.next(comments);
   }
 
 }

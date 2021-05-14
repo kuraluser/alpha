@@ -24,7 +24,7 @@ export class QuantityPipe implements PipeTransform {
    * @returns {number}
    * @memberof QuantityPipe
    */
-  transform(value: string | number, unitFrom: QUANTITY_UNIT, unitTo: QUANTITY_UNIT, api: string | number, temperature?: string | number): number {
+  transform(value: string | number, unitFrom: QUANTITY_UNIT, unitTo: QUANTITY_UNIT, api: string | number, temperature?: string | number, decimalPoint?: number): number {
     if (!value || value === '' || !api || api === '' || !unitFrom || !unitTo) {
       return null;
     }
@@ -32,8 +32,35 @@ export class QuantityPipe implements PipeTransform {
     const _api = Number(api);
     const _temperature = Number(temperature);
     const quantityInBBLS = this.convertToBBLS(_value, unitFrom, _api, _temperature);
-    const convertedQuantity = this.convertFromBBLS(quantityInBBLS, unitTo, _api, _temperature);
-
+    let convertedQuantity = this.convertFromBBLS(quantityInBBLS, unitTo, _api, _temperature);
+    
+    if(decimalPoint !== -1) {
+      switch (unitTo) {
+        case QUANTITY_UNIT.MT:
+          convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 2));
+          break;
+  
+        case QUANTITY_UNIT.KL:
+          convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 3));
+          break;
+  
+        case QUANTITY_UNIT.OBSBBLS:
+          convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 0));
+          break;
+  
+        case QUANTITY_UNIT.BBLS:
+          convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 0));
+          break;
+  
+        case QUANTITY_UNIT.LT:
+          convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 2));
+          break;
+  
+        default:
+          convertedQuantity = convertedQuantity;
+          break;
+      }
+    }
     return convertedQuantity;
   }
 

@@ -13,7 +13,7 @@
 
         <div class="ml-auto pr-15">
             <span class="ml-20 mr-10">
-                <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
+                <cpdss-portal-unit-dropdown (unitChange)="onUnitChange()"></cpdss-portal-unit-dropdown>
             </span>
             <button class="btn btn-main mr-10 ml-10" id="btn_callNewLoadableStudyPopup"
                 (click)="patternHistory()">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
@@ -45,21 +45,21 @@
                     </cpdss-portal-pattern-case>
                     <div class="row">
                         <div class="col-7 text-center pt-20">
-                            <button class="btn btn-main mr-10"
-                                (click)="viewPlan(loadablePattern)" *cpdssPortalPermission="loadablePlanPermissionContext">{{'LOADABLE_PATTERN_HISTORY_VIEW_PLAN_BUTTON_LABEL'
+                            <button class="btn btn-main mr-10" (click)="viewPlan(loadablePattern)"
+                                *cpdssPortalPermission="loadablePlanPermissionContext">{{'LOADABLE_PATTERN_HISTORY_VIEW_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main mr-10" (click)="confirmPlan(loadablePattern?.loadablePatternId)"
+                            <button class="btn btn-main mr-10" (click)="onConfirmPlanClick(loadablePattern?.loadablePatternId)" id="pattern-history-confirm-btn"
                                 *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main confirmed mr-10"
+                            <button class="btn btn-main confirmed"
                                 *ngIf="loadablePattern?.loadableStudyStatusId === 2" [disabled]="true">
                                 <span class="pi pi-check check-rounded"></span>
                                 {{'LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |
                                 translate}}</button>
-                            <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
-                                {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button>
+                            <!-- <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
+                                {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button> -->
                         </div>
                     </div>
                 </div>
@@ -80,5 +80,8 @@
     (displayPopup)="setStabilityPopupVisibility($event)" *ngIf="showStability"></cpdss-portal-stability-pop-up>
 <cpdss-portal-pattern-view-more-pop-up [display]="viewMore" [selectedLoadablePattern]="selectedLoadablePattern"
     (displayPopup)="setPatternViewMorePopupVisibility($event)" [vesselId]="vesselId" [voyageId]="voyageId"
-    [loadableStudyId]="loadableStudyId" [cargoTankList]="tankLists" *ngIf="viewMore" [rearBallastTanks]="rearBallastTanks"
-    [centerBallastTanks]="centerBallastTanks" [frontBallastTanks]="frontBallastTanks" [cargos]="cargos"></cpdss-portal-pattern-view-more-pop-up>
+    [loadableStudyId]="loadableStudyId" [cargoTankList]="tankLists" *ngIf="viewMore"
+    [rearBallastTanks]="rearBallastTanks" [centerBallastTanks]="centerBallastTanks"
+    [frontBallastTanks]="frontBallastTanks" [cargos]="cargos"></cpdss-portal-pattern-view-more-pop-up>
+<cpdss-portal-port-rotation-popup *ngIf="showPortRotationPopup" [visible]="showPortRotationPopup" [vesselId]="vesselId" [voyageId]="voyageId"
+[loadableStudyId]="loadableStudyId" (displayPopup)="closePortRotationPopup($event)"></cpdss-portal-port-rotation-popup>

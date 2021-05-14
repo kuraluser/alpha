@@ -12,6 +12,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { IPermission } from '../../shared/models/user-profile.model';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT  } from '../../shared/models/common.model';
+import * as moment from 'moment';
 
 /**
  * Component class for voyages compoent
@@ -41,7 +43,10 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   defaultDate: Date;
   isStart: boolean;
   display: boolean;
+  newVoyagePermissionContext: IPermissionContext;
 
+  filterDateError = null;
+  errorMessages: any;
   public loading: boolean;
   public totalRecords: number;
   public currentPage: number;
@@ -59,6 +64,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
+    this.errorMessages = this.voyageListTransformationService.setValidationErrorMessage();
     this.ngxSpinnerService.show();
     this.getPagePermission();
     this.permissionStart = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStart'], false);
@@ -90,6 +96,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
    */
    getPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyagesComponent']);
+    this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['VoyageHistoryNewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
   }
 
   /**
@@ -112,7 +119,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       const voyageList = voyageLIstResponse.voyages;
       this.totalRecords = voyageLIstResponse.totalElements;
       if (this.totalRecords && !voyageList?.length) {
-        this.currentPage -= 1;
+        this.currentPage = this.currentPage ? this.currentPage - 1 :  0;
         this.pageState['page'] = this.currentPage;
         this.getVoyageLists$.next();
       }
@@ -127,6 +134,10 @@ export class VoyagesComponent implements OnInit, OnDestroy {
           if (voyage?.cargos?.length) {
             voyage.cargo = voyage.cargos.map(e => e.name).join(", ");
           }
+          voyage.plannedStartDate = this.dateStringToDate(voyage?.plannedStartDate);
+          voyage.plannedEndDate = this.dateStringToDate(voyage?.plannedEndDate);
+          voyage.actualStartDate = this.dateStringToDate(voyage?.actualStartDate);
+          voyage.actualEndDate = this.dateStringToDate(voyage?.actualEndDate);
           voyage.isStart = voyage.status === 'Active' ? false : (voyage.status === 'Closed' ? false : true);
           voyage.isStop = voyage.status === 'Active' ? true : false;
           return voyage;
@@ -165,8 +176,12 @@ export class VoyagesComponent implements OnInit, OnDestroy {
  */
   onDateRangeSelect(event) {
     if (this.filterDates[0] && this.filterDates[1]) {
+      this.filterDateError = null;
       this.dateRangeFilter.hideOverlay();
       this.reloadVoyageHistory();
+    }
+    else if(this.filterDates[0] && !this.filterDates[1]){
+      this.filterDateError = { 'toDate': true };
     }
   }
 
@@ -177,6 +192,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   * @memberof VoyagesComponent
   */
   resetDateFilter(event) {
+    this.filterDateError = null;
     this.filterDates = null;
     this.reloadVoyageHistory();
   }
@@ -239,4 +255,18 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     this.display = true;
   }
 
+
+  /**
+   * function to convert string to Date object
+   *
+   * @param {string} dateTime
+   * @return {*}  {Date}
+   * @memberof PortsComponent
+   */
+   dateStringToDate(date: string): string {
+    if (date) {
+      const _dateTime = moment(date, 'DD-MM-YYYY').format(AppConfigurationService.settings?.dateFormat.split(' ')[0]);
+      return _dateTime;
+    }
+  }
 }

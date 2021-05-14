@@ -150,19 +150,23 @@ service LoadableStudyService {
 	
 	rpc GetVoyages (VoyageRequest) returns (VoyageListReply) {
 	}
-	
+
+	//	Generate loadable plan excel report
+	rpc GetLoadablePlanReport (LoadablePlanReportRequest) returns (stream LoadablePlanReportReply) {
+	}
+
 	rpc GetAlgoErrors (AlgoErrorRequest) returns (AlgoErrorReply) {
 	}
 	
 	rpc SaveVoyageStatus(SaveVoyageStatusRequest) returns (SaveVoyageStatusReply){
 	}
-	
+
 	rpc GetCargoApiTempHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
 	}
-	
+
 	rpc GetAllCargoHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
 	}
-	
+
 	rpc SaveJson (JsonRequest) returns (StatusReply) {
 	}
 
@@ -325,11 +329,12 @@ message LDIntactStability {
 }
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
-	repeated LoadablePlanDetails loadablePlanDetails = 2;
-	int64 loadableStudyId = 3;
-	bool validated = 4;
-	repeated AlgoErrors algoErrors = 5;
-	int64 loadablePatternId = 6;
+	bool hasLodicator =2;
+	repeated LoadablePlanDetails loadablePlanDetails = 3;
+	int64 loadableStudyId = 4;
+	bool validated = 5;
+	repeated AlgoErrors algoErrors = 6;
+	int64 loadablePatternId = 7;
 	
 }
 
@@ -390,6 +395,8 @@ message LoadablePlanDetailsReply {
   	int64 loadablePatternStatusId = 15;
   	int64 voyageStatusId = 16;
   	bool validated = 17;
+  	StabilityParameter stabilityParameter =18;
+  	int64 loadableStudyStatusId = 19;
 }
 
 message LoadablePlanComments {
@@ -416,6 +423,8 @@ message LoadablePlanBallastDetails {
 	string inertia = 13;
 	string tankName = 14;
 	string colorCode = 15;
+	string tankShortName = 16;
+	int32 tankDisplayOrder = 17;
 }
 
 message LoadablePlanStowageDetails {
@@ -437,7 +446,10 @@ message LoadablePlanStowageDetails {
   bool isCommingle = 16;
   int64 cargoNominationId = 17;
   bool isBallast = 18;
-}
+  string sg = 19;
+  string tankShortName = 20;
+  int32 tankDisplayOrder = 21;
+ }
 
 
 message LoadableQuantityCommingleCargoDetails {
@@ -466,7 +478,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 int32 loadingOrder = 23;
 	 int64 tankId = 24;
 	 string fillingRatio = 25;
-	 string correctedUllage = 26; 
+	 string correctedUllage = 26;
  	 string rdgUllage = 27;
      string correctionFactor = 28;
       string slopQuantity = 29;
@@ -711,7 +723,7 @@ message CargoNominationDetail {
 	string tempEst = 12;
 	int64 segregationId = 13;
 	bool isCargoNominationComplete=14;
-	
+
 }
 
 message CargoNominationRequest {
@@ -737,9 +749,9 @@ message PortRotationRequest{
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
 	repeated PortRotationDetail portRotationDetails = 6;
-	int64 dischargingCargoId=7;	
+	int64 dischargingCargoId=7;
     bool isDischargingPortsComplete=8;
-	
+
 }
 
 message PortRotationDetail{
@@ -763,6 +775,7 @@ message PortRotationDetail{
 	bool isPortsComplete=18;
 	int64 portTimezoneId = 19;
 	bool isLandingPage=20;
+	string operationType=21;
 }
 
 message Operation{
@@ -775,6 +788,7 @@ message PortRotationReply{
 	repeated PortRotationDetail ports=2;
 	repeated Operation operations=3;
 	int64 portRotationId = 4;
+	int64 lastModifiedPort = 5;
 }
 
 message LoadableQuantityResponse {
@@ -1058,6 +1072,7 @@ message SynopticalCargoRecord{
 	string api = 11;	
 	bool isCommingleCargo=12;
 	string temperature = 13;
+	string fillingRatio = 14;
 }
 
 message SynopticalOhqRecord{
@@ -1081,6 +1096,7 @@ message SynopticalBallastRecord{
 	string correctedUllage = 6;
 	string spGravity = 7;
 	string colorCode = 8;
+	string fillingRatio = 9;
 }
 
 message SynopticalTableRequest{
@@ -1089,7 +1105,8 @@ message SynopticalTableRequest{
 	int64 voyageId = 3;
 	int64 portId = 4;
 	repeated SynopticalRecord synopticalRecord = 5;
-	int64 loadablePatternId = 6;	
+	int64 loadablePatternId = 6;
+	string operationType = 7;	
 }
 
 message SynopticalTableReply{
@@ -1133,12 +1150,16 @@ message LoadableStudyAttachmentReply{
 
 message SaveCommentReply {
 	ResponseStatus responseStatus = 1;
+		SaveCommentRequest comment = 2;
 }
 
 message SaveCommentRequest{
 	int64 loadablePatternId=1;
 	string comment =2;
 	int64 user=3;
+	int64 commentId = 4;
+	string createDate = 5;
+	string updateDate = 6;
 }
 
 message SaveLoadOnTopRequest{
@@ -1155,6 +1176,20 @@ message DischargingPortDetail{
 message CargoDetails{
 	int64 cargoId = 1;
 	string name=3;
+}
+
+// Request object for loadable plan report
+message LoadablePlanReportRequest {
+	int64 vesselId = 1;
+	int64 loadablePatternId = 2;
+	int64 loadableStudyId = 3;
+}
+
+// Response object for loadable plan report
+message LoadablePlanReportReply {
+	StatusReply responseStatus = 1;
+	bytes data = 2;
+	int32 size = 3;
 }
 
 message SaveVoyageStatusRequest{

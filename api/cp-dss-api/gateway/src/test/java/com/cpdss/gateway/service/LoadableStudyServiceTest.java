@@ -107,6 +107,7 @@ import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.Roles;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.google.protobuf.ByteString;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -147,6 +148,8 @@ class LoadableStudyServiceTest {
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";
   private static final Long TEST_COMPANY_ID = 1L;
   private static final Long TEST_VESSEL_ID = 1L;
+  private static final Long TEST_LOADABLE_STUDY_ID = 1L;
+  private static final Long TEST_LOADABLE_PATTERN_ID = 1L;
   private static final Long TEST_VOYAGE_ID = 1L;
   private static final Long ID_TEST_VALUE = 1L;
   private static final String STRING_TEST_VALUE = "1";
@@ -1656,7 +1659,7 @@ class LoadableStudyServiceTest {
     LoadablePlanDetails planDetails = new LoadablePlanDetails();
     planDetails.setLoadablePlanPortWiseDetails(createLoadablePlanPortWiseDetails());
     planDetails.setCaseNumber(1);
-    planDetails.setStabilityParameters(createStabilityParameters());
+    // planDetails.setStabilityParameters(createStabilityParameters());
     loadablePlanDetails.add(planDetails);
     return loadablePlanDetails;
   }
@@ -2377,6 +2380,70 @@ class LoadableStudyServiceTest {
                     loadOnTopRequest, "corelationId", (long) 1));
 
     assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code");
+  }
+
+  /**
+   * Method to test downloadLoadablePlanReport - Positive test
+   *
+   * @throws GenericServiceException
+   */
+  @Test
+  void testDownloadLoadablePlanReport() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.newBuilder()
+            .setData(ByteString.copyFrom(new byte[2]))
+            .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+    Mockito.when(
+            this.loadableStudyService.getLoadablePlanReport(
+                ArgumentMatchers.any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.class)))
+        .thenReturn(replyBuilder.build());
+
+    byte[] response =
+        this.loadableStudyService.downloadLoadablePlanReport(
+            TEST_VESSEL_ID, TEST_LOADABLE_STUDY_ID, TEST_LOADABLE_PATTERN_ID);
+    assertAll(() -> assertEquals(response.length, 2), () -> assertNotNull(response));
+  }
+
+  /**
+   * Method to test downloadLoadablePlanReport - Negative test
+   *
+   * @throws GenericServiceException
+   */
+  @Test
+  void testDownloadLoadablePlanReportException() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.newBuilder()
+            .setResponseStatus(
+                StatusReply.newBuilder()
+                    .setStatus(FAILED)
+                    .setCode(String.valueOf(HttpStatusCode.BAD_REQUEST.value()))
+                    .build());
+    Mockito.when(
+            this.loadableStudyService.getLoadablePlanReport(
+                ArgumentMatchers.any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.class)))
+        .thenReturn(replyBuilder.build());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.downloadLoadablePlanReport(
+                    TEST_VESSEL_ID, TEST_LOADABLE_STUDY_ID, TEST_LOADABLE_PATTERN_ID));
+
+    assertEquals(
+        CommonErrorCodes.E_HTTP_BAD_REQUEST,
+        ex.getCode(),
+        "Failed to generate loadable plan report");
   }
 
   @Test

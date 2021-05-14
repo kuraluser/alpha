@@ -25,7 +25,7 @@
             </cpdss-portal-port-rotation-ribbon>
         </div>
     </div>
-    <router-outlet></router-outlet>
+    <router-outlet *ngIf="vesselInfo && selectedVoyage"></router-outlet>
 </div>
 
 <cpdss-portal-new-voyage-popup [vesselDetails]="vesselInfo" *ngIf="displayNewVoyagePopup && vesselInfo"

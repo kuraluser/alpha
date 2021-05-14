@@ -128,6 +128,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     colorCode: string;
     fullCapacityCubm: string;
     isCommingle?: boolean;
+    tankShortName?: string;
 }
 
 /**
@@ -154,6 +155,7 @@ export interface ICargoTankDetailValueObject {
     temperature: ValueObject<number>;
     isAdd: boolean;
     fullCapacityCubm: string;
+    tankShortName: string;
 }
 
 /**
@@ -177,6 +179,7 @@ export interface ICargoTankDetailValueObject {
     isAdd: boolean;
     api: ValueObject<number>;
     temperature: ValueObject<number>;
+    tankShortName: string;
  }
 
 /**
@@ -290,6 +293,9 @@ export interface IUpdateUllageModel {
    tankId: number;
    correctedUllage: string;
    isBallast: boolean;
+   api: string;
+   temperature: string;
+   sg: string;
 }
 
 /**
@@ -394,6 +400,19 @@ export enum VALIDATION_AND_SAVE_STATUS {
     errorHeading: string,
     errorDetails: string[]
  }
+
+ /**
+ * Interface for comment response
+ *
+ * @export
+ * @interface ICommentResponse
+ */
+ export interface ICommentResponse {
+    responseStatus: IResponseStatus;
+    comment: ILoadablePlanCommentsDetails
+ }
+
+
 
 
 

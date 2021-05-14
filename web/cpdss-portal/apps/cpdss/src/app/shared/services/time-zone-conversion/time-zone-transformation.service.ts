@@ -23,6 +23,10 @@ export class TimeZoneTransformationService {
     {
       dateFormat:'DD/MMM/YYYY HH:mm',
       calenderFormat: 'dd/M/yy'
+    },
+    {
+      dateFormat:'DD-MMM-YYYY HH:mm',
+      calenderFormat: 'dd-M-yy'
     }
   ];
 

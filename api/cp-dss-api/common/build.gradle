@@ -50,3 +50,13 @@ protobuf {
     generatedFilesBaseDir = "$projectDir/src"
 }
 
+dependencies {
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
+    implementation('commons-beanutils:commons-beanutils:1.9.4')
+}
+
+configurations {
+    all {
+        exclude module: 'commons-logging'
+    }
+}

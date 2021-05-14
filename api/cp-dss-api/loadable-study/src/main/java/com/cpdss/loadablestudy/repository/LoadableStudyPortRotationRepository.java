@@ -141,4 +141,12 @@ public interface LoadableStudyPortRotationRepository
   @Query(
       "select var.id as id, var.portXId as portId from LoadableStudyPortRotation var where var.loadableStudy.id = ?1 and var.isActive = ?2")
   List<PortRotationIdAndPortId> findAllIdAndPortIdsByLSId(Long loadableStudyId, boolean isActive);
+
+  @Query(
+      "select min(portOrder) from LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 "
+          + "AND LSPR.isActive = true AND LSPR.portXId in ?2 and operation.id=1")
+  public Long findSmallestOrderForPorts(LoadableStudy loadableStudy, List<Long> portIds);
+
+  public List<LoadableStudyPortRotation> findByLoadableStudyAndPortXIdAndIsActiveAndOperation(
+      LoadableStudy loadableStudy, Long portId, boolean isActive, CargoOperation operation);
 }

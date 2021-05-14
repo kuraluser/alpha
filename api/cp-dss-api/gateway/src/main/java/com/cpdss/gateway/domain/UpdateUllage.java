@@ -26,5 +26,13 @@ public class UpdateUllage {
 
   private Boolean isBallast;
 
-  private BigDecimal fillingRatio;
+  private String fillingRatio;
+
+  private String api;
+
+  private String temperature;
+
+  private String observedM3;
+
+  private String sg;
 }

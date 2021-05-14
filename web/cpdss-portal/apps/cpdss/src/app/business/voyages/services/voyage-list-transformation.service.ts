@@ -67,7 +67,8 @@ export class VoyageListTransformationService {
         filterField: 'plannedStartDate',
         sortable: true,
         sortField: 'plannedStartDate',
-        filterByServer: true
+        filterByServer: true,
+        dateFormat: 'dd-M-yy'
       },
       {
         field: 'plannedEndDate',
@@ -80,7 +81,8 @@ export class VoyageListTransformationService {
         filterField: 'plannedEndDate',
         sortable: true,
         sortField: 'plannedEndDate',
-        filterByServer: true
+        filterByServer: true,
+        dateFormat: 'dd-M-yy'
       },
       {
         field: 'actualStartDate',
@@ -93,7 +95,8 @@ export class VoyageListTransformationService {
         filterField: 'actualStartDate',
         sortable: true,
         sortField: 'actualStartDate',
-        filterByServer: true
+        filterByServer: true,
+        dateFormat: 'dd-M-yy'
       },
       {
         field: 'actualEndDate',
@@ -106,7 +109,8 @@ export class VoyageListTransformationService {
         filterField: 'actualEndDate',
         sortable: true,
         sortField: 'actualEndDate',
-        filterByServer: true
+        filterByServer: true,
+        dateFormat: 'dd-M-yy'
       },
       {
         field: 'loading',
@@ -198,6 +202,18 @@ export class VoyageListTransformationService {
       return day + '-' + month + '-' + date.getFullYear() + ' ' + hour + ':' + minute;
     } else {
       return day + '-' + month + '-' + date.getFullYear();
+    }
+  }
+
+    /**
+   * Set validation Error to form control
+   * @memberof VoyageListTransformationService
+  */
+  setValidationErrorMessage() {
+    return {
+      filterDateRange: {
+        'toDate': 'VOYAGE_LIST_DATE_RANGE_TO_DATE_ERROR'
+      }
     }
   }
 }
