@@ -1306,7 +1306,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
 	private void setPortOrdering(LoadableStudy loadableStudy) {
 		AtomicLong portOrder = new AtomicLong(0L);
-		this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByOperationAndPortOrder(loadableStudy, true)
+		List<LoadableStudyPortRotation>loadableStudyPortRotations = this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(loadableStudy, true);
+		loadableStudyPortRotations.stream()
+		.filter(portRotation -> portRotation.getOperation().getId() == 1L)
+		.forEach(portRotation -> {
+			portRotation.setPortOrder(portOrder.incrementAndGet());
+			this.loadableStudyPortRotationRepository.save(portRotation);
+		});
+		
+		loadableStudyPortRotations.stream()
+		.filter(portRotation -> (portRotation.getOperation().getId() != 1L) && (portRotation.getOperation().getId() != 2L))
+		.forEach(portRotation -> {
+			portRotation.setPortOrder(portOrder.incrementAndGet());
+			this.loadableStudyPortRotationRepository.save(portRotation);
+		});
+		
+		loadableStudyPortRotations.stream()
+		.filter(portRotation -> portRotation.getOperation().getId() == 2L)
 		.forEach(portRotation -> {
 			portRotation.setPortOrder(portOrder.incrementAndGet());
 			this.loadableStudyPortRotationRepository.save(portRotation);
@@ -1916,6 +1932,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 //      loadableStudyOpt.get().setIsPortsComplete(request.getIsPortsComplete());
 //      this.loadableStudyRepository.save(loadableStudyOpt.get());
       this.loadableStudyRepository.updateLoadableStudyIsPortsComplete(loadableStudyOpt.get().getId(), request.getIsPortsComplete());
+      
+      // set port order after update
+      this.setPortOrdering(loadableStudyOpt.get());
+      
       replyBuilder.setPortRotationId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
@@ -6598,7 +6618,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       List<SynopticalTable> synopticalTableList =
           this.synopticalTableRepository
-              .findByLoadableStudyXIdAndIsActiveOrderByOperationAndPortOrder(
+              .findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
                   request.getLoadableStudyId(), true);
       if (!synopticalTableList.isEmpty()) {
         VesselReply vesselReply =
