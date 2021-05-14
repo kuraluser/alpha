@@ -41,7 +41,7 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
       "UPDATE LoadableStudy LS SET LS.feedbackLoop = ?1, LS.feedbackLoopCount = ?2 WHERE id = ?3")
   public void updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
       Boolean feedbackLoop, Integer feedbackLoopCount, Long id);
-  
+
   @Transactional
   @Modifying
   @Query("UPDATE LoadableStudy LS SET LS.isPortsComplete = ?2 WHERE LS.id = ?1")
