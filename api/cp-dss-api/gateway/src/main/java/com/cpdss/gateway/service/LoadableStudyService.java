@@ -3218,9 +3218,8 @@ public class LoadableStudyService {
       rec.setApi(isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
-      //      rec.setIsCommingleCargo(
-      //          isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
-      rec.setIsCommingleCargo(protoRec.getIsCommingleCargo());
+      rec.setIsCommingleCargo(
+          isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
       if (protoRec.getTemperature() != null && protoRec.getTemperature().length() > 0) {
         rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
       }
