@@ -63,4 +63,7 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "correction_factor")
   private String correctionFactor;
+
+  @Column(name = "filling_percentage")
+  private String fillingPercentage;
 }
