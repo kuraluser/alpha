@@ -399,6 +399,7 @@ message LoadablePlanDetailsReply {
   	int64 loadableStudyStatusId = 19;
   	string totalLoadableQuantity = 20;
   	int64 lastModifiedPort = 21;
+	bool confirmPlanEligibility = 22;
 }
 
 message LoadablePlanComments {

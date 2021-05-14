@@ -3783,6 +3783,7 @@ public class LoadableStudyService {
     response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
     response.setValidated(grpcReply.getValidated());
     response.setLoadableStudyStatusId(grpcReply.getLoadableStudyStatusId());
+    response.setConfirmPlanEligibility(grpcReply.getConfirmPlanEligibility());
   }
 
   /**

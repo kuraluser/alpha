@@ -72,4 +72,6 @@ public class LoadablePlanDetailsResponse {
 
   @JsonInclude(Include.NON_NULL)
   private Long lastModifiedPort;
+
+  private boolean confirmPlanEligibility;
 }

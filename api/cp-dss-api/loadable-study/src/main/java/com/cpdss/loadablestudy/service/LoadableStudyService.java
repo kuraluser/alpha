@@ -8068,7 +8068,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_PATTERN_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
-
+        Optional<LoadableStudy> ls =
+            loadableStudyRepository.findByIdAndIsActive(
+                loadablePatternOpt.get().getLoadableStudy().getId(), true);
+        boolean status = this.validateLoadableStudyForConfimPlan(ls.get());
+        replyBuilder.setConfirmPlanEligibility(status);
         buildLoadablePlanDetails(loadablePatternOpt, replyBuilder);
       }
     } catch (GenericServiceException e) {
