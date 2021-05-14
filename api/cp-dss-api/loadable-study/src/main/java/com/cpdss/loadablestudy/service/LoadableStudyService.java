@@ -8945,13 +8945,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         if (!loadableQuantityList.isEmpty()) {
           List<LoadableQuantity> loadableQuantities = new ArrayList<LoadableQuantity>();
 
-          loadableQuantityList.forEach(
-              loadableQuantity -> {
-                entityManager.detach(loadableQuantity);
-                loadableQuantity.setId(null);
-                loadableQuantity.setLoadableStudyXId(entity);
-                loadableQuantities.add(loadableQuantity);
-              });
+          for (LoadableQuantity oldLQ : loadableQuantityList) {
+            entityManager.detach(oldLQ);
+            oldLQ.setId(null);
+            oldLQ.setLoadableStudyXId(entity);
+            log.info(
+                "Duplicate loadable quantity From LS {}, LQ Port Rotation {}",
+                request.getDuplicatedFromId(),
+                oldLQ.getLoadableStudyPortRotation().getId());
+            this.setNewPortRotationIdForNewLS(oldLQ, loadableStudyDuplicatedPorts);
+            log.info(
+                "Duplicate loadable quantity To LS {}, LQ Port Rotation {}",
+                entity.getId(),
+                oldLQ.getLoadableStudyPortRotation().getId());
+            loadableQuantities.add(oldLQ);
+          }
           this.loadableQuantityRepository.saveAll(loadableQuantities);
         }
 
@@ -9037,6 +9045,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Failed to save duplicate entries", CommonErrorCodes.E_GEN_INTERNAL_ERR, null);
       }
+    }
+  }
+
+  private void setNewPortRotationIdForNewLS(
+      LoadableQuantity lq, List<LoadableStudyPortRotation> newPrList) {
+    if (lq != null && lq.getLoadableStudyPortRotation() != null) {
+      LoadableStudyPortRotation pr = lq.getLoadableStudyPortRotation();
+      Optional<LoadableStudyPortRotation> portRotaionIdToAdd =
+          newPrList.stream()
+              .filter(
+                  var ->
+                      (pr.getPortXId().equals(var.getPortXId()))
+                          && (pr.getOperation().getId().equals(var.getOperation().getId())))
+              .findFirst();
+      lq.setLoadableStudyPortRotation(portRotaionIdToAdd.get());
     }
   }
 

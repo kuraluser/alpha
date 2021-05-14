@@ -117,7 +117,10 @@ public class LoadableQuantityService {
         dwtValue =
             String.valueOf(
                 this.getDWTByVesselId(
-                    loadableStudy.get().getVesselXId(), portRotation.getMaxDraft()));
+                    loadableStudy.get().getVesselXId(),
+                    portRotation.getMaxDraft() != null
+                        ? portRotation.getMaxDraft()
+                        : BigDecimal.ZERO));
       }
 
       List<OnHandQuantity> onHandQuantityList =
