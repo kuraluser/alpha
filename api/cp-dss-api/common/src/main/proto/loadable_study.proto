@@ -397,6 +397,7 @@ message LoadablePlanDetailsReply {
   	bool validated = 17;
   	StabilityParameter stabilityParameter =18;
   	int64 loadableStudyStatusId = 19;
+	bool confirmPlanEligibility = 20;
 }
 
 message LoadablePlanComments {

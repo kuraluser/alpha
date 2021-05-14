@@ -65,4 +65,6 @@ public class LoadablePlanDetailsResponse {
 
   @JsonInclude(Include.NON_NULL)
   private Long loadableStudyStatusId;
+
+  private boolean confirmPlanEligibility;
 }
