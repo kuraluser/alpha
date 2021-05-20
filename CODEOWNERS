@@ -14,3 +14,5 @@
 /api/cp-dss-api/company-info/ @jeringeorgealpha @johnsoorajxavier
 /api/cp-dss-api/gateway/ @jeringeorgealpha @johnsoorajxavier
 /api/cp-dss-api/user-authorization/ @jeringeorgealpha @johnsoorajxavier
+/api/cp-dss-api/envoy-reader/ @jeringeorgealpha @johnsoorajxavier
+/api/cp-dss-api/envoy-writer/ @jeringeorgealpha @johnsoorajxavier
