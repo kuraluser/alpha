@@ -5,7 +5,7 @@ import { CommonApiService } from '../../../shared/services/common/common-api.ser
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ILoadablePlanResponse, ISaveComment, IUpdateUllageModel , IUpdatedUllageResponse  , IAlgoResponse , IValidateAndSaveStowage , IUpdatedRdgLevelResponse , ICommentResponse } from '../models/loadable-plan.model';
 import { ICargoResponseModel , IValidateAndSaveResponse } from '../../../shared/models/common.model';
-import { IResponse, IConfirmStatusResponse } from '../../../shared/models/common.model';
+import { IResponse, IConfirmStatusResponse , LoadableQuantityModel  } from '../../../shared/models/common.model';
 
 /**
  * Api Service for loadable plan
@@ -126,5 +126,29 @@ export class LoadablePlanApiService {
   getAlgoErrorDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<IAlgoResponse> {
     return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern/${loadablePatternId}/algo-errors`);
   }
+
+    /**
+  * 
+  * @param {number} vesselId 
+  * @param {number} voyageId 
+  * @param {number} loadableStudyId 
+  * @param {number} loadablePatternId
+  * Export data
+  */
+  export(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<any> {
+    return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patten/${loadablePatternId}/report`, {responseType: 'blob' as 'json'});
+  }
+
+    /**
+   * 
+   * @param vesselId 
+   * @param voyageId 
+   * @param loadableStudyId 
+   * @param portRotationId
+   * Get api for loadable quantity
+   */
+    getLoadableQuantity(vesselId: number, voyageId: number, loadableStudyId: number, portRotationId: number): Observable<LoadableQuantityModel> {
+      return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity?portRotationId=${portRotationId}`);
+    }
 }
 

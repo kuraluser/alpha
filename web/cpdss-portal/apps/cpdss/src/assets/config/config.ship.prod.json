@@ -7,7 +7,7 @@
     "baseUnit": "MT",
     "volumeBaseUnit": "KL",
     "passwordMinLength": "8",
-    "processingTimeout": 600000,
+    "processingTimeout": 3600000,
     "commingleColor": "#7114d9",
     "dateFormat": "DD-MMM-YYYY HH:mm",
     "quantityNumberFormatKL": "1.3-3",
@@ -15,5 +15,6 @@
     "quantityNumberFormatMT": "1.2-2",
     "quantityNumberFormatLT": "1.2-2",
     "quantityNumberFormatOBSBBLS": "1.0-0",
-    "defaultWeightUnit" : "BBLS"
+    "defaultWeightUnit" : "BBLS",
+    "maxFillingPercentage": "98"
 }

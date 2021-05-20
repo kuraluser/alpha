@@ -7,11 +7,13 @@
 export interface IFleetVoyagePorts {
     portname: string;
     portType: string;
+    portOrder: number;
     anchorage: boolean;
-    prevPort?: string;
-    nextPort?: string;
     vesselName?: string;
     atd?: string;
+    ata?: string;
+    etd?: string;
+    eta?: string;
     iconUrl: string;
     lat: number;
     lon: number;
@@ -32,6 +34,7 @@ export interface IFleetVessel {
     flagImage: string;
     atd: string;
     eta: string;
+    ata?: string;
     imoNo: number;
     voyagePorts?: IFleetVoyagePorts[];
 }

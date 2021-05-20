@@ -12,7 +12,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col" style="max-width: 120px;">
+                            <div class="col pr-0" style="max-width: 113px;">
                                 <span class="text-secondary text-uppercase">{{'OHQ_SELECTED_PORT'| translate}}</span>
                             </div>
                             <div class="col pl-0">
@@ -111,7 +111,7 @@
                     </div>
                     <div class="col-8">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-5">
                                 <div class="row mb-15">
                                     <label for="" class="col-12 text-center">{{'OHQ_DENSITY'| translate}}</label>
                                     <div class="col error-icon-wrapper">
@@ -126,10 +126,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6"
+                            <div class="col-7"
                                 [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.ARRIVAL ? 'visible': 'hidden'}"
                                 [ngClass]="{'order-last': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE}">
-                                <div class="row mb-15">
+                                <div class="row">
                                     <label for="" class="col-12 text-center no-wrap">{{'OHQ_ARRIVAL'| translate}}
                                         {{'OHQ_QUANTITY'| translate}}</label>
                                     <div class="col error-icon-wrapper">

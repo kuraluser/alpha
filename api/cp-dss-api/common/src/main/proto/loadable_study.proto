@@ -397,6 +397,9 @@ message LoadablePlanDetailsReply {
   	bool validated = 17;
   	StabilityParameter stabilityParameter =18;
   	int64 loadableStudyStatusId = 19;
+  	string totalLoadableQuantity = 20;
+  	int64 lastModifiedPort = 21;
+	bool confirmPlanEligibility = 22;
 }
 
 message LoadablePlanComments {
@@ -1072,6 +1075,7 @@ message SynopticalCargoRecord{
 	string api = 11;	
 	bool isCommingleCargo=12;
 	string temperature = 13;
+	string fillingRatio = 14;
 }
 
 message SynopticalOhqRecord{
@@ -1095,6 +1099,7 @@ message SynopticalBallastRecord{
 	string correctedUllage = 6;
 	string spGravity = 7;
 	string colorCode = 8;
+	string fillingRatio = 9;
 }
 
 message SynopticalTableRequest{
@@ -1103,7 +1108,8 @@ message SynopticalTableRequest{
 	int64 voyageId = 3;
 	int64 portId = 4;
 	repeated SynopticalRecord synopticalRecord = 5;
-	int64 loadablePatternId = 6;	
+	int64 loadablePatternId = 6;
+	string operationType = 7;	
 }
 
 message SynopticalTableReply{

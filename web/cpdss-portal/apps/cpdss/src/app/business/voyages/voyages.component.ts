@@ -217,15 +217,15 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   * @memberof VoyagesComponent
   */
   async onButtonClick(event) {
-    let dateArr;
+    let dateValue: string;
     if (event.field === 'isStart') {
       this.isStart = true;
-      dateArr = event?.data?.actualStartDate ? event?.data?.actualStartDate?.split('-') : event?.data?.plannedStartDate?.split('-');
+      dateValue = event?.data?.actualStartDate ? event?.data?.actualStartDate : event?.data?.plannedStartDate;
     } else if (event.field === 'isStop') {
       this.isStart = false;
-      dateArr = event?.data?.actualEndDate ? event?.data?.actualEndDate?.split('-') : event?.data?.plannedEndDate?.split('-');
+      dateValue = event?.data?.actualEndDate ? event?.data?.actualEndDate : event?.data?.plannedEndDate;
     }
-    this.defaultDate = dateArr ? new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0])) : new Date();
+    this.defaultDate = dateValue !== undefined ? moment(dateValue).toDate() : new Date();
     this.selectedVoyageId = event?.data?.id;
     this.showDatePopup = true;
   }

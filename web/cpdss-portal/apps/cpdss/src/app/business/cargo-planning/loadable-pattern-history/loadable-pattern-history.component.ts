@@ -128,7 +128,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
 */
   async getPagePermission() {
     const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], true);
-    
     this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
     this.loadablePlanPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePlanComponent'], actions: [PERMISSION_ACTION.VIEW] };
     return loadablePatternPermission;
@@ -321,6 +320,18 @@ export class LoadablePatternHistoryComponent implements OnInit {
   convertQuantityToSelectedUnit() {
     const loadablePatterns = this.loadablePatterns?.map(pattern => {
       const loadablePatternCargoDetails = pattern.loadablePatternCargoDetails.map(cargo => {
+        if (!cargo?.isCommingle) {
+          pattern?.loadableQuantityCommingleCargoDetails.forEach(commingleCargo => {
+            if (cargo.cargoAbbreviation === commingleCargo.cargo1Abbreviation) {
+              cargo.quantity = Number(cargo.quantity) - Number(commingleCargo?.cargo1MT);
+              cargo.orderedQuantity = Number(cargo.orderedQuantity) - Number(commingleCargo?.cargo1MT);
+            }
+            else if (cargo.cargoAbbreviation === commingleCargo.cargo2Abbreviation) {
+              cargo.quantity = Number(cargo.quantity) - Number(commingleCargo?.cargo2MT);
+              cargo.orderedQuantity = Number(cargo.orderedQuantity) - Number(commingleCargo?.cargo2MT);
+            }
+          });
+        }
         const orderedQuantity = this.quantityPipe.transform(cargo.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
         cargo.orderedQuantity = orderedQuantity ? orderedQuantity : 0;
         const quantity = this.quantityPipe.transform(cargo.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);

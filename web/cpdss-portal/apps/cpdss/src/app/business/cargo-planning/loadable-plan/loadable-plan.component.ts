@@ -9,10 +9,10 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError , ILoadablePlanCommentsDetails , VALIDATION_AND_SAVE_STATUS , IAlgoResponse } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError , IloadableQuantityCargoDetails , ILoadablePlanCommentsDetails , VALIDATION_AND_SAVE_STATUS , IAlgoResponse } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 
-import { ICargoResponseModel, ICargo, ITimeZone } from '../../../shared/models/common.model';
+import { ICargoResponseModel, ICargo, ITimeZone , ISubTotal } from '../../../shared/models/common.model';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
 
 import { VoyageService } from '../../core/services/voyage.service';
@@ -25,6 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
+import { saveAs } from 'file-saver';
 
 /**
  * Component class of loadable plan
@@ -86,8 +87,10 @@ export class LoadablePlanComponent implements OnInit  {
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
   loadablePlanBallastDetails: IBallastStowageDetails[];
   selectedVoyage: Voyage;
+  confirmPlanEligibility: boolean;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
+  showPortRotationPopup = false;
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
   public loadablePlanComments: ILoadablePlanCommentsDetails[];
   public voyageNumber: string;
@@ -103,6 +106,9 @@ export class LoadablePlanComponent implements OnInit  {
   public errorPopup: boolean;
   public validationPending: boolean;
   timeZoneList: ITimeZone[];
+  public loadableQuantity: number;
+  loadableQuantityCargo: IloadableQuantityCargoDetails[];
+  portRotationId: number;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -347,12 +353,19 @@ export class LoadablePlanComponent implements OnInit  {
   * @memberof LoadablePlanComponent
   */
   private async getLoadablePlanDetails() {
+    this.loadableQuantityCargo = [];
     this.ngxSpinnerService.show();
     const loadablePlanRes: ILoadablePlanResponse = await this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+    this.confirmPlanEligibility = loadablePlanRes?.confirmPlanEligibility;
     this.loadableQuantityCargoDetails = loadablePlanRes.loadableQuantityCargoDetails;
+    this.portRotationId = loadablePlanRes.lastModifiedPort;
     this.loadableQuantityCargoDetails.map((loadableQuantityCargoDetail) => {
-      loadableQuantityCargoDetail['grade'] = this.fingCargo(loadableQuantityCargoDetail)
+      loadableQuantityCargoDetail['grade'] = this.fingCargo(loadableQuantityCargoDetail);
+      const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence)/100)* Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
+      const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence)/100)* Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
+      this.loadableQuantityCargo.push({'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, total: 0 , minTolerence: minTolerence , maxTolerence: maxTolerence})
     })
+    loadablePlanRes.loadableQuantity ? this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) : this.getLoadableQuantity();
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => {
       const tank = this.findCargoTank(cargo.tankId, loadablePlanRes?.tankLists)
@@ -382,10 +395,89 @@ export class LoadablePlanComponent implements OnInit  {
     } else if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED) {
       this.listenEvents();
     }
+    
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
     this.setProcessingLoadableStudyActions();
     this.validationPending = !loadablePlanRes.validated;
     this.ngxSpinnerService.hide();
+  }
+  
+  /**
+  * Calculation for subtotal
+  * @memberof LoadablePlanComponent
+  */
+  async getLoadableQuantity() {
+    const loadableQuantityResult = await this.loadablePlanApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.loadableStudyId, this.portRotationId ? this.portRotationId : 0).toPromise();
+    if (loadableQuantityResult.responseStatus.status === "200") {
+      loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantity = Number(loadableQuantityResult.loadableQuantity.totalQuantity);
+    }
+  }
+  
+  /**
+  * Calculation for subtotal
+  * @memberof LoadablePlanComponent
+  */
+   getSubTotal(loadableQuantityResult: any) {
+    const loadableQuantity = loadableQuantityResult.loadableQuantity;
+    let subTotal = 0;
+    if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
+      const data: ISubTotal = {
+        dwt: loadableQuantity.dwt,
+        sagCorrection: loadableQuantity.saggingDeduction,
+        foOnboard: loadableQuantity.estFOOnBoard,
+        doOnboard: loadableQuantity.estDOOnBoard,
+        freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
+        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
+        ballast: loadableQuantity.ballast,
+        constant: loadableQuantity.constant,
+        others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
+      }
+      subTotal = Number(this.loadablePlanTransformationService.getSubTotal(data));
+      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+    }
+    else {
+      const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
+      const data: ISubTotal = {
+        dwt: dwt,
+        sagCorrection: loadableQuantity.saggingDeduction,
+        sgCorrection: loadableQuantity.sgCorrection,
+        foOnboard: loadableQuantity.estFOOnBoard,
+        doOnboard: loadableQuantity.estDOOnBoard,
+        freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
+        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
+        ballast: loadableQuantity.ballast,
+        constant: loadableQuantity.constant,
+        others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
+      }
+      subTotal = Number(this.loadablePlanTransformationService.getSubTotal(data));
+      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+    }
+  }
+
+
+  /**
+   * Calculation for Loadable quantity
+   * @memberof LoadablePlanComponent
+  */
+  getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
+    const loadableQuantity = loadableQuantityResult.loadableQuantity;
+    if (loadableQuantityResult.caseNo === 1) {
+      const total = Number(subTotal) + Number(loadableQuantity.foConInSZ);
+      if (total < 0) {
+        this.loadableQuantity = 0;
+      }
+      else {
+        this.loadableQuantity = total;
+      }
+    }
+    else {
+      if (subTotal < 0) {
+        this.loadableQuantity = 0;
+      }
+      else {
+        this.loadableQuantity = subTotal;
+      }
+    }
   }
 
   /**
@@ -453,6 +545,19 @@ export class LoadablePlanComponent implements OnInit  {
     })
     return cargoDetail.name;
   }
+
+   /**
+ * Handler for confirm plan button
+ *
+ * @memberof LoadablePlanComponent
+ */
+    onConfirmPlanClick() {
+      if (this.confirmPlanEligibility) {
+        this.confirmPlan();
+      } else {
+        this.showPortRotationPopup = true;
+      }
+    }
 
   /**
    * for confirm stowage plan
@@ -529,5 +634,30 @@ export class LoadablePlanComponent implements OnInit  {
     };
     return this.timeZoneTransformationService.formatDateTime(etaEtdDateTime, formatOptions);
   }
+
+  /**
+   * export data
+   * @memberof LoadablePlanComponent
+   */
+  async export() {
+    this.loadablePlanApiService.export(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).subscribe((data) => {
+      const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' })
+      const fileurl = window.URL.createObjectURL(blob)
+      saveAs(fileurl, 'Report.xlsx')
+    });
+  }
+
+   /**
+  * Method to close port rotation pop up
+  *
+  * @memberof LoadablePlanComponent
+  */
+    closePortRotationPopup(e) {
+      this.showPortRotationPopup = e.hide;
+      if (e.success) {
+        this.confirmPlanEligibility = false;
+        this.confirmPlan();
+      }
+    }
 
 }

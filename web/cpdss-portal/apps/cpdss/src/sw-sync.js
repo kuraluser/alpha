@@ -467,7 +467,7 @@
         notifyClients(sync);
         clearInterval(timer);
       }
-    }, 600000);
+    }, 3600000);
   }
 
 

@@ -88,7 +88,6 @@ export class LoadableStudyListApiService {
   * @memberof LoadableStudyListApiService
   */
   downloadAttachment(vesselId: number, voyageId: number, loadableStudyId: number, attachmentId: number) : Observable<any>{
-    const url = environment.name === 'shore' ?  '/api/cloud' : '/api/ship';
-    return this.http.get<any>(`${self.location.origin}${url}/vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`, {responseType: 'blob' as 'json'});
+    return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`, {responseType: 'blob' as 'json'});
   }
 }  

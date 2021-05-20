@@ -32,7 +32,7 @@
         <div class="col-12  voyage-listing-wrapper">
             <cpdss-portal-datatable *ngIf="voyageList" [tableId]="'voyage_list'" [columns]="columns"
                 [value]="voyageList" [filterable]="true" [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
-                [lazy]="true" (dataStateChange)="onDataStateChange($event)" [loading]="loading"
+                [lazy]="true" (dataStateChange)="onDataStateChange($event)" [loading]="loading" 
                 [(currentPage)]="currentPage" [(first)]="first" (buttonClick)="onButtonClick($event)">
             </cpdss-portal-datatable>
         </div>

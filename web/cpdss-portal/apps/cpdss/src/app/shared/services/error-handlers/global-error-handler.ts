@@ -2,12 +2,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'apps/cpdss/src/environments/environment';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 import { ConfirmationAlertService } from './../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { first } from 'rxjs/operators';
+import { SecurityService } from '../security/security.service';
 
 /**
  * Service for globally hadling errors
@@ -89,6 +89,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'SESSIONOUT_DIALOG_HEADER', detail: 'SESSIONOUT_DIALOG_BODY', data: { confirmLabel: 'SESSIONOUT_CONFIRM_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
+        SecurityService.userLogoutAction();
         window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
       }
     });
