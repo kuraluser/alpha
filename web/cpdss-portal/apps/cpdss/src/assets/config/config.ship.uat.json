@@ -16,5 +16,6 @@
     "quantityNumberFormatLT": "1.2-2",
     "quantityNumberFormatOBSBBLS": "1.0-0",
     "defaultWeightUnit" : "BBLS",
-    "maxFillingPercentage": "98"
+    "maxFillingPercentage": "98",
+    "sgNumberFormat": "1.4-4"
 }

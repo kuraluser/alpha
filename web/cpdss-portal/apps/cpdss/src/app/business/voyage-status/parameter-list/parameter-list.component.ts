@@ -92,7 +92,7 @@ export class ParameterListComponent implements OnInit {
           numberFormat = this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS);
           break;
         case "specificGravity":
-          numberFormat =  '1.4-4';
+          numberFormat =  AppConfigurationService.settings?.sgNumberFormat;
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_SPECIFIC_GRAVITY";
           break;
         case "totalDwtWeight":

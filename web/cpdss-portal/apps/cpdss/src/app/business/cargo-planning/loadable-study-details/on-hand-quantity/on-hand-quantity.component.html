@@ -83,7 +83,7 @@
                         </ng-container>
 
                     </div>
-                    <div class="col" [ngStyle]="{'visibility':selectedTankId ? 'visible': 'hidden'}">
+                    <div class="col-4" [ngStyle]="{'visibility':selectedTankId ? 'visible': 'hidden'}">
                         <span *ngIf="selectedTank">{{selectedTank?.percentageFilled}}</span>
                         {{('OHQ_FILLED'| translate)}}</div>
                 </div>

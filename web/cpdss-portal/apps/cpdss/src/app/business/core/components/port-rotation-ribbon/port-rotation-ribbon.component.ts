@@ -262,8 +262,10 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     date = this.convertToPortBasedTimeZone(date, newPortList?.portTimezoneId, 'utcToPort');
     let dateActual = this.convertToDate(newPortList.type === "Arrival" ? newPortList?.etaActual : newPortList?.etdActual);
     dateActual = this.convertToPortBasedTimeZone(dateActual, newPortList?.portTimezoneId, 'utcToPort');
+    const portTimezoneData = this.getTimezoneData(newPortList?.portTimezoneId);
     return this.fb.group({
       port: this.fb.control(newPortList?.name, [Validators.required]),
+      portTimezoneOffset: this.fb.control(portTimezoneData.offsetValue, []),
       date: this.fb.control(dateActual ? dateActual : date, [Validators.required, portEtaEtdValidator(index)]),
       time: this.fb.control(dateActual ? dateActual : date, [Validators.required, portTimeValidator(index)]),
       distance: this.fb.control(newPortList?.distanceBetweenPorts ? newPortList?.distanceBetweenPorts : 0, [Validators.required])
@@ -578,7 +580,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
   convertToPortBasedTimeZone(dateTime: Date | string, portTimezoneId: number, convertType?: string): any {
     if (dateTime && portTimezoneId) {
-      const selectedTimeZone: ITimeZone = this.timeZoneList.find(tz => (tz.id === portTimezoneId));
+      const selectedTimeZone: ITimeZone = this.getTimezoneData(portTimezoneId);
       const formatOptions: IDateTimeFormatOptions = {
         portLocalFormat: true,
         portTimeZoneOffset: selectedTimeZone?.offsetValue,
@@ -609,6 +611,17 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       port.portTime = portLocalAbbr && moment(formGroup['time']).format(AppConfigurationService.settings?.dateFormat.split(' ')[1]) + portLocalAbbr;
       return port;
     });
+  }
+
+  /**
+   * function to return port timezone details.
+   *
+   * @param {number} timezoneId
+   * @return {*}  {ITimeZone}
+   * @memberof PortRotationRibbonComponent
+   */
+  getTimezoneData(timezoneId: number): ITimeZone {
+    return this.timeZoneList.find(tz => (tz.id === timezoneId));
   }
 
 }

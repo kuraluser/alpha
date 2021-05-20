@@ -56,10 +56,12 @@
                         <span *ngIf="options?.showWeight"
                             class="tank-commodity-weight">{{tank?.commodity[options?.weightField] | quantityDecimalFormat : options?.weightUnit }}
                             {{options?.weightUnit}}</span>
+                           
+                    
                     </div>
                     <span *ngIf="options?.showUllage"
-                        class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.0-2' }}
-                        {{options?.ullageUnit}}</span>
+                    class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.0-2' }}
+                    {{options?.ullageUnit}}</span>
                     <span *ngIf="options?.showFillingPercentage"
                         class="tank-filling-percentage">{{options?.fillingPercentageField ?
                         (tank?.commodity[options?.fillingPercentageField] | number :'1.0-2'): (tank?.percentageFilled | number :'1.0-2')}}%</span>

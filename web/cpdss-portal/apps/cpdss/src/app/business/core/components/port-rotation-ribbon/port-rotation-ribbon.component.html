@@ -55,7 +55,8 @@
                                     <p-calendar appendTo="body" formControlName="date"
                                         (onClose)="onBlur($event, port, 'date')"
                                         id="eta_date_{{portList.indexOf(port)}}" [minDate]="minDate"
-                                        dateFormat="{{carouselDateFormat}}">
+                                        dateFormat="{{carouselDateFormat}}"
+                                        placeholder="{{'CHOOSE_ETA' | translate}}">
                                     </p-calendar>
                                     <cpdss-portal-validation-error
                                         [errors]="fieldError(portList.indexOf(port), 'date' )"
@@ -66,13 +67,14 @@
                             <div class="row" *ngIf=" port.type === 'Departure'"
                                 (click)="editPort($event, port, 'date')">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETD' | translate }}</label>
-                                <div *ngIf="!port?.isDateEditable" class="col text-secondary text-capitalise">
+                                <div *ngIf="!port?.isDateEditable" class="col text-secondary text-capitalise" >
                                     {{port.portDate}}</div>
                                 <div class="col text-secondary relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
                                         (onClose)="onBlur($event, port, 'date')"
                                         id="etd_date_{{portList.indexOf(port)}}" [minDate]="minDate"
-                                        dateFormat="{{carouselDateFormat}}">
+                                        dateFormat="{{carouselDateFormat}}"
+                                        placeholder="{{'CHOOSE_ETD' | translate}}">
                                     </p-calendar>
                                     <cpdss-portal-validation-error
                                         [errors]="fieldError(portList.indexOf(port), 'date' )"

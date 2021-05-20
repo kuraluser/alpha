@@ -772,7 +772,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'seaWaterDensity',
         header: 'WATER DENSITY (T/M3)',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.4-4',
+        numberFormat: AppConfigurationService.settings?.sgNumberFormat,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT_WATER_DENSITY',
         filterType: DATATABLE_FILTER_TYPE.NUMBER,

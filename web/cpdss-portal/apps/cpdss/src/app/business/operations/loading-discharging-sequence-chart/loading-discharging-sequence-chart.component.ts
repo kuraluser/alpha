@@ -11,9 +11,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
  * Override the reset function, we don't need to hide the tooltips and
  * crosshairs.
  */
-Highcharts.Pointer.prototype.reset = function () {
+// May be needed in future
+/* Highcharts.Pointer.prototype.reset = function () {
   return undefined;
-};
+}; */
 
 Theme(Highcharts);
 GanttChart(Highcharts);
@@ -42,7 +43,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     {
       id: 1,
       name: 'Cargo 1',
-      color: '#00f',
+      color: '#236aff',
       abbreviation: 'C1',
       duration: '12 HRS',
       stageId: 1,
@@ -84,7 +85,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     {
       id: 2,
       name: 'Cargo 2',
-      color: '#ff0',
+      color: '#eaa15c',
       abbreviation: 'C2',
       duration: '16 HRS',
       stageId: 2,
@@ -115,7 +116,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     {
       id: 3,
       name: 'Cargo 3',
-      color: '#f00',
+      color: '#5d9ea0',
       abbreviation: 'C3',
       duration: '8 HRS',
       stageId: 3,
@@ -142,7 +143,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     {
       id: 4,
       name: 'Cargo 4',
-      color: '#00FF00',
+      color: '#ff0095',
       abbreviation: 'C4',
       duration: '8 HRS',
       stageId: 4,
@@ -193,7 +194,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     {
       id: 6,
       name: 'Cargo Pump',
-      color: '#0ff',
+      color: '#236aff',
       abbreviation: 'Cargo Pump',
       stageId: 1,
       data: [
@@ -205,25 +206,25 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           rate: 1856,
         },
         {
-          tankId: 2,
+          tankId: 1,
           start: Date.UTC(2014, 10, 17, 0),
           end: Date.UTC(2014, 10, 17, 12),
-          tankNo: 'Tank 2',
+          tankNo: 'Tank 1',
           rate: 1856,
         }
       ]
     }, {
       id: 6,
       name: 'Cargo Pump',
-      color: '#0ff',
+      color: '#eaa15c',
       abbreviation: 'Cargo Pump',
       stageId: 2,
       data: [
         {
-          tankId: 1,
+          tankId: 2,
           start: Date.UTC(2014, 10, 17, 13),
           end: Date.UTC(2014, 10, 17, 16),
-          tankNo: 'Tank 1',
+          tankNo: 'Tank 2',
           rate: 1856,
         }
       ]
@@ -231,6 +232,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       id: 5,
       name: 'Ballast',
       stageId: 1,
+      color: '#01717d',
       data: [
         {
           tankId: 3,
@@ -265,7 +267,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   static tableLine(renderer, x1, y1, x2, y2) {
     renderer.path(['M', x1, y1, 'L', x2, y2])
       .attr({
-        stroke: '#797f87',
+        stroke: '#bebebe',
         'stroke-width': 1
       })
       .add();
@@ -296,7 +298,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             ullage: dataObj?.ullage,
             quantity: dataObj?.quantity,
             id: dataObj?.id,
-            color: dataObj?.id === 'stripping' ? '#666666' : cargoData.color,
+            color: dataObj?.id === 'stripping' ? '#d1d1d1' : cargoData.color,
             abbreviation: cargoData.abbreviation,
             y: this.sequenceChartTankCategories.findIndex(i => i?.id === dataObj.tankId),
             pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
@@ -315,7 +317,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             tankNo: dataObj?.tankNo,
             rate: dataObj?.rate,
             id: dataObj?.id,
-            color: dataObj?.id === 'stripping' ? '#666666' : item.color,
+            color: dataObj?.id === 'stripping' ? '#d1d1d1' : item.color,
             abbreviation: item.abbreviation,
             y: this.sequenceChartTankCategories.findIndex(i => i?.id === dataObj.tankId),
             pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
@@ -353,7 +355,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             ullage: dataObj?.ullage,
             quantity: dataObj?.quantity,
             id: dataObj?.id,
-            color: dataObj?.id === 'stripping' ? '#666666' : item.color,
+            color: dataObj?.id === 'stripping' ? '#d1d1d1' : item.color,
             abbreviation: item.abbreviation,
             y: this.rateChartTankCategories.findIndex(i => i?.id === dataObj.tankId),
             pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
@@ -463,7 +465,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             color: 'red',
             snap: false
           },
-          lineColor: '#797f87',
+          lineColor: '#bebebe',
           lineWidth: 1,
           events: {
             setExtremes: this.syncExtremes
@@ -482,7 +484,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           tickInterval: 3600,
           tickLength: 0,
           gridLineWidth: 1,
-          gridLineColor: '#797f87',
+          gridLineColor: '#bebebe',
           min: Date.UTC(2014, 10, 17, 0),
           max: Date.UTC(2014, 10, 18, 21),
           dateTimeLabelFormats: {
@@ -492,28 +494,28 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             value: Date.UTC(2014, 10, 17, 6),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           },
           {
             value: Date.UTC(2014, 10, 17, 20),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           },
           {
             value: Date.UTC(2014, 10, 18, 8),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           },
           {
             value: Date.UTC(2014, 10, 18, 16),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           }
           ]
@@ -529,7 +531,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             text: `<div style="padding: 13px 52px;text-align: left;">Total:2,21,154 BBLS</div>`,
             useHTML: true,
           },
-          lineColor: '#797f87',
+          lineColor: '#bebebe',
           lineWidth: 1,
           grid: {
             enabled: true,
@@ -558,6 +560,23 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
 
               return categoryLabel;
             },
+          },
+        },
+        {
+          opposite: false,
+          grid: {
+            enabled: true,
+          },
+          lineWidth: 0,
+          lineColor: 'transparent',
+          gridZIndex: 3,
+          gridLineColor: '#000d20',
+          gridLineWidth: 1,
+          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickColor: '#000d20',
+          margin: -45,
+          labels: {
+            enabled: false
           },
         },
         {
@@ -616,7 +635,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         type: 'category',
         grid: {
           enabled: true,
-          borderColor: '#797f87',
+          borderColor: '#bebebe',
           columns: [
             {
               title: {
@@ -634,7 +653,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 useHTML: true,
                 y: -73.5,
               },
-              categories: ['C2', 'C1', 'C2', 'C3', 'C4', 'BALLAST', 'BALLAST']
+              categories: ['C2', 'C1', 'C2', 'C3', 'C4'],
+              labels: {
+                useHTML: true,
+                formatter: function () {
+                  let cargosLabel = '';
+                  LoadingDischargingSequenceChartComponent.cargos.forEach((cargo: any) => {
+                    if (cargo.abbreviation === this.value) {
+                      cargosLabel += '<span><span class="badge-custom mx-1" style="background-color: ' + cargo?.color + '"> ' + cargo?.abbreviation + '</span></span>';
+                    }
+                  });
+
+                  const categoryLabel = cargosLabel;
+
+                  return categoryLabel;
+                },
+              }
             },
             {
               title: {
@@ -653,10 +687,10 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               }
             }]
         },
-        gridLineColor: '#797f87'
+        gridLineColor: '#bebebe'
       },
       tooltip: {
-        borderColor: '#797f87',
+        borderColor: '#bebebe',
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true,
@@ -728,7 +762,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             y: -60,
             text: `Loading Rate BBLS/HR`,
           },
-          lineColor: '#797f87',
+          lineColor: '#bebebe',
           lineWidth: 1,
           crosshair: {
             color: 'red',
@@ -752,7 +786,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           tickInterval: 3600,
           tickLength: 0,
           gridLineWidth: 1,
-          gridLineColor: '#797f87',
+          gridLineColor: '#bebebe',
           min: Date.UTC(2014, 10, 17, 0),
           max: Date.UTC(2014, 10, 18, 21),
           dateTimeLabelFormats: {
@@ -762,34 +796,34 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             value: Date.UTC(2014, 10, 17, 6),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           },
           {
             value: Date.UTC(2014, 10, 17, 20),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           },
           {
             value: Date.UTC(2014, 10, 18, 8),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           },
           {
             value: Date.UTC(2014, 10, 18, 16),
             color: '#000d20',
             width: 1,
-            dashStyle: 'ShortDash',
+            dashStyle: 'Dash',
             zIndex: 1
           }
           ]
         },
         {
-          lineColor: '#797f87',
+          lineColor: '#bebebe',
           lineWidth: 1,
           opposite: false,
           title: {
@@ -822,7 +856,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               const categoryLabel =
                 '<div class="row">' +
                 '<div class="col-md-12" style="text-align: center">' +
-                '<span>' + quantity + '</span>' +
+                '<span>' + quantity + ' BBLS</span>' +
                 '</div>' +
                 '</div>';
 
@@ -861,13 +895,30 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               }
             },
           }
-        }
+        },
+        {
+          opposite: false,
+          grid: {
+            enabled: true,
+          },
+          lineWidth: 0,
+          lineColor: 'transparent',
+          gridZIndex: 3,
+          gridLineColor: '#000d20',
+          gridLineWidth: 1,
+          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickColor: '#000d20',
+          margin: -45,
+          labels: {
+            enabled: false
+          },
+        },
       ],
       yAxis: {
         type: 'category',
         grid: {
           enabled: true,
-          borderColor: '#797f87',
+          borderColor: '#bebebe',
           columns: [
             {
               categories: this.rateChartTankCategories.map(function (item) {
@@ -880,16 +931,15 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               })
             }]
         },
-        gridLineColor: '#797f87'
+        gridLineColor: '#bebebe'
       },
       tooltip: {
         // shared: true,
-        borderColor: '#797f87',
+        borderColor: '#bebebe',
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true,
         formatter: function () {
-          console.log(this);
           const tankNo = this?.point?.tankNo,
             seriesName = this?.series?.name,
             rate = this?.point?.rate;
@@ -940,7 +990,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       },
       xAxis: [
         {
-          lineColor: '#797f87',
+          lineColor: '#bebebe',
           lineWidth: 1,
           title: {
             align: 'low',
@@ -965,19 +1015,62 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             }
           },
           tickInterval: 3600,
-          tickLength: 10,
-          tickColor: '#797f87',
-          gridLineColor: '#797f87',
+          tickLength: 0,
+          // tickColor: '#bebebe',
+          gridLineColor: '#bebebe',
           min: Date.UTC(2014, 10, 17, 0),
           max: Date.UTC(2014, 10, 18, 21),
           dateTimeLabelFormats: {
             hour: '%H'
+          },
+          plotLines: [{
+            value: Date.UTC(2014, 10, 17, 6),
+            color: '#000d20',
+            width: 1,
+            dashStyle: 'Dash',
+            zIndex: 1
+          },
+          {
+            value: Date.UTC(2014, 10, 17, 20),
+            color: '#000d20',
+            width: 1,
+            dashStyle: 'Dash',
+            zIndex: 1
+          },
+          {
+            value: Date.UTC(2014, 10, 18, 8),
+            color: '#000d20',
+            width: 1,
+            dashStyle: 'Dash',
+            zIndex: 1
+          },
+          {
+            value: Date.UTC(2014, 10, 18, 16),
+            color: '#000d20',
+            width: 1,
+            dashStyle: 'Dash',
+            zIndex: 1
           }
-        }
+          ]
+        },
+        {
+          lineWidth: 0,
+          startOnTick: true,
+          opposite: true,
+          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickColor: '#000d20',
+          tickLength: 20,
+          gridLineColor: '#000d20',
+          min: Date.UTC(2014, 10, 17, 0),
+          max: Date.UTC(2014, 10, 18, 21),
+          labels: {
+            enabled: false
+          }
+        },
       ],
       yAxis: [{
         id: 'yaxis-3',
-        gridLineColor: '#797f87',
+        gridLineColor: '#bebebe',
         minorGridLineWidth: 0,
         // offset: 0,
         title: {
@@ -986,7 +1079,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       }],
       tooltip: {
         shared: true,
-        borderColor: '#797f87',
+        borderColor: '#bebebe',
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true
@@ -1026,7 +1119,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           },
           tickInterval: 3600,
           tickLength: 0,
-          tickColor: '#797f87',
+          tickColor: '#bebebe',
           gridLineWidth: 0,
           top: 13,
           min: Date.UTC(2014, 10, 17, 0),
@@ -1058,14 +1151,30 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             }
           },
           tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)],
-          tickLength: 10,
-          tickColor: '#797f87',
+          tickLength: 20,
+          tickColor: '#bebebe',
           gridLineWidth: 0,
-          top: 13,
+          top: 24,
           min: Date.UTC(2014, 10, 17, 0),
           max: Date.UTC(2014, 10, 18, 21),
           dateTimeLabelFormats: {
             hour: '%H'
+          }
+        },
+        {
+          lineWidth: 0,
+          startOnTick: true,
+          opposite: true,
+          top: 39,
+          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickColor: '#000d20',
+          tickPosition: 'inside',
+          tickLength: 20,
+          gridLineWidth: 0,
+          min: Date.UTC(2014, 10, 17, 0),
+          max: Date.UTC(2014, 10, 18, 21),
+          labels: {
+            enabled: false
           }
         }
       ],
@@ -1081,10 +1190,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       }],
       tooltip: {
         shared: true,
-        borderColor: '#797f87',
+        borderColor: '#bebebe',
         borderWidth: 1,
         borderRadius: 20,
-        followPointer: true
+        followPointer: true,
+        enabled: false
       },
       series: [{
         yAxis: 0,
@@ -1168,6 +1278,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       chart = Highcharts.charts[i];
       e = chart.pointer.normalize(e); // Find coordinates within the chart
       points = [];
+      chart.xAxis[0].drawCrosshair(e);
       chart.series.forEach((p) => {
         const point = this.searchPoint(e, chart, p);
         if (point) {
@@ -1183,13 +1294,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             number++;
           }
         })
-        if (points.length) {
-          points.forEach((point) => {
-            point.onMouseOver();
-            chart.tooltip.refresh(points); // Show the tooltip
-            chart.xAxis[0].drawCrosshair(e, points[0]); // Show the crosshair
-          });
-        }
+        points?.forEach((point) => {
+          // point.onMouseOver(); May be needed in future
+          chart.tooltip.refresh(points); // Show the tooltip
+          // chart.xAxis[0].drawCrosshair(e, points[0]); // Show the crosshair may be needed in future
+        });
       }
     }
   };
@@ -1244,13 +1353,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         serie.name, tableLeft + cellPadding, tableTop + (serie_index + 2) * rowHeight - cellPadding).css({
           color: '#666666'
         }).add();
-      if (serie.options?.custom?.showFinalValue) {
-        renderer.text(
-          serie.data[serie.data.length - 1].y, chart.plotLeft - 2 * tablePadding - cellPadding, tableTop + (serie_index + 2) * rowHeight - cellPadding).css({
-            color: '#666666',
-            align: 'right'
-          }).add();
-      }
+      // if (serie.options?.custom?.showFinalValue) {
+      //   renderer.text(
+      //     serie.data[serie.data.length - 1].y, chart.plotLeft - 2 * tablePadding - cellPadding, tableTop + (serie_index + 2) * rowHeight - cellPadding).css({
+      //       color: '#666666',
+      //       align: 'right'
+      //     }).add();
+      // }
     });
 
     // Render data points
@@ -1259,13 +1368,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       series.forEach((item, i) => {
         if (series[i].data[category_index]) {
           cellWidth = series[i].data[category_index].plotX;
-          if (category_index !== 0) {
+          // if (category_index !== 0) {
             renderer.text(series[i].data[category_index]?.y, chart.plotLeft + series[i].data[category_index].plotX, tableTop + (i + 2) * rowHeight - cellPadding).attr({
               align: 'center',
             }).css({
               color: '#666666'
             }).add();
-          }
+          // }
 
           // horizontal lines
           if (i === 0) {

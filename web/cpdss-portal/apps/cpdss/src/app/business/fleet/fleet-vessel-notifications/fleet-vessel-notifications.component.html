@@ -1,1 +1,64 @@
-<p>fleet-vessel-notifications works!</p>
+<div class="notification-panel">
+  <div class="text-lead main-head mb-10">NOTIFICATIONS</div>
+
+  <div class="filters">
+    <div class="input-search">
+      <input type="text" id="search_vessel" (input)="searchVessel()" placeholder="Search Vessel" class="p-column-filter"
+        [(ngModel)]="searchKey">
+    </div>
+    <div class="calender-control-multi-date">
+      <p-calendar selectionMode="range" [showButtonBar]="true" [readonlyInput]="true" inputId="range"
+        (onSelect)="onDateRangeSelect()" (onClearClick)="resetDateFilter()" dateFormat="dd-M-yy"
+        placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}" id="fleet_date_range_filter"
+        [(ngModel)]="filteredDates" [maxDate]="today" #fleetNotificationDateRange></p-calendar>
+    </div>
+  </div>
+
+  <div class="col switch-tabs">
+    <div>
+      <a [ngClass]="{'active': isCurrent}" id="current-notification" class="tab-btn pull-right"
+        (click)="switchNotifications('current')">Current</a>
+    </div>
+    <div>
+      <a [ngClass]="{'active': !isCurrent}" id="all-notification" class="tab-btn"
+        (click)="switchNotifications('all')">All</a>
+    </div>
+  </div>
+
+  <div #currentNotification class="notification-list" *ngIf="isCurrent">
+    <div class="notification-item" [routerLink]="['/business/voyage-status']"
+      *ngFor="let vessel of currentNotifications">
+      <div class="flag-container">
+        <img src="{{vessel?.flag}}" alt="">
+      </div>
+      <div class="notification-details">
+        <p class="main-head">{{vessel?.vesselName}} <span
+            class="pull-right text-medium">{{vessel.dateTime | momentFormat: 'DD-MMM-YYYY HH:mm'}} UTC</span></p>
+        <p class="text-medium">{{vessel?.status}}</p>
+      </div>
+    </div>
+    <div class="notification-item" *ngIf="currentNotifications?.length === 0">
+      <div class="notification-details">
+        <p class="text-medium">No data found</p>
+      </div>
+    </div>
+  </div>
+  <div #allNotification class="notification-list" *ngIf="!isCurrent">
+    <div class="notification-item" [routerLink]="['/business/voyage-status']" *ngFor="let vessel of allNotifications">
+      <div class="flag-container">
+        <img src="{{vessel?.flag}}" alt="">
+      </div>
+      <div class="notification-details">
+        <p class="main-head">{{vessel?.vesselName}} <span
+            class="pull-right text-medium">{{vessel.dateTime | momentFormat: 'DD-MMM-YYYY HH:mm'}} UTC</span></p>
+        <p class="text-medium">{{vessel?.status}}</p>
+      </div>
+    </div>
+    <div class="notification-item" *ngIf="allNotifications?.length === 0">
+      <div class="notification-details">
+        <p class="text-medium">No data found</p>
+      </div>
+    </div>
+  </div>
+
+</div>

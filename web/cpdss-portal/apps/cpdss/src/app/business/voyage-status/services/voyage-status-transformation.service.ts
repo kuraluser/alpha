@@ -38,10 +38,7 @@ export class VoyageStatusTransformationService {
             const actualWeight = ballastTank[groupIndex][tankIndex].commodity.actualWeight;
             ballastTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
             ballastTank[groupIndex][tankIndex].commodity.volume = ballastTank[groupIndex][tankIndex].density ? Number((ballastTank[groupIndex][tankIndex].commodity.actualWeight/ballastTank[groupIndex][tankIndex].density).toFixed(2)) : 0;
-            ballastTank[groupIndex][tankIndex].commodity.percentageFilled = ballastTank[groupIndex][tankIndex].commodity?.fillingRatio;
-            if (!ballastTank[groupIndex][tankIndex].commodity.percentageFilled.length) {
-              ballastTank[groupIndex][tankIndex].commodity.percentageFilled = '0';
-            }
+            ballastTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(ballastTank[groupIndex][tankIndex]);
             break;
           }
         }
@@ -94,13 +91,9 @@ export class VoyageStatusTransformationService {
             const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
-            cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;
-            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, cargoTank[groupIndex][tankIndex].commodity?.api);
-            cargoTank[groupIndex][tankIndex].commodity.percentageFilled = cargoTank[groupIndex][tankIndex].commodity?.fillingRatio;
-            if(!cargoTank[groupIndex][tankIndex].commodity.percentageFilled.length)
-            {
-              cargoTank[groupIndex][tankIndex].commodity.percentageFilled = '0'
-            }
+            cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;         
+            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api,cargoTank[groupIndex][tankIndex].commodity?.temperature);
+            cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
             if (cargoTank[groupIndex][tankIndex].commodity?.isCommingleCargo) {
               cargoTank[groupIndex][tankIndex].commodity.colorCode = AppConfigurationService.settings.commingleColor;
             }

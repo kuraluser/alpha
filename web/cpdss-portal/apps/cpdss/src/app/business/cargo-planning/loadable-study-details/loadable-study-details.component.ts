@@ -244,6 +244,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.loadableStudyDetailsTransformationService.setOHQValidity(this.selectedLoadableStudy.ohqPorts ?? [])
       this.loadableStudyDetailsTransformationService.setObqValidity(this.selectedLoadableStudy.isObqComplete);
       this.loadableStudyDetailsTransformationService.portUpdated();
+      if (sessionStorage.getItem('loadableStudyInfo')) {
+        this.displayLoadableQuntity = true;
+        sessionStorage.removeItem('loadableStudyInfo');
+      }
     } else {
       this.selectedLoadableStudy = null;
     }
