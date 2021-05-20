@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated.loading_plan";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+message LoadingPlanRequest{
+  int64 companyId = 1;
+  int64 vesselId = 2;
+  int64 voyageId = 3;
+}
+
+// Plane response, can edit
+message LoadingPlanResponse{
+  ResponseStatus responseStatus = 1;
+}
