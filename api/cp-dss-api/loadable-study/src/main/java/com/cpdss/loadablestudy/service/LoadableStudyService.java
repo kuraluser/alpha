@@ -2364,6 +2364,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               });
         }
       }
+      
+      // Setting port order after deletion
+      if (loadableStudyOpt.isPresent()) {
+    	  this.setPortOrdering(loadableStudyOpt.get());
+      }
+      
       this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
       cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
