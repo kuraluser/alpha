@@ -122,9 +122,9 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "feedback_loop_count")
   private Integer feedbackLoopCount;
 
-  @Column(name = "messageUUID")
+/*  @Column(name = "messageUUID")
   private String messageUUID;
 
   @Column(name = "sequence_no")
-  private String sequenceNo;
+  private String sequenceNo;*/
 }
