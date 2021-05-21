@@ -7,14 +7,15 @@ option java_package = "com.cpdss.common.generated";
 import "common.proto";
 
 service EnvoyWriterService {
-  rpc GetLoadableStudy(WriterLoadableStudyRequest) returns (WriterReply) {
+  rpc GetCommunicationServer(EnvoyWriterRequest) returns (WriterReply) {
   }
 
 }
-message WriterLoadableStudyRequest {
-  string loadableStudy = 1;
+message EnvoyWriterRequest {
+  string jsonPayload = 1;
   string imoNumber = 2;
   int64 vesselId = 3;
+  int32 requestType = 4;
 }
 message WriterReply {
   ResponseStatus responseStatus = 1;
