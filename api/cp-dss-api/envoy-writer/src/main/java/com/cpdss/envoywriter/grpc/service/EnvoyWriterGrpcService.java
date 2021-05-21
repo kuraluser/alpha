@@ -2,7 +2,7 @@
 package com.cpdss.envoywriter.grpc.service;
 
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
+import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -25,8 +25,8 @@ public class EnvoyWriterGrpcService extends EnvoyWriterServiceImplBase {
   private static final String FAILED = "FAILED";
 
   @Override
-  public void getLoadableStudy(
-      LoadableStudyJson request, StreamObserver<WriterReply> responseObserver) {
+  public void getCommunicationServer(
+          EnvoyWriterRequest request, StreamObserver<WriterReply> responseObserver) {
     log.info("Inside getLoadableStudy in Envoy Writer micro service");
     WriterReply.Builder builder = WriterReply.newBuilder();
     try {
