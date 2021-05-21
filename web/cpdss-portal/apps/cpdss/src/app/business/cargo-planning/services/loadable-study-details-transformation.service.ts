@@ -36,6 +36,7 @@ export class LoadableStudyDetailsTransformationService {
   private _ohqUpdate: Subject<any> = new Subject();
   private _portUpdate: Subject<any> = new Subject();
   private OPERATIONS: OPERATIONS;
+  private _loadLineChangeSource: Subject<any> = new Subject();
 
   // public fields
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
@@ -47,6 +48,7 @@ export class LoadableStudyDetailsTransformationService {
   obqValidity$ = this._obqValiditySource.asObservable();
   ohqUpdate$ = this._ohqUpdate.asObservable();
   portUpdate$ = this._portUpdate.asObservable();
+  loadLineChange$ = this._loadLineChangeSource.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
   constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
@@ -922,6 +924,11 @@ export class LoadableStudyDetailsTransformationService {
   /** Set port grid complete status */
   setPortValidity(isValid: boolean) {
     this._portValiditySource.next(isValid);
+  }
+
+   /** Set load line change status */
+   setLoadLineChange() {
+    this._loadLineChangeSource.next();
   }
 
   /**
