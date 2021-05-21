@@ -8124,7 +8124,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
         loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
             loadablePatternOpt.get(), true);
-    buildLoadablePlanCommingleDetails(loadablePlanCommingleDetails, replyBuilder);
+    List<Long> tankIdsCommingle =
+        loadablePlanCommingleDetails.stream()
+            .map(LoadablePlanCommingleDetails::getTankId)
+            .collect(Collectors.toList());
+    VesselInfo.VesselTankRequest replyTankCommingleBuilder =
+        VesselInfo.VesselTankRequest.newBuilder().addAllTankIds(tankIdsCommingle).build();
+    VesselInfo.VesselTankResponse vesselReplyCommingle =
+        this.getVesselTankDetailsByTankIds(replyTankCommingleBuilder);
+    buildLoadablePlanCommingleDetails(
+        loadablePlanCommingleDetails, replyBuilder, vesselReplyCommingle);
 
     List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
         loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
@@ -8334,10 +8343,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * @param loadablePlanCommingleDetails
    * @param replyBuilder void
+   * @param vesselReplyCommingle
    */
   private void buildLoadablePlanCommingleDetails(
       List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails,
-      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+      LoadablePlanDetailsReply.Builder replyBuilder,
+      VesselInfo.VesselTankResponse vesselReplyCommingle) {
     loadablePlanCommingleDetails.forEach(
         lpcd -> {
           LoadableQuantityCommingleCargoDetails.Builder builder =
@@ -8382,8 +8393,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(stowageBuilder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);
           stowageBuilder.setIsCommingle(true);
+          addTankShortName(vesselReplyCommingle, lpcd.getTankId(), stowageBuilder);
           replyBuilder.addLoadablePlanStowageDetails(stowageBuilder);
         });
+  }
+
+  private void addTankShortName(
+      VesselInfo.VesselTankResponse vesselReplyCommingle,
+      Long tankId,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder stowageBuilder) {
+    VesselInfo.VesselTankOrder vesselTankOrder =
+        vesselReplyCommingle.getVesselTankOrderList().stream()
+            .filter(tankData -> (tankData.getTankId() == tankId))
+            .findFirst()
+            .get();
+    Optional.ofNullable(vesselTankOrder.getShortName()).ifPresent(stowageBuilder::setTankShortName);
+    Optional.ofNullable(vesselTankOrder.getTankDisplayOrder())
+        .ifPresent(stowageBuilder::setTankDisplayOrder);
   }
 
   /**
@@ -8419,14 +8445,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
           this.setTempStowageDetails(lpsd, tempStowageDetails, builder);
           builder.setIsCommingle(false);
-          VesselInfo.VesselTankOrder vesselTankOrder =
-              vesselTankData.getVesselTankOrderList().stream()
-                  .filter(tankData -> (tankData.getTankId() == lpsd.getTankId()))
-                  .findFirst()
-                  .get();
-          Optional.ofNullable(vesselTankOrder.getShortName()).ifPresent(builder::setTankShortName);
-          Optional.ofNullable(vesselTankOrder.getTankDisplayOrder())
-              .ifPresent(builder::setTankDisplayOrder);
+          addTankShortName(vesselTankData, lpsd.getTankId(), builder);
           replyBuilder.addLoadablePlanStowageDetails(builder);
         });
   }
