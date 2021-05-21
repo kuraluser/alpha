@@ -1,22 +1,25 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.envoyreader.common;
 
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+import java.util.zip.ZipInputStream;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.util.StreamUtils;
 
 /** @Author jerin.g */
 @Log4j2
 public class Utility {
-
-  private static final String SECRET_KEY = "my_super_secret_key_ho_ho_ho";
-  private static final String SALT = "ssshhhhhhhhhhh!!!!";
 
   public static String decrypt(String strToDecrypt, String secret, String salt) {
     try {
@@ -35,5 +38,20 @@ public class Utility {
       log.error("Error while decrypting: " + e);
       return null;
     }
+  }
+
+  public static Boolean isCheckSum(ZipInputStream zipInputStream, String checkSum) {
+
+    try {
+      MessageDigest digest = MessageDigest.getInstance("MD5");
+      digest.update(StreamUtils.copyToByteArray(zipInputStream));
+      String convertedCheckSum = DatatypeConverter.printHexBinary(digest.digest()).toUpperCase();
+      return checkSum.equalsIgnoreCase(convertedCheckSum) ? true : false;
+    } catch (NoSuchAlgorithmException e) {
+      log.error("Error while compareCheckSum: " + e);
+    } catch (IOException e) {
+      log.error("Error while compareCheckSum: " + e);
+    }
+    return null;
   }
 }

@@ -76,7 +76,7 @@ export class QuantityPipe implements PipeTransform {
    */
   convertToBBLS(value: number, unitFrom: QUANTITY_UNIT, api: number, temperature: number): number {
     const conversionConstant: number = this.getConversionConstant(unitFrom, api, temperature);
-    const _value: number = unitFrom === QUANTITY_UNIT.OBSBBLS ? value * conversionConstant : value / conversionConstant;
+    const _value: number = unitFrom === QUANTITY_UNIT.OBSBBLS || unitFrom === QUANTITY_UNIT.OBSKL ? value * conversionConstant : value / conversionConstant;
 
     return _value;
   }
@@ -93,7 +93,7 @@ export class QuantityPipe implements PipeTransform {
    */
   convertFromBBLS(value: number, unitTo: QUANTITY_UNIT, api: number, temperature: number): number {
     const conversionConstant: number = this.getConversionConstant(unitTo, api, temperature);
-    const _value: number = unitTo === QUANTITY_UNIT.OBSBBLS ? value / conversionConstant : value * conversionConstant;
+    const _value: number = unitTo === QUANTITY_UNIT.OBSBBLS || unitTo === QUANTITY_UNIT.OBSKL ? value / conversionConstant : value * conversionConstant;
 
     return _value;
   }
@@ -116,6 +116,10 @@ export class QuantityPipe implements PipeTransform {
 
       case QUANTITY_UNIT.KL:
         conversionConstant = 0.15899;
+        break;
+       
+      case QUANTITY_UNIT.OBSKL:
+        conversionConstant = 6.28981 * (Math.exp(-(341.0957 / Math.pow((141360.198 / (api + 131.5)), 2)) * (temperature - 60) * (1 + (0.8 * (341.0957 / Math.pow((141360.198 / (api + 131.5)), 2)) * (temperature - 60)))));
         break;
 
       case QUANTITY_UNIT.OBSBBLS:

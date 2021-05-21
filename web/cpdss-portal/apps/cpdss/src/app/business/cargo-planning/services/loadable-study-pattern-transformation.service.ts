@@ -72,7 +72,7 @@ export class LoadableStudyPatternTransformationService {
     commingleDetail.api = this.decimalConvertion(decimalPipe , commingleDetail.api , '1.2-2');
     commingleDetail.temperature = this.decimalConvertion(decimalPipe , commingleDetail.temperature , '1.2-2');
     commingleDetail.cargoQuantity = this.decimalConvertion(decimalPipe , commingleDetail.cargo1Quantity , '1.2-2') + '\n' + this.decimalConvertion(decimalPipe , commingleDetail.cargo2Quantity , '1.2-2');
-    commingleDetail.cargoPercentage = commingleDetail.cargo1Abbrivation + '-' + commingleDetail.cargo1Percentage + '%\n' + commingleDetail.cargo2Abbrivation + '-' + commingleDetail.cargo2Percentage + '%';
+    commingleDetail.cargoPercentage = commingleDetail.cargo1Abbreviation + '-' + commingleDetail.cargo1Percentage + '%\n' + commingleDetail.cargo2Abbreviation + '-' + commingleDetail.cargo2Percentage + '%';
     return commingleDetail;
   }
 
@@ -178,8 +178,14 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
         header: 'CARGO_TO_BE_LOADED_KIND_OF_CARGO'
       },
       {
-        field: 'apiTemp',
-        header: 'CARGO_TO_BE_LOADED_API_TEMP'
+        field: 'estimatedAPI',
+        header: 'CARGO_TO_BE_LOADED_API',
+        numberFormat: '1.2-2'
+      },
+      {
+        field: 'estimatedTemp',
+        header: 'CARGO_TO_BE_LOADED_TEMP',
+        numberFormat: '1.2-2'
       },
       {
         field: 'loadingPort',
@@ -207,13 +213,14 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
       },
       {
         field: 'slopQuantity',
-        header: 'CARGO_TO_BE_LOADED_SLOP_QTY'
+        header: 'CARGO_TO_BE_LOADED_SLOP_QTY',
+        numberFormat: '1.2-2'
       }
     ]
   }
 
   /**
-* 
+*
 * Get synoptical table header
 * @returns {IDataTableColumn[]}
 * @memberof LoadableStudyPatternTransformationService
@@ -265,7 +272,7 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
   }
 
   /**
-* 
+*
 * Get Formated Loadable Quantity Data
 * @returns {decimal converted value us number}
 */

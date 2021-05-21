@@ -136,8 +136,8 @@
                     </ng-container>
                     <ng-template #noEdit>
                         <ng-container [ngSwitch]="field.type">
-                            <ng-container *ngSwitchCase="fieldType.NUMBER">{{column[field.key] | number: field.numberFormat}}</ng-container>
-                            <ng-container *ngSwitchDefault>{{column[field.key]}}</ng-container>
+                            <ng-container *ngSwitchCase="fieldType.NUMBER">{{ field.numberType === 'quantity' ?  (column[field.key] | quantityDecimalFormat: field.unit) : column[field.key] | number: field.numberFormat}}</ng-container>
+                            <ng-container *ngSwitchDefault>{{ field.numberType === 'quantity' ? (column[field.key] | quantityDecimalFormat: field.unit) : column[field.key]}}</ng-container>
                         </ng-container>
                     </ng-template>
                 </ng-container>

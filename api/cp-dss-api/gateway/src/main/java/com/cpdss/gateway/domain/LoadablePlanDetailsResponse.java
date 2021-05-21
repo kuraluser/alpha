@@ -4,6 +4,7 @@ package com.cpdss.gateway.domain;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
 
@@ -65,4 +66,12 @@ public class LoadablePlanDetailsResponse {
 
   @JsonInclude(Include.NON_NULL)
   private Long loadableStudyStatusId;
+
+  @JsonInclude(Include.NON_NULL)
+  private BigDecimal loadableQuantity;
+
+  @JsonInclude(Include.NON_NULL)
+  private Long lastModifiedPort;
+
+  private boolean confirmPlanEligibility;
 }

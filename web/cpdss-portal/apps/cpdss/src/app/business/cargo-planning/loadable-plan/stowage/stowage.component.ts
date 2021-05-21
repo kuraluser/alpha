@@ -5,7 +5,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { DATATABLE_EDITMODE } from '../../../../shared/components/datatable/datatable.model';
 import { IBallastStowageDetails, IBallastTank, ICargoTank, ITankOptions, LOADABLE_STUDY_STATUS, TANKTYPE, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
-import { ICargoTankDetailValueObject, IPortsEvent, IUpdatedBallastUllageResponse, IUpdateUllageModel, IUpdatedUllageResponse, IUpdatedRdgLevelResponse, IValidateAndSaveStowage, IBallastTankDetailValueObject, IUpdateBallastUllagegModel, VALIDATION_AND_SAVE_STATUS } from '../../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, IPortsEvent, IUpdatedBallastUllageResponse, IloadableQuantityCargoDetails , IUpdateUllageModel, IUpdatedUllageResponse, IUpdatedRdgLevelResponse, IValidateAndSaveStowage, IBallastTankDetailValueObject, IUpdateBallastUllagegModel, VALIDATION_AND_SAVE_STATUS } from '../../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
@@ -137,6 +137,22 @@ export class StowageComponent implements OnInit {
     this._errorMessage = errorMessage;
   }
 
+  @Input()
+  get loadableQuantityCargo(): IloadableQuantityCargoDetails[] {
+    return this._loadableQuantityCargo;
+  }
+  set loadableQuantityCargo(loadableQuantityCargo: IloadableQuantityCargoDetails[]) {
+    this._loadableQuantityCargo = loadableQuantityCargo;
+  }
+
+  @Input()
+  get loadableQuantity(): number {
+    return this._loadableQuantity;
+  }
+  set loadableQuantity(loadableQuantity: number) {
+    this._loadableQuantity = loadableQuantity;
+  }
+
   @Output() errorMessageDisplayChange = new EventEmitter<boolean>();
   @Output() ullageUpdate = new EventEmitter<boolean>();
   @Output() registerEvents = new EventEmitter<boolean>();
@@ -148,7 +164,7 @@ export class StowageComponent implements OnInit {
   selectedTab = TANKTYPE.CARGO;
   showGrid = false;
   cargoGridColumns: any[];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showWeight: true, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrelsAt60', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: AppConfigurationService.settings.baseUnit, ullageField: 'correctedUllage', ullageUnit: 'CM', showTooltip: true, commodityNameField: 'cargoAbbreviation', showDensity: true, densityField: 'api' };
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true,showFillingPercentage: true, showWeight: true, showUllage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrelsAt60', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: AppConfigurationService.settings.baseUnit, ullageField: 'correctedUllage', ullageUnit: 'CM', showTooltip: true, commodityNameField: 'cargoAbbreviation', showDensity: true, densityField: 'api' };
   ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM', showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
   isPermissionAvaliable: boolean;
   isEditable: boolean;
@@ -173,6 +189,8 @@ export class StowageComponent implements OnInit {
   private _loadablePatternValidationStatus: number;
   private _errorMessage: IErrorMessage[];
   private quantityPipe: QuantityPipe = new QuantityPipe();
+  private _loadableQuantityCargo: IloadableQuantityCargoDetails[];
+  private _loadableQuantity: number;
 
   constructor(
     private loadablePlanTransformationService: LoadablePlanTransformationService,
@@ -323,11 +341,11 @@ export class StowageComponent implements OnInit {
       cargoAbbreviation: this.fb.control(cargo?.cargoAbbreviation),
       weight: this.fb.control(cargo?.weight?.value),
       correctedUllage: this.fb.control(cargo?.correctedUllage?.value),
-      fillingRatio: this.fb.control(cargo?.fillingRatio?.value),
+      fillingRatio: this.fb.control(cargo?.fillingRatio?.value , tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage' , 'fillingRatio')),
       tankName: this.fb.control(cargo?.tankName),
-      rdgUllage: this.fb.control(cargo?.rdgUllage?.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage')]),
+      rdgUllage: this.fb.control(cargo?.rdgUllage?.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage', 'fillingRatio')]),
       correctionFactor: this.fb.control(cargo?.correctionFactor?.value),
-      observedM3: this.fb.control(cargo?.observedM3?.value, [tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage')]),
+      observedM3: this.fb.control(cargo?.observedM3?.value, [tankCapacityValidator('observedM3', cargo.fullCapacityCubm, 'rdgUllage' , 'fillingRatio')]),
       observedBarrels: this.fb.control(cargo?.observedBarrels?.value),
       observedBarrelsAt60: this.fb.control(cargo?.observedBarrelsAt60?.value),
       api: this.fb.control(cargo?.api),
@@ -388,14 +406,19 @@ export class StowageComponent implements OnInit {
             this.updateField(event.index, 'observedM3', unitConvertedTankDetails.observedM3, 'cargoTanks');
             this.updateField(event.index, 'observedBarrelsAt60', unitConvertedTankDetails.observedBarrelsAt60, 'cargoTanks');
             this.updateField(event.index, 'observedBarrels', unitConvertedTankDetails.observedBarrels, 'cargoTanks');
+
+            const fillingRatio = this.decimalPipe.transform(this.loadablePlanTransformationService.calculatePercentage(Number(this.cargoTankDetails[event.index]['observedM3'].value), Number(this.cargoTankDetails[event.index]['fullCapacityCubm'])), '1.2-2');
+            this.cargoTankDetails[event.index]['fillingRatio'].value = Number(result.fillingRatio);
+            this.updateField(event.index, 'fillingRatio', this.cargoTankDetails[event.index]['fillingRatio'].value , 'cargoTanks');
+           
+            
             this.cargoTankDetails[event.index]['correctionFactor'].value = Number(result.correctionFactor);
             this.cargoTankDetails[event.index]['correctedUllage'].value = Number(result.correctedUllage);
             this.cargoTankDetails[event.index]['weight'].value = Number(result.quantityMt);
             this.cargoTankDetails[event.index]['observedM3'].value = unitConvertedTankDetails.observedM3;
             this.cargoTankDetails[event.index]['observedBarrelsAt60'].value = unitConvertedTankDetails.observedBarrelsAt60;
             this.cargoTankDetails[event.index]['observedBarrels'].value = unitConvertedTankDetails.observedBarrels;
-            const fillingRatio = this.decimalPipe.transform(this.loadablePlanTransformationService.calculatePercentage(Number(this.cargoTankDetails[event.index]['observedM3'].value), Number(this.cargoTankDetails[event.index]['fullCapacityCubm'])), '1.2-2');
-            this.cargoTankDetails[event.index]['fillingRatio'].value = Number(fillingRatio);
+            
             this.initialCargoTankDetails = JSON.parse(JSON.stringify(this.cargoTankDetails));
             this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS'] });
             this.ngxSpinnerService.hide();
@@ -447,7 +470,8 @@ export class StowageComponent implements OnInit {
           this.ballastTankDetails[event.index]['correctionFactor'].value = result.correctionFactor;
           this.ballastTankDetails[event.index]['metricTon'].value = result.quantityMt;
           const fillingRatio = this.decimalPipe.transform(this.loadablePlanTransformationService.calculatePercentage(Number(this.ballastTankDetails[event.index]['cubicMeter'].value), Number(this.ballastTankDetails[event.index]['fullCapacityCubm'])), '1.2-2');
-          this.ballastTankDetails[event.index]['percentage'].value = fillingRatio + '';
+          this.ballastTankDetails[event.index]['percentage'].value = result.fillingRatio + '';
+          this.updateField(event.index, 'percentage', this.ballastTankDetails[event.index]['percentage'].value, 'ballastTanks');
           const unitConvertedTankDetails = {
             observedM3: (Number(this.ballastTankDetails[event.index]['metricTon'].value) / Number(this.ballastTankDetails[event.index]['sg'].value)).toFixed(2)
           }
@@ -473,7 +497,28 @@ export class StowageComponent implements OnInit {
    * @memberof StowageComponent
   */
   async commentsPopup(status: boolean) {
-    const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADABLE_PLAN_EXCEED_TOLERANCE_LIMIT','LOADABLE_PLAN_EXCEED_LOADABLE_QUANTITY','LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
+    let cargoQuantity = 0;
+    let exceedToleranceLimit;
+    this.cargoTankDetails.map((cargoDetail) => {
+      cargoQuantity += Number(cargoDetail?.weight?.value);
+      this.loadableQuantityCargo.map(loadableQuantityCargo => { 
+        if(loadableQuantityCargo?.cargoAbbreviation === cargoDetail?.cargoAbbreviation) { 
+          loadableQuantityCargo.total += Number(cargoDetail.weight?.value);
+          if(loadableQuantityCargo?.total > loadableQuantityCargo?.maxTolerence) {
+            exceedToleranceLimit = loadableQuantityCargo;
+          }
+        }
+      })
+    })
+    this.loadableQuantityCargo.map((loadableQuantityCargo) => loadableQuantityCargo.total = 0);
+    if(this.loadableQuantity < cargoQuantity) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_EXCEED_LOADABLE_QUANTITY'] });
+      return;
+    } else if(exceedToleranceLimit){
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_EXCEED_TOLERANCE_LIMIT'] });
+      return;
+    }
     if (this.loadablePlanForm.valid) {
       this.openSaveStowagePopup = status;
     } else {
@@ -503,6 +548,12 @@ export class StowageComponent implements OnInit {
   */
   async validateAndSave() {
     if (this.loadablePlanForm.valid) {
+      this.buttonStatus = 0;
+      this.editMode = null;
+      this.loadablePlanTransformationService.ballastEditStatus({
+        buttonStatus: this.buttonStatus,
+        editMode: this.editMode
+      })
       this.validateAndSaveProcessing = true;
       this.ngxSpinnerService.show();
       const data: IValidateAndSaveStowage = {
@@ -514,8 +565,6 @@ export class StowageComponent implements OnInit {
       }
       const result: IValidateAndSaveResponse = await this.loadablePlanApiService.validateAndSave(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, {}).toPromise();
       if (result.responseStatus.status === '200') {
-        this.buttonStatus = 0;
-        this.editMode = null;
         data.processId = result.processId;
         this.registerEvents.emit(true);
         navigator.serviceWorker.controller.postMessage({ type: 'validate-and-save', data });
@@ -586,8 +635,9 @@ export class StowageComponent implements OnInit {
   private initBallastTankFormGroup(ballast: IBallastTankDetailValueObject): FormGroup {
     return this.fb.group({
       id: this.fb.control(ballast?.id),
-      cubicMeter: this.fb.control(ballast.cubicMeter.value, [tankCapacityValidator('cubicMeter', ballast.fullCapacityCubm, 'rdgLevel')]),
+      cubicMeter: this.fb.control(ballast.cubicMeter.value, [tankCapacityValidator('cubicMeter', ballast.fullCapacityCubm, 'rdgLevel','percentage')]),
       rdgLevel: this.fb.control(ballast?.rdgLevel?.value, [Validators.required, numberValidator(6, 3, false)]),
+      percentage: this.fb.control(ballast?.percentage, [tankCapacityValidator('cubicMeter', ballast.fullCapacityCubm, 'rdgLevel','percentage')])
     });
   }
 

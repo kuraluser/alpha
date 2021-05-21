@@ -4,7 +4,7 @@
 }
 
 .port-popup {
-  min-width: 300px;
+  min-width: 330px;
   width: auto;
   height: 120px;
   padding: 1%;
@@ -20,8 +20,20 @@
 }
 
 .vessel-card-notification-container {
-  width: 100%;
-  height: auto;
   z-index: 9999;
   position: absolute;
+}
+
+.vessel-notification {
+  width: 27%;
+  padding-left: 10px;
+  padding-top: 10px;
+  margin-right: 15px;
+}
+
+.vessel-card {
+  left: 27%;
+  width: 73%;
+  padding-left: 15px;
+  padding-top: 10px;
 }

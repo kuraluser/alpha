@@ -131,6 +131,7 @@ export interface IShipCargoTank extends ITank {
     commodity?: ICargoQuantities;
     gridColumn?: string;
     percentageFilled?: string;
+    fillingRatio?: string;
 }
 
 /**
@@ -139,6 +140,7 @@ export interface IShipCargoTank extends ITank {
  * @interface ICargoQuantities
  */
 export interface ICargoQuantities {
+    fillingRatio?: any;
     tankId: number;
     tankName: string;
     actualWeight: number;
@@ -154,6 +156,9 @@ export interface ICargoQuantities {
     volume?: number;
     api?: number;
     percentageFilled?: string;
+    isCommingle?: boolean;
+    isCommingleCargo?: boolean;
+    temperature?:any;
 }
 
 /**
@@ -184,6 +189,7 @@ export interface IShipBallastTank extends ITank {
  * @interface IBallastQuantities
  */
 export interface IBallastQuantities {
+    fillingRatio: string;
     abbreviation: string;
     actualWeight: number;
     capacity: number;

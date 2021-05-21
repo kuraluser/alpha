@@ -29,6 +29,9 @@ export interface ILoadablePlanResponse {
     loadablePatternStatusId: number,
     voyageStatusId: number,
     validated: boolean;
+    confirmPlanEligibility?: boolean;
+    loadableQuantity: number;
+    lastModifiedPort: number;
 }
 
 
@@ -180,6 +183,7 @@ export interface ICargoTankDetailValueObject {
     api: ValueObject<number>;
     temperature: ValueObject<number>;
     tankShortName: string;
+    fillingRatio: string;
  }
 
 /**
@@ -231,19 +235,19 @@ export interface ISynopticalRecordArrangeModel {
     portId: number,
     portName: string,
     etaEtdPlanned: string,
-    plannedFOTotal: number,
-    plannedDOTotal: number,
-    plannedFWTotal: number,
-    othersPlanned: number,
-    totalDwtPlanned: number,
-    displacementPlanned: number,
+    plannedFOTotal: string,
+    plannedDOTotal: string,
+    plannedFWTotal: string,
+    othersPlanned: string,
+    totalDwtPlanned: string,
+    displacementPlanned: string,
     specificGravity: number,
     finalDraftFwd: string,
     finalDraftAft: string,
     finalDraftMid: string,
     calculatedTrimPlanned: string,
-    cargoPlannedTotal: number,
-    ballastPlanned: number
+    cargoPlannedTotal: string,
+    ballastPlanned: string
 }
 
 /**
@@ -410,6 +414,19 @@ export enum VALIDATION_AND_SAVE_STATUS {
  export interface ICommentResponse {
     responseStatus: IResponseStatus;
     comment: ILoadablePlanCommentsDetails
+ }
+
+ /**
+ * Interface for loadableQuantityCargo Details
+ *
+ * @export
+ * @interface IloadableQuantityCargoDetails
+ */
+ export interface IloadableQuantityCargoDetails {
+     total: number;
+     cargoAbbreviation: string;
+     minTolerence: number;
+     maxTolerence: number;
  }
 
 

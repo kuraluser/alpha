@@ -108,7 +108,8 @@ export class CargoHistoryTransformationService {
           filterType: DATATABLE_FILTER_TYPE.TEXT,
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
           filterField: 'api',
-          filterByServer: true
+          filterByServer: true,
+          numberFormat: '1.2-2'
         },
         {
           field: 'temperature',
@@ -118,7 +119,8 @@ export class CargoHistoryTransformationService {
           filterType: DATATABLE_FILTER_TYPE.TEXT,
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
           filterField: 'temperature',
-          filterByServer: true
+          filterByServer: true,
+          numberFormat: '1.2-2'
         }
       ]
     }

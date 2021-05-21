@@ -1,6 +1,6 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
 import { ICargoTank, ILoadableCargo, IBallastStowageDetails,  IBallastTank} from '../../core/models/common.model';
-import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from './cargo-planning.model';
+import { ICommingleDetails, ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from './cargo-planning.model';
 
 
 /**
@@ -39,6 +39,7 @@ export interface ILoadablePattern {
     loadableQuantityCargoDetails: ILoadableQuantityCargo[];
     loadablePlanBallastDetails: IBallastStowageDetails[];
     loadablePlanSynopticRecord: ILoadablePlanSynopticalRecord;
+    loadableQuantityCommingleCargoDetails: ICommingleDetails[];
 }
 
 /**

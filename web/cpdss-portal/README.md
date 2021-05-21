@@ -2,8 +2,6 @@
 
 This project was generated using [Nx](https://nx.dev).
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
-
 🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
 This Workspace consist of two projects one Login App and CPDSS main application.
 Run `npm install` command for intalling all dependencies and devDependencies.
@@ -68,15 +66,6 @@ Run following commands for a dev server. The app will automatically reload if yo
 
 Run `ng g component my-component --project=my-app` to generate a new component.
 
-## Test Build
-
-Run following commands to build the project. The build artifacts will be stored in the `dist/` directory.
-
-`npm run build:login:ship:test`
-`npm run build:loginshore:tets`
-`npm run build:cpdss:ship:test`
-`npm run build:cpdss:shore:tets`
-
 ## Production Build
 
 Run following commands to build the project. The build artifacts will be stored in the `dist/` directory.
@@ -85,6 +74,56 @@ Run following commands to build the project. The build artifacts will be stored 
 `npm run build:login:shore`
 `npm run build:cpdss:ship`
 `npm run build:cpdss:shore`
+
+## Test Build
+
+Run following commands to build the project. The build artifacts will be stored in the `dist/` directory.
+
+`npm run build:login:ship:test`
+`npm run build:loginshore:test`
+`npm run build:cpdss:ship:test`
+`npm run build:cpdss:shore:test`
+
+## UAT Build
+
+Run following commands to build the project. The build artifacts will be stored in the `dist/` directory.
+
+`npm run build:login:ship:uat`
+`npm run build:loginshore:uat`
+`npm run build:cpdss:ship:uat`
+`npm run build:cpdss:shore:uat`
+
+## Configuration
+
+CPDSS angular framework is maintaining seperate configuration files for each environments. You can find the configuration files inside [assests/config/] of respective application. Currently there are four configuration files for each application ie: `DEV`, `PROD`(Dev server), `TEST` & `UAT`.
+
+Login Application Properties:
+| Property | Description | Ship/Shore |
+| ------ | ------ | ------ |
+| apiUrl | Specifying a base path for all your api calls | Both |
+| keycloakUrl | Specifying Keycloak url for athentication | Shore |
+| path | Specifying the base path of redirect url for navigating to cpdss after login | Both |
+| clientId | Specifying the Keycloak client id | Shore |
+
+CPDSS Application Properties: 
+| Property | Description | Ship/Shore |
+| ------ | ------ | ------ |
+| apiUrl | Specifying a base path for all your api calls | Both |
+| keycloakUrl | Specifying Keycloak url for athentication | Shore |
+| path | Specifying the base path for api cals inside service worker | Both |
+| redirectPath | Specifying the base path of redirect url for navigating to login after user logout / token expired | Both |
+| clientId | Specifying the Keycloak client id | Shore |
+| baseUnit | Specifying base unit of weight field. All weight properties in the database will be in this unit. | Both |
+| volumeBaseUnit | Specifying base unit of volume filed. All volume properties in the database will be in this unit. | Both |
+| processingTimeout | Specifying the timeout(in milli second) for algo process. After specified time the status check will be terminated. | Both |
+| commingleColor | Specifying the color for comingle cargo | Both |
+| dateFormat | Specifying the date format | Both |
+| quantityNumberFormatKL | Specifying the number format for volume in KL | Both |
+| quantityNumberFormatBBLS | Specifying the number format for volume in BBLS | Both |
+| quantityNumberFormatMT | Specifying the number format for weight in MT | Both |
+| quantityNumberFormatLT | Specifying the number format for weight in LT | Both |
+| quantityNumberFormatOBSBBLS | Specifying the number format for volume in OBS. BBLS | Both |
+| defaultWeightUnit | Specifying the default unit in the unit dropdown | Both |
 
 ## Running unit tests
 

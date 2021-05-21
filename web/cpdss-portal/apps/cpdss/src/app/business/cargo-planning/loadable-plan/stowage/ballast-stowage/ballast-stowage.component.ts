@@ -27,7 +27,7 @@ import { DATATABLE_EDITMODE } from '../../../../../shared/components/datatable/d
 })
 export class BallastStowageComponent implements OnInit {
 
-  //public fields 
+  //public fields
   public columns: any[];
   public editMode: DATATABLE_EDITMODE = null;
   public ballastTankDetails: IBallastTankDetailValueObject[];
@@ -112,13 +112,17 @@ export class BallastStowageComponent implements OnInit {
   /**
    * Component lifecycle ngOnit
    * Method called while intialization the component
-   * 
+   *
    * @returns {void}
    * @memberof BallastStowageComponent
    */
   ngOnInit(): void {
     this.buttonStatus = 0;
     this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns();
+    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
+      this.buttonStatus = value.buttonStatus;
+      this.editMode = value.editMode;
+    })
   }
 
   /**
@@ -162,7 +166,7 @@ export class BallastStowageComponent implements OnInit {
       const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST','LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST'] });
     }
-    
+
   }
 
   /**
@@ -205,7 +209,7 @@ export class BallastStowageComponent implements OnInit {
     this.validateAndSave.emit(true);
   }
 
-  
+
   /**
   * view algo error message
   *

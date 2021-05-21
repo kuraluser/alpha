@@ -18,11 +18,11 @@
     <div class="row">
 
         <div class="col">
-            <cpdss-portal-grade-loading-order
+            <cpdss-portal-grade-loading-order *ngIf="selectedTab === tankType.CARGO"
                 [loadablePatternCargoDetails]="selectedLoadablePattern.loadablePatternCargoDetails"
                 [showCaseLabel]="false" [index]="index">
             </cpdss-portal-grade-loading-order>
-            <cpdss-portal-constraint [constraint]="selectedLoadablePattern.constraints"></cpdss-portal-constraint>
+            <cpdss-portal-constraint *ngIf="selectedTab === tankType.CARGO" [constraint]="selectedLoadablePattern.constraints"></cpdss-portal-constraint>
             <div class="col col-11 m-auto" *ngIf="selectedTab === tankType.CARGO">
                 <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
                 </cpdss-portal-cargo-tank-layout>
@@ -34,8 +34,8 @@
             </div>
         </div>
         <div class="col pattern-view-sidebar">
-            <div class="row">
-               <div class="col mb-10">
+            <div class="row" >
+               <div class="col mb-10" *ngIf="selectedTab === tankType.CARGO">
                 <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)" ></cpdss-portal-unit-dropdown>
                </div>
             </div>

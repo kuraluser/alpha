@@ -11,3 +11,11 @@
 .badge-custom{
     border-radius:3px;
     }
+
+    @media (max-width:1399px){
+        .tank-order{
+            .badge-custom{
+                font-size: 11px;
+            }
+        }
+    }

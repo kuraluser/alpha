@@ -672,7 +672,7 @@ h5{
 }
 
 .new-loadable-study-pop-up{
-  width: 765px;
+  width: 870px;
   .col-form-label{
     min-width: 165px;
     padding-right: 0;
@@ -1076,7 +1076,7 @@ input[type=number] {
 
 .table-responsive-custom{
   width: 100%;
-  max-height: calc(100vh - 260px);
+  max-height: calc(100vh - 270px);
   /*overflow: auto;*/
   padding-left: 15px;
   padding-right: 15px;
@@ -1459,6 +1459,7 @@ td.sl div{
         text-overflow: ellipsis;
         width: 34%;
         display: block;
+        white-space: nowrap;
       }
       .tank-filling-percentage{
         position: absolute;
@@ -1466,7 +1467,7 @@ td.sl div{
         right: 5px;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 45%;
+        max-width: 45%;
       }
 }
 
@@ -1599,21 +1600,18 @@ th{
 .table-pattern{
   &.p-datatable .p-datatable-tbody > tr > td{
     padding:  2px 3px;
-    font-size: 11px;
     &:last-child{
       border-right: 0;
     }
   }
   &.p-datatable .p-datatable-thead > tr > th{
     padding:  2px 3px;
-    font-size: 11px;
     &:last-child{
       border-right: 0;
     }
   }
   &.p-datatable .p-datatable-tfoot > tr > td{
     padding: 2px 3px!important;
-    font-size: 11px;
   }
   table{
     table-layout: auto!important;
@@ -1704,7 +1702,7 @@ th .p-calendar .p-inputtext{
   padding: 10px 25px;
 }
 .column-class.column-etd, .column-class.column-eta{
-  width: 140px!important;
+  width: 255px!important;
 }
 .edit-port-rotation{
   .p-orderlist-controls{
@@ -1856,7 +1854,7 @@ height: 15px;
       .tank-name{
       text-align: left;
       padding-left: 3px;
-      top: 7px;
+      top: 9px;
       left: 15px;
     }
     .tank-filling-percentage{
@@ -1911,8 +1909,8 @@ height: 15px;
 }
 
 .p-overlaypanel{
-  margin-left: -80px;
-    margin-top: -150px!important;
+  margin-left: -110px;
+    margin-top: -165px!important;
     &:after, &:before{
       display: none;
     }
@@ -1923,7 +1921,7 @@ height: 15px;
 
 .p-overlaypanel.tank-tooltip{
   border-radius: 5px;
-  width: 160px;
+  width: 220px;
   box-shadow: none;
   ul{
     margin-bottom: 0!important;
@@ -2097,7 +2095,7 @@ width: 50px !important;
 
 .p-datatable-scrollable-header-table .p-calendar .p-inputtext{
   padding: 0;
-    height: 17px;
+    height: 22px;
     margin-bottom: 0;
     &:focus{
       outline: none;
@@ -2247,7 +2245,7 @@ tr:hover{
 }
 
 .api-temp-pop-up{
-  max-width: 570px!important;
+  max-width: 590px!important;
   .column-class{
     width: auto!important;
   }
@@ -2308,10 +2306,15 @@ tr:hover{
     margin-top: 0!important;
     width: auto!important;
   }
-  .tank-commodity-weight{
+  .tank-item-valign{
     position: absolute;
     left: 2px;
     top: 13px;
+  }
+  .tank-filling-percentage{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
   }
   .p-datatable table{
     table-layout: auto!important;
@@ -2430,7 +2433,9 @@ textarea{
   .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern{
     width: 60px;
   }
-
+  .cargo-nomiantion-tab .tab-btn{
+    padding: 20px 12px;
+  }
 }
 .carousel-card{
   .p-calendar .p-inputtext{
@@ -2443,7 +2448,7 @@ textarea{
   }
 } 
 
-#countryMap
+#countryMap, #fleetMap
 {
   .ol-viewport{
     .ol-uncollapsible
@@ -2464,3 +2469,15 @@ textarea{
     height: 270px;
   }
 }
+
+@media (max-width: 1500px){
+  .table-pattern.p-datatable .p-datatable-tbody>tr>td, .table-pattern.p-datatable .p-datatable-thead>tr>th, .table-pattern.p-datatable .p-datatable-tfoot > tr > td {
+    font-size: 11px;
+  }
+  
+}
+
+.loadable-plan.p-datatable table{
+    min-width: 100%!important;
+    width: auto!important;
+  }

@@ -94,7 +94,7 @@ export class PortRotationPopupTransformationService {
         minDate: minDate,
         fieldPlaceholder: 'CHOOSE_LAY_CAN',
         fieldClass: 'lay-can',
-        dateFormat: 'dd-mm-yy',
+        dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         fieldHeaderTooltipIcon: 'pi-info-circle',
         fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
         errorMessages: {

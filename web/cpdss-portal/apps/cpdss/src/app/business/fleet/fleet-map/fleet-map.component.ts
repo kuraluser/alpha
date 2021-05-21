@@ -4,7 +4,6 @@ import { Feature, Map, Overlay, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
-import XYZ from 'ol/source/XYZ';
 import Point from 'ol/geom/Point';
 import { fromLonLat } from 'ol/proj';
 import Style from 'ol/style/Style';
@@ -15,9 +14,11 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import * as _ from 'lodash';
 
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
-import { IFleetVessel, IFleetVoyagePorts } from './../models/fleet-map.model';
+import { IFleetNotificationResponse, IFleetVessel, IFleetVoyagePorts } from './../models/fleet-map.model';
+import { IDateTimeFormatOptions } from '../../../shared/models/common.model';
 
 /**
  * this dummy data will remove once actual data given
@@ -29,45 +30,59 @@ const vesselInfo = {
       voyageName: 'Mina Al Ahmadi - Shimotsu',
       vesselName: 'KAZUSA',
       flagImage: '../../../../assets/images/flags/japan.png',
-      atd: '20/03/2021',
-      eta: '26/03/2021',
+      atd: '20-03-2021',
+      eta: '26-03-2021',
       imoNo: 9513402,
       voyagePorts: [{
         portname: 'MINA AL AHMADI',
         portType: 'loading',
+        portOrder: 1,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
-        atd: '20/03',
+        atd: '20-03-2021',
+        etd: '20-03-2021',
         lat: 48.163475,
         lon: 29.066295
       }, {
         portname: 'ZIRKU ISLAND',
         portType: 'loading',
+        portOrder: 2,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
-        atd: '21/03',
+        atd: '21-03-2021',
+        ata: '21-03-2021',
+        etd: '21-03-2021',
+        eta: '21-03-2021',
         lat: 52.9897,
         lon: 25.0203
       }, {
         portname: 'KOCHIN',
         portType: 'loading',
+        portOrder: 3,
         anchorage: true,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/port-location-1960148-1654998.png',
-        atd: '22/03',
+        ata: '23-03-2021',
+        etd: '23-03-2021',
+        eta: '23-03-2021',
         lat: 76.2678,
         lon: 9.9546
       }, {
         portname: 'KIIRE',
         portType: 'loading',
+        portOrder: 4,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        etd: '25-03-2021',
+        eta: '25-03-2021',
         lat: 130.55,
         lon: 31.38753
       }, {
         portname: 'SHIMOTSU',
         portType: 'discharging',
+        portOrder: 5,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        eta: '26-03-2021',
         lat: 135.13335,
         lon: 34.117275
       }]
@@ -76,45 +91,59 @@ const vesselInfo = {
       voyageName: 'Shimotsu - Mina Ahmadi',
       vesselName: 'HAKUSAN',
       flagImage: '../../../../assets/images/flags/japan.png',
-      atd: '20/03/2021',
-      eta: '26/03/2021',
+      atd: '20-03-2021',
+      eta: '26-03-2021',
       imoNo: 9535058,
       voyagePorts: [{
         portname: 'MINA AL AHMADI',
         portType: 'loading',
+        portOrder: 5,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
-        atd: '20/03',
+        eta: '26-03-2021',
         lat: 48.163475,
         lon: 29.066295
       }, {
         portname: 'ZIRKU ISLAND',
         portType: 'loading',
+        portOrder: 4,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
-        atd: '21/03',
+        etd: '25-03-2021',
+        eta: '25-03-2021',
         lat: 52.9897,
         lon: 25.0203
       }, {
         portname: 'KOCHIN',
         portType: 'loading',
+        portOrder: 3,
         anchorage: true,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/port-location-1960148-1654998.png',
-        atd: '22/03',
+        ata: '23-03-2021',
+        etd: '23-03-2021',
+        eta: '23-03-2021',
         lat: 76.2678,
         lon: 9.9546
       }, {
         portname: 'KIIRE',
         portType: 'loading',
+        portOrder: 2,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
+        atd: '21-03-2021',
+        ata: '21-03-2021',
+        etd: '21-03-2021',
+        eta: '21-03-2021',
         lat: 130.55,
         lon: 31.38753
       }, {
         portname: 'SHIMOTSU',
         portType: 'discharging',
+        portOrder: 1,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
+        atd: '20-03-2021',
+        etd: '20-03-2021',
         lat: 135.13335,
         lon: 34.117275
       }]
@@ -123,137 +152,178 @@ const vesselInfo = {
       voyageName: 'Zirku Island - Shimotsu',
       vesselName: 'KIRISHIMA',
       flagImage: '../../../../assets/images/flags/japan.png',
-      atd: '20/03/2021',
-      eta: '26/03/2021',
+      atd: '20-03-2021',
+      eta: '26-03-2021',
       imoNo: 9513402,
       voyagePorts: [{
         portname: 'ZIRKU ISLAND',
         portType: 'loading',
+        portOrder: 1,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
-        atd: '21/03',
+        atd: '21-03-2021',
+        etd: '21-03-2021',
         lat: 52.9897,
         lon: 25.0203
       }, {
         portname: 'KOCHIN',
         portType: 'loading',
+        portOrder: 2,
         anchorage: true,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/port-location-1960148-1654998.png',
-        atd: '22/03',
+        ata: '23-03-2021',
+        etd: '23-03-2021',
+        eta: '23-03-2021',
         lat: 76.2678,
         lon: 9.9546
       }, {
         portname: 'KIIRE',
         portType: 'loading',
+        portOrder: 3,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        etd: '25-03-2021',
+        eta: '25-03-2021',
         lat: 130.55,
         lon: 31.38753
       }, {
         portname: 'SHIMOTSU',
         portType: 'discharging',
+        portOrder: 4,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        eta: '26-03-2021',
         lat: 135.13335,
         lon: 34.117275
       }]
     }, {
       id: 152,
       voyageName: 'Mina Al Ahmadi - Shimotsu',
-      vesselName: 'KAZUSA',
+      vesselName: 'MITSUI',
       flagImage: '../../../../assets/images/flags/japan.png',
-      atd: '20/03/2021',
-      eta: '26/03/2021',
+      atd: '20-03-2021',
+      eta: '26-03-2021',
       imoNo: 9513402,
       voyagePorts: [{
         portname: 'MINA AL AHMADI',
         portType: 'loading',
+        portOrder: 1,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
-        atd: '20/03',
+        atd: '20-03-2021',
+        etd: '20-03-2021',
         lat: 48.163475,
         lon: 29.066295
       }, {
         portname: 'ZIRKU ISLAND',
         portType: 'loading',
+        portOrder: 2,
         anchorage: false,
-        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
-        atd: '21/03',
+        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        etd: '21-03-2021',
+        eta: '21-03-2021',
         lat: 52.9897,
         lon: 25.0203
       }, {
         portname: 'KOCHIN',
         portType: 'loading',
-        anchorage: true,
-        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/port-location-1960148-1654998.png',
-        atd: '22/03',
+        portOrder: 3,
+        anchorage: false,
+        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        etd: '23-03-2021',
+        eta: '23-03-2021',
         lat: 76.2678,
         lon: 9.9546
       }, {
         portname: 'KIIRE',
         portType: 'loading',
+        portOrder: 4,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        etd: '25-03-2021',
+        eta: '25-03-2021',
         lat: 130.55,
         lon: 31.38753
       }, {
         portname: 'SHIMOTSU',
         portType: 'discharging',
+        portOrder: 5,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        eta: '26-03-2021',
         lat: 135.13335,
         lon: 34.117275
       }]
     }, {
       id: 153,
       voyageName: 'Mina Al Ahmadi - Shimotsu',
-      vesselName: 'KAZUSA',
+      vesselName: 'SHIZUKISAN',
       flagImage: '../../../../assets/images/flags/japan.png',
-      atd: '20/03/2021',
-      eta: '26/03/2021',
+      atd: '20-03-2021',
+      eta: '26-03-2021',
       imoNo: 9513402,
       voyagePorts: [{
         portname: 'MINA AL AHMADI',
         portType: 'loading',
+        portOrder: 1,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
-        atd: '20/03',
+        atd: '20-03-2021',
+        etd: '20-03-2021',
         lat: 48.163475,
         lon: 29.066295
       }, {
         portname: 'ZIRKU ISLAND',
         portType: 'loading',
+        portOrder: 2,
         anchorage: false,
         iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
-        atd: '21/03',
+        atd: '21-03-2021',
+        ata: '21-03-2021',
+        etd: '21-03-2021',
+        eta: '21-03-2021',
         lat: 52.9897,
         lon: 25.0203
       }, {
         portname: 'KOCHIN',
         portType: 'loading',
-        anchorage: true,
-        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/port-location-1960148-1654998.png',
-        atd: '22/03',
+        portOrder: 3,
+        anchorage: false,
+        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
+        etd: '23-03-2021',
+        atd: '23-03-2021',
+        eta: '23-03-2021',
+        ata: '23-03-2021',
         lat: 76.2678,
         lon: 9.9546
       }, {
         portname: 'KIIRE',
         portType: 'loading',
+        portOrder: 4,
         anchorage: false,
-        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-2824108-2344070.png',
+        etd: '25-03-2021',
+        atd: '25-03-2021',
+        eta: '25-03-2021',
+        ata: '25-03-2021',
         lat: 130.55,
         lon: 31.38753
       }, {
         portname: 'SHIMOTSU',
         portType: 'discharging',
-        anchorage: false,
-        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/location-pin-2120117-1785458.png',
+        portOrder: 5,
+        anchorage: true,
+        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/port-location-1960148-1654998.png',
+        eta: '26-03-2021',
+        ata: '26-03-2021',
         lat: 135.13335,
         lon: 34.117275
       }]
     }
   ]
 };
+
+
 
 /**
  * Component to integrate fleet
@@ -281,11 +351,13 @@ export class FleetMapComponent implements OnInit, AfterViewInit {
 
   vessels: IFleetVessel[];
   selectedVessel: IFleetVessel;
+  hidePortPopUp = true;
   voyagePorts: IFleetVoyagePorts[];
   cardValues: IFleetVoyagePorts;
-  hidePortPopUp = true;
+  vesselNotifications: IFleetNotificationResponse;
 
   constructor(
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private renderer: Renderer2,
     private ngxSpinnerService: NgxSpinnerService
   ) { }
@@ -314,14 +386,17 @@ export class FleetMapComponent implements OnInit, AfterViewInit {
    * @memberof FleetMapComponent
    */
   initMap(vesselId: number): void {
+    this.ngxSpinnerService.show();
+    const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
     this.selectedVessel = this.vessels.find(vessel => (vessel.id === vesselId));
-    this.voyagePorts = [...this.selectedVessel.voyagePorts].map((port, i) => {
+    this.voyagePorts = [...this.selectedVessel.voyagePorts].map(port => {
       port.vesselName = this.selectedVessel.vesselName;
-      port.prevPort = this.selectedVessel.voyagePorts[i - 1] ? this.selectedVessel.voyagePorts[i - 1].portname : '-';
-      port.nextPort = this.selectedVessel.voyagePorts[i + 1] ? this.selectedVessel.voyagePorts[i + 1].portname : '-';
+      if (port.eta) { port.eta = this.timeZoneTransformationService.formatDateTime(port?.eta, formatOptions); }
+      if (port.etd) { port.etd = this.timeZoneTransformationService.formatDateTime(port?.etd, formatOptions); }
+      if (port.ata) { port.ata = this.timeZoneTransformationService.formatDateTime(port?.ata, formatOptions); }
+      if (port.atd) { port.atd = this.timeZoneTransformationService.formatDateTime(port?.atd, formatOptions); }
       return port;
     });
-    this.ngxSpinnerService.show();
 
     document.getElementById("fleetMap").innerHTML = "";
 

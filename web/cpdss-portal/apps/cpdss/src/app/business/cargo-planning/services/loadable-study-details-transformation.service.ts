@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON , DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ValueObject , ISubTotal } from '../../../shared/models/common.model';
+import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { ValueObject, ISubTotal } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IMonths, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
@@ -34,7 +34,9 @@ export class LoadableStudyDetailsTransformationService {
   private _ohqValiditySource: Subject<boolean> = new Subject();
   private _obqValiditySource: Subject<boolean> = new Subject();
   private _ohqUpdate: Subject<any> = new Subject();
+  private _portUpdate: Subject<any> = new Subject();
   private OPERATIONS: OPERATIONS;
+  private _loadLineChangeSource: Subject<any> = new Subject();
 
   // public fields
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
@@ -45,6 +47,8 @@ export class LoadableStudyDetailsTransformationService {
   ohqValidity$ = this._ohqValiditySource.asObservable();
   obqValidity$ = this._obqValiditySource.asObservable();
   ohqUpdate$ = this._ohqUpdate.asObservable();
+  portUpdate$ = this._portUpdate.asObservable();
+  loadLineChange$ = this._loadLineChangeSource.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
   constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
@@ -346,7 +350,7 @@ export class LoadableStudyDetailsTransformationService {
     ];
     if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      
+
       if (permission?.add) {
         const buttons = {
           field: 'buttons',
@@ -356,7 +360,7 @@ export class LoadableStudyDetailsTransformationService {
           fieldColumnClass: 'text-center',
           fieldType: DATATABLE_FIELD_TYPE.BUTTON,
           buttons: [
-            {type: DATATABLE_BUTTON.SAVE_BUTTON , field: 'isAdd' , icons: '' , class: 'pi pi-save' , label: '' , tooltip: 'Save' , tooltipPosition: "top"}
+            { type: DATATABLE_BUTTON.SAVE_BUTTON, field: 'isAdd', icons: '', class: 'pi pi-save', label: '', tooltip: 'Save', tooltipPosition: "top" }
           ]
         }
         columns = [...columns, buttons];
@@ -392,8 +396,17 @@ export class LoadableStudyDetailsTransformationService {
    *
    * @memberof LoadableStudyDetailsTransformationService
    */
-  ohqUpdated(event) {
-    this._ohqUpdate.next(event);
+  ohqUpdated() {
+    this._ohqUpdate.next();
+  }
+
+  /**
+ * Method for emitting observable for update port table
+ *
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  portUpdated() {
+    this._portUpdate.next();
   }
 
   /**
@@ -429,7 +442,8 @@ export class LoadableStudyDetailsTransformationService {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'min': 'CARGO_NOMINATION_LOADING_PORT_MIN_ERROR',
           'pattern': 'CARGO_NOMINATION_LOADING_PORT_PATTERN_ERROR'
-        }
+        },
+        numberType: 'quantity'
       }
     ]
 
@@ -642,9 +656,9 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IPortsValueObject}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getPortAsValueObject(port: IPortList, isNewValue = true, isEditable = true, listData: IPortAllDropdownData , portEtaEtdPermission: IPermission): IPortsValueObject {
+  getPortAsValueObject(port: IPortList, isNewValue = true, isEditable = true, listData: IPortAllDropdownData, portEtaEtdPermission: IPermission): IPortsValueObject {
     const _port = <IPortsValueObject>{};
-    const isEtaEtadEdtitable = this.isEtaEtdViewable(portEtaEtdPermission,isNewValue);
+    const isEtaEtadEdtitable = this.isEtaEtdViewable(portEtaEtdPermission, isNewValue);
     const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
     const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
     const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING || operationObj.id === OPERATIONS.DISCHARGING) : true;
@@ -669,19 +683,19 @@ export class LoadableStudyDetailsTransformationService {
     return _port;
   }
 
-    /**
-  * Method for initializing ports row
-  *
-  * @private
-  * @param {boolean} isAdd
-  * @returns {boolean}
-  * @memberof LoadableStudyDetailsTransformationService
-  */
-  isEtaEtdViewable(portEtaEtdPermission: IPermission ,isAdd: boolean) {
-    return (portEtaEtdPermission?.view || portEtaEtdPermission?.view === undefined) && 
-    ( (isAdd && (portEtaEtdPermission?.add || portEtaEtdPermission?.add === undefined)) || 
-      (!isAdd  && (portEtaEtdPermission?.edit || portEtaEtdPermission?.edit === undefined))
-    ) ? true : false;
+  /**
+* Method for initializing ports row
+*
+* @private
+* @param {boolean} isAdd
+* @returns {boolean}
+* @memberof LoadableStudyDetailsTransformationService
+*/
+  isEtaEtdViewable(portEtaEtdPermission: IPermission, isAdd: boolean) {
+    return (portEtaEtdPermission?.view || portEtaEtdPermission?.view === undefined) &&
+      ((isAdd && (portEtaEtdPermission?.add || portEtaEtdPermission?.add === undefined)) ||
+        (!isAdd && (portEtaEtdPermission?.edit || portEtaEtdPermission?.edit === undefined))
+      ) ? true : false;
   }
 
 
@@ -691,7 +705,7 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getPortDatatableColumns(permission: IPermission, portEtaEtdPermission:IPermission , loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     const minDate = new Date();
     let columns: IDataTableColumn[] = [
       {
@@ -712,7 +726,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         listName: 'portList',
         listFilter: true,
-        sortable: true,
+        sortable: false,
         sortField: 'port.value.name',
         filterField: 'port.value.name',
         fieldOptionLabel: 'name',
@@ -760,7 +774,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'seaWaterDensity',
         header: 'WATER DENSITY (T/M3)',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.4-4' ,
+        numberFormat: AppConfigurationService.settings?.sgNumberFormat,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT_WATER_DENSITY',
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
@@ -822,10 +836,10 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR'
         }
       },
-    
+
     ];
 
-    if(portEtaEtdPermission?.view || portEtaEtdPermission?.view === undefined) {
+    if (portEtaEtdPermission?.view || portEtaEtdPermission?.view === undefined) {
       const etaEtd = [
         {
           field: 'eta',
@@ -912,6 +926,11 @@ export class LoadableStudyDetailsTransformationService {
     this._portValiditySource.next(isValid);
   }
 
+   /** Set load line change status */
+   setLoadLineChange() {
+    this._loadLineChangeSource.next();
+  }
+
   /**
   * Method for converting from port value object model
   *
@@ -932,7 +951,7 @@ export class LoadableStudyDetailsTransformationService {
             const layCanFrom = moment(port[key].value.split('to')[0].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).endOf('d').format('DD-MM-YYYY HH:mm');
             _ports.layCanFrom = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanFrom, port.port?.value?.timezoneOffsetVal)?.slice(0, 10);
             const layCanTo = moment(port[key].value.split('to')[1].trim(), AppConfigurationService.settings?.dateFormat.split(' ')[0]).startOf('d').format('DD-MM-YYYY HH:mm');
-            _ports.layCanTo = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanTo, port.port?.value?.timezoneOffsetVal)?.slice(0, 10) ;
+            _ports.layCanTo = this.timeZoneTransformationService.revertZoneTimetoUTC(layCanTo, port.port?.value?.timezoneOffsetVal)?.slice(0, 10);
           } else {
             _ports.layCanFrom = "";
             _ports.layCanTo = "";
@@ -1283,15 +1302,13 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE',
           'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT'
         },
-        numberType:'quantity'
+        numberType: 'quantity'
       }
     ];
 
     if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if (permission?.delete) {
-        actions.push(DATATABLE_ACTION.DELETE);
-      }
+      actions.push(DATATABLE_ACTION.DELETE);
       const action: IDataTableColumn = {
         field: 'actions',
         header: '',

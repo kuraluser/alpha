@@ -20,17 +20,20 @@
             <div class="ml-auto pr-15">
                 <ng-container *ngIf="!validationPending;else refPending">
                     <ng-container [ngSwitch]="loadablePatternValidationStatus">  
-                        <span class="badge-custom badge-sucess" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_SUCCESS">{{'LOADABLE_PLAN_ULLAGE_VERIFIED' | translate}}</span>  
-                        <span class="badge-custom badge-danger" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_FAILED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_FAILED' | translate}}</span>  
-                        <span class="badge-custom badge-info" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_STARTED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_IN_PROGESS' | translate}}</span>  
+                        <span class="badge-custom badge-success v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_SUCCESS">{{'LOADABLE_PLAN_ULLAGE_VERIFIED' | translate}}</span>  
+                        <span class="badge-custom badge-danger v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_FAILED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_FAILED' | translate}}</span>  
+                        <span class="badge-custom badge-info v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_STARTED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_IN_PROGESS' | translate}}</span>  
                     </ng-container> 
                 </ng-container>
-                <ng-template #refPending><span class="badge-custom badge-muted">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_PENDING' | translate}}</span></ng-template>
-                <button class="btn btn-main" id="confirm_plan" [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">
+                <ng-template #refPending><span class="badge-custom badge-muted v-middle mr-10" >{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_PENDING' | translate}}</span></ng-template>
+                <button class="btn btn-main mr-10" id="confirm_plan" [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="onConfirmPlanClick()">
                     <span class="pi pi-check check-rounded" *ngIf="loadableStudyStatus"></span>
                     {{loadableStudyStatus ? ('LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |translate) : ('LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |translate)}}
                 </button>
-                <a><img src="../../../../assets/images/themes/dark/download-arrow.png" alt="" class="ml-20"></a>
+                <button class="btn btn-main" id="export" (click)="export()">
+                    {{'LOADABLE_PLAN_EXPORT' |translate}}
+                </button>
+                
                 <a><img src="../../../../assets/images/themes/dark/print-icon.png" alt="" class="ml-20 mr-30"></a>
                 <button class="btn btn-main" id="btn_callNewLoadableStudyPopup" (click)="backToLoadableStudy()">{{'LOADABLE_PLAN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
                 translate}}</button>
@@ -50,7 +53,7 @@
                 [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
                 [loadableStudyId]="loadableStudyId" [voyage]="selectedVoyage" [loadableStudy]="loadableStudy" [loadablePatternValidationStatus]="loadablePatternValidationStatus"
                 [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup" (ullageUpdate)="validationPending = $event"
-                (registerEvents)="listenEvents()">
+                (registerEvents)="listenEvents()" [loadableQuantityCargo]="loadableQuantityCargo" [loadableQuantity]="loadableQuantity">
             </cpdss-portal-stowage>
         </div>
         <div>
@@ -64,3 +67,5 @@
         </div>
     </div>
 </div>
+<cpdss-portal-port-rotation-popup *ngIf="showPortRotationPopup" [visible]="showPortRotationPopup" [vesselId]="vesselId" [voyageId]="voyageId"
+[loadableStudyId]="loadableStudyId" (displayPopup)="closePortRotationPopup($event)"></cpdss-portal-port-rotation-popup>

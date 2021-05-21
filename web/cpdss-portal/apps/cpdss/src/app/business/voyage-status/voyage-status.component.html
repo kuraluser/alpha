@@ -44,10 +44,10 @@
             (displayPopUp)="displayEditPortRotationPopUpTab($event)" [vesselDetails]="vesselInfo"
             [voyageDetails]="selectedVoyage">
         </cpdss-portal-edit-port-rotation-popup>
-        <div class="row no-wrap pt-10">
+        <div class="row no-wrap">
             <div class="col sidebar-landing">
                 <cpdss-portal-parameter-list *ngIf="bunkerConditions &&  cargoQuantities"
-                    [bunkerConditions]="bunkerConditions" [cargoConditions]="cargoConditions">
+                    [bunkerConditions]="bunkerConditions" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions">
                 </cpdss-portal-parameter-list>
             </div>
             <div class="col tank-layout-status" *ngIf="voyageStatusResponse">

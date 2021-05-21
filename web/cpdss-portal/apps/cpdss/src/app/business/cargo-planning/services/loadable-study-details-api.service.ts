@@ -6,9 +6,10 @@ import { CommonApiService } from '../../../shared/services/common/common-api.ser
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop, IGeneratePatternResponse, ICargoApiTempHistoryResponse, IApiTempHistoryRequest } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
-import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
+import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse , IAlgoResponse } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 /**
  * Api Service for Loadable Study Details module
  *
@@ -40,7 +41,8 @@ export class LoadableStudyDetailsApiService {
         this._cargoNominations = cargoNominations;
         this.cargoNominationChange.next(true);
     }
-    constructor(private commonApiService: CommonApiService) {
+    constructor(private commonApiService: CommonApiService,
+        private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) {
         this._cargoNominationDb = new CargoNominationDB();
         this._portsDb = new PortsDB();
         this._ohqDb = new OHQDB();
@@ -303,17 +305,20 @@ export class LoadableStudyDetailsApiService {
      * @memberof LoadableStudyDetailsApiService
      */
     updateQuantityByUnit(currentValue, unitFrom, unitTo, api, temp?) {
-        if (!api || api === '') {
-            api = 1;
-        }
-        let newValue;
-        if (temp) {
-            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString(), -1);
-        } else {
-            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString() , '' , -1);
+        let newValue = currentValue;
+        if (unitFrom != unitTo) {
+            if (!api || api === '') {
+                api = 1;
+            }
+            if (temp) {
+                newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString(), -1);
+            } else {
+                newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), '', -1);
+            }
         }
         return Number(newValue);
     }
+    
 
     /* Save load on top is enable or not for loadable study
     *
@@ -337,6 +342,49 @@ export class LoadableStudyDetailsApiService {
      */
     getCargoApiTemperatureHistoryDetails(vesselId: number, voyageId: number, loadableStudyId: number, cargoApiTempHistoryParams: IApiTempHistoryRequest): Observable<ICargoApiTempHistoryResponse> {
         return this.commonApiService.post<IApiTempHistoryRequest,ICargoApiTempHistoryResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/cargo-history`, cargoApiTempHistoryParams);
+    }
+
+    /**
+     * Converts the quantity from one unit to another
+     *
+     * @param  currentValue
+     * @param  api
+     * @param  temp
+     * @param  unitFrom
+     * @returns {number}
+     * @memberof LoadableStudyDetailsApiService
+     */
+    decimalQuantiy(currentValue, unitFrom, unitTo, api, temp?) {
+        if (!api || api === '') {
+            api = 1;
+        }
+        let newValue;
+        if (temp) {
+            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString(), -1);
+        } else {
+            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString() , '' , -1);
+        }
+        newValue = this.quantityDecimalFormatPipe.transform(newValue, unitTo)
+        return newValue;
+    }
+
+    /**
+    * parse number from formatted string
+    * @returns {number}
+    */
+    convertToNumber(value: string) {
+        value = value?.replace(',', '');
+        return value
+    }
+    /**
+     * 
+     * @param {number} vesselId 
+     * @param {number} voyageId 
+     * @param {number} loadableStudyId 
+     * Get api for algo error response
+     */
+    getAlgoErrorDetails(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IAlgoResponse> {
+        return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/algo-errors`);
     }
 
 }

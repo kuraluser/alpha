@@ -34,7 +34,9 @@ import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
+import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -67,10 +69,12 @@ import { TooltipModule } from 'primeng/tooltip';
     UnitDropdownModule,
     QuantityPipeModule,
     TableModule,
-    TooltipModule
+    TooltipModule,
+    QuantityDecimalFormatPipeModule,
+    ErrorLogPopupModule
   ],
   providers: [
-    LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe
+    LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe  
   ]
 })
 export class LoadableStudyDetailsModule { }

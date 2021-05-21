@@ -52,7 +52,7 @@
                 </div>
                 <div class="row">
                     <div class="col content-wrapper-view-more">
-                <cpdss-portal-datatable *ngIf="loadablePlanForm?.controls?.cargoTanks && this.cargoTankDetails" [columns]="cargoGridColumns"
+                <cpdss-portal-datatable *ngIf="loadablePlanForm?.controls?.cargoTanks && this.cargoTankDetails" [columns]="cargoGridColumns" [showTotal]="true"
                     [value]="cargoTankDetails" [editMode]="editMode" (editComplete)="onEditComplete($event)" [form]="loadablePlanForm?.controls?.cargoTanks">
                 </cpdss-portal-datatable>
                     </div>

@@ -1,7 +1,7 @@
 .content-outer-obq{
     display: grid;
     grid-template-columns: calc(100% - 500px) 500px;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 220px);
 }
 @media (max-width: 1400px){
     .content-outer-obq{

@@ -141,7 +141,7 @@ export interface ICargoNominationAllDropdownData {
 }
 
 /**
- * Interface for segregation 
+ * Interface for segregation
  *
  * @export
  * @interface ISegregation
@@ -479,7 +479,7 @@ export class PortsDB extends CPDSSDB {
 
 
 /**
- * Model for loadable study list 
+ * Model for loadable study list
  */
 export class PatternHistory {
     public name: string;
@@ -500,7 +500,7 @@ export enum OPERATIONS {
 }
 
 /**
- * Interface for commingle cargo details 
+ * Interface for commingle cargo details
  *
  * @export
  * @interface ICommingleDetails
@@ -508,8 +508,8 @@ export enum OPERATIONS {
 export interface ICommingleDetails {
     id: number;
     tankShortName: string;
-    cargo1Abbrivation: string;
-    cargo2Abbrivation: string;
+    cargo1Abbreviation: string;
+    cargo2Abbreviation: string;
     grade: string;
     quantity: number;
     api: string;
@@ -520,6 +520,8 @@ export interface ICommingleDetails {
     cargo2Percentage: string;
     cargoQuantity: string;
     cargoPercentage: string;
+    cargo1MT: string;
+    cargo2MT: string;
 }
 
 /**
@@ -569,6 +571,7 @@ export interface IPortOBQTankDetail {
     loadOnTop: boolean;
     volume: number;
     isObqComplete?: boolean;
+    temperature?: number;
 }
 
 /**
@@ -595,6 +598,7 @@ export interface IPortOBQTankDetailValueObject {
     abbreviation: string;
     loadOnTop: boolean;
     processing?: boolean;
+    temperature?: number;
 }
 
 /**
@@ -786,7 +790,7 @@ export interface ICargoHistoryDetails {
 }
 
 /**
- * Interface for loadable quality 
+ * Interface for loadable quality
  *
  * @export
  * @interface ILoadableQuantityCargo
@@ -812,10 +816,11 @@ export interface ICargoHistoryDetails {
     cargoId?: number;
     apiTemp?: string;
     minMaxTolerance?: string;
-    slopQuantity?: string;
+    slopQuantity?: number;
     timeRequiredForLoading?: string;
     loadingPorts?: string[];
     loadingPort?: string;
+    cargoAbbreviation?: string;
 }
 
 

@@ -3,7 +3,7 @@
     <div class="col">
 
         <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true" [maxDate]="today" [readonlyInput]="true"
-            inputId="actual_date_selector" id="actual_date_selector" dateFormat="dd-mm-yy"
+            inputId="actual_date_selector" id="actual_date_selector" dateFormat="{{popupDateFormat}}"
             [hideOnDateTimeSelect]="false" [placeholder]="'VOYAGE_LIST_DATE_POPUP_ACTUAL_DATE_PLACEHOLDER' | translate" [(ngModel)]="defaultDate" #coldatetime></p-calendar>
     </div>
     <p-footer>

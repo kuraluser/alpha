@@ -1,129 +1,144 @@
-<!-- <form [formGroup]="formGroup" id="fg_load_discharge_details" (ngSubmit)="onSubmit()">
-    <div class="container-fluid">
-        <div class="row item-row-wrapper">  
-            <div class="col">
-                
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Intial loading rate'}}</label>
+<div class="row">
+    <div class="col-md-6">
+        <h5>Berth Details</h5>
+    </div>
+    <div class="col-md-6">
+        <button class="pull-right" (click)="addBerth()">Add</button>
+    </div>
+</div>
+<div class="row">
+    <div *ngFor=" let berth of berthList; let i=index" class="col-md-6 pt-10">
+        <div (click)="selectBerth(berth)" class="d-flex flex-row bd-highlight" *ngIf="!berth?.edit">
+            <span>{{(i+1) + '. '}}</span><label>{{berth?.berth?.label}}</label>
+            <span><button (click)="editBerth(berth)">E</button></span><span><button (click)="deleteBerth(berth.berth)">d</button></span>
+        </div>
+        <div *ngIf="berth?.edit" class="d-flex flex-row dropdown-load_discharge_details">
+            <span>{{(i+1) + '. '}}</span>
+            <p-dropdown #dd id="id" styleClass="form-control" [filter]="true" [options]="berthDropDownlist"
+                optionLabel="label" [(ngModel)]="berth.berth" (onChange)="onBerthChange($event)" placeholder="{{'Enter initial loading rate'}}"
+                [readonly]="false" resetFilterOnHide="true">
+            </p-dropdown>
+        </div>
+    </div>
+</div>
+<div class="row pt-10">
+    <div class="col-md-12">
+        <form [formGroup]="formGroup" id="fg_load_discharge_details">
+            <div class="container-fluid">
+                <div class="row item-row-wrapper">
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Max loading rate'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Min Deballast rate'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Max Deballast rate'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Sunrise/Sunset'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                        /
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
 
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Start Time'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Time Allowed(Initial/Max/Final)'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                        /
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                        /
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
+                        <div class="row">
+                            <label>Selected Berth Details</label>
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Name'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="berthName"
+                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Depth (M)'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="depth"
+                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Manifold'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="manifold"
+                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Alongside, House Connection'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="alongSideHouseConnection"
+                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Sea Draft Limitation'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="seaDraftLimitation"
+                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Air Draft Limitation'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="airdraftLimitation"
+                                    placeholder="{{'Enter Air Draft Limitation'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Max Manifold Height'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="maxManifoldheight"
+                                    placeholder="{{'Enter Air Draft Limitation'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate" class="col no-left-padding">{{'Special Regulation & Restrictoin'}}</label>
+                            <div class="col">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="initial_loading_rate" formControlName="specialRegulation"
+                                    placeholder="{{'Enter Air Draft Limitation'}}" (change)="change()"
+                                    [readonly]="false">
+                            </div>
+                            <!-- <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div> -->
+                        </div>
 
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="loading_ratio"
-                        class="col no-left-padding">{{'Intial loading rate'}}</label>
-                    <div class="col dropdown-load_discharge_details">
-                        <p-dropdown #dd id="loading_ratio" styleClass="form-control" [filter]="true"
-                            [options]="[]" formControlName="loadingRatio" optionLabel="name" (click)="clearFilter(dd)"
-                            placeholder="{{'Enter initial loading rate'}}"
-                            [readonly]="false" resetFilterOnHide="true">
-                        </p-dropdown>
-                    </div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-</form> -->
+</div>
