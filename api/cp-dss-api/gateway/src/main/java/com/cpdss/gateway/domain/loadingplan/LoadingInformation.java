@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.gateway.domain.loading_plan;
+package com.cpdss.gateway.domain.loadingplan;
 
-import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import java.util.List;
 import lombok.Data;
 
@@ -22,15 +22,14 @@ import lombok.Data;
 // topping off sequence
 
 @Data
+@CPDSSJsonParser
 public class LoadingInformation {
-
-  private CommonSuccessResponse responseStatus;
 
   private LoadingDetails loadingDetails;
   private LoadingRates loadingRates;
-  private List<BerthDetails> berthDetails;
+  private List<LoadingBerthDetails> berthDetails;
   private List<CargoMachineryInUse> machineryInUses;
-  // private CargoDetails cargoDetails;
+  // private CargoDetails cargoDetails; // call to LS and get by port rotation condition
   private LoadingStages loadingStages;
   private LoadingSequences loadingSequences;
   private ToppingOffSequence toppingOffSequence;
