@@ -1,14 +1,14 @@
 export const environment = {
-  ENVOY_SERVER_PATH: '../serverData',
-  SPLIT_FILE_SIZE: 1000,
-  PORT: 3000,
+  ENVOY_SERVER_PATH: `${process.env.CONTAINER_VOLUME_PATH}/server/serverData`,
+  SPLIT_FILE_SIZE: 1000*20,
+  PORT: `${process.env.PORT || 3000}`,
   DB_NAME: 'envoy_server',
-  DB_USERNAME: 'postgres',
-  DB_PASSWORD: 'postgres',
-  DB_HOST: '127.0.0.1',
+  DB_USERNAME: process.env.DB_USER,
+  DB_PASSWORD: process.env.DB_PASSWORD,
+  DB_HOST: process.env.DB_HOST,
   DB_PORT: 5432,
-  REDIS_SENTINAL_SERVERS: [{ host: '127.0.0.1', port: 26380 }],
+  REDIS_SENTINAL_SERVERS: [{ host: 'redis-stack_redis-sentinel', port: 26379 }],
   REDIS_MASTER_NAME: 'mymaster',
-  REDIS_MASTER_PASSWORD: 'Admin@123',
-  JWT_PUBLIC_KEY_PATH: '/mnt/efs/keys/public_keys/jwt'
+  REDIS_MASTER_PASSWORD: 'cpdss',
+  JWT_PUBLIC_KEY_PATH: `${process.env.CONTAINER_VOLUME_PATH}/server/jwt`
 };

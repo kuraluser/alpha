@@ -19,12 +19,11 @@ export class ServerUtilService {
     constructor(private logger: CommonLoggerService, private configService: ConfigService, private redisUtilService: RedisUtilService) {
         this.logger.setContext('ServerUtilService');
         this.logger.log('Loading public keys');
-        const directory = path.normalize(configService.get<string>('jwtPublicKeyPath'));
-        const filesArray: string[] = fs.readdirSync(directory);
-        //Reading the public key files(pem) for each client and storing it in the map
-        _.chain(filesArray).filter(f => (f.indexOf('.pem') !== -1))
-            .each(f => this.clientPublicKeys.set(f.substring(0, f.lastIndexOf('.pem')),
-                fs.readFileSync(path.normalize(`${directory}/${f}`), 'utf8')));
+        try {
+            this.refreshKeys();
+        } catch (err) {
+            this.logger.error(`Error in refreshing key file ${err.message}`, err.stack);
+        }
     }
 
     public getClientPublicKey(shipid: string): string {
@@ -41,6 +40,32 @@ export class ServerUtilService {
 
     public removeClientSocket(shipid: string): void {
         this.clientSocketMap.delete(shipid);
+    }
+
+    /**
+     * Refreshing public keys
+     */
+    public refreshPublicKeys(): any {
+        try {
+            this.logger.log('Refreshing public keys');
+            this.refreshKeys();
+        } catch (err) {
+            this.logger.error(`Error in refreshing key file ${err.message}`, err.stack);
+            return { statusCode: "500", message: err };
+        }
+    }
+
+    /**
+     * Refresh keys
+     */
+    private refreshKeys() {
+        const directory = path.normalize(this.configService.get<string>('jwtPublicKeyPath'));
+        const filesArray: string[] = fs.readdirSync(directory);
+        //Reading the public key files(pem) for each client and storing it in the map
+        _.chain(filesArray).filter(f => (f.indexOf('.pem') !== -1))
+            .each(f => this.clientPublicKeys.set(f.substring(0, f.lastIndexOf('.pem')),
+                fs.readFileSync(path.normalize(`${directory}/${f}`), 'utf8')));
+        return { statusCode: "200", message: "Success" };
     }
 
 

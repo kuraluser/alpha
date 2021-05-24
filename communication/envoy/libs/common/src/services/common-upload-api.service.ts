@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { CommonDataStore } from '../store/common-db-store';
-import { InboundEventData, InboundEventUploadResponse } from '../models/common-models';
+import { CancelledCacheData, InboundEventData, InboundEventUploadResponse } from '../models/common-models';
 import { CommonDBService } from './common-db.service';
 import * as Busboy from 'busboy';
 import * as crypto from 'crypto';
@@ -10,13 +10,16 @@ import * as fs from 'fs';
 import { CommonLoggerService } from './common-logger.service';
 import { Injectable } from '@nestjs/common';
 import { InBoundEventDataEntity } from '../entities/common-inbound-event.entity';
+import { CommonUtilService } from '../utils/common-util.service';
 /**
  * Class to perform common upload api functions
  */
 @Injectable()
 export class CommonUploadApiService {
 
-    constructor(private configService: ConfigService, private commonDbStore: CommonDataStore, private commonDbService: CommonDBService<InBoundEventDataEntity, InboundEventData>, private logger: CommonLoggerService) {
+    constructor(private configService: ConfigService, private commonDbStore: CommonDataStore,
+        private commonDbService: CommonDBService<InBoundEventDataEntity, InboundEventData>,
+        private logger: CommonLoggerService, private commonUtilService: CommonUtilService) {
         this.logger.setContext('CommonUploadApiService');
     }
 
@@ -50,7 +53,7 @@ export class CommonUploadApiService {
             const uniqueId: string = uuidv1();
             const fileName = `${uniqueId}.zip`;
             let eventData: InboundEventData = {
-                clientId: params.clientId, messageId: params.messageId, sequence: params.seq, size: 0, shipId: params.shipId,
+                clientId: params.clientId, messageId: params.messageId, messageType: params.messageType, sequence: params.seq, size: 0, shipId: params.shipId,
                 uniqueId: uniqueId, fileName: fileName, checksum: checksum, algo: algo, split: split, process: 'upload'
             }
             //Verifying event data and returns with metadata
@@ -90,6 +93,37 @@ export class CommonUploadApiService {
             //Verifying event data and returns with metadata
             existingEventData = await this.verifyAndUploadFile(req, existingEventData);
             await this.commonDbService.updateObject(this.commonDbStore.getInboundEventStore(), existingEventData);
+            return { statusCode: "200", message: "success", messageId: params.messageId, shipId: params.shipId };
+        } catch (err) {
+            this.logger.error(`Error in update file ${err.message}`, err.stack);
+            return { statusCode: "500", message: err, messageId: params.messageId, shipId: params.shipId };
+        }
+    }
+
+
+    /**
+     * Common method to cancel a single file for client and server
+     * 
+     * @param params 
+     * @param req 
+     * @param checksum 
+     * @param algo 
+     * @param split 
+     */
+    public async cancelFile(params: any): Promise<InboundEventUploadResponse> {
+        try {
+            const conditions = "inbound.clientId = :clientId AND inbound.messageId = :messageId AND inbound.shipId = :shipId";
+            const whereParams: any = { clientId: params.clientId, messageId: params.messageId, shipId: params.shipId };
+            let existingEventData: InboundEventData = await this.commonDbService.findOne(this.commonDbStore.getInboundEventStore(), 'inbound', conditions, whereParams) as InboundEventData;
+            if (!existingEventData) {
+                return { statusCode: "400", message: "Message Id doesnot exists", messageId: params.messageId, shipId: params.shipId };
+            }
+            //Creating event data
+            existingEventData.process = 'cancel';
+            //Verifying event data and returns with metadata
+            await this.commonDbService.updateObject(this.commonDbStore.getInboundEventStore(), existingEventData);
+            const cancelledCacheData: CancelledCacheData = { clientId: existingEventData.clientId, messageId: existingEventData.messageId, shipId: existingEventData.shipId, uniqueId: existingEventData.uniqueId };
+            this.commonUtilService.storeCanceledKeys(existingEventData.uniqueId, cancelledCacheData);
             return { statusCode: "200", message: "success", messageId: params.messageId, shipId: params.shipId };
         } catch (err) {
             this.logger.error(`Error in update file ${err.message}`, err.stack);
@@ -168,11 +202,11 @@ export class CommonUploadApiService {
     }
 
 
- /**
-  * Removing a directory with files synchronously
-  *
-  * @param dirPath
-  */
+    /**
+     * Removing a directory with files synchronously
+     *
+     * @param dirPath
+     */
     private removeDirSync(dirPath: string): void {
         let files: any;
         try {

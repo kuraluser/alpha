@@ -18,7 +18,7 @@ export class UploadController {
    * @param params 
    * @param file 
    */
-  @Post('push/:clientId/:messageId/:seq')
+  @Post('push/:clientId/:messageType/:messageId/:seq')
   public async pushFile(@Param() params, @Req() req, @Headers('checksum') checksum, @Headers('algo') algo, @Headers('split') split): Promise<InboundEventUploadResponse> {
     params.shipId = this.configService.get<string>('shipId');
     return this.commonApiService.uploadFile(params, req, checksum, algo, split);
@@ -37,5 +37,19 @@ export class UploadController {
   public async updateFile(@Param() params, @Req() req, @Headers('checksum') checksum, @Headers('algo') algo, @Headers('split') split): Promise<InboundEventUploadResponse> {
     params.shipId = this.configService.get<string>('shipId');
     return this.commonApiService.updateFile(params, req, checksum, algo, split);
+  }
+
+  /**
+   * Request method to cancel a single file
+   * 
+   * @param params 
+   * @param req 
+   * @param checksum 
+   * @param algo 
+   * @param split 
+   */
+  @Put('cancel/:clientId/:messageId/:shipId')
+  public async cancelFile(@Param() params): Promise<InboundEventUploadResponse> {
+    return this.commonApiService.cancelFile(params);
   }
 }
