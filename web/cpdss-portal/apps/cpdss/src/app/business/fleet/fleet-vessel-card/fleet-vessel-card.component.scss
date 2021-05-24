@@ -1,13 +1,118 @@
 .vessel-card {
-  width: 300px;
-  height: 120px;
+  width: auto;
+  min-width: 305px;
+  height: 130px;
   border-radius: 10px;
   background-color: #c1c8d3f5;
   float: left;
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
 }
 
 .active-vessel {
-  background-color: aliceblue;
-  border: 2px solid white;
+  background-color: #aec4e0;
+  border: 1px solid white;
+}
+
+.progress-vessel {
+  height: 2px;
+  overflow: inherit;
+  margin-bottom: 3px;
+  margin-top: 3px;
+  background: #6ba4e4;
+}
+
+.arrow-end {
+  position: absolute;
+  right: -10px;
+  top: -4px;
+  max-width: none !important;
+}
+
+.vessel-card-content {
+  display: flex;
+  width: 265px;
+}
+
+.text-medium {
+  font-size: 12px;
+}
+
+.vessel-card-submenu {
+  display: none;
+  ul {
+    list-style: none;
+  }
+}
+
+.vessel-card:hover .vessel-card-submenu {
+  display: block;
+}
+
+.menu-item-icon {
+  width: 46px;
+  height: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    opacity: 1;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    opacity: 0;
+  }
+
+  &:hover {
+    &:before {
+      opacity: 0;
+    }
+
+    &:after {
+      opacity: 1;
+    }
+  }
+
+  &.status {
+    &:before {
+      background-position: center center;
+    }
+
+    &:after {
+      background-position: center center;
+    }
+  }
+
+  &.cargo-planning {
+    &:before {
+      background-position: center center;
+    }
+
+    &:after {
+      background-position: center center;
+    }
+  }
+
+  &.voyages {
+    &:before {
+      background-position: center center;
+    }
+
+    &:after {
+      background-position: center center;
+    }
+  }
 }

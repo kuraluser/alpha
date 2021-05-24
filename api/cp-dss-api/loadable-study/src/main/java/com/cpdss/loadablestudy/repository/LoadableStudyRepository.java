@@ -41,4 +41,14 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
       "UPDATE LoadableStudy LS SET LS.feedbackLoop = ?1, LS.feedbackLoopCount = ?2 WHERE id = ?3")
   public void updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
       Boolean feedbackLoop, Integer feedbackLoopCount, Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadableStudy LS SET LS.isPortsComplete = ?2 WHERE LS.id = ?1")
+  public void updateLoadableStudyIsPortsComplete(Long loadableStudyId, Boolean isPortsComplete);
+
+  /*@Transactional
+  @Modifying
+  @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1, LS.sequenceNo = ?2 WHERE id = ?3")
+  public void updateLoadableStudyUUIDAndSeqNo(String messageUUID, String sequenceNo, Long id);*/
 }

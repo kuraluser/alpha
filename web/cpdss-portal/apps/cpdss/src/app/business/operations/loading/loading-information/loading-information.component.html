@@ -8,9 +8,12 @@
         </div>
         <div class="row">
             <div class="col">
-                <h5>Berth Details</h5>
-                <cpdss-portal-loading-discharging-berth></cpdss-portal-loading-discharging-berth>
+                <h5>Loading Rates</h5>
+                <cpdss-portal-loading-rate></cpdss-portal-loading-rate>
             </div>
+        </div>
+        <div class="row">
+                <cpdss-portal-loading-discharging-berth></cpdss-portal-loading-discharging-berth>
         </div>
         <div class="row">
             <div class="col">
@@ -27,27 +30,98 @@
             </div>
         </div>
         <div class="row">
-            <div class="col">
-                <div>Loadable Study LS1- Loadable Pattern</div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5>NO. OF STAGES</h5>
+                        <div class="row form-group">
+                            <label for="initial_loading_rate"
+                                class="col no-left-padding">{{'Min Amount of stages'}}</label>
+                            <div class="col">
+                                <input type="text" class="form-control"
+                                id="initial_loading_rate"   placeholder="{{'Enter initial loading rate'}}"
+                                [readonly]="false">
+                            </div>
+                             <!-- <div class="col error-column">
+                                <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                    [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                            </div>  -->
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row form-group">
+                            <label for="initial_loading_rate"
+                                class="col no-left-padding">{{'Duration of Each stages'}}</label>
+                            <div class="col">
+                                <input type="text" class="form-control"
+                                id="initial_loading_rate"   placeholder="{{'Enter initial loading rate'}}"
+                                [readonly]="false">
+                            </div>
+                             <!-- <div class="col error-column">
+                                <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                    [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                            </div>  -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
 
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>ADD DELAY</h5>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button >Add Cargo</button>
+                        <button >Add delay</button>
+                    </div>
+                </div>
             </div>
+            <p-table [columns]="delayColumns" [value]="delayData" >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header |  translate}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
+                    <tr>    
+                        <td>{{rowIndex+1}}</td>
+                        <td><p-dropdown #dd id="loading_ratio" styleClass="form-control" [filter]="true"
+                            [options]="[]" [(ngModel)]="rowData.delayReason" optionLabel="name"
+                            placeholder="{{''}}"
+                            [readonly]="false" resetFilterOnHide="true">
+                            </p-dropdown>
+                        </td>
+                        <td>{{rowData?.stageDelay}}</td>
+                        <td>{{rowData?.duration}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+        </div>
+        <div class="row pt-10">
+                <h5>SELECTED CARGO TYPE TOPPING OFF SEQUENCE</h5>
         </div>
         <div class="row">
-            <div class="col-8">
-                Tank Layout
-            </div>
-            <div class="col-4">
-                grade table
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                bottom layout table
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h5>selected cargo type topping off sequence</h5>
+            <div class="col-md-12 pt-5">
+                <div class="row border-bottom border-secondary">
+                    <div class="col-md-3">
+                        <label>Topping Off Rate</label>
+                    </div>
+                    <div class="col-md-9 pb-5">
+                        <input type="text" placeholder="Initial">
+                        <input type="text" placeholder="Final">
+                    </div>
+                </div>
+                <div class="row">
+                    <cpdss-portal-topping-off-tank-table></cpdss-portal-topping-off-tank-table>
+                </div>
             </div>
         </div>
     </div>

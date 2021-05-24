@@ -6,6 +6,8 @@ import { ConfirmationAlertService } from '../../../shared/components/confirmatio
 import { VoyageListApiService } from '../services/voyage-list-api.service';
 import { VoyageListTransformationService } from '../services/voyage-list-transformation.service';
 import { first } from 'rxjs/operators';
+import { AppConfigurationService } from './../../../shared/services/app-configuration/app-configuration.service';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  * Component class for Date Popup compoent
@@ -32,15 +34,18 @@ export class DatePopUpComponent implements OnInit {
   header: string;
   startStopButtonLabel: string;
   today = new Date();
+  popupDateFormat: string;
 
   constructor(private voyageListApiService: VoyageListApiService,
     private voyageListTransformationService: VoyageListTransformationService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private translateService: TranslateService,
     private messageService: MessageService,
     private ngxSpinnerService: NgxSpinnerService,
     private confirmationAlertService: ConfirmationAlertService) { }
 
   ngOnInit(): void {
+    this.popupDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings.dateFormat);
     this.header = this.isStart ? "VOYAGE_HISTORY_START_DATE_POPUP_HEADER" : "VOYAGE_HISTORY_END_DATE_POPUP_HEADER";
     this.startStopButtonLabel = this.isStart ? "VOYAGE_LIST_DATE_POPUP_START_BUTTON" : "VOYAGE_LIST_DATE_POPUP_STOP_BUTTON";
   }
@@ -66,9 +71,10 @@ export class DatePopUpComponent implements OnInit {
   async startStopVoyage() {
     this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_EXIST', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_CONFIRM_LOADABLE_STUDY', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS']).toPromise();
+    const formattedDate = this.timeZoneTransformationService.formatDateTime(this.defaultDate, {customFormat: 'DD-MM-YYYY HH:mm'});
     if (this.isStart) {
       try {
-        const result = await this.voyageListApiService.startVoyage(this.vesselId, this.voyageId, this.voyageListTransformationService.formatDateTime(this.defaultDate, true)).toPromise();
+        const result = await this.voyageListApiService.startVoyage(this.vesselId, this.voyageId, formattedDate).toPromise();
         if (result.responseStatus.status === '200') {
           this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START'] });
         }
@@ -89,7 +95,7 @@ export class DatePopUpComponent implements OnInit {
 
           this.ngxSpinnerService.show();
           try {
-            const result = await this.voyageListApiService.endVoyage(this.vesselId, this.voyageId, this.voyageListTransformationService.formatDateTime(this.defaultDate, true)).toPromise();
+            const result = await this.voyageListApiService.endVoyage(this.vesselId, this.voyageId, formattedDate).toPromise();
             if (result.responseStatus.status === '200') {
               this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP'] });
             }

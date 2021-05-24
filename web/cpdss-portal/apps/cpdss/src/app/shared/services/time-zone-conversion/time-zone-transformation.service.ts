@@ -154,7 +154,7 @@ export class TimeZoneTransformationService {
    * @return {*} 
    * @memberof TimeZoneTransformationService
    */
-  getMappedConfigurationDateFormat(dateTimeFormat: string){
+  getMappedConfigurationDateFormat(dateTimeFormat: string): string {
     const mappedFormat = [...this.dateTimeFormatArray].find(format => (format.dateFormat === dateTimeFormat));
     return mappedFormat.calenderFormat;
   }

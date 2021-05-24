@@ -25,9 +25,9 @@ export class CommonApiService {
   /**
    *  Common get request handler
    */
-  get<T>(apiUri: string): Observable<T> {
+  get<T>(apiUri: string, options?: any): Observable<T> {
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
-    return this.http.get<T>(this.apiGetter(apiUri), {headers:httpHeaders});
+    return this.http.get<T>(this.apiGetter(apiUri), {headers:httpHeaders , responseType: options?.responseType});
   }
 
   /**
@@ -60,4 +60,5 @@ export class CommonApiService {
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
     return this.http.delete<T>(this.apiGetter(apiUri),{headers:httpHeaders});
   }
+
 }

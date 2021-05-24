@@ -7,11 +7,13 @@
 export interface IFleetVoyagePorts {
     portname: string;
     portType: string;
+    portOrder: number;
     anchorage: boolean;
-    prevPort?: string;
-    nextPort?: string;
     vesselName?: string;
     atd?: string;
+    ata?: string;
+    etd?: string;
+    eta?: string;
     iconUrl: string;
     lat: number;
     lon: number;
@@ -32,6 +34,7 @@ export interface IFleetVessel {
     flagImage: string;
     atd: string;
     eta: string;
+    ata?: string;
     imoNo: number;
     voyagePorts?: IFleetVoyagePorts[];
 }
@@ -45,4 +48,24 @@ export interface IFleetVessel {
 export interface IFleetVesselCardEvent {
     vesselId: number;
     originalEvent: MouseEvent;
+}
+
+/**
+ * interface for vessel-notifications
+ *
+ * @export
+ * @interface IFleetNotifications
+ */
+export interface IFleetNotifications {
+    vesselName: string;
+    vesselId: number;
+    flag: string;
+    status: string;
+    updatedDate: string;
+    dateTime?: Date;
+}
+
+export interface IFleetNotificationResponse {
+    current: IFleetNotifications[];
+    all: IFleetNotifications[];
 }

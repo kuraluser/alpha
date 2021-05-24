@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { IVessel } from '../../models/vessel-details.model';
 import { NewVoyageModel } from '../../models/common.model';
 import { VoyageService } from '../../services/voyage.service';
+import { AppConfigurationService } from './../../../../shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,6 +37,7 @@ export class NewVoyagePopupComponent implements OnInit {
   globalTimeZones: ITimeZone[];
   startDateTimeZone: ITimeZone;
   endDateTimeZone: ITimeZone;
+  createVoyageDateFormat: string;
 
   constructor(private fb: FormBuilder, private router: Router,
     private voyageApiService: VoyageService,
@@ -47,6 +49,8 @@ export class NewVoyagePopupComponent implements OnInit {
   ngOnInit(): void {
     this.date = new Date();
     this.errorMessages = this.voyageApiService.setValidationErrorMessage();
+    this.createVoyageDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings.dateFormat);
+
     this.getVesselInfo();
     this.getTimeZoneList();
   }
@@ -199,12 +203,7 @@ export class NewVoyagePopupComponent implements OnInit {
   convertToTimeZoneDT(dateTime: Date | string, portTimezoneId: number): string {
     if (dateTime && portTimezoneId) {
       const selectedTimeZone: ITimeZone = this.globalTimeZones.find(tz => (tz.id === portTimezoneId));
-      const formatOptions: IDateTimeFormatOptions = {
-        portLocalFormat: true,
-        portTimeZoneOffset: selectedTimeZone?.offsetValue,
-        portTimeZoneAbbr: selectedTimeZone?.abbreviation
-      };
-      return this.timeZoneTransformationService.revertZoneTimetoUTC(dateTime, selectedTimeZone.offsetValue);
+      return this.timeZoneTransformationService.revertZoneTimetoUTC(dateTime, selectedTimeZone?.offsetValue);
     }
   }
 }

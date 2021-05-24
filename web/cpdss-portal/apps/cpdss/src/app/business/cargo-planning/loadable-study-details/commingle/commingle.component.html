@@ -127,7 +127,7 @@
             <form [formGroup]="commingleManualForm">
                 <div class="form-group row">
                     <div class="col">
-                        <cpdss-portal-datatable [tableId]="'commingle'" [listData]="listData"
+                        <cpdss-portal-datatable [tableId]="'commingle'" [scrollable]="false" [listData]="listData"
                             [form]="commingleManualForm" [columns]="columns" [editMode]="editMode"
                             [value]="manualCommingleList" [filterable]="true" (editComplete)="onEditComplete($event)"
                             (deleteRow)="onDeleteRow($event)">

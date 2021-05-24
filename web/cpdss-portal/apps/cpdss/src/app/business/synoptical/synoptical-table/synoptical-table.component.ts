@@ -358,7 +358,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
           validators: ['dddd.dddd.+'],
-          numberFormat: '1.4-4'
+          numberFormat: AppConfigurationService.settings?.sgNumberFormat
         }],
         editable: true,
       },
@@ -591,11 +591,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             header: "",
             subHeaders: [
               {
-                fields: [{ key: 'cargoPlannedTotal' }],
-                header: 'Plan'
+                fields: [{ key: 'cargoPlannedTotal', numberType: 'quantity', unit: 'MT' }],
+                header: 'Plan',
               },
               {
-                fields: [{ key: 'cargoActualTotal' }],
+                fields: [{ key: 'cargoActualTotal', numberType: 'quantity', unit: 'MT' }],
                 header: 'Actual',
               },
             ]
@@ -613,11 +613,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             subHeaders: [
               {
                 header: 'Plan',
-                fields: [{ key: 'plannedFOTotal' }],
+                fields: [{ key: 'plannedFOTotal', numberType: 'quantity', unit: 'MT' }],
               },
               {
                 header: 'Actual',
-                fields: [{ key: 'actualFOTotal' }],
+                fields: [{ key: 'actualFOTotal', numberType: 'quantity', unit: 'MT' }],
               },
             ]
           }
@@ -634,11 +634,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             subHeaders: [
               {
                 header: 'Plan',
-                fields: [{ key: 'plannedDOTotal', }],
+                fields: [{ key: 'plannedDOTotal', numberType: 'quantity', unit: 'MT'}],
               },
               {
                 header: 'Actual',
-                fields: [{ key: 'actualDOTotal', }],
+                fields: [{ key: 'actualDOTotal', numberType: 'quantity', unit: 'MT' }],
               },
             ]
           }
@@ -655,11 +655,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             subHeaders: [
               {
                 header: 'Plan',
-                fields: [{ key: 'plannedFWTotal' }],
+                fields: [{ key: 'plannedFWTotal', numberType: 'quantity', unit: 'MT' }],
               },
               {
                 header: 'Actual',
-                fields: [{ key: 'actualFWTotal' }],
+                fields: [{ key: 'actualFWTotal', numberType: 'quantity', unit: 'MT' }],
               },
             ]
           }
@@ -676,11 +676,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             subHeaders: [
               {
                 header: 'Plan',
-                fields: [{ key: 'plannedLubeTotal' }],
+                fields: [{ key: 'plannedLubeTotal', numberType: 'quantity', unit: 'MT'}],
               },
               {
                 header: 'Actual',
-                fields: [{ key: 'actualLubeTotal' }],
+                fields: [{ key: 'actualLubeTotal', numberType: 'quantity', unit: 'MT' }],
+                
               },
             ]
           }
@@ -699,7 +700,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 header: "Plan",
                 fields: [{
                   key: "ballastPlannedTotal",
-                  type: this.fieldType.NUMBER
+                  type: this.fieldType.NUMBER,
+                  numberType: 'quantity',
+                  unit: 'MT'
                 }],
                 editable: false
               },
@@ -707,7 +710,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 header: "Actual",
                 fields: [{
                   key: "ballastActualTotal",
-                  type: this.fieldType.NUMBER
+                  type: this.fieldType.NUMBER,
+                  numberType: 'quantity',
+                  unit: 'MT'
                 }],
                 editable: false,
               },
@@ -726,6 +731,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'othersPlanned',
                 type: this.fieldType.NUMBER,
+                numberType: 'quantity',
+                unit: 'MT',
                 validators: ['required', 'ddddddd.dd.+']
               }],
               editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
@@ -735,7 +742,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'othersActual',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.dd.+']
+                numberType: 'quantity',
+                validators: ['required', 'ddddddd.dd.+'],
+                unit: 'MT'
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -753,7 +762,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'constantPlanned',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                numberType: 'quantity',
+                validators: ['required', 'ddddddd.+'],
+                unit: 'MT'
               }],
               editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
@@ -762,7 +773,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'constantActual',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                numberType: 'quantity',
+                validators: ['required', 'ddddddd.+'],
+                unit: 'MT'
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -780,7 +793,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'totalDwtPlanned',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                numberType: 'quantity',
+                validators: ['required', 'ddddddd.+'],
+                unit: 'MT'
               }],
               editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
@@ -789,7 +804,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'totalDwtActual',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                numberType: 'quantity',
+                validators: ['required', 'ddddddd.+'],
+                unit: 'MT'
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -807,7 +824,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'displacementPlanned',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                numberType: 'quantity',
+                validators: ['required', 'ddddddd.+'],
+                unit: 'MT'
               }],
               editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
@@ -816,7 +835,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'displacementActual',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                numberType: 'quantity',
+                validators: ['required', 'ddddddd.+'],
+                unit: 'MT'
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -1022,6 +1043,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         key.fields.forEach(field => {
           const tempField = JSON.parse(JSON.stringify(field))
           tempField['key'] = fieldKey + item.id + field['key']
+          if(field.type === 'NUMBER'){
+            tempField['numberType'] = 'quantity';
+            tempField['unit'] = 'MT';
+          }
           if (item.max) {
             tempField['max'] = item.max;
           }
@@ -1035,7 +1060,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           subHeaders: [
             {
               header: item.header,
-              subHeaders: subHeaders
+              subHeaders: subHeaders,
             }
           ],
         }

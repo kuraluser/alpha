@@ -222,6 +222,9 @@ export class NumberDecimalDirective {
       const allowedLength = maxLength - this.inputElement.value.length;
       result = allowedLength > 0 ? result.substring(0, allowedLength) : '';
     }
+    if(Number(input) > this.max){
+      result = ''
+    }
     return result;
   }
 

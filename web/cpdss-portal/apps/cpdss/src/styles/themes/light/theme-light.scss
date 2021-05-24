@@ -1319,6 +1319,12 @@ header{
 .badge-muted{
   background: $muted;
 }
+.badge-success{
+  background: $green;
+}
+.badge-danger{
+  background: $red;
+}
 .action-btn {
   color: $main-head!important;
 }

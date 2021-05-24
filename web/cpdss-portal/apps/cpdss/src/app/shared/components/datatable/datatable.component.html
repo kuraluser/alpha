@@ -210,7 +210,7 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
-                                        <span (click)="onCellValueClick($event, rowData, rowIndex, col)">{{
+                                        <span (click)="onClick($event, rowData, rowIndex, col)">{{
                                             col?.numberType === 'quantity' ? (rowData[col.field]?.value | quantityDecimalFormat: col.unit) : rowData[col.field]?.value | number:
                                             col?.numberFormat}}{{rowData[col.field]?.value? col.fieldSuffix
                                             : ''}}
@@ -365,7 +365,11 @@
 
                     </td>
                     <td *ngFor="let col of columns; let i = index">
-                        {{getTotal(col, i) | quantityDecimalFormat}}
+                        <ng-container *ngIf="i !== 0;else totalRef">
+                            {{ col?.numberType === 'quantity' ? (getTotal(col, i) | quantityDecimalFormat: col?.unit) :
+                            (getTotal(col, i) | number: col?.numberFormat)}}
+                        </ng-container>
+                        <ng-template #totalRef>{{ getTotal(col, i) }}</ng-template>
                     </td>
                 </tr>
             </ng-template>

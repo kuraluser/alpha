@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { whiteSpaceValidator } from '../../directives/space-validator.directive';
 import { saveAs } from 'file-saver';
+import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
 
 /**
  *  popup for creating / editing loadable-study
@@ -79,7 +80,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private ngxSpinnerService: NgxSpinnerService) { }
+    private ngxSpinnerService: NgxSpinnerService,
+    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService) { }
 
   ngOnInit(): void {
     this.deletedAttachments = [];
@@ -148,13 +150,13 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     if (this.newLoadableStudyFormGroup.valid) {
       const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
       this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
-      const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST','LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY', 'NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED']).toPromise();
+      const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST', 'LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY', 'NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED']).toPromise();
       let isLoadableStudyAvailable;
       isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object;
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
           id: this.isEdit ? this.selectedLoadableStudy.id : 0,
-          createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ? 
+          createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
             this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
           name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
           detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
@@ -173,6 +175,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
           if (result.responseStatus.status === "200") {
             if (this.isEdit) {
+              if (this.isLoadlineChanged()) {
+                this.loadableStudyDetailsTransformationService.setLoadLineChange();
+              }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
@@ -181,10 +186,10 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             this.addedNewLoadableStudy.emit(result.loadableStudyId)
           }
         } catch (error) {
-          if(error.error.errorCode === 'ERR-RICO-105') {
+          if (error.error.errorCode === 'ERR-RICO-105') {
             this.newLoadableStudyNameExist = true;
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST'] });
-          } else if(error.error.errorCode === 'ERR-RICO-110') {
+          } else if (error.error.errorCode === 'ERR-RICO-110') {
             const messageKey = this.isEdit ? translationKeys['NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED'] : this.newLoadableStudyPopupModel?.createdFromId ? translationKeys['NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED'] : translationKeys['NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED'];
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: messageKey, life: 10000 });
           }
@@ -233,10 +238,10 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           continue;
         }
       }
-      const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR' , 'NEW_LOADABLE_STUDY_LIST_POPUP_ERROR']).toPromise();
-      if(sizeErrorFiles?.length) {
-        const errMessage = sizeErrorFiles.toString() + ' '+ translationKeys['NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR'];
-        this.messageService.add({ severity: 'error', summary: translationKeys['NEW_LOADABLE_STUDY_LIST_POPUP_ERROR'], detail:  errMessage});
+      const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR', 'NEW_LOADABLE_STUDY_LIST_POPUP_ERROR']).toPromise();
+      if (sizeErrorFiles?.length) {
+        const errMessage = sizeErrorFiles.toString() + ' ' + translationKeys['NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR'];
+        this.messageService.add({ severity: 'error', summary: translationKeys['NEW_LOADABLE_STUDY_LIST_POPUP_ERROR'], detail: errMessage });
       }
     } else {
       this.showError = true;
@@ -248,7 +253,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   //open selected file
-  openFile(index, fileID = null , file?: any) {
+  openFile(index, fileID = null, file?: any) {
     const fileName = file?.name ? file?.name : file?.fileName
     if (fileID) {
       this.loadableStudyListApiService.downloadAttachment(this.vesselInfoList?.id, this.voyage.id, this.selectedLoadableStudy?.id, fileID).subscribe((data) => {
@@ -264,7 +269,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   //remove selected file
-  removeFile(index,  fileID = null) {
+  removeFile(index, fileID = null) {
     if (fileID) {
       this.deletedAttachments.push(fileID);
     }
@@ -304,16 +309,16 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         loadLineXId: loadableStudyObj.loadLineXId,
         draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
       }
-      if(loadableStudyObj?.createdFromId) {
+      if (loadableStudyObj?.createdFromId) {
         this.loadableStudyList?.map((loadableStudy) => {
-          if(loadableStudyObj.createdFromId === loadableStudy.id) {
+          if (loadableStudyObj.createdFromId === loadableStudy.id) {
             this.newLoadableStudyFormGroup.patchValue({
               duplicateExisting: loadableStudy
             })
           }
         })
       }
-      
+
       this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
     } else {
       this.newLoadableStudyFormGroup.patchValue({

@@ -1,29 +1,50 @@
-<div class="row vessel-card mr-25 pt-10" [ngClass]="{'active-vessel': vessel.id === selectedVesselId}"
+<div class="vessel-card mr-10 mb-10 pt-10 pl-10 pb-10" [ngClass]="{'active-vessel': vessel.id === selectedVesselId}"
   (click)="onClickVesselCard($event, vessel)" *ngFor="let vessel of vesselValues">
-  <div class="col-md-2">
-    <img src="{{vessel.flagImage}}" width="42" height="30">
+  <div class="">
+    <img src="{{vessel.flagImage}}" width="30" height="20">
   </div>
-  <div class="col-md-10">
-    <div class="row">
-      <div class="col">
-        <h5>{{vessel.vesselName}}</h5>
-      </div>
+  <div class="">
+    <div class="vessel-card-content">
+      <div class="col text-lead">{{vessel.vesselName}}</div>
     </div>
-    <div class="row">
-      <div class="col">
-        <div>{{'VESSEL_INFO_IMO' | translate}} {{vessel.imoNo}}</div>
-      </div>
+    <div class="vessel-card-content">
+      <div class="col">{{'VESSEL_INFO_IMO' | translate}} {{vessel.imoNo}}</div>
     </div>
-    <div class="row">
+    <div class="vessel-card-content">
       <div class="col"> &nbsp; </div>
     </div>
-    <div class="row">
+    <div class="vessel-card-content">
+      <div class="col-6 text-medium">{{'FLEET_PORT_ATD' | translate}} {{vessel.atd | momentFormat: 'DD-MMM-YYYY'}}</div>
+      <div class="col-6 text-right text-medium" *ngIf="vessel?.ata">{{'FLEET_PORT_ATA' | translate}} {{vessel.ata | momentFormat: 'DD-MMM-YYYY'}}</div>
+      <div class="col-6 text-right text-medium" *ngIf="!vessel?.ata">{{'FLEET_PORT_ETA' | translate}} {{vessel.eta | momentFormat: 'DD-MMM-YYYY'}}</div>
+    </div>
+    <div class="vessel-card-content">
       <div class="col-6">
-        <div>{{vessel.voyageStart}}</div>
+        <div class="text-medium">{{vessel.voyageStart}}</div>
       </div>
       <div class="col-6 text-right">
-        <div>{{vessel.voyageEnd}}</div>
+        <div class="text-medium">{{vessel.voyageEnd}}</div>
       </div>
     </div>
+
+    <!-- Will use in future -->
+    <!-- <div class="vessel-card-content">
+      <div class="col-12">
+        <div class="progress progress-vessel">
+          <div class="progress-bar bg-success" [style.width.%]=20 tooltip="20%" role="progressbar">
+            <img src="../../../../assets/images/arrow-green.png" class="arrow-end" style="display: inherit; width: auto;">
+          </div>
+        </div>
+      </div>
+    </div> -->
   </div>
+
+  <div class="vessel-card-submenu">
+    <ul class="pl-0">
+      <li><div [routerLink]="['/business/voyage-status']" class="menu-item-icon status"></div></li>
+      <li><div [routerLink]="['/business/cargo-planning']" class="menu-item-icon cargo-planning"></div></li>
+      <li><div [routerLink]="['/business/voyages']" class="menu-item-icon voyages"></div></li>
+    </ul>
+  </div>
+
 </div>

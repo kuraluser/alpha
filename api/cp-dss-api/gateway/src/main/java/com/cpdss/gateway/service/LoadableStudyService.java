@@ -9,7 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
-import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
+import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -3759,6 +3759,11 @@ public class LoadableStudyService {
     buildLoadableStudyBallastDetails(response, grpcReply);
     buildSynopticalTableDetails(response, loadableStudyId, vesselId, loadablePatternId);
     buildLoadablePlanComments(response, grpcReply);
+    response.setLoadableQuantity(
+        isEmpty(grpcReply.getTotalLoadableQuantity())
+            ? null
+            : new BigDecimal(grpcReply.getTotalLoadableQuantity()));
+    response.setLastModifiedPort(grpcReply.getLastModifiedPort());
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
@@ -3778,6 +3783,7 @@ public class LoadableStudyService {
     response.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
     response.setValidated(grpcReply.getValidated());
     response.setLoadableStudyStatusId(grpcReply.getLoadableStudyStatusId());
+    response.setConfirmPlanEligibility(grpcReply.getConfirmPlanEligibility());
   }
 
   /**
@@ -4007,6 +4013,7 @@ public class LoadableStudyService {
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+              cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
@@ -4782,6 +4789,9 @@ public class LoadableStudyService {
                       cargo.setId(synopticalCargoRecord.getCargoId());
                       cargo.setPlannedWeight(synopticalCargoRecord.getPlannedWeight());
                       cargo.setActualWeight(synopticalCargoRecord.getActualWeight());
+                      cargo.setAbbreviation(synopticalCargoRecord.getAbbreviation());
+                      cargo.setApi(synopticalCargoRecord.getApi().toString());
+                      cargo.setTemp(synopticalCargoRecord.getTemperature().toString());
                       cargoConditions.add(cargo);
                     }
                   });
@@ -5645,8 +5655,9 @@ public class LoadableStudyService {
 
   /** @return Object */
   public Object test() {
-    LoadableStudyJson.Builder error = LoadableStudyJson.newBuilder();
-    this.envoyWriterGrpcService.getLoadableStudy(error.build());
+    EnvoyWriterRequest.Builder error = EnvoyWriterRequest.newBuilder();
+    error.setImoNumber("123");
+    this.envoyWriterGrpcService.getCommunicationServer(error.build());
     return null;
   }
 }

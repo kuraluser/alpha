@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject } from '../../models/cargo-planning.model';
@@ -19,7 +19,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 
 /**
- * Component for OBQ tab 
+ * Component for OBQ tab
  *
  * @export
  * @class OnBoardQuantityComponent
@@ -51,7 +51,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   @Input() vesselId: number;
 
   @Input() permission: IPermission;
-  
+
   @Input()
   get loadableStudy() {
     return this._loadableStudy;
@@ -106,8 +106,8 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     this.scrollToSelectedRow(this.selectedIndex);
     this.onRowSelection({ data: this.selectedTank, index: this.selectedIndex });
   }
-  
-  
+
+
   editMode: DATATABLE_EDITMODE;
   cargoList = [];
   selectedPort: IPort;
@@ -124,7 +124,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
   private _selectedTank: IPortOBQTankDetailValueObject;
   private _loadableStudyId: number;
-  private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];  
+  private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];
   private _quantitySelectedUnit: QUANTITY_UNIT;
   private _prevQuantitySelectedUnit: QUANTITY_UNIT;
   private _loadableStudy: LoadableStudy;
@@ -175,7 +175,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       this.selectedPort = obqPorts[0];
       await this.getPortOBQDetails(this.selectedPort?.id);
       this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
-      
+
       const hasPendingUpdates = await this.checkForPendingUpdates();
       if (hasPendingUpdates) {
         this.dataTableLoading = true;
@@ -297,17 +297,17 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     event.data.volume = volume ?? 0;
 
     if(event?.field === 'api'){
-      formGroup.controls.quantity.updateValueAndValidity();   
+      formGroup.controls.quantity.updateValueAndValidity();
     }
 
     if (formGroup.valid  && formGroup.controls.api.value && formGroup.controls.quantity.value) {
       event.data.processing = true;
-      const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);     
+      const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.obqForm.controls.dataTable.valid);
       this.updateTankList();
       this.setFillingPercentage(this.selectedTankId);
-    } 
+    }
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
       if((this.selectedPortOBQTankDetails[event.index][key]).hasOwnProperty('_isEditMode')) {
@@ -315,7 +315,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
         control.markAsTouched();
         this.obqForm.updateValueAndValidity();
       }
-    });  
+    });
 
     this.obqForm.controls.api.setValue(Number(formGroup.controls.api.value));
     this.obqForm.controls.quantity.setValue(Number(formGroup.controls.quantity.value));
@@ -424,7 +424,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   }
 
   /**
- * Get form control of form 
+ * Get form control of form
  *
  * @param {number} formGroupIndex
  * @param {string} formControlName
@@ -463,7 +463,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
           quantity: selectedPortOBQTankDetail.quantity?.value,
           volume: selectedPortOBQTankDetail?.volume ?? 0,
           colorCode: selectedPortOBQTankDetail?.colorCode,
-          api: selectedPortOBQTankDetail?.api?.value 
+          api: selectedPortOBQTankDetail?.api?.value
         }
         return tank;
       });
@@ -579,17 +579,17 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     const _selectedPortOBQTankDetails = this.selectedPortOBQTankDetails?.map(obqTankDetail => {
       if (obqTankDetail.api.value) {
         const _prevQuantitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
-        
+
           obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value , '' , -1);
           obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value) : 0;
-          const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, obqTankDetail?.api?.value);
+          const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, QUANTITY_UNIT.OBSKL, obqTankDetail?.api?.value, obqTankDetail?.temperature);
           obqTankDetail.volume = volume ?? 0;
 
           // setting converted values to the form below tank layout
           if(obqTankDetail.tankId === this.selectedTankId) {
             this.obqForm.controls.quantity.setValue(obqTankDetail.quantity.value);
           }
-        
+
         const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
         if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
           const fullCapacity = this.quantityPipe.transform(obqTankDetail.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
@@ -615,6 +615,32 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     const _selectedPortOBQTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(selectedPortOBQTankDetails);
     _selectedPortOBQTankDetail.quantity = this.quantityPipe.transform(_selectedPortOBQTankDetail?.quantity, this.quantitySelectedUnit, QUANTITY_UNIT?.MT, _selectedPortOBQTankDetail?.api);
     return _selectedPortOBQTankDetail;
+  }
+
+  /**
+   * Handler for filter event
+   *
+   * @param {IDataTableFilterEvent} event
+   * @memberof OnBoardQuantityComponent
+   */
+  onFilter(event: IDataTableFilterEvent) {
+    this.dataTableLoading = true;
+    const obqTankDetailsArray = event?.filteredValue?.map((obqTankDetails) => this.initOBQFormGroup(obqTankDetails));
+    this.obqForm.setControl('dataTable', this.fb.array([...obqTankDetailsArray]));
+    this.dataTableLoading = false;
+  }
+
+  /**
+   * Handler for datatable sort event
+   *
+   * @param {IDataTableSortEvent} event
+   * @memberof OnBoardQuantityComponent
+   */
+  onSort(event: IDataTableSortEvent) {
+    this.dataTableLoading = true;
+    const obqTankDetailsArray = event?.data?.map((obqTankDetails) => this.initOBQFormGroup(obqTankDetails));
+    this.obqForm.setControl('dataTable', this.fb.array([...obqTankDetailsArray]));
+    this.dataTableLoading = false;
   }
 
 }

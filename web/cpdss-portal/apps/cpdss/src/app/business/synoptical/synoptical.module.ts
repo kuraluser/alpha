@@ -17,6 +17,7 @@ import { NumberDirectiveModule } from '../../shared/directives/number-directive/
 import { SynopticalApiService } from './services/synoptical-api.service';
 import { PermissionDirectiveModule } from '../../shared/directives/permission/permission-directive.module';
 import { TooltipModule } from 'primeng/tooltip';
+import { QuantityDecimalFormatPipeModule } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
  * Module for Synoptical Table
@@ -41,7 +42,8 @@ import { TooltipModule } from 'primeng/tooltip';
     CalendarModule,
     NumberDirectiveModule,
     PermissionDirectiveModule,
-    TooltipModule
+    TooltipModule,
+    QuantityDecimalFormatPipeModule
   ],
   providers: [
     LoadableStudyListApiService,

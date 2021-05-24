@@ -242,12 +242,12 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Event handler for grid cell click
-   *
-   * @param {ICargoNominationEvent} event
-   * @memberof CargoNominationComponent
-   */
-  async onCellValueClick(event: ICargoNominationEvent) {
+* Event handler for grid column click
+*
+* @param {ICargoNominationEvent} event
+* @memberof CargoNominationComponent
+*/
+  async onColumnClick(event: ICargoNominationEvent) {
     this.ngxSpinnerService.show();
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
     if (event.field === 'loadingPorts' || event.field === 'quantity') {
@@ -265,7 +265,19 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         }
         this.openLoadingPopup = true;
       }
-    } else if (['api', 'temperature'].includes(event.field)) {
+    }
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Event handler for grid cell click
+   *
+   * @param {ICargoNominationEvent} event
+   * @memberof CargoNominationComponent
+   */
+  async onCellValueClick(event: ICargoNominationEvent) {
+    this.ngxSpinnerService.show();
+    if (['api', 'temperature'].includes(event.field)) {
       if (event.data?.cargo?.value) {
         this.apiTempPopupData = <IApiTempPopupData>{
           rowDataCargo: event.data?.loadingPorts?.value,
@@ -330,7 +342,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       event.data.cargo.value.ports = result?.ports;
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
-    } else if (event.field === 'loadingPorts'){
+    } else if (event.field === 'loadingPorts') {
       const cargoId = event.data.cargo.value.id;
       const ports = event.data.loadingPorts.value;
       const portId = ports[ports.length - 1].id
@@ -449,6 +461,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
       if (res) {
+        this.loadableStudyDetailsTransformationService.portUpdated();
         this.cargoNominations[valueIndex].isAdd = false;
         for (const key in this.cargoNominations[valueIndex]) {
           if (this.cargoNominations[valueIndex].hasOwnProperty(key) && this.cargoNominations[valueIndex][key].hasOwnProperty('_isEditMode')) {
@@ -643,7 +656,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }
-      if(event?.data?.status === '401' && event?.data?.errorCode === '210'){
+      if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
         this.globalErrorHandler.sessionOutMessage();
       }
     }
@@ -761,10 +774,10 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   onFilter(event: IDataTableFilterEvent) {
-    this.ngxSpinnerService.show();
+    this.dataTableLoading = true;
     const cargoNominationArray = event?.filteredValue?.map(cargoNomination => this.initCargoNominationFormGroup(cargoNomination));
-    this.cargoNominationForm.controls.dataTable = this.fb.array([...cargoNominationArray]);
-    this.ngxSpinnerService.hide();
+    this.cargoNominationForm.setControl('dataTable', this.fb.array([...cargoNominationArray]));
+    this.dataTableLoading = false;
   }
 
   /**
@@ -774,10 +787,10 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   onSort(event: IDataTableSortEvent) {
-    this.ngxSpinnerService.show();
+    this.dataTableLoading = true;
     const cargoNominationArray = event?.data?.map(cargoNomination => this.initCargoNominationFormGroup(cargoNomination));
-    this.cargoNominationForm.controls.dataTable = this.fb.array([...cargoNominationArray]);
-    this.ngxSpinnerService.hide();
+    this.cargoNominationForm.setControl('dataTable', this.fb.array([...cargoNominationArray]));
+    this.dataTableLoading = false;
   }
 
   /**
@@ -820,7 +833,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   async onUnitChangeBlocked() {
-    const translationKeys = await this.translateService.get(['UNIT_CHANGE_API_ERROR','UNIT_CHANGE_API_ERROR_DETAILS']).toPromise();
+    const translationKeys = await this.translateService.get(['UNIT_CHANGE_API_ERROR', 'UNIT_CHANGE_API_ERROR_DETAILS']).toPromise();
     this.messageService.add({ severity: 'error', summary: translationKeys['UNIT_CHANGE_API_ERROR'], detail: translationKeys['UNIT_CHANGE_API_ERROR_DETAILS'] });
 
   }

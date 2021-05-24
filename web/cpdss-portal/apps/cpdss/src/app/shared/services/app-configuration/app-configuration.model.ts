@@ -19,6 +19,8 @@ export interface IAppConfiguration {
     quantityNumberFormatMT?: string,
     quantityNumberFormatOBSBBLS?: string,
     quantityNumberFormatLT?: string
-    defaultWeightUnit: QUANTITY_UNIT
+    defaultWeightUnit: QUANTITY_UNIT,
+    maxFillingPercentage: string,
+    sgNumberFormat: string
 }
 

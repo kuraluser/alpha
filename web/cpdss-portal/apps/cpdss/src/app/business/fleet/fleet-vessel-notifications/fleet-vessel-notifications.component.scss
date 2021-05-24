@@ -1,0 +1,86 @@
+.notification-panel {
+  width: 100%;
+  height: calc(100vh - 100px);
+  border-radius: 10px;
+  background-color: #c1c8d3f5;
+  padding: 10px;
+}
+
+.notification-list {
+  max-height: calc(100vh - 270px);
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  overflow-y: auto;
+}
+
+.notification-item {
+  display: flex;
+  width: 100%;
+  padding-top: 5px;
+
+  .flag-container {
+    width: 12%;
+  }
+
+  .notification-details {
+    width: 88%;
+    padding-right: 5px;
+
+    p {
+      height: 10px;
+    }
+
+    .text-medium {
+      font-size: 11px;
+      color: black;
+    }
+  }
+}
+
+.notification-item:not(:last-child) {
+  border-bottom: 1px solid rgb(56, 56, 56);
+  border-bottom-width: thin;
+}
+
+.notification-item:hover {
+  cursor: pointer;
+  background-color: #aec4e0;
+}
+
+.switch-tabs {
+  display: flex;
+  margin-bottom: 5px;
+
+  div {
+    width: 50%;
+  }
+
+  div a {
+    padding: 5px 10px;
+  }
+}
+
+.switch-tabs div:not(:last-child) {
+  border-right: 1px solid rgb(56, 56, 56);
+  border-right-width: thin;
+}
+
+.filters {
+  display: flex;
+  margin-bottom: 5px;
+  width: 100%;
+
+  div input {
+    border-bottom: 1px solid #005397;
+    width: 100%;
+  }
+}
+
+.filters div:first-child {
+  padding-right: 5px;
+  width: 54%;
+}
+
+.filters div:last-child {
+  width: 46%;
+}

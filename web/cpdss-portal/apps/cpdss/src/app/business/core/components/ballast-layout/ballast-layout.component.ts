@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ITank, ITankOptions } from '../../models/common.model';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component class for ballast tank layout
@@ -61,6 +62,7 @@ export class BallastLayoutComponent implements OnInit {
   private _tanks: ITank[][];
   private _rearTanks: ITank[][];
   private _frontTanks: ITank[][];
+  readonly sgNumberFormat = AppConfigurationService.settings?.sgNumberFormat;
 
   constructor() { }
 

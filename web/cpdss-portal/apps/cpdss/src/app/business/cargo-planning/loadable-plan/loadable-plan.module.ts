@@ -27,6 +27,7 @@ import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error
 import { TooltipModule } from 'primeng/tooltip';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
+import { PortRotationPopupModule } from '../../core/components/port-rotation-popup/port-rotation-popup.module';
 /**
  * Module for loadable plan
  *
@@ -49,7 +50,8 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
     ErrorLogPopupModule,
     ValidationErrorModule,
     TooltipModule,
-    QuantityDecimalFormatPipeModule
+    QuantityDecimalFormatPipeModule,
+    PortRotationPopupModule
   ],
   providers: [QuantityDecimalFormatPipe , LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe, LoadableStudyListApiService ],
   exports: [

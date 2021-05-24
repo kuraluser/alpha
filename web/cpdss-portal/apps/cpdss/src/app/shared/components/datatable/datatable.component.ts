@@ -42,7 +42,7 @@ export class DatatableComponent implements OnInit {
     const colsWithSubCol = columns.filter(col => col?.columns?.length);
     this.totalColSpan = columns.length - colsWithSubCol?.length;
     colsWithSubCol.forEach(col => {
-      this.totalColSpan += + col?.columns.length;
+      this.totalColSpan += col?.columns.length;
     });
     this.setActions(columns);
   }
@@ -59,6 +59,7 @@ export class DatatableComponent implements OnInit {
           dataTable: this.fb.array([...this.value])
         });
       }
+      this.filteredValue = value;
     }
   }
 
@@ -76,7 +77,14 @@ export class DatatableComponent implements OnInit {
 
   @Input() selectionMode: DATATABLE_SELECTIONMODE;
 
-  @Input() progress = false;
+  @Input()
+  get progress(): boolean {
+    return this._progress;
+  }
+  set progress(value) {
+    this._progress = value;
+    this.totalColSpan += value ? 1 : 0;
+  }
 
   @Input()
   get editMode(): DATATABLE_EDITMODE {
@@ -94,7 +102,14 @@ export class DatatableComponent implements OnInit {
 
   @Input() sortMode: boolean;
 
-  @Input() tableRowReOrder = false;
+  @Input()
+  get tableRowReOrder(): boolean {
+    return this._tableRowReOrder;
+  }
+  set tableRowReOrder(value) {
+    this._tableRowReOrder = value;
+    this.totalColSpan += value ? 1 : 0;
+  }
 
   @Input() tableId: string;
 
@@ -214,6 +229,7 @@ export class DatatableComponent implements OnInit {
   totalColSpan: number;
   customSort: boolean;
   filterObject: object = {};
+  filteredValue: Array<any>;
 
 
   // private fields
@@ -229,6 +245,8 @@ export class DatatableComponent implements OnInit {
   private _currentPage: number;
   private _loading: boolean;
   private _first: number;
+  private _progress = false;
+  private _tableRowReOrder = false;
 
 
   // public methods
@@ -236,7 +254,7 @@ export class DatatableComponent implements OnInit {
     private translateService: TranslateService,
     private timeZoneTransformationService: TimeZoneTransformationService,
     private fb: FormBuilder,
-    private decimalPipe: DecimalPipe) {}
+    private decimalPipe: DecimalPipe) { }
 
   ngOnInit(): void {
     this._first = 0;
@@ -323,11 +341,11 @@ export class DatatableComponent implements OnInit {
 
   /**
    * Handler for cell tab on focus event
-   * @param event 
-   * @param rowData 
-   * @param rowIndex 
-   * @param col 
-   * @param colIndex 
+   * @param event
+   * @param rowData
+   * @param rowIndex
+   * @param col
+   * @param colIndex
    */
   onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
@@ -343,11 +361,11 @@ export class DatatableComponent implements OnInit {
 
   /**
   * Handler for cell on click event
-  * @param event 
-  * @param rowData 
-  * @param rowIndex 
-  * @param col 
-  * @param colIndex 
+  * @param event
+  * @param rowData
+  * @param rowIndex
+  * @param col
+  * @param colIndex
   */
   onClick(event, rowData, rowIndex, col: IDataTableColumn) {
     if (rowData[col.field]?.isEditable && this.row(rowIndex) && this.editMode && (col.editable === undefined || col.editable) && col.fieldType !== this.fieldType.ACTION) {
@@ -364,10 +382,11 @@ export class DatatableComponent implements OnInit {
    */
   onFilter(event: IDataTableFilterEvent) {
     this.filter.emit(event);
+    this.filteredValue = event.filteredValue;
   }
 
   /**
-   * Get form control of form 
+   * Get form control of form
    *
    * @param {number} formGroupIndex
    * @param {string} formControlName
@@ -419,7 +438,7 @@ export class DatatableComponent implements OnInit {
 
   /**
    * for setting focus on filter of drop down.
-   * 
+   *
    * @param {DropDown} dropDown
    */
   setDropDownFocus(dropDown: Dropdown): void {
@@ -639,7 +658,7 @@ export class DatatableComponent implements OnInit {
 
   /**
    * Method for filtering date on enter key press
-   * @param value 
+   * @param value
    */
   onDateFilter(value, col, field) {
     if (col?.filterByServer) {
@@ -728,12 +747,12 @@ export class DatatableComponent implements OnInit {
   }
 
   /**
-  * On closing Date panel 
+  * On closing Date panel
   */
   onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any) {
     const formControl = this.field(formGroupIndex, formControlName);
     const oldValue = rowData[formControlName].value;
-    const newValue = this.convertDT_PortBasedTimeZone(formControl.value, rowData.port.value.timezoneOffsetVal, rowData.port.value.timezoneAbbreviation);
+    const newValue = formControl.value ? this.convertDT_PortBasedTimeZone(formControl.value, rowData.port.value?.timezoneOffsetVal, rowData.port.value?.timezoneAbbreviation) : null;
     rowData[formControlName].value = newValue;
     rowData[formControlName].isEditMode = formControl?.invalid;
     if (oldValue !== newValue) {
@@ -793,8 +812,8 @@ export class DatatableComponent implements OnInit {
 
   /**
    * Checks field disabled or not
-   * @param formGroupIndex 
-   * @param formControlName 
+   * @param formGroupIndex
+   * @param formControlName
    */
   disabledField(formGroupIndex: number, formControlName: string) {
     const formControl = this.field(formGroupIndex, formControlName);
@@ -804,8 +823,8 @@ export class DatatableComponent implements OnInit {
 
   /**
  * Get the total value of a column
- * @param col 
- * @param index 
+ * @param col
+ * @param index
  */
   getTotal(col: IDataTableColumn, index: number) {
     if (!index)
@@ -813,7 +832,7 @@ export class DatatableComponent implements OnInit {
     else if (col.showTotal && col.fieldType === this.fieldType.NUMBER) {
       let total = 0;
       const unit = col.unit ? col.unit : <QUANTITY_UNIT>localStorage.getItem('unit');
-      this.value.forEach(row => {
+      this.filteredValue.forEach(row => {
         if (row[col.field]) {
           const value = row[col.field].value ?? 0;
           total += value
@@ -876,7 +895,7 @@ export class DatatableComponent implements OnInit {
     this.filterObject[col.filterField] = ($event.target.value).trim();
     if (col?.filterByServer) {
       this._first = 0;
-      this._currentPage = 0;      
+      this._currentPage = 0;
       const data = this.setStateValue('filter');
       this.firstChange.emit(this._first);
       this.currentPageChange.emit(this._currentPage);

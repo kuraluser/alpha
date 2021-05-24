@@ -80,29 +80,45 @@
                 *ngIf="isPatternGenerated">{{'VIEW_PATTERN_BUTTON_LABEL' | translate }}</button>
         </div>
     </div>
-    <div class="row mb-10">
+    <div class="row mb-10 mt-10">
         <div class="col text-uppercase sub-heading">
             <label class=" text-secondary  pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_STUDY_LABEL'| translate}}
                 <span>{{selectedLoadableStudy?.name}}</span></label>
 
             
-                <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit +
+                <div class="pr-20 inline-block">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit +
                     ')'}}
                     <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
-                        (click)="showLoadableQuantityPopup()"
-                        *cpdssPortalPermission="loadableQuantityPermissionContext">{{loadableQuantityNew | number :
+                        (click)="showLoadableQuantityPopup()" [disabled]="showLoadableQuantityButton || !loadableQuantityPermission?.view">{{loadableQuantityNew | number :
                         '1.2-2' }}</button>
-                </label>
+                </div>
 
             <cpdss-portal-unit-dropdown  *ngIf="selectedTab == LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab == LOADABLE_STUDY_DETAILS_TABS.OBQ" (unitChange)="onUnitChange($event)"
                 [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange"
                 (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
         </div>
+        <div class="pr-5" *ngIf="selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION">
+            <button class="btn btn-main" id="view_error" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
+        </div>
+
         <div class="pr-15"
             *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
             <button id="commingle_btn" class="btn btn-main  ml-10" type="button" (click)="showComminglePopup()"
                 [disabled]="showCommingleButton || !addComminglePermission?.view">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
+
+        <div *ngIf="false">
+            <ng-container [ngSwitch]="selectedLoadableStudy?.statusId">  
+                <span class="badge-custom badge-muted" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_PENDING">{{'GENERATE_LOADABLE_PATTERN_PENDING' | translate}}</span>  
+                <span class="badge-custom badge-info" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING">{{'GENERATE_LOADABLE_PATTERN_ALGO_PROCESSING' | translate}}</span>  
+                <span class="badge-custom badge-info" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED">{{'GENERATE_LOADABLE_PATTERN_PLAN_ALGO_PROCESSING_COMPETED' | translate}}</span> 
+                <span class="badge-custom badge-info" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_CONFIRMED">{{'LOADABLE_PATTERN_PLAN_CONFIRMED' | translate}}</span>  
+                <span class="badge-custom badge-danger" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION">{{'GENERATE_LOADABLE_PATTERN_PLAN_NO_SOLUTION' | translate}}</span>
+                <span class="badge-custom badge-danger" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_ERROR">{{'GENERATE_LOADABLE_PATTERN_PLAN_ERROR' | translate}}</span>
+                <span class="badge-custom badge-sucess" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_GENERATED">{{'GENERATE_LOADABLE_PATTERN_PLAN_GENERATED' | translate}}</span>  
+            </ng-container> 
+        </div>
+        
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
@@ -140,7 +156,7 @@
                     (cargoNominationUpdate)="cargoNominationUpdate($event)"  ></cpdss-portal-cargo-nomination>
                 <cpdss-portal-ports
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && portsTabPermission?.view" [permission]="portsTabPermission" [voyage]="selectedVoyage"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy">
+                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy" (portUpdate)="portUpdate($event)">
                 </cpdss-portal-ports>
                 <cpdss-portal-on-hand-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (ohqTabPermission?.view || ohqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
@@ -190,3 +206,10 @@
     (newLoadableQuantity)="loadableQuantity($event)" [vesselId]="vesselId" [voyage]="selectedVoyage"
     [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-loadable-quantity>
 <cpdss-portal-commingle *ngIf="displayCommingle" (displayPopUp)="displayComminglePopUpTab($event)" [vesselId]="vesselId" [voyage]="selectedVoyage" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"></cpdss-portal-commingle>
+
+<cpdss-portal-error-log-popup 
+    [(visible)]="errorPopup"  
+    (visibleChange)="viewError($event)" 
+    [header]="'GENERATED_PATTERN_ERROR_MESSAGE_HEADING'"  
+    [errorMessage]="errorMessage"
+    ></cpdss-portal-error-log-popup>
