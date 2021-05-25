@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 /** @Author jerin.g */
 @Log4j2
 @GrpcService
-@Transactional
 public class EnvoyWriterGrpcService extends EnvoyWriterServiceImplBase {
 
   @Autowired private EnvoyWriterService envoyWriterService;

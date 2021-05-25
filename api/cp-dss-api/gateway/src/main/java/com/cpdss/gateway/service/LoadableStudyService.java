@@ -9,6 +9,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.EnvoyReader.ResultJson;
+import com.cpdss.common.generated.EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub;
 import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
@@ -213,6 +215,9 @@ public class LoadableStudyService {
 
   @GrpcClient("envoywritersrvice")
   private EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
+  
+  @GrpcClient("envoyreadersrvice")
+  private EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
   @Autowired UserService userService;
 
@@ -5658,6 +5663,14 @@ public class LoadableStudyService {
     LoadableStudyJson.Builder error = LoadableStudyJson.newBuilder();
     error.setImoNumber("123");
     this.envoyWriterGrpcService.getLoadableStudy(error.build());
+    return null;
+  }
+  
+  /** @return Object */
+  public Object test1() {
+	  ResultJson.Builder error = ResultJson.newBuilder();
+    error.setImoNumber("123");
+    this.envoyReaderGrpcService.getResults(error.build());
     return null;
   }
 }

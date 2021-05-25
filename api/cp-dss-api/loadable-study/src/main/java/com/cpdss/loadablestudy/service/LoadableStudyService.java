@@ -4614,6 +4614,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
     algoRequest.setApi(request.getLoadablePlanStowageDetails().getApi());
     algoRequest.setTemp(request.getLoadablePlanStowageDetails().getTemperature());
+    algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
     Optional<SynopticalTable> synopticalTableOpt =
         synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
             getLastPortRotationId(

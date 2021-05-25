@@ -7,5 +7,15 @@ option java_package = "com.cpdss.common.generated";
 import "common.proto";
 
 service EnvoyReaderService {
+    rpc GetResults(ResultJson) returns (ReaderReply) {
+    }
+}  
+  message ResultJson {
+  	string loadableStudy = 1;
+ 	string imoNumber = 2;
+  	int64 vesselId = 3;
+  }
   
+  message ReaderReply {
+    ResponseStatus responseStatus = 1;
   }

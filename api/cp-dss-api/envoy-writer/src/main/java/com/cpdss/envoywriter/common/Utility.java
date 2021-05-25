@@ -43,19 +43,19 @@ public class Utility {
     }
   }
 
-  public static String getCheckSum(ZipOutputStream zipInputStream) {
+  public static String getCheckSum(ZipOutputStream zipOutputStream) {
 
     MessageDigest md;
     try {
       md = MessageDigest.getInstance("MD5");
-      try (OutputStream os = zipInputStream;
+      try (OutputStream os = zipOutputStream;
           DigestOutputStream dis = new DigestOutputStream(os, md)) {}
 
       return DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
     } catch (NoSuchAlgorithmException e) {
-      log.error("Error while hashing: " + e);
+      log.error("Error while getCheckSum: " + e);
     } catch (IOException e) {
-      log.error("Error while hashing: " + e);
+      log.error("Error while getCheckSum: " + e);
     }
     return null;
   }

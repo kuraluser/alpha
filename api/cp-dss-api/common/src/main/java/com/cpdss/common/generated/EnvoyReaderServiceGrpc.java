@@ -27,6 +27,37 @@ public final class EnvoyReaderServiceGrpc {
   public static final String SERVICE_NAME = "EnvoyReaderService";
 
   // Static method descriptors that strictly reflect the proto.
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.EnvoyReader.ResultJson,
+      com.cpdss.common.generated.EnvoyReader.ReaderReply> getGetResultsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetResults",
+      requestType = com.cpdss.common.generated.EnvoyReader.ResultJson.class,
+      responseType = com.cpdss.common.generated.EnvoyReader.ReaderReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.EnvoyReader.ResultJson,
+      com.cpdss.common.generated.EnvoyReader.ReaderReply> getGetResultsMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.EnvoyReader.ResultJson, com.cpdss.common.generated.EnvoyReader.ReaderReply> getGetResultsMethod;
+    if ((getGetResultsMethod = EnvoyReaderServiceGrpc.getGetResultsMethod) == null) {
+      synchronized (EnvoyReaderServiceGrpc.class) {
+        if ((getGetResultsMethod = EnvoyReaderServiceGrpc.getGetResultsMethod) == null) {
+          EnvoyReaderServiceGrpc.getGetResultsMethod = getGetResultsMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.EnvoyReader.ResultJson, com.cpdss.common.generated.EnvoyReader.ReaderReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetResults"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.EnvoyReader.ResultJson.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.EnvoyReader.ReaderReply.getDefaultInstance()))
+              .setSchemaDescriptor(new EnvoyReaderServiceMethodDescriptorSupplier("GetResults"))
+              .build();
+        }
+      }
+    }
+    return getGetResultsMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -75,8 +106,22 @@ public final class EnvoyReaderServiceGrpc {
    */
   public static abstract class EnvoyReaderServiceImplBase implements io.grpc.BindableService {
 
+    /**
+     */
+    public void getResults(com.cpdss.common.generated.EnvoyReader.ResultJson request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyReader.ReaderReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetResultsMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+          .addMethod(
+            getGetResultsMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.EnvoyReader.ResultJson,
+                com.cpdss.common.generated.EnvoyReader.ReaderReply>(
+                  this, METHODID_GET_RESULTS)))
           .build();
     }
   }
@@ -94,6 +139,14 @@ public final class EnvoyReaderServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new EnvoyReaderServiceStub(channel, callOptions);
     }
+
+    /**
+     */
+    public void getResults(com.cpdss.common.generated.EnvoyReader.ResultJson request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyReader.ReaderReply> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetResultsMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -108,6 +161,13 @@ public final class EnvoyReaderServiceGrpc {
     protected EnvoyReaderServiceBlockingStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new EnvoyReaderServiceBlockingStub(channel, callOptions);
+    }
+
+    /**
+     */
+    public com.cpdss.common.generated.EnvoyReader.ReaderReply getResults(com.cpdss.common.generated.EnvoyReader.ResultJson request) {
+      return blockingUnaryCall(
+          getChannel(), getGetResultsMethod(), getCallOptions(), request);
     }
   }
 
@@ -124,8 +184,17 @@ public final class EnvoyReaderServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new EnvoyReaderServiceFutureStub(channel, callOptions);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.EnvoyReader.ReaderReply> getResults(
+        com.cpdss.common.generated.EnvoyReader.ResultJson request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetResultsMethod(), getCallOptions()), request);
+    }
   }
 
+  private static final int METHODID_GET_RESULTS = 0;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -144,6 +213,10 @@ public final class EnvoyReaderServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_GET_RESULTS:
+          serviceImpl.getResults((com.cpdss.common.generated.EnvoyReader.ResultJson) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyReader.ReaderReply>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -205,6 +278,7 @@ public final class EnvoyReaderServiceGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new EnvoyReaderServiceFileDescriptorSupplier())
+              .addMethod(getGetResultsMethod())
               .build();
         }
       }
