@@ -6,6 +6,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   templateUrl: './loading-discharging-details.component.html',
   styleUrls: ['./loading-discharging-details.component.scss']
 })
+
+/**
+ * Component class for loading discharging details component
+ *
+ * @export
+ * @class LoadingDischargingDetailsComponent
+ * @implements {OnInit}
+ */
 export class LoadingDischargingDetailsComponent implements OnInit {
 
   formGroup: FormGroup;

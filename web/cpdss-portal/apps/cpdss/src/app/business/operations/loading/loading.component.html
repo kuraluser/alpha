@@ -39,7 +39,7 @@
           Incomplete
         </div>
       </a>
-      <a class="tab-btn">
+      <a (click)="currentTab = OPERATION_TAB.PLAN" [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN}" class="tab-btn">
         Loading Plan
         <div class="pt-5">
           <div class="tab-status-icon pi pi-check completed">
@@ -104,19 +104,15 @@
 
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.INSTRUCTION">
-    //TODO: Need to crate seperate component for loading instruction
-    <div class="col-4">
-      <cpdss-portal-instruction-side-panel [panelList]="panelList"
-        (selectedInstructionChange)="sidePanelInstructionChange($event)"></cpdss-portal-instruction-side-panel>
-    </div>
-    <div class="col-8">
-      <cpdss-portal-instruction-check-list [instructionList]="instructionList"></cpdss-portal-instruction-check-list>
-    </div>
+    <cpdss-portal-loading-instruction></cpdss-portal-loading-instruction>
   </div>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.SEQUENCE">
     <div class="col">
       <cpdss-portal-loading-sequence></cpdss-portal-loading-sequence>
     </div>
+  </div>
+  <div class="row" *ngIf="currentTab === OPERATION_TAB.PLAN">
+      <cpdss-portal-loading-plan></cpdss-portal-loading-plan>
   </div>
 </div>

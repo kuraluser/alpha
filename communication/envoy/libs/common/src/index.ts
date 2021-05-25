@@ -13,6 +13,7 @@ export * from './tasks/common-finish-task.service';
 export * from './tasks/common-verify-task.service';
 export * from './tasks/common-resend-task.service';
 export * from './tasks/common-confirm-task.service';
+export * from './tasks/common-cancel-task.service';
 export * from './events/common-transport-event.service';
 export * from './events/common-finish-event.service';
 export * from './events/common-resend-event.service';

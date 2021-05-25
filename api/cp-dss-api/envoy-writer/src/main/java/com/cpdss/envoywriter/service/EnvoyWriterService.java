@@ -3,7 +3,7 @@ package com.cpdss.envoywriter.service;
 
 import static com.cpdss.envoywriter.common.Utility.*;
 
-import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
+import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply.Builder;
 import com.cpdss.envoywriter.entity.SequenceNumber;
@@ -48,14 +48,14 @@ public class EnvoyWriterService {
 
   @Autowired private RestTemplate restTemplate;
 
-  public WriterReply passDataToCommunicationServer(LoadableStudyJson request, Builder builder) {
+  public WriterReply passDataToCommunicationServer(EnvoyWriterRequest request, Builder builder) {
 
     Optional<SequenceNumber> numberOpt = sequenceNumberRepository.findById(SEQUENCE_NUMBER_ID);
 
     Long sequenceNumber = numberOpt.get().getSequenceNumber();
     updateSequenceNumber(sequenceNumber, numberOpt.get());
 
-    String encryptedString = encrypt(request.getLoadableStudy(), request.getImoNumber(), salt);
+    String encryptedString = encrypt(request.getJsonPayload(), request.getImoNumber(), salt);
 
     try {
       ByteArrayOutputStream bos = new ByteArrayOutputStream(encryptedString.length());

@@ -14,7 +14,8 @@ import { OutBoundEventDataEntity } from '../entities/common-outbound-event.entit
  */
 @Injectable()
 export class CommonTransportEventService {
-    constructor(private configService: ConfigService, private commonUtilService: CommonUtilService, private commonDbStore: CommonDataStore, private commonDbService: CommonDBService<OutBoundEventDataEntity, OutboundEventData>,
+    constructor(private configService: ConfigService, private commonUtilService: CommonUtilService, 
+        private commonDbStore: CommonDataStore, private commonDbService: CommonDBService<OutBoundEventDataEntity, OutboundEventData>,
         private logger: CommonLoggerService) {
         this.logger.setContext('CommonTransportEventService');
     }
@@ -30,6 +31,11 @@ export class CommonTransportEventService {
             const uniqueId: string = fileNameWithSeq.substring(0, fileNameWithSeq.indexOf('.'));
             const directory = path.normalize(`${this.configService.get<string>('appPath')}/data/${clientID}/${shipId}/${uniqueId}`);
             const filePath = `${directory}/${fileNameWithSeq}`;
+            let partNumber: any = 0;
+            if (fileNameWithSeq.indexOf('part') !== -1) {
+                partNumber = fileNameWithSeq.substring(fileNameWithSeq.indexOf('part') + 4, fileNameWithSeq.length);
+                partNumber = parseInt(partNumber, 10);
+            }
             this.commonUtilService.writeToFile(directory, filePath, eventData.buf).then(str => {
                 // Checking if its the first packet arrived and store it to the db
                 if (eventData.messageId) {
@@ -40,11 +46,13 @@ export class CommonTransportEventService {
                         filePath: `${directory}/${uniqueId}.zip`,
                         shipId: shipId,
                         messageId: eventData.messageId,
+                        messageType: eventData.messageType,
                         checksum: eventData.checksum,
                         algo: eventData.algo,
                         sequence: eventData.seq,
                         size: eventData.size,
                         total: eventData.total,
+                        partNumber: partNumber,
                         createdtimeStamp: eventData.createdtimeStamp
                     }
                     const conditions = "outbound.clientId = :clientId AND outbound.messageId = :messageId AND outbound.uniqueId = :uniqueId AND outbound.shipId = :shipId";
@@ -57,6 +65,7 @@ export class CommonTransportEventService {
                             result.sequence = dataReceived.sequence;
                             result.size = dataReceived.size;
                             result.total = dataReceived.total;
+                            result.partNumber = partNumber;
                             result.createdtimeStamp = dataReceived.createdtimeStamp;
                             this.commonDbService.updateObject(this.commonDbStore.getOutboundEventStore(), result).then(res => {
                             }).catch(err => {
@@ -68,6 +77,14 @@ export class CommonTransportEventService {
                         }).catch(err => {
                             this.logger.error(`Error in saving the outbound data ${err.message}`, err.stack);
                         })
+                    });
+                } else {
+                    //Update the receiving part number
+                    //Update data updates the row without using select query to check if the row exists.
+                    //This improves the performance while saving the send packets to db
+                    this.commonDbService.updateData(this.commonDbStore.getOutboundEventStore(), { clientId: clientID, uniqueId: uniqueId }, { partNumber: partNumber }).then(res => {
+                    }).catch(err => {
+                        this.logger.error(`Error in updating the outbound data ${err.message}`, err.stack);
                     });
                 }
                 //console.log(str);

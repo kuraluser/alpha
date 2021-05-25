@@ -305,14 +305,16 @@ export class LoadableStudyDetailsApiService {
      * @memberof LoadableStudyDetailsApiService
      */
     updateQuantityByUnit(currentValue, unitFrom, unitTo, api, temp?) {
-        if (!api || api === '') {
-            api = 1;
-        }
-        let newValue;
-        if (temp) {
-            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString(), -1);
-        } else {
-            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString() , '' , -1);
+        let newValue = currentValue;
+        if (unitFrom != unitTo) {
+            if (!api || api === '') {
+                api = 1;
+            }
+            if (temp) {
+                newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString(), -1);
+            } else {
+                newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), '', -1);
+            }
         }
         return Number(newValue);
     }

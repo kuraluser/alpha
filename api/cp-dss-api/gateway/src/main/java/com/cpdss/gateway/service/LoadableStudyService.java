@@ -9,7 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
-import com.cpdss.common.generated.EnvoyWriter.LoadableStudyJson;
+import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -5655,9 +5655,9 @@ public class LoadableStudyService {
 
   /** @return Object */
   public Object test() {
-    LoadableStudyJson.Builder error = LoadableStudyJson.newBuilder();
+    EnvoyWriterRequest.Builder error = EnvoyWriterRequest.newBuilder();
     error.setImoNumber("123");
-    this.envoyWriterGrpcService.getLoadableStudy(error.build());
+    this.envoyWriterGrpcService.getCommunicationServer(error.build());
     return null;
   }
 }

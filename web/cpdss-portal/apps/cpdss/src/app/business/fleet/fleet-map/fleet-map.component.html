@@ -20,27 +20,26 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <div *ngIf="cardValues?.ata">{{'FLEET_PORT_ATA' | translate}} {{cardValues?.ata}}</div>
-          <div *ngIf="!cardValues?.ata && cardValues?.eta">{{'FLEET_PORT_ETA' | translate}} {{cardValues?.eta}}</div>
+          <div *ngIf="cardValues?.ata">{{'FLEET_PORT_ATA' | translate}} {{cardValues?.ata | momentFormat: 'DD-MMM-YYYY'}}</div>
+          <div *ngIf="!cardValues?.ata && cardValues?.eta">{{'FLEET_PORT_ETA' | translate}} {{cardValues?.eta | momentFormat: 'DD-MMM-YYYY'}}</div>
           <div *ngIf="!cardValues?.ata && !cardValues?.eta">-</div>
         </div>
         <div class="col-6 text-right">
-          <div *ngIf="cardValues?.atd">{{'FLEET_PORT_ATD' | translate}} {{cardValues?.atd}}</div>
-          <div *ngIf="!cardValues?.atd && cardValues?.etd">{{'FLEET_PORT_ETD' | translate}} {{cardValues?.etd}}</div>
+          <div *ngIf="cardValues?.atd">{{'FLEET_PORT_ATD' | translate}} {{cardValues?.atd | momentFormat: 'DD-MMM-YYYY'}}</div>
+          <div *ngIf="!cardValues?.atd && cardValues?.etd">{{'FLEET_PORT_ETD' | translate}} {{cardValues?.etd | momentFormat: 'DD-MMM-YYYY'}}</div>
           <div *ngIf="!cardValues?.atd && !cardValues?.etd">-</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="vessel-card-notification-container">
-    <div class="col mr-10">
-      <cpdss-portal-fleet-vessel-notifications></cpdss-portal-fleet-vessel-notifications>
-    </div>
-    <div class="col pt-10 pl-15">
-      <cpdss-portal-fleet-vessel-card *ngIf="vessels" [vesselValues]="vessels" (selectVessel)="onSelectVessel($event)">
-      </cpdss-portal-fleet-vessel-card>
-    </div>
+  <div class="vessel-card-notification-container vessel-notification">
+    <cpdss-portal-fleet-vessel-notifications></cpdss-portal-fleet-vessel-notifications>
+  </div>
+
+  <div class="vessel-card-notification-container vessel-card">
+    <cpdss-portal-fleet-vessel-card *ngIf="vessels" [vesselValues]="vessels" (selectVessel)="onSelectVessel($event)">
+    </cpdss-portal-fleet-vessel-card>
   </div>
 
 </div>

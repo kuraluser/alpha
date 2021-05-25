@@ -50,9 +50,9 @@ export class VerifyTaskService {
                     //Releasing lock after sending
                     this.isLocked = false;
                     //Remove the below line after POC TESTING
-                    if (ProcessStatus[event.processStatus] === ProcessStatus['RECEIVED_WITH_HASH_VERIFIED']) {
-                        dataEmitter.emit('data', event.uniqueId);
-                    }
+                    // if (ProcessStatus[event.processStatus] === ProcessStatus['RECEIVED_WITH_HASH_VERIFIED']) {
+                    //     dataEmitter.emit('data', event.uniqueId);
+                    // }
 
                 });
             });

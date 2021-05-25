@@ -366,7 +366,8 @@
                     </td>
                     <td *ngFor="let col of columns; let i = index">
                         <ng-container *ngIf="i !== 0;else totalRef">
-                            {{getTotal(col, i) | quantityDecimalFormat}}
+                            {{ col?.numberType === 'quantity' ? (getTotal(col, i) | quantityDecimalFormat: col?.unit) :
+                            (getTotal(col, i) | number: col?.numberFormat)}}
                         </ng-container>
                         <ng-template #totalRef>{{ getTotal(col, i) }}</ng-template>
                     </td>

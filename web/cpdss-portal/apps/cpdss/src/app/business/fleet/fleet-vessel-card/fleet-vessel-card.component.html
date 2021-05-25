@@ -14,9 +14,9 @@
       <div class="col"> &nbsp; </div>
     </div>
     <div class="vessel-card-content">
-      <div class="col-6 text-medium">{{'FLEET_PORT_ATD' | translate}} {{vessel.atd}}</div>
-      <div class="col-6 text-right text-medium" *ngIf="vessel?.ata">{{'FLEET_PORT_ATA' | translate}} {{vessel.ata}}</div>
-      <div class="col-6 text-right text-medium" *ngIf="!vessel?.ata">{{'FLEET_PORT_ETA' | translate}} {{vessel.eta}}</div>
+      <div class="col-6 text-medium">{{'FLEET_PORT_ATD' | translate}} {{vessel.atd | momentFormat: 'DD-MMM-YYYY'}}</div>
+      <div class="col-6 text-right text-medium" *ngIf="vessel?.ata">{{'FLEET_PORT_ATA' | translate}} {{vessel.ata | momentFormat: 'DD-MMM-YYYY'}}</div>
+      <div class="col-6 text-right text-medium" *ngIf="!vessel?.ata">{{'FLEET_PORT_ETA' | translate}} {{vessel.eta | momentFormat: 'DD-MMM-YYYY'}}</div>
     </div>
     <div class="vessel-card-content">
       <div class="col-6">

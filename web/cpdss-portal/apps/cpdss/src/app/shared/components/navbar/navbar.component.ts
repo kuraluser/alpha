@@ -136,15 +136,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
           { 'name': 'Loading', 'subMenuLink': '/business/operations/loading', 'permissionMapping': AppConfigurationService.settings.permissionMapping['LoadingComponent'], 'isVisible': false }
         ],
       },
-      {
-        'menu': 'FLEET',
-        'menuIcon': '',
-        'menuLink': 'fleet',
-        'routerLinkActive': 'fleet',
-        'subMenu': [],
-        'isSubMenuOpen': false,
-        'permissionMapping': AppConfigurationService.settings.permissionMapping['FleetComponent']
-      },
       /*
       {
         'menu': 'VOYAGES',
@@ -168,6 +159,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
       } */
 
     ];
+
+    if (this.isShore) {
+      menuList.push({
+        'menu': 'FLEET',
+        'menuIcon': '',
+        'menuLink': 'fleet',
+        'routerLinkActive': 'fleet',
+        'subMenu': [],
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['FleetComponent']
+      });
+    }
+
     const isUserPermissionAvailable = setInterval(() => {
       if (JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'))) {
         this.userPermission = JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'));

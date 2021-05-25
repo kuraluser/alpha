@@ -24,7 +24,7 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
-  security = 'y'
+  security = 'jwt'
   monitoring = 'y'
   docker {
         imageName = 'cpdss-gateway'
