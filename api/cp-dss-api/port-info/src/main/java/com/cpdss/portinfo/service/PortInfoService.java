@@ -15,6 +15,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.entity.BerthInfo;
 import com.cpdss.portinfo.entity.PortInfo;
 import com.cpdss.portinfo.entity.Timezone;
+import com.cpdss.portinfo.repository.BerthInfoRepository;
 import com.cpdss.portinfo.repository.CargoPortMappingRepository;
 import com.cpdss.portinfo.repository.PortInfoRepository;
 import com.cpdss.portinfo.repository.TimezoneRepository;
@@ -271,6 +272,59 @@ public class PortInfoService extends PortInfoServiceImplBase {
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  @Autowired BerthInfoRepository berthInfoRepository;
+
+  @Override
+  public void getBerthDetailsByPortId(
+      com.cpdss.common.generated.PortInfo.PortIdRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse> responseObserver) {
+    com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder builder =
+        com.cpdss.common.generated.PortInfo.BerthInfoResponse.newBuilder();
+    try {
+      Optional<PortInfo> portInfo = portRepository.findByIdAndIsActiveTrue(request.getPortId());
+      if (portInfo.isPresent()) {
+        List<BerthInfo> berthInfoList =
+            berthInfoRepository.findAllByPortInfoAndIsActiveTrue(portInfo.get());
+        this.buildBerthInfoToGrpcResponse(berthInfoList, builder);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to get berth info for Port {}", request.getPortId());
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void buildBerthInfoToGrpcResponse(
+      List<BerthInfo> list, com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder builder) {
+    for (BerthInfo bi : list) {
+      com.cpdss.common.generated.PortInfo.BerthDetail.Builder builder2 =
+          com.cpdss.common.generated.PortInfo.BerthDetail.newBuilder();
+      Optional.ofNullable(bi.getId()).ifPresent(builder2::setId);
+      Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
+      // Optional.ofNullable(bi.getMaxShipChannel()).ifPresent(builder2::setMaxShipChannel);
+      Optional.ofNullable(bi.getBerthName())
+          .ifPresent(v -> builder2.setBerthName(String.valueOf(v)));
+      Optional.ofNullable(bi.getMaxShipDepth())
+          .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
+      builder2.setSeaDraftLimitation("0000");
+      Optional.ofNullable(bi.getAirDraft())
+          .ifPresent(v -> builder2.setAirDraftLimitation(String.valueOf(v)));
+      builder2.setMaxManifoldHeight("0000");
+      Optional.ofNullable(bi.getMaximumLoa()).ifPresent(v -> builder2.setMaxLoa(String.valueOf(v)));
+      Optional.ofNullable(bi.getMaximumDraft())
+          .ifPresent(v -> builder2.setMaxDraft(String.valueOf(v)));
+      builder.addBerths(builder2);
     }
   }
 }

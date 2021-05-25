@@ -2894,6 +2894,59 @@ public final class LoadableStudyServiceGrpc {
     return getGetCargoHistoryByCargoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+          com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
+      getGetActiveVoyagesByVesselMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetActiveVoyagesByVessel",
+      requestType = com.cpdss.common.generated.LoadableStudy.VoyageRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.ActiveVoyage.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+          com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
+      getGetActiveVoyagesByVesselMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+            com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
+        getGetActiveVoyagesByVesselMethod;
+    if ((getGetActiveVoyagesByVesselMethod =
+            LoadableStudyServiceGrpc.getGetActiveVoyagesByVesselMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetActiveVoyagesByVesselMethod =
+                LoadableStudyServiceGrpc.getGetActiveVoyagesByVesselMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetActiveVoyagesByVesselMethod =
+              getGetActiveVoyagesByVesselMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+                          com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetActiveVoyagesByVessel"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.VoyageRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.ActiveVoyage
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetActiveVoyagesByVessel"))
+                      .build();
+        }
+      }
+    }
+    return getGetActiveVoyagesByVesselMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3408,6 +3461,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetCargoHistoryByCargoMethod(), responseObserver);
     }
 
+    /** */
+    public void getActiveVoyagesByVessel(
+        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetActiveVoyagesByVesselMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -3812,6 +3873,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
                       com.cpdss.common.generated.LoadableStudy.LatestCargoReply>(
                       this, METHODID_GET_CARGO_HISTORY_BY_CARGO)))
+          .addMethod(
+              getGetActiveVoyagesByVesselMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+                      com.cpdss.common.generated.LoadableStudy.ActiveVoyage>(
+                      this, METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL)))
           .build();
     }
   }
@@ -4462,6 +4530,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getActiveVoyagesByVessel(
+        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -4881,6 +4960,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetCargoHistoryByCargoMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.ActiveVoyage getActiveVoyagesByVessel(
+        com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetActiveVoyagesByVesselMethod(), getCallOptions(), request);
     }
   }
 
@@ -5385,6 +5471,14 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
+        getActiveVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -5444,6 +5538,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_ALGO_ERRORS = 54;
   private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 55;
   private static final int METHODID_GET_CARGO_HISTORY_BY_CARGO = 56;
+  private static final int METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL = 57;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5853,6 +5948,12 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LatestCargoReply>)
                   responseObserver);
           break;
+        case METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL:
+          serviceImpl.getActiveVoyagesByVessel(
+              (com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -5974,6 +6075,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveAlgoErrorsMethod())
                       .addMethod(getFetchAllAlgoErrorsMethod())
                       .addMethod(getGetCargoHistoryByCargoMethod())
+                      .addMethod(getGetActiveVoyagesByVesselMethod())
                       .build();
         }
       }

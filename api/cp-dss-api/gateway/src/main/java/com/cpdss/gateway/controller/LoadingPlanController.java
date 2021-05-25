@@ -22,6 +22,20 @@ public class LoadingPlanController {
   @Autowired LoadingPlanService loadingPlanService;
 
   /**
+   * Get API to collect the port rotation details of active Voyage
+   *
+   * @param vesselId Long
+   * @param id Long: Always 0.
+   * @return
+   */
+  @GetMapping("/vessels/{vesselId}/loading-plan/{id}")
+  public Object getPortRotationDetails(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long id) {
+    return loadingPlanService.getLoadingPortRotationDetails(vesselId, id);
+  }
+
+  /**
    * Loading Information Get API,
    *
    * <p>Some data collect from Loadable study service and others in Loading plan DB
@@ -37,7 +51,7 @@ public class LoadingPlanController {
   public LoadingInformationResponse getLoadingInformation(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long planId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long planId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long portRotationId) {
     LoadingInformationResponse loadingInformationResponse =

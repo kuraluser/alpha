@@ -12247,4 +12247,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Autowired VoyageService voyageService;
+
+  @Override
+  public void getActiveVoyagesByVessel(
+      VoyageRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.ActiveVoyage.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.ActiveVoyage.newBuilder();
+    ResponseStatus.Builder repBuilder = ResponseStatus.newBuilder();
+    try {
+      if (request.getVesselId() > 0) {
+        // Fetch and build Voayge Response Object
+        this.voyageService.fetchActiveVoyageByVesselId(
+            builder, request.getVesselId(), ACTIVE_VOYAGE_STATUS);
+      }
+      repBuilder.setStatus(SUCCESS);
+    } catch (Exception e) {
+      log.error("Failed to fetch active voyage for, Vessel Id {}", request.getVesselId());
+      repBuilder.setStatus(FAILED);
+      repBuilder.setMessage(e.getMessage());
+    } finally {
+      builder.setResponseStatus(repBuilder.build());
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

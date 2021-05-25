@@ -108,6 +108,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
   @Autowired private UllageTableDataRepository ullageTableDataRepository;
   @Autowired HydrostaticService hydrostaticService;
+  @Autowired VesselPumpService vesselPumpService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -1389,6 +1390,28 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getVesselPumpsByVesselId(
+      com.cpdss.common.generated.VesselInfo.VesselIdRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.VesselPumpsResponse> responseObserver) {
+    com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder builder =
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.newBuilder();
+    try {
+      this.vesselPumpService.getVesselPumpsAndTypes(builder, request.getVesselId());
+    } catch (Exception e) {
+      log.error("Exception in Vessel Pump and Type Getter", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }
