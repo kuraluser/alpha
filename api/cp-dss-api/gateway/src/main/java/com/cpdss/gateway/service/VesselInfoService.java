@@ -4,6 +4,7 @@ package com.cpdss.gateway.service;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
@@ -623,5 +624,18 @@ public class VesselInfoService {
    */
   public VesselAlgoReply getVesselsDetails(VesselAlgoRequest vesselAlgoRequest) {
     return vesselInfoGrpcService.getVesselDetailsForAlgo(vesselAlgoRequest);
+  }
+
+  public VesselInfo.VesselPumpsResponse getVesselPumpsFromVesselInfo(Long vesselId) {
+    VesselInfo.VesselPumpsResponse response =
+        this.vesselInfoGrpcService.getVesselPumpsByVesselId(
+            VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build());
+    log.info("Vessel Info RPC call for Pump list, Vessel Id {}", vesselId);
+    if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
+      return response;
+    } else {
+      log.error("Vessel Info RPC call Failed, {}", response.getResponseStatus().getMessage());
+      return null;
+    }
   }
 }
