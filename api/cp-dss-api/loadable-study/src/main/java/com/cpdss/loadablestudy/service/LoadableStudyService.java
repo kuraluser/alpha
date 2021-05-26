@@ -9174,6 +9174,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             synopticalTable.setDisplacementActual(null);
             synopticalTable.setConstantActual(null);
             synopticalTable.setDeadWeightActual(null);
+            synopticalTable.setOthersActual(null);
 
             synopticalTables.add(synopticalTable);
           }
