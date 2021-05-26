@@ -2009,7 +2009,6 @@ public class LoadableStudyController {
           e);
     }
   }
-  
 
   @GetMapping(value = "test1")
   public void test1(@RequestHeader HttpHeaders headers) throws CommonRestException {

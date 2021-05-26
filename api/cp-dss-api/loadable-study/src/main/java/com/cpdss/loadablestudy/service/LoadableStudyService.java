@@ -4575,18 +4575,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
       throws GenericServiceException {
-	  
-	  
-	  ObjectMapper objectMapper = new ObjectMapper();
 
-     
-         try {
-			System.out.println("--" + objectMapper.writeValueAsString(algoRequest));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
-	  
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    try {
+      System.out.println("--" + objectMapper.writeValueAsString(algoRequest));
+    } catch (JsonProcessingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     ResponseEntity<UllageUpdateResponse> responseEntity =
         this.restTemplate.postForEntity(
             this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);

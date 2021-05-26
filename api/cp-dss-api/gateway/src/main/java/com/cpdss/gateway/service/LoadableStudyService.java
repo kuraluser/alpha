@@ -215,7 +215,7 @@ public class LoadableStudyService {
 
   @GrpcClient("envoywritersrvice")
   private EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
-  
+
   @GrpcClient("envoyreadersrvice")
   private EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
@@ -5665,10 +5665,10 @@ public class LoadableStudyService {
     this.envoyWriterGrpcService.getLoadableStudy(error.build());
     return null;
   }
-  
+
   /** @return Object */
   public Object test1() {
-	  ResultJson.Builder error = ResultJson.newBuilder();
+    ResultJson.Builder error = ResultJson.newBuilder();
     error.setImoNumber("123");
     this.envoyReaderGrpcService.getResults(error.build());
     return null;

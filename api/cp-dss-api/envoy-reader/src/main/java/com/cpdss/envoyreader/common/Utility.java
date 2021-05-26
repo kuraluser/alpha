@@ -1,9 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.envoyreader.common;
 
-import java.io.IOException;
+import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.zip.ZipInputStream;
@@ -13,9 +12,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.util.StreamUtils;
 
 /** @Author jerin.g */
 @Log4j2
@@ -41,16 +38,21 @@ public class Utility {
   }
 
   public static Boolean isCheckSum(ZipInputStream zipInputStream, String checkSum) {
-
+    String checksumGenerated = null;
     try {
-      MessageDigest digest = MessageDigest.getInstance("MD5");
-      digest.update(StreamUtils.copyToByteArray(zipInputStream));
-      String convertedCheckSum = DatatypeConverter.printHexBinary(digest.digest()).toUpperCase();
-      return checkSum.equalsIgnoreCase(convertedCheckSum) ? true : false;
-    } catch (NoSuchAlgorithmException e) {
-      log.error("Error while compareCheckSum: " + e);
-    } catch (IOException e) {
-      log.error("Error while compareCheckSum: " + e);
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      // Using MessageDigest update() method to provide input
+      byte[] buffer = new byte[8192];
+      int numOfBytesRead;
+      while ((numOfBytesRead = zipInputStream.read(buffer)) > 0) {
+        md.update(buffer, 0, numOfBytesRead);
+      }
+      byte[] hash = md.digest();
+      checksumGenerated =
+          new BigInteger(1, hash).toString(16); // don't use this, truncates leading zero
+
+      return checkSum.equalsIgnoreCase(checksumGenerated) ? true : false;
+    } catch (Exception ex) {
     }
     return null;
   }

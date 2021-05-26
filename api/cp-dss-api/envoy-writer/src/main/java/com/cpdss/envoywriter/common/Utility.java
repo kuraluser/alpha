@@ -1,22 +1,20 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.envoywriter.common;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
-import java.util.zip.ZipOutputStream;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import lombok.extern.log4j.Log4j2;
 
 /** @Author jerin.g */
@@ -43,20 +41,63 @@ public class Utility {
     }
   }
 
-  public static String getCheckSum(ZipOutputStream zipOutputStream) {
+  public static String getCheckSum(File file) {
 
-    MessageDigest md;
+    MessageDigest mdigest;
     try {
-      md = MessageDigest.getInstance("MD5");
-      try (OutputStream os = zipOutputStream;
-          DigestOutputStream dis = new DigestOutputStream(os, md)) {}
+      mdigest = MessageDigest.getInstance("MD5");
+      // Get the checksum
 
-      return DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
-    } catch (NoSuchAlgorithmException e) {
-      log.error("Error while getCheckSum: " + e);
+      return checksum(mdigest, file);
     } catch (IOException e) {
+      log.error("Error while getCheckSum: " + e);
+
+    } catch (NoSuchAlgorithmException e) {
       log.error("Error while getCheckSum: " + e);
     }
     return null;
+  }
+
+  private static String checksum(MessageDigest digest, File file) throws IOException {
+    // Get file input stream for reading the file
+    // content
+    FileInputStream fis = new FileInputStream(file);
+
+    // Create byte array to read data in chunks
+    byte[] byteArray = new byte[1024];
+    int bytesCount = 0;
+
+    // read the data from file and update that data in
+    // the message digest
+    while ((bytesCount = fis.read(byteArray)) != -1) {
+      digest.update(byteArray, 0, bytesCount);
+    }
+    ;
+
+    // close the input stream
+    fis.close();
+
+    // store the bytes returned by the digest() method
+    byte[] bytes = digest.digest();
+
+    // this array of bytes has bytes in decimal format
+    // so we need to convert it into hexadecimal format
+
+    // for this we create an object of StringBuilder
+    // since it allows us to update the string i.e. its
+    // mutable
+    StringBuilder sb = new StringBuilder();
+
+    // loop through the bytes array
+    for (int i = 0; i < bytes.length; i++) {
+
+      // the following line converts the decimal into
+      // hexadecimal format and appends that to the
+      // StringBuilder object
+      sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+    }
+
+    // finally we return the complete hash
+    return sb.toString();
   }
 }
