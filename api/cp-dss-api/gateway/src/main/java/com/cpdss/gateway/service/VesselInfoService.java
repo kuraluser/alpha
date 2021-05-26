@@ -630,9 +630,11 @@ public class VesselInfoService {
     VesselInfo.VesselPumpsResponse response =
         this.vesselInfoGrpcService.getVesselPumpsByVesselId(
             VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build());
+    log.info("Vessel Info RPC call for Pump list, Vessel Id {}", vesselId);
     if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
       return response;
     } else {
+      log.error("Vessel Info RPC call Failed, {}", response.getResponseStatus().getMessage());
       return null;
     }
   }

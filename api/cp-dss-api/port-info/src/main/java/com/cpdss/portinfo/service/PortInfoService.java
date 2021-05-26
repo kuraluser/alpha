@@ -283,13 +283,18 @@ public class PortInfoService extends PortInfoServiceImplBase {
       StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse> responseObserver) {
     com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder builder =
         com.cpdss.common.generated.PortInfo.BerthInfoResponse.newBuilder();
+    ResponseStatus.Builder builder1 = ResponseStatus.newBuilder().setStatus("FAILED");
     try {
       Optional<PortInfo> portInfo = portRepository.findByIdAndIsActiveTrue(request.getPortId());
       if (portInfo.isPresent()) {
         List<BerthInfo> berthInfoList =
-            berthInfoRepository.findAllByPortInfoAndIsActiveTrue(portInfo.get());
+            berthInfoRepository.findAllByPortInfoAndIsActiveTrue(portInfo.get().getId());
         this.buildBerthInfoToGrpcResponse(berthInfoList, builder);
+        log.info(
+            "Berth Info size {}, for Port Id {}", berthInfoList.size(), portInfo.get().getId());
+        builder1.setStatus("SUCCESS");
       }
+      builder.setResponseStatus(builder1);
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Failed to get berth info for Port {}", request.getPortId());
@@ -312,7 +317,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
           com.cpdss.common.generated.PortInfo.BerthDetail.newBuilder();
       Optional.ofNullable(bi.getId()).ifPresent(builder2::setId);
       Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
-      // Optional.ofNullable(bi.getMaxShipChannel()).ifPresent(builder2::setMaxShipChannel);
+      Optional.ofNullable(bi.getMaxShipChannel())
+          .ifPresent(v -> builder2.setMaxShipChannel(String.valueOf(v)));
       Optional.ofNullable(bi.getBerthName())
           .ifPresent(v -> builder2.setBerthName(String.valueOf(v)));
       Optional.ofNullable(bi.getMaxShipDepth())

@@ -1,12 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 
 public interface LoadingPlanService {
 
-  Object getLoadingPortRotationDetails(Long vesselId, Long portRId);
+  Object getLoadingPortRotationDetails(Long vesselId, Long portRId) throws GenericServiceException;
 
-  LoadingInformationResponse getLoadingInformationByPortRotation(
-      Long vesselId, Long voyageId, Long planId, Long portRId);
+  LoadingInformation getLoadingInformationByPortRotation(Long vesselId, Long planId, Long portRId)
+      throws GenericServiceException;
 }

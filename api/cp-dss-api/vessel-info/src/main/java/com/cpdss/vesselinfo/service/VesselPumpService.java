@@ -2,6 +2,7 @@
 package com.cpdss.vesselinfo.service;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.vesselinfo.entity.PumpType;
 import com.cpdss.vesselinfo.entity.Vessel;
@@ -10,12 +11,15 @@ import com.cpdss.vesselinfo.repository.PumpTypeRepository;
 import com.cpdss.vesselinfo.repository.VesselPumpRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/** Master service for Pump Operations */
+@Slf4j
 @Service
 public class VesselPumpService {
 
@@ -28,6 +32,7 @@ public class VesselPumpService {
   public VesselInfo.VesselPumpsResponse getVesselPumpsAndTypes(
       VesselInfo.VesselPumpsResponse.Builder builder, Long vesselId)
       throws GenericServiceException {
+    Common.ResponseStatus.Builder builder1 = Common.ResponseStatus.newBuilder().setStatus("FAILED");
     Pageable defaultPage = PageRequest.of(0, 1000);
     Vessel vessel = vesselRepository.findByIdAndIsActive(vesselId, true);
     if (vessel != null) {
@@ -36,6 +41,13 @@ public class VesselPumpService {
           vesselPumpRepository.findAllByVesselAndIsActiveTrue(vessel, defaultPage);
       this.buildPumpTypeGrpcBuilder(pumpTypes.toList(), builder);
       this.buildVesselPumpGrpcBuilder(vesselPumps.toList(), builder);
+      builder1.setStatus("SUCCESS");
+      builder.setResponseStatus(builder1);
+      log.info(
+          "Vessel pumps for vessel {}, Pump size {}, Type Size {}",
+          vesselId,
+          vesselPumps.getTotalElements(),
+          pumpTypes.getTotalElements());
     }
     return builder.build();
   }

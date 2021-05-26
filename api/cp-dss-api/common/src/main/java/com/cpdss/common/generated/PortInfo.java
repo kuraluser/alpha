@@ -11829,11 +11829,17 @@ public final class PortInfo {
     long getPortId();
 
     /**
-     * <code>int64 maxShipChannel = 3;</code>
+     * <code>string maxShipChannel = 3;</code>
      *
      * @return The maxShipChannel.
      */
-    long getMaxShipChannel();
+    java.lang.String getMaxShipChannel();
+    /**
+     * <code>string maxShipChannel = 3;</code>
+     *
+     * @return The bytes for maxShipChannel.
+     */
+    com.google.protobuf.ByteString getMaxShipChannelBytes();
 
     /**
      * <code>string berthName = 4;</code>
@@ -11951,6 +11957,7 @@ public final class PortInfo {
     }
 
     private BerthDetail() {
+      maxShipChannel_ = "";
       berthName_ = "";
       maxShipDepth_ = "";
       seaDraftLimitation_ = "";
@@ -12000,9 +12007,11 @@ public final class PortInfo {
                 portId_ = input.readInt64();
                 break;
               }
-            case 24:
+            case 26:
               {
-                maxShipChannel_ = input.readInt64();
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxShipChannel_ = s;
                 break;
               }
             case 34:
@@ -12116,14 +12125,38 @@ public final class PortInfo {
     }
 
     public static final int MAXSHIPCHANNEL_FIELD_NUMBER = 3;
-    private long maxShipChannel_;
+    private volatile java.lang.Object maxShipChannel_;
     /**
-     * <code>int64 maxShipChannel = 3;</code>
+     * <code>string maxShipChannel = 3;</code>
      *
      * @return The maxShipChannel.
      */
-    public long getMaxShipChannel() {
-      return maxShipChannel_;
+    public java.lang.String getMaxShipChannel() {
+      java.lang.Object ref = maxShipChannel_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxShipChannel_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxShipChannel = 3;</code>
+     *
+     * @return The bytes for maxShipChannel.
+     */
+    public com.google.protobuf.ByteString getMaxShipChannelBytes() {
+      java.lang.Object ref = maxShipChannel_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxShipChannel_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int BERTHNAME_FIELD_NUMBER = 4;
@@ -12426,8 +12459,8 @@ public final class PortInfo {
       if (portId_ != 0L) {
         output.writeInt64(2, portId_);
       }
-      if (maxShipChannel_ != 0L) {
-        output.writeInt64(3, maxShipChannel_);
+      if (!getMaxShipChannelBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, maxShipChannel_);
       }
       if (!getBerthNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, berthName_);
@@ -12468,8 +12501,8 @@ public final class PortInfo {
       if (portId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, portId_);
       }
-      if (maxShipChannel_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, maxShipChannel_);
+      if (!getMaxShipChannelBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, maxShipChannel_);
       }
       if (!getBerthNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, berthName_);
@@ -12514,7 +12547,7 @@ public final class PortInfo {
 
       if (getId() != other.getId()) return false;
       if (getPortId() != other.getPortId()) return false;
-      if (getMaxShipChannel() != other.getMaxShipChannel()) return false;
+      if (!getMaxShipChannel().equals(other.getMaxShipChannel())) return false;
       if (!getBerthName().equals(other.getBerthName())) return false;
       if (!getMaxShipDepth().equals(other.getMaxShipDepth())) return false;
       if (!getSeaDraftLimitation().equals(other.getSeaDraftLimitation())) return false;
@@ -12539,7 +12572,7 @@ public final class PortInfo {
       hash = (37 * hash) + PORTID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
       hash = (37 * hash) + MAXSHIPCHANNEL_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getMaxShipChannel());
+      hash = (53 * hash) + getMaxShipChannel().hashCode();
       hash = (37 * hash) + BERTHNAME_FIELD_NUMBER;
       hash = (53 * hash) + getBerthName().hashCode();
       hash = (37 * hash) + MAXSHIPDEPTH_FIELD_NUMBER;
@@ -12697,7 +12730,7 @@ public final class PortInfo {
 
         portId_ = 0L;
 
-        maxShipChannel_ = 0L;
+        maxShipChannel_ = "";
 
         berthName_ = "";
 
@@ -12810,8 +12843,9 @@ public final class PortInfo {
         if (other.getPortId() != 0L) {
           setPortId(other.getPortId());
         }
-        if (other.getMaxShipChannel() != 0L) {
-          setMaxShipChannel(other.getMaxShipChannel());
+        if (!other.getMaxShipChannel().isEmpty()) {
+          maxShipChannel_ = other.maxShipChannel_;
+          onChanged();
         }
         if (!other.getBerthName().isEmpty()) {
           berthName_ = other.berthName_;
@@ -12941,35 +12975,78 @@ public final class PortInfo {
         return this;
       }
 
-      private long maxShipChannel_;
+      private java.lang.Object maxShipChannel_ = "";
       /**
-       * <code>int64 maxShipChannel = 3;</code>
+       * <code>string maxShipChannel = 3;</code>
        *
        * @return The maxShipChannel.
        */
-      public long getMaxShipChannel() {
-        return maxShipChannel_;
+      public java.lang.String getMaxShipChannel() {
+        java.lang.Object ref = maxShipChannel_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxShipChannel_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 maxShipChannel = 3;</code>
+       * <code>string maxShipChannel = 3;</code>
+       *
+       * @return The bytes for maxShipChannel.
+       */
+      public com.google.protobuf.ByteString getMaxShipChannelBytes() {
+        java.lang.Object ref = maxShipChannel_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxShipChannel_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxShipChannel = 3;</code>
        *
        * @param value The maxShipChannel to set.
        * @return This builder for chaining.
        */
-      public Builder setMaxShipChannel(long value) {
+      public Builder setMaxShipChannel(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
 
         maxShipChannel_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 maxShipChannel = 3;</code>
+       * <code>string maxShipChannel = 3;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearMaxShipChannel() {
 
-        maxShipChannel_ = 0L;
+        maxShipChannel_ = getDefaultInstance().getMaxShipChannel();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxShipChannel = 3;</code>
+       *
+       * @param value The bytes for maxShipChannel to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxShipChannelBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxShipChannel_ = value;
         onChanged();
         return this;
       }
@@ -13728,7 +13805,7 @@ public final class PortInfo {
           + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006bert"
           + "hs\030\002 \003(\0132\014.BerthDetail\"\201\002\n\013BerthDetail\022\n"
           + "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\026\n\016maxShipCha"
-          + "nnel\030\003 \001(\003\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShip"
+          + "nnel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShip"
           + "Depth\030\005 \001(\t\022\032\n\022seaDraftLimitation\030\006 \001(\t\022"
           + "\032\n\022airDraftLimitation\030\007 \001(\t\022\031\n\021maxManifo"
           + "ldHeight\030\010 \001(\t\022 \n\030regulationAndRestricti"

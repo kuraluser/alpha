@@ -10,9 +10,16 @@ import com.cpdss.loadablestudy.repository.VoyageRepository;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Master Service for Voyage Related Operations
+ *
+ * @author Johnsooraj.x
+ */
+@Slf4j
 @Service
 public class VoyageService {
 
@@ -20,7 +27,14 @@ public class VoyageService {
 
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
-  public LoadableStudy.ActiveVoyage fetchActiveVoyageByVesselId(
+  /**
+   * Find the voyage which have a status 3 Also, collect the LS details and Port Rotation Details
+   *
+   * @param builder GRPC Response
+   * @param vesselId Long id
+   * @param activeStatus Long Number - 3
+   */
+  public void fetchActiveVoyageByVesselId(
       LoadableStudy.ActiveVoyage.Builder builder, Long vesselId, Long activeStatus) {
     List<Voyage> activeVoyage =
         this.voyageRepository.findActiveVoyagesByVesselId(activeStatus, vesselId);
@@ -47,7 +61,7 @@ public class VoyageService {
           && (STATUS_ACTIVE.equalsIgnoreCase(voyage.getVoyageStatus().getName())
               || STATUS_CLOSE.equalsIgnoreCase(voyage.getVoyageStatus().getName()))) {
 
-        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> lsOb =
+        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedLs =
             voyage.getLoadableStudies().stream()
                 .filter(
                     ls ->
@@ -56,13 +70,13 @@ public class VoyageService {
                                 ls.getLoadableStudyStatus().getName())))
                 .findFirst();
 
-        if (lsOb.isPresent()) {
+        if (confirmedLs.isPresent()) {
           LoadableStudy.LoadableStudyDetail.Builder lsBuilder =
               LoadableStudy.LoadableStudyDetail.newBuilder();
-          this.buildLoadableStudyForVoyage(lsBuilder, lsOb.get());
+          this.buildLoadableStudyForVoyage(lsBuilder, confirmedLs.get());
           builder.setConfirmedLoadableStudy(lsBuilder);
-          if (!lsOb.get().getPortRotations().isEmpty()) {
-            for (LoadableStudyPortRotation lsPr : lsOb.get().getPortRotations()) {
+          if (!confirmedLs.get().getPortRotations().isEmpty()) {
+            for (LoadableStudyPortRotation lsPr : confirmedLs.get().getPortRotations()) {
               LoadableStudy.PortRotationDetail.Builder grpcPRBuilder =
                   LoadableStudy.PortRotationDetail.newBuilder();
               this.buildPortRotationForLs(grpcPRBuilder, lsPr);
@@ -71,8 +85,12 @@ public class VoyageService {
           }
         }
       }
+      log.info(
+          "Active voyage for vessel {}, voyage no {}, status {}",
+          vesselId,
+          voyage.getVoyageNo(),
+          voyage.getVoyageStatus().getId());
     }
-    return null;
   }
 
   // Few data added for now

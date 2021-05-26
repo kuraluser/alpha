@@ -1,7 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
@@ -31,12 +34,23 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @Override
-  public VoyageResponse getActiveVoyageDetails(Long vesselId) {
+  public VoyageResponse getActiveVoyageDetails(Long vesselId) throws GenericServiceException {
     LoadableStudy.ActiveVoyage activeVoyage =
         loadableStudyServiceBlockingStub.getActiveVoyagesByVessel(
             this.buildVoyageRequest(vesselId));
     if (!activeVoyage.getResponseStatus().getStatus().equalsIgnoreCase("SUCCESS")) {
       log.error("Failed to collect Active Voyage Data, Vessel Id {}", vesselId);
+      throw new GenericServiceException(
+          "Failed to get Active Voyage",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    if (activeVoyage.getId() <= 0) {
+      log.error("Failed to collect Active Voyage Data, Vessel Id {}", vesselId);
+      throw new GenericServiceException(
+          "No Active Voyage Exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
     VoyageResponse voyageResponse = new VoyageResponse();
     BeanUtils.copyProperties(activeVoyage, voyageResponse);
