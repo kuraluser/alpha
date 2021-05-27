@@ -11,6 +11,7 @@ export interface EventData {
   shipId: string;
   clientId: string;
   messageId: string;
+  messageType: string;
   sequence: number;
   uniqueId: string;
   fileName: string;
@@ -24,7 +25,7 @@ export interface EventData {
  */
 export interface InboundEventData extends EventData {
   _id?: string,
-  process: 'upload' | 'split' | 'send' | 'finish' | 'confirm'
+  process: 'upload' | 'split' | 'send' | 'finish' | 'confirm' | 'cancel'
   processStatus?: ProcessStatusLevels;
   split?: 'y' | 'n'
   filePath?: string;
@@ -52,6 +53,7 @@ export interface OutboundEventData extends EventData {
   total: number;
   filePath: string;
   createdtimeStamp: number;
+  partNumber?: string;
   process?: 'received' | 'verified' | 'shared';
   processStatus?: ProcessStatusLevels;
   missingPackets?: string;
@@ -69,11 +71,23 @@ export interface InboundEventUploadResponse {
   shipId?: string;
 }
 
+//Response model for status of events
+export interface EventStatusResponse {
+  statusCode: string;
+  message: string;
+  messageId: string;
+  eventUploadStatus?: string,
+  eventUploadPacketStatus?: string,
+  eventDownloadStatus?: string,
+  eventDownloadPacketStatus?: string
+}
+
 // Inbound event data transfer object
 export interface InboundEventDataTransfer {
   clientId: string;
   fileName: string;
   messageId?: string;
+  messageType?: string;
   checksum?: string;
   size?: number;
   total?: number;
@@ -95,4 +109,12 @@ export interface ResendEventDataTransfer {
 export interface LogEventDataTransfer {
   logTime: string,
   buf: any;
+}
+
+//Data for Cancellation cache object
+export interface CancelledCacheData {
+  shipId: string;
+  clientId: string;
+  messageId: string;
+  uniqueId: string;
 }

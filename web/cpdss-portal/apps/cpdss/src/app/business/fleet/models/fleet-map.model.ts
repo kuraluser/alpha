@@ -49,3 +49,23 @@ export interface IFleetVesselCardEvent {
     vesselId: number;
     originalEvent: MouseEvent;
 }
+
+/**
+ * interface for vessel-notifications
+ *
+ * @export
+ * @interface IFleetNotifications
+ */
+export interface IFleetNotifications {
+    vesselName: string;
+    vesselId: number;
+    flag: string;
+    status: string;
+    updatedDate: string;
+    dateTime?: Date;
+}
+
+export interface IFleetNotificationResponse {
+    current: IFleetNotifications[];
+    all: IFleetNotifications[];
+}

@@ -31,7 +31,7 @@
                                         {{options?.ullageUnit}}</li>
                                     <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                                     <li class="col-7">
-                                        {{tank?.commodity[options?.densityField] ? tank?.commodity[options?.densityField] : 0}}
+                                        {{tank?.commodity[options?.densityField] ? (tank?.commodity[options?.densityField] | number: sgNumberFormat) : 0}}
                                     </li>
                                     <li class="col-5">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                                     <li class="col-7">
@@ -84,7 +84,7 @@
                                     {{options?.ullageUnit}}</li>
                                 <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                                 <li class="col-7">
-                                    {{tank?.commodity[options?.densityField] ? tank?.commodity[options?.densityField] : 0}}
+                                    {{tank?.commodity[options?.densityField] ? (tank?.commodity[options?.densityField] | number: sgNumberFormat) : 0}}
                                 </li>
                                 <li class="col-5">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                                 <li class="col-7">
@@ -135,7 +135,7 @@
                                 {{options?.ullageUnit}}</li>
                             <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                             <li class="col-7">
-                                {{tank?.commodity[options?.densityField] ? tank?.commodity[options?.densityField] : 0}}
+                                {{tank?.commodity[options?.densityField] ? (tank?.commodity[options?.densityField] | number: sgNumberFormat) : 0}}
                             </li>
                             <li class="col-5">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                             <li class="col-7">

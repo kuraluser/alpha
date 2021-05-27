@@ -12,6 +12,9 @@ export class InBoundEventDataEntity {
   @Column({ name: 'message_id' })
   messageId: string;
 
+  @Column({ name: 'message_type' })
+  messageType: string;
+
   @Column({ type: 'bigint' })
   sequence: bigint;
 

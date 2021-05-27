@@ -458,6 +458,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.updateValidityAndEditMode(i, 'etd')
       }
     }
+    form.markAsTouched();
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, rowIndex) => {
       if ((event.field === 'port' || event.field === 'operation')) {
@@ -750,9 +751,9 @@ export class PortsComponent implements OnInit, OnDestroy {
       }
       invalidFormControls.forEach((key) => {
         this.portsLists[i][key].isEditMode = true;
+        form.get(key).markAsTouched();
       });
-      this.updateValuesIfBunkering(this.portsLists[i], form, i)
-      form.markAllAsTouched();
+      this.updateValuesIfBunkering(this.portsLists[i], form, i);
       form.updateValueAndValidity();
       this.portsForm.updateValueAndValidity();
     }

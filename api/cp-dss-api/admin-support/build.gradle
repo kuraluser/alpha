@@ -1,4 +1,5 @@
 appConfig {
+  appName = 'admin-support'
   grpcServer = 'y'
   logging = 'y'
   javaMainClass = "com.cpdss.adminsupport.Application"

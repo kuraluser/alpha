@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { CommonDataStore } from '../store/common-db-store';
 import { CommonDBService } from '../services/common-db.service';
 import { InboundEventData, InboundEventDataTransfer } from '../models/common-models';
-import { TaskCompleted, AppConstants } from '../utils/common-app.constants';
+import { TaskCompleted, AppConstants, dataEmitter } from '../utils/common-app.constants';
 import * as io from 'socket.io-client';
 import { Socket } from 'socket.io';
 import * as fs from 'fs';
@@ -76,6 +76,13 @@ export class CommonTransportTaskService {
      * @param eventData
      */
     private transportData(eventData: InboundEventData, taskCompleted: TaskCompleted): void {
+
+        //Checking if the data is cancelled
+        if (this.commonUtilService.checkCanceledKeys(eventData.uniqueId)) {
+            this.logger.warn('Data has cancelled by the client for the id ' + eventData.uniqueId);
+            taskCompleted("Error", '');
+            return;
+        }
         let filePath: string;
         let fileName: string;
         this.logger.log('Part number ' + eventData.partNumber);
@@ -101,6 +108,7 @@ export class CommonTransportTaskService {
             //Checking if its the first part of the packet
             if (eventData.partNumber === AppConstants.PART_NUMBER_ZERO || eventData.partNumber === eventData.startIndex) {
                 dataToSend.messageId = eventData.messageId;
+                dataToSend.messageType = eventData.messageType;
                 dataToSend.checksum = eventData.checksum;
                 dataToSend.algo = eventData.algo;
                 dataToSend.size = eventData.size;

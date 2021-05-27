@@ -358,7 +358,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
           validators: ['dddd.dddd.+'],
-          numberFormat: '1.4-4'
+          numberFormat: AppConfigurationService.settings?.sgNumberFormat
         }],
         editable: true,
       },

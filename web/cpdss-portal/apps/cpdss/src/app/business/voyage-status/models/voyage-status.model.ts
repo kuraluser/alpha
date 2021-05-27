@@ -158,6 +158,7 @@ export interface ICargoQuantities {
     percentageFilled?: string;
     isCommingle?: boolean;
     isCommingleCargo?: boolean;
+    temperature?:any;
 }
 
 /**
