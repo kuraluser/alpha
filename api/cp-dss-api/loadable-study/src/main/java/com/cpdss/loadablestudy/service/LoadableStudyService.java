@@ -11575,63 +11575,63 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                               loadableStudyElement.getLoadableStudyStatus().getName())))
               .findFirst();
 
-      if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
-        List<Voyage> activeVoyage =
-            this.voyageRepository.findByVoyageStatusAndVesselIdAndIsActive(
-                ACTIVE_VOYAGE_STATUS, request.getVesselId(), true);
-        if (!activeVoyage.isEmpty()) {
-          throw new GenericServiceException(
-              "Active Voyage already exist",
-              CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
-              HttpStatusCode.BAD_REQUEST);
-        }
-        if (!loadableStudy.isPresent()) {
-          throw new GenericServiceException(
-              "Confirmed Loadable study does not exist",
-              CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-        Optional<VoyageStatus> status =
-            this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
-        if (!status.isPresent()) {
-          throw new GenericServiceException(
-              "Voyage status does not  exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-        voyageEntity.setVoyageStatus(status.get());
-
-        if (request.getActualStartDate().isEmpty()) {
-          LoadableStudyPortRotation minPortOrderEntity =
-              this.loadableStudyPortRotationRepository
-                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
-                      loadableStudy.get(), true);
-
-          if (null != minPortOrderEntity) {
-            List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
-            if (!synopticalData.isEmpty()) {
-              Optional<SynopticalTable> synoptical =
-                  synopticalData.stream()
-                      .filter(
-                          data ->
-                              data.getLoadableStudyPortRotation()
-                                      .getId()
-                                      .equals(minPortOrderEntity.getId())
-                                  && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(
-                                      data.getOperationType()))
-                      .findAny();
-              if (synoptical.isPresent()) {
-                voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
-              }
-            }
-          }
-        } else {
-          voyageEntity.setActualStartDate(
-              !StringUtils.isEmpty(request.getActualStartDate())
-                  ? LocalDateTime.from(
-                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualStartDate()))
-                  : null);
-        }
+//      if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
+//        List<Voyage> activeVoyage =
+//            this.voyageRepository.findByVoyageStatusAndVesselIdAndIsActive(
+//                ACTIVE_VOYAGE_STATUS, request.getVesselId(), true);
+//        if (!activeVoyage.isEmpty()) {
+//          throw new GenericServiceException(
+//              "Active Voyage already exist",
+//              CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
+//              HttpStatusCode.BAD_REQUEST);
+//        }
+//        if (!loadableStudy.isPresent()) {
+//          throw new GenericServiceException(
+//              "Confirmed Loadable study does not exist",
+//              CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+//              HttpStatusCode.BAD_REQUEST);
+//        }
+//        Optional<VoyageStatus> status =
+//            this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+//        if (!status.isPresent()) {
+//          throw new GenericServiceException(
+//              "Voyage status does not  exist",
+//              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+//              HttpStatusCode.BAD_REQUEST);
+//        }
+//        voyageEntity.setVoyageStatus(status.get());
+//
+//        if (request.getActualStartDate().isEmpty()) {
+//          LoadableStudyPortRotation minPortOrderEntity =
+//              this.loadableStudyPortRotationRepository
+//                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
+//                      loadableStudy.get(), true);
+//
+//          if (null != minPortOrderEntity) {
+//            List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
+//            if (!synopticalData.isEmpty()) {
+//              Optional<SynopticalTable> synoptical =
+//                  synopticalData.stream()
+//                      .filter(
+//                          data ->
+//                              data.getLoadableStudyPortRotation()
+//                                      .getId()
+//                                      .equals(minPortOrderEntity.getId())
+//                                  && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(
+//                                      data.getOperationType()))
+//                      .findAny();
+//              if (synoptical.isPresent()) {
+//                voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
+//              }
+//            }
+//          }
+//        } else {
+//          voyageEntity.setActualStartDate(
+//              !StringUtils.isEmpty(request.getActualStartDate())
+//                  ? LocalDateTime.from(
+//                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualStartDate()))
+//                  : null);
+//        }
 
         // Synchronizing with Loading Plan Microservice
         loadableStudy.get().getPortRotations().stream()
@@ -11672,56 +11672,56 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   }
                 });
 
-      } else {
-
-        Optional<VoyageStatus> status =
-            this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
-        if (!status.isPresent()) {
-          throw new GenericServiceException(
-              "Voyage status does not  exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-        voyageEntity.setVoyageStatus(status.get());
-
-        if (request.getActualEndDate().isEmpty()) {
-          LoadableStudyPortRotation maxPortOrderEntity =
-              this.loadableStudyPortRotationRepository
-                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
-                      loadableStudy.get(), true);
-          if (maxPortOrderEntity != null) {
-            List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
-            if (!synopticalData.isEmpty()) {
-              Optional<SynopticalTable> synoptical =
-                  synopticalData.stream()
-                      .filter(
-                          data ->
-                              data.getLoadableStudyPortRotation()
-                                      .getId()
-                                      .equals(maxPortOrderEntity.getId())
-                                  && SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(
-                                      data.getOperationType()))
-                      .findAny();
-
-              if (synoptical.isPresent()) {
-                voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
-              }
-            }
-          }
-        } else {
-          voyageEntity.setActualEndDate(
-              !StringUtils.isEmpty(request.getActualEndDate())
-                  ? LocalDateTime.from(
-                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
-                  : null);
-        }
-      }
-      this.voyageRepository.save(voyageEntity);
-      try {
-        this.updateApiTempWithCargoNominations(voyageEntity);
-      } catch (Exception e) {
-        log.info("Voyage Close, update api-temp - Failed {} - {}", e.getMessage(), e);
-      }
+//      } else {
+//
+//        Optional<VoyageStatus> status =
+//            this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
+//        if (!status.isPresent()) {
+//          throw new GenericServiceException(
+//              "Voyage status does not  exist",
+//              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+//              HttpStatusCode.BAD_REQUEST);
+//        }
+//        voyageEntity.setVoyageStatus(status.get());
+//
+//        if (request.getActualEndDate().isEmpty()) {
+//          LoadableStudyPortRotation maxPortOrderEntity =
+//              this.loadableStudyPortRotationRepository
+//                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+//                      loadableStudy.get(), true);
+//          if (maxPortOrderEntity != null) {
+//            List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
+//            if (!synopticalData.isEmpty()) {
+//              Optional<SynopticalTable> synoptical =
+//                  synopticalData.stream()
+//                      .filter(
+//                          data ->
+//                              data.getLoadableStudyPortRotation()
+//                                      .getId()
+//                                      .equals(maxPortOrderEntity.getId())
+//                                  && SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(
+//                                      data.getOperationType()))
+//                      .findAny();
+//
+//              if (synoptical.isPresent()) {
+//                voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
+//              }
+//            }
+//          }
+//        } else {
+//          voyageEntity.setActualEndDate(
+//              !StringUtils.isEmpty(request.getActualEndDate())
+//                  ? LocalDateTime.from(
+//                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
+//                  : null);
+//        }
+//      }
+//      this.voyageRepository.save(voyageEntity);
+//      try {
+//        this.updateApiTempWithCargoNominations(voyageEntity);
+//      } catch (Exception e) {
+//        log.info("Voyage Close, update api-temp - Failed {} - {}", e.getMessage(), e);
+//      }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 
     } catch (GenericServiceException e) {
