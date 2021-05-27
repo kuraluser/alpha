@@ -489,6 +489,8 @@ message LoadableQuantityCommingleCargoDetails {
      string correctionFactor = 28;
       string slopQuantity = 29;
      string actualQuantity=30;
+     string timeRequiredForLoading = 31;
+	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 32;
 }
 
 message LoadableQuantityCargoDetails {
@@ -516,6 +518,14 @@ message LoadableQuantityCargoDetails {
 	 string slopQuantity = 22;
 	 int64 cargoNominationId = 23;
 	 repeated LoadingPortDetail loadingPorts = 24;
+	 string timeRequiredForLoading = 25;
+	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 26;
+}
+
+message CargoToppingOffSequenceDetails {
+  int64 tankId = 1;
+  int32 orderNumber = 2;
+  int64 cargoId = 3;
 }
 
 message ConfirmPlanRequest {
@@ -1203,6 +1213,7 @@ string status=1;
 int64 voyageId=2;
 string actualStartDate=3;
 string actualEndDate=4;
+int64 vesselId=5;
 }
 
 message SaveVoyageStatusReply {

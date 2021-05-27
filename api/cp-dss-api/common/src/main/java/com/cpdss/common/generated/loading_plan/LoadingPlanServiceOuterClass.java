@@ -23,7 +23,9 @@ public final class LoadingPlanServiceOuterClass {
           + "o2a\n\031LoadingInformationService\022D\n\025GetLoa"
           + "dingInformation\022\023.LoadingPlanRequest\032\024.L"
           + "oadingPlanResponse\"\0002\033\n\031LoadingInstructi"
-          + "onService2\024\n\022LoadingPlanServiceB+\n\'com.c"
+          + "onService2d\n\022LoadingPlanService\022N\n\032Loadi"
+          + "ngPlanSynchronization\022\027.LoadingPlanSyncD"
+          + "etails\032\025.LoadingPlanSyncReply\"\000B+\n\'com.c"
           + "pdss.common.generated.loading_planP\000b\006pr"
           + "oto3"
     };

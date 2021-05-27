@@ -23,6 +23,7 @@ import com.cpdss.common.generated.LoadableStudy.CargoHistoryReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.CargoToppingOffSequenceDetails;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
@@ -3595,6 +3596,20 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
     Optional.ofNullable(lpqcd.getCargoNominationId())
         .ifPresent(qunatityBuilder::setCargoNominationId);
+    Optional.ofNullable(lpqcd.getTimeRequiredForLoading())
+        .ifPresent(qunatityBuilder::setTimeRequiredForLoading);
+    lpqcd
+        .getToppingSequence()
+        .forEach(
+            sequence -> {
+              CargoToppingOffSequenceDetails.Builder toppingBuilder =
+                  CargoToppingOffSequenceDetails.newBuilder();
+              Optional.ofNullable(lpqcd.getCargoId()).ifPresent(toppingBuilder::setCargoId);
+              Optional.ofNullable(sequence.getSequenceOrder())
+                  .ifPresent(toppingBuilder::setOrderNumber);
+              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
+              qunatityBuilder.addToppingOffSequences(toppingBuilder.build());
+            });
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3627,6 +3642,21 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
     Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+    Optional.ofNullable(lqccd.getTimeRequiredForLoading())
+        .ifPresent(builder::setTimeRequiredForLoading);
+    lqccd
+        .getToppingSequence()
+        .forEach(
+            sequence -> {
+              CargoToppingOffSequenceDetails.Builder toppingBuilder =
+                  CargoToppingOffSequenceDetails.newBuilder();
+              Optional.ofNullable(lqccd.getToppingOffCargoId())
+                  .ifPresent(toppingBuilder::setCargoId);
+              Optional.ofNullable(sequence.getSequenceOrder())
+                  .ifPresent(toppingBuilder::setOrderNumber);
+              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
+              builder.addToppingOffSequences(toppingBuilder.build());
+            });
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -5456,6 +5486,7 @@ public class LoadableStudyService {
     builder.setVoyageId(request.getVoyageId());
     Optional.ofNullable(request.getActualStartDate()).ifPresent(builder::setActualStartDate);
     Optional.ofNullable(request.getActualEndDate()).ifPresent(builder::setActualEndDate);
+    Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
     builder.setStatus(request.getStatus());
     SaveVoyageStatusReply reply = this.saveVoyageStatus(builder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
