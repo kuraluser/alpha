@@ -5662,6 +5662,7 @@ public class LoadableStudyService {
   public Object test() {
     LoadableStudyJson.Builder error = LoadableStudyJson.newBuilder();
     error.setImoNumber("123");
+    error.setLoadableStudy("test data");
     this.envoyWriterGrpcService.getLoadableStudy(error.build());
     return null;
   }

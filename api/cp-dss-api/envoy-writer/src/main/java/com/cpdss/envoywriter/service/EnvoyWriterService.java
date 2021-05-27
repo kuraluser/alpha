@@ -37,13 +37,17 @@ public class EnvoyWriterService {
   @Value("${cpdss.communication.salt}")
   private String salt;
 
+  @Value("${cpdss.communucation.writer.url}")
+  private String writerUrl;
+
   @Autowired private SequenceNumberRepository sequenceNumberRepository;
 
   private static final Long SEQUENCE_NUMBER_ID = 1L;
 
   @Autowired private RestTemplate restTemplate;
-  public static final String PREFIX = "temp";
-  public static final String SUFFIX = ".zip";
+  public static final String FILE_PREFIX = "temp";
+  public static final String FILE_SUFFIX = ".zip";
+  public static final String FILE_NAME = "temp.txt";
 
   public WriterReply passDataToCommunicationServer(LoadableStudyJson request, Builder builder)
       throws IOException {
@@ -64,7 +68,7 @@ public class EnvoyWriterService {
 
         /* File is not on the disk, temp.txt indicates
         only the file name to be put into the zip */
-        ZipEntry entry = new ZipEntry("temp.txt");
+        ZipEntry entry = new ZipEntry(FILE_NAME);
 
         zos.putNextEntry(entry);
         zos.write(encryptedString.getBytes());
@@ -77,7 +81,7 @@ public class EnvoyWriterService {
         ioe.printStackTrace();
       }
 
-      File tempFile = java.io.File.createTempFile(PREFIX, SUFFIX);
+      File tempFile = java.io.File.createTempFile(FILE_PREFIX, FILE_SUFFIX);
       tempFile.deleteOnExit();
       out = new FileOutputStream(tempFile);
 
@@ -85,7 +89,6 @@ public class EnvoyWriterService {
 
       FileSystemResource fileSystemResource = new FileSystemResource(tempFile);
       String checkSum = getCheckSum(tempFile);
-
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("file", fileSystemResource);
       HttpHeaders headers = new HttpHeaders();
@@ -98,10 +101,7 @@ public class EnvoyWriterService {
           new HttpEntity<LinkedMultiValueMap<String, Object>>(map, headers);
       ResponseEntity<String> result =
           restTemplate.exchange(
-              "http://192.168.3.151:4900/push/kazusa/57/58/59",
-              HttpMethod.POST,
-              requestEntity,
-              String.class);
+              writerUrl + "/push/kazusa/ls/96/96", HttpMethod.POST, requestEntity, String.class);
 
       System.out.println("-- " + result);
 
