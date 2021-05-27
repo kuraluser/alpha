@@ -16,17 +16,43 @@ public final class EnvoyReader {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string lsUUID = 1;</code>
+     * <code>string requestType = 1;</code>
      *
-     * @return The lsUUID.
+     * @return The requestType.
      */
-    java.lang.String getLsUUID();
+    java.lang.String getRequestType();
     /**
-     * <code>string lsUUID = 1;</code>
+     * <code>string requestType = 1;</code>
      *
-     * @return The bytes for lsUUID.
+     * @return The bytes for requestType.
      */
-    com.google.protobuf.ByteString getLsUUIDBytes();
+    com.google.protobuf.ByteString getRequestTypeBytes();
+
+    /**
+     * <code>string clientId = 2;</code>
+     *
+     * @return The clientId.
+     */
+    java.lang.String getClientId();
+    /**
+     * <code>string clientId = 2;</code>
+     *
+     * @return The bytes for clientId.
+     */
+    com.google.protobuf.ByteString getClientIdBytes();
+
+    /**
+     * <code>string shipId = 3;</code>
+     *
+     * @return The shipId.
+     */
+    java.lang.String getShipId();
+    /**
+     * <code>string shipId = 3;</code>
+     *
+     * @return The bytes for shipId.
+     */
+    com.google.protobuf.ByteString getShipIdBytes();
   }
   /** Protobuf type {@code EnvoyReaderResultRequest} */
   public static final class EnvoyReaderResultRequest extends com.google.protobuf.GeneratedMessageV3
@@ -40,7 +66,9 @@ public final class EnvoyReader {
     }
 
     private EnvoyReaderResultRequest() {
-      lsUUID_ = "";
+      requestType_ = "";
+      clientId_ = "";
+      shipId_ = "";
     }
 
     @java.lang.Override
@@ -76,7 +104,21 @@ public final class EnvoyReader {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                lsUUID_ = s;
+                requestType_ = s;
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                clientId_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                shipId_ = s;
                 break;
               }
             default:
@@ -113,35 +155,105 @@ public final class EnvoyReader {
               com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest.Builder.class);
     }
 
-    public static final int LSUUID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object lsUUID_;
+    public static final int REQUESTTYPE_FIELD_NUMBER = 1;
+    private volatile java.lang.Object requestType_;
     /**
-     * <code>string lsUUID = 1;</code>
+     * <code>string requestType = 1;</code>
      *
-     * @return The lsUUID.
+     * @return The requestType.
      */
-    public java.lang.String getLsUUID() {
-      java.lang.Object ref = lsUUID_;
+    public java.lang.String getRequestType() {
+      java.lang.Object ref = requestType_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        lsUUID_ = s;
+        requestType_ = s;
         return s;
       }
     }
     /**
-     * <code>string lsUUID = 1;</code>
+     * <code>string requestType = 1;</code>
      *
-     * @return The bytes for lsUUID.
+     * @return The bytes for requestType.
      */
-    public com.google.protobuf.ByteString getLsUUIDBytes() {
-      java.lang.Object ref = lsUUID_;
+    public com.google.protobuf.ByteString getRequestTypeBytes() {
+      java.lang.Object ref = requestType_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        lsUUID_ = b;
+        requestType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CLIENTID_FIELD_NUMBER = 2;
+    private volatile java.lang.Object clientId_;
+    /**
+     * <code>string clientId = 2;</code>
+     *
+     * @return The clientId.
+     */
+    public java.lang.String getClientId() {
+      java.lang.Object ref = clientId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        clientId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string clientId = 2;</code>
+     *
+     * @return The bytes for clientId.
+     */
+    public com.google.protobuf.ByteString getClientIdBytes() {
+      java.lang.Object ref = clientId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        clientId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SHIPID_FIELD_NUMBER = 3;
+    private volatile java.lang.Object shipId_;
+    /**
+     * <code>string shipId = 3;</code>
+     *
+     * @return The shipId.
+     */
+    public java.lang.String getShipId() {
+      java.lang.Object ref = shipId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        shipId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string shipId = 3;</code>
+     *
+     * @return The bytes for shipId.
+     */
+    public com.google.protobuf.ByteString getShipIdBytes() {
+      java.lang.Object ref = shipId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        shipId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -162,8 +274,14 @@ public final class EnvoyReader {
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-      if (!getLsUUIDBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, lsUUID_);
+      if (!getRequestTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, requestType_);
+      }
+      if (!getClientIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, clientId_);
+      }
+      if (!getShipIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, shipId_);
       }
       unknownFields.writeTo(output);
     }
@@ -174,8 +292,14 @@ public final class EnvoyReader {
       if (size != -1) return size;
 
       size = 0;
-      if (!getLsUUIDBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, lsUUID_);
+      if (!getRequestTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, requestType_);
+      }
+      if (!getClientIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, clientId_);
+      }
+      if (!getShipIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, shipId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -193,7 +317,9 @@ public final class EnvoyReader {
       com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest other =
           (com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest) obj;
 
-      if (!getLsUUID().equals(other.getLsUUID())) return false;
+      if (!getRequestType().equals(other.getRequestType())) return false;
+      if (!getClientId().equals(other.getClientId())) return false;
+      if (!getShipId().equals(other.getShipId())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -205,8 +331,12 @@ public final class EnvoyReader {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + LSUUID_FIELD_NUMBER;
-      hash = (53 * hash) + getLsUUID().hashCode();
+      hash = (37 * hash) + REQUESTTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getRequestType().hashCode();
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
+      hash = (53 * hash) + getClientId().hashCode();
+      hash = (37 * hash) + SHIPID_FIELD_NUMBER;
+      hash = (53 * hash) + getShipId().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -349,7 +479,11 @@ public final class EnvoyReader {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        lsUUID_ = "";
+        requestType_ = "";
+
+        clientId_ = "";
+
+        shipId_ = "";
 
         return this;
       }
@@ -379,7 +513,9 @@ public final class EnvoyReader {
       public com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest buildPartial() {
         com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest result =
             new com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest(this);
-        result.lsUUID_ = lsUUID_;
+        result.requestType_ = requestType_;
+        result.clientId_ = clientId_;
+        result.shipId_ = shipId_;
         onBuilt();
         return result;
       }
@@ -434,8 +570,16 @@ public final class EnvoyReader {
         if (other
             == com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest.getDefaultInstance())
           return this;
-        if (!other.getLsUUID().isEmpty()) {
-          lsUUID_ = other.lsUUID_;
+        if (!other.getRequestType().isEmpty()) {
+          requestType_ = other.requestType_;
+          onChanged();
+        }
+        if (!other.getClientId().isEmpty()) {
+          clientId_ = other.clientId_;
+          onChanged();
+        }
+        if (!other.getShipId().isEmpty()) {
+          shipId_ = other.shipId_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -469,78 +613,230 @@ public final class EnvoyReader {
         return this;
       }
 
-      private java.lang.Object lsUUID_ = "";
+      private java.lang.Object requestType_ = "";
       /**
-       * <code>string lsUUID = 1;</code>
+       * <code>string requestType = 1;</code>
        *
-       * @return The lsUUID.
+       * @return The requestType.
        */
-      public java.lang.String getLsUUID() {
-        java.lang.Object ref = lsUUID_;
+      public java.lang.String getRequestType() {
+        java.lang.Object ref = requestType_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          lsUUID_ = s;
+          requestType_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string lsUUID = 1;</code>
+       * <code>string requestType = 1;</code>
        *
-       * @return The bytes for lsUUID.
+       * @return The bytes for requestType.
        */
-      public com.google.protobuf.ByteString getLsUUIDBytes() {
-        java.lang.Object ref = lsUUID_;
+      public com.google.protobuf.ByteString getRequestTypeBytes() {
+        java.lang.Object ref = requestType_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          lsUUID_ = b;
+          requestType_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string lsUUID = 1;</code>
+       * <code>string requestType = 1;</code>
        *
-       * @param value The lsUUID to set.
+       * @param value The requestType to set.
        * @return This builder for chaining.
        */
-      public Builder setLsUUID(java.lang.String value) {
+      public Builder setRequestType(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        lsUUID_ = value;
+        requestType_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string lsUUID = 1;</code>
+       * <code>string requestType = 1;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearLsUUID() {
+      public Builder clearRequestType() {
 
-        lsUUID_ = getDefaultInstance().getLsUUID();
+        requestType_ = getDefaultInstance().getRequestType();
         onChanged();
         return this;
       }
       /**
-       * <code>string lsUUID = 1;</code>
+       * <code>string requestType = 1;</code>
        *
-       * @param value The bytes for lsUUID to set.
+       * @param value The bytes for requestType to set.
        * @return This builder for chaining.
        */
-      public Builder setLsUUIDBytes(com.google.protobuf.ByteString value) {
+      public Builder setRequestTypeBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        lsUUID_ = value;
+        requestType_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object clientId_ = "";
+      /**
+       * <code>string clientId = 2;</code>
+       *
+       * @return The clientId.
+       */
+      public java.lang.String getClientId() {
+        java.lang.Object ref = clientId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          clientId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string clientId = 2;</code>
+       *
+       * @return The bytes for clientId.
+       */
+      public com.google.protobuf.ByteString getClientIdBytes() {
+        java.lang.Object ref = clientId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          clientId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string clientId = 2;</code>
+       *
+       * @param value The clientId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setClientId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        clientId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string clientId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearClientId() {
+
+        clientId_ = getDefaultInstance().getClientId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string clientId = 2;</code>
+       *
+       * @param value The bytes for clientId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setClientIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        clientId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object shipId_ = "";
+      /**
+       * <code>string shipId = 3;</code>
+       *
+       * @return The shipId.
+       */
+      public java.lang.String getShipId() {
+        java.lang.Object ref = shipId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          shipId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string shipId = 3;</code>
+       *
+       * @return The bytes for shipId.
+       */
+      public com.google.protobuf.ByteString getShipIdBytes() {
+        java.lang.Object ref = shipId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          shipId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string shipId = 3;</code>
+       *
+       * @param value The shipId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShipId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        shipId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shipId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearShipId() {
+
+        shipId_ = getDefaultInstance().getShipId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shipId = 3;</code>
+       *
+       * @param value The bytes for shipId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShipIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        shipId_ = value;
         onChanged();
         return this;
       }
@@ -619,18 +915,31 @@ public final class EnvoyReader {
     com.google.protobuf.ByteString getPatternResultJsonBytes();
 
     /**
-     * <code>.ResponseStatus responseStatus = 2;</code>
+     * <code>string patternResultType = 2;</code>
+     *
+     * @return The patternResultType.
+     */
+    java.lang.String getPatternResultType();
+    /**
+     * <code>string patternResultType = 2;</code>
+     *
+     * @return The bytes for patternResultType.
+     */
+    com.google.protobuf.ByteString getPatternResultTypeBytes();
+
+    /**
+     * <code>.ResponseStatus responseStatus = 3;</code>
      *
      * @return Whether the responseStatus field is set.
      */
     boolean hasResponseStatus();
     /**
-     * <code>.ResponseStatus responseStatus = 2;</code>
+     * <code>.ResponseStatus responseStatus = 3;</code>
      *
      * @return The responseStatus.
      */
     com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
-    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    /** <code>.ResponseStatus responseStatus = 3;</code> */
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
   }
   /** Protobuf type {@code EnvoyReaderResultReply} */
@@ -646,6 +955,7 @@ public final class EnvoyReader {
 
     private EnvoyReaderResultReply() {
       patternResultJson_ = "";
+      patternResultType_ = "";
     }
 
     @java.lang.Override
@@ -685,6 +995,13 @@ public final class EnvoyReader {
                 break;
               }
             case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                patternResultType_ = s;
+                break;
+              }
+            case 26:
               {
                 com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
                 if (responseStatus_ != null) {
@@ -770,10 +1087,45 @@ public final class EnvoyReader {
       }
     }
 
-    public static final int RESPONSESTATUS_FIELD_NUMBER = 2;
+    public static final int PATTERNRESULTTYPE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object patternResultType_;
+    /**
+     * <code>string patternResultType = 2;</code>
+     *
+     * @return The patternResultType.
+     */
+    public java.lang.String getPatternResultType() {
+      java.lang.Object ref = patternResultType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        patternResultType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string patternResultType = 2;</code>
+     *
+     * @return The bytes for patternResultType.
+     */
+    public com.google.protobuf.ByteString getPatternResultTypeBytes() {
+      java.lang.Object ref = patternResultType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        patternResultType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 3;
     private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
     /**
-     * <code>.ResponseStatus responseStatus = 2;</code>
+     * <code>.ResponseStatus responseStatus = 3;</code>
      *
      * @return Whether the responseStatus field is set.
      */
@@ -781,7 +1133,7 @@ public final class EnvoyReader {
       return responseStatus_ != null;
     }
     /**
-     * <code>.ResponseStatus responseStatus = 2;</code>
+     * <code>.ResponseStatus responseStatus = 3;</code>
      *
      * @return The responseStatus.
      */
@@ -790,7 +1142,7 @@ public final class EnvoyReader {
           ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
           : responseStatus_;
     }
-    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    /** <code>.ResponseStatus responseStatus = 3;</code> */
     public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
       return getResponseStatus();
     }
@@ -812,8 +1164,11 @@ public final class EnvoyReader {
       if (!getPatternResultJsonBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, patternResultJson_);
       }
+      if (!getPatternResultTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, patternResultType_);
+      }
       if (responseStatus_ != null) {
-        output.writeMessage(2, getResponseStatus());
+        output.writeMessage(3, getResponseStatus());
       }
       unknownFields.writeTo(output);
     }
@@ -827,8 +1182,11 @@ public final class EnvoyReader {
       if (!getPatternResultJsonBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, patternResultJson_);
       }
+      if (!getPatternResultTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, patternResultType_);
+      }
       if (responseStatus_ != null) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, getResponseStatus());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -847,6 +1205,7 @@ public final class EnvoyReader {
           (com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply) obj;
 
       if (!getPatternResultJson().equals(other.getPatternResultJson())) return false;
+      if (!getPatternResultType().equals(other.getPatternResultType())) return false;
       if (hasResponseStatus() != other.hasResponseStatus()) return false;
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
@@ -864,6 +1223,8 @@ public final class EnvoyReader {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + PATTERNRESULTJSON_FIELD_NUMBER;
       hash = (53 * hash) + getPatternResultJson().hashCode();
+      hash = (37 * hash) + PATTERNRESULTTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getPatternResultType().hashCode();
       if (hasResponseStatus()) {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
@@ -1010,6 +1371,8 @@ public final class EnvoyReader {
         super.clear();
         patternResultJson_ = "";
 
+        patternResultType_ = "";
+
         if (responseStatusBuilder_ == null) {
           responseStatus_ = null;
         } else {
@@ -1045,6 +1408,7 @@ public final class EnvoyReader {
         com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply result =
             new com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply(this);
         result.patternResultJson_ = patternResultJson_;
+        result.patternResultType_ = patternResultType_;
         if (responseStatusBuilder_ == null) {
           result.responseStatus_ = responseStatus_;
         } else {
@@ -1106,6 +1470,10 @@ public final class EnvoyReader {
           return this;
         if (!other.getPatternResultJson().isEmpty()) {
           patternResultJson_ = other.patternResultJson_;
+          onChanged();
+        }
+        if (!other.getPatternResultType().isEmpty()) {
+          patternResultType_ = other.patternResultType_;
           onChanged();
         }
         if (other.hasResponseStatus()) {
@@ -1214,6 +1582,874 @@ public final class EnvoyReader {
         checkByteStringIsUtf8(value);
 
         patternResultJson_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object patternResultType_ = "";
+      /**
+       * <code>string patternResultType = 2;</code>
+       *
+       * @return The patternResultType.
+       */
+      public java.lang.String getPatternResultType() {
+        java.lang.Object ref = patternResultType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          patternResultType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string patternResultType = 2;</code>
+       *
+       * @return The bytes for patternResultType.
+       */
+      public com.google.protobuf.ByteString getPatternResultTypeBytes() {
+        java.lang.Object ref = patternResultType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          patternResultType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string patternResultType = 2;</code>
+       *
+       * @param value The patternResultType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPatternResultType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        patternResultType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string patternResultType = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPatternResultType() {
+
+        patternResultType_ = getDefaultInstance().getPatternResultType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string patternResultType = 2;</code>
+       *
+       * @param value The bytes for patternResultType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPatternResultTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        patternResultType_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 3;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 3;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:EnvoyReaderResultReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:EnvoyReaderResultReply)
+    private static final com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply();
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<EnvoyReaderResultReply> PARSER =
+        new com.google.protobuf.AbstractParser<EnvoyReaderResultReply>() {
+          @java.lang.Override
+          public EnvoyReaderResultReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new EnvoyReaderResultReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<EnvoyReaderResultReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<EnvoyReaderResultReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface EnvoyReaderStatusReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:EnvoyReaderStatusReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string downloadStatus = 1;</code>
+     *
+     * @return The downloadStatus.
+     */
+    java.lang.String getDownloadStatus();
+    /**
+     * <code>string downloadStatus = 1;</code>
+     *
+     * @return The bytes for downloadStatus.
+     */
+    com.google.protobuf.ByteString getDownloadStatusBytes();
+
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /** Protobuf type {@code EnvoyReaderStatusReply} */
+  public static final class EnvoyReaderStatusReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:EnvoyReaderStatusReply)
+      EnvoyReaderStatusReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use EnvoyReaderStatusReply.newBuilder() to construct.
+    private EnvoyReaderStatusReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private EnvoyReaderStatusReply() {
+      downloadStatus_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new EnvoyReaderStatusReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private EnvoyReaderStatusReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                downloadStatus_ = s;
+                break;
+              }
+            case 18:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.EnvoyReader
+          .internal_static_EnvoyReaderStatusReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.EnvoyReader
+          .internal_static_EnvoyReaderStatusReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply.class,
+              com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply.Builder.class);
+    }
+
+    public static final int DOWNLOADSTATUS_FIELD_NUMBER = 1;
+    private volatile java.lang.Object downloadStatus_;
+    /**
+     * <code>string downloadStatus = 1;</code>
+     *
+     * @return The downloadStatus.
+     */
+    public java.lang.String getDownloadStatus() {
+      java.lang.Object ref = downloadStatus_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        downloadStatus_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string downloadStatus = 1;</code>
+     *
+     * @return The bytes for downloadStatus.
+     */
+    public com.google.protobuf.ByteString getDownloadStatusBytes() {
+      java.lang.Object ref = downloadStatus_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        downloadStatus_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 2;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (!getDownloadStatusBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, downloadStatus_);
+      }
+      if (responseStatus_ != null) {
+        output.writeMessage(2, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getDownloadStatusBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, downloadStatus_);
+      }
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply other =
+          (com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply) obj;
+
+      if (!getDownloadStatus().equals(other.getDownloadStatus())) return false;
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + DOWNLOADSTATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getDownloadStatus().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code EnvoyReaderStatusReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:EnvoyReaderStatusReply)
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.EnvoyReader
+            .internal_static_EnvoyReaderStatusReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.EnvoyReader
+            .internal_static_EnvoyReaderStatusReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply.class,
+                com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        downloadStatus_ = "";
+
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.EnvoyReader
+            .internal_static_EnvoyReaderStatusReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply build() {
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply buildPartial() {
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply result =
+            new com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply(this);
+        result.downloadStatus_ = downloadStatus_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply) {
+          return mergeFrom((com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply other) {
+        if (other
+            == com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply.getDefaultInstance())
+          return this;
+        if (!other.getDownloadStatus().isEmpty()) {
+          downloadStatus_ = other.downloadStatus_;
+          onChanged();
+        }
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object downloadStatus_ = "";
+      /**
+       * <code>string downloadStatus = 1;</code>
+       *
+       * @return The downloadStatus.
+       */
+      public java.lang.String getDownloadStatus() {
+        java.lang.Object ref = downloadStatus_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          downloadStatus_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string downloadStatus = 1;</code>
+       *
+       * @return The bytes for downloadStatus.
+       */
+      public com.google.protobuf.ByteString getDownloadStatusBytes() {
+        java.lang.Object ref = downloadStatus_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          downloadStatus_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string downloadStatus = 1;</code>
+       *
+       * @param value The downloadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDownloadStatus(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        downloadStatus_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string downloadStatus = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDownloadStatus() {
+
+        downloadStatus_ = getDefaultInstance().getDownloadStatus();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string downloadStatus = 1;</code>
+       *
+       * @param value The bytes for downloadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDownloadStatusBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        downloadStatus_ = value;
         onChanged();
         return this;
       }
@@ -1349,44 +2585,44 @@ public final class EnvoyReader {
         return super.mergeUnknownFields(unknownFields);
       }
 
-      // @@protoc_insertion_point(builder_scope:EnvoyReaderResultReply)
+      // @@protoc_insertion_point(builder_scope:EnvoyReaderStatusReply)
     }
 
-    // @@protoc_insertion_point(class_scope:EnvoyReaderResultReply)
-    private static final com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply
+    // @@protoc_insertion_point(class_scope:EnvoyReaderStatusReply)
+    private static final com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply
         DEFAULT_INSTANCE;
 
     static {
-      DEFAULT_INSTANCE = new com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply();
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply();
     }
 
-    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply
+    public static com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply
         getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<EnvoyReaderResultReply> PARSER =
-        new com.google.protobuf.AbstractParser<EnvoyReaderResultReply>() {
+    private static final com.google.protobuf.Parser<EnvoyReaderStatusReply> PARSER =
+        new com.google.protobuf.AbstractParser<EnvoyReaderStatusReply>() {
           @java.lang.Override
-          public EnvoyReaderResultReply parsePartialFrom(
+          public EnvoyReaderStatusReply parsePartialFrom(
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws com.google.protobuf.InvalidProtocolBufferException {
-            return new EnvoyReaderResultReply(input, extensionRegistry);
+            return new EnvoyReaderStatusReply(input, extensionRegistry);
           }
         };
 
-    public static com.google.protobuf.Parser<EnvoyReaderResultReply> parser() {
+    public static com.google.protobuf.Parser<EnvoyReaderStatusReply> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<EnvoyReaderResultReply> getParserForType() {
+    public com.google.protobuf.Parser<EnvoyReaderStatusReply> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply
+    public com.cpdss.common.generated.EnvoyReader.EnvoyReaderStatusReply
         getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -1400,6 +2636,10 @@ public final class EnvoyReader {
       internal_static_EnvoyReaderResultReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_EnvoyReaderResultReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_EnvoyReaderStatusReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_EnvoyReaderStatusReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -1409,14 +2649,20 @@ public final class EnvoyReader {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\022envoy_reader.proto\032\014common.proto\"*\n\030En"
-          + "voyReaderResultRequest\022\016\n\006lsUUID\030\001 \001(\t\"\\"
-          + "\n\026EnvoyReaderResultReply\022\031\n\021patternResul"
-          + "tJson\030\001 \001(\t\022\'\n\016responseStatus\030\002 \001(\0132\017.Re"
-          + "sponseStatus2e\n\022EnvoyReaderService\022O\n\027ge"
-          + "tResultFromCommServer\022\031.EnvoyReaderResul"
-          + "tRequest\032\027.EnvoyReaderResultReply\"\000B\036\n\032c"
-          + "om.cpdss.common.generatedP\000b\006proto3"
+      "\n\022envoy_reader.proto\032\014common.proto\"Q\n\030En"
+          + "voyReaderResultRequest\022\023\n\013requestType\030\001 "
+          + "\001(\t\022\020\n\010clientId\030\002 \001(\t\022\016\n\006shipId\030\003 \001(\t\"w\n"
+          + "\026EnvoyReaderResultReply\022\031\n\021patternResult"
+          + "Json\030\001 \001(\t\022\031\n\021patternResultType\030\002 \001(\t\022\'\n"
+          + "\016responseStatus\030\003 \001(\0132\017.ResponseStatus\"Y"
+          + "\n\026EnvoyReaderStatusReply\022\026\n\016downloadStat"
+          + "us\030\001 \001(\t\022\'\n\016responseStatus\030\002 \001(\0132\017.Respo"
+          + "nseStatus2\266\001\n\022EnvoyReaderService\022O\n\027getR"
+          + "esultFromCommServer\022\031.EnvoyReaderResultR"
+          + "equest\032\027.EnvoyReaderResultReply\"\000\022O\n\027get"
+          + "StatusFromCommServer\022\031.EnvoyReaderResult"
+          + "Request\032\027.EnvoyReaderResultReply\"\000B\036\n\032co"
+          + "m.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1429,14 +2675,21 @@ public final class EnvoyReader {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_EnvoyReaderResultRequest_descriptor,
             new java.lang.String[] {
-              "LsUUID",
+              "RequestType", "ClientId", "ShipId",
             });
     internal_static_EnvoyReaderResultReply_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_EnvoyReaderResultReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_EnvoyReaderResultReply_descriptor,
             new java.lang.String[] {
-              "PatternResultJson", "ResponseStatus",
+              "PatternResultJson", "PatternResultType", "ResponseStatus",
+            });
+    internal_static_EnvoyReaderStatusReply_descriptor = getDescriptor().getMessageTypes().get(2);
+    internal_static_EnvoyReaderStatusReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_EnvoyReaderStatusReply_descriptor,
+            new java.lang.String[] {
+              "DownloadStatus", "ResponseStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

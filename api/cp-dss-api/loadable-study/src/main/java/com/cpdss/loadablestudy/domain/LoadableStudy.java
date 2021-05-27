@@ -31,4 +31,5 @@ public class LoadableStudy {
   private List<OnHandQuantity> onHandQuantity;
   private List<OnBoardQuantity> onBoardQuantity;
   private List<PortDetails> portDetails;
+  private List<LoadableStudyAttachment> LoadableStudyAttachment;
 }

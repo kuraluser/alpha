@@ -3,9 +3,13 @@ package com.cpdss.envoywriter.service;
 
 import static com.cpdss.envoywriter.common.Utility.*;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply.Builder;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.envoywriter.domain.CommunicationResponse;
 import com.cpdss.envoywriter.entity.SequenceNumber;
 import com.cpdss.envoywriter.repository.SequenceNumberRepository;
 import java.io.BufferedReader;
@@ -24,15 +28,12 @@ import java.util.zip.ZipOutputStream;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Log4j2
 @Transactional
@@ -87,21 +88,41 @@ public class EnvoyWriterService {
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("files", entry);
       HttpHeaders headers = new HttpHeaders();
-      headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+      headers.setContentType(MediaType.ALL);
       zos.closeEntry();
       zos.close();
 
+      UriComponentsBuilder uri =
+          UriComponentsBuilder.fromHttpUrl(
+              "http://192.168.3.151:4900/push/clientId/messageType/messageId/seq");
+
+      uri.queryParam("clientId", request.getVesselName());
+      uri.queryParam("messageType", request.getRequestType());
+      // uri.queryParam("messageId", name);//is it UUID?
+      uri.queryParam("seq", sequenceNumber);
+
       HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity =
           new HttpEntity<LinkedMultiValueMap<String, Object>>(map, headers);
-      ResponseEntity<String> result =
+      ResponseEntity<CommunicationResponse> response =
           restTemplate.exchange(
-              "http://localhost:8085/api/cloud/vessels/1/voyages/1/loadable-studies/1",
+              uri.build().encode().toUri(),
               HttpMethod.POST,
               requestEntity,
-              String.class);
+              CommunicationResponse.class);
 
       // System.out.println("-- " + checkSum);
-
+      if (HttpStatus.OK.value() == response.getStatusCodeValue()) {
+        CommunicationResponse communicationResponse = response.getBody();
+        builder.setMessageId(communicationResponse.getMessageId());
+        builder.setMessage(communicationResponse.getMessage());
+        builder.setShipId(communicationResponse.getShipId());
+      } else {
+        log.error("Error in Communication + ");
+        throw new GenericServiceException(
+            "Error in Communication",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.valueOf(response.getStatusCode().value()));
+      }
       byte[] zipBytes = bos.toByteArray();
       ByteArrayInputStream bis = new ByteArrayInputStream(zipBytes);
       ZipInputStream zis = new ZipInputStream(bis);
@@ -118,7 +139,7 @@ public class EnvoyWriterService {
       System.out.println("--- " + text);
       System.out.println("encryptedString " + encryptedString);
 
-    } catch (IOException e) {
+    } catch (IOException | GenericServiceException e) {
       log.error("Error while hashing: " + e);
     }
 

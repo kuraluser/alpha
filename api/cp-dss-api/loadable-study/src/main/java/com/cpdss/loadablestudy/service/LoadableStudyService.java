@@ -5,11 +5,8 @@ import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
-import com.cpdss.common.generated.*;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
@@ -143,6 +140,7 @@ import com.cpdss.loadablestudy.domain.LoadicatorAlgoResponse;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetails;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetailsResults;
 import com.cpdss.loadablestudy.domain.LoadicatorResultDetails;
+import com.cpdss.loadablestudy.domain.MessageTypes;
 import com.cpdss.loadablestudy.domain.OperationsTable;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.PortOperationTable;
@@ -157,6 +155,7 @@ import com.cpdss.loadablestudy.domain.VesselPlanTable;
 import com.cpdss.loadablestudy.domain.VesselPlanTableTitles;
 import com.cpdss.loadablestudy.domain.VesselTanksTable;
 import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
@@ -200,11 +199,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import io.grpc.stub.StreamObserver;
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -273,6 +272,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -1205,7 +1205,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param voyage - voyage entity
    * @return - the folder path
    */
-  private String constructFolderPath(LoadableStudy loadableStudy) {
+  public String constructFolderPath(LoadableStudy loadableStudy) {
     String separator = File.separator;
     StringBuilder pathBuilder = new StringBuilder(separator);
     pathBuilder
@@ -2667,14 +2667,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 		fuelTypes.add(onHandQuantity.getFuelTypeXId());
                 		BigDecimal total = new BigDecimal(0);
                 		for(OnHandQuantity ohq : onHandQuantityList) {
-                			if(ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {    
+                			if(ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
                 				total = total.add(ohq.getDepartureQuantity());
                 			}
                 		}
                 		if(total.compareTo(new BigDecimal(0)) <= 0) {
                 			ohqComplete = false;
                 		}
-                		
+
                 	}
                     entityManager.detach(onHandQuantity);
                     onHandQuantity.setId(null);
@@ -5298,7 +5298,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         buildLoadableStudy(
             request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
-
+        buildLoadableAttachment(request.getLoadableStudyId(), loadableStudy);
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.writeValue(
@@ -5311,27 +5311,28 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             LOADABLE_STUDY_REQUEST,
             objectMapper.writeValueAsString(loadableStudy));
         /** **Calling EW for communication server */
-        //uncomment with communication service implementation
-       /* EnvoyWriter.WriterReply ewReply = passRequestPayloadToEnvoyWriter(loadableStudy);
+        // uncomment with communication service implementation
+        EnvoyWriter.WriterReply ewReply = passRequestPayloadToEnvoyWriter(loadableStudy);
         if (!SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
           throw new GenericServiceException(
-                  "Failed to pass toWriterReply",
-                  ewReply.getResponseStatus().getCode(),
-                  HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
+              "Failed to pass toWriterReply",
+              ewReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
         }
-        this.loadableStudyRepository.updateLoadableStudyUUIDAndSeqNo(
-                ewReply.getLsUUID(), ewReply.getSequenceNo(), request.getLoadableStudyId());
-        EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReader(ewReply.getLsUUID());
-        if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-          throw new GenericServiceException(
-                  "Failed to get Result from Communication Server",
-                  erReply.getResponseStatus().getCode(),
-                  HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
-        }
-        LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
-        load.setLoadableStudyId(request.getLoadableStudyId());
-        saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
-*/
+        this.loadableStudyRepository.updateLoadableStudyUUID(
+            ewReply.getMessageId(), request.getLoadableStudyId());
+        /*       EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReader(ewReply.getLsUUID());
+                if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+                  throw new GenericServiceException(
+                          "Failed to get Result from Communication Server",
+                          erReply.getResponseStatus().getCode(),
+                          HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
+                }
+                LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
+                load.setLoadableStudyId(request.getLoadableStudyId());
+                saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
+
+        */
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
@@ -5394,6 +5395,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  private void buildLoadableAttachment(
+      long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    List<LoadableStudyAttachments> loadableStudyAttachments =
+        this.loadableStudyAttachmentsRepository.findByLoadableStudyXIdAndIsActive(
+            loadableStudyId, true);
+    loadableStudyAttachments.forEach(
+        loadableAttach -> {
+          com.cpdss.loadablestudy.domain.LoadableStudyAttachment loadableAttachDto =
+              new com.cpdss.loadablestudy.domain.LoadableStudyAttachment();
+
+          ofNullable(loadableAttach.getFilePath())
+              .ifPresent(filePath -> loadableAttachDto.setFilePath(String.valueOf(filePath)));
+          ofNullable(loadableAttach.getUploadedFileName())
+              .ifPresent(fileName -> loadableAttachDto.setFilePath(String.valueOf(fileName)));
+
+          try {
+            File file = ResourceUtils.getFile(this.rootFolder + loadableAttachDto.getFilePath());
+            byte[] fileContent = Files.readAllBytes(file.toPath());
+            // inputStream = new InputStreamResource(new FileInputStream(file));
+            loadableAttachDto.setContent(fileContent);
+          } catch (IOException e) {
+            log.error("FileNotFoundException in buildLoadableAttachment", e);
+          }
+          loadableStudy.getLoadableStudyAttachment().add(loadableAttachDto);
+        });
+  }
+
   private void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
     List<LoadableQuantity> lQs =
         loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(ls.getId(), true);
@@ -5426,23 +5454,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReader(String lsUUID) {
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
-            EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setLsUUID(lsUUID);
+        EnvoyReader.EnvoyReaderResultRequest.newBuilder();
+    request.setRequestType(String.valueOf(MessageTypes.ALGORESULT));
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
-  private EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy)
-      throws GenericServiceException {
+
+  private EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) throws GenericServiceException {
     ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String loadableStudyJson = null;
     try {
       VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
       loadableStudyJson = ow.writeValueAsString(loadableStudy);
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
-              EnvoyWriter.EnvoyWriterRequest.newBuilder();
+          EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(loadableStudyJson);
       writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setVesselId(vesselReply.getId());
-      writerRequest.setRequestType(1);
+      writerRequest.setVesselName(vesselReply.getName());
+      writerRequest.setRequestType(String.valueOf(MessageTypes.LOADABLESTUDY));
       return this.envoyWriterGrpcService.getCommunicationServer(writerRequest.build());
 
     } catch (JsonProcessingException e) {
@@ -5451,17 +5481,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     return null;
   }
   private EnvoyWriter.WriterReply passResultPayloadToEnvoyWriter(
-          LoadablePatternAlgoRequest loadablePatternAlgoRequest) throws GenericServiceException {
+      LoadablePatternAlgoRequest loadablePatternAlgoRequest) throws GenericServiceException {
     String jsonPayload = null;
     try {
-      //VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
+      // VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
       jsonPayload = JsonFormat.printer().print(loadablePatternAlgoRequest);
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
-              EnvoyWriter.EnvoyWriterRequest.newBuilder();
+          EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
-      //loadableStudyValue.setImoNumber(vesselReply.getImoNumber());
-      //loadableStudyValue.setVesselId(vesselReply.getId());
-      writerRequest.setRequestType(2);
+      // loadableStudyValue.setImoNumber(vesselReply.getImoNumber());
+      // loadableStudyValue.setVesselId(vesselReply.getId());
+      writerRequest.setRequestType(String.valueOf(MessageTypes.ALGORESULT));
       return this.envoyWriterGrpcService.getCommunicationServer(writerRequest.build());
 
     } catch (InvalidProtocolBufferException e) {
