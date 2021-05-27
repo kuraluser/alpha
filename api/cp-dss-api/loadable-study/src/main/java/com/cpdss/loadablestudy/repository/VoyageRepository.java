@@ -43,4 +43,9 @@ public interface VoyageRepository
 
   @Query("select V from Voyage V WHERE V.voyageStatus.id =?1 AND V.isActive=?2")
   public List<Voyage> findByVoyageStatusAndIsActive(Long voyageId, boolean b);
+
+  @Query(
+      "select V from Voyage V WHERE V.voyageStatus.id =?1 AND V.vesselXId = ?2 AND V.isActive=?3")
+  public List<Voyage> findByVoyageStatusAndVesselIdAndIsActive(
+      Long voyageId, Long vesselId, boolean b);
 }

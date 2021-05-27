@@ -7,7 +7,9 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Autowired LoadingInformationService loadingInformationService;

@@ -59,4 +59,6 @@ public class LoadableQuantityCargoDetails {
 
   @JsonInclude(Include.NON_NULL)
   private List<String> loadingPorts;
+
+  private List<CargoToppingOffSequence> toppingSequence;
 }
