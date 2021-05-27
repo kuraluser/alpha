@@ -1819,6 +1819,7 @@ public class LoadableStudyController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public VoyageActionResponse updateVoyageStatus(
+      @PathVariable Long vesselId,
       @PathVariable Long voyageId,
       @RequestBody @Valid VoyageActionRequest request,
       @RequestHeader HttpHeaders headers)
@@ -1826,6 +1827,7 @@ public class LoadableStudyController {
     try {
       log.info("save voyage status: {}", getClientIp());
       request.setVoyageId(voyageId);
+      request.setVesselId(vesselId);
       return this.loadableStudyService.saveVoyageStatus(request, CORRELATION_ID_HEADER);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving voyage status", e);

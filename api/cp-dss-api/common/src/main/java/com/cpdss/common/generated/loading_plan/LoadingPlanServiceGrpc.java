@@ -1,6 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated.loading_plan;
 
+import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingUnaryCall;
+import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
+
 /** */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
@@ -12,6 +19,63 @@ public final class LoadingPlanServiceGrpc {
   public static final String SERVICE_NAME = "LoadingPlanService";
 
   // Static method descriptors that strictly reflect the proto.
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
+      getLoadingPlanSynchronizationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "LoadingPlanSynchronization",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
+      getLoadingPlanSynchronizationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
+        getLoadingPlanSynchronizationMethod;
+    if ((getLoadingPlanSynchronizationMethod =
+            LoadingPlanServiceGrpc.getLoadingPlanSynchronizationMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getLoadingPlanSynchronizationMethod =
+                LoadingPlanServiceGrpc.getLoadingPlanSynchronizationMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getLoadingPlanSynchronizationMethod =
+              getLoadingPlanSynchronizationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingPlanSyncDetails,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingPlanSyncReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "LoadingPlanSynchronization"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingPlanSyncDetails.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingPlanSyncReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "LoadingPlanSynchronization"))
+                      .build();
+        }
+      }
+    }
+    return getLoadingPlanSynchronizationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -56,9 +120,27 @@ public final class LoadingPlanServiceGrpc {
   /** */
   public abstract static class LoadingPlanServiceImplBase implements io.grpc.BindableService {
 
+    /** */
+    public void loadingPlanSynchronization(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getLoadingPlanSynchronizationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor()).build();
+      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+          .addMethod(
+              getLoadingPlanSynchronizationMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanSyncDetails,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanSyncReply>(this, METHODID_LOADING_PLAN_SYNCHRONIZATION)))
+          .build();
     }
   }
 
@@ -73,6 +155,18 @@ public final class LoadingPlanServiceGrpc {
     protected LoadingPlanServiceStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadingPlanServiceStub(channel, callOptions);
+    }
+
+    /** */
+    public void loadingPlanSynchronization(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getLoadingPlanSynchronizationMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
   }
 
@@ -89,6 +183,15 @@ public final class LoadingPlanServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadingPlanServiceBlockingStub(channel, callOptions);
     }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply
+        loadingPlanSynchronization(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                request) {
+      return blockingUnaryCall(
+          getChannel(), getLoadingPlanSynchronizationMethod(), getCallOptions(), request);
+    }
   }
 
   /** */
@@ -103,7 +206,19 @@ public final class LoadingPlanServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadingPlanServiceFutureStub(channel, callOptions);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
+        loadingPlanSynchronization(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getLoadingPlanSynchronizationMethod(), getCallOptions()), request);
+    }
   }
+
+  private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -122,6 +237,15 @@ public final class LoadingPlanServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_LOADING_PLAN_SYNCHRONIZATION:
+          serviceImpl.loadingPlanSynchronization(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanSyncReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -186,6 +310,7 @@ public final class LoadingPlanServiceGrpc {
               result =
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new LoadingPlanServiceFileDescriptorSupplier())
+                      .addMethod(getLoadingPlanSynchronizationMethod())
                       .build();
         }
       }
