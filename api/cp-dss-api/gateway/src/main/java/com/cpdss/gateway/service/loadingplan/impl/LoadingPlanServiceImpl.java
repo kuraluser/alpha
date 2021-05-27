@@ -57,32 +57,41 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     LoadingInformation var1 = new LoadingInformation();
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
-    log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
+    log.info(
+        "Get Loading Info, Active Voyage Number and Id {} ",
+        activeVoyage.getVoyageNumber(),
+        activeVoyage.getId());
     Optional<PortRotation> portRotation =
         activeVoyage.getPortRotations().stream().filter(v -> v.getId().equals(portRId)).findFirst();
-    if (!portRotation.isPresent()) {
+    if (!portRotation.isPresent() || portRotation.get().getPortId() == null) {
       log.error("Port Rotation Id cannot be empty");
       throw new GenericServiceException(
           "Port Rotation Id Cannot be empty",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    log.info(
+        "Get Loading Info, Port rotation id is available in Active Voyage, Port Id is {}",
+        portRotation.get().getPortId());
 
-    // call to synoptic
+    // all done, call to LS, synoptic
     LoadingDetails loadingDetails =
         this.loadingInformationService.getLoadingDetailsByPortRotationId(
-            vesselId, activeVoyage.getId(), portRId);
+            vesselId, activeVoyage.getId(), portRId, portRotation.get().getPortId());
 
     // from loading info table, loading plan service
     LoadingRates loadingRates = this.loadingInformationService.getLoadingRateForVessel(vesselId);
 
-    // done
+    // all done, call to port Info service
     List<BerthDetails> berthDetails =
         this.loadingInformationService.getBerthDetailsByPortId(portRotation.get().getPortId());
-    var1.setBerthDetails(new LoadingBerthDetails(berthDetails));
-    // all done
+
+    // all done, call to vessel service
     CargoMachineryInUse machineryInUse =
         this.loadingInformationService.getCargoMachinesInUserFromVessel(vesselId);
+
+    var1.setLoadingDetails(loadingDetails);
+    var1.setBerthDetails(new LoadingBerthDetails(berthDetails));
     var1.setMachineryInUses(machineryInUse);
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;

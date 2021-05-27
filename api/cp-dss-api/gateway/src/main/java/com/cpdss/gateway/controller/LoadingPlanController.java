@@ -75,6 +75,7 @@ public class LoadingPlanController {
           Long portRotationId)
       throws CommonRestException {
     try {
+      log.info("Get Loading Info, api for vessel {}, Port Rotation {}", vesselId, portRotationId);
       LoadingInformation var1 =
           this.loadingPlanService.getLoadingInformationByPortRotation(
               vesselId, planId, portRotationId);

@@ -9,6 +9,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -77,6 +78,59 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   @Override
   public Object getPortRotationDetailsForActiveVoyage(Long vesselId) {
     return null;
+  }
+
+  @Override
+  public LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotationArrivalCondition(
+      Long portRId) throws GenericServiceException {
+    LoadableStudy.LoadingPlanCommonResponse response =
+        this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
+            LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                .setIdType("PORT_ROTATION")
+                .setId(portRId)
+                .build());
+
+    if (!response.getResponseStatus().getStatus().equals("SUCCESS")) {
+      log.error("Failed to get Synoptic data from LS ", response.getResponseStatus().getMessage());
+      throw new GenericServiceException(
+          "Failed to get Synoptic Data for Port",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    if (response.getSynopticDataList().isEmpty()) {
+      log.info("No data found for Port Rotation {} in Synoptic table", portRId);
+      return null;
+    } else {
+      return response.getSynopticDataList().stream()
+          .filter(v -> v.getOperationType().equalsIgnoreCase("ARR"))
+          .findFirst()
+          .get();
+    }
+  }
+
+  @Override
+  public PortInfo.PortDetail fetchPortDetailByPortId(Long portId) throws GenericServiceException {
+    PortInfo.PortReply response =
+        this.portInfoServiceBlockingStub.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                .addAllId(Arrays.asList(portId))
+                .build());
+
+    if (!response.getResponseStatus().getStatus().equals("SUCCESS")) {
+      log.error(
+          "Failed to get Port Details from Port Info ", response.getResponseStatus().getMessage());
+      throw new GenericServiceException(
+          "Failed to get Port Details from Port Info",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    if (response.getPortsList().isEmpty()) {
+      log.info("No data found for port, Id {}", portId);
+      return null;
+    } else {
+      return response.getPortsList().stream().filter(v -> (v.getId() == portId)).findFirst().get();
+    }
   }
 
   public LoadableStudy.VoyageRequest buildVoyageRequest(Long vesselId) {

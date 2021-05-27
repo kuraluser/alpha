@@ -18,17 +18,13 @@ public final class EnvoyReader {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\022envoy_reader.proto\032\014common.proto2\024\n\022En"
-          + "voyReaderServiceB\036\n\032com.cpdss.common.gen"
-          + "eratedP\000b\006proto3"
+      "\n\022envoy_reader.proto2\024\n\022EnvoyReaderServi"
+          + "ceB\036\n\032com.cpdss.common.generatedP\000b\006prot"
+          + "o3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
-            descriptorData,
-            new com.google.protobuf.Descriptors.FileDescriptor[] {
-              com.cpdss.common.generated.Common.getDescriptor(),
-            });
-    com.cpdss.common.generated.Common.getDescriptor();
+            descriptorData, new com.google.protobuf.Descriptors.FileDescriptor[] {});
   }
 
   // @@protoc_insertion_point(outer_class_scope)

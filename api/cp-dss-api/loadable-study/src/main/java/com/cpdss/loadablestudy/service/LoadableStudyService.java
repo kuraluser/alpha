@@ -12250,6 +12250,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired VoyageService voyageService;
 
+  @Autowired SynopticService synopticService;
+
   @Override
   public void getActiveVoyagesByVessel(
       VoyageRequest request,
@@ -12268,6 +12270,29 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Failed to fetch active voyage for, Vessel Id {}", request.getVesselId());
+      repBuilder.setStatus(FAILED);
+      repBuilder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      repBuilder.setMessage(e.getMessage());
+    } finally {
+      builder.setResponseStatus(repBuilder.build());
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getSynopticDataForLoadingPlan(
+      com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.newBuilder();
+    ResponseStatus.Builder repBuilder = ResponseStatus.newBuilder();
+    try {
+      this.synopticService.fetchLoadingInformationSynopticDetails(request, builder, repBuilder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to Get Synoptic Record", request.getId());
       repBuilder.setStatus(FAILED);
       repBuilder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
       repBuilder.setMessage(e.getMessage());

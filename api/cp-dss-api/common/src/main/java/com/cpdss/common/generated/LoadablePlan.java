@@ -18,17 +18,13 @@ public final class LoadablePlan {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\023loadable_plan.proto\032\014common.proto2\025\n\023L"
-          + "oadablePlanServiceB\036\n\032com.cpdss.common.g"
-          + "eneratedP\000b\006proto3"
+      "\n\023loadable_plan.proto2\025\n\023LoadablePlanSer"
+          + "viceB\036\n\032com.cpdss.common.generatedP\000b\006pr"
+          + "oto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
-            descriptorData,
-            new com.google.protobuf.Descriptors.FileDescriptor[] {
-              com.cpdss.common.generated.Common.getDescriptor(),
-            });
-    com.cpdss.common.generated.Common.getDescriptor();
+            descriptorData, new com.google.protobuf.Descriptors.FileDescriptor[] {});
   }
 
   // @@protoc_insertion_point(outer_class_scope)
