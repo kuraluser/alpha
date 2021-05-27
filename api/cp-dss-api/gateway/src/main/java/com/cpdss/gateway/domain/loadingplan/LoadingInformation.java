@@ -2,7 +2,7 @@
 package com.cpdss.gateway.domain.loadingplan;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
-import java.util.List;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import lombok.Data;
 
 /**
@@ -25,10 +25,11 @@ import lombok.Data;
 @CPDSSJsonParser
 public class LoadingInformation {
 
+  private CommonSuccessResponse responseStatus;
   private LoadingDetails loadingDetails;
   private LoadingRates loadingRates;
-  private List<LoadingBerthDetails> berthDetails;
-  private List<CargoMachineryInUse> machineryInUses;
+  private LoadingBerthDetails berthDetails;
+  private CargoMachineryInUse machineryInUses;
   // private CargoDetails cargoDetails; // call to LS and get by port rotation condition
   private LoadingStages loadingStages;
   private LoadingSequences loadingSequences;
