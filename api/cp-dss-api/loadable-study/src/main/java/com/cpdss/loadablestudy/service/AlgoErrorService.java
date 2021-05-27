@@ -11,15 +11,14 @@ import com.cpdss.loadablestudy.entity.AlgoErrors;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import io.grpc.stub.StreamObserver;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -32,35 +31,36 @@ public class AlgoErrorService {
 
   @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
 
-  @Autowired
-  ScheduledTaskRequest scheduledTaskRequest;
+  @Autowired ScheduledTaskRequest scheduledTaskRequest;
 
   @PostConstruct
-  public void init(){
-    new Thread(() -> {
-      try {
-        Thread.sleep(15*1000);
-        System.out.println("EXECUTING");
-        LocalDateTime dateTime = LocalDateTime.now();
-        LocalDateTime endDateTime =dateTime.plus(Duration.ofDays(2));
-        ScheduledTaskProperties properties = new ScheduledTaskProperties();
-        properties.setTaskName("TEST ASYNC TASK NAME");
-        properties.setTaskFrequency(30);
-        properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
-        properties.setTaskStartDate(dateTime.toLocalDate());
-        properties.setTaskStartTime(dateTime.toLocalTime());
-        properties.setTaskEndDate(endDateTime.toLocalDate());
-        properties.setTaskEndTime(endDateTime.toLocalTime());
-        properties.setTaskURI("localhost:9090");
-        Map<String, String> requestParam = new HashMap<>();
-        requestParam.put("test", "myval");
-        properties.setTaskReqParam(requestParam);
-        scheduledTaskRequest.createScheduledTaskRequest(properties);
+  public void init() {
+    new Thread(
+            () -> {
+              try {
+                Thread.sleep(15 * 1000);
+                System.out.println("EXECUTING");
+                LocalDateTime dateTime = LocalDateTime.now();
+                LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(2));
+                ScheduledTaskProperties properties = new ScheduledTaskProperties();
+                properties.setTaskName("TEST ASYNC TASK NAME");
+                properties.setTaskFrequency(30);
+                properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+                properties.setTaskStartDate(dateTime.toLocalDate());
+                properties.setTaskStartTime(dateTime.toLocalTime());
+                properties.setTaskEndDate(endDateTime.toLocalDate());
+                properties.setTaskEndTime(endDateTime.toLocalTime());
+                properties.setTaskURI("localhost:9090");
+                Map<String, String> requestParam = new HashMap<>();
+                requestParam.put("test", "myval");
+                properties.setTaskReqParam(requestParam);
+                scheduledTaskRequest.createScheduledTaskRequest(properties);
 
-      } catch (InterruptedException | GenericServiceException e) {
-        e.printStackTrace();
-      }
-    }).start();
+              } catch (InterruptedException | GenericServiceException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
   }
 
   /** Save GRPC Algo Error into Entity Object */

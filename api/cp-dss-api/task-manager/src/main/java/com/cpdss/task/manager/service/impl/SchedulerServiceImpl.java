@@ -5,16 +5,15 @@ import static com.cpdss.common.rest.CommonErrorCodes.*;
 import static com.cpdss.task.manager.commons.TaskManagerConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.scheduler.ScheduledTaskProperties;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.task.manager.component.JobScheduleCreator;
-import com.cpdss.common.scheduler.ScheduledTaskProperties;
 import com.cpdss.task.manager.entity.SchedulerJobInfo;
 import com.cpdss.task.manager.jobs.ExecuteJob;
 import com.cpdss.task.manager.repository.SchedulerRepository;
 import com.cpdss.task.manager.service.SchedulerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import java.net.URL;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
