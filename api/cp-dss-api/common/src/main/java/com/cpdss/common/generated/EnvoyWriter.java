@@ -47,6 +47,32 @@ public final class EnvoyWriter {
      * @return The vesselId.
      */
     long getVesselId();
+
+    /**
+     * <code>string clientId = 4;</code>
+     *
+     * @return The clientId.
+     */
+    java.lang.String getClientId();
+    /**
+     * <code>string clientId = 4;</code>
+     *
+     * @return The bytes for clientId.
+     */
+    com.google.protobuf.ByteString getClientIdBytes();
+
+    /**
+     * <code>string messageType = 5;</code>
+     *
+     * @return The messageType.
+     */
+    java.lang.String getMessageType();
+    /**
+     * <code>string messageType = 5;</code>
+     *
+     * @return The bytes for messageType.
+     */
+    com.google.protobuf.ByteString getMessageTypeBytes();
   }
   /** Protobuf type {@code LoadableStudyJson} */
   public static final class LoadableStudyJson extends com.google.protobuf.GeneratedMessageV3
@@ -62,6 +88,8 @@ public final class EnvoyWriter {
     private LoadableStudyJson() {
       loadableStudy_ = "";
       imoNumber_ = "";
+      clientId_ = "";
+      messageType_ = "";
     }
 
     @java.lang.Override
@@ -110,6 +138,20 @@ public final class EnvoyWriter {
             case 24:
               {
                 vesselId_ = input.readInt64();
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                clientId_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                messageType_ = s;
                 break;
               }
             default:
@@ -226,6 +268,76 @@ public final class EnvoyWriter {
       return vesselId_;
     }
 
+    public static final int CLIENTID_FIELD_NUMBER = 4;
+    private volatile java.lang.Object clientId_;
+    /**
+     * <code>string clientId = 4;</code>
+     *
+     * @return The clientId.
+     */
+    public java.lang.String getClientId() {
+      java.lang.Object ref = clientId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        clientId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string clientId = 4;</code>
+     *
+     * @return The bytes for clientId.
+     */
+    public com.google.protobuf.ByteString getClientIdBytes() {
+      java.lang.Object ref = clientId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        clientId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MESSAGETYPE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object messageType_;
+    /**
+     * <code>string messageType = 5;</code>
+     *
+     * @return The messageType.
+     */
+    public java.lang.String getMessageType() {
+      java.lang.Object ref = messageType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        messageType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string messageType = 5;</code>
+     *
+     * @return The bytes for messageType.
+     */
+    public com.google.protobuf.ByteString getMessageTypeBytes() {
+      java.lang.Object ref = messageType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        messageType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -249,6 +361,12 @@ public final class EnvoyWriter {
       if (vesselId_ != 0L) {
         output.writeInt64(3, vesselId_);
       }
+      if (!getClientIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, clientId_);
+      }
+      if (!getMessageTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, messageType_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -266,6 +384,12 @@ public final class EnvoyWriter {
       }
       if (vesselId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, vesselId_);
+      }
+      if (!getClientIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, clientId_);
+      }
+      if (!getMessageTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, messageType_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -286,6 +410,8 @@ public final class EnvoyWriter {
       if (!getLoadableStudy().equals(other.getLoadableStudy())) return false;
       if (!getImoNumber().equals(other.getImoNumber())) return false;
       if (getVesselId() != other.getVesselId()) return false;
+      if (!getClientId().equals(other.getClientId())) return false;
+      if (!getMessageType().equals(other.getMessageType())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -303,6 +429,10 @@ public final class EnvoyWriter {
       hash = (53 * hash) + getImoNumber().hashCode();
       hash = (37 * hash) + VESSELID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
+      hash = (53 * hash) + getClientId().hashCode();
+      hash = (37 * hash) + MESSAGETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageType().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -448,6 +578,10 @@ public final class EnvoyWriter {
 
         vesselId_ = 0L;
 
+        clientId_ = "";
+
+        messageType_ = "";
+
         return this;
       }
 
@@ -477,6 +611,8 @@ public final class EnvoyWriter {
         result.loadableStudy_ = loadableStudy_;
         result.imoNumber_ = imoNumber_;
         result.vesselId_ = vesselId_;
+        result.clientId_ = clientId_;
+        result.messageType_ = messageType_;
         onBuilt();
         return result;
       }
@@ -539,6 +675,14 @@ public final class EnvoyWriter {
         }
         if (other.getVesselId() != 0L) {
           setVesselId(other.getVesselId());
+        }
+        if (!other.getClientId().isEmpty()) {
+          clientId_ = other.clientId_;
+          onChanged();
+        }
+        if (!other.getMessageType().isEmpty()) {
+          messageType_ = other.messageType_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -755,6 +899,158 @@ public final class EnvoyWriter {
         return this;
       }
 
+      private java.lang.Object clientId_ = "";
+      /**
+       * <code>string clientId = 4;</code>
+       *
+       * @return The clientId.
+       */
+      public java.lang.String getClientId() {
+        java.lang.Object ref = clientId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          clientId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string clientId = 4;</code>
+       *
+       * @return The bytes for clientId.
+       */
+      public com.google.protobuf.ByteString getClientIdBytes() {
+        java.lang.Object ref = clientId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          clientId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string clientId = 4;</code>
+       *
+       * @param value The clientId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setClientId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        clientId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string clientId = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearClientId() {
+
+        clientId_ = getDefaultInstance().getClientId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string clientId = 4;</code>
+       *
+       * @param value The bytes for clientId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setClientIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        clientId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object messageType_ = "";
+      /**
+       * <code>string messageType = 5;</code>
+       *
+       * @return The messageType.
+       */
+      public java.lang.String getMessageType() {
+        java.lang.Object ref = messageType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          messageType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string messageType = 5;</code>
+       *
+       * @return The bytes for messageType.
+       */
+      public com.google.protobuf.ByteString getMessageTypeBytes() {
+        java.lang.Object ref = messageType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          messageType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string messageType = 5;</code>
+       *
+       * @param value The messageType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        messageType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string messageType = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMessageType() {
+
+        messageType_ = getDefaultInstance().getMessageType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string messageType = 5;</code>
+       *
+       * @param value The bytes for messageType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        messageType_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -826,6 +1122,32 @@ public final class EnvoyWriter {
     com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
     /** <code>.ResponseStatus responseStatus = 1;</code> */
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>string uuid = 2;</code>
+     *
+     * @return The uuid.
+     */
+    java.lang.String getUuid();
+    /**
+     * <code>string uuid = 2;</code>
+     *
+     * @return The bytes for uuid.
+     */
+    com.google.protobuf.ByteString getUuidBytes();
+
+    /**
+     * <code>string messageId = 3;</code>
+     *
+     * @return The messageId.
+     */
+    java.lang.String getMessageId();
+    /**
+     * <code>string messageId = 3;</code>
+     *
+     * @return The bytes for messageId.
+     */
+    com.google.protobuf.ByteString getMessageIdBytes();
   }
   /** Protobuf type {@code WriterReply} */
   public static final class WriterReply extends com.google.protobuf.GeneratedMessageV3
@@ -838,7 +1160,10 @@ public final class EnvoyWriter {
       super(builder);
     }
 
-    private WriterReply() {}
+    private WriterReply() {
+      uuid_ = "";
+      messageId_ = "";
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -884,6 +1209,20 @@ public final class EnvoyWriter {
                   responseStatus_ = subBuilder.buildPartial();
                 }
 
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                uuid_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                messageId_ = s;
                 break;
               }
             default:
@@ -943,6 +1282,76 @@ public final class EnvoyWriter {
       return getResponseStatus();
     }
 
+    public static final int UUID_FIELD_NUMBER = 2;
+    private volatile java.lang.Object uuid_;
+    /**
+     * <code>string uuid = 2;</code>
+     *
+     * @return The uuid.
+     */
+    public java.lang.String getUuid() {
+      java.lang.Object ref = uuid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        uuid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string uuid = 2;</code>
+     *
+     * @return The bytes for uuid.
+     */
+    public com.google.protobuf.ByteString getUuidBytes() {
+      java.lang.Object ref = uuid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        uuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MESSAGEID_FIELD_NUMBER = 3;
+    private volatile java.lang.Object messageId_;
+    /**
+     * <code>string messageId = 3;</code>
+     *
+     * @return The messageId.
+     */
+    public java.lang.String getMessageId() {
+      java.lang.Object ref = messageId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        messageId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string messageId = 3;</code>
+     *
+     * @return The bytes for messageId.
+     */
+    public com.google.protobuf.ByteString getMessageIdBytes() {
+      java.lang.Object ref = messageId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        messageId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -960,6 +1369,12 @@ public final class EnvoyWriter {
       if (responseStatus_ != null) {
         output.writeMessage(1, getResponseStatus());
       }
+      if (!getUuidBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
+      }
+      if (!getMessageIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, messageId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -971,6 +1386,12 @@ public final class EnvoyWriter {
       size = 0;
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      if (!getUuidBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
+      }
+      if (!getMessageIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, messageId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -992,6 +1413,8 @@ public final class EnvoyWriter {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
+      if (!getUuid().equals(other.getUuid())) return false;
+      if (!getMessageId().equals(other.getMessageId())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1007,6 +1430,10 @@ public final class EnvoyWriter {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
+      hash = (37 * hash) + UUID_FIELD_NUMBER;
+      hash = (53 * hash) + getUuid().hashCode();
+      hash = (37 * hash) + MESSAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageId().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1150,6 +1577,10 @@ public final class EnvoyWriter {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
         }
+        uuid_ = "";
+
+        messageId_ = "";
+
         return this;
       }
 
@@ -1181,6 +1612,8 @@ public final class EnvoyWriter {
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
+        result.uuid_ = uuid_;
+        result.messageId_ = messageId_;
         onBuilt();
         return result;
       }
@@ -1235,6 +1668,14 @@ public final class EnvoyWriter {
           return this;
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
+        }
+        if (!other.getUuid().isEmpty()) {
+          uuid_ = other.uuid_;
+          onChanged();
+        }
+        if (!other.getMessageId().isEmpty()) {
+          messageId_ = other.messageId_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1385,6 +1826,158 @@ public final class EnvoyWriter {
         return responseStatusBuilder_;
       }
 
+      private java.lang.Object uuid_ = "";
+      /**
+       * <code>string uuid = 2;</code>
+       *
+       * @return The uuid.
+       */
+      public java.lang.String getUuid() {
+        java.lang.Object ref = uuid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          uuid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string uuid = 2;</code>
+       *
+       * @return The bytes for uuid.
+       */
+      public com.google.protobuf.ByteString getUuidBytes() {
+        java.lang.Object ref = uuid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          uuid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string uuid = 2;</code>
+       *
+       * @param value The uuid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUuid(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        uuid_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string uuid = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearUuid() {
+
+        uuid_ = getDefaultInstance().getUuid();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string uuid = 2;</code>
+       *
+       * @param value The bytes for uuid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUuidBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        uuid_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object messageId_ = "";
+      /**
+       * <code>string messageId = 3;</code>
+       *
+       * @return The messageId.
+       */
+      public java.lang.String getMessageId() {
+        java.lang.Object ref = messageId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          messageId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string messageId = 3;</code>
+       *
+       * @return The bytes for messageId.
+       */
+      public com.google.protobuf.ByteString getMessageIdBytes() {
+        java.lang.Object ref = messageId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          messageId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string messageId = 3;</code>
+       *
+       * @param value The messageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        messageId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string messageId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMessageId() {
+
+        messageId_ = getDefaultInstance().getMessageId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string messageId = 3;</code>
+       *
+       * @param value The bytes for messageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        messageId_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1454,14 +2047,16 @@ public final class EnvoyWriter {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\022envoy_writer.proto\032\014common.proto\"O\n\021Lo"
+      "\n\022envoy_writer.proto\032\014common.proto\"v\n\021Lo"
           + "adableStudyJson\022\025\n\rloadableStudy\030\001 \001(\t\022\021"
-          + "\n\timoNumber\030\002 \001(\t\022\020\n\010vesselId\030\003 \001(\003\"6\n\013W"
-          + "riterReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res"
-          + "ponseStatus2L\n\022EnvoyWriterService\0226\n\020Get"
-          + "LoadableStudy\022\022.LoadableStudyJson\032\014.Writ"
-          + "erReply\"\000B\036\n\032com.cpdss.common.generatedP"
-          + "\000b\006proto3"
+          + "\n\timoNumber\030\002 \001(\t\022\020\n\010vesselId\030\003 \001(\003\022\020\n\010c"
+          + "lientId\030\004 \001(\t\022\023\n\013messageType\030\005 \001(\t\"W\n\013Wr"
+          + "iterReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022\014\n\004uuid\030\002 \001(\t\022\021\n\tmessageId\030\003 "
+          + "\001(\t2L\n\022EnvoyWriterService\0226\n\020GetLoadable"
+          + "Study\022\022.LoadableStudyJson\032\014.WriterReply\""
+          + "\000B\036\n\032com.cpdss.common.generatedP\000b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1474,14 +2069,14 @@ public final class EnvoyWriter {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyJson_descriptor,
             new java.lang.String[] {
-              "LoadableStudy", "ImoNumber", "VesselId",
+              "LoadableStudy", "ImoNumber", "VesselId", "ClientId", "MessageType",
             });
     internal_static_WriterReply_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_WriterReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_WriterReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus",
+              "ResponseStatus", "Uuid", "MessageId",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

@@ -5661,7 +5661,9 @@ public class LoadableStudyService {
   /** @return Object */
   public Object test() {
     LoadableStudyJson.Builder error = LoadableStudyJson.newBuilder();
-    error.setImoNumber("123");
+    error.setClientId("kazusa");
+    error.setMessageType("ls");
+    error.setImoNumber("9513402");
     error.setLoadableStudy("test data");
     this.envoyWriterGrpcService.getLoadableStudy(error.build());
     return null;
@@ -5670,7 +5672,9 @@ public class LoadableStudyService {
   /** @return Object */
   public Object test1() {
     ResultJson.Builder error = ResultJson.newBuilder();
-    error.setImoNumber("123");
+    error.setClientId("kazusa");
+    error.setMessageType("ls");
+    error.setImoNumber("9513402");
     this.envoyReaderGrpcService.getResults(error.build());
     return null;
   }

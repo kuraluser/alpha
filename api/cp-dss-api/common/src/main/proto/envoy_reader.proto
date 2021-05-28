@@ -11,11 +11,17 @@ service EnvoyReaderService {
     }
 }  
   message ResultJson {
-  	string loadableStudy = 1;
- 	string imoNumber = 2;
-  	int64 vesselId = 3;
+ 	string imoNumber = 1;
+  	int64 vesselId = 2;
+  	string clientId = 3;
+    string messageType = 4;
   }
   
   message ReaderReply {
     ResponseStatus responseStatus = 1;
+    string shipId = 2; //imoNumber
+	string clientId = 3;
+    string messageType = 4;
+    string uuid = 5;
+    string resultData = 6; 
   }
