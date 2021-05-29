@@ -7,7 +7,7 @@ import static com.cpdss.task.manager.commons.TaskManagerConstants.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.task.manager.component.JobScheduleCreator;
-import com.cpdss.task.manager.domain.SchedulerJobInfoRequest;
+import com.cpdss.common.scheduler.ScheduledTaskProperties;
 import com.cpdss.task.manager.entity.SchedulerJobInfo;
 import com.cpdss.task.manager.jobs.ExecuteJob;
 import com.cpdss.task.manager.repository.SchedulerRepository;
@@ -77,7 +77,7 @@ public class SchedulerServiceImpl implements SchedulerService {
    * @throws GenericServiceException - throws GenericServiceException.
    */
   @Override
-  public SchedulerJobInfoRequest scheduleNewJob(final SchedulerJobInfoRequest jobInfoRequest)
+  public ScheduledTaskProperties scheduleNewJob(final ScheduledTaskProperties jobInfoRequest)
       throws GenericServiceException {
     if (jobInfoRequest.getCronExpression() == null) {
       validateSchedulerJobInfo(jobInfoRequest);
@@ -88,7 +88,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     createJobDetailJobTriggerAndScheduleJob(scheduler, jobInfo);
     final SchedulerJobInfo jobInfoResponse = schedulerRepository.save(jobInfo);
-    return mapper.convertValue(jobInfoResponse, SchedulerJobInfoRequest.class);
+    return mapper.convertValue(jobInfoResponse, ScheduledTaskProperties.class);
   }
 
   /**
@@ -97,7 +97,7 @@ public class SchedulerServiceImpl implements SchedulerService {
    * @param jobInfoRequest - SchedulerJobInfoRequest
    * @throws GenericServiceException - throws GenericServiceException.
    */
-  private void validateSchedulerJobInfo(final SchedulerJobInfoRequest jobInfoRequest)
+  private void validateSchedulerJobInfo(final ScheduledTaskProperties jobInfoRequest)
       throws GenericServiceException {
 
     if (jobInfoRequest.getTaskFrequency() == null) {
@@ -186,16 +186,10 @@ public class SchedulerServiceImpl implements SchedulerService {
    * @throws IllegalArgumentException
    */
   private JobDataMap createJobDataMap(final SchedulerJobInfo jobInfo) {
-
-    final Boolean urlValid = isUrlValid(jobInfo.getTaskURI());
-    if (Boolean.FALSE.equals(urlValid)) {
-      throw new IllegalArgumentException(INVALID_TASK_URL);
-    }
     final JobDataMap jobDataMap = new JobDataMap();
     jobDataMap.put(TASK_URL, jobInfo.getTaskURI());
     jobDataMap.put(TIME_FREQUENCY, String.valueOf(jobInfo.getTaskFrequency()));
     jobDataMap.put(REQUEST_BODY, new Gson().toJson(jobInfo.getTaskReqParam()));
-
     return jobDataMap;
   }
 
@@ -263,7 +257,7 @@ public class SchedulerServiceImpl implements SchedulerService {
    * @throws GenericServiceException - throws GenericServiceException.
    */
   @Override
-  public Page<SchedulerJobInfoRequest> findAll(final Pageable pageable)
+  public Page<ScheduledTaskProperties> findAll(final Pageable pageable)
       throws GenericServiceException {
 
     try {
@@ -313,7 +307,7 @@ public class SchedulerServiceImpl implements SchedulerService {
    * @param schedulerJobInfoPage - Page of SchedulerJobInfo
    * @return Page of SchedulerJobInfoRequest
    */
-  private Page<SchedulerJobInfoRequest> toPageObjectDto(
+  private Page<ScheduledTaskProperties> toPageObjectDto(
       final Page<SchedulerJobInfo> schedulerJobInfoPage) {
 
     return schedulerJobInfoPage.map(this::convertToObjectDto);
@@ -325,24 +319,8 @@ public class SchedulerServiceImpl implements SchedulerService {
    * @param jobInfo - Details of the job that need to schedule.
    * @return SchedulerJobInfoRequest
    */
-  private SchedulerJobInfoRequest convertToObjectDto(final SchedulerJobInfo jobInfo) {
+  private ScheduledTaskProperties convertToObjectDto(final SchedulerJobInfo jobInfo) {
 
-    return mapper.convertValue(jobInfo, SchedulerJobInfoRequest.class);
-  }
-
-  /**
-   * Check url is a valid URL
-   *
-   * @param url - string url
-   * @return boolean
-   */
-  private Boolean isUrlValid(final String url) {
-    try {
-      new URL(url).toURI();
-      return true;
-
-    } catch (final Exception e) {
-      return false;
-    }
+    return mapper.convertValue(jobInfo, ScheduledTaskProperties.class);
   }
 }

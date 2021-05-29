@@ -2,7 +2,7 @@
 package com.cpdss.task.manager.service;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.task.manager.domain.SchedulerJobInfoRequest;
+import com.cpdss.common.scheduler.ScheduledTaskProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,7 +23,7 @@ public interface SchedulerService {
    * @return SchedulerJobInfoRequest.
    * @throws GenericServiceException - throws GenericServiceException.
    */
-  SchedulerJobInfoRequest scheduleNewJob(SchedulerJobInfoRequest jobInfo)
+  ScheduledTaskProperties scheduleNewJob(ScheduledTaskProperties jobInfo)
       throws GenericServiceException;
 
   /**
@@ -33,7 +33,7 @@ public interface SchedulerService {
    * @return Page of SchedulerJobInfoRequest
    * @throws GenericServiceException - throws GenericServiceException.
    */
-  Page<SchedulerJobInfoRequest> findAll(Pageable pageable) throws GenericServiceException;
+  Page<ScheduledTaskProperties> findAll(Pageable pageable) throws GenericServiceException;
 
   /**
    * Delete scheduled job.

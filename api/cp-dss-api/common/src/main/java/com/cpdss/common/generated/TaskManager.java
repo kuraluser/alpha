@@ -3099,6 +3099,1500 @@ public final class TaskManager {
 
   }
 
+  public interface ExecuteTaskRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ExecuteTaskRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string taskName = 1;</code>
+     * @return The taskName.
+     */
+    java.lang.String getTaskName();
+    /**
+     * <code>string taskName = 1;</code>
+     * @return The bytes for taskName.
+     */
+    com.google.protobuf.ByteString
+        getTaskNameBytes();
+
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+    int getTaskReqParamCount();
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+    boolean containsTaskReqParam(
+        java.lang.String key);
+    /**
+     * Use {@link #getTaskReqParamMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
+    getTaskReqParam();
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.String>
+    getTaskReqParamMap();
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+
+    java.lang.String getTaskReqParamOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue);
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+
+    java.lang.String getTaskReqParamOrThrow(
+        java.lang.String key);
+  }
+  /**
+   * Protobuf type {@code ExecuteTaskRequest}
+   */
+  public  static final class ExecuteTaskRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ExecuteTaskRequest)
+      ExecuteTaskRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ExecuteTaskRequest.newBuilder() to construct.
+    private ExecuteTaskRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ExecuteTaskRequest() {
+      taskName_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ExecuteTaskRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ExecuteTaskRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              taskName_ = s;
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                taskReqParam_ = com.google.protobuf.MapField.newMapField(
+                    TaskReqParamDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+              taskReqParam__ = input.readMessage(
+                  TaskReqParamDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              taskReqParam_.getMutableMap().put(
+                  taskReqParam__.getKey(), taskReqParam__.getValue());
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskRequest_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetTaskReqParam();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.class, com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.Builder.class);
+    }
+
+    public static final int TASKNAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object taskName_;
+    /**
+     * <code>string taskName = 1;</code>
+     * @return The taskName.
+     */
+    public java.lang.String getTaskName() {
+      java.lang.Object ref = taskName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        taskName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string taskName = 1;</code>
+     * @return The bytes for taskName.
+     */
+    public com.google.protobuf.ByteString
+        getTaskNameBytes() {
+      java.lang.Object ref = taskName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        taskName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TASKREQPARAM_FIELD_NUMBER = 2;
+    private static final class TaskReqParamDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, java.lang.String> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, java.lang.String>newDefaultInstance(
+                  com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskRequest_TaskReqParamEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "");
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.String> taskReqParam_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetTaskReqParam() {
+      if (taskReqParam_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            TaskReqParamDefaultEntryHolder.defaultEntry);
+      }
+      return taskReqParam_;
+    }
+
+    public int getTaskReqParamCount() {
+      return internalGetTaskReqParam().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+
+    public boolean containsTaskReqParam(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetTaskReqParam().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getTaskReqParamMap()} instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getTaskReqParam() {
+      return getTaskReqParamMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+
+    public java.util.Map<java.lang.String, java.lang.String> getTaskReqParamMap() {
+      return internalGetTaskReqParam().getMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+
+    public java.lang.String getTaskReqParamOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetTaskReqParam().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+     */
+
+    public java.lang.String getTaskReqParamOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetTaskReqParam().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getTaskNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, taskName_);
+      }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetTaskReqParam(),
+          TaskReqParamDefaultEntryHolder.defaultEntry,
+          2);
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getTaskNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, taskName_);
+      }
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+           : internalGetTaskReqParam().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+        taskReqParam__ = TaskReqParamDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, taskReqParam__);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.TaskManager.ExecuteTaskRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.TaskManager.ExecuteTaskRequest other = (com.cpdss.common.generated.TaskManager.ExecuteTaskRequest) obj;
+
+      if (!getTaskName()
+          .equals(other.getTaskName())) return false;
+      if (!internalGetTaskReqParam().equals(
+          other.internalGetTaskReqParam())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TASKNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTaskName().hashCode();
+      if (!internalGetTaskReqParam().getMap().isEmpty()) {
+        hash = (37 * hash) + TASKREQPARAM_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetTaskReqParam().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.TaskManager.ExecuteTaskRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ExecuteTaskRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ExecuteTaskRequest)
+        com.cpdss.common.generated.TaskManager.ExecuteTaskRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskRequest_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetTaskReqParam();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetMutableTaskReqParam();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.class, com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        taskName_ = "";
+
+        internalGetMutableTaskReqParam().clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.TaskManager.ExecuteTaskRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.TaskManager.ExecuteTaskRequest build() {
+        com.cpdss.common.generated.TaskManager.ExecuteTaskRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.TaskManager.ExecuteTaskRequest buildPartial() {
+        com.cpdss.common.generated.TaskManager.ExecuteTaskRequest result = new com.cpdss.common.generated.TaskManager.ExecuteTaskRequest(this);
+        int from_bitField0_ = bitField0_;
+        result.taskName_ = taskName_;
+        result.taskReqParam_ = internalGetTaskReqParam();
+        result.taskReqParam_.makeImmutable();
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.TaskManager.ExecuteTaskRequest) {
+          return mergeFrom((com.cpdss.common.generated.TaskManager.ExecuteTaskRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.TaskManager.ExecuteTaskRequest other) {
+        if (other == com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.getDefaultInstance()) return this;
+        if (!other.getTaskName().isEmpty()) {
+          taskName_ = other.taskName_;
+          onChanged();
+        }
+        internalGetMutableTaskReqParam().mergeFrom(
+            other.internalGetTaskReqParam());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.TaskManager.ExecuteTaskRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object taskName_ = "";
+      /**
+       * <code>string taskName = 1;</code>
+       * @return The taskName.
+       */
+      public java.lang.String getTaskName() {
+        java.lang.Object ref = taskName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          taskName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string taskName = 1;</code>
+       * @return The bytes for taskName.
+       */
+      public com.google.protobuf.ByteString
+          getTaskNameBytes() {
+        java.lang.Object ref = taskName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          taskName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string taskName = 1;</code>
+       * @param value The taskName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTaskName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        taskName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string taskName = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTaskName() {
+        
+        taskName_ = getDefaultInstance().getTaskName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string taskName = 1;</code>
+       * @param value The bytes for taskName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTaskNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        taskName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.String, java.lang.String> taskReqParam_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetTaskReqParam() {
+        if (taskReqParam_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              TaskReqParamDefaultEntryHolder.defaultEntry);
+        }
+        return taskReqParam_;
+      }
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMutableTaskReqParam() {
+        onChanged();;
+        if (taskReqParam_ == null) {
+          taskReqParam_ = com.google.protobuf.MapField.newMapField(
+              TaskReqParamDefaultEntryHolder.defaultEntry);
+        }
+        if (!taskReqParam_.isMutable()) {
+          taskReqParam_ = taskReqParam_.copy();
+        }
+        return taskReqParam_;
+      }
+
+      public int getTaskReqParamCount() {
+        return internalGetTaskReqParam().getMap().size();
+      }
+      /**
+       * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+       */
+
+      public boolean containsTaskReqParam(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetTaskReqParam().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getTaskReqParamMap()} instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getTaskReqParam() {
+        return getTaskReqParamMap();
+      }
+      /**
+       * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+       */
+
+      public java.util.Map<java.lang.String, java.lang.String> getTaskReqParamMap() {
+        return internalGetTaskReqParam().getMap();
+      }
+      /**
+       * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+       */
+
+      public java.lang.String getTaskReqParamOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetTaskReqParam().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+       */
+
+      public java.lang.String getTaskReqParamOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetTaskReqParam().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearTaskReqParam() {
+        internalGetMutableTaskReqParam().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+       */
+
+      public Builder removeTaskReqParam(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableTaskReqParam().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String>
+      getMutableTaskReqParam() {
+        return internalGetMutableTaskReqParam().getMutableMap();
+      }
+      /**
+       * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+       */
+      public Builder putTaskReqParam(
+          java.lang.String key,
+          java.lang.String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableTaskReqParam().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <code>map&lt;string, string&gt; taskReqParam = 2;</code>
+       */
+
+      public Builder putAllTaskReqParam(
+          java.util.Map<java.lang.String, java.lang.String> values) {
+        internalGetMutableTaskReqParam().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ExecuteTaskRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:ExecuteTaskRequest)
+    private static final com.cpdss.common.generated.TaskManager.ExecuteTaskRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.TaskManager.ExecuteTaskRequest();
+    }
+
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ExecuteTaskRequest>
+        PARSER = new com.google.protobuf.AbstractParser<ExecuteTaskRequest>() {
+      @java.lang.Override
+      public ExecuteTaskRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ExecuteTaskRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ExecuteTaskRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ExecuteTaskRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.TaskManager.ExecuteTaskRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ExecuteTaskReplyOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ExecuteTaskReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /**
+   * Protobuf type {@code ExecuteTaskReply}
+   */
+  public  static final class ExecuteTaskReply extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ExecuteTaskReply)
+      ExecuteTaskReplyOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ExecuteTaskReply.newBuilder() to construct.
+    private ExecuteTaskReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ExecuteTaskReply() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ExecuteTaskReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ExecuteTaskReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+              if (responseStatus_ != null) {
+                subBuilder = responseStatus_.toBuilder();
+              }
+              responseStatus_ = input.readMessage(com.cpdss.common.generated.Common.ResponseStatus.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(responseStatus_);
+                responseStatus_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.TaskManager.ExecuteTaskReply.class, com.cpdss.common.generated.TaskManager.ExecuteTaskReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.TaskManager.ExecuteTaskReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.TaskManager.ExecuteTaskReply other = (com.cpdss.common.generated.TaskManager.ExecuteTaskReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus()
+            .equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.TaskManager.ExecuteTaskReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ExecuteTaskReply}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ExecuteTaskReply)
+        com.cpdss.common.generated.TaskManager.ExecuteTaskReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.TaskManager.ExecuteTaskReply.class, com.cpdss.common.generated.TaskManager.ExecuteTaskReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.TaskManager.ExecuteTaskReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.TaskManager.internal_static_ExecuteTaskReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.TaskManager.ExecuteTaskReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.TaskManager.ExecuteTaskReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.TaskManager.ExecuteTaskReply build() {
+        com.cpdss.common.generated.TaskManager.ExecuteTaskReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.TaskManager.ExecuteTaskReply buildPartial() {
+        com.cpdss.common.generated.TaskManager.ExecuteTaskReply result = new com.cpdss.common.generated.TaskManager.ExecuteTaskReply(this);
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.TaskManager.ExecuteTaskReply) {
+          return mergeFrom((com.cpdss.common.generated.TaskManager.ExecuteTaskReply)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.TaskManager.ExecuteTaskReply other) {
+        if (other == com.cpdss.common.generated.TaskManager.ExecuteTaskReply.getDefaultInstance()) return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.TaskManager.ExecuteTaskReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.TaskManager.ExecuteTaskReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder> responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+              com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_).mergeFrom(value).buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+        
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null ?
+              com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+        }
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder> 
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(),
+                  getParentForChildren(),
+                  isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ExecuteTaskReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:ExecuteTaskReply)
+    private static final com.cpdss.common.generated.TaskManager.ExecuteTaskReply DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.TaskManager.ExecuteTaskReply();
+    }
+
+    public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ExecuteTaskReply>
+        PARSER = new com.google.protobuf.AbstractParser<ExecuteTaskReply>() {
+      @java.lang.Override
+      public ExecuteTaskReply parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ExecuteTaskReply(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ExecuteTaskReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ExecuteTaskReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.TaskManager.ExecuteTaskReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_ScheduleTaskRequest_descriptor;
   private static final 
@@ -3119,6 +4613,21 @@ public final class TaskManager {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_TaskManagerReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ExecuteTaskRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ExecuteTaskRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ExecuteTaskRequest_TaskReqParamEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ExecuteTaskRequest_TaskReqParamEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ExecuteTaskReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ExecuteTaskReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3141,12 +4650,19 @@ public final class TaskManager {
       "\r\n\005value\030\002 \001(\t:\0028\001B\016\n\014taskInterval\"-\n\031Sc" +
       "heduleTaskDeleteRequest\022\020\n\010taskName\030\001 \001(" +
       "\t\";\n\020TaskManagerReply\022\'\n\016responseStatus\030" +
-      "\001 \001(\0132\017.ResponseStatus2\226\001\n\022TaskManagerSe" +
-      "rvice\0229\n\014ScheduleTask\022\024.ScheduleTaskRequ" +
-      "est\032\021.TaskManagerReply\"\000\022E\n\022DeleteSchedu" +
-      "leTask\022\032.ScheduleTaskDeleteRequest\032\021.Tas" +
-      "kManagerReply\"\000B\036\n\032com.cpdss.common.gene" +
-      "ratedP\000b\006proto3"
+      "\001 \001(\0132\017.ResponseStatus\"\230\001\n\022ExecuteTaskRe" +
+      "quest\022\020\n\010taskName\030\001 \001(\t\022;\n\014taskReqParam\030" +
+      "\002 \003(\0132%.ExecuteTaskRequest.TaskReqParamE" +
+      "ntry\0323\n\021TaskReqParamEntry\022\013\n\003key\030\001 \001(\t\022\r" +
+      "\n\005value\030\002 \001(\t:\0028\001\";\n\020ExecuteTaskReply\022\'\n" +
+      "\016responseStatus\030\001 \001(\0132\017.ResponseStatus2\317" +
+      "\001\n\022TaskManagerService\0229\n\014ScheduleTask\022\024." +
+      "ScheduleTaskRequest\032\021.TaskManagerReply\"\000" +
+      "\022E\n\022DeleteScheduleTask\022\032.ScheduleTaskDel" +
+      "eteRequest\032\021.TaskManagerReply\"\000\0227\n\013Execu" +
+      "teTask\022\023.ExecuteTaskRequest\032\021.ExecuteTas" +
+      "kReply\"\000B\036\n\032com.cpdss.common.generatedP\000" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3177,6 +4693,24 @@ public final class TaskManager {
     internal_static_TaskManagerReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_TaskManagerReply_descriptor,
+        new java.lang.String[] { "ResponseStatus", });
+    internal_static_ExecuteTaskRequest_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_ExecuteTaskRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ExecuteTaskRequest_descriptor,
+        new java.lang.String[] { "TaskName", "TaskReqParam", });
+    internal_static_ExecuteTaskRequest_TaskReqParamEntry_descriptor =
+      internal_static_ExecuteTaskRequest_descriptor.getNestedTypes().get(0);
+    internal_static_ExecuteTaskRequest_TaskReqParamEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ExecuteTaskRequest_TaskReqParamEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_ExecuteTaskReply_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_ExecuteTaskReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ExecuteTaskReply_descriptor,
         new java.lang.String[] { "ResponseStatus", });
     com.google.protobuf.TimestampProto.getDescriptor();
     com.cpdss.common.generated.Common.getDescriptor();

@@ -89,6 +89,37 @@ public final class TaskManagerServiceGrpc {
     return getDeleteScheduleTaskMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.TaskManager.ExecuteTaskRequest,
+      com.cpdss.common.generated.TaskManager.ExecuteTaskReply> getExecuteTaskMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ExecuteTask",
+      requestType = com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.class,
+      responseType = com.cpdss.common.generated.TaskManager.ExecuteTaskReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.TaskManager.ExecuteTaskRequest,
+      com.cpdss.common.generated.TaskManager.ExecuteTaskReply> getExecuteTaskMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.TaskManager.ExecuteTaskRequest, com.cpdss.common.generated.TaskManager.ExecuteTaskReply> getExecuteTaskMethod;
+    if ((getExecuteTaskMethod = TaskManagerServiceGrpc.getExecuteTaskMethod) == null) {
+      synchronized (TaskManagerServiceGrpc.class) {
+        if ((getExecuteTaskMethod = TaskManagerServiceGrpc.getExecuteTaskMethod) == null) {
+          TaskManagerServiceGrpc.getExecuteTaskMethod = getExecuteTaskMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.TaskManager.ExecuteTaskRequest, com.cpdss.common.generated.TaskManager.ExecuteTaskReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ExecuteTask"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.TaskManager.ExecuteTaskRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.TaskManager.ExecuteTaskReply.getDefaultInstance()))
+              .setSchemaDescriptor(new TaskManagerServiceMethodDescriptorSupplier("ExecuteTask"))
+              .build();
+        }
+      }
+    }
+    return getExecuteTaskMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -151,6 +182,13 @@ public final class TaskManagerServiceGrpc {
       asyncUnimplementedUnaryCall(getDeleteScheduleTaskMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void executeTask(com.cpdss.common.generated.TaskManager.ExecuteTaskRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.TaskManager.ExecuteTaskReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getExecuteTaskMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -167,6 +205,13 @@ public final class TaskManagerServiceGrpc {
                 com.cpdss.common.generated.TaskManager.ScheduleTaskDeleteRequest,
                 com.cpdss.common.generated.TaskManager.TaskManagerReply>(
                   this, METHODID_DELETE_SCHEDULE_TASK)))
+          .addMethod(
+            getExecuteTaskMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.TaskManager.ExecuteTaskRequest,
+                com.cpdss.common.generated.TaskManager.ExecuteTaskReply>(
+                  this, METHODID_EXECUTE_TASK)))
           .build();
     }
   }
@@ -200,6 +245,14 @@ public final class TaskManagerServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getDeleteScheduleTaskMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void executeTask(com.cpdss.common.generated.TaskManager.ExecuteTaskRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.TaskManager.ExecuteTaskReply> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getExecuteTaskMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -228,6 +281,13 @@ public final class TaskManagerServiceGrpc {
     public com.cpdss.common.generated.TaskManager.TaskManagerReply deleteScheduleTask(com.cpdss.common.generated.TaskManager.ScheduleTaskDeleteRequest request) {
       return blockingUnaryCall(
           getChannel(), getDeleteScheduleTaskMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.cpdss.common.generated.TaskManager.ExecuteTaskReply executeTask(com.cpdss.common.generated.TaskManager.ExecuteTaskRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getExecuteTaskMethod(), getCallOptions(), request);
     }
   }
 
@@ -260,10 +320,19 @@ public final class TaskManagerServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getDeleteScheduleTaskMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.TaskManager.ExecuteTaskReply> executeTask(
+        com.cpdss.common.generated.TaskManager.ExecuteTaskRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getExecuteTaskMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SCHEDULE_TASK = 0;
   private static final int METHODID_DELETE_SCHEDULE_TASK = 1;
+  private static final int METHODID_EXECUTE_TASK = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -289,6 +358,10 @@ public final class TaskManagerServiceGrpc {
         case METHODID_DELETE_SCHEDULE_TASK:
           serviceImpl.deleteScheduleTask((com.cpdss.common.generated.TaskManager.ScheduleTaskDeleteRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.TaskManager.TaskManagerReply>) responseObserver);
+          break;
+        case METHODID_EXECUTE_TASK:
+          serviceImpl.executeTask((com.cpdss.common.generated.TaskManager.ExecuteTaskRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.TaskManager.ExecuteTaskReply>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -353,6 +426,7 @@ public final class TaskManagerServiceGrpc {
               .setSchemaDescriptor(new TaskManagerServiceFileDescriptorSupplier())
               .addMethod(getScheduleTaskMethod())
               .addMethod(getDeleteScheduleTaskMethod())
+              .addMethod(getExecuteTaskMethod())
               .build();
         }
       }

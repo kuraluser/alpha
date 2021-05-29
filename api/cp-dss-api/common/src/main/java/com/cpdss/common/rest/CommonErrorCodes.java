@@ -34,6 +34,7 @@ public interface CommonErrorCodes {
   String E_CPDSS_RESEND_ACCESS_REQUSET = "111";
   String E_CPDSS_ALREADY_REQUESTED = "112";
   String E_CPDSS_REJECTION_COUNT_EXCEEDED = "113";
+  String E_CPDSS_TASK_SCHEDULE_CREATE_ERROR="125";
 
   String E_CPDSS_PASSWORD_POLICIES_VIOLATION_1 =
       "120"; // Password cannot contain first name or last name

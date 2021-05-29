@@ -12,6 +12,8 @@ service TaskManagerService {
 	}
 	rpc DeleteScheduleTask (ScheduleTaskDeleteRequest) returns (TaskManagerReply) {
     }
+    rpc ExecuteTask (ExecuteTaskRequest) returns (ExecuteTaskReply) {
+    }
 }
 
 message ScheduleTaskRequest {
@@ -32,5 +34,14 @@ message ScheduleTaskDeleteRequest {
 }
 
 message TaskManagerReply {
+	ResponseStatus responseStatus = 1;
+}
+
+message ExecuteTaskRequest {
+	string taskName = 1;
+	map<string, string> taskReqParam = 2;
+}
+
+message ExecuteTaskReply {
 	ResponseStatus responseStatus = 1;
 }

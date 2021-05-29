@@ -39,7 +39,7 @@ public class GrpcClientConfig extends GrpcChannelsProperties {
    *
    * @return
    */
-  @Bean
+  @Bean(name = "GrpcChannelConfigurer")
   public GrpcChannelConfigurer keepAliveClientConfigurer() {
     targets.forEach(
         (targetName, targetAddress) -> {
