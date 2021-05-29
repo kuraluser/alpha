@@ -18,5 +18,6 @@ export * from './events/common-transport-event.service';
 export * from './events/common-finish-event.service';
 export * from './events/common-resend-event.service';
 export * from './events/common-confirm-event.service';
+export * from './events/common-cancel-event.service';
 export * from './utils/common-app.constants';
 export * from './utils/common-util.service';

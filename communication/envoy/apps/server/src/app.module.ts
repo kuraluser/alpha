@@ -15,6 +15,7 @@ import { ConfirmTaskService } from './schedulers/confirm-task.service';
 import { DownloadController } from './controllers/download.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisUtilService } from './utils/redis-util.service';
+import { CancelTaskService } from './schedulers/cancel-task.service';
 
 /**
  * Root module for Envoy server
@@ -41,7 +42,7 @@ import { RedisUtilService } from './utils/redis-util.service';
   controllers: [UploadAppController, DownloadController],
   providers: [
     SocketServerService, VerifyTaskService, ResendTaskService, SplitTaskService,
-    TransportTaskService, FinishTaskService, ConfirmTaskService, ServerUtilService, RedisUtilService
+    TransportTaskService, FinishTaskService, ConfirmTaskService, CancelTaskService, ServerUtilService, RedisUtilService
   ]
 })
 export class AppModule { }
