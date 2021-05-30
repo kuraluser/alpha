@@ -83,6 +83,18 @@ public class LoadingInformation extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
+  @Column(name = "stages_min_amount_xid")
+  private StageOffset stageOffset;
+
+  @Column(name = "stages_duration_xid")
+  private StageDuration stageDuration;
+
+  @Column(name = "is_track_start_end_stage")
+  private Boolean trackStartEndStage;
+
+  @Column(name = "is_track_grade_switching")
+  private Boolean trackGradeSwitch;
+
   @OneToMany(mappedBy = "loadingInformation", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
   private Set<LoadingBerthDetail> loadingBerthDetails;
 

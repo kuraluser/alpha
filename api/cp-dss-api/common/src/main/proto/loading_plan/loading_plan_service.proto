@@ -8,7 +8,7 @@ import "loading_plan/loading_plan_models.proto";
 
 service LoadingInformationService {
 
-  rpc GetLoadingInformation(LoadingInformationRequest) returns (LoadingPlanInformation) {}
+  rpc GetLoadingInformation(LoadingInformationRequest) returns (LoadingInformation) {}
 }
 
 service LoadingInstructionService {

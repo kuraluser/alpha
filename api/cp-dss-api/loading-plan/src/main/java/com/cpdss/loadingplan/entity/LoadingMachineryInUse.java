@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,4 +36,7 @@ public class LoadingMachineryInUse extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "capacity")
+  private BigDecimal capacity;
 }

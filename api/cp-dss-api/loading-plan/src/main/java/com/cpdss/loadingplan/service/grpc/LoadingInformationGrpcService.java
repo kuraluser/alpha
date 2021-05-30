@@ -36,5 +36,5 @@ public class LoadingInformationGrpcService
   @Override
   public void getLoadingInformation(
       LoadingPlanModels.LoadingInformationRequest request,
-      StreamObserver<LoadingPlanModels.LoadingPlanInformation> responseObserver) {}
+      StreamObserver<LoadingPlanModels.LoadingInformation> responseObserver) {}
 }
