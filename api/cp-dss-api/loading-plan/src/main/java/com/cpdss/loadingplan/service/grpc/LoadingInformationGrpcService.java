@@ -3,9 +3,11 @@ package com.cpdss.loadingplan.service.grpc;
 
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.loadingplan.service.LoadingInformationService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Grpc Service Implementation from common
@@ -17,6 +19,8 @@ import net.devh.boot.grpc.server.service.GrpcService;
 @GrpcService
 public class LoadingInformationGrpcService
     extends LoadingInformationServiceGrpc.LoadingInformationServiceImplBase {
+
+  @Autowired LoadingInformationService loadingInformationService;
 
   /**
    * Loading Information Is the First page in Loading module (UI).
@@ -31,6 +35,6 @@ public class LoadingInformationGrpcService
    */
   @Override
   public void getLoadingInformation(
-      LoadingPlanModels.LoadingPlanRequest request,
-      StreamObserver<LoadingPlanModels.LoadingPlanResponse> responseObserver) {}
+      LoadingPlanModels.LoadingInformationRequest request,
+      StreamObserver<LoadingPlanModels.LoadingPlanInformation> responseObserver) {}
 }
