@@ -24,10 +24,11 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
-  security = 'y'
+  security = 'jwt'
   monitoring = 'y'
   docker {
         imageName = 'cpdss-gateway'
+        baseImage = 'openjdk:8u292-jre'
         containerName = 'gateway-container'
         networkName = 'cpdss-network'
         hostVolumeMapping {

@@ -3,58 +3,7 @@
     <div class="container-fluid">
         <div class="row item-row-wrapper">
             <div class="col">
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Intial loading rate'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div> -->
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Max loading rate'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div> -->
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Min Deballast rate'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div> -->
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Max Deballast rate'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                    </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div> -->
-                </div>
+                
                 <div class="row form-group">
                     <label for="initial_loading_rate"
                         class="col no-left-padding">{{'Sunrise/Sunset'}}</label>
@@ -108,138 +57,22 @@
                             [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                     </div> -->
                 </div>
-                <!-- <div class="row form-group">
-                    <label for="loading_ratio"
-                        class="col no-left-padding">{{'Intial loading rate'}}</label>
-                    <div class="col dropdown-load_discharge_details">
-                        <p-dropdown #dd id="loading_ratio" styleClass="form-control" [filter]="true"
-                            [options]="[]" formControlName="loadingRatio" optionLabel="name" (click)="clearFilter(dd)"
-                            placeholder="{{'Enter initial loading rate'}}"
-                            [readonly]="false" resetFilterOnHide="true">
-                        </p-dropdown>
+                <div class="row form-group">
+                    <label for="initial_loading_rate"
+                        class="col no-left-padding">{{'Tide Details (HW/LW)'}}</label>
+                    <div class="col">
+                        <button>{{'Browse'}}</button>
+                        <button>{{'d'}}</button>
+                        <button>{{'v'}}</button>
+                        <button>{{'e'}}</button>
                     </div>
                     <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        <!-- <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error> -->
                     </div>
-                </div> -->
+                </div>
             </div>
-            <!-- <div class="col second-column" *ngIf="caseNo === 1">
-                <div class="row form-group">
-                    <label for="loadable_quantity_dist_in_summery"
-                        class="col col-form-label">{{'LOADABLE_QUANTITY_DIST_IN' | translate}}
-                        {{selectedZone}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                            id="loadable_quantity_dist_in_summery" formControlName="distanceInSummerzone"
-                            (change)="getRunningHours()" [readonly]="!isEditable">
-                    </div>
-                    <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MILES' | translate }}</div>
-                    <div class="col error-column text-center">
-                        <cpdss-portal-validation-error [errors]="fieldError('distanceInSummerzone')"
-                            [errorMessages]="errorMesages.distanceInSummerzone"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="loadable_quantity_speed_in_sz"
-                        class="col col-form-label">{{'LOADABLE_QUANTITY_SPEED_IN' | translate}}
-                        {{selectedZone}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false"
-                            id="loadable_quantity_speed_in_sz" class="form-control" formControlName="speedInSz"
-                            (change)="getRunningHours()" [readonly]="!isEditable">
-                    </div>
-                    <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_KNOTS' | translate }}</div>
-                    <div class="col error-column text-center">
-                        <cpdss-portal-validation-error [errors]="fieldError('speedInSz')"
-                            [errorMessages]="errorMesages.speedInSz"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="loadable_quantity_running_hours"
-                        class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_HOURS' | translate}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false"
-                            id="loadable_quantity_running_hours" class="form-control" formControlName="runningHours"
-                            (change)="getRunningDays()" readonly>
-                    </div>
-                    <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_HOURS' | translate }}</div>
-                    <div class="col error-column text-center">
-                        <cpdss-portal-validation-error [errors]="fieldError('runningHours')"
-                            [errorMessages]="errorMesages.runningHours"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="loadable_quantity_running_days"
-                        class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_DAYS' | translate}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false"
-                            id="loadable_quantity_running_days" class="form-control" formControlName="runningDays"
-                            (change)="getFoConsumptionInSz()" readonly>
-                    </div>
-                    <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_DAYS' | translate }}</div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('runningDays')"
-                            [errorMessages]="errorMesages.runningDays"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="loadable_quantity_fo_con_day"
-                        class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CON_/_DAY' | translate}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false"
-                            id="loadable_quantity_fo_con_day" class="form-control" formControlName="foConday"
-                            (change)="getFoConsumptionInSz()" [readonly]="!isEditable">
-                    </div>
-                    <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT/DAY' | translate }}</div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('foConday')"
-                            [errorMessages]="errorMesages.foConday"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <label for="loadable_quantity_fo_cons_in_sz"
-                        class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CONS_IN' | translate}}
-                        {{selectedZone}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                            id="loadable_quantity_fo_cons_in_sz" formControlName="foConsInSz" readonly>
-                    </div>
-                    <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('foConsInSz')"
-                            [errorMessages]="errorMesages.foConsInSz"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row form-group sub-heading-size text-secondary no-border">
-                    <label for="" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
-                    <div class="col pt-5">
-                        <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity') | number :
-                            '1.2-2'}}</label>
-
-                    </div>
-                    <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                    <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
-                            [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="pt-5 text-danger" *ngIf="isNegative">
-                            {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
-                        <div class="text-danger" *ngIf="isNoArrivalMaxDraft">
-                            {{'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED' | translate}}</div>
-                        <div class="text-danger" *ngIf="isNoTpc">
-                            {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
-                        <div class="text-danger" *ngIf="isNoDwt">
-                            {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
-                        <div class="text-danger" *ngIf="isNoConstant">
-                            {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
-                    </div>
-                </div>
-
-            </div> -->
+            
 
         </div>
     </div>

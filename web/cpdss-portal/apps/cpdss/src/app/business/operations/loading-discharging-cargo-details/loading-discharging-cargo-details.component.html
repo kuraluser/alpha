@@ -1,1 +1,25 @@
-<p>loading-discharging-cargo-details works!</p>
+<div class="row">
+    <div class="col">
+        <div>Loadable Study LS1- Loadable Pattern</div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="col col-11 landing-page-tank-wrapper m-auto pt-30">
+            <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
+            </cpdss-portal-cargo-tank-layout>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <cpdss-portal-loading-discharging-cargo-details-table [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"></cpdss-portal-loading-discharging-cargo-details-table>
+        <!-- <button (click)="display = true" class="btn btn-main">Update Ullage</button> -->
+    </div>
+</div>
+<div class="row pt-20">
+    <div class="col-md-12">
+        <cpdss-portal-datatable [tableId]="'drparture-details-tbl'"
+        [columns]="departureDetailsColumns" [listData]="listData" [value]="departureDetailsList">
+      </cpdss-portal-datatable>
+    </div>
+</div>

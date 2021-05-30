@@ -7,5 +7,12 @@ option java_package = "com.cpdss.common.generated";
 import "common.proto";
 
 service EnvoyReaderService {
-  
-  }
+  rpc getResultFromCommServer(EnvoyReaderResultRequest) returns (EnvoyReaderResultReply){}
+}
+message EnvoyReaderResultRequest{
+  string lsUUID = 1;
+}
+message EnvoyReaderResultReply{
+  string patternResultJson = 1;
+  ResponseStatus responseStatus = 2;
+}

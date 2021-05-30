@@ -253,10 +253,6 @@ public class LoadableQuantityService {
               disp -> loadableQuantityRequest.setDisplacmentDraftRestriction(disp.toString()));
       Optional.ofNullable(loadableQuantity.get().getConstant())
           .ifPresent(cons -> loadableQuantityRequest.setConstant(cons.toString()));
-      Optional.ofNullable(loadableQuantity.get().getDraftRestriction())
-          .ifPresent(
-              draftRestriction ->
-                  loadableQuantityRequest.setDraftRestriction(draftRestriction.toString()));
       Optional.ofNullable(loadableQuantity.get().getDistanceFromLastPort())
           .ifPresent(dist -> loadableQuantityRequest.setDistanceFromLastPort(dist.toString()));
 
@@ -313,10 +309,7 @@ public class LoadableQuantityService {
           .ifPresent(
               foConsumptionInSZ ->
                   loadableQuantityRequest.setFoConInSZ(foConsumptionInSZ.toString()));
-      Optional.ofNullable(loadableQuantity.get().getDraftRestriction())
-          .ifPresent(
-              draftRestriction ->
-                  loadableQuantityRequest.setDraftRestriction(draftRestriction.toString()));
+      loadableQuantityRequest.setDraftRestriction(draftRestriction1);
       Optional.ofNullable(loadableQuantity.get().getSubTotal())
           .ifPresent(subTotal -> loadableQuantityRequest.setSubTotal(subTotal.toString()));
       Optional.ofNullable(loadableQuantity.get().getFoConsumptionPerDay())

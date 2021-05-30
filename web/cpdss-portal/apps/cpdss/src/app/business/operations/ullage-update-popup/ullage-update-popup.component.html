@@ -1,0 +1,230 @@
+<p-dialog id="dialog_newLoadableStudyPopup" header="{{'UPDATE ULLAGE' | translate}}" [(visible)]="display"
+    [modal]="true" styleClass="new-loadable-study-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
+    [closable]="false">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="">BERTH</label> <span class="pl-20"> North Pier #11/#12</span>
+            </div>
+            <div class="col-md-4">
+                <label for="">STATUS</label> <span class="pl-20">
+                    <p-dropdown  filter="true" optionLabel="voyageNo"
+                        resetFilterOnHide="true"></p-dropdown>
+                </span>
+            </div>
+            <div class="col-md-4">
+                <label for="">SHOW AS</label> <span class="pl-20">
+                    <p-dropdown  filter="true" optionLabel="voyageNo"
+                        resetFilterOnHide="true"></p-dropdown>
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="pt-15">
+                    <div class="col  text-center">
+                        <a class="tab-btn tab-btn-default tab-landing tank-icon" [ngClass]="{'active': selectedTab === tankType.CARGO}" pTooltip="{{'CARGO' | translate}}" tooltipPosition="top"
+                            id="ship_landing_cargo_tab" (click)="onTabClick(tankType.CARGO)">
+                        </a>
+                        <a class="tab-btn tab-btn-default tab-landing ballast-icon" [ngClass]="{'active': selectedTab === tankType.BALLAST}" pTooltip="{{'BALLAST' | translate}}" tooltipPosition="top"
+                            id="ship_landing_ballast_tab" (click)="onTabClick(tankType.BALLAST)">
+                        </a>
+                        <a class="tab-btn tab-btn-default tab-landing bunker-icon" [ngClass]="{'active': selectedTab === tankType.BUNKER}" pTooltip="{{'BUNKER' | translate}}" tooltipPosition="top"
+                        id="ship_landing_bunker_tab" (click)="onTabClick(tankType.BUNKER)">
+                    </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-20">
+            <div class="col-md-4">
+                <cpdss-portal-datatable *ngIf="selectedTab === tankType.CARGO" [value]="cargoQuantities" [filterable]="false"
+                    [tableId]="'user_list'" [columns]="cargoColumns"></cpdss-portal-datatable>
+                    <cpdss-portal-datatable *ngIf="selectedTab === tankType.BALLAST" [value]="ballastQuantities" [filterable]="false"
+                    [tableId]="'user_list'" [columns]="ballastColumns"></cpdss-portal-datatable>
+                    <cpdss-portal-datatable *ngIf="selectedTab === tankType.BUNKER" [value]="bunkerTanksList" [filterable]="false"
+                    [tableId]="'user_list'" [columns]="bunkerColumns"></cpdss-portal-datatable>
+            </div>
+            <div class="col-md-8">
+                <!-- <cpdss-portal-ship-landing-tanks [vesselId]="vesselInfo?.id" [voyageId]="selectedVoyage?.id"
+                    [loadableStudyId]="selectedVoyage?.confirmedLoadableStudyId"
+                    [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
+                    [selectedPortDetails]="selectedPortDetails" [shipLandingTanks]="voyageStatusResponse">
+                </cpdss-portal-ship-landing-tanks> -->
+                <div>
+                    <div class="row">
+                        <!-- <div *ngIf="selectedTab === tankType.CARGO || selectedTab === tankType.BALLAST" class="col-7 pb-5 m-auto text-right">
+                            <div class="switch-wrapper">
+                                <span class="switch-label">View All</span>
+                                <p-inputSwitch [(ngModel)]="viewAll"></p-inputSwitch>
+                            </div>
+                           </div> -->
+                        <div class="col col-11 landing-page-tank-wrapper m-auto" *ngIf="selectedTab === tankType.CARGO">
+                            <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
+                            </cpdss-portal-cargo-tank-layout>
+                            
+                        </div>
+                        <div class="col-11 m-auto loadable-plan-ballast landing-page-tank-wrapper" *ngIf="selectedTab === tankType.BALLAST">
+                            <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
+                                    [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
+                                </cpdss-portal-ballast-layout>
+                                
+                        </div>
+                        <div class="col col-7 m-auto landing-page-tank-wrapper" *ngIf="selectedTab === tankType.BUNKER">
+                            <div class="col text-center pb-10 pt-10">
+                                <span class="mr-10 text-uppercase text-secondary">{{'SHIP_LANDING_TYPE'| translate}}</span>
+                                <ng-container *ngFor="let fuelType of fuelTypes">
+                                    <span class="badge-custom mr-5" *ngIf="fuelType?.shortName"
+                                        [ngStyle]="{'background-color': fuelType?.colorCode}">{{fuelType?.shortName}}</span>
+                                </ng-container>
+                
+                            </div>
+                            
+                                    <cpdss-portal-bunkering-layout [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks" [options]="ohqTankOptions"
+                                        >
+                                    </cpdss-portal-bunkering-layout>
+                             
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="selectedTab === tankType.CARGO" class="row">
+            <div class="col-md-4">
+                <label>B/L FIGURE</label>
+            </div>
+        </div>
+        <div *ngIf="selectedTab === tankType.CARGO" class="row">
+            <div class="col-md-12">
+                <p-table [value]="blFigure">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>CARGO NAME</th>
+                            <th>B/L REF NO</th>
+                            <th>BBL@60F</th>
+                            <th>LT</th>
+                            <th>MT</th>
+                            <th>KL@15C</th>
+                            <th>API</th>
+                            <th>TEMP</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row let-index>
+                        <ng-container *ngFor="let column of row.cargoDetails; let i=index">
+                            <tr>
+                                <td *ngIf="i === 0" [attr.rowspan]="row.cargoDetails.length">{{row.cargoName}}</td>
+                                <td [hidden]="row?.hideRef">{{column.blRefNo}}</td>
+                                <td>{{column.bbl}}</td>
+                                <td>{{column.lt}}</td>
+                                <td>{{column.mt}}</td>
+                                <td>{{column.kl}}</td>
+                                <td>{{column.api}}</td>
+                                <td>{{column.temp}}</td>
+                            </tr>
+                        </ng-container>    
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <div *ngIf="selectedTab === tankType.CARGO" class="row">
+            <div class="col-md-4 pt-20">
+                CARGO QUANTITY TABLE
+            </div>
+        </div>
+        <div *ngIf="selectedTab === tankType.CARGO" class="row">
+            <div class="col-md-12 pt-20">
+                <p-table [value]="cargoQuantityList">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th rowspan="2">CARGO GRADE NAME</th>
+                            <th rowspan="2">NOMINATION FIG IN BBLS</th>
+                            <th colspan="2">TOLERANCE</th>
+                            <th colspan="2">QUANTITY</th>
+                            <th rowspan="2"></th>
+                            <th rowspan="2">BBLS@60F</th>
+                            <th rowspan="2">LT</th>
+                            <th rowspan="2">MT</th>
+                            <th rowspan="2">KL@15C</th>
+                            <th rowspan="2">API</th>
+                            <th rowspan="2">TEMP(F)</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2">MAX</th>
+                            <th rowspan="2">MIN</th>
+                            <th rowspan="2">MAX</th>
+                            <th rowspan="2">MIN</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row let-index>
+                        <!-- <ng-container *ngFor="let column of row.cargoDetails; let i=index"> -->
+                            <tr>
+                                <td rowspan="4">{{row.cargoName}}</td>
+                                <td rowspan="4">{{row.nominationFig}}</td>
+                                <td rowspan="4">{{row.tolerance.max}}</td>
+                                <td rowspan="4">{{row.tolerance.min}}</td>
+                                <td rowspan="4">{{row.quantity.max}}</td>
+                                <td rowspan="4">{{row.quantity.min}}</td>
+                                <td>PLAN</td>
+                                <td>{{row.plan.bbl}}</td>
+                                <td>{{row.plan.lt}}</td>
+                                <td>{{row.plan.mt}}</td>
+                                <td>{{row.plan.kl}}</td>
+                                <td>{{row.plan.api}}</td>
+                                <td>{{row.plan.temp}}</td>
+                            </tr>
+                            <tr>
+                                <td>ACTUAL</td>
+                                <td>{{row.actual.bbl}}</td>
+                                <td>{{row.actual.lt}}</td>
+                                <td>{{row.actual.mt}}</td>
+                                <td>{{row.actual.kl}}</td>
+                                <td>{{row.actual.api}}</td>
+                                <td>{{row.actual.temp}}</td>
+                            </tr>
+                            <tr>
+                                <td>B/L FIG</td>
+                                <td>{{row.blFigure.bbl}}</td>
+                                <td>{{row.blFigure.lt}}</td>
+                                <td>{{row.blFigure.mt}}</td>
+                                <td>{{row.blFigure.kl}}</td>
+                                <td>{{row.blFigure.api}}</td>
+                                <td>{{row.blFigure.temp}}</td>
+                            </tr>
+                            <tr>
+                                <td>DIFF</td>
+                                <td>{{row.diff.bbl}}</td>
+                                <td>{{row.diff.lt}}</td>
+                                <td>{{row.diff.mt}}</td>
+                                <td>{{row.diff.kl}}</td>
+                                <td>{{row.diff.api}}</td>
+                                <td>{{row.diff.temp}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6"></td>
+                                <td>DIFF%</td>
+                                <td>{{row.diffPercentage.bbl}}</td>
+                                <td>{{row.diffPercentage.lt}}</td>
+                                <td>{{row.diffPercentage.mt}}</td>
+                                <td>{{row.diffPercentage.kl}}</td>
+                                <td>{{row.diffPercentage.api}}</td>
+                                <td>{{row.diffPercentage.temp}}</td>
+                            </tr>
+                        <!-- </ng-container>     -->
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+
+    <p-footer>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
+                    focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
+                <button type="submit" class="btn btn-main" id="new-loadable-study-popup-save" form="fg_newLoadableStudy"
+                    autofocus focusTrap>{{'SAVE' | translate}}</button>
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>

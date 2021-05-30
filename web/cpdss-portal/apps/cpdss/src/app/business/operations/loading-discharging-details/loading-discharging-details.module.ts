@@ -6,7 +6,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
 
 
-
+/**
+ * Module for loading discharging details module
+ *
+ * @export
+ * @class LoadingDischargingDetailsModule
+ */
 @NgModule({
   declarations: [LoadingDischargingDetailsComponent],
   exports: [LoadingDischargingDetailsComponent],

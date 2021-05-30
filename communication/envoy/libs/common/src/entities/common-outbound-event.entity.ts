@@ -12,6 +12,9 @@ export class OutBoundEventDataEntity {
   @Column({ name: 'message_id' })
   messageId: string;
 
+  @Column({ name: 'message_type' })
+  messageType: string;
+
   @Column({ type: 'bigint' })
   sequence: bigint;
 
@@ -50,6 +53,9 @@ export class OutBoundEventDataEntity {
 
   @Column({ type: 'bigint', nullable: true })
   total: bigint;
+
+  @Column({ type: 'bigint', nullable: true })
+  partNumber: bigint;
 
   @Column({ name: 'missing_packets', nullable: true })
   missingPackets: string;

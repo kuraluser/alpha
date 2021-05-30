@@ -352,6 +352,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
       }
     });
+    this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
+      this.displayLoadableQuntity = true;
+    })
   }
 
   /**

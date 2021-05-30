@@ -1467,7 +1467,7 @@ td.sl div{
         right: 5px;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 45%;
+        max-width: 45%;
       }
 }
 
@@ -1854,7 +1854,7 @@ height: 15px;
       .tank-name{
       text-align: left;
       padding-left: 3px;
-      top: 7px;
+      top: 9px;
       left: 15px;
     }
     .tank-filling-percentage{
@@ -2245,7 +2245,7 @@ tr:hover{
 }
 
 .api-temp-pop-up{
-  max-width: 570px!important;
+  max-width: 590px!important;
   .column-class{
     width: auto!important;
   }
@@ -2306,10 +2306,15 @@ tr:hover{
     margin-top: 0!important;
     width: auto!important;
   }
-  .tank-commodity-weight{
+  .tank-item-valign{
     position: absolute;
     left: 2px;
     top: 13px;
+  }
+  .tank-filling-percentage{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
   }
   .p-datatable table{
     table-layout: auto!important;
@@ -2443,7 +2448,7 @@ textarea{
   }
 } 
 
-#countryMap
+#countryMap, #fleetMap
 {
   .ol-viewport{
     .ol-uncollapsible
@@ -2471,3 +2476,8 @@ textarea{
   }
   
 }
+
+.loadable-plan.p-datatable table{
+    min-width: 100%!important;
+    width: auto!important;
+  }

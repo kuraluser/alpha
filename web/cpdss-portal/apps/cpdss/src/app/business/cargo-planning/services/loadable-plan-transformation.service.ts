@@ -296,7 +296,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.id = cargoTankDetail?.id;
     _cargoTankDetail.tankId = cargoTankDetail?.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail?.cargoAbbreviation;
-    _cargoTankDetail.weight = new ValueObject<number>(cargoTankDetail?.weight, true, false);
+    _cargoTankDetail.weight = new ValueObject<number>(Number(cargoTankDetail?.weight), true, false);
     _cargoTankDetail.correctedUllage = new ValueObject<number>(cargoTankDetail?.correctedUllage, true, false);
     _cargoTankDetail.fillingRatio = new ValueObject<number>(Number(cargoTankDetail?.fillingRatio), true, false);
     _cargoTankDetail.tankName = cargoTankDetail?.tankName;
@@ -381,22 +381,28 @@ export class LoadablePlanTransformationService {
         field: 'observedM3',
         header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_M3',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: AppConfigurationService.settings.quantityNumberFormatKL,
         editable: false,
+        unit: QUANTITY_UNIT.KL,
+        showTotal: true,
+        numberType: 'quantity'
       },
       {
         field: 'observedBarrels',
         header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_BBLS',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberType: 'quantity',
+        unit: QUANTITY_UNIT.OBSBBLS,
         editable: false,
+        showTotal: true
       },
       {
         field: 'observedBarrelsAt60',
         header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_BBL_AT_60F',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberType: 'quantity',
+        unit: QUANTITY_UNIT.BBLS,
         editable: false,
+        showTotal: true
       },
       {
         field: 'weight',
@@ -404,6 +410,9 @@ export class LoadablePlanTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
         editable: false,
+        showTotal: true,
+        numberType: 'quantity',
+        unit: QUANTITY_UNIT.MT,
       },
       {
         field: 'fillingRatio',
@@ -451,11 +460,11 @@ export class LoadablePlanTransformationService {
         }
       },
       { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.0-2'},
       { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
       { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
       { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.4-4',}
+      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat}
     ]
   }
 
@@ -526,7 +535,7 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.othersPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.othersPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.totalDwtPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.totalDwtPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.displacementPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.displacementPlanned,QUANTITY_UNIT.MT);
-    _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, '1.4-4');
+    _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, AppConfigurationService.settings?.sgNumberFormat);
     _synopticalRecord.cargoPlannedTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.cargoPlannedTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.ballastPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.ballastPlanned,QUANTITY_UNIT.MT);
 
