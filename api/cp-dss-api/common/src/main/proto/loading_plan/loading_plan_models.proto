@@ -24,7 +24,7 @@ message LoadingInformation{
   LoadingDetails loadingDetail = 3;
   LoadingRates loadingRate = 4;
   repeated LoadingBerths loadingBerths = 5;
-  LoadingMachinesInUse loadingMachines = 7;
+  repeated LoadingMachinesInUse loadingMachines = 7;
   // cargo data = 8
   LoadingStages loadingStage = 9;
   LoadingDelay loadingDelays = 10;

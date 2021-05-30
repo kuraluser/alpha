@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface StageOffsetRepository extends CommonCrudRepository<StageOffset, Long> {
 
-  List<StageOffset> findAllByIsActive();
+  List<StageOffset> findAllByIsActiveTrue();
 }

@@ -1,20 +1,22 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
+import com.cpdss.loadingplan.entity.LoadingBerthDetail;
 import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.repository.CargoToppingOffSequenceRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanBallastDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanStowageDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationRepository;
+import com.cpdss.loadingplan.entity.LoadingMachineryInUse;
+import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.service.LoadingInformationBuilderService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class LoadingInformationServiceImpl implements LoadingInformationService {
 
@@ -24,6 +26,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired LoadablePlanStowageDetailsRepository loadablePlanStowageDetailsRepository;
+  @Autowired LoadingInformationBuilderService informationBuilderService;
+  @Autowired LoadingBerthDetailsRepository berthDetailsRepository;
+  @Autowired LoadingMachineryInUseRepository loadingMachineryInUserRepository;
 
   @Override
   public LoadingInformation saveLoadingInformation(
@@ -62,5 +67,66 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     loadablePlanCommingleDetailsRepository.deleteByLoadingInformation(loadingInformation);
     loadablePlanQuantityRepository.deleteByLoadingInformation(loadingInformation);
     loadablePlanStowageDetailsRepository.deleteByLoadingInformation(loadingInformation);
+  }
+
+  @Override
+  public Optional<LoadingInformation> getLoadingInformation(
+      Long id, Long vesselId, Long patternId) {
+    Optional<LoadingInformation> information = Optional.empty();
+
+    Optional<LoadingInformation> val1 = this.loadingInformationRepository.findById(id);
+
+    if ((id != null && id > 0) && (vesselId != null && vesselId > 0)) {
+      information =
+          this.loadingInformationRepository.findByIdAndVesselXIdAndIsActiveTrue(id, vesselId);
+      log.info("Loading Information found for Id {}, Vessel Id {}", id, vesselId);
+    } else if ((patternId != null && patternId > 0) && (vesselId != null && vesselId > 0)) {
+      information =
+          this.loadingInformationRepository.findByVesselXIdAndLoadablePatternXIdAndIsActiveTrue(
+              vesselId, patternId);
+      log.info("Loading Information found for Vessel {}, Pattern Id {}", vesselId, patternId);
+    }
+    return information;
+  }
+
+  @Override
+  public LoadingPlanModels.LoadingInformation getLoadingInformation(
+      LoadingPlanModels.LoadingInformationRequest request,
+      LoadingPlanModels.LoadingInformation.Builder builder)
+      throws GenericServiceException {
+
+    Optional<LoadingInformation> var1 =
+        this.getLoadingInformation(
+            request.getLoadingPlanId(), request.getVesselId(), request.getLoadingPatternId());
+    if (!var1.isPresent()) {
+      throw new GenericServiceException(null, null, null);
+    }
+
+    // Loading Details
+    LoadingPlanModels.LoadingDetails details =
+        this.informationBuilderService.buildLoadingDetailsMessage(var1.get());
+
+    // Loading Rates
+    LoadingPlanModels.LoadingRates rates =
+        this.informationBuilderService.buildLoadingRateMessage(var1.get());
+
+    // Loading Berths
+    List<LoadingBerthDetail> list1 =
+        this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(var1.get());
+    List<LoadingPlanModels.LoadingBerths> berths =
+        this.informationBuilderService.buildLoadingBerthsMessage(list1);
+
+    // Machines in use
+    List<LoadingMachineryInUse> list2 =
+        this.loadingMachineryInUserRepository.findAllByLoadingInformationAndIsActiveTrue(
+            var1.get());
+    List<LoadingPlanModels.LoadingMachinesInUse> machines =
+        this.informationBuilderService.buildLoadingMachineryInUseMessage(list2);
+
+    builder.setLoadingDetail(details);
+    builder.setLoadingRate(rates);
+    builder.addAllLoadingBerths(berths);
+    builder.addAllLoadingMachines(machines);
+    return builder.build();
   }
 }

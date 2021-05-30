@@ -5,12 +5,7 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -83,10 +78,12 @@ public class LoadingInformation extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @Column(name = "stages_min_amount_xid")
+  @ManyToOne
+  @JoinColumn(name = "stages_min_amount_xid")
   private StageOffset stageOffset;
 
-  @Column(name = "stages_duration_xid")
+  @ManyToOne
+  @JoinColumn(name = "stages_duration_xid")
   private StageDuration stageDuration;
 
   @Column(name = "is_track_start_end_stage")
@@ -95,15 +92,15 @@ public class LoadingInformation extends EntityDoc {
   @Column(name = "is_track_grade_switching")
   private Boolean trackGradeSwitch;
 
-  @OneToMany(mappedBy = "loadingInformation", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingInformation")
   private Set<LoadingBerthDetail> loadingBerthDetails;
 
-  @OneToMany(mappedBy = "loadingInformation", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingInformation")
   private Set<CargoToppingOffSequence> cargoToppingOfSequences;
 
-  @OneToMany(mappedBy = "loadingInformation", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingInformation")
   private Set<LoadingDelay> loadingDelays;
 
-  @OneToMany(mappedBy = "loadingInformation", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingInformation")
   private Set<LoadingMachineryInUse> loadingMachineriesInUse;
 }

@@ -4,6 +4,7 @@ package com.cpdss.loadingplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,9 @@ public interface LoadingInformationRepository
   @Modifying
   @Query("UPDATE LoadingInformation SET isActive = false WHERE id = ?1")
   public void deleteByLoadingInformationId(Long id);
+
+  Optional<LoadingInformation> findByIdAndVesselXIdAndIsActiveTrue(Long id, Long vesselId);
+
+  Optional<LoadingInformation> findByVesselXIdAndLoadablePatternXIdAndIsActiveTrue(
+      Long vesselId, Long patternId);
 }

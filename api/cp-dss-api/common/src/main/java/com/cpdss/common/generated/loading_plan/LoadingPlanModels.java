@@ -947,22 +947,23 @@ public final class LoadingPlanModels {
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerthsOrBuilder
         getLoadingBerthsOrBuilder(int index);
 
-    /**
-     * <code>.LoadingMachinesInUse loadingMachines = 7;</code>
-     *
-     * @return Whether the loadingMachines field is set.
-     */
-    boolean hasLoadingMachines();
-    /**
-     * <code>.LoadingMachinesInUse loadingMachines = 7;</code>
-     *
-     * @return The loadingMachines.
-     */
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+    java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+        getLoadingMachinesList();
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-        getLoadingMachines();
-    /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
+        getLoadingMachines(int index);
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+    int getLoadingMachinesCount();
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+    java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingMachinesInUseOrBuilder>
+        getLoadingMachinesOrBuilderList();
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder
-        getLoadingMachinesOrBuilder();
+        getLoadingMachinesOrBuilder(int index);
 
     /**
      *
@@ -1054,6 +1055,7 @@ public final class LoadingPlanModels {
 
     private LoadingInformation() {
       loadingBerths_ = java.util.Collections.emptyList();
+      loadingMachines_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -1179,22 +1181,18 @@ public final class LoadingPlanModels {
               }
             case 58:
               {
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-                        .Builder
-                    subBuilder = null;
-                if (loadingMachines_ != null) {
-                  subBuilder = loadingMachines_.toBuilder();
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  loadingMachines_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingMachinesInUse>();
+                  mutable_bitField0_ |= 0x00000002;
                 }
-                loadingMachines_ =
+                loadingMachines_.add(
                     input.readMessage(
                         com.cpdss.common.generated.loading_plan.LoadingPlanModels
                             .LoadingMachinesInUse.parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(loadingMachines_);
-                  loadingMachines_ = subBuilder.buildPartial();
-                }
-
+                        extensionRegistry));
                 break;
               }
             case 74:
@@ -1270,6 +1268,9 @@ public final class LoadingPlanModels {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           loadingBerths_ = java.util.Collections.unmodifiableList(loadingBerths_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          loadingMachines_ = java.util.Collections.unmodifiableList(loadingMachines_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1433,32 +1434,36 @@ public final class LoadingPlanModels {
     }
 
     public static final int LOADINGMACHINES_FIELD_NUMBER = 7;
-    private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+    private java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
         loadingMachines_;
-    /**
-     * <code>.LoadingMachinesInUse loadingMachines = 7;</code>
-     *
-     * @return Whether the loadingMachines field is set.
-     */
-    public boolean hasLoadingMachines() {
-      return loadingMachines_ != null;
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+    public java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+        getLoadingMachinesList() {
+      return loadingMachines_;
     }
-    /**
-     * <code>.LoadingMachinesInUse loadingMachines = 7;</code>
-     *
-     * @return The loadingMachines.
-     */
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingMachinesInUseOrBuilder>
+        getLoadingMachinesOrBuilderList() {
+      return loadingMachines_;
+    }
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+    public int getLoadingMachinesCount() {
+      return loadingMachines_.size();
+    }
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-        getLoadingMachines() {
-      return loadingMachines_ == null
-          ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-              .getDefaultInstance()
-          : loadingMachines_;
+        getLoadingMachines(int index) {
+      return loadingMachines_.get(index);
     }
-    /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
+    /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder
-        getLoadingMachinesOrBuilder() {
-      return getLoadingMachines();
+        getLoadingMachinesOrBuilder(int index) {
+      return loadingMachines_.get(index);
     }
 
     public static final int LOADINGSTAGE_FIELD_NUMBER = 9;
@@ -1595,8 +1600,8 @@ public final class LoadingPlanModels {
       for (int i = 0; i < loadingBerths_.size(); i++) {
         output.writeMessage(5, loadingBerths_.get(i));
       }
-      if (loadingMachines_ != null) {
-        output.writeMessage(7, getLoadingMachines());
+      for (int i = 0; i < loadingMachines_.size(); i++) {
+        output.writeMessage(7, loadingMachines_.get(i));
       }
       if (loadingStage_ != null) {
         output.writeMessage(9, getLoadingStage());
@@ -1632,8 +1637,9 @@ public final class LoadingPlanModels {
       for (int i = 0; i < loadingBerths_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, loadingBerths_.get(i));
       }
-      if (loadingMachines_ != null) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(7, getLoadingMachines());
+      for (int i = 0; i < loadingMachines_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(7, loadingMachines_.get(i));
       }
       if (loadingStage_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(9, getLoadingStage());
@@ -1680,10 +1686,7 @@ public final class LoadingPlanModels {
         if (!getLoadingRate().equals(other.getLoadingRate())) return false;
       }
       if (!getLoadingBerthsList().equals(other.getLoadingBerthsList())) return false;
-      if (hasLoadingMachines() != other.hasLoadingMachines()) return false;
-      if (hasLoadingMachines()) {
-        if (!getLoadingMachines().equals(other.getLoadingMachines())) return false;
-      }
+      if (!getLoadingMachinesList().equals(other.getLoadingMachinesList())) return false;
       if (hasLoadingStage() != other.hasLoadingStage()) return false;
       if (hasLoadingStage()) {
         if (!getLoadingStage().equals(other.getLoadingStage())) return false;
@@ -1727,9 +1730,9 @@ public final class LoadingPlanModels {
         hash = (37 * hash) + LOADINGBERTHS_FIELD_NUMBER;
         hash = (53 * hash) + getLoadingBerthsList().hashCode();
       }
-      if (hasLoadingMachines()) {
+      if (getLoadingMachinesCount() > 0) {
         hash = (37 * hash) + LOADINGMACHINES_FIELD_NUMBER;
-        hash = (53 * hash) + getLoadingMachines().hashCode();
+        hash = (53 * hash) + getLoadingMachinesList().hashCode();
       }
       if (hasLoadingStage()) {
         hash = (37 * hash) + LOADINGSTAGE_FIELD_NUMBER;
@@ -1895,6 +1898,7 @@ public final class LoadingPlanModels {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
           getLoadingBerthsFieldBuilder();
+          getLoadingMachinesFieldBuilder();
         }
       }
 
@@ -1932,10 +1936,10 @@ public final class LoadingPlanModels {
           loadingBerthsBuilder_.clear();
         }
         if (loadingMachinesBuilder_ == null) {
-          loadingMachines_ = null;
+          loadingMachines_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
         } else {
-          loadingMachines_ = null;
-          loadingMachinesBuilder_ = null;
+          loadingMachinesBuilder_.clear();
         }
         if (loadingStageBuilder_ == null) {
           loadingStage_ = null;
@@ -2017,6 +2021,10 @@ public final class LoadingPlanModels {
           result.loadingBerths_ = loadingBerthsBuilder_.build();
         }
         if (loadingMachinesBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            loadingMachines_ = java.util.Collections.unmodifiableList(loadingMachines_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
           result.loadingMachines_ = loadingMachines_;
         } else {
           result.loadingMachines_ = loadingMachinesBuilder_.build();
@@ -2132,8 +2140,32 @@ public final class LoadingPlanModels {
             }
           }
         }
-        if (other.hasLoadingMachines()) {
-          mergeLoadingMachines(other.getLoadingMachines());
+        if (loadingMachinesBuilder_ == null) {
+          if (!other.loadingMachines_.isEmpty()) {
+            if (loadingMachines_.isEmpty()) {
+              loadingMachines_ = other.loadingMachines_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureLoadingMachinesIsMutable();
+              loadingMachines_.addAll(other.loadingMachines_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.loadingMachines_.isEmpty()) {
+            if (loadingMachinesBuilder_.isEmpty()) {
+              loadingMachinesBuilder_.dispose();
+              loadingMachinesBuilder_ = null;
+              loadingMachines_ = other.loadingMachines_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              loadingMachinesBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getLoadingMachinesFieldBuilder()
+                      : null;
+            } else {
+              loadingMachinesBuilder_.addAllMessages(other.loadingMachines_);
+            }
+          }
         }
         if (other.hasLoadingStage()) {
           mergeLoadingStage(other.getLoadingStage());
@@ -2931,120 +2963,233 @@ public final class LoadingPlanModels {
         return loadingBerthsBuilder_;
       }
 
-      private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-          loadingMachines_;
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+          loadingMachines_ = java.util.Collections.emptyList();
+
+      private void ensureLoadingMachinesIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          loadingMachines_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>(
+                  loadingMachines_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse,
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
                   .Builder,
               com.cpdss.common.generated.loading_plan.LoadingPlanModels
                   .LoadingMachinesInUseOrBuilder>
           loadingMachinesBuilder_;
-      /**
-       * <code>.LoadingMachinesInUse loadingMachines = 7;</code>
-       *
-       * @return Whether the loadingMachines field is set.
-       */
-      public boolean hasLoadingMachines() {
-        return loadingMachinesBuilder_ != null || loadingMachines_ != null;
-      }
-      /**
-       * <code>.LoadingMachinesInUse loadingMachines = 7;</code>
-       *
-       * @return The loadingMachines.
-       */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-          getLoadingMachines() {
+
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+          getLoadingMachinesList() {
         if (loadingMachinesBuilder_ == null) {
-          return loadingMachines_ == null
-              ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-                  .getDefaultInstance()
-              : loadingMachines_;
+          return java.util.Collections.unmodifiableList(loadingMachines_);
         } else {
-          return loadingMachinesBuilder_.getMessage();
+          return loadingMachinesBuilder_.getMessageList();
         }
       }
-      /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public int getLoadingMachinesCount() {
+        if (loadingMachinesBuilder_ == null) {
+          return loadingMachines_.size();
+        } else {
+          return loadingMachinesBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+          getLoadingMachines(int index) {
+        if (loadingMachinesBuilder_ == null) {
+          return loadingMachines_.get(index);
+        } else {
+          return loadingMachinesBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
       public Builder setLoadingMachines(
+          int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse value) {
         if (loadingMachinesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          loadingMachines_ = value;
+          ensureLoadingMachinesIsMutable();
+          loadingMachines_.set(index, value);
           onChanged();
         } else {
-          loadingMachinesBuilder_.setMessage(value);
+          loadingMachinesBuilder_.setMessage(index, value);
         }
-
         return this;
       }
-      /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
       public Builder setLoadingMachines(
+          int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
               builderForValue) {
         if (loadingMachinesBuilder_ == null) {
-          loadingMachines_ = builderForValue.build();
+          ensureLoadingMachinesIsMutable();
+          loadingMachines_.set(index, builderForValue.build());
           onChanged();
         } else {
-          loadingMachinesBuilder_.setMessage(builderForValue.build());
+          loadingMachinesBuilder_.setMessage(index, builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
-      public Builder mergeLoadingMachines(
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public Builder addLoadingMachines(
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse value) {
         if (loadingMachinesBuilder_ == null) {
-          if (loadingMachines_ != null) {
-            loadingMachines_ =
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-                    .newBuilder(loadingMachines_)
-                    .mergeFrom(value)
-                    .buildPartial();
-          } else {
-            loadingMachines_ = value;
+          if (value == null) {
+            throw new NullPointerException();
           }
+          ensureLoadingMachinesIsMutable();
+          loadingMachines_.add(value);
           onChanged();
         } else {
-          loadingMachinesBuilder_.mergeFrom(value);
+          loadingMachinesBuilder_.addMessage(value);
         }
-
         return this;
       }
-      /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public Builder addLoadingMachines(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse value) {
+        if (loadingMachinesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadingMachinesIsMutable();
+          loadingMachines_.add(index, value);
+          onChanged();
+        } else {
+          loadingMachinesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public Builder addLoadingMachines(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+              builderForValue) {
+        if (loadingMachinesBuilder_ == null) {
+          ensureLoadingMachinesIsMutable();
+          loadingMachines_.add(builderForValue.build());
+          onChanged();
+        } else {
+          loadingMachinesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public Builder addLoadingMachines(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+              builderForValue) {
+        if (loadingMachinesBuilder_ == null) {
+          ensureLoadingMachinesIsMutable();
+          loadingMachines_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadingMachinesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public Builder addAllLoadingMachines(
+          java.lang.Iterable<
+                  ? extends
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingMachinesInUse>
+              values) {
+        if (loadingMachinesBuilder_ == null) {
+          ensureLoadingMachinesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, loadingMachines_);
+          onChanged();
+        } else {
+          loadingMachinesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
       public Builder clearLoadingMachines() {
         if (loadingMachinesBuilder_ == null) {
-          loadingMachines_ = null;
+          loadingMachines_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
           onChanged();
         } else {
-          loadingMachines_ = null;
-          loadingMachinesBuilder_ = null;
+          loadingMachinesBuilder_.clear();
         }
-
         return this;
       }
-      /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
-          getLoadingMachinesBuilder() {
-
-        onChanged();
-        return getLoadingMachinesFieldBuilder().getBuilder();
-      }
-      /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder
-          getLoadingMachinesOrBuilder() {
-        if (loadingMachinesBuilder_ != null) {
-          return loadingMachinesBuilder_.getMessageOrBuilder();
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public Builder removeLoadingMachines(int index) {
+        if (loadingMachinesBuilder_ == null) {
+          ensureLoadingMachinesIsMutable();
+          loadingMachines_.remove(index);
+          onChanged();
         } else {
-          return loadingMachines_ == null
-              ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
-                  .getDefaultInstance()
-              : loadingMachines_;
+          loadingMachinesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+          getLoadingMachinesBuilder(int index) {
+        return getLoadingMachinesFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder
+          getLoadingMachinesOrBuilder(int index) {
+        if (loadingMachinesBuilder_ == null) {
+          return loadingMachines_.get(index);
+        } else {
+          return loadingMachinesBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>.LoadingMachinesInUse loadingMachines = 7;</code> */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingMachinesInUseOrBuilder>
+          getLoadingMachinesOrBuilderList() {
+        if (loadingMachinesBuilder_ != null) {
+          return loadingMachinesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(loadingMachines_);
+        }
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+          addLoadingMachinesBuilder() {
+        return getLoadingMachinesFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+          addLoadingMachinesBuilder(int index) {
+        return getLoadingMachinesFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadingMachinesInUse loadingMachines = 7;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+                  .Builder>
+          getLoadingMachinesBuilderList() {
+        return getLoadingMachinesFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse,
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
                   .Builder,
@@ -3053,13 +3198,16 @@ public final class LoadingPlanModels {
           getLoadingMachinesFieldBuilder() {
         if (loadingMachinesBuilder_ == null) {
           loadingMachinesBuilder_ =
-              new com.google.protobuf.SingleFieldBuilderV3<
+              new com.google.protobuf.RepeatedFieldBuilderV3<
                   com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse,
                   com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
                       .Builder,
                   com.cpdss.common.generated.loading_plan.LoadingPlanModels
                       .LoadingMachinesInUseOrBuilder>(
-                  getLoadingMachines(), getParentForChildren(), isClean());
+                  loadingMachines_,
+                  ((bitField0_ & 0x00000002) != 0),
+                  getParentForChildren(),
+                  isClean());
           loadingMachines_ = null;
         }
         return loadingMachinesBuilder_;
@@ -42428,7 +42576,7 @@ public final class LoadingPlanModels {
           + "ionDetail\022&\n\rloadingDetail\030\003 \001(\0132\017.Loadi"
           + "ngDetails\022\"\n\013loadingRate\030\004 \001(\0132\r.Loading"
           + "Rates\022%\n\rloadingBerths\030\005 \003(\0132\016.LoadingBe"
-          + "rths\022.\n\017loadingMachines\030\007 \001(\0132\025.LoadingM"
+          + "rths\022.\n\017loadingMachines\030\007 \003(\0132\025.LoadingM"
           + "achinesInUse\022$\n\014loadingStage\030\t \001(\0132\016.Loa"
           + "dingStages\022$\n\rloadingDelays\030\n \001(\0132\r.Load"
           + "ingDelay\022.\n\022toppingOffSequence\030\013 \001(\0132\022.L"
