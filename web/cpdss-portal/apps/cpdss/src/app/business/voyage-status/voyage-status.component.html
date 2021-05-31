@@ -10,11 +10,11 @@
                 <p-dropdown styleClass="dropdown-w-100" [options]="voyageInfo" optionLabel="voyageNo"
                     [(ngModel)]="selectedVoyage" resetFilterOnHide="true"></p-dropdown>
             </div>
-            <div class="col">
+            <div class="col" *ngIf="vesselInfo">
                 <a class="btn btn-link icon-btn plus-icon-rounded ml-15" (click)="showDialog()"
                     id="show-popup" *cpdssPortalPermission="newVoyagePermissionContext">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
                     <ng-container *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
-                <a class="btn btn-link icon-btn pencil-icon" 
+                <a class="btn btn-link icon-btn pencil-icon"
                     (click)="showEditPortRotation()" id="show-edit-port-rotation-popup" *cpdssPortalPermission="editPortRotationPermissionContext">{{'EDIT_PORT_ROTATION' |
                     translate}}</a>
                 </ng-container>

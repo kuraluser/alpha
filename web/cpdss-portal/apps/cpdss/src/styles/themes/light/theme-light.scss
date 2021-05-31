@@ -187,7 +187,7 @@ header .header-nav .nav li.active {
 }
 .p-dialog {
   background:$body-bg;
-    border: 1px solid $outline-border;
+    border: 1px solid $border-color;
     .p-dialog-header{
         background: $body-bg;
         color:$main-head;
@@ -234,12 +234,15 @@ hr{
 .btn{
   color: $link-color;
   &.btn-main{
-    border: 1px solid $outline-border;
+    border: 1px solid $outline-border!important;
+    background: none!important;
     &:hover{
       color: $text-secondary!important;
+      background: none!important;
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($outline-border, 0.25);
+      background: none!important;
     }
   }
 }

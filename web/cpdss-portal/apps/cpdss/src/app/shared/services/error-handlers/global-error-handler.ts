@@ -3,10 +3,8 @@ import { ErrorHandler, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
-import { ConfirmationAlertService } from './../../../shared/components/confirmation-alert/confirmation-alert.service';
-import { first } from 'rxjs/operators';
 import { SecurityService } from '../security/security.service';
 
 /**
@@ -25,7 +23,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     private messageService: MessageService,
     private router: Router,
     private translateService: TranslateService,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationService: ConfirmationService) { }
 
   /**
    * Method for handling error
@@ -81,14 +79,22 @@ export class GlobalErrorHandler implements ErrorHandler {
   /**
    * Handler session out
    *
-   * @private
    * @memberof GlobalErrorHandler
    */
-  public sessionOutMessage() {
-    this.confirmationAlertService.clear('confirmation-alert');
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'SESSIONOUT_DIALOG_HEADER', detail: 'SESSIONOUT_DIALOG_BODY', data: { confirmLabel: 'SESSIONOUT_CONFIRM_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-      if (response) {
+  public async sessionOutMessage() {
+    this.confirmationService.close();
+    const translationKeys = await this.translateService.get(['SESSIONOUT_DIALOG_HEADER', 'SESSIONOUT_DIALOG_BODY', 'SESSIONOUT_CONFIRM_LABEL']).toPromise();
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['SESSIONOUT_DIALOG_HEADER'],
+      message: translationKeys['SESSIONOUT_DIALOG_BODY'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['SESSIONOUT_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: false,
+      accept: () => {
         SecurityService.userLogoutAction();
         window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
       }

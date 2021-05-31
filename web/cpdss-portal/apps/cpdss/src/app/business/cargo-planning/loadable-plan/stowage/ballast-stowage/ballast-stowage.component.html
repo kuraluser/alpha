@@ -1,9 +1,9 @@
 <div class="text-right mb-10" *ngIf="isEditable">
     <button class="btn btn-main  mb-10" *ngIf="loadablePatternValidationStatus === validateAndSaveStatus.LOADABLE_PLAN_FAILED" (click)="viewError()">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
-    <button class="btn btn-main mr-10" id="edit_stowage" [hidden]="loadableStudyStatus" *ngIf="!buttonStatus" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable || !ballastTankDetails?.length || isStowageEditable"
+    <button class="btn btn-main mr-10" id="edit_stowage" [hidden]="loadableStudyStatus" *ngIf="!buttonStatus" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable || !ballastTankDetails?.length || isStowageEditable || validateAndSaveProcessing"
     (click)="changeGridToEditMode()">{{'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL'| translate}}
     </button>
-    <button class="btn btn-main mr-10"  id="ballast_validate_save" (click)="commentsPopup(true)" *ngIf="buttonStatus === 1">
+    <button class="btn btn-main mr-10"  id="ballast_validate_save" (click)="commentsPopup(true)" *ngIf="buttonStatus === 1" [disabled]="stowageDataEditStatus">
     {{'LOADABLE_PLAN_VALIDATE_AND_SAVE'| translate}}
     </button>
     <button class="btn btn-main mr-10" *ngIf="buttonStatus === 1" id="ballast_validate_cancel" (click)="cancelStowageEdit()">

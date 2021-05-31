@@ -37,6 +37,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -74,7 +75,7 @@ import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error
     ErrorLogPopupModule
   ],
   providers: [
-    LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe  
+    LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe, QuantityDecimalFormatPipe
   ]
 })
 export class LoadableStudyDetailsModule { }

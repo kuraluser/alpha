@@ -13,7 +13,7 @@
 
         <div class="ml-auto pr-15">
             <span class="ml-20 mr-10">
-                <cpdss-portal-unit-dropdown (unitChange)="onUnitChange()"></cpdss-portal-unit-dropdown>
+                <cpdss-portal-unit-dropdown [selectedUnit]="{value: currentQuantitySelectedUnit}" (unitChange)="onUnitChange()"></cpdss-portal-unit-dropdown>
             </span>
             <button class="btn btn-main mr-10 ml-10" id="btn_callNewLoadableStudyPopup"
                 (click)="patternHistory()">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>

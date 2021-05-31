@@ -1,11 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MessageService } from 'primeng/api';
-import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { VoyageListApiService } from '../services/voyage-list-api.service';
 import { VoyageListTransformationService } from '../services/voyage-list-transformation.service';
-import { first } from 'rxjs/operators';
 import { AppConfigurationService } from './../../../shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
@@ -28,13 +26,26 @@ export class DatePopUpComponent implements OnInit {
   @Input() display;
   @Input() voyageId: number;
   @Input() vesselId: number;
-  @Input() defaultDate: Date;
   @Input() isStart: boolean;
+  @Input()
+  get defaultDate(): Date {
+    return this._defaultDate;
+  }
+
+  set defaultDate(value: Date) {
+    this.today = new Date();
+    if(this.isStart) {
+      this._defaultDate = value > this.today ? this.today : value;
+    } else {
+      this._defaultDate = value;
+    }
+  }
 
   header: string;
   startStopButtonLabel: string;
-  today = new Date();
+  today;
   popupDateFormat: string;
+  private _defaultDate: Date;
 
   constructor(private voyageListApiService: VoyageListApiService,
     private voyageListTransformationService: VoyageListTransformationService,
@@ -42,7 +53,7 @@ export class DatePopUpComponent implements OnInit {
     private translateService: TranslateService,
     private messageService: MessageService,
     private ngxSpinnerService: NgxSpinnerService,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationService: ConfirmationService) { }
 
   ngOnInit(): void {
     this.popupDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings.dateFormat);
@@ -70,8 +81,8 @@ export class DatePopUpComponent implements OnInit {
   */
   async startStopVoyage() {
     this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_EXIST', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_CONFIRM_LOADABLE_STUDY', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS']).toPromise();
-    const formattedDate = this.timeZoneTransformationService.formatDateTime(this.defaultDate, {customFormat: 'DD-MM-YYYY HH:mm'});
+    const translationKeys = await this.translateService.get(['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_EXIST', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_CONFIRM_LOADABLE_STUDY', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_SUMMARY', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_DETAILS', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_CONFIRM_LABEL', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_REJECTION_LABEL']).toPromise();
+    const formattedDate = this.timeZoneTransformationService.formatDateTime(this.defaultDate, { customFormat: 'DD-MM-YYYY HH:mm' });
     if (this.isStart) {
       try {
         const result = await this.voyageListApiService.startVoyage(this.vesselId, this.voyageId, formattedDate).toPromise();
@@ -89,10 +100,19 @@ export class DatePopUpComponent implements OnInit {
       }
       this.closeDialog(true);
     } else {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_SUMMARY', detail: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_DETAILS', data: { confirmLabel: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_CONFIRM_LABEL', rejectLabel: 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_REJECTION_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-        if (response) {
-
+      this.confirmationService.confirm({
+        key: 'confirmation-alert',
+        header: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_STOP_SUMMARY'],
+        message: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_STOP_DETAILS'],
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_STOP_CONFIRM_LABEL'],
+        acceptIcon: 'pi',
+        acceptButtonStyleClass: 'btn btn-main mr-5',
+        rejectVisible: true,
+        rejectLabel: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_STOP_REJECTION_LABEL'],
+        rejectIcon: 'pi',
+        rejectButtonStyleClass: 'btn btn-main',
+        accept: async () => {
           this.ngxSpinnerService.show();
           try {
             const result = await this.voyageListApiService.endVoyage(this.vesselId, this.voyageId, formattedDate).toPromise();

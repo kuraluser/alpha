@@ -1,12 +1,8 @@
-.confirmation-wrapper{
-    position: fixed;
-    background: rgba(0, 0, 0, 0.5);
-    height: 100%;
-    width: 100%;
-    z-index: 999;
-    display: none;
-
-    &.show {
-        display: block;
-    }
+.confirmation-wrapper {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  display: none;
 }

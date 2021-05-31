@@ -5,14 +5,14 @@ import { IVoyageList, IVoyageListResponse } from './models/voyage-list.model'
 import { VoyageListApiService } from './services/voyage-list-api.service';
 import { IDataStateChange } from '../admin/models/user-role-permission.model';
 import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap } from 'rxjs/operators';
 import { IVessel } from '../core/models/vessel-details.model';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { IPermission } from '../../shared/models/user-profile.model';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT  } from '../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../shared/models/common.model';
 import * as moment from 'moment';
 
 /**
@@ -30,6 +30,7 @@ import * as moment from 'moment';
 })
 export class VoyagesComponent implements OnInit, OnDestroy {
   @ViewChild('dateRangeFilter') dateRangeFilter: any;
+  @ViewChild('voyageListTable') voyageListTableBody: any;
 
   columns: IDataTableColumn[];
   voyageList: IVoyageList[];
@@ -76,6 +77,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     this.vesselId = this.vesselDetails?.id;
     this.columns = this.voyageListTransformationService.getVoyageListDatatableColumns(this.permissionStart, this.permissionStop);
     this.getVoyageLists$.pipe(
+      debounceTime(1000), // By setting this we can avoid multiple api calls
       switchMap(() => {
         return this.voyageListApiService.getVoyageList(this.vesselId, this.pageState, this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[0]), this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[1]))
       })
@@ -88,13 +90,13 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     this.getVoyageLists$.next();
   }
 
-  
+
   /**
    * Get page permission
    *
    * @memberof VoyagesComponent
    */
-   getPagePermission() {
+  getPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyagesComponent']);
     this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['VoyageHistoryNewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
   }
@@ -119,7 +121,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       const voyageList = voyageLIstResponse.voyages;
       this.totalRecords = voyageLIstResponse.totalElements;
       if (this.totalRecords && !voyageList?.length) {
-        this.currentPage = this.currentPage ? this.currentPage - 1 :  0;
+        this.currentPage = this.currentPage ? this.currentPage - 1 : 0;
         this.pageState['page'] = this.currentPage;
         this.getVoyageLists$.next();
       }
@@ -165,6 +167,13 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       orderBy: event.sort.sortOrder,
     };
     this.reloadVoyageHistory();
+    if (event.action === 'paginator') {
+      const tableBody = this.voyageListTableBody.nativeElement.querySelector('.p-datatable-scrollable-body');
+      if (tableBody) {
+        tableBody.scrollTop = 0;
+        tableBody.scrollLeft = 0;
+      }
+    }
   }
 
 
@@ -180,7 +189,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       this.dateRangeFilter.hideOverlay();
       this.reloadVoyageHistory();
     }
-    else if(this.filterDates[0] && !this.filterDates[1]){
+    else if (this.filterDates[0] && !this.filterDates[1]) {
       this.filterDateError = { 'toDate': true };
     }
   }
@@ -263,7 +272,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
    * @return {*}  {Date}
    * @memberof PortsComponent
    */
-   dateStringToDate(date: string): string {
+  dateStringToDate(date: string): string {
     if (date) {
       const _dateTime = moment(date, 'DD-MM-YYYY').format(AppConfigurationService.settings?.dateFormat.split(' ')[0]);
       return _dateTime;

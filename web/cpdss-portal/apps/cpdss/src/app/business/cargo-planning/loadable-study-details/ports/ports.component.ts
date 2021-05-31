@@ -7,7 +7,6 @@ import { IPortAllDropdownData, IPortsValueObject, IPortsEvent } from '../../mode
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { OPERATIONS } from '../../models/cargo-planning.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
@@ -15,10 +14,9 @@ import { portDateCompareValidator } from '../../directives/validator/port-date-c
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
 import { IPortList, IPortsDetailsResponse, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
-import { first } from 'rxjs/operators';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 import { IDateTimeFormatOptions, ITimeZone, ValueObject } from './../../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
@@ -71,7 +69,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   }
 
   @Output() portUpdate = new EventEmitter<boolean>();
-  
+
   // public fields
   editMode: DATATABLE_EDITMODE;
   OPERATIONS: OPERATIONS;
@@ -97,7 +95,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     private timeZoneTransformationService: TimeZoneTransformationService,
     private fb: FormBuilder,
     private ngxSpinnerService: NgxSpinnerService,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private translateService: TranslateService,
     private globalErrorHandler: GlobalErrorHandler,
@@ -234,9 +232,9 @@ export class PortsComponent implements OnInit, OnDestroy {
     this.portsLists = _portsLists;
     setTimeout(() => {
       this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
-    this.updatePortOrder();
-    this.ngxSpinnerService.hide();
-    this.updateFormValidity(portListArray);
+      this.updatePortOrder();
+      this.ngxSpinnerService.hide();
+      this.updateFormValidity(portListArray);
     }, 500);
 
   }
@@ -374,13 +372,26 @@ export class PortsComponent implements OnInit, OnDestroy {
     const index = event.index;
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if ((event.field === 'port' || event.field === 'operation') && !event.data?.isAdd && !this.portsListSaved[valueIndex]['isAdd']) {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORT_CHANGE_CONFIRM_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORT_CHANGE_CONFIRM_LABEL', rejectLabel: 'PORT_CHANGE_REJECT_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-        if (response) {
+      const translationKeys = await this.translateService.get(['PORT_CHANGE_CONFIRM_SUMMARY', 'PORT_CHANGE_CONFIRM_DETAILS', 'PORT_CHANGE_CONFIRM_LABEL', 'PORT_CHANGE_REJECT_LABEL']).toPromise();
+
+      this.confirmationService.confirm({
+        key: 'confirmation-alert',
+        header: translationKeys['PORT_CHANGE_CONFIRM_SUMMARY'],
+        message: translationKeys['PORT_CHANGE_CONFIRM_DETAILS'],
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: translationKeys['PORT_CHANGE_CONFIRM_LABEL'],
+        acceptIcon: 'pi',
+        acceptButtonStyleClass: 'btn btn-main mr-5',
+        rejectVisible: true,
+        rejectLabel: translationKeys['PORT_CHANGE_REJECT_LABEL'],
+        rejectIcon: 'pi',
+        rejectButtonStyleClass: 'btn btn-main',
+        accept: async () => {
           this.portsListSaved[index] = JSON.parse(JSON.stringify(this.portsLists[index]))
           this.portsListSaved[index]['isAdd'] = true;
           this.updatePortsDetails(event)
-        } else {
+        },
+        reject: () => {
           this.portsLists[valueIndex][event.field].value = this.portsListSaved[valueIndex][event.field]['_value'];
           this.updateField(event.index, event.field, this.portsListSaved[valueIndex][event.field]['_value']);
         }
@@ -582,14 +593,24 @@ export class PortsComponent implements OnInit, OnDestroy {
     }
     if (event?.data?.isDelete) {
       if (!event?.data?.isAdd) {
-        this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORT_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
-        const subscription = this.confirmationAlertService.confirmAlert$
-          .subscribe(async (response) => {
-            if (response) {
-              await this.removePortFromList(event);
-            }
-            subscription.unsubscribe();
-          });
+        const translationKeys = await this.translateService.get(['PORTS_DELETE_SUMMARY', 'PORT_CHANGE_CONFIRM_DETAILS', 'PORTS_DELETE_CONFIRM_LABEL', 'PORTS_DELETE_REJECT_LABEL']).toPromise();
+
+        this.confirmationService.confirm({
+          key: 'confirmation-alert',
+          header: translationKeys['PORTS_DELETE_SUMMARY'],
+          message: translationKeys['PORT_CHANGE_CONFIRM_DETAILS'],
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: translationKeys['PORTS_DELETE_CONFIRM_LABEL'],
+          acceptIcon: 'pi',
+          acceptButtonStyleClass: 'btn btn-main mr-5',
+          rejectVisible: true,
+          rejectLabel: translationKeys['PORTS_DELETE_REJECT_LABEL'],
+          rejectIcon: 'pi',
+          rejectButtonStyleClass: 'btn btn-main',
+          accept: async () => {
+            await this.removePortFromList(event);
+          },
+        });
       }
       else {
         await this.removePortFromList(event);
@@ -646,7 +667,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     const isPortOrderCorrect = this.isPortOrderCorrect(event.dropIndex);
 
 
-    if(!isPortOrderCorrect) {
+    if (!isPortOrderCorrect) {
       const dropData = this.portsLists[event.dropIndex];
       this.portsLists.splice(event.dropIndex, 1);
       this.portsLists.splice(event.dragIndex, 0, dropData);
