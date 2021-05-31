@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
@@ -18,7 +19,11 @@ public interface LoadingInformationService {
    * @return - LoadingDetails
    */
   LoadingDetails getLoadingDetailsByPortRotationId(
-      Long vesselId, Long voyageId, Long portRId, Long portId);
+      LoadingPlanModels.LoadingDetails var1,
+      Long vesselId,
+      Long voyageId,
+      Long portRId,
+      Long portId);
 
   LoadingRates getLoadingRateForVessel(Long vesselId);
 

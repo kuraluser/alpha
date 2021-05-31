@@ -5,10 +5,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.gateway.domain.loadingplan.BerthDetails;
-import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
-import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingRates;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
 import com.cpdss.gateway.service.PortInfoService;
@@ -39,18 +37,30 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
   /**
-   * Collect from Synoptic Table in LS
+   * Sunset/Sunrise Only Collect from Synoptic Table in LS
    *
    * @param vesselId Long
    * @param voyageId Long
    * @param portRId Long
-   * @return
+   * @return loadingDetails with Sunset/Sunrise Only
    */
   @Override
   public LoadingDetails getLoadingDetailsByPortRotationId(
-      Long vesselId, Long voyageId, Long portRId, Long portId) {
+      LoadingPlanModels.LoadingDetails var1,
+      Long vesselId,
+      Long voyageId,
+      Long portRId,
+      Long portId) {
     LoadingDetails var = new LoadingDetails();
     try {
+      // Set Values from Loading plan
+      BeanUtils.copyProperties(var1, var);
+      if (var1.hasTrimAllowed()) {
+        TrimAllowed trimAllowed = new TrimAllowed();
+        BeanUtils.copyProperties(var1.getTrimAllowed(), trimAllowed);
+        var.setTrimAllowed(trimAllowed);
+      }
+
       // For Sunrise and Sunset, 1st  call to LS
       LoadableStudy.LoadingSynopticResponse response =
           this.loadingPlanGrpcService.fetchSynopticRecordForPortRotationArrivalCondition(portRId);

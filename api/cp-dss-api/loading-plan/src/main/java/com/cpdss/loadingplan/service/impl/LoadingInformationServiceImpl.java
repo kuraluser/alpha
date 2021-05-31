@@ -1,7 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
+
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
 import com.cpdss.loadingplan.entity.*;
@@ -101,6 +104,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingPlanModels.LoadingInformation.Builder builder)
       throws GenericServiceException {
 
+    Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
+    responseStatus.setStatus(FAILED);
+
     Optional<LoadingInformation> var1 =
         this.getLoadingInformation(
             request.getLoadingPlanId(), request.getVesselId(), request.getLoadingPatternId());
@@ -159,6 +165,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     builder.setLoadingStage(loadingStages);
     builder.setLoadingDelays(loadingDelay);
     builder.addAllToppingOffSequence(toppingOff);
+    builder.setResponseStatus(responseStatus.setStatus(SUCCESS));
     return builder.build();
   }
 }
