@@ -57,8 +57,8 @@ public class EnvoyWriterService {
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 
-  public WriterReply passDataToCommunicationServer(EnvoyWriterRequest request, Builder writerBuilder)
-      throws IOException {
+  public WriterReply passDataToCommunicationServer(
+      EnvoyWriterRequest request, Builder writerBuilder) throws IOException {
 
     Optional<SequenceNumber> numberOpt = sequenceNumberRepository.findById(SEQUENCE_NUMBER_ID);
     Long sequenceNumber = numberOpt.get().getSequenceNumber();
@@ -84,7 +84,6 @@ public class EnvoyWriterService {
           new HttpEntity<LinkedMultiValueMap<String, Object>>(
               map, createHeaderParameters(getCheckSum(tempFile)));
 
-      
       ResponseEntity<String> result =
           restTemplate.exchange(
               uploadUrlBuilder(request, uuid, sequenceNumber),
@@ -95,7 +94,7 @@ public class EnvoyWriterService {
       ObjectMapper mapper = new ObjectMapper();
       WriterResponse writerResponse = mapper.readValue(result.getBody(), WriterResponse.class);
 
-      buildWriterResponse(writerBuilder, writerResponse/*, encryptedString*/);
+      buildWriterResponse(writerBuilder, writerResponse /*, encryptedString*/);
 
     } catch (IOException e) {
       log.error("IOException in sending file: " + e);
@@ -124,7 +123,7 @@ public class EnvoyWriterService {
    * @param writerResponse
    */
   private void buildWriterResponse(
-      Builder writerBuilder, WriterResponse writerResponse/*, String uuid*/) {
+      Builder writerBuilder, WriterResponse writerResponse /*, String uuid*/) {
     writerBuilder.setMessageId(writerResponse.getMessageId());
     writerBuilder.setMessage(writerResponse.getMessage());
     writerBuilder.setShipId(writerResponse.getShipId());
@@ -198,6 +197,6 @@ public class EnvoyWriterService {
         .append(sequenceNumber);
     return valueOf(urlBuilder);
   }
-  
+
   public void checkStatus() {}
 }

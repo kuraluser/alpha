@@ -49,6 +49,6 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   @Transactional
   @Modifying
-  @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1 WHERE id = ?3 ")
+  @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1 WHERE id = ?2 ")
   public void updateLoadableStudyUUID(String messageUUID, Long id);
 }

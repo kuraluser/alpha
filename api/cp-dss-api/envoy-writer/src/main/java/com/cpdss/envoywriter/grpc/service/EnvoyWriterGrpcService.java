@@ -24,7 +24,7 @@ public class EnvoyWriterGrpcService extends EnvoyWriterServiceImplBase {
 
   @Override
   public void getCommunicationServer(
-          EnvoyWriterRequest request, StreamObserver<WriterReply> responseObserver) {
+      EnvoyWriterRequest request, StreamObserver<WriterReply> responseObserver) {
     log.info("Inside getLoadableStudy in Envoy Writer micro service");
     WriterReply.Builder builder = WriterReply.newBuilder();
     try {

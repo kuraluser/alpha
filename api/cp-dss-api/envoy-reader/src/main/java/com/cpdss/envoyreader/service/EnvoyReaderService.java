@@ -4,9 +4,9 @@ package com.cpdss.envoyreader.service;
 import static com.cpdss.envoyreader.common.Utility.*;
 import static java.lang.String.valueOf;
 
-import com.cpdss.common.generated.EnvoyReader;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.EnvoyReader;
 import com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply.Builder;
 import com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -50,7 +50,8 @@ public class EnvoyReaderService {
   private static final String FAILED = "FAILED";
 
   @SuppressWarnings({"resource", "rawtypes"})
-  public EnvoyReader.EnvoyReaderResultReply getDataFromCommunicationServer(EnvoyReaderResultRequest request, Builder readerBuilder) throws GenericServiceException {
+  public EnvoyReader.EnvoyReaderResultReply getDataFromCommunicationServer(
+      EnvoyReaderResultRequest request, Builder readerBuilder) throws GenericServiceException {
     try {
       ReaderResponse response =
           restTemplate.execute(
@@ -131,7 +132,7 @@ public class EnvoyReaderService {
    */
   private void buildReaderResponse(
       String decryptedData, ReaderResponse responseDto, Builder readerBuilder) {
- /*   readerBuilder.setMessageType(responseDto.getMessageType());
+    /*   readerBuilder.setMessageType(responseDto.getMessageType());
     readerBuilder.setUuid(responseDto.getUniqueId());
     readerBuilder.setClientId(responseDto.getClientId());
     readerBuilder.setMessageType(responseDto.getMessageType());*/

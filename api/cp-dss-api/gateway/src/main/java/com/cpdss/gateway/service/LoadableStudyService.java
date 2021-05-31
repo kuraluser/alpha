@@ -9,6 +9,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.EnvoyReader;
+import com.cpdss.common.generated.EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub;
 import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
@@ -5661,19 +5663,19 @@ public class LoadableStudyService {
     EnvoyWriterRequest.Builder error = EnvoyWriterRequest.newBuilder();
     error.setClientId("kazusa");
     error.setMessageType("ls");
-    error.setImoNumber("9513402");
-    error.setLoadableStudy("test data");
+    error.setJsonPayload("test data");
     this.envoyWriterGrpcService.getCommunicationServer(error.build());
     return null;
   }
 
   /** @return Object */
   public Object test1() {
-    ResultJson.Builder error = ResultJson.newBuilder();
+    EnvoyReader.EnvoyReaderResultRequest.Builder error =
+        EnvoyReader.EnvoyReaderResultRequest.newBuilder();
     error.setClientId("kazusa");
     error.setMessageType("ls");
-    error.setImoNumber("9513402");
-    this.envoyReaderGrpcService.getResults(error.build());
+    error.setShipId("9513402");
+    this.envoyReaderGrpcService.getResultFromCommServer(error.build());
     return null;
   }
 }

@@ -2662,30 +2662,29 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
               boolean ohqComplete = true;
               List<Long> fuelTypes = new ArrayList<Long>();
-              for(OnHandQuantity onHandQuantity : onHandQuantityList) {
-                	if(ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
-                		fuelTypes.add(onHandQuantity.getFuelTypeXId());
-                		BigDecimal total = new BigDecimal(0);
-                		for(OnHandQuantity ohq : onHandQuantityList) {
-                			if(ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
-                				total = total.add(ohq.getDepartureQuantity());
-                			}
-                		}
-                		if(total.compareTo(new BigDecimal(0)) <= 0) {
-                			ohqComplete = false;
-                		}
-
-                	}
-                    entityManager.detach(onHandQuantity);
-                    onHandQuantity.setId(null);
-                    onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
-                    onHandQuantity.setActualArrivalQuantity(null);
-                    onHandQuantity.setActualDepartureQuantity(null);
-                    onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
-                    onHandQuantity.setPortXId(portRotation.getPortXId());
-                    onHandQuantity.setPortRotation(portRotation);
-                    OnHandQuantities.add(onHandQuantity);
+              for (OnHandQuantity onHandQuantity : onHandQuantityList) {
+                if (ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
+                  fuelTypes.add(onHandQuantity.getFuelTypeXId());
+                  BigDecimal total = new BigDecimal(0);
+                  for (OnHandQuantity ohq : onHandQuantityList) {
+                    if (ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
+                      total = total.add(ohq.getDepartureQuantity());
+                    }
                   }
+                  if (total.compareTo(new BigDecimal(0)) <= 0) {
+                    ohqComplete = false;
+                  }
+                }
+                entityManager.detach(onHandQuantity);
+                onHandQuantity.setId(null);
+                onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
+                onHandQuantity.setActualArrivalQuantity(null);
+                onHandQuantity.setActualDepartureQuantity(null);
+                onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
+                onHandQuantity.setPortXId(portRotation.getPortXId());
+                onHandQuantity.setPortRotation(portRotation);
+                OnHandQuantities.add(onHandQuantity);
+              }
               portRotation.setIsPortRotationOhqComplete(ohqComplete);
             } else {
 
@@ -5478,11 +5477,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     return null;
   }
+
   private EnvoyWriter.WriterReply passResultPayloadToEnvoyWriter(
       LoadablePatternAlgoRequest loadablePatternAlgoRequest) throws GenericServiceException {
     String jsonPayload = null;
     try {
-      //VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadablePatternAlgoRequest.getV());
+      // VesselDetail vesselReply =
+      // this.getVesselDetailsForEnvoy(loadablePatternAlgoRequest.getV());
       jsonPayload = JsonFormat.printer().print(loadablePatternAlgoRequest);
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
