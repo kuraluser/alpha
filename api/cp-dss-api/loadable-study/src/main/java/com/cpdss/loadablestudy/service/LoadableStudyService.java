@@ -5455,7 +5455,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReader(String lsUUID) {
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setRequestType(String.valueOf(MessageTypes.ALGORESULT));
+    request.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 
@@ -5469,10 +5469,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(loadableStudyJson);
-      writerRequest.setImoNumber(vesselReply.getImoNumber());
-      writerRequest.setVesselId(vesselReply.getId());
-      writerRequest.setVesselName(vesselReply.getName());
-      writerRequest.setRequestType(String.valueOf(MessageTypes.LOADABLESTUDY));
+      writerRequest.setClientId(vesselReply.getName());
+      writerRequest.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
       return this.envoyWriterGrpcService.getCommunicationServer(writerRequest.build());
 
     } catch (JsonProcessingException e) {
@@ -5484,14 +5482,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadablePatternAlgoRequest loadablePatternAlgoRequest) throws GenericServiceException {
     String jsonPayload = null;
     try {
-      // VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
+      //VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadablePatternAlgoRequest.getV());
       jsonPayload = JsonFormat.printer().print(loadablePatternAlgoRequest);
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
       // loadableStudyValue.setImoNumber(vesselReply.getImoNumber());
       // loadableStudyValue.setVesselId(vesselReply.getId());
-      writerRequest.setRequestType(String.valueOf(MessageTypes.ALGORESULT));
+      writerRequest.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
       return this.envoyWriterGrpcService.getCommunicationServer(writerRequest.build());
 
     } catch (InvalidProtocolBufferException e) {

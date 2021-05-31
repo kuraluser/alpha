@@ -8,20 +8,18 @@ import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceImplB
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.envoywriter.service.EnvoyWriterService;
 import io.grpc.stub.StreamObserver;
+import java.io.IOException;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /** @Author jerin.g */
 @Log4j2
 @GrpcService
-@Transactional
 public class EnvoyWriterGrpcService extends EnvoyWriterServiceImplBase {
 
   @Autowired private EnvoyWriterService envoyWriterService;
 
-  private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 
   @Override
@@ -33,14 +31,21 @@ public class EnvoyWriterGrpcService extends EnvoyWriterServiceImplBase {
 
       envoyWriterService.passDataToCommunicationServer(request, builder);
 
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-
-    } catch (Exception e) {
-      log.error("Exception when getLoadableStudy in Envoy Writer micro service", e);
+    } catch (IOException e) {
+      log.error("IOException in when getLoadableStudy in Envoy Writer micro service: " + e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception when getLoadableStudy in Envoy Writer micro service")
+              .setMessage("IOException in Envoy Writer micro service")
+              .setStatus(FAILED)
+              .build());
+
+    } catch (Exception e) {
+      log.error("Exception when getLoadableStudy in Envoy Writer micro service: ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in Envoy Writer micro service")
               .setStatus(FAILED)
               .build());
     } finally {

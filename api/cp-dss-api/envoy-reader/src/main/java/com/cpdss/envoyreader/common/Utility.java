@@ -1,21 +1,21 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.envoyreader.common;
 
+import static com.cpdss.common.utils.CommunicatonServerUtils.*;
+
+import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
-import java.util.zip.ZipInputStream;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.util.StreamUtils;
 
 /** @Author jerin.g */
 @Log4j2
@@ -40,18 +40,18 @@ public class Utility {
     }
   }
 
-  public static Boolean isCheckSum(ZipInputStream zipInputStream, String checkSum) {
+  public static boolean isCheckSum(File file, String checkSum) {
 
+    MessageDigest mdigest;
     try {
-      MessageDigest digest = MessageDigest.getInstance("MD5");
-      digest.update(StreamUtils.copyToByteArray(zipInputStream));
-      String convertedCheckSum = DatatypeConverter.printHexBinary(digest.digest()).toUpperCase();
-      return checkSum.equalsIgnoreCase(convertedCheckSum) ? true : false;
-    } catch (NoSuchAlgorithmException e) {
-      log.error("Error while compareCheckSum: " + e);
+      mdigest = MessageDigest.getInstance("MD5");
+      // Get the checksum
+      return getChecksum(mdigest, file).equals(checkSum) ? true : false;
     } catch (IOException e) {
-      log.error("Error while compareCheckSum: " + e);
+      log.error("IOException at isCheckSum: " + e);
+    } catch (NoSuchAlgorithmException e) {
+      log.error("NoSuchAlgorithmException at isCheckSum: " + e);
     }
-    return null;
+    return false;
   }
 }

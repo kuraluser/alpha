@@ -1,22 +1,21 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.envoywriter.common;
 
+import static com.cpdss.common.utils.CommunicatonServerUtils.*;
+
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
-import java.util.zip.ZipOutputStream;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import lombok.extern.log4j.Log4j2;
 
 /** @Author jerin.g */
@@ -43,19 +42,17 @@ public class Utility {
     }
   }
 
-  public static String getCheckSum(ZipOutputStream zipInputStream) {
+  public static String getCheckSum(File file) {
 
-    MessageDigest md;
+    MessageDigest mdigest;
     try {
-      md = MessageDigest.getInstance("MD5");
-      try (OutputStream os = zipInputStream;
-          DigestOutputStream dis = new DigestOutputStream(os, md)) {}
-
-      return DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
-    } catch (NoSuchAlgorithmException e) {
-      log.error("Error while hashing: " + e);
+      mdigest = MessageDigest.getInstance("MD5");
+      // Get the checksum
+      return getChecksum(mdigest, file);
     } catch (IOException e) {
-      log.error("Error while hashing: " + e);
+      log.error("Error while getCheckSum: " + e);
+    } catch (NoSuchAlgorithmException e) {
+      log.error("Error while getCheckSum: " + e);
     }
     return null;
   }

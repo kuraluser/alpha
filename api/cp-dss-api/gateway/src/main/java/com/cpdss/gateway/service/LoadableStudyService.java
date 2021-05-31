@@ -214,6 +214,9 @@ public class LoadableStudyService {
   @GrpcClient("envoywritersrvice")
   private EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
 
+  @GrpcClient("envoyreadersrvice")
+  private EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
+
   @Autowired UserService userService;
 
   @Value("${gateway.attachement.rootFolder}")
@@ -5656,8 +5659,21 @@ public class LoadableStudyService {
   /** @return Object */
   public Object test() {
     EnvoyWriterRequest.Builder error = EnvoyWriterRequest.newBuilder();
-    error.setImoNumber("123");
+    error.setClientId("kazusa");
+    error.setMessageType("ls");
+    error.setImoNumber("9513402");
+    error.setLoadableStudy("test data");
     this.envoyWriterGrpcService.getCommunicationServer(error.build());
+    return null;
+  }
+
+  /** @return Object */
+  public Object test1() {
+    ResultJson.Builder error = ResultJson.newBuilder();
+    error.setClientId("kazusa");
+    error.setMessageType("ls");
+    error.setImoNumber("9513402");
+    this.envoyReaderGrpcService.getResults(error.build());
     return null;
   }
 }

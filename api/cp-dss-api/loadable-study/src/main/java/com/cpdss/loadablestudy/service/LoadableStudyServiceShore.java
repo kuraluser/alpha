@@ -75,7 +75,7 @@ public class LoadableStudyServiceShore {
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore() {
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setRequestType(String.valueOf(MessageTypes.LOADABLESTUDY));
+    request.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 

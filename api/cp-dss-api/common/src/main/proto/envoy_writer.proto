@@ -13,10 +13,8 @@ service EnvoyWriterService {
 }
 message EnvoyWriterRequest {
   string jsonPayload = 1;
-  string imoNumber = 2;
-  int64 vesselId = 3;
-  string requestType = 4;
-  string vesselName = 5;
+  string messageType = 2;
+  string clientId = 3;
 }
 message WriterReply {
   ResponseStatus responseStatus = 1;
