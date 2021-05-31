@@ -92,6 +92,12 @@ public class LoadingInformation extends EntityDoc {
   @Column(name = "is_track_grade_switching")
   private Boolean trackGradeSwitch;
 
+  @Column(name = "voyage_xid")
+  private Long voyageId;
+
+  @Column(name = "initial_loading_rate")
+  private BigDecimal initialLoadingRate;
+
   @OneToMany(mappedBy = "loadingInformation")
   private Set<LoadingBerthDetail> loadingBerthDetails;
 

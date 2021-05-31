@@ -35,6 +35,12 @@ public class LoadingDelay extends EntityDoc {
   @Column(name = "duration")
   private BigDecimal duration;
 
+  @Column(name = "cargo_xid")
+  private Long cargoXId;
+
+  @Column(name = "quantity")
+  private BigDecimal quantity;
+
   @Column(name = "is_active")
   private Boolean isActive;
 }
