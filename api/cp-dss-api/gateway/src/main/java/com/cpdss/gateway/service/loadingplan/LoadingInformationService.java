@@ -17,7 +17,8 @@ public interface LoadingInformationService {
    * @param portRId Long
    * @return - LoadingDetails
    */
-  LoadingDetails getLoadingDetailsByPortRotationId(Long vesselId, Long voyageId, Long portRId);
+  LoadingDetails getLoadingDetailsByPortRotationId(
+      Long vesselId, Long voyageId, Long portRId, Long portId);
 
   LoadingRates getLoadingRateForVessel(Long vesselId);
 

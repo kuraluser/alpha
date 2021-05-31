@@ -178,6 +178,8 @@ service LoadableStudyService {
 
 	rpc GetActiveVoyagesByVessel (VoyageRequest) returns (ActiveVoyage) {
 	}
+
+	rpc GetSynopticDataForLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanCommonResponse) {}
 }
 
 message LatestCargoRequest{
@@ -1291,6 +1293,29 @@ message ActiveVoyage{
 	LoadableStudyDetail confirmedLoadableStudy = 11;
 	repeated PortRotationDetail portRotation = 12;
 	repeated CargoNominationDetail cargoNomination = 13;
+}
+
+// Generic Request message
+// This id can be LS Id, Or PR Id Or Voyage Id
+// Usage at LoadingPlanGrpcServiceImpl.fetchSynopticRecordForPortRotationArrivalCondition
+message LoadingPlanIdRequest {
+	int64 id = 1;
+	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY
+}
+
+message LoadingPlanCommonResponse{
+	ResponseStatus responseStatus = 1;
+	repeated LoadingSynopticResponse synopticData = 2;
+}
+
+message LoadingSynopticResponse{
+	int64 synopticTableId = 1;
+	int64 loadableStudyId = 2;
+	int64 portRotationId = 3;
+	int64 portId = 4;
+	string operationType = 5;
+	string timeOfSunrise = 6;
+	string timeOfSunset = 7;
 }
 
 // <------ end loading plan, by john -------->

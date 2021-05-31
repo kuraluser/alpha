@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
@@ -12,6 +14,7 @@ import com.cpdss.gateway.domain.vessel.VesselPump;
 import com.cpdss.gateway.service.PortInfoService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Autowired PortInfoService portInfoService;
 
+  @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+
   /**
    * Collect from Synoptic Table in LS
    *
@@ -43,8 +48,30 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
    */
   @Override
   public LoadingDetails getLoadingDetailsByPortRotationId(
-      Long vesselId, Long voyageId, Long portRId) {
-    return null;
+      Long vesselId, Long voyageId, Long portRId, Long portId) {
+    LoadingDetails var = new LoadingDetails();
+    try {
+      // For Sunrise and Sunset, 1st  call to LS
+      LoadableStudy.LoadingSynopticResponse response =
+          this.loadingPlanGrpcService.fetchSynopticRecordForPortRotationArrivalCondition(portRId);
+      var.setTimeOfSunrise(
+          response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
+      var.setTimeOfSunset(response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+
+      // If not found in LS, Synoptic Go to Port Master
+      if (var.getTimeOfSunrise() == null || var.getTimeOfSunset() == null) {
+        PortInfo.PortDetail response2 = this.loadingPlanGrpcService.fetchPortDetailByPortId(portId);
+        var.setTimeOfSunrise(response2.getSunriseTime());
+        var.setTimeOfSunset(response2.getSunsetTime());
+        log.info(
+            "Get Loading info, Sunrise/Sunset added from Port Info table {}, {}",
+            response2.getSunriseTime(),
+            response2.getSunsetTime());
+      }
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    return var;
   }
 
   // Call in VesselInfoService
@@ -68,6 +95,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         log.error("Failed to process berth details");
         e.printStackTrace();
       }
+      log.info("Get Loading Info, Berth details added, Berth list Size {}", berthDetails.size());
     }
     return berthDetails;
   }
@@ -97,6 +125,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         }
         machineryInUse.setPumpTypes(pumpTypes);
         machineryInUse.setVesselPumps(vesselPumps);
+        log.info(
+            "Get loading info, Cargo machines Pump List Size {}, Type Size {} from Vessel Info",
+            vesselPumps.size(),
+            pumpTypes.size());
       } catch (Exception e) {
         log.error("Failed to process Vessel Pumps");
         e.printStackTrace();

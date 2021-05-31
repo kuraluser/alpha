@@ -1,11 +1,18 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.grpc;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
+
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadingplan.service.LoadingInformationService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Grpc Service Implementation from common
@@ -17,6 +24,8 @@ import net.devh.boot.grpc.server.service.GrpcService;
 @GrpcService
 public class LoadingInformationGrpcService
     extends LoadingInformationServiceGrpc.LoadingInformationServiceImplBase {
+
+  @Autowired LoadingInformationService loadingInformationService;
 
   /**
    * Loading Information Is the First page in Loading module (UI).
@@ -31,6 +40,25 @@ public class LoadingInformationGrpcService
    */
   @Override
   public void getLoadingInformation(
-      LoadingPlanModels.LoadingPlanRequest request,
-      StreamObserver<LoadingPlanModels.LoadingPlanResponse> responseObserver) {}
+      LoadingPlanModels.LoadingInformationRequest request,
+      StreamObserver<LoadingPlanModels.LoadingInformation> responseObserver) {
+    LoadingPlanModels.LoadingInformation.Builder builder =
+        LoadingPlanModels.LoadingInformation.newBuilder();
+    try {
+      this.loadingInformationService.getLoadingInformation(request, builder);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

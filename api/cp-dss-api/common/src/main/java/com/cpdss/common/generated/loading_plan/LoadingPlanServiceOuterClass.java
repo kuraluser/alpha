@@ -20,14 +20,14 @@ public final class LoadingPlanServiceOuterClass {
     java.lang.String[] descriptorData = {
       "\n\'loading_plan/loading_plan_service.prot"
           + "o\032&loading_plan/loading_plan_models.prot"
-          + "o2a\n\031LoadingInformationService\022D\n\025GetLoa"
-          + "dingInformation\022\023.LoadingPlanRequest\032\024.L"
-          + "oadingPlanResponse\"\0002\033\n\031LoadingInstructi"
-          + "onService2d\n\022LoadingPlanService\022N\n\032Loadi"
-          + "ngPlanSynchronization\022\027.LoadingPlanSyncD"
-          + "etails\032\025.LoadingPlanSyncReply\"\000B+\n\'com.c"
-          + "pdss.common.generated.loading_planP\000b\006pr"
-          + "oto3"
+          + "o2g\n\031LoadingInformationService\022J\n\025GetLoa"
+          + "dingInformation\022\032.LoadingInformationRequ"
+          + "est\032\023.LoadingInformation\"\0002\033\n\031LoadingIns"
+          + "tructionService2d\n\022LoadingPlanService\022N\n"
+          + "\032LoadingPlanSynchronization\022\027.LoadingPla"
+          + "nSyncDetails\032\025.LoadingPlanSyncReply\"\000B+\n"
+          + "\'com.cpdss.common.generated.loading_plan"
+          + "P\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

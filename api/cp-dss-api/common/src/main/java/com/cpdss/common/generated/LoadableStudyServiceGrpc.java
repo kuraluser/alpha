@@ -2947,6 +2947,59 @@ public final class LoadableStudyServiceGrpc {
     return getGetActiveVoyagesByVesselMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+      getGetSynopticDataForLoadingPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetSynopticDataForLoadingPlan",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+      getGetSynopticDataForLoadingPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+        getGetSynopticDataForLoadingPlanMethod;
+    if ((getGetSynopticDataForLoadingPlanMethod =
+            LoadableStudyServiceGrpc.getGetSynopticDataForLoadingPlanMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetSynopticDataForLoadingPlanMethod =
+                LoadableStudyServiceGrpc.getGetSynopticDataForLoadingPlanMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetSynopticDataForLoadingPlanMethod =
+              getGetSynopticDataForLoadingPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetSynopticDataForLoadingPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetSynopticDataForLoadingPlan"))
+                      .build();
+        }
+      }
+    }
+    return getGetSynopticDataForLoadingPlanMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3469,6 +3522,15 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetActiveVoyagesByVesselMethod(), responseObserver);
     }
 
+    /** */
+    public void getSynopticDataForLoadingPlan(
+        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetSynopticDataForLoadingPlanMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -3880,6 +3942,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                       com.cpdss.common.generated.LoadableStudy.ActiveVoyage>(
                       this, METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL)))
+          .addMethod(
+              getGetSynopticDataForLoadingPlanMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>(
+                      this, METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN)))
           .build();
     }
   }
@@ -4541,6 +4610,18 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getSynopticDataForLoadingPlan(
+        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetSynopticDataForLoadingPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -4967,6 +5048,14 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetActiveVoyagesByVesselMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse
+        getSynopticDataForLoadingPlan(
+            com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetSynopticDataForLoadingPlanMethod(), getCallOptions(), request);
     }
   }
 
@@ -5479,6 +5568,16 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+        getSynopticDataForLoadingPlan(
+            com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetSynopticDataForLoadingPlanMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -5539,6 +5638,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 55;
   private static final int METHODID_GET_CARGO_HISTORY_BY_CARGO = 56;
   private static final int METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL = 57;
+  private static final int METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN = 58;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -5954,6 +6054,13 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>)
                   responseObserver);
           break;
+        case METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN:
+          serviceImpl.getSynopticDataForLoadingPlan(
+              (com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -6076,6 +6183,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getFetchAllAlgoErrorsMethod())
                       .addMethod(getGetCargoHistoryByCargoMethod())
                       .addMethod(getGetActiveVoyagesByVesselMethod())
+                      .addMethod(getGetSynopticDataForLoadingPlanMethod())
                       .build();
         }
       }
