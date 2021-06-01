@@ -111,6 +111,7 @@ public class VoyageService {
       LoadableStudy.PortRotationDetail.Builder builder, LoadableStudyPortRotation entity) {
     Optional.ofNullable(entity.getId()).ifPresent(builder::setId);
     Optional.ofNullable(entity.getPortXId()).ifPresent(builder::setPortId);
+    Optional.ofNullable(entity.getPortOrder()).ifPresent(builder::setPortOrder);
     Optional.ofNullable(entity.getBerthXId()).ifPresent(builder::setBerthId);
     Optional.ofNullable(entity.getOperation().getId()).ifPresent(builder::setOperationId);
     Optional.ofNullable(entity.getSeaWaterDensity())

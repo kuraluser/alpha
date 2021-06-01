@@ -116,12 +116,22 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.getToppingOffSequence(
             loadingInfo.getToppingOffSequenceList());
 
+    CargoVesselTankDetails vesselTankDetails =
+        this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
+            vesselId,
+            activeVoyage.getId(),
+            activeVoyage.getActiveLs().getId(),
+            portRotation.get().getPortId(),
+            portRotation.get().getPortOrder(),
+            portRotation.get().getId());
+
     var1.setLoadingDetails(loadingDetails);
     var1.setLoadingRates(loadingRates);
     var1.setBerthDetails(new LoadingBerthDetails(masterBerthDetails, loadingBerthDetails));
     var1.setMachineryInUses(machineryInUse);
     var1.setLoadingStages(loadingStages);
     var1.setToppingOffSequence(toppingSequence);
+    var1.setCargoVesselTankDetails(vesselTankDetails);
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }

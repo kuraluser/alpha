@@ -8,7 +8,11 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.VoyageStatusRequest;
+import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +20,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** Calls to Grpc Service Parser here and give back to caller. */
@@ -39,6 +44,8 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   @GrpcClient("loadingInformationService")
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
       loadingInfoServiceBlockingStub;
+
+  @Autowired private LoadableStudyService loadableStudyService;
 
   @Override
   public VoyageResponse getActiveVoyageDetails(Long vesselId) throws GenericServiceException {
@@ -158,6 +165,31 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
           HttpStatusCode.BAD_REQUEST);
     }
     return replay;
+  }
+
+  @Override
+  public CargoVesselTankDetails fetchPortWiseCargoDetails(
+      Long vesselId,
+      Long voyageId,
+      Long loadableStudyId,
+      Long portId,
+      Long portOrder,
+      Long portRotationId) {
+    CargoVesselTankDetails cvt = new CargoVesselTankDetails();
+    VoyageStatusRequest request = new VoyageStatusRequest();
+    request.setPortOrder(portOrder);
+    request.setOperationType("ARR");
+    request.setPortRotationId(portRotationId);
+    try {
+      VoyageStatusResponse rpcResponse =
+          this.loadableStudyService.getVoyageStatus(
+              request, vesselId, voyageId, loadableStudyId, portId, null);
+      cvt.setCargoTanks(rpcResponse.getCargoTanks());
+      cvt.setCargoQuantities(rpcResponse.getCargoQuantities());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    return cvt;
   }
 
   public LoadableStudy.VoyageRequest buildVoyageRequest(Long vesselId) {

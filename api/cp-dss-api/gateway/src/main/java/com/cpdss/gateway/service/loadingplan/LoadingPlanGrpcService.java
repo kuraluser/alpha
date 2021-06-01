@@ -5,6 +5,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 
 public interface LoadingPlanGrpcService {
@@ -21,4 +22,12 @@ public interface LoadingPlanGrpcService {
   LoadingPlanModels.LoadingInformation fetchLoadingInformation(
       Long vesselId, Long voyageId, Long loadingInfoId, Long patternId)
       throws GenericServiceException;
+
+  CargoVesselTankDetails fetchPortWiseCargoDetails(
+      Long vesselId,
+      Long voyageId,
+      Long loadableStudyId,
+      Long portId,
+      Long portOrder,
+      Long portRotationId);
 }
