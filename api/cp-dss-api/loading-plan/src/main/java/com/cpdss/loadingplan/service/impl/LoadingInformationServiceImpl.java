@@ -111,50 +111,49 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         this.getLoadingInformation(
             request.getLoadingPlanId(), request.getVesselId(), request.getLoadingPatternId());
     if (!var1.isPresent()) {
-      throw new GenericServiceException(null, null, null);
+      log.info("No Loading Information found for Id {}", request.getLoadingPlanId());
     }
 
     // Loading Details
     LoadingPlanModels.LoadingDetails details =
-        this.informationBuilderService.buildLoadingDetailsMessage(var1.get());
+        this.informationBuilderService.buildLoadingDetailsMessage(var1.orElse(null));
 
     // Loading Rates
     LoadingPlanModels.LoadingRates rates =
-        this.informationBuilderService.buildLoadingRateMessage(var1.get());
+        this.informationBuilderService.buildLoadingRateMessage(var1.orElse(null));
 
     // Loading Berths
     List<LoadingBerthDetail> list1 =
-        this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(var1.get());
+        this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
     List<LoadingPlanModels.LoadingBerths> berths =
         this.informationBuilderService.buildLoadingBerthsMessage(list1);
 
     // Machines in use
     List<LoadingMachineryInUse> list2 =
         this.loadingMachineryInUserRepository.findAllByLoadingInformationAndIsActiveTrue(
-            var1.get());
+            var1.orElse(null));
     List<LoadingPlanModels.LoadingMachinesInUse> machines =
         this.informationBuilderService.buildLoadingMachineryInUseMessage(list2);
 
     // Stage Min Amount Master
     List<StageOffset> list3 = this.stageOffsetRepository.findAll();
-
     // Stage Duration Master
     List<StageDuration> list4 = this.stageDurationRepository.findAll();
 
     // Staging User data and Master data
     LoadingPlanModels.LoadingStages loadingStages =
-        this.informationBuilderService.buildLoadingStageMessage(var1.get(), list3, list4);
+        this.informationBuilderService.buildLoadingStageMessage(var1.orElse(null), list3, list4);
 
     // Loading Delay
     List<ReasonForDelay> list5 = this.reasonForDelayRepository.findAll();
     List<LoadingDelay> list6 =
-        this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrue(var1.get());
+        this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
     LoadingPlanModels.LoadingDelay loadingDelay =
         this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
 
     List<CargoToppingOffSequence> list8 =
         this.cargoToppingOffSequenceRepository.findAllByLoadingInformationAndIsActiveTrue(
-            var1.get());
+            var1.orElse(null));
     List<LoadingPlanModels.LoadingToppingOff> toppingOff =
         this.informationBuilderService.buildToppingOffMessage(list8);
 

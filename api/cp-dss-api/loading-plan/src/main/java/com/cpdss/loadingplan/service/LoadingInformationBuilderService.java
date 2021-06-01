@@ -19,44 +19,48 @@ public class LoadingInformationBuilderService {
 
   public LoadingDetails buildLoadingDetailsMessage(LoadingInformation var1) {
     LoadingDetails.Builder builder = LoadingDetails.newBuilder();
-    Optional.of(var1.getId()).ifPresent(builder::setId);
-    Optional.ofNullable(var1.getSunriseTime())
-        .ifPresent(v -> builder.setTimeOfSunrise(TIME_FORMATTER.format(v)));
-    Optional.ofNullable(var1.getSunsetTime())
-        .ifPresent(v -> builder.setTimeOfSunset(TIME_FORMATTER.format(v)));
-    Optional.ofNullable(var1.getStartTime())
-        .ifPresent(v -> builder.setStartTime(TIME_FORMATTER.format(v)));
+    if (var1 != null) {
+      Optional.of(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getSunriseTime())
+          .ifPresent(v -> builder.setTimeOfSunrise(TIME_FORMATTER.format(v)));
+      Optional.ofNullable(var1.getSunsetTime())
+          .ifPresent(v -> builder.setTimeOfSunset(TIME_FORMATTER.format(v)));
+      Optional.ofNullable(var1.getStartTime())
+          .ifPresent(v -> builder.setStartTime(TIME_FORMATTER.format(v)));
 
-    TrimAllowed.Builder builder1 = TrimAllowed.newBuilder();
-    Optional.ofNullable(var1.getInitialTrim())
-        .ifPresent(v -> builder1.setInitialTrim(v.toString()));
-    Optional.ofNullable(var1.getMaximumTrim())
-        .ifPresent(v -> builder1.setMaximumTrim(v.toString()));
-    Optional.ofNullable(var1.getFinalTrim()).ifPresent(v -> builder1.setFinalTrim(v.toString()));
+      TrimAllowed.Builder builder1 = TrimAllowed.newBuilder();
+      Optional.ofNullable(var1.getInitialTrim())
+          .ifPresent(v -> builder1.setInitialTrim(v.toString()));
+      Optional.ofNullable(var1.getMaximumTrim())
+          .ifPresent(v -> builder1.setMaximumTrim(v.toString()));
+      Optional.ofNullable(var1.getFinalTrim()).ifPresent(v -> builder1.setFinalTrim(v.toString()));
 
-    builder.setTrimAllowed(builder1.build());
+      builder.setTrimAllowed(builder1.build());
+    }
     return builder.build();
   }
 
   public LoadingRates buildLoadingRateMessage(LoadingInformation var1) {
     LoadingRates.Builder builder = LoadingRates.newBuilder();
-    Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
-    Optional.ofNullable(var1.getInitialLoadingRate())
-        .ifPresent(v -> builder.setInitialLoadingRate(v.toString()));
-    Optional.ofNullable(var1.getMaxLoadingRate())
-        .ifPresent(v -> builder.setMaxLoadingRate(v.toString()));
-    Optional.ofNullable(var1.getReducedLoadingRate())
-        .ifPresent(v -> builder.setReducedLoadingRate(v.toString()));
-    Optional.ofNullable(var1.getMinDeBallastRate())
-        .ifPresent(v -> builder.setMinDeBallastingRate(v.toString()));
-    Optional.ofNullable(var1.getMaxDeBallastRate())
-        .ifPresent(v -> builder.setMinDeBallastingRate(v.toString()));
-    Optional.ofNullable(var1.getNoticeTimeForRateReduction())
-        .ifPresent(v -> builder.setNoticeTimeRateReduction(v.toString()));
-    Optional.ofNullable(var1.getNoticeTimeForStopLoading())
-        .ifPresent(v -> builder.setNoticeTimeStopLoading(v.toString()));
-    Optional.ofNullable(var1.getLineContentRemaining())
-        .ifPresent(v -> builder.setLineContentRemaining(v.toString()));
+    if (var1 != null) {
+      Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getInitialLoadingRate())
+          .ifPresent(v -> builder.setInitialLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getMaxLoadingRate())
+          .ifPresent(v -> builder.setMaxLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getReducedLoadingRate())
+          .ifPresent(v -> builder.setReducedLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getMinDeBallastRate())
+          .ifPresent(v -> builder.setMinDeBallastingRate(v.toString()));
+      Optional.ofNullable(var1.getMaxDeBallastRate())
+          .ifPresent(v -> builder.setMinDeBallastingRate(v.toString()));
+      Optional.ofNullable(var1.getNoticeTimeForRateReduction())
+          .ifPresent(v -> builder.setNoticeTimeRateReduction(v.toString()));
+      Optional.ofNullable(var1.getNoticeTimeForStopLoading())
+          .ifPresent(v -> builder.setNoticeTimeStopLoading(v.toString()));
+      Optional.ofNullable(var1.getLineContentRemaining())
+          .ifPresent(v -> builder.setLineContentRemaining(v.toString()));
+    }
     return builder.build();
   }
 
@@ -103,13 +107,15 @@ public class LoadingInformationBuilderService {
       List<StageOffset> list3,
       List<com.cpdss.loadingplan.entity.StageDuration> list4) {
     LoadingStages.Builder builder = LoadingStages.newBuilder();
-    Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
-    Optional.ofNullable(var1.getStageOffset().getId())
-        .ifPresent(value -> builder.setStageOffset(value.intValue()));
-    Optional.ofNullable(var1.getStageDuration().getId())
-        .ifPresent(value -> builder.setStageDuration(value.intValue()));
-    Optional.ofNullable(var1.getTrackStartEndStage()).ifPresent(builder::setTrackStartEndStage);
-    Optional.ofNullable(var1.getTrackGradeSwitch()).ifPresent(builder::setTrackGradeSwitch);
+    if (var1 != null) {
+      Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getStageOffset().getId())
+          .ifPresent(value -> builder.setStageOffset(value.intValue()));
+      Optional.ofNullable(var1.getStageDuration().getId())
+          .ifPresent(value -> builder.setStageDuration(value.intValue()));
+      Optional.ofNullable(var1.getTrackStartEndStage()).ifPresent(builder::setTrackStartEndStage);
+      Optional.ofNullable(var1.getTrackGradeSwitch()).ifPresent(builder::setTrackGradeSwitch);
+    }
 
     // Set Offset Master
     builder.addAllStageOffsets(this.buildStageOffsetMasterMessage(list3));
@@ -185,6 +191,7 @@ public class LoadingInformationBuilderService {
           .ifPresent(value -> builder.setFillingRatio(value.toString()));
       Optional.ofNullable(var1.getRemarks()).ifPresent(builder::setRemark);
       // cargo name, short name, colour need to add
+      toppingOffs.add(builder.build());
     }
     return toppingOffs;
   }

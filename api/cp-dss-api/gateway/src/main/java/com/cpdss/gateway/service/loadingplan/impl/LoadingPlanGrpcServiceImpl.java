@@ -148,7 +148,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     builder.setVesselId(vesselId);
     builder.setVoyageId(voyageId);
     builder.setLoadingPlanId(loadingInfoId);
-    builder.setLoadingPatternId(patternId);
+    if (patternId != null) builder.setLoadingPatternId(patternId);
     LoadingPlanModels.LoadingInformation replay =
         loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
     if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {

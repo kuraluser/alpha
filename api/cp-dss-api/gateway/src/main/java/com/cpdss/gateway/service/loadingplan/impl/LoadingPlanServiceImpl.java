@@ -117,6 +117,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             loadingInfo.getToppingOffSequenceList());
 
     var1.setLoadingDetails(loadingDetails);
+    var1.setLoadingRates(loadingRates);
     var1.setBerthDetails(new LoadingBerthDetails(masterBerthDetails, loadingBerthDetails));
     var1.setMachineryInUses(machineryInUse);
     var1.setLoadingStages(loadingStages);

@@ -56,10 +56,15 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     LoadingDetails var = new LoadingDetails();
     try {
       // Set Values from Loading plan
-      BeanUtils.copyProperties(var1, var);
+      Optional.ofNullable(var1.getStartTime()).ifPresent(var::setStartTime);
       if (var1.hasTrimAllowed()) {
         TrimAllowed trimAllowed = new TrimAllowed();
-        BeanUtils.copyProperties(var1.getTrimAllowed(), trimAllowed);
+        Optional.ofNullable(var1.getTrimAllowed().getInitialTrim())
+            .ifPresent(v -> trimAllowed.setInitialTrim(new BigDecimal(v)));
+        Optional.ofNullable(var1.getTrimAllowed().getMaximumTrim())
+            .ifPresent(v -> trimAllowed.setMaximumTrim(new BigDecimal(v)));
+        Optional.ofNullable(var1.getTrimAllowed().getFinalTrim())
+            .ifPresent(v -> trimAllowed.setFinalTrim(new BigDecimal(v)));
         var.setTrimAllowed(trimAllowed);
       }
 
@@ -91,7 +96,38 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   public LoadingRates getLoadingRateForVessel(LoadingPlanModels.LoadingRates var1, Long vesselId) {
     LoadingRates loadingRates = new LoadingRates();
     try {
-      BeanUtils.copyProperties(var1, loadingRates);
+      loadingRates.setInitialLoadingRate(
+          var1.getInitialLoadingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getInitialLoadingRate()));
+      loadingRates.setMaxLoadingRate(
+          var1.getMaxLoadingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getMaxLoadingRate()));
+      loadingRates.setReducedLoadingRate(
+          var1.getReducedLoadingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getReducedLoadingRate()));
+      loadingRates.setMinDeBallastingRate(
+          var1.getMinDeBallastingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getMinDeBallastingRate()));
+      loadingRates.setMaxDeBallastingRate(
+          var1.getMaxDeBallastingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getMaxDeBallastingRate()));
+      loadingRates.setNoticeTimeStopLoading(
+          var1.getNoticeTimeStopLoading().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getNoticeTimeStopLoading()));
+      loadingRates.setNoticeTimeRateReduction(
+          var1.getNoticeTimeRateReduction().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getNoticeTimeRateReduction()));
+      loadingRates.setLineContentRemaining(
+          var1.getLineContentRemaining().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(var1.getLineContentRemaining()));
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Failed to cast loading rates");
@@ -107,7 +143,38 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       try {
         for (PortInfo.BerthDetail bd : response.getBerthsList()) {
           BerthDetails dto = new BerthDetails();
-          BeanUtils.copyProperties(bd, dto);
+          Optional.ofNullable(bd.getId()).ifPresent(dto::setId);
+          Optional.ofNullable(bd.getPortId()).ifPresent(dto::setPortId);
+          // Optional.ofNullable(bd.getId()).ifPresent(dto::setLoadingInfoId);
+          dto.setMaxShpChannel(
+              bd.getMaxShipChannel().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(bd.getMaxShipChannel()));
+          Optional.ofNullable(bd.getBerthName()).ifPresent(dto::setBerthName);
+          Optional.ofNullable(bd.getId()).ifPresent(dto::setLoadingBerthId);
+
+          dto.setMaxShipDepth(
+              bd.getMaxShipDepth().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(bd.getMaxShipDepth()));
+          dto.setMaxShipDepth(
+              bd.getSeaDraftLimitation().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(bd.getSeaDraftLimitation()));
+          dto.setMaxShipDepth(
+              bd.getSeaDraftLimitation().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(bd.getSeaDraftLimitation()));
+          dto.setMaxShipDepth(
+              bd.getMaxManifoldHeight().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(bd.getMaxManifoldHeight()));
+          Optional.ofNullable(bd.getRegulationAndRestriction())
+              .ifPresent(dto::setRegulationAndRestriction);
+          dto.setMaxShipDepth(
+              bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
+          dto.setMaxShipDepth(
+              bd.getMaxDraft().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxDraft()));
           berthDetails.add(dto);
         }
       } catch (Exception e) {
@@ -203,14 +270,18 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       List<StageDuration> list2 = new ArrayList<>();
       for (LoadingPlanModels.StageOffsets val1 : var1.getStageOffsetsList()) {
         StageOffset stageOffset = new StageOffset();
-        BeanUtils.copyProperties(var1, stageOffset);
+        Optional.ofNullable(val1.getId()).ifPresent(stageOffset::setId);
+        Optional.ofNullable(val1.getStageOffsetVal()).ifPresent(stageOffset::setStageOffsetVal);
         list1.add(stageOffset);
       }
       for (LoadingPlanModels.StageDuration val1 : var1.getStageDurationsList()) {
         StageDuration duration = new StageDuration();
-        BeanUtils.copyProperties(var1, duration);
+        Optional.ofNullable(val1.getId()).ifPresent(duration::setId);
+        Optional.ofNullable(val1.getDuration()).ifPresent(duration::setDuration);
         list2.add(duration);
       }
+      loadingStages.setStageOffsetList(list1);
+      loadingStages.setStageDurationList(list2);
     } catch (Exception e) {
       e.printStackTrace();
     }
