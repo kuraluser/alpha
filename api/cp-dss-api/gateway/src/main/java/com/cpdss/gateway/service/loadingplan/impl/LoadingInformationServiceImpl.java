@@ -13,8 +13,10 @@ import com.cpdss.gateway.service.PortInfoService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,12 +88,19 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   // Call in VesselInfoService
   @Override
-  public LoadingRates getLoadingRateForVessel(Long vesselId) {
-    return null;
+  public LoadingRates getLoadingRateForVessel(LoadingPlanModels.LoadingRates var1, Long vesselId) {
+    LoadingRates loadingRates = new LoadingRates();
+    try {
+      BeanUtils.copyProperties(var1, loadingRates);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to cast loading rates");
+    }
+    return loadingRates;
   }
 
   @Override
-  public List<BerthDetails> getBerthDetailsByPortId(Long portId) {
+  public List<BerthDetails> getMasterBerthDetailsByPortId(Long portId) {
     PortInfo.BerthInfoResponse response = this.portInfoService.getBerthInfoByPortId(portId);
     List<BerthDetails> berthDetails = new ArrayList<>();
     if (response != null && !response.getBerthsList().isEmpty()) {
@@ -111,7 +120,31 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public CargoMachineryInUse getCargoMachinesInUserFromVessel(Long vesselId) {
+  public List<BerthDetails> buildLoadingPlanBerthDetails(
+      List<LoadingPlanModels.LoadingBerths> var1) {
+    List<BerthDetails> list = new ArrayList<>();
+    for (LoadingPlanModels.LoadingBerths lb : var1) {
+      BerthDetails var2 = new BerthDetails();
+      var2.setLoadingBerthId(lb.getId());
+      var2.setLoadingInfoId(lb.getLoadingInfoId());
+      var2.setId(lb.getBerthId());
+      var2.setMaxShipDepth(
+          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+      var2.setSeaDraftLimitation(
+          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+      var2.setAirDraftLimitation(
+          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+      var2.setMaxManifoldHeight(
+          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+      var2.setRegulationAndRestriction(lb.getDepth());
+      list.add(var2);
+    }
+    return list;
+  }
+
+  @Override
+  public CargoMachineryInUse getCargoMachinesInUserFromVessel(
+      List<LoadingPlanModels.LoadingMachinesInUse> var1, Long vesselId) {
     VesselInfo.VesselPumpsResponse grpcReply =
         vesselInfoService.getVesselPumpsFromVesselInfo(vesselId);
     CargoMachineryInUse machineryInUse = new CargoMachineryInUse();
@@ -144,6 +177,75 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         e.printStackTrace();
       }
     }
+
+    if (!var1.isEmpty()) {
+      List<LoadingMachinesInUse> list2 = new ArrayList<>();
+      for (LoadingPlanModels.LoadingMachinesInUse lm : var1) {
+        LoadingMachinesInUse var2 = new LoadingMachinesInUse();
+        var2.setId(lm.getId());
+        var2.setPumpId(lm.getPumpId());
+        var2.setLoadingInfoId(lm.getLoadingInfoId());
+        var2.setCapacity(
+            lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
+        list2.add(var2);
+      }
+      machineryInUse.setLoadingMachinesInUses(list2);
+    }
     return machineryInUse;
+  }
+
+  @Override
+  public LoadingStages getLoadingStagesAndMasters(LoadingPlanModels.LoadingStages var1) {
+    LoadingStages loadingStages = new LoadingStages();
+    try {
+      BeanUtils.copyProperties(var1, loadingStages);
+      List<StageOffset> list1 = new ArrayList<>();
+      List<StageDuration> list2 = new ArrayList<>();
+      for (LoadingPlanModels.StageOffsets val1 : var1.getStageOffsetsList()) {
+        StageOffset stageOffset = new StageOffset();
+        BeanUtils.copyProperties(var1, stageOffset);
+        list1.add(stageOffset);
+      }
+      for (LoadingPlanModels.StageDuration val1 : var1.getStageDurationsList()) {
+        StageDuration duration = new StageDuration();
+        BeanUtils.copyProperties(var1, duration);
+        list2.add(duration);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return loadingStages;
+  }
+
+  @Override
+  public List<ToppingOffSequence> getToppingOffSequence(
+      List<LoadingPlanModels.LoadingToppingOff> list1) {
+    List<ToppingOffSequence> list2 = new ArrayList<>();
+    try {
+      for (LoadingPlanModels.LoadingToppingOff var1 : list1) {
+        ToppingOffSequence var2 = new ToppingOffSequence();
+        Optional.ofNullable(var1.getId()).ifPresent(var2::setId);
+        Optional.ofNullable(var1.getLoadingInfoId()).ifPresent(var2::setLoadingInfoId);
+        Optional.ofNullable(var1.getOrderNumber()).ifPresent(var2::setOrderNumber);
+        Optional.ofNullable(var1.getTankId()).ifPresent(var2::setTankId);
+        Optional.ofNullable(var1.getCargoId()).ifPresent(var2::setCargoId);
+        Optional.ofNullable(var1.getCargoName()).ifPresent(var2::setCargoName);
+        Optional.ofNullable(var1.getCargoAbbreviation()).ifPresent(var2::setCargoAbbreviation);
+        Optional.ofNullable(var1.getColourCode()).ifPresent(var2::setColourCode);
+        Optional.ofNullable(var1.getRemark()).ifPresent(var2::setRemark);
+        var2.setUllage(
+            var1.getUllage().isEmpty() ? BigDecimal.ZERO : new BigDecimal(var1.getUllage()));
+        var2.setQuantity(
+            var1.getQuantity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(var1.getQuantity()));
+        var2.setFillingRatio(
+            var1.getFillingRatio().isEmpty()
+                ? BigDecimal.ZERO
+                : new BigDecimal(var1.getFillingRatio()));
+        list2.add(var2);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return list2;
   }
 }

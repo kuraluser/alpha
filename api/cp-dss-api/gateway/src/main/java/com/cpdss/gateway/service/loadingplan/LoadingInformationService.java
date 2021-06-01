@@ -2,10 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.gateway.domain.loadingplan.BerthDetails;
-import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
-import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingRates;
+import com.cpdss.gateway.domain.loadingplan.*;
 import java.util.List;
 
 public interface LoadingInformationService {
@@ -25,7 +22,7 @@ public interface LoadingInformationService {
       Long portRId,
       Long portId);
 
-  LoadingRates getLoadingRateForVessel(Long vesselId);
+  LoadingRates getLoadingRateForVessel(LoadingPlanModels.LoadingRates var1, Long vesselId);
 
   /**
    * Berth Data is based on Port, So The Port Id must be pass to Port-Info Service
@@ -33,7 +30,14 @@ public interface LoadingInformationService {
    * @param portId - Long
    * @return - BerthDetails
    */
-  List<BerthDetails> getBerthDetailsByPortId(Long portId);
+  List<BerthDetails> getMasterBerthDetailsByPortId(Long portId);
 
-  CargoMachineryInUse getCargoMachinesInUserFromVessel(Long vesselId);
+  List<BerthDetails> buildLoadingPlanBerthDetails(List<LoadingPlanModels.LoadingBerths> var1);
+
+  CargoMachineryInUse getCargoMachinesInUserFromVessel(
+      List<LoadingPlanModels.LoadingMachinesInUse> var1, Long vesselId);
+
+  LoadingStages getLoadingStagesAndMasters(LoadingPlanModels.LoadingStages var1);
+
+  List<ToppingOffSequence> getToppingOffSequence(List<LoadingPlanModels.LoadingToppingOff> var1);
 }

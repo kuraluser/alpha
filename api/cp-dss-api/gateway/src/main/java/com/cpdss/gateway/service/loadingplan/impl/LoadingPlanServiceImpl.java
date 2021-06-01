@@ -90,19 +90,37 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             portRotation.get().getPortId());
 
     // from loading info table, loading plan service
-    LoadingRates loadingRates = this.loadingInformationService.getLoadingRateForVessel(vesselId);
+    LoadingRates loadingRates =
+        this.loadingInformationService.getLoadingRateForVessel(
+            loadingInfo.getLoadingRate(), vesselId);
 
-    // all done, call to port Info service
-    List<BerthDetails> berthDetails =
-        this.loadingInformationService.getBerthDetailsByPortId(portRotation.get().getPortId());
+    // Berth data from master, call to port Info service
+    List<BerthDetails> masterBerthDetails =
+        this.loadingInformationService.getMasterBerthDetailsByPortId(
+            portRotation.get().getPortId());
+    List<BerthDetails> loadingBerthDetails =
+        this.loadingInformationService.buildLoadingPlanBerthDetails(
+            loadingInfo.getLoadingBerthsList());
 
-    // all done, call to vessel service
+    // Call to vessel and set value from loading plan
     CargoMachineryInUse machineryInUse =
-        this.loadingInformationService.getCargoMachinesInUserFromVessel(vesselId);
+        this.loadingInformationService.getCargoMachinesInUserFromVessel(
+            loadingInfo.getLoadingMachinesList(), vesselId);
+
+    // from loading plan, user data + master data
+    LoadingStages loadingStages =
+        this.loadingInformationService.getLoadingStagesAndMasters(loadingInfo.getLoadingStage());
+
+    // Topping Off Sequence
+    List<ToppingOffSequence> toppingSequence =
+        this.loadingInformationService.getToppingOffSequence(
+            loadingInfo.getToppingOffSequenceList());
 
     var1.setLoadingDetails(loadingDetails);
-    var1.setBerthDetails(new LoadingBerthDetails(berthDetails));
+    var1.setBerthDetails(new LoadingBerthDetails(masterBerthDetails, loadingBerthDetails));
     var1.setMachineryInUses(machineryInUse);
+    var1.setLoadingStages(loadingStages);
+    var1.setToppingOffSequence(toppingSequence);
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }

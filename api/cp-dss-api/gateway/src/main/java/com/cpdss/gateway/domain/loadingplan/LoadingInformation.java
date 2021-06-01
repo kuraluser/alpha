@@ -3,6 +3,7 @@ package com.cpdss.gateway.domain.loadingplan;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.rest.CommonSuccessResponse;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -33,5 +34,5 @@ public class LoadingInformation {
   // private CargoDetails cargoDetails; // call to LS and get by port rotation condition
   private LoadingStages loadingStages;
   private LoadingSequences loadingSequences;
-  private ToppingOffSequence toppingOffSequence;
+  private List<ToppingOffSequence> toppingOffSequence;
 }
