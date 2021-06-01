@@ -113,6 +113,7 @@ message BerthInfoResponse{
 message BerthDetail{
 	int64 id = 1;
 	int64 portId = 2;
+	int64 loadingInfoId = 12;
 	string maxShipChannel = 3;
 	string berthName = 4;
 	string maxShipDepth = 5;

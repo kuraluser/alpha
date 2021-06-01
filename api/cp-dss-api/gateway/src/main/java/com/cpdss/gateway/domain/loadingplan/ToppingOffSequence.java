@@ -7,13 +7,17 @@ import lombok.Data;
 @Data
 public class ToppingOffSequence {
 
-  private Integer sequenceOrder;
+  private Long id;
+  private Long loadingInfoId;
+  private Long orderNumber;
   private Long tankId;
+  private Long cargoId;
   private String shortName;
-  private String cargoType;
+  private String cargoName;
+  private String cargoAbbreviation;
+  private String colourCode;
+  private String remark;
   private BigDecimal ullage;
-  private BigDecimal volume;
-  private BigDecimal weight;
-  private BigDecimal fillingPercent;
-  private String remarks;
+  private BigDecimal quantity;
+  private BigDecimal fillingRatio;
 }

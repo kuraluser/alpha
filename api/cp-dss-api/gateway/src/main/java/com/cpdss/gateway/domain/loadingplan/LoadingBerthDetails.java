@@ -3,11 +3,13 @@ package com.cpdss.gateway.domain.loadingplan;
 
 import java.io.Serializable;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class LoadingBerthDetails implements Serializable {
 
   /**
@@ -19,8 +21,4 @@ public class LoadingBerthDetails implements Serializable {
   private List<BerthDetails> availableBerths; // From db, per port selected
 
   private List<BerthDetails> selectedBerths; // To loading-plan DB, as they edited
-
-  public LoadingBerthDetails(List<BerthDetails> availableBerths) {
-    this.availableBerths = availableBerths;
-  }
 }
