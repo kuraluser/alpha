@@ -40,9 +40,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EnvoyWriterService {
 
-  @Value("${cpdss.communication.salt}")
-  private String salt;
-
   @Value("${cpdss.communucation.writer.url}")
   private String writerUrl;
 
@@ -64,7 +61,7 @@ public class EnvoyWriterService {
     Long sequenceNumber = numberOpt.get().getSequenceNumber();
     updateSequenceNumber(sequenceNumber, numberOpt.get());
     String uuid = UUID.randomUUID().toString();
-    String encryptedString = encrypt(request.getLoadableStudy(), "123", salt);
+    String encryptedString = encrypt(request.getLoadableStudy(), request.getImoNumber());
     FileOutputStream out = null;
     try {
       // creating temp zip file
@@ -84,7 +81,6 @@ public class EnvoyWriterService {
           new HttpEntity<LinkedMultiValueMap<String, Object>>(
               map, createHeaderParameters(getCheckSum(tempFile)));
 
-      
       ResponseEntity<String> result =
           restTemplate.exchange(
               uploadUrlBuilder(request, uuid, sequenceNumber),
@@ -198,6 +194,6 @@ public class EnvoyWriterService {
         .append(sequenceNumber);
     return valueOf(urlBuilder);
   }
-  
+
   public void checkStatus() {}
 }
