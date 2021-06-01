@@ -26,4 +26,6 @@ public interface LoadingInformationRepository
 
   Optional<LoadingInformation> findByVesselXIdAndLoadablePatternXIdAndIsActiveTrue(
       Long vesselId, Long patternId);
+
+  Optional<LoadingInformation> findByIdAndIsActiveTrue(Long id);
 }

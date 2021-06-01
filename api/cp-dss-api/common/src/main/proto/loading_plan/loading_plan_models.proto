@@ -28,7 +28,7 @@ message LoadingInformation{
   // cargo data = 8
   LoadingStages loadingStage = 9;
   LoadingDelay loadingDelays = 10;
-  LoadingToppingOff toppingOffSequence = 11;
+  repeated LoadingToppingOff toppingOffSequence = 11;
 }
 
 message LoadingDetails{
@@ -66,6 +66,8 @@ message LoadingBerths{
   string airDraftLimitation = 6;
   string maxManifoldHeight = 7;
   string specialRegulationRestriction = 8;
+  string itemsToBeAgreedWith = 9;
+  string hoseConnections = 10;
 }
 
 message LoadingStages{
@@ -76,6 +78,8 @@ message LoadingStages{
   bool trackGradeSwitch = 5;
   repeated StageOffsets stageOffsets = 6; // master data
   repeated StageDuration stageDurations = 7; // master data
+  StageOffsets offset = 8;
+  StageDuration duration = 9;
 }
 
 // stage min_amount
@@ -136,6 +140,7 @@ message LoadingToppingOff{
   string quantity = 9;
   string fillingRation = 10;
   string reason = 11;
+  int64 cargoId = 12;
 }
 
 

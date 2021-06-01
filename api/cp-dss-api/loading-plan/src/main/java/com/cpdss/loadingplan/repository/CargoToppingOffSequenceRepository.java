@@ -4,6 +4,7 @@ package com.cpdss.loadingplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,6 @@ public interface CargoToppingOffSequenceRepository
   @Modifying
   @Query("UPDATE CargoToppingOffSequence SET isActive = false WHERE loadingInformation = ?1")
   public void deleteByLoadingInformation(LoadingInformation loadingInformation);
+
+  public Optional<CargoToppingOffSequence> findByIdAndIsActiveTrue(Long id);
 }

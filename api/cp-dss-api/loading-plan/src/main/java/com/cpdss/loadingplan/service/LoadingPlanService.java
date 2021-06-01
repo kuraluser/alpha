@@ -33,7 +33,7 @@ public class LoadingPlanService {
     try {
       LoadingInformation loadingInformation = new LoadingInformation();
       LoadingInformation savedLoadingInformation =
-          loadingInformationService.saveLoadingInformation(
+          loadingInformationService.saveLoadingInformationDetail(
               request.getLoadingInformationDetail(), loadingInformation);
       cargoToppingOffSequenceService.saveCargoToppingOffSequenceList(
           request.getCargoToppingOffSequencesList(), savedLoadingInformation);
