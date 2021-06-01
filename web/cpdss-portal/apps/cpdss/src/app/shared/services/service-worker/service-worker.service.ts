@@ -2,10 +2,9 @@ import { ApplicationRef, Injectable } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { concat, interval } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { ConfirmationAlertService } from '../../components/confirmation-alert/confirmation-alert.service';
 import { CPDSSDB } from '../../models/common.model';
 import { SecurityService } from '../security/security.service';
 
@@ -22,7 +21,7 @@ export class ServiceWorkerService {
   cpdssDb: CPDSSDB;
   constructor(private appRef: ApplicationRef,
     private updates: SwUpdate,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private translateService: TranslateService) {
@@ -69,10 +68,20 @@ export class ServiceWorkerService {
    * @memberof ServiceWorkerService
    */
   promptUpdate() {
-    this.updates.available.subscribe(event => {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'SERVICE_WORKER_UPDATE', detail: 'SERVICE_WORKER_UPDATE_DETAILS', data: { confirmLabel: 'SERVICE_WORKER_CONFIRM_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-        if (response) {
+    this.updates.available.subscribe(async event => {
+      this.confirmationService.close();
+      const translationKeys = await this.translateService.get(['SERVICE_WORKER_UPDATE', 'SERVICE_WORKER_UPDATE_DETAILS', 'SERVICE_WORKER_CONFIRM_LABEL']).toPromise();
+
+      this.confirmationService.confirm({
+        key: 'confirmation-alert',
+        header: translationKeys['SERVICE_WORKER_UPDATE'],
+        message: translationKeys['SERVICE_WORKER_UPDATE_DETAILS'],
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: translationKeys['SERVICE_WORKER_CONFIRM_LABEL'],
+        acceptIcon: 'pi',
+        acceptButtonStyleClass: 'btn btn-main mr-5',
+        rejectVisible: false,
+        accept: () => {
           this.ngxSpinnerService.show();
           // TODO: delete existing db logic
           this.cpdssDb?.delete().then(async () => {

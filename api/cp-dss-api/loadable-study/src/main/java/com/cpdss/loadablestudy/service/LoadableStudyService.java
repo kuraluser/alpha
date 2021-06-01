@@ -2593,6 +2593,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       OnHandQuantityRequest request, StreamObserver<OnHandQuantityReply> responseObserver) {
     OnHandQuantityReply.Builder replyBuilder = OnHandQuantityReply.newBuilder();
     try {
+
       Optional<LoadableStudy> loadableStudyOpt =
           this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (!loadableStudyOpt.isPresent()) {
@@ -2658,11 +2659,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .filter(i -> portRotationList.get(i).getId().equals(portRotation.getId()))
                     .findFirst()
                     .orElse(-1);
-
             if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
-
-              onHandQuantityList.forEach(
-                  onHandQuantity -> {
+              boolean ohqComplete = true;
+              List<Long> fuelTypes = new ArrayList<Long>();
+              for(OnHandQuantity onHandQuantity : onHandQuantityList) {
+                	if(ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
+                		fuelTypes.add(onHandQuantity.getFuelTypeXId());
+                		BigDecimal total = new BigDecimal(0);
+                		for(OnHandQuantity ohq : onHandQuantityList) {
+                			if(ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {    
+                				total = total.add(ohq.getDepartureQuantity());
+                			}
+                		}
+                		if(total.compareTo(new BigDecimal(0)) <= 0) {
+                			ohqComplete = false;
+                		}
+                		
+                	}
                     entityManager.detach(onHandQuantity);
                     onHandQuantity.setId(null);
                     onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
@@ -2672,11 +2685,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     onHandQuantity.setPortXId(portRotation.getPortXId());
                     onHandQuantity.setPortRotation(portRotation);
                     OnHandQuantities.add(onHandQuantity);
-                  });
+                  }
+              portRotation.setIsPortRotationOhqComplete(ohqComplete);
             } else {
 
               LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
-
+              portRotation.setIsPortRotationOhqComplete(previousPortPortRotation.getIsPortRotationOhqComplete());
+              this.loadableStudyPortRotationRepository.save(portRotation);
               onHandQuantityList =
                   this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
                       loadableStudyOpt.get(), previousPortPortRotation, true);
@@ -9159,6 +9174,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             synopticalTable.setDisplacementActual(null);
             synopticalTable.setConstantActual(null);
             synopticalTable.setDeadWeightActual(null);
+            synopticalTable.setOthersActual(null);
 
             synopticalTables.add(synopticalTable);
           }

@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../../../shared/components/datatable/datatable.model';
 import { numberValidator } from '../../../directives/validator/number-validator.directive';
 import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
-import { ConfirmationAlertService } from '../../../../../shared/components/confirmation-alert/confirmation-alert.service';
-import { first } from 'rxjs/operators';
 import { IPort, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../../core/models/common.model';
 import { IPermission } from '../../../../../shared/models/user-profile.model';
 import { LoadableStudy } from '../../../models/loadable-study-list.model';
@@ -45,7 +43,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Input()
@@ -81,7 +79,7 @@ export class LoadingPortsPopupComponent implements OnInit {
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private quantityDecimalService: QuantityDecimalService) { }
 
   ngOnInit(): void {
@@ -141,11 +139,22 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @param {IDataTableEvent} event
    * @memberof LoadingPortsPopupComponent
    */
-  onDeleteRow(event: IDataTableEvent) {
-    
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADED_PORT_DELETE_SUMMARY', detail: 'LOADED_PORT_DELETE_DETAILS', data: { confirmLabel: 'LOADED_PORT_DELETE_CONFIRM_LABEL', rejectLabel: 'LOADED_PORT_DELETE_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-      if (response) {
+  async onDeleteRow(event: IDataTableEvent) {
+    const translationKeys = await this.translateService.get(['LOADED_PORT_DELETE_SUMMARY', 'LOADED_PORT_DELETE_DETAILS', 'LOADED_PORT_DELETE_CONFIRM_LABEL', 'LOADED_PORT_DELETE_REJECT_LABEL']).toPromise();
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['LOADED_PORT_DELETE_SUMMARY'],
+      message: translationKeys['LOADED_PORT_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['LOADED_PORT_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['LOADED_PORT_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: () => {
         this.loadingPort.splice(event.index, 1);
         const dataTableControl = <FormArray>this.loadingPortsFrom.get('dataTable');
         dataTableControl.removeAt(event.index);
@@ -168,7 +177,7 @@ export class LoadingPortsPopupComponent implements OnInit {
       this.closePopup();
     } else {
       if (this.loadingPortsFrom.controls.dataTable?.errors?.required) {
-        const translationKeys = await this.translateService.get(['CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR_DETAILS' , 'CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR']).toPromise();
+        const translationKeys = await this.translateService.get(['CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR_DETAILS', 'CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR'], detail: translationKeys['CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR_DETAILS'] });
       }
 
@@ -188,9 +197,10 @@ export class LoadingPortsPopupComponent implements OnInit {
    */
   private initLoadingPortFormGroup(loadingPort: ILoadingPortValueObject) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal();
+    const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
       name: this.fb.control(loadingPort.name.value, Validators.required),
-      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(.01), numberValidator(quantityDecimal, 7, false)])
+      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)])
     });
   }
 

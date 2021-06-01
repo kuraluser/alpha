@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DecimalPipe } from'@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { IDataTableColumn , DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
+import { IDataTableColumn, DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { IBunkerConditionParameterList, IBunkerConditions, ICargoConditions, ICargoQuantities } from '../models/voyage-status.model';
 /**
  * Component class of ParameterListComponent
@@ -29,11 +29,10 @@ export class ParameterListComponent implements OnInit {
   }
 
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
-    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit??AppConfigurationService.settings.baseUnit;
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
-    this.getParameterList();    
   }
-  
+
   readonly fieldType = DATATABLE_FIELD_TYPE;
   cols: IDataTableColumn[];
   parameterList: IBunkerConditionParameterList[] = [];
@@ -52,7 +51,7 @@ export class ParameterListComponent implements OnInit {
   ngOnInit(): void {
     this.cols = [
       { field: 'parameters', header: 'VOYAGE_STATUS_CARGO_PARAMETER_LIST' },
-      { field: 'value', header: 'VOYAGE_STATUS_CARGO_VALUE' , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: 'numberFormat'}
+      { field: 'value', header: 'VOYAGE_STATUS_CARGO_VALUE', fieldType: DATATABLE_FIELD_TYPE.NUMBER, numberFormat: 'numberFormat' }
     ];
   }
 
@@ -64,46 +63,44 @@ export class ParameterListComponent implements OnInit {
     this.totalActual = 0
     this.cargoConditions?.map(cargoList => {
       this.totalActual = cargoList.actualWeight + this.totalActual;
-
-    })
-    this._currentQuantitySelectedUnit;
-    this.parameterList.push({ parameters: 'VOYAGE_STATUS_PARAMETER_LIST_TOTAL_CARGO_MT', value: this.totalActual, numberFormat: this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS)})
+    });
+    this.parameterList.push({ parameters: 'VOYAGE_STATUS_PARAMETER_LIST_TOTAL_CARGO_MT', value: this.totalActual, numberFormat: AppConfigurationService.settings.quantityNumberFormatMT })
     let oilWeight = 0;
     oilWeight = this.bunkerConditions?.fuelOilWeight + this.bunkerConditions?.dieselOilWeight;
-    this.parameterList.push({ parameters: 'VOYAGE_STATUS_PARAMETER_LIST_FUEL_AND_DIESEL', value: oilWeight, numberFormat: this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS) })
+    this.parameterList.push({ parameters: 'VOYAGE_STATUS_PARAMETER_LIST_FUEL_AND_DIESEL', value: oilWeight, numberFormat: AppConfigurationService.settings.quantityNumberFormatMT })
     for (const [key, value] of Object.entries(this.bunkerConditions)) {
       let newKey = null;
       let numberFormat = '';
       switch (key) {
         case "ballastWeight":
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_BALLAST_WEIGHT";
-          numberFormat = this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS);
+          numberFormat = AppConfigurationService.settings.quantityNumberFormatMT;
           break;
         case "displacement":
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_DISPLACEMENT";
-          numberFormat = this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS);
+          numberFormat = AppConfigurationService.settings.quantityNumberFormatMT;
           break;
         case "freshWaterWeight":
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_FREASH_WATER_WEIGHT";
-          numberFormat = this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS);
+          numberFormat = AppConfigurationService.settings.quantityNumberFormatMT;
           break;
         case "othersWeight":
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_OTHERS_WEIGHT";
-          numberFormat = this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS);
+          numberFormat = AppConfigurationService.settings.quantityNumberFormatMT;
           break;
         case "specificGravity":
-          numberFormat =  AppConfigurationService.settings?.sgNumberFormat;
+          numberFormat = AppConfigurationService.settings?.sgNumberFormat;
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_SPECIFIC_GRAVITY";
           break;
         case "totalDwtWeight":
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_TOTAL_DWT_WEIGHT";
-          numberFormat = this._currentQuantitySelectedUnit === 'MT' ? AppConfigurationService.settings.quantityNumberFormatMT : (this._currentQuantitySelectedUnit === 'KL' ? AppConfigurationService.settings.quantityNumberFormatKL : AppConfigurationService.settings.quantityNumberFormatBBLS);
+          numberFormat = AppConfigurationService.settings.quantityNumberFormatMT
           break;
         default:
           break;
       }
       if (newKey) {
-        this.parameterList.push({ parameters: newKey, value: value , numberFormat: numberFormat})
+        this.parameterList.push({ parameters: newKey, value: value, numberFormat: numberFormat })
       }
     }
   }

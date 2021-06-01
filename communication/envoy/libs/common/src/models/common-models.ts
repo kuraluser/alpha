@@ -25,7 +25,7 @@ export interface EventData {
  */
 export interface InboundEventData extends EventData {
   _id?: string,
-  process: 'upload' | 'split' | 'send' | 'finish' | 'confirm' | 'cancel'
+  process: 'upload' | 'split' | 'send' | 'finish' | 'confirm' | 'init-cancel' | 'cancelled'
   processStatus?: ProcessStatusLevels;
   split?: 'y' | 'n'
   filePath?: string;
@@ -43,6 +43,8 @@ export interface InboundEventData extends EventData {
   finishReadTimeStamp?: number;
   confirmRead?: string;
   confirmReadTimeStamp?: number;
+  cancelRead?: string;
+  cancelReadTimeStamp?: number;
 }
 
 /**
@@ -54,7 +56,7 @@ export interface OutboundEventData extends EventData {
   filePath: string;
   createdtimeStamp: number;
   partNumber?: string;
-  process?: 'received' | 'verified' | 'shared';
+  process?: 'received' | 'verified' | 'cancelled' | 'shared';
   processStatus?: ProcessStatusLevels;
   missingPackets?: string;
   ioClient?: SocketIOClient.Socket | SocketIO.Socket;
