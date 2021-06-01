@@ -5664,7 +5664,10 @@ public class LoadableStudyService {
     error.setClientId("kazusa");
     error.setMessageType("ls");
     error.setJsonPayload("test data");
-    this.envoyWriterGrpcService.getCommunicationServer(error.build());
+    error.setImoNumber("9513402");
+    error.setMessageId("3638b5aa-1cd0-4e47-b1b7-5a7039f830f9");
+    // this.envoyWriterGrpcService.getCommunicationServer(error.build());
+    this.envoyWriterGrpcService.statusCheck(error.build());
     return null;
   }
 

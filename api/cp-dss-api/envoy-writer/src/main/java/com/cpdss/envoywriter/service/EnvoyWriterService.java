@@ -9,9 +9,12 @@ import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply.Builder;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.envoywriter.domain.StatusCheckResponse;
 import com.cpdss.envoywriter.domain.WriterResponse;
 import com.cpdss.envoywriter.entity.SequenceNumber;
 import com.cpdss.envoywriter.repository.SequenceNumberRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -196,5 +199,46 @@ public class EnvoyWriterService {
     return valueOf(urlBuilder);
   }
 
-  public void checkStatus() {}
+  public void checkStatus(EnvoyWriterRequest request, Builder statusCheckbuilder)
+      throws JsonMappingException, JsonProcessingException {
+
+    ResponseEntity<String> result =
+        restTemplate.getForEntity(statucCheckUrlBuilder(request), String.class);
+
+    ObjectMapper mapper = new ObjectMapper();
+
+    StatusCheckResponse statusCheckResponse =
+        mapper.readValue(result.getBody(), StatusCheckResponse.class);
+    buildStatusCheckResponse(statusCheckbuilder, statusCheckResponse);
+  }
+
+  /**
+   * @param statusCheckbuilder
+   * @param statusCheckResponse void
+   */
+  private void buildStatusCheckResponse(
+      Builder statusCheckBuilder, StatusCheckResponse statusCheckResponse) {
+    statusCheckBuilder.setStatusCode(statusCheckResponse.getStatusCode());
+    statusCheckBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
+  /**
+   * @param request
+   * @return URI
+   */
+  private String statucCheckUrlBuilder(EnvoyWriterRequest request) {
+    String separator = "/";
+    StringBuilder urlBuilder = new StringBuilder();
+    urlBuilder
+        .append(writerUrl)
+        .append(separator)
+        .append("status")
+        .append(separator)
+        .append(request.getClientId())
+        .append(separator)
+        .append(request.getMessageId())
+        .append(separator)
+        .append(request.getImoNumber());
+    return valueOf(urlBuilder);
+  }
 }

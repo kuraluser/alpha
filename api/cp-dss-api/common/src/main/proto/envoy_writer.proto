@@ -9,6 +9,8 @@ import "common.proto";
 service EnvoyWriterService {
   rpc GetCommunicationServer(EnvoyWriterRequest) returns (WriterReply) {
   }
+  rpc StatusCheck(EnvoyWriterRequest) returns (WriterReply) {
+  }
 
 }
 message EnvoyWriterRequest {
@@ -16,10 +18,12 @@ message EnvoyWriterRequest {
   string messageType = 2;
   string clientId = 3;
   string imoNumber = 4;
+  string messageId = 5; //uuid
 }
 message WriterReply {
   ResponseStatus responseStatus = 1;
   string messageId = 2;
   string shipId = 3;
   string message = 4;
+  string statusCode = 5;
 }
