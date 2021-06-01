@@ -3,6 +3,8 @@ package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.PortRotation;
@@ -33,6 +35,10 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
 
   @Override
   public VoyageResponse getActiveVoyageDetails(Long vesselId) throws GenericServiceException {
@@ -131,6 +137,27 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     } else {
       return response.getPortsList().stream().filter(v -> (v.getId() == portId)).findFirst().get();
     }
+  }
+
+  @Override
+  public LoadingPlanModels.LoadingInformation fetchLoadingInformation(
+      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId)
+      throws GenericServiceException {
+    LoadingPlanModels.LoadingInformationRequest.Builder builder =
+        LoadingPlanModels.LoadingInformationRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    builder.setVoyageId(voyageId);
+    builder.setLoadingPlanId(loadingInfoId);
+    if (patternId != null) builder.setLoadingPatternId(patternId);
+    LoadingPlanModels.LoadingInformation replay =
+        loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
+    if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {
+      throw new GenericServiceException(
+          "Failed to get Loading Information",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    return replay;
   }
 
   public LoadableStudy.VoyageRequest buildVoyageRequest(Long vesselId) {

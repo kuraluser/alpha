@@ -7,12 +7,13 @@ import lombok.Data;
 @Data
 public class LoadingRates {
 
+  private Long Id;
   private BigDecimal initialLoadingRate;
   private BigDecimal maxLoadingRate;
   private BigDecimal reducedLoadingRate;
   private BigDecimal minDeBallastingRate;
   private BigDecimal maxDeBallastingRate;
-  private String noticeTimeRateReduction;
-  private String noticeTimeStopLoading;
+  private BigDecimal noticeTimeRateReduction;
+  private BigDecimal noticeTimeStopLoading;
   private BigDecimal lineContentRemaining; // BA Clarification Pending
 }

@@ -7829,32 +7829,6 @@ public final class LoadingPlanModels {
      * @return The bytes for specialRegulationRestriction.
      */
     com.google.protobuf.ByteString getSpecialRegulationRestrictionBytes();
-
-    /**
-     * <code>string itemsToBeAgreedWith = 9;</code>
-     *
-     * @return The itemsToBeAgreedWith.
-     */
-    java.lang.String getItemsToBeAgreedWith();
-    /**
-     * <code>string itemsToBeAgreedWith = 9;</code>
-     *
-     * @return The bytes for itemsToBeAgreedWith.
-     */
-    com.google.protobuf.ByteString getItemsToBeAgreedWithBytes();
-
-    /**
-     * <code>string hoseConnections = 10;</code>
-     *
-     * @return The hoseConnections.
-     */
-    java.lang.String getHoseConnections();
-    /**
-     * <code>string hoseConnections = 10;</code>
-     *
-     * @return The bytes for hoseConnections.
-     */
-    com.google.protobuf.ByteString getHoseConnectionsBytes();
   }
   /** Protobuf type {@code LoadingBerths} */
   public static final class LoadingBerths extends com.google.protobuf.GeneratedMessageV3
@@ -7873,8 +7847,6 @@ public final class LoadingPlanModels {
       airDraftLimitation_ = "";
       maxManifoldHeight_ = "";
       specialRegulationRestriction_ = "";
-      itemsToBeAgreedWith_ = "";
-      hoseConnections_ = "";
     }
 
     @java.lang.Override
@@ -7954,20 +7926,6 @@ public final class LoadingPlanModels {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 specialRegulationRestriction_ = s;
-                break;
-              }
-            case 74:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                itemsToBeAgreedWith_ = s;
-                break;
-              }
-            case 82:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                hoseConnections_ = s;
                 break;
               }
             default:
@@ -8213,76 +8171,6 @@ public final class LoadingPlanModels {
       }
     }
 
-    public static final int ITEMSTOBEAGREEDWITH_FIELD_NUMBER = 9;
-    private volatile java.lang.Object itemsToBeAgreedWith_;
-    /**
-     * <code>string itemsToBeAgreedWith = 9;</code>
-     *
-     * @return The itemsToBeAgreedWith.
-     */
-    public java.lang.String getItemsToBeAgreedWith() {
-      java.lang.Object ref = itemsToBeAgreedWith_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        itemsToBeAgreedWith_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string itemsToBeAgreedWith = 9;</code>
-     *
-     * @return The bytes for itemsToBeAgreedWith.
-     */
-    public com.google.protobuf.ByteString getItemsToBeAgreedWithBytes() {
-      java.lang.Object ref = itemsToBeAgreedWith_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        itemsToBeAgreedWith_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int HOSECONNECTIONS_FIELD_NUMBER = 10;
-    private volatile java.lang.Object hoseConnections_;
-    /**
-     * <code>string hoseConnections = 10;</code>
-     *
-     * @return The hoseConnections.
-     */
-    public java.lang.String getHoseConnections() {
-      java.lang.Object ref = hoseConnections_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        hoseConnections_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string hoseConnections = 10;</code>
-     *
-     * @return The bytes for hoseConnections.
-     */
-    public com.google.protobuf.ByteString getHoseConnectionsBytes() {
-      java.lang.Object ref = hoseConnections_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        hoseConnections_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -8322,12 +8210,6 @@ public final class LoadingPlanModels {
         com.google.protobuf.GeneratedMessageV3.writeString(
             output, 8, specialRegulationRestriction_);
       }
-      if (!getItemsToBeAgreedWithBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, itemsToBeAgreedWith_);
-      }
-      if (!getHoseConnectionsBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, hoseConnections_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -8363,12 +8245,6 @@ public final class LoadingPlanModels {
             com.google.protobuf.GeneratedMessageV3.computeStringSize(
                 8, specialRegulationRestriction_);
       }
-      if (!getItemsToBeAgreedWithBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, itemsToBeAgreedWith_);
-      }
-      if (!getHoseConnectionsBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, hoseConnections_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -8395,8 +8271,6 @@ public final class LoadingPlanModels {
       if (!getMaxManifoldHeight().equals(other.getMaxManifoldHeight())) return false;
       if (!getSpecialRegulationRestriction().equals(other.getSpecialRegulationRestriction()))
         return false;
-      if (!getItemsToBeAgreedWith().equals(other.getItemsToBeAgreedWith())) return false;
-      if (!getHoseConnections().equals(other.getHoseConnections())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -8424,10 +8298,6 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getMaxManifoldHeight().hashCode();
       hash = (37 * hash) + SPECIALREGULATIONRESTRICTION_FIELD_NUMBER;
       hash = (53 * hash) + getSpecialRegulationRestriction().hashCode();
-      hash = (37 * hash) + ITEMSTOBEAGREEDWITH_FIELD_NUMBER;
-      hash = (53 * hash) + getItemsToBeAgreedWith().hashCode();
-      hash = (37 * hash) + HOSECONNECTIONS_FIELD_NUMBER;
-      hash = (53 * hash) + getHoseConnections().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -8587,10 +8457,6 @@ public final class LoadingPlanModels {
 
         specialRegulationRestriction_ = "";
 
-        itemsToBeAgreedWith_ = "";
-
-        hoseConnections_ = "";
-
         return this;
       }
 
@@ -8630,8 +8496,6 @@ public final class LoadingPlanModels {
         result.airDraftLimitation_ = airDraftLimitation_;
         result.maxManifoldHeight_ = maxManifoldHeight_;
         result.specialRegulationRestriction_ = specialRegulationRestriction_;
-        result.itemsToBeAgreedWith_ = itemsToBeAgreedWith_;
-        result.hoseConnections_ = hoseConnections_;
         onBuilt();
         return result;
       }
@@ -8715,14 +8579,6 @@ public final class LoadingPlanModels {
         }
         if (!other.getSpecialRegulationRestriction().isEmpty()) {
           specialRegulationRestriction_ = other.specialRegulationRestriction_;
-          onChanged();
-        }
-        if (!other.getItemsToBeAgreedWith().isEmpty()) {
-          itemsToBeAgreedWith_ = other.itemsToBeAgreedWith_;
-          onChanged();
-        }
-        if (!other.getHoseConnections().isEmpty()) {
-          hoseConnections_ = other.hoseConnections_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -9236,158 +9092,6 @@ public final class LoadingPlanModels {
         return this;
       }
 
-      private java.lang.Object itemsToBeAgreedWith_ = "";
-      /**
-       * <code>string itemsToBeAgreedWith = 9;</code>
-       *
-       * @return The itemsToBeAgreedWith.
-       */
-      public java.lang.String getItemsToBeAgreedWith() {
-        java.lang.Object ref = itemsToBeAgreedWith_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          itemsToBeAgreedWith_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string itemsToBeAgreedWith = 9;</code>
-       *
-       * @return The bytes for itemsToBeAgreedWith.
-       */
-      public com.google.protobuf.ByteString getItemsToBeAgreedWithBytes() {
-        java.lang.Object ref = itemsToBeAgreedWith_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          itemsToBeAgreedWith_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string itemsToBeAgreedWith = 9;</code>
-       *
-       * @param value The itemsToBeAgreedWith to set.
-       * @return This builder for chaining.
-       */
-      public Builder setItemsToBeAgreedWith(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        itemsToBeAgreedWith_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string itemsToBeAgreedWith = 9;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearItemsToBeAgreedWith() {
-
-        itemsToBeAgreedWith_ = getDefaultInstance().getItemsToBeAgreedWith();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string itemsToBeAgreedWith = 9;</code>
-       *
-       * @param value The bytes for itemsToBeAgreedWith to set.
-       * @return This builder for chaining.
-       */
-      public Builder setItemsToBeAgreedWithBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        itemsToBeAgreedWith_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object hoseConnections_ = "";
-      /**
-       * <code>string hoseConnections = 10;</code>
-       *
-       * @return The hoseConnections.
-       */
-      public java.lang.String getHoseConnections() {
-        java.lang.Object ref = hoseConnections_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          hoseConnections_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string hoseConnections = 10;</code>
-       *
-       * @return The bytes for hoseConnections.
-       */
-      public com.google.protobuf.ByteString getHoseConnectionsBytes() {
-        java.lang.Object ref = hoseConnections_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          hoseConnections_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string hoseConnections = 10;</code>
-       *
-       * @param value The hoseConnections to set.
-       * @return This builder for chaining.
-       */
-      public Builder setHoseConnections(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        hoseConnections_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string hoseConnections = 10;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearHoseConnections() {
-
-        hoseConnections_ = getDefaultInstance().getHoseConnections();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string hoseConnections = 10;</code>
-       *
-       * @param value The bytes for hoseConnections to set.
-       * @return This builder for chaining.
-       */
-      public Builder setHoseConnectionsBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        hoseConnections_ = value;
-        onChanged();
-        return this;
-      }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -9603,38 +9307,6 @@ public final class LoadingPlanModels {
      */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDurationOrBuilder
         getStageDurationsOrBuilder(int index);
-
-    /**
-     * <code>.StageOffsets offset = 8;</code>
-     *
-     * @return Whether the offset field is set.
-     */
-    boolean hasOffset();
-    /**
-     * <code>.StageOffsets offset = 8;</code>
-     *
-     * @return The offset.
-     */
-    com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets getOffset();
-    /** <code>.StageOffsets offset = 8;</code> */
-    com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsetsOrBuilder
-        getOffsetOrBuilder();
-
-    /**
-     * <code>.StageDuration duration = 9;</code>
-     *
-     * @return Whether the duration field is set.
-     */
-    boolean hasDuration();
-    /**
-     * <code>.StageDuration duration = 9;</code>
-     *
-     * @return The duration.
-     */
-    com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration getDuration();
-    /** <code>.StageDuration duration = 9;</code> */
-    com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDurationOrBuilder
-        getDurationOrBuilder();
   }
   /** Protobuf type {@code LoadingStages} */
   public static final class LoadingStages extends com.google.protobuf.GeneratedMessageV3
@@ -9736,44 +9408,6 @@ public final class LoadingPlanModels {
                         com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration
                             .parser(),
                         extensionRegistry));
-                break;
-              }
-            case 66:
-              {
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets.Builder
-                    subBuilder = null;
-                if (offset_ != null) {
-                  subBuilder = offset_.toBuilder();
-                }
-                offset_ =
-                    input.readMessage(
-                        com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets
-                            .parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(offset_);
-                  offset_ = subBuilder.buildPartial();
-                }
-
-                break;
-              }
-            case 74:
-              {
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder
-                    subBuilder = null;
-                if (duration_ != null) {
-                  subBuilder = duration_.toBuilder();
-                }
-                duration_ =
-                    input.readMessage(
-                        com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration
-                            .parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(duration_);
-                  duration_ = subBuilder.buildPartial();
-                }
-
                 break;
               }
             default:
@@ -10018,60 +9652,6 @@ public final class LoadingPlanModels {
       return stageDurations_.get(index);
     }
 
-    public static final int OFFSET_FIELD_NUMBER = 8;
-    private com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets offset_;
-    /**
-     * <code>.StageOffsets offset = 8;</code>
-     *
-     * @return Whether the offset field is set.
-     */
-    public boolean hasOffset() {
-      return offset_ != null;
-    }
-    /**
-     * <code>.StageOffsets offset = 8;</code>
-     *
-     * @return The offset.
-     */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets getOffset() {
-      return offset_ == null
-          ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets
-              .getDefaultInstance()
-          : offset_;
-    }
-    /** <code>.StageOffsets offset = 8;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsetsOrBuilder
-        getOffsetOrBuilder() {
-      return getOffset();
-    }
-
-    public static final int DURATION_FIELD_NUMBER = 9;
-    private com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration duration_;
-    /**
-     * <code>.StageDuration duration = 9;</code>
-     *
-     * @return Whether the duration field is set.
-     */
-    public boolean hasDuration() {
-      return duration_ != null;
-    }
-    /**
-     * <code>.StageDuration duration = 9;</code>
-     *
-     * @return The duration.
-     */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration getDuration() {
-      return duration_ == null
-          ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration
-              .getDefaultInstance()
-          : duration_;
-    }
-    /** <code>.StageDuration duration = 9;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDurationOrBuilder
-        getDurationOrBuilder() {
-      return getDuration();
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -10107,12 +9687,6 @@ public final class LoadingPlanModels {
       for (int i = 0; i < stageDurations_.size(); i++) {
         output.writeMessage(7, stageDurations_.get(i));
       }
-      if (offset_ != null) {
-        output.writeMessage(8, getOffset());
-      }
-      if (duration_ != null) {
-        output.writeMessage(9, getDuration());
-      }
       unknownFields.writeTo(output);
     }
 
@@ -10143,12 +9717,6 @@ public final class LoadingPlanModels {
       for (int i = 0; i < stageDurations_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(7, stageDurations_.get(i));
       }
-      if (offset_ != null) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(8, getOffset());
-      }
-      if (duration_ != null) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(9, getDuration());
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -10173,14 +9741,6 @@ public final class LoadingPlanModels {
       if (getTrackGradeSwitch() != other.getTrackGradeSwitch()) return false;
       if (!getStageOffsetsList().equals(other.getStageOffsetsList())) return false;
       if (!getStageDurationsList().equals(other.getStageDurationsList())) return false;
-      if (hasOffset() != other.hasOffset()) return false;
-      if (hasOffset()) {
-        if (!getOffset().equals(other.getOffset())) return false;
-      }
-      if (hasDuration() != other.hasDuration()) return false;
-      if (hasDuration()) {
-        if (!getDuration().equals(other.getDuration())) return false;
-      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -10209,14 +9769,6 @@ public final class LoadingPlanModels {
       if (getStageDurationsCount() > 0) {
         hash = (37 * hash) + STAGEDURATIONS_FIELD_NUMBER;
         hash = (53 * hash) + getStageDurationsList().hashCode();
-      }
-      if (hasOffset()) {
-        hash = (37 * hash) + OFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + getOffset().hashCode();
-      }
-      if (hasDuration()) {
-        hash = (37 * hash) + DURATION_FIELD_NUMBER;
-        hash = (53 * hash) + getDuration().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -10386,18 +9938,6 @@ public final class LoadingPlanModels {
         } else {
           stageDurationsBuilder_.clear();
         }
-        if (offsetBuilder_ == null) {
-          offset_ = null;
-        } else {
-          offset_ = null;
-          offsetBuilder_ = null;
-        }
-        if (durationBuilder_ == null) {
-          duration_ = null;
-        } else {
-          duration_ = null;
-          durationBuilder_ = null;
-        }
         return this;
       }
 
@@ -10452,16 +9992,6 @@ public final class LoadingPlanModels {
           result.stageDurations_ = stageDurations_;
         } else {
           result.stageDurations_ = stageDurationsBuilder_.build();
-        }
-        if (offsetBuilder_ == null) {
-          result.offset_ = offset_;
-        } else {
-          result.offset_ = offsetBuilder_.build();
-        }
-        if (durationBuilder_ == null) {
-          result.duration_ = duration_;
-        } else {
-          result.duration_ = durationBuilder_.build();
         }
         onBuilt();
         return result;
@@ -10587,12 +10117,6 @@ public final class LoadingPlanModels {
               stageDurationsBuilder_.addAllMessages(other.stageDurations_);
             }
           }
-        }
-        if (other.hasOffset()) {
-          mergeOffset(other.getOffset());
-        }
-        if (other.hasDuration()) {
-          mergeDuration(other.getDuration());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -11572,258 +11096,6 @@ public final class LoadingPlanModels {
           stageDurations_ = null;
         }
         return stageDurationsBuilder_;
-      }
-
-      private com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets offset_;
-      private com.google.protobuf.SingleFieldBuilderV3<
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets.Builder,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsetsOrBuilder>
-          offsetBuilder_;
-      /**
-       * <code>.StageOffsets offset = 8;</code>
-       *
-       * @return Whether the offset field is set.
-       */
-      public boolean hasOffset() {
-        return offsetBuilder_ != null || offset_ != null;
-      }
-      /**
-       * <code>.StageOffsets offset = 8;</code>
-       *
-       * @return The offset.
-       */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets getOffset() {
-        if (offsetBuilder_ == null) {
-          return offset_ == null
-              ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets
-                  .getDefaultInstance()
-              : offset_;
-        } else {
-          return offsetBuilder_.getMessage();
-        }
-      }
-      /** <code>.StageOffsets offset = 8;</code> */
-      public Builder setOffset(
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets value) {
-        if (offsetBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          offset_ = value;
-          onChanged();
-        } else {
-          offsetBuilder_.setMessage(value);
-        }
-
-        return this;
-      }
-      /** <code>.StageOffsets offset = 8;</code> */
-      public Builder setOffset(
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets.Builder
-              builderForValue) {
-        if (offsetBuilder_ == null) {
-          offset_ = builderForValue.build();
-          onChanged();
-        } else {
-          offsetBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /** <code>.StageOffsets offset = 8;</code> */
-      public Builder mergeOffset(
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets value) {
-        if (offsetBuilder_ == null) {
-          if (offset_ != null) {
-            offset_ =
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets.newBuilder(
-                        offset_)
-                    .mergeFrom(value)
-                    .buildPartial();
-          } else {
-            offset_ = value;
-          }
-          onChanged();
-        } else {
-          offsetBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /** <code>.StageOffsets offset = 8;</code> */
-      public Builder clearOffset() {
-        if (offsetBuilder_ == null) {
-          offset_ = null;
-          onChanged();
-        } else {
-          offset_ = null;
-          offsetBuilder_ = null;
-        }
-
-        return this;
-      }
-      /** <code>.StageOffsets offset = 8;</code> */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets.Builder
-          getOffsetBuilder() {
-
-        onChanged();
-        return getOffsetFieldBuilder().getBuilder();
-      }
-      /** <code>.StageOffsets offset = 8;</code> */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsetsOrBuilder
-          getOffsetOrBuilder() {
-        if (offsetBuilder_ != null) {
-          return offsetBuilder_.getMessageOrBuilder();
-        } else {
-          return offset_ == null
-              ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets
-                  .getDefaultInstance()
-              : offset_;
-        }
-      }
-      /** <code>.StageOffsets offset = 8;</code> */
-      private com.google.protobuf.SingleFieldBuilderV3<
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets.Builder,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsetsOrBuilder>
-          getOffsetFieldBuilder() {
-        if (offsetBuilder_ == null) {
-          offsetBuilder_ =
-              new com.google.protobuf.SingleFieldBuilderV3<
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets,
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets.Builder,
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsetsOrBuilder>(
-                  getOffset(), getParentForChildren(), isClean());
-          offset_ = null;
-        }
-        return offsetBuilder_;
-      }
-
-      private com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration duration_;
-      private com.google.protobuf.SingleFieldBuilderV3<
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDurationOrBuilder>
-          durationBuilder_;
-      /**
-       * <code>.StageDuration duration = 9;</code>
-       *
-       * @return Whether the duration field is set.
-       */
-      public boolean hasDuration() {
-        return durationBuilder_ != null || duration_ != null;
-      }
-      /**
-       * <code>.StageDuration duration = 9;</code>
-       *
-       * @return The duration.
-       */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration getDuration() {
-        if (durationBuilder_ == null) {
-          return duration_ == null
-              ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration
-                  .getDefaultInstance()
-              : duration_;
-        } else {
-          return durationBuilder_.getMessage();
-        }
-      }
-      /** <code>.StageDuration duration = 9;</code> */
-      public Builder setDuration(
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration value) {
-        if (durationBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          duration_ = value;
-          onChanged();
-        } else {
-          durationBuilder_.setMessage(value);
-        }
-
-        return this;
-      }
-      /** <code>.StageDuration duration = 9;</code> */
-      public Builder setDuration(
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder
-              builderForValue) {
-        if (durationBuilder_ == null) {
-          duration_ = builderForValue.build();
-          onChanged();
-        } else {
-          durationBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /** <code>.StageDuration duration = 9;</code> */
-      public Builder mergeDuration(
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration value) {
-        if (durationBuilder_ == null) {
-          if (duration_ != null) {
-            duration_ =
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder(
-                        duration_)
-                    .mergeFrom(value)
-                    .buildPartial();
-          } else {
-            duration_ = value;
-          }
-          onChanged();
-        } else {
-          durationBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /** <code>.StageDuration duration = 9;</code> */
-      public Builder clearDuration() {
-        if (durationBuilder_ == null) {
-          duration_ = null;
-          onChanged();
-        } else {
-          duration_ = null;
-          durationBuilder_ = null;
-        }
-
-        return this;
-      }
-      /** <code>.StageDuration duration = 9;</code> */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder
-          getDurationBuilder() {
-
-        onChanged();
-        return getDurationFieldBuilder().getBuilder();
-      }
-      /** <code>.StageDuration duration = 9;</code> */
-      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDurationOrBuilder
-          getDurationOrBuilder() {
-        if (durationBuilder_ != null) {
-          return durationBuilder_.getMessageOrBuilder();
-        } else {
-          return duration_ == null
-              ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration
-                  .getDefaultInstance()
-              : duration_;
-        }
-      }
-      /** <code>.StageDuration duration = 9;</code> */
-      private com.google.protobuf.SingleFieldBuilderV3<
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDurationOrBuilder>
-          getDurationFieldBuilder() {
-        if (durationBuilder_ == null) {
-          durationBuilder_ =
-              new com.google.protobuf.SingleFieldBuilderV3<
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration,
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder,
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDurationOrBuilder>(
-                  getDuration(), getParentForChildren(), isClean());
-          duration_ = null;
-        }
-        return durationBuilder_;
       }
 
       @java.lang.Override
@@ -13911,19 +13183,59 @@ public final class LoadingPlanModels {
       // @@protoc_insertion_point(interface_extends:LoadingDelay)
       com.google.protobuf.MessageOrBuilder {
 
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons>
         getReasonsList();
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons getReasons(int index);
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     int getReasonsCount();
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     java.util.List<
             ? extends
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasonsOrBuilder>
         getReasonsOrBuilderList();
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasonsOrBuilder
         getReasonsOrBuilder(int index);
 
@@ -13983,21 +13295,61 @@ public final class LoadingPlanModels {
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelaysOrBuilder
         getDelaysOrBuilder(int index);
 
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos>
         getCargosList();
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos getCargos(
         int index);
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     int getCargosCount();
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     java.util.List<
             ? extends
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels
                     .LoadingDelayCargosOrBuilder>
         getCargosOrBuilderList();
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargosOrBuilder
         getCargosOrBuilder(int index);
   }
@@ -14149,28 +13501,68 @@ public final class LoadingPlanModels {
     public static final int REASONS_FIELD_NUMBER = 1;
     private java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons>
         reasons_;
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons>
         getReasonsList() {
       return reasons_;
     }
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     public java.util.List<
             ? extends
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasonsOrBuilder>
         getReasonsOrBuilderList() {
       return reasons_;
     }
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     public int getReasonsCount() {
       return reasons_.size();
     }
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons getReasons(
         int index) {
       return reasons_.get(index);
     }
-    /** <code>repeated .DelayReasons reasons = 1;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * master data
+     * </pre>
+     *
+     * <code>repeated .DelayReasons reasons = 1;</code>
+     */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasonsOrBuilder
         getReasonsOrBuilder(int index) {
       return reasons_.get(index);
@@ -14250,13 +13642,29 @@ public final class LoadingPlanModels {
     private java.util.List<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos>
         cargos_;
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     public java.util.List<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos>
         getCargosList() {
       return cargos_;
     }
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     public java.util.List<
             ? extends
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels
@@ -14264,16 +13672,40 @@ public final class LoadingPlanModels {
         getCargosOrBuilderList() {
       return cargos_;
     }
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     public int getCargosCount() {
       return cargos_.size();
     }
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos getCargos(
         int index) {
       return cargos_.get(index);
     }
-    /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * cargo data
+     * </pre>
+     *
+     * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+     */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargosOrBuilder
         getCargosOrBuilder(int index) {
       return cargos_.get(index);
@@ -14782,7 +14214,15 @@ public final class LoadingPlanModels {
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasonsOrBuilder>
           reasonsBuilder_;
 
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons>
           getReasonsList() {
         if (reasonsBuilder_ == null) {
@@ -14791,7 +14231,15 @@ public final class LoadingPlanModels {
           return reasonsBuilder_.getMessageList();
         }
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public int getReasonsCount() {
         if (reasonsBuilder_ == null) {
           return reasons_.size();
@@ -14799,7 +14247,15 @@ public final class LoadingPlanModels {
           return reasonsBuilder_.getCount();
         }
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons getReasons(
           int index) {
         if (reasonsBuilder_ == null) {
@@ -14808,7 +14264,15 @@ public final class LoadingPlanModels {
           return reasonsBuilder_.getMessage(index);
         }
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder setReasons(
           int index, com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons value) {
         if (reasonsBuilder_ == null) {
@@ -14823,7 +14287,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder setReasons(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons.Builder
@@ -14837,7 +14309,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder addReasons(
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons value) {
         if (reasonsBuilder_ == null) {
@@ -14852,7 +14332,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder addReasons(
           int index, com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons value) {
         if (reasonsBuilder_ == null) {
@@ -14867,7 +14355,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder addReasons(
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons.Builder
               builderForValue) {
@@ -14880,7 +14376,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder addReasons(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons.Builder
@@ -14894,7 +14398,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder addAllReasons(
           java.lang.Iterable<
                   ? extends com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons>
@@ -14908,7 +14420,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder clearReasons() {
         if (reasonsBuilder_ == null) {
           reasons_ = java.util.Collections.emptyList();
@@ -14919,7 +14439,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public Builder removeReasons(int index) {
         if (reasonsBuilder_ == null) {
           ensureReasonsIsMutable();
@@ -14930,12 +14458,28 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons.Builder
           getReasonsBuilder(int index) {
         return getReasonsFieldBuilder().getBuilder(index);
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasonsOrBuilder
           getReasonsOrBuilder(int index) {
         if (reasonsBuilder_ == null) {
@@ -14944,7 +14488,15 @@ public final class LoadingPlanModels {
           return reasonsBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public java.util.List<
               ? extends
                   com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasonsOrBuilder>
@@ -14955,7 +14507,15 @@ public final class LoadingPlanModels {
           return java.util.Collections.unmodifiableList(reasons_);
         }
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons.Builder
           addReasonsBuilder() {
         return getReasonsFieldBuilder()
@@ -14963,7 +14523,15 @@ public final class LoadingPlanModels {
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons
                     .getDefaultInstance());
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons.Builder
           addReasonsBuilder(int index) {
         return getReasonsFieldBuilder()
@@ -14972,7 +14540,15 @@ public final class LoadingPlanModels {
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons
                     .getDefaultInstance());
       }
-      /** <code>repeated .DelayReasons reasons = 1;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * master data
+       * </pre>
+       *
+       * <code>repeated .DelayReasons reasons = 1;</code>
+       */
       public java.util.List<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons.Builder>
           getReasonsBuilderList() {
@@ -15395,7 +14971,15 @@ public final class LoadingPlanModels {
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargosOrBuilder>
           cargosBuilder_;
 
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public java.util.List<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos>
           getCargosList() {
@@ -15405,7 +14989,15 @@ public final class LoadingPlanModels {
           return cargosBuilder_.getMessageList();
         }
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public int getCargosCount() {
         if (cargosBuilder_ == null) {
           return cargos_.size();
@@ -15413,7 +15005,15 @@ public final class LoadingPlanModels {
           return cargosBuilder_.getCount();
         }
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos getCargos(
           int index) {
         if (cargosBuilder_ == null) {
@@ -15422,7 +15022,15 @@ public final class LoadingPlanModels {
           return cargosBuilder_.getMessage(index);
         }
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder setCargos(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos value) {
@@ -15438,7 +15046,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder setCargos(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos.Builder
@@ -15452,7 +15068,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder addCargos(
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos value) {
         if (cargosBuilder_ == null) {
@@ -15467,7 +15091,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder addCargos(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos value) {
@@ -15483,7 +15115,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder addCargos(
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos.Builder
               builderForValue) {
@@ -15496,7 +15136,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder addCargos(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos.Builder
@@ -15510,7 +15158,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder addAllCargos(
           java.lang.Iterable<
                   ? extends
@@ -15525,7 +15181,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder clearCargos() {
         if (cargosBuilder_ == null) {
           cargos_ = java.util.Collections.emptyList();
@@ -15536,7 +15200,15 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public Builder removeCargos(int index) {
         if (cargosBuilder_ == null) {
           ensureCargosIsMutable();
@@ -15547,12 +15219,28 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos.Builder
           getCargosBuilder(int index) {
         return getCargosFieldBuilder().getBuilder(index);
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargosOrBuilder
           getCargosOrBuilder(int index) {
         if (cargosBuilder_ == null) {
@@ -15561,7 +15249,15 @@ public final class LoadingPlanModels {
           return cargosBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public java.util.List<
               ? extends
                   com.cpdss.common.generated.loading_plan.LoadingPlanModels
@@ -15573,7 +15269,15 @@ public final class LoadingPlanModels {
           return java.util.Collections.unmodifiableList(cargos_);
         }
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos.Builder
           addCargosBuilder() {
         return getCargosFieldBuilder()
@@ -15581,7 +15285,15 @@ public final class LoadingPlanModels {
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos
                     .getDefaultInstance());
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos.Builder
           addCargosBuilder(int index) {
         return getCargosFieldBuilder()
@@ -15590,7 +15302,15 @@ public final class LoadingPlanModels {
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos
                     .getDefaultInstance());
       }
-      /** <code>repeated .LoadingDelayCargos cargos = 3;</code> */
+      /**
+       *
+       *
+       * <pre>
+       * cargo data
+       * </pre>
+       *
+       * <code>repeated .LoadingDelayCargos cargos = 3;</code>
+       */
       public java.util.List<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelayCargos.Builder>
           getCargosBuilderList() {
@@ -16378,6 +16098,13 @@ public final class LoadingPlanModels {
      * @return The bytes for duration.
      */
     com.google.protobuf.ByteString getDurationBytes();
+
+    /**
+     * <code>int64 cargoId = 5;</code>
+     *
+     * @return The cargoId.
+     */
+    long getCargoId();
   }
   /** Protobuf type {@code LoadingDelays} */
   public static final class LoadingDelays extends com.google.protobuf.GeneratedMessageV3
@@ -16443,6 +16170,11 @@ public final class LoadingPlanModels {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 duration_ = s;
+                break;
+              }
+            case 40:
+              {
+                cargoId_ = input.readInt64();
                 break;
               }
             default:
@@ -16548,6 +16280,17 @@ public final class LoadingPlanModels {
       }
     }
 
+    public static final int CARGOID_FIELD_NUMBER = 5;
+    private long cargoId_;
+    /**
+     * <code>int64 cargoId = 5;</code>
+     *
+     * @return The cargoId.
+     */
+    public long getCargoId() {
+      return cargoId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -16574,6 +16317,9 @@ public final class LoadingPlanModels {
       if (!getDurationBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, duration_);
       }
+      if (cargoId_ != 0L) {
+        output.writeInt64(5, cargoId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -16594,6 +16340,9 @@ public final class LoadingPlanModels {
       }
       if (!getDurationBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, duration_);
+      }
+      if (cargoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, cargoId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -16616,6 +16365,7 @@ public final class LoadingPlanModels {
       if (getLoadingInfoId() != other.getLoadingInfoId()) return false;
       if (getReasonForDelayId() != other.getReasonForDelayId()) return false;
       if (!getDuration().equals(other.getDuration())) return false;
+      if (getCargoId() != other.getCargoId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -16635,6 +16385,8 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getReasonForDelayId());
       hash = (37 * hash) + DURATION_FIELD_NUMBER;
       hash = (53 * hash) + getDuration().hashCode();
+      hash = (37 * hash) + CARGOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -16786,6 +16538,8 @@ public final class LoadingPlanModels {
 
         duration_ = "";
 
+        cargoId_ = 0L;
+
         return this;
       }
 
@@ -16821,6 +16575,7 @@ public final class LoadingPlanModels {
         result.loadingInfoId_ = loadingInfoId_;
         result.reasonForDelayId_ = reasonForDelayId_;
         result.duration_ = duration_;
+        result.cargoId_ = cargoId_;
         onBuilt();
         return result;
       }
@@ -16889,6 +16644,9 @@ public final class LoadingPlanModels {
         if (!other.getDuration().isEmpty()) {
           duration_ = other.duration_;
           onChanged();
+        }
+        if (other.getCargoId() != 0L) {
+          setCargoId(other.getCargoId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -17093,6 +16851,39 @@ public final class LoadingPlanModels {
         checkByteStringIsUtf8(value);
 
         duration_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long cargoId_;
+      /**
+       * <code>int64 cargoId = 5;</code>
+       *
+       * @return The cargoId.
+       */
+      public long getCargoId() {
+        return cargoId_;
+      }
+      /**
+       * <code>int64 cargoId = 5;</code>
+       *
+       * @param value The cargoId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoId(long value) {
+
+        cargoId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 cargoId = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoId() {
+
+        cargoId_ = 0L;
         onChanged();
         return this;
       }
@@ -18397,30 +18188,30 @@ public final class LoadingPlanModels {
     com.google.protobuf.ByteString getQuantityBytes();
 
     /**
-     * <code>string fillingRation = 10;</code>
+     * <code>string fillingRatio = 10;</code>
      *
-     * @return The fillingRation.
+     * @return The fillingRatio.
      */
-    java.lang.String getFillingRation();
+    java.lang.String getFillingRatio();
     /**
-     * <code>string fillingRation = 10;</code>
+     * <code>string fillingRatio = 10;</code>
      *
-     * @return The bytes for fillingRation.
+     * @return The bytes for fillingRatio.
      */
-    com.google.protobuf.ByteString getFillingRationBytes();
+    com.google.protobuf.ByteString getFillingRatioBytes();
 
     /**
-     * <code>string reason = 11;</code>
+     * <code>string remark = 11;</code>
      *
-     * @return The reason.
+     * @return The remark.
      */
-    java.lang.String getReason();
+    java.lang.String getRemark();
     /**
-     * <code>string reason = 11;</code>
+     * <code>string remark = 11;</code>
      *
-     * @return The bytes for reason.
+     * @return The bytes for remark.
      */
-    com.google.protobuf.ByteString getReasonBytes();
+    com.google.protobuf.ByteString getRemarkBytes();
 
     /**
      * <code>int64 cargoId = 12;</code>
@@ -18446,8 +18237,8 @@ public final class LoadingPlanModels {
       colourCode_ = "";
       ullage_ = "";
       quantity_ = "";
-      fillingRation_ = "";
-      reason_ = "";
+      fillingRatio_ = "";
+      remark_ = "";
     }
 
     @java.lang.Override
@@ -18538,14 +18329,14 @@ public final class LoadingPlanModels {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                fillingRation_ = s;
+                fillingRatio_ = s;
                 break;
               }
             case 90:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                reason_ = s;
+                remark_ = s;
                 break;
               }
             case 96:
@@ -18813,70 +18604,70 @@ public final class LoadingPlanModels {
       }
     }
 
-    public static final int FILLINGRATION_FIELD_NUMBER = 10;
-    private volatile java.lang.Object fillingRation_;
+    public static final int FILLINGRATIO_FIELD_NUMBER = 10;
+    private volatile java.lang.Object fillingRatio_;
     /**
-     * <code>string fillingRation = 10;</code>
+     * <code>string fillingRatio = 10;</code>
      *
-     * @return The fillingRation.
+     * @return The fillingRatio.
      */
-    public java.lang.String getFillingRation() {
-      java.lang.Object ref = fillingRation_;
+    public java.lang.String getFillingRatio() {
+      java.lang.Object ref = fillingRatio_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        fillingRation_ = s;
+        fillingRatio_ = s;
         return s;
       }
     }
     /**
-     * <code>string fillingRation = 10;</code>
+     * <code>string fillingRatio = 10;</code>
      *
-     * @return The bytes for fillingRation.
+     * @return The bytes for fillingRatio.
      */
-    public com.google.protobuf.ByteString getFillingRationBytes() {
-      java.lang.Object ref = fillingRation_;
+    public com.google.protobuf.ByteString getFillingRatioBytes() {
+      java.lang.Object ref = fillingRatio_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        fillingRation_ = b;
+        fillingRatio_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int REASON_FIELD_NUMBER = 11;
-    private volatile java.lang.Object reason_;
+    public static final int REMARK_FIELD_NUMBER = 11;
+    private volatile java.lang.Object remark_;
     /**
-     * <code>string reason = 11;</code>
+     * <code>string remark = 11;</code>
      *
-     * @return The reason.
+     * @return The remark.
      */
-    public java.lang.String getReason() {
-      java.lang.Object ref = reason_;
+    public java.lang.String getRemark() {
+      java.lang.Object ref = remark_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        reason_ = s;
+        remark_ = s;
         return s;
       }
     }
     /**
-     * <code>string reason = 11;</code>
+     * <code>string remark = 11;</code>
      *
-     * @return The bytes for reason.
+     * @return The bytes for remark.
      */
-    public com.google.protobuf.ByteString getReasonBytes() {
-      java.lang.Object ref = reason_;
+    public com.google.protobuf.ByteString getRemarkBytes() {
+      java.lang.Object ref = remark_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        reason_ = b;
+        remark_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -18935,11 +18726,11 @@ public final class LoadingPlanModels {
       if (!getQuantityBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, quantity_);
       }
-      if (!getFillingRationBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, fillingRation_);
+      if (!getFillingRatioBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, fillingRatio_);
       }
-      if (!getReasonBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, reason_);
+      if (!getRemarkBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, remark_);
       }
       if (cargoId_ != 0L) {
         output.writeInt64(12, cargoId_);
@@ -18980,11 +18771,11 @@ public final class LoadingPlanModels {
       if (!getQuantityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, quantity_);
       }
-      if (!getFillingRationBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, fillingRation_);
+      if (!getFillingRatioBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, fillingRatio_);
       }
-      if (!getReasonBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, reason_);
+      if (!getRemarkBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, remark_);
       }
       if (cargoId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, cargoId_);
@@ -19015,8 +18806,8 @@ public final class LoadingPlanModels {
       if (!getColourCode().equals(other.getColourCode())) return false;
       if (!getUllage().equals(other.getUllage())) return false;
       if (!getQuantity().equals(other.getQuantity())) return false;
-      if (!getFillingRation().equals(other.getFillingRation())) return false;
-      if (!getReason().equals(other.getReason())) return false;
+      if (!getFillingRatio().equals(other.getFillingRatio())) return false;
+      if (!getRemark().equals(other.getRemark())) return false;
       if (getCargoId() != other.getCargoId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
@@ -19047,10 +18838,10 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getUllage().hashCode();
       hash = (37 * hash) + QUANTITY_FIELD_NUMBER;
       hash = (53 * hash) + getQuantity().hashCode();
-      hash = (37 * hash) + FILLINGRATION_FIELD_NUMBER;
-      hash = (53 * hash) + getFillingRation().hashCode();
-      hash = (37 * hash) + REASON_FIELD_NUMBER;
-      hash = (53 * hash) + getReason().hashCode();
+      hash = (37 * hash) + FILLINGRATIO_FIELD_NUMBER;
+      hash = (53 * hash) + getFillingRatio().hashCode();
+      hash = (37 * hash) + REMARK_FIELD_NUMBER;
+      hash = (53 * hash) + getRemark().hashCode();
       hash = (37 * hash) + CARGOID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
       hash = (29 * hash) + unknownFields.hashCode();
@@ -19219,9 +19010,9 @@ public final class LoadingPlanModels {
 
         quantity_ = "";
 
-        fillingRation_ = "";
+        fillingRatio_ = "";
 
-        reason_ = "";
+        remark_ = "";
 
         cargoId_ = 0L;
 
@@ -19265,8 +19056,8 @@ public final class LoadingPlanModels {
         result.colourCode_ = colourCode_;
         result.ullage_ = ullage_;
         result.quantity_ = quantity_;
-        result.fillingRation_ = fillingRation_;
-        result.reason_ = reason_;
+        result.fillingRatio_ = fillingRatio_;
+        result.remark_ = remark_;
         result.cargoId_ = cargoId_;
         onBuilt();
         return result;
@@ -19357,12 +19148,12 @@ public final class LoadingPlanModels {
           quantity_ = other.quantity_;
           onChanged();
         }
-        if (!other.getFillingRation().isEmpty()) {
-          fillingRation_ = other.fillingRation_;
+        if (!other.getFillingRatio().isEmpty()) {
+          fillingRatio_ = other.fillingRatio_;
           onChanged();
         }
-        if (!other.getReason().isEmpty()) {
-          reason_ = other.reason_;
+        if (!other.getRemark().isEmpty()) {
+          remark_ = other.remark_;
           onChanged();
         }
         if (other.getCargoId() != 0L) {
@@ -19930,154 +19721,154 @@ public final class LoadingPlanModels {
         return this;
       }
 
-      private java.lang.Object fillingRation_ = "";
+      private java.lang.Object fillingRatio_ = "";
       /**
-       * <code>string fillingRation = 10;</code>
+       * <code>string fillingRatio = 10;</code>
        *
-       * @return The fillingRation.
+       * @return The fillingRatio.
        */
-      public java.lang.String getFillingRation() {
-        java.lang.Object ref = fillingRation_;
+      public java.lang.String getFillingRatio() {
+        java.lang.Object ref = fillingRatio_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          fillingRation_ = s;
+          fillingRatio_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string fillingRation = 10;</code>
+       * <code>string fillingRatio = 10;</code>
        *
-       * @return The bytes for fillingRation.
+       * @return The bytes for fillingRatio.
        */
-      public com.google.protobuf.ByteString getFillingRationBytes() {
-        java.lang.Object ref = fillingRation_;
+      public com.google.protobuf.ByteString getFillingRatioBytes() {
+        java.lang.Object ref = fillingRatio_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          fillingRation_ = b;
+          fillingRatio_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string fillingRation = 10;</code>
+       * <code>string fillingRatio = 10;</code>
        *
-       * @param value The fillingRation to set.
+       * @param value The fillingRatio to set.
        * @return This builder for chaining.
        */
-      public Builder setFillingRation(java.lang.String value) {
+      public Builder setFillingRatio(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        fillingRation_ = value;
+        fillingRatio_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string fillingRation = 10;</code>
+       * <code>string fillingRatio = 10;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearFillingRation() {
+      public Builder clearFillingRatio() {
 
-        fillingRation_ = getDefaultInstance().getFillingRation();
+        fillingRatio_ = getDefaultInstance().getFillingRatio();
         onChanged();
         return this;
       }
       /**
-       * <code>string fillingRation = 10;</code>
+       * <code>string fillingRatio = 10;</code>
        *
-       * @param value The bytes for fillingRation to set.
+       * @param value The bytes for fillingRatio to set.
        * @return This builder for chaining.
        */
-      public Builder setFillingRationBytes(com.google.protobuf.ByteString value) {
+      public Builder setFillingRatioBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        fillingRation_ = value;
+        fillingRatio_ = value;
         onChanged();
         return this;
       }
 
-      private java.lang.Object reason_ = "";
+      private java.lang.Object remark_ = "";
       /**
-       * <code>string reason = 11;</code>
+       * <code>string remark = 11;</code>
        *
-       * @return The reason.
+       * @return The remark.
        */
-      public java.lang.String getReason() {
-        java.lang.Object ref = reason_;
+      public java.lang.String getRemark() {
+        java.lang.Object ref = remark_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          reason_ = s;
+          remark_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string reason = 11;</code>
+       * <code>string remark = 11;</code>
        *
-       * @return The bytes for reason.
+       * @return The bytes for remark.
        */
-      public com.google.protobuf.ByteString getReasonBytes() {
-        java.lang.Object ref = reason_;
+      public com.google.protobuf.ByteString getRemarkBytes() {
+        java.lang.Object ref = remark_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          reason_ = b;
+          remark_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string reason = 11;</code>
+       * <code>string remark = 11;</code>
        *
-       * @param value The reason to set.
+       * @param value The remark to set.
        * @return This builder for chaining.
        */
-      public Builder setReason(java.lang.String value) {
+      public Builder setRemark(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        reason_ = value;
+        remark_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string reason = 11;</code>
+       * <code>string remark = 11;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearReason() {
+      public Builder clearRemark() {
 
-        reason_ = getDefaultInstance().getReason();
+        remark_ = getDefaultInstance().getRemark();
         onChanged();
         return this;
       }
       /**
-       * <code>string reason = 11;</code>
+       * <code>string remark = 11;</code>
        *
-       * @param value The bytes for reason to set.
+       * @param value The bytes for remark to set.
        * @return This builder for chaining.
        */
-      public Builder setReasonBytes(com.google.protobuf.ByteString value) {
+      public Builder setRemarkBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        reason_ = value;
+        remark_ = value;
         onChanged();
         return this;
       }
@@ -43538,129 +43329,127 @@ public final class LoadingPlanModels {
           + "\033\n\023maxDeBallastingRate\030\006 \001(\t\022\037\n\027noticeTi"
           + "meRateReduction\030\007 \001(\t\022\035\n\025noticeTimeStopL"
           + "oading\030\010 \001(\t\022\034\n\024lineContentRemaining\030\t \001"
-          + "(\t\"\201\002\n\rLoadingBerths\022\n\n\002id\030\001 \001(\003\022\025\n\rload"
+          + "(\t\"\313\001\n\rLoadingBerths\022\n\n\002id\030\001 \001(\003\022\025\n\rload"
           + "ingInfoId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\r\n\005dept"
           + "h\030\004 \001(\t\022\032\n\022seaDraftLimitation\030\005 \001(\t\022\032\n\022a"
           + "irDraftLimitation\030\006 \001(\t\022\031\n\021maxManifoldHe"
           + "ight\030\007 \001(\t\022$\n\034specialRegulationRestricti"
-          + "on\030\010 \001(\t\022\033\n\023itemsToBeAgreedWith\030\t \001(\t\022\027\n"
-          + "\017hoseConnections\030\n \001(\t\"\213\002\n\rLoadingStages"
-          + "\022\n\n\002id\030\001 \001(\003\022\023\n\013stageOffset\030\002 \001(\005\022\025\n\rsta"
-          + "geDuration\030\003 \001(\005\022\032\n\022trackStartEndStage\030\004"
-          + " \001(\010\022\030\n\020trackGradeSwitch\030\005 \001(\010\022#\n\014stageO"
-          + "ffsets\030\006 \003(\0132\r.StageOffsets\022&\n\016stageDura"
-          + "tions\030\007 \003(\0132\016.StageDuration\022\035\n\006offset\030\010 "
-          + "\001(\0132\r.StageOffsets\022 \n\010duration\030\t \001(\0132\016.S"
-          + "tageDuration\"2\n\014StageOffsets\022\n\n\002id\030\001 \001(\003"
-          + "\022\026\n\016stageOffsetVal\030\002 \001(\003\"-\n\rStageDuratio"
-          + "n\022\n\n\002id\030\001 \001(\003\022\020\n\010duration\030\002 \001(\003\"[\n\024Loadi"
-          + "ngMachinesInUse\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingIn"
-          + "foId\030\002 \001(\003\022\016\n\006pumpId\030\003 \001(\003\022\020\n\010capacity\030\004"
-          + " \001(\t\"s\n\014LoadingDelay\022\036\n\007reasons\030\001 \003(\0132\r."
-          + "DelayReasons\022\036\n\006delays\030\002 \003(\0132\016.LoadingDe"
-          + "lays\022#\n\006cargos\030\003 \003(\0132\023.LoadingDelayCargo"
-          + "s\"*\n\014DelayReasons\022\n\n\002id\030\001 \001(\003\022\016\n\006reason\030"
-          + "\002 \001(\t\"^\n\rLoadingDelays\022\n\n\002id\030\001 \001(\003\022\025\n\rlo"
-          + "adingInfoId\030\002 \001(\003\022\030\n\020reasonForDelayId\030\003 "
-          + "\001(\003\022\020\n\010duration\030\004 \001(\t\"u\n\022LoadingDelayCar"
-          + "gos\022\017\n\007cargoId\030\001 \001(\003\022\022\n\ncolourCode\030\002 \001(\t"
-          + "\022\021\n\tcargoName\030\003 \001(\t\022\025\n\rcargoShorName\030\004 \001"
-          + "(\t\022\020\n\010quantity\030\005 \001(\t\"\367\001\n\021LoadingToppingO"
-          + "ff\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfoId\030\002 \001(\003\022\023\n"
-          + "\013orderNumber\030\003 \001(\003\022\016\n\006tankId\030\004 \001(\003\022\021\n\tca"
-          + "rgoName\030\005 \001(\t\022\031\n\021cargoAbbreviation\030\006 \001(\t"
-          + "\022\022\n\ncolourCode\030\007 \001(\t\022\016\n\006ullage\030\010 \001(\t\022\020\n\010"
-          + "quantity\030\t \001(\t\022\025\n\rfillingRation\030\n \001(\t\022\016\n"
-          + "\006reason\030\013 \001(\t\022\017\n\007cargoId\030\014 \001(\003\"r\n\030Loadin"
-          + "gInformationDetail\022\031\n\021loadablePatternId\030"
-          + "\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021synopticalTable"
-          + "Id\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\"\314\002\n\031LoadableP"
-          + "lanBallastDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcolorCod"
-          + "e\030\002 \001(\t\022\026\n\016correctedLevel\030\003 \001(\t\022\030\n\020corre"
-          + "ctionFactor\030\004 \001(\t\022\022\n\ncubicMeter\030\005 \001(\t\022\017\n"
-          + "\007inertia\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\022\013\n\003lcg\030"
-          + "\010 \001(\t\022\031\n\021loadablePatternId\030\t \001(\003\022\021\n\tmetr"
-          + "icTon\030\n \001(\t\022\022\n\npercentage\030\013 \001(\t\022\020\n\010rdgLe"
-          + "vel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t\022\016\n\006tankId\030\016 \001(\003\022\020\n"
-          + "\010tankName\030\017 \001(\t\022\013\n\003tcg\030\020 \001(\t\022\013\n\003vcg\030\021 \001("
-          + "\t\"\330\005\n\033LoadablePlanCommingleDetail\022\n\n\002id\030"
-          + "\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n\022cargo1Abbreviation"
-          + "\030\003 \001(\t\022\025\n\rcargo1Bbls60f\030\004 \001(\t\022\025\n\rcargo1B"
-          + "blsDbs\030\005 \001(\t\022\020\n\010cargo1Kl\030\006 \001(\t\022\020\n\010cargo1"
-          + "Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030\010 \001(\t\022\030\n\020cargo1Perc"
-          + "entage\030\t \001(\t\022\032\n\022cargo2Abbreviation\030\n \001(\t"
-          + "\022\025\n\rcargo2Bbls60f\030\013 \001(\t\022\025\n\rcargo2BblsDbs"
-          + "\030\014 \001(\t\022\020\n\010cargo2Kl\030\r \001(\t\022\020\n\010cargo2Lt\030\016 \001"
-          + "(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022\030\n\020cargo2Percentage"
-          + "\030\020 \001(\t\022\027\n\017correctedUllage\030\021 \001(\t\022\030\n\020corre"
-          + "ctionFactor\030\022 \001(\t\022\024\n\014fillingRatio\030\023 \001(\t\022"
-          + "\r\n\005grade\030\024 \001(\t\022\020\n\010isActive\030\025 \001(\010\022\031\n\021load"
-          + "ablePatternId\030\026 \001(\003\022\026\n\016loadablePlanId\030\027 "
-          + "\001(\003\022\024\n\014loadingOrder\030\030 \001(\005\022\025\n\rorderQuanti"
-          + "ty\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\020\n\010quantity\030\033"
-          + " \001(\t\022\021\n\trdgUllage\030\034 \001(\t\022\024\n\014slopQuantity\030"
-          + "\035 \001(\t\022\016\n\006tankId\030\036 \001(\003\022\020\n\010tankName\030\037 \001(\t\022"
-          + "\023\n\013temperature\030  \001(\t\022\036\n\026timeRequiredForL"
-          + "oading\030! \001(\t\"\221\005\n\024LoadablePlanQuantity\022\031\n"
-          + "\021cargoAbbreviation\030\001 \001(\t\022\022\n\ncargoColor\030\002"
-          + " \001(\t\022\031\n\021cargoNominationId\030\003 \001(\003\022\017\n\007cargo"
-          + "Id\030\004 \001(\003\022\027\n\017differenceColor\030\005 \001(\t\022\034\n\024dif"
-          + "ferencePercentage\030\006 \001(\t\022\024\n\014estimatedApi\030"
-          + "\007 \001(\t\022\034\n\024estimatedTemperature\030\010 \001(\t\022\r\n\005g"
-          + "rade\030\t \001(\t\022\n\n\002id\030\n \001(\003\022\020\n\010isActive\030\013 \001(\010"
-          + "\022\027\n\017loadableBbls60f\030\014 \001(\t\022\027\n\017loadableBbl"
-          + "sDbs\030\r \001(\t\022\022\n\nloadableKl\030\016 \001(\t\022\022\n\nloadab"
-          + "leLt\030\017 \001(\t\022\022\n\nloadableMt\030\020 \001(\t\022\031\n\021loadab"
-          + "lePatternId\030\021 \001(\003\022\026\n\016loadablePlanId\030\022 \001("
-          + "\003\022\030\n\020loadableQuantity\030\023 \001(\t\022\024\n\014loadingOr"
-          + "der\030\024 \001(\005\022\024\n\014maxTolerence\030\025 \001(\t\022\024\n\014minTo"
-          + "lerence\030\026 \001(\t\022\024\n\014orderBbls60f\030\027 \001(\t\022\024\n\014o"
-          + "rderBblsDbs\030\030 \001(\t\022\025\n\rorderQuantity\030\031 \001(\t"
-          + "\022\020\n\010priority\030\032 \001(\005\022\024\n\014slopQuantity\030\033 \001(\t"
-          + "\022\036\n\026timeRequiredForLoading\030\034 \001(\t\"\250\003\n\031Loa"
-          + "dablePlanStowageDetail\022\024\n\014abbreviation\030\001"
-          + " \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021cargoNominationId\030\003"
-          + " \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\021\n\tcolorCode\030\005 \001(\t"
-          + "\022\027\n\017correctedUllage\030\006 \001(\t\022\030\n\020correctionF"
-          + "actor\030\007 \001(\t\022\031\n\021fillingPercentage\030\010 \001(\t\022\n"
-          + "\n\002id\030\t \001(\003\022\020\n\010isActive\030\n \001(\010\022\031\n\021loadable"
-          + "PatternId\030\013 \001(\003\022\027\n\017observedBarrels\030\014 \001(\t"
-          + "\022\033\n\023observedBarrelsAt60\030\r \001(\t\022\022\n\nobserve"
-          + "dM3\030\016 \001(\t\022\021\n\trdgUllage\030\017 \001(\t\022\016\n\006tankId\030\020"
-          + " \001(\003\022\020\n\010tankname\030\021 \001(\t\022\023\n\013temperature\030\022 "
-          + "\001(\t\022\016\n\006weight\030\023 \001(\t\"\355\005\n\020LoadableQuantity"
-          + "\022\017\n\007ballast\030\001 \001(\t\022\032\n\022boilerWaterOnBoard\030"
-          + "\002 \001(\t\022\020\n\010constant\030\003 \001(\t\022\022\n\ndeadWeight\030\004 "
-          + "\001(\t\022&\n\036displacementAtDraftRestriction\030\005 "
-          + "\001(\t\022\034\n\024distanceFromLastPort\030\006 \001(\t\022\030\n\020dra"
-          + "ftRestriction\030\007 \001(\t\022\032\n\022estimatedDOOnBoar"
-          + "d\030\010 \001(\t\022\032\n\022estimatedFOOnBoard\030\t \001(\t\022\032\n\022e"
-          + "stimatedFWOnBoard\030\n \001(\t\022\030\n\020estimatedSagg"
-          + "ing\030\013 \001(\t\022\033\n\023estimatedSeaDensity\030\014 \001(\t\022\031"
-          + "\n\021foConsumptionInSZ\030\r \001(\t\022\033\n\023foConsumpti"
-          + "onPerDay\030\016 \001(\t\022\n\n\002id\030\017 \001(\003\022\020\n\010isActive\030\020"
-          + " \001(\010\022\023\n\013lightWeight\030\021 \001(\t\022#\n\033loadableStu"
-          + "dyPortRotationId\030\022 \001(\003\022\027\n\017loadableStudyI"
-          + "d\030\023 \001(\003\022\022\n\notherIfAny\030\024 \001(\t\022\016\n\006portId\030\025 "
-          + "\001(\t\022\023\n\013runningDays\030\026 \001(\t\022\024\n\014runningHours"
-          + "\030\027 \001(\t\022\030\n\020saggingDeduction\030\030 \001(\t\022\024\n\014sgCo"
-          + "rrection\030\031 \001(\t\022\020\n\010subTotal\030\032 \001(\t\022\032\n\022tota"
-          + "lFoConsumption\030\033 \001(\t\022\025\n\rtotalQuantity\030\034 "
-          + "\001(\t\022\022\n\ntpcatDraft\030\035 \001(\t\022\032\n\022vesselAverage"
-          + "Speed\030\036 \001(\t\"\325\001\n\027CargoToppingOffSequence\022"
-          + "\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fillingRatio\030\002 \001(\t\022"
-          + "\020\n\010isActive\030\003 \001(\010\022\023\n\013orderNumber\030\004 \001(\005\022\017"
-          + "\n\007remarks\030\005 \001(\t\022\017\n\007tankXId\030\006 \001(\003\022\016\n\006ulla"
-          + "ge\030\007 \001(\t\022\016\n\006volume\030\010 \001(\t\022\016\n\006weight\030\t \001(\t"
-          + "\022\031\n\021loadablePatternId\030\n \001(\003\"\316\001\n\026LoadingP"
-          + "lanSyncDetails\022;\n\030loadingInformationDeta"
-          + "il\030\001 \001(\0132\031.LoadingInformationDetail\022;\n\030l"
-          + "oadablePlanDetailsReply\030\002 \001(\0132\031.Loadable"
-          + "PlanDetailsReply\022:\n\030cargoToppingOffSeque"
-          + "nces\030\003 \003(\0132\030.CargoToppingOffSequence\"?\n\024"
-          + "LoadingPlanSyncReply\022\'\n\016responseStatus\030\001"
-          + " \001(\0132\017.ResponseStatusB+\n\'com.cpdss.commo"
-          + "n.generated.loading_planP\000b\006proto3"
+          + "on\030\010 \001(\t\"\312\001\n\rLoadingStages\022\n\n\002id\030\001 \001(\003\022\023"
+          + "\n\013stageOffset\030\002 \001(\005\022\025\n\rstageDuration\030\003 \001"
+          + "(\005\022\032\n\022trackStartEndStage\030\004 \001(\010\022\030\n\020trackG"
+          + "radeSwitch\030\005 \001(\010\022#\n\014stageOffsets\030\006 \003(\0132\r"
+          + ".StageOffsets\022&\n\016stageDurations\030\007 \003(\0132\016."
+          + "StageDuration\"2\n\014StageOffsets\022\n\n\002id\030\001 \001("
+          + "\003\022\026\n\016stageOffsetVal\030\002 \001(\003\"-\n\rStageDurati"
+          + "on\022\n\n\002id\030\001 \001(\003\022\020\n\010duration\030\002 \001(\003\"[\n\024Load"
+          + "ingMachinesInUse\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingI"
+          + "nfoId\030\002 \001(\003\022\016\n\006pumpId\030\003 \001(\003\022\020\n\010capacity\030"
+          + "\004 \001(\t\"s\n\014LoadingDelay\022\036\n\007reasons\030\001 \003(\0132\r"
+          + ".DelayReasons\022\036\n\006delays\030\002 \003(\0132\016.LoadingD"
+          + "elays\022#\n\006cargos\030\003 \003(\0132\023.LoadingDelayCarg"
+          + "os\"*\n\014DelayReasons\022\n\n\002id\030\001 \001(\003\022\016\n\006reason"
+          + "\030\002 \001(\t\"o\n\rLoadingDelays\022\n\n\002id\030\001 \001(\003\022\025\n\rl"
+          + "oadingInfoId\030\002 \001(\003\022\030\n\020reasonForDelayId\030\003"
+          + " \001(\003\022\020\n\010duration\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\""
+          + "u\n\022LoadingDelayCargos\022\017\n\007cargoId\030\001 \001(\003\022\022"
+          + "\n\ncolourCode\030\002 \001(\t\022\021\n\tcargoName\030\003 \001(\t\022\025\n"
+          + "\rcargoShorName\030\004 \001(\t\022\020\n\010quantity\030\005 \001(\t\"\366"
+          + "\001\n\021LoadingToppingOff\022\n\n\002id\030\001 \001(\003\022\025\n\rload"
+          + "ingInfoId\030\002 \001(\003\022\023\n\013orderNumber\030\003 \001(\003\022\016\n\006"
+          + "tankId\030\004 \001(\003\022\021\n\tcargoName\030\005 \001(\t\022\031\n\021cargo"
+          + "Abbreviation\030\006 \001(\t\022\022\n\ncolourCode\030\007 \001(\t\022\016"
+          + "\n\006ullage\030\010 \001(\t\022\020\n\010quantity\030\t \001(\t\022\024\n\014fill"
+          + "ingRatio\030\n \001(\t\022\016\n\006remark\030\013 \001(\t\022\017\n\007cargoI"
+          + "d\030\014 \001(\003\"r\n\030LoadingInformationDetail\022\031\n\021l"
+          + "oadablePatternId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031"
+          + "\n\021synopticalTableId\030\003 \001(\003\022\020\n\010vesselId\030\004 "
+          + "\001(\003\"\314\002\n\031LoadablePlanBallastDetail\022\n\n\002id\030"
+          + "\001 \001(\003\022\021\n\tcolorCode\030\002 \001(\t\022\026\n\016correctedLev"
+          + "el\030\003 \001(\t\022\030\n\020correctionFactor\030\004 \001(\t\022\022\n\ncu"
+          + "bicMeter\030\005 \001(\t\022\017\n\007inertia\030\006 \001(\t\022\020\n\010isAct"
+          + "ive\030\007 \001(\010\022\013\n\003lcg\030\010 \001(\t\022\031\n\021loadablePatter"
+          + "nId\030\t \001(\003\022\021\n\tmetricTon\030\n \001(\t\022\022\n\npercenta"
+          + "ge\030\013 \001(\t\022\020\n\010rdgLevel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t\022\016"
+          + "\n\006tankId\030\016 \001(\003\022\020\n\010tankName\030\017 \001(\t\022\013\n\003tcg\030"
+          + "\020 \001(\t\022\013\n\003vcg\030\021 \001(\t\"\330\005\n\033LoadablePlanCommi"
+          + "ngleDetail\022\n\n\002id\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n\022c"
+          + "argo1Abbreviation\030\003 \001(\t\022\025\n\rcargo1Bbls60f"
+          + "\030\004 \001(\t\022\025\n\rcargo1BblsDbs\030\005 \001(\t\022\020\n\010cargo1K"
+          + "l\030\006 \001(\t\022\020\n\010cargo1Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030\010 "
+          + "\001(\t\022\030\n\020cargo1Percentage\030\t \001(\t\022\032\n\022cargo2A"
+          + "bbreviation\030\n \001(\t\022\025\n\rcargo2Bbls60f\030\013 \001(\t"
+          + "\022\025\n\rcargo2BblsDbs\030\014 \001(\t\022\020\n\010cargo2Kl\030\r \001("
+          + "\t\022\020\n\010cargo2Lt\030\016 \001(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022\030\n"
+          + "\020cargo2Percentage\030\020 \001(\t\022\027\n\017correctedUlla"
+          + "ge\030\021 \001(\t\022\030\n\020correctionFactor\030\022 \001(\t\022\024\n\014fi"
+          + "llingRatio\030\023 \001(\t\022\r\n\005grade\030\024 \001(\t\022\020\n\010isAct"
+          + "ive\030\025 \001(\010\022\031\n\021loadablePatternId\030\026 \001(\003\022\026\n\016"
+          + "loadablePlanId\030\027 \001(\003\022\024\n\014loadingOrder\030\030 \001"
+          + "(\005\022\025\n\rorderQuantity\030\031 \001(\t\022\020\n\010priority\030\032 "
+          + "\001(\005\022\020\n\010quantity\030\033 \001(\t\022\021\n\trdgUllage\030\034 \001(\t"
+          + "\022\024\n\014slopQuantity\030\035 \001(\t\022\016\n\006tankId\030\036 \001(\003\022\020"
+          + "\n\010tankName\030\037 \001(\t\022\023\n\013temperature\030  \001(\t\022\036\n"
+          + "\026timeRequiredForLoading\030! \001(\t\"\221\005\n\024Loadab"
+          + "lePlanQuantity\022\031\n\021cargoAbbreviation\030\001 \001("
+          + "\t\022\022\n\ncargoColor\030\002 \001(\t\022\031\n\021cargoNomination"
+          + "Id\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\027\n\017differenceC"
+          + "olor\030\005 \001(\t\022\034\n\024differencePercentage\030\006 \001(\t"
+          + "\022\024\n\014estimatedApi\030\007 \001(\t\022\034\n\024estimatedTempe"
+          + "rature\030\010 \001(\t\022\r\n\005grade\030\t \001(\t\022\n\n\002id\030\n \001(\003\022"
+          + "\020\n\010isActive\030\013 \001(\010\022\027\n\017loadableBbls60f\030\014 \001"
+          + "(\t\022\027\n\017loadableBblsDbs\030\r \001(\t\022\022\n\nloadableK"
+          + "l\030\016 \001(\t\022\022\n\nloadableLt\030\017 \001(\t\022\022\n\nloadableM"
+          + "t\030\020 \001(\t\022\031\n\021loadablePatternId\030\021 \001(\003\022\026\n\016lo"
+          + "adablePlanId\030\022 \001(\003\022\030\n\020loadableQuantity\030\023"
+          + " \001(\t\022\024\n\014loadingOrder\030\024 \001(\005\022\024\n\014maxToleren"
+          + "ce\030\025 \001(\t\022\024\n\014minTolerence\030\026 \001(\t\022\024\n\014orderB"
+          + "bls60f\030\027 \001(\t\022\024\n\014orderBblsDbs\030\030 \001(\t\022\025\n\ror"
+          + "derQuantity\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\024\n\014s"
+          + "lopQuantity\030\033 \001(\t\022\036\n\026timeRequiredForLoad"
+          + "ing\030\034 \001(\t\"\250\003\n\031LoadablePlanStowageDetail\022"
+          + "\024\n\014abbreviation\030\001 \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021ca"
+          + "rgoNominationId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\021"
+          + "\n\tcolorCode\030\005 \001(\t\022\027\n\017correctedUllage\030\006 \001"
+          + "(\t\022\030\n\020correctionFactor\030\007 \001(\t\022\031\n\021fillingP"
+          + "ercentage\030\010 \001(\t\022\n\n\002id\030\t \001(\003\022\020\n\010isActive\030"
+          + "\n \001(\010\022\031\n\021loadablePatternId\030\013 \001(\003\022\027\n\017obse"
+          + "rvedBarrels\030\014 \001(\t\022\033\n\023observedBarrelsAt60"
+          + "\030\r \001(\t\022\022\n\nobservedM3\030\016 \001(\t\022\021\n\trdgUllage\030"
+          + "\017 \001(\t\022\016\n\006tankId\030\020 \001(\003\022\020\n\010tankname\030\021 \001(\t\022"
+          + "\023\n\013temperature\030\022 \001(\t\022\016\n\006weight\030\023 \001(\t\"\355\005\n"
+          + "\020LoadableQuantity\022\017\n\007ballast\030\001 \001(\t\022\032\n\022bo"
+          + "ilerWaterOnBoard\030\002 \001(\t\022\020\n\010constant\030\003 \001(\t"
+          + "\022\022\n\ndeadWeight\030\004 \001(\t\022&\n\036displacementAtDr"
+          + "aftRestriction\030\005 \001(\t\022\034\n\024distanceFromLast"
+          + "Port\030\006 \001(\t\022\030\n\020draftRestriction\030\007 \001(\t\022\032\n\022"
+          + "estimatedDOOnBoard\030\010 \001(\t\022\032\n\022estimatedFOO"
+          + "nBoard\030\t \001(\t\022\032\n\022estimatedFWOnBoard\030\n \001(\t"
+          + "\022\030\n\020estimatedSagging\030\013 \001(\t\022\033\n\023estimatedS"
+          + "eaDensity\030\014 \001(\t\022\031\n\021foConsumptionInSZ\030\r \001"
+          + "(\t\022\033\n\023foConsumptionPerDay\030\016 \001(\t\022\n\n\002id\030\017 "
+          + "\001(\003\022\020\n\010isActive\030\020 \001(\010\022\023\n\013lightWeight\030\021 \001"
+          + "(\t\022#\n\033loadableStudyPortRotationId\030\022 \001(\003\022"
+          + "\027\n\017loadableStudyId\030\023 \001(\003\022\022\n\notherIfAny\030\024"
+          + " \001(\t\022\016\n\006portId\030\025 \001(\t\022\023\n\013runningDays\030\026 \001("
+          + "\t\022\024\n\014runningHours\030\027 \001(\t\022\030\n\020saggingDeduct"
+          + "ion\030\030 \001(\t\022\024\n\014sgCorrection\030\031 \001(\t\022\020\n\010subTo"
+          + "tal\030\032 \001(\t\022\032\n\022totalFoConsumption\030\033 \001(\t\022\025\n"
+          + "\rtotalQuantity\030\034 \001(\t\022\022\n\ntpcatDraft\030\035 \001(\t"
+          + "\022\032\n\022vesselAverageSpeed\030\036 \001(\t\"\325\001\n\027CargoTo"
+          + "ppingOffSequence\022\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fi"
+          + "llingRatio\030\002 \001(\t\022\020\n\010isActive\030\003 \001(\010\022\023\n\013or"
+          + "derNumber\030\004 \001(\005\022\017\n\007remarks\030\005 \001(\t\022\017\n\007tank"
+          + "XId\030\006 \001(\003\022\016\n\006ullage\030\007 \001(\t\022\016\n\006volume\030\010 \001("
+          + "\t\022\016\n\006weight\030\t \001(\t\022\031\n\021loadablePatternId\030\n"
+          + " \001(\003\"\316\001\n\026LoadingPlanSyncDetails\022;\n\030loadi"
+          + "ngInformationDetail\030\001 \001(\0132\031.LoadingInfor"
+          + "mationDetail\022;\n\030loadablePlanDetailsReply"
+          + "\030\002 \001(\0132\031.LoadablePlanDetailsReply\022:\n\030car"
+          + "goToppingOffSequences\030\003 \003(\0132\030.CargoToppi"
+          + "ngOffSequence\"?\n\024LoadingPlanSyncReply\022\'\n"
+          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatusB+"
+          + "\n\'com.cpdss.common.generated.loading_pla"
+          + "nP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -43733,8 +43522,6 @@ public final class LoadingPlanModels {
               "AirDraftLimitation",
               "MaxManifoldHeight",
               "SpecialRegulationRestriction",
-              "ItemsToBeAgreedWith",
-              "HoseConnections",
             });
     internal_static_LoadingStages_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_LoadingStages_fieldAccessorTable =
@@ -43748,8 +43535,6 @@ public final class LoadingPlanModels {
               "TrackGradeSwitch",
               "StageOffsets",
               "StageDurations",
-              "Offset",
-              "Duration",
             });
     internal_static_StageOffsets_descriptor = getDescriptor().getMessageTypes().get(7);
     internal_static_StageOffsets_fieldAccessorTable =
@@ -43791,7 +43576,7 @@ public final class LoadingPlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingDelays_descriptor,
             new java.lang.String[] {
-              "Id", "LoadingInfoId", "ReasonForDelayId", "Duration",
+              "Id", "LoadingInfoId", "ReasonForDelayId", "Duration", "CargoId",
             });
     internal_static_LoadingDelayCargos_descriptor = getDescriptor().getMessageTypes().get(13);
     internal_static_LoadingDelayCargos_fieldAccessorTable =
@@ -43814,8 +43599,8 @@ public final class LoadingPlanModels {
               "ColourCode",
               "Ullage",
               "Quantity",
-              "FillingRation",
-              "Reason",
+              "FillingRatio",
+              "Remark",
               "CargoId",
             });
     internal_static_LoadingInformationDetail_descriptor = getDescriptor().getMessageTypes().get(15);

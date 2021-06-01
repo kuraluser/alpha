@@ -3,11 +3,14 @@ package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadingplan.entity.LoadingDelay;
+import com.cpdss.loadingplan.entity.LoadingInformation;
 import java.util.Optional;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
 public interface LoadingDelayRepository extends CommonCrudRepository<LoadingDelay, Long> {
+
+  List<LoadingDelay> findAllByLoadingInformationAndIsActiveTrue(LoadingInformation var1);
+
 
   public Optional<LoadingDelay> findByIdAndIsActive(Long id, Boolean isActive);
 }

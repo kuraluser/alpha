@@ -102,9 +102,9 @@ message LoadingMachinesInUse{
 
 // Object message for hold, master and user data
 message LoadingDelay{
-  repeated DelayReasons reasons = 1;
+  repeated DelayReasons reasons = 1; // master data
   repeated LoadingDelays delays = 2; // user data
-  repeated LoadingDelayCargos cargos = 3;
+  repeated LoadingDelayCargos cargos = 3; // cargo data
 }
 
 message DelayReasons{
@@ -117,6 +117,7 @@ message LoadingDelays{
   int64 loadingInfoId = 2;
   int64 reasonForDelayId = 3;
   string duration = 4;
+  int64 cargoId = 5;
 }
 
 // pure cargo details based on the port rotation
@@ -138,8 +139,8 @@ message LoadingToppingOff{
   string colourCode = 7;
   string ullage = 8;
   string quantity = 9;
-  string fillingRation = 10;
-  string reason = 11;
+  string fillingRatio = 10;
+  string remark = 11;
   int64 cargoId = 12;
 }
 

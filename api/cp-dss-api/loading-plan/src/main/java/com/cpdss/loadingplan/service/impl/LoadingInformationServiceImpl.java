@@ -1,12 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
+
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
-import com.cpdss.loadingplan.entity.LoadingBerthDetail;
-import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.entity.LoadingMachineryInUse;
+import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingBerthService;
@@ -38,11 +39,20 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingBerthDetailsRepository berthDetailsRepository;
   @Autowired LoadingMachineryInUseRepository loadingMachineryInUserRepository;
 
+  @Autowired StageOffsetRepository stageOffsetRepository;
+
+  @Autowired StageDurationRepository stageDurationRepository;
+
+  @Autowired ReasonForDelayRepository reasonForDelayRepository;
+
+  @Autowired LoadingDelayRepository loadingDelayRepository;
+
   @Autowired LoadingBerthService loadingBerthService;
   @Autowired LoadingDelayService loadingDelayService;
   @Autowired LoadingMachineryInUseService loadingMachineryInUseService;
   @Autowired LoadingStageService loadingStageService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
+
 
   @Override
   public LoadingInformation saveLoadingInformationDetail(
@@ -109,38 +119,67 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingPlanModels.LoadingInformation.Builder builder)
       throws GenericServiceException {
 
+    Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
+    responseStatus.setStatus(FAILED);
+
     Optional<LoadingInformation> var1 =
         this.getLoadingInformation(
             request.getLoadingPlanId(), request.getVesselId(), request.getLoadingPatternId());
     if (!var1.isPresent()) {
-      throw new GenericServiceException(null, null, null);
+      log.info("No Loading Information found for Id {}", request.getLoadingPlanId());
     }
 
     // Loading Details
     LoadingPlanModels.LoadingDetails details =
-        this.informationBuilderService.buildLoadingDetailsMessage(var1.get());
+        this.informationBuilderService.buildLoadingDetailsMessage(var1.orElse(null));
 
     // Loading Rates
     LoadingPlanModels.LoadingRates rates =
-        this.informationBuilderService.buildLoadingRateMessage(var1.get());
+        this.informationBuilderService.buildLoadingRateMessage(var1.orElse(null));
 
     // Loading Berths
     List<LoadingBerthDetail> list1 =
-        this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(var1.get());
+        this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
     List<LoadingPlanModels.LoadingBerths> berths =
         this.informationBuilderService.buildLoadingBerthsMessage(list1);
 
     // Machines in use
     List<LoadingMachineryInUse> list2 =
         this.loadingMachineryInUserRepository.findAllByLoadingInformationAndIsActiveTrue(
-            var1.get());
+            var1.orElse(null));
     List<LoadingPlanModels.LoadingMachinesInUse> machines =
         this.informationBuilderService.buildLoadingMachineryInUseMessage(list2);
+
+    // Stage Min Amount Master
+    List<StageOffset> list3 = this.stageOffsetRepository.findAll();
+    // Stage Duration Master
+    List<StageDuration> list4 = this.stageDurationRepository.findAll();
+
+    // Staging User data and Master data
+    LoadingPlanModels.LoadingStages loadingStages =
+        this.informationBuilderService.buildLoadingStageMessage(var1.orElse(null), list3, list4);
+
+    // Loading Delay
+    List<ReasonForDelay> list5 = this.reasonForDelayRepository.findAll();
+    List<LoadingDelay> list6 =
+        this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
+    LoadingPlanModels.LoadingDelay loadingDelay =
+        this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
+
+    List<CargoToppingOffSequence> list8 =
+        this.cargoToppingOffSequenceRepository.findAllByLoadingInformationAndIsActiveTrue(
+            var1.orElse(null));
+    List<LoadingPlanModels.LoadingToppingOff> toppingOff =
+        this.informationBuilderService.buildToppingOffMessage(list8);
 
     builder.setLoadingDetail(details);
     builder.setLoadingRate(rates);
     builder.addAllLoadingBerths(berths);
     builder.addAllLoadingMachines(machines);
+    builder.setLoadingStage(loadingStages);
+    builder.setLoadingDelays(loadingDelay);
+    builder.addAllToppingOffSequence(toppingOff);
+    builder.setResponseStatus(responseStatus.setStatus(SUCCESS));
     return builder.build();
   }
 

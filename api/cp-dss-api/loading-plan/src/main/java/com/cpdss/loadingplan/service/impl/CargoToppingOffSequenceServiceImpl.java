@@ -45,14 +45,15 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
                   StringUtils.isEmpty(cargoToppingOff.getUllage())
                       ? null
                       : new BigDecimal(cargoToppingOff.getUllage()));
-              cargoToppingOffSequence.setVolume(
+              // volume, weight remove and quantity added
+              /* cargoToppingOffSequence.setVolume(
                   StringUtils.isEmpty(cargoToppingOff.getVolume())
                       ? null
                       : new BigDecimal(cargoToppingOff.getVolume()));
               cargoToppingOffSequence.setWeight(
                   StringUtils.isEmpty(cargoToppingOff.getWeight())
                       ? null
-                      : new BigDecimal(cargoToppingOff.getWeight()));
+                      : new BigDecimal(cargoToppingOff.getWeight()));*/
               cargoToppingOffSequence.setLoadingInformation(loadingInformation);
               cargoToppingOffSequence.setIsActive(true);
               cargoToppingOffSequenceRepository.save(cargoToppingOffSequence);

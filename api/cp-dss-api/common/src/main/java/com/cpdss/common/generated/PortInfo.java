@@ -11829,6 +11829,13 @@ public final class PortInfo {
     long getPortId();
 
     /**
+     * <code>int64 loadingInfoId = 12;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    long getLoadingInfoId();
+
+    /**
      * <code>string maxShipChannel = 3;</code>
      *
      * @return The maxShipChannel.
@@ -12070,6 +12077,11 @@ public final class PortInfo {
                 maxDraft_ = s;
                 break;
               }
+            case 96:
+              {
+                loadingInfoId_ = input.readInt64();
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -12122,6 +12134,17 @@ public final class PortInfo {
      */
     public long getPortId() {
       return portId_;
+    }
+
+    public static final int LOADINGINFOID_FIELD_NUMBER = 12;
+    private long loadingInfoId_;
+    /**
+     * <code>int64 loadingInfoId = 12;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    public long getLoadingInfoId() {
+      return loadingInfoId_;
     }
 
     public static final int MAXSHIPCHANNEL_FIELD_NUMBER = 3;
@@ -12486,6 +12509,9 @@ public final class PortInfo {
       if (!getMaxDraftBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, maxDraft_);
       }
+      if (loadingInfoId_ != 0L) {
+        output.writeInt64(12, loadingInfoId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -12529,6 +12555,9 @@ public final class PortInfo {
       if (!getMaxDraftBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, maxDraft_);
       }
+      if (loadingInfoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, loadingInfoId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -12547,6 +12576,7 @@ public final class PortInfo {
 
       if (getId() != other.getId()) return false;
       if (getPortId() != other.getPortId()) return false;
+      if (getLoadingInfoId() != other.getLoadingInfoId()) return false;
       if (!getMaxShipChannel().equals(other.getMaxShipChannel())) return false;
       if (!getBerthName().equals(other.getBerthName())) return false;
       if (!getMaxShipDepth().equals(other.getMaxShipDepth())) return false;
@@ -12571,6 +12601,8 @@ public final class PortInfo {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
       hash = (37 * hash) + PORTID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      hash = (37 * hash) + LOADINGINFOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadingInfoId());
       hash = (37 * hash) + MAXSHIPCHANNEL_FIELD_NUMBER;
       hash = (53 * hash) + getMaxShipChannel().hashCode();
       hash = (37 * hash) + BERTHNAME_FIELD_NUMBER;
@@ -12730,6 +12762,8 @@ public final class PortInfo {
 
         portId_ = 0L;
 
+        loadingInfoId_ = 0L;
+
         maxShipChannel_ = "";
 
         berthName_ = "";
@@ -12776,6 +12810,7 @@ public final class PortInfo {
             new com.cpdss.common.generated.PortInfo.BerthDetail(this);
         result.id_ = id_;
         result.portId_ = portId_;
+        result.loadingInfoId_ = loadingInfoId_;
         result.maxShipChannel_ = maxShipChannel_;
         result.berthName_ = berthName_;
         result.maxShipDepth_ = maxShipDepth_;
@@ -12842,6 +12877,9 @@ public final class PortInfo {
         }
         if (other.getPortId() != 0L) {
           setPortId(other.getPortId());
+        }
+        if (other.getLoadingInfoId() != 0L) {
+          setLoadingInfoId(other.getLoadingInfoId());
         }
         if (!other.getMaxShipChannel().isEmpty()) {
           maxShipChannel_ = other.maxShipChannel_;
@@ -12971,6 +13009,39 @@ public final class PortInfo {
       public Builder clearPortId() {
 
         portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long loadingInfoId_;
+      /**
+       * <code>int64 loadingInfoId = 12;</code>
+       *
+       * @return The loadingInfoId.
+       */
+      public long getLoadingInfoId() {
+        return loadingInfoId_;
+      }
+      /**
+       * <code>int64 loadingInfoId = 12;</code>
+       *
+       * @param value The loadingInfoId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingInfoId(long value) {
+
+        loadingInfoId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadingInfoId = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingInfoId() {
+
+        loadingInfoId_ = 0L;
         onChanged();
         return this;
       }
@@ -13803,26 +13874,27 @@ public final class PortInfo {
           + "\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006po"
           + "rtId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022\'\n\016respo"
           + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006bert"
-          + "hs\030\002 \003(\0132\014.BerthDetail\"\201\002\n\013BerthDetail\022\n"
-          + "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\026\n\016maxShipCha"
-          + "nnel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShip"
-          + "Depth\030\005 \001(\t\022\032\n\022seaDraftLimitation\030\006 \001(\t\022"
-          + "\032\n\022airDraftLimitation\030\007 \001(\t\022\031\n\021maxManifo"
-          + "ldHeight\030\010 \001(\t\022 \n\030regulationAndRestricti"
-          + "on\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010maxDraft\030\013 \001"
-          + "(\t2\322\003\n\017PortInfoService\022)\n\013GetPortInfo\022\014."
-          + "PortRequest\032\n.PortReply\"\000\022R\n\024GetPortInfo"
-          + "ByCargoId\022\034.GetPortInfoByCargoIdRequest\032"
-          + "\032.GetPortInfoByCargoIdReply\"\000\022B\n\024GetPort"
-          + "InfoByPortIds\022\034.GetPortInfoByPortIdsRequ"
-          + "est\032\n.PortReply\"\000\022G\n\031GetPortInfoDetailsF"
-          + "orAlgo\022\034.GetPortInfoByPortIdsRequest\032\n.P"
-          + "ortReply\"\000\0225\n\013GetTimezone\022\021.PortEmptyReq"
-          + "uest\032\021.TimezoneResponse\"\000\022;\n\023GetPortInfo"
-          + "ByPaging\022\026.PortRequestWithPaging\032\n.PortR"
-          + "eply\"\000\022?\n\027GetBerthDetailsByPortId\022\016.Port"
-          + "IdRequest\032\022.BerthInfoResponse\"\000B\036\n\032com.c"
-          + "pdss.common.generatedP\000b\006proto3"
+          + "hs\030\002 \003(\0132\014.BerthDetail\"\230\002\n\013BerthDetail\022\n"
+          + "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingInf"
+          + "oId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tber"
+          + "thName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022se"
+          + "aDraftLimitation\030\006 \001(\t\022\032\n\022airDraftLimita"
+          + "tion\030\007 \001(\t\022\031\n\021maxManifoldHeight\030\010 \001(\t\022 \n"
+          + "\030regulationAndRestriction\030\t \001(\t\022\016\n\006maxLo"
+          + "a\030\n \001(\t\022\020\n\010maxDraft\030\013 \001(\t2\322\003\n\017PortInfoSe"
+          + "rvice\022)\n\013GetPortInfo\022\014.PortRequest\032\n.Por"
+          + "tReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.GetPo"
+          + "rtInfoByCargoIdRequest\032\032.GetPortInfoByCa"
+          + "rgoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034.G"
+          + "etPortInfoByPortIdsRequest\032\n.PortReply\"\000"
+          + "\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPortI"
+          + "nfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013Get"
+          + "Timezone\022\021.PortEmptyRequest\032\021.TimezoneRe"
+          + "sponse\"\000\022;\n\023GetPortInfoByPaging\022\026.PortRe"
+          + "questWithPaging\032\n.PortReply\"\000\022?\n\027GetBert"
+          + "hDetailsByPortId\022\016.PortIdRequest\032\022.Berth"
+          + "InfoResponse\"\000B\036\n\032com.cpdss.common.gener"
+          + "atedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -13942,6 +14014,7 @@ public final class PortInfo {
             new java.lang.String[] {
               "Id",
               "PortId",
+              "LoadingInfoId",
               "MaxShipChannel",
               "BerthName",
               "MaxShipDepth",
