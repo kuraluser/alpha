@@ -2689,7 +2689,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             } else {
 
               LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
-              portRotation.setIsPortRotationOhqComplete(previousPortPortRotation.getIsPortRotationOhqComplete());
+              portRotation.setIsPortRotationOhqComplete(
+                  previousPortPortRotation.getIsPortRotationOhqComplete());
               this.loadableStudyPortRotationRepository.save(portRotation);
               onHandQuantityList =
                   this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
@@ -3124,7 +3125,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
       } else {
-        //uncomment with communication service implementation
+        // uncomment with communication service implementation
         // savePatternDtails(request, loadableStudyOpt);
         Long lastLoadingPort =
             getLastPort(
@@ -3217,7 +3218,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  //uncomment with communication service implementation
+  // uncomment with communication service implementation
   /*private void savePatternDtails(
           LoadablePatternAlgoRequest request, Optional<LoadableStudy> loadableStudyOpt) {
     Long lastLoadingPort =
@@ -5432,25 +5433,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
   }
+
   public void saveLoadablePatternDetails(
-          String patternResultJson, LoadablePatternAlgoRequest.Builder load) {
+      String patternResultJson, LoadablePatternAlgoRequest.Builder load) {
     // String patternResponse = erReply.getPatternResultJson();
     try {
       Optional<LoadableStudy> loadableStudyOpt =
-              this.loadableStudyRepository.findByIdAndIsActive(load.getLoadableStudyId(), true);
+          this.loadableStudyRepository.findByIdAndIsActive(load.getLoadableStudyId(), true);
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
-                "Loadable study does not exist",
-                CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                HttpStatusCode.BAD_REQUEST);
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
       JsonFormat.parser().ignoringUnknownFields().merge(patternResultJson, load);
-     // savePatternDtails(load.build(), loadableStudyOpt);
+      // savePatternDtails(load.build(), loadableStudyOpt);
 
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
     }
   }
+
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReader(String lsUUID) {
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
@@ -12430,6 +12433,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  @Autowired private LoadableStudyServiceShore loadableStudyServiceShore;
+
+  @Override
+  public void saveLoadableStudyShore(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply>
+          responseObserver) {
+    try {
+      loadableStudyServiceShore.getDataFromEnvoyReaderShore(request.getJsonResult());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
     }
   }
 }

@@ -124,5 +124,4 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "messageUUID")
   private String messageUUID;
-
 }

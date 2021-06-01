@@ -122,7 +122,7 @@ public class EnvoyReaderService {
               .setStatus(FAILED)
               .build());
     }
-    return null;
+    return readerBuilder.build();
   }
 
   /**

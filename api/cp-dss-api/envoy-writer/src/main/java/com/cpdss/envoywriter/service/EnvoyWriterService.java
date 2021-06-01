@@ -169,6 +169,7 @@ public class EnvoyWriterService {
    * @param sequenceNumber
    * @param number
    */
+  @Transactional
   private void updateSequenceNumber(Long sequenceNumber, SequenceNumber number) {
     number.setSequenceNumber(sequenceNumber + 1L);
     sequenceNumberRepository.save(number);

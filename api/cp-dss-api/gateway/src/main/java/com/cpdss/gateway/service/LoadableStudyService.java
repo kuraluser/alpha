@@ -5673,9 +5673,13 @@ public class LoadableStudyService {
     EnvoyReader.EnvoyReaderResultRequest.Builder error =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
     error.setClientId("kazusa");
-    error.setMessageType("ls");
+    error.setMessageType("LOADABLESTUDY");
     error.setShipId("9513402");
-    this.envoyReaderGrpcService.getResultFromCommServer(error.build());
-    return null;
+    EnvoyReader.EnvoyReaderResultReply jsonResult =
+        this.envoyReaderGrpcService.getResultFromCommServer(error.build());
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder req =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
+    req.setJsonResult(jsonResult.getPatternResultJson());
+    return loadableStudyServiceBlockingStub.saveLoadableStudyShore(req.build());
   }
 }

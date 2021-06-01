@@ -11,7 +11,6 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.MessageTypes;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
-import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -30,7 +29,7 @@ import org.springframework.util.StringUtils;
 @Log4j2
 @Service
 @Transactional
-public class LoadableStudyServiceShore {
+public class LoadableStudyServiceShore extends LoadableStudyService {
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
@@ -46,15 +45,16 @@ public class LoadableStudyServiceShore {
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
 
-  public void getDataFromEnvoyReaderShore() throws GenericServiceException {
-    EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore();
+  public void getDataFromEnvoyReaderShore(String patternJson) throws GenericServiceException {
+    /*EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore();
     if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Failed to get Result from Communication Server",
           erReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-    }
-    String jsonResult = erReply.getPatternResultJson();
+    }*/
+    // String jsonResult = erReply.getPatternResultJson();
+    String jsonResult = patternJson;
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 

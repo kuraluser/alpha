@@ -175,8 +175,15 @@ service LoadableStudyService {
 	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 	
 	rpc GetCargoHistoryByCargo(LatestCargoRequest) returns(LatestCargoReply) {}
+	rpc saveLoadableStudyShore(LoadableStudyShoreRequest) returns(LoadableStudyShoreReply) {}
 }
 
+message LoadableStudyShoreRequest{
+	string jsonResult=1;
+}
+message LoadableStudyShoreReply{
+	ResponseStatus responseStatus = 1;
+}
 message LatestCargoRequest{
 	int64 vesselId = 1;
 	int64 portId = 2;

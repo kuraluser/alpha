@@ -29,46 +29,26 @@ public final class EnvoyWriter {
     com.google.protobuf.ByteString getJsonPayloadBytes();
 
     /**
-     * <code>string imoNumber = 2;</code>
-     *
-     * @return The imoNumber.
-     */
-    java.lang.String getImoNumber();
-    /**
-     * <code>string imoNumber = 2;</code>
-     *
-     * @return The bytes for imoNumber.
-     */
-    com.google.protobuf.ByteString getImoNumberBytes();
-
-    /**
-     * <code>int64 vesselId = 3;</code>
-     *
-     * @return The vesselId.
-     */
-    long getVesselId();
-
-    /**
-     * <code>string messageType = 4;</code>
+     * <code>string messageType = 2;</code>
      *
      * @return The messageType.
      */
     java.lang.String getMessageType();
     /**
-     * <code>string messageType = 4;</code>
+     * <code>string messageType = 2;</code>
      *
      * @return The bytes for messageType.
      */
     com.google.protobuf.ByteString getMessageTypeBytes();
 
     /**
-     * <code>string clientId = 5;</code>
+     * <code>string clientId = 3;</code>
      *
      * @return The clientId.
      */
     java.lang.String getClientId();
     /**
-     * <code>string clientId = 5;</code>
+     * <code>string clientId = 3;</code>
      *
      * @return The bytes for clientId.
      */
@@ -87,7 +67,6 @@ public final class EnvoyWriter {
 
     private EnvoyWriterRequest() {
       jsonPayload_ = "";
-      imoNumber_ = "";
       messageType_ = "";
       clientId_ = "";
     }
@@ -132,22 +111,10 @@ public final class EnvoyWriter {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                imoNumber_ = s;
-                break;
-              }
-            case 24:
-              {
-                vesselId_ = input.readInt64();
-                break;
-              }
-            case 34:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
                 messageType_ = s;
                 break;
               }
-            case 42:
+            case 26:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
@@ -222,56 +189,10 @@ public final class EnvoyWriter {
       }
     }
 
-    public static final int IMONUMBER_FIELD_NUMBER = 2;
-    private volatile java.lang.Object imoNumber_;
-    /**
-     * <code>string imoNumber = 2;</code>
-     *
-     * @return The imoNumber.
-     */
-    public java.lang.String getImoNumber() {
-      java.lang.Object ref = imoNumber_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        imoNumber_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string imoNumber = 2;</code>
-     *
-     * @return The bytes for imoNumber.
-     */
-    public com.google.protobuf.ByteString getImoNumberBytes() {
-      java.lang.Object ref = imoNumber_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        imoNumber_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int VESSELID_FIELD_NUMBER = 3;
-    private long vesselId_;
-    /**
-     * <code>int64 vesselId = 3;</code>
-     *
-     * @return The vesselId.
-     */
-    public long getVesselId() {
-      return vesselId_;
-    }
-
-    public static final int MESSAGETYPE_FIELD_NUMBER = 4;
+    public static final int MESSAGETYPE_FIELD_NUMBER = 2;
     private volatile java.lang.Object messageType_;
     /**
-     * <code>string messageType = 4;</code>
+     * <code>string messageType = 2;</code>
      *
      * @return The messageType.
      */
@@ -287,7 +208,7 @@ public final class EnvoyWriter {
       }
     }
     /**
-     * <code>string messageType = 4;</code>
+     * <code>string messageType = 2;</code>
      *
      * @return The bytes for messageType.
      */
@@ -303,10 +224,10 @@ public final class EnvoyWriter {
       }
     }
 
-    public static final int CLIENTID_FIELD_NUMBER = 5;
+    public static final int CLIENTID_FIELD_NUMBER = 3;
     private volatile java.lang.Object clientId_;
     /**
-     * <code>string clientId = 5;</code>
+     * <code>string clientId = 3;</code>
      *
      * @return The clientId.
      */
@@ -322,7 +243,7 @@ public final class EnvoyWriter {
       }
     }
     /**
-     * <code>string clientId = 5;</code>
+     * <code>string clientId = 3;</code>
      *
      * @return The bytes for clientId.
      */
@@ -355,17 +276,11 @@ public final class EnvoyWriter {
       if (!getJsonPayloadBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, jsonPayload_);
       }
-      if (!getImoNumberBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, imoNumber_);
-      }
-      if (vesselId_ != 0L) {
-        output.writeInt64(3, vesselId_);
-      }
       if (!getMessageTypeBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, messageType_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, messageType_);
       }
       if (!getClientIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, clientId_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, clientId_);
       }
       unknownFields.writeTo(output);
     }
@@ -379,17 +294,11 @@ public final class EnvoyWriter {
       if (!getJsonPayloadBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, jsonPayload_);
       }
-      if (!getImoNumberBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, imoNumber_);
-      }
-      if (vesselId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, vesselId_);
-      }
       if (!getMessageTypeBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, messageType_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, messageType_);
       }
       if (!getClientIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, clientId_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, clientId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -408,8 +317,6 @@ public final class EnvoyWriter {
           (com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest) obj;
 
       if (!getJsonPayload().equals(other.getJsonPayload())) return false;
-      if (!getImoNumber().equals(other.getImoNumber())) return false;
-      if (getVesselId() != other.getVesselId()) return false;
       if (!getMessageType().equals(other.getMessageType())) return false;
       if (!getClientId().equals(other.getClientId())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
@@ -425,10 +332,6 @@ public final class EnvoyWriter {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + JSONPAYLOAD_FIELD_NUMBER;
       hash = (53 * hash) + getJsonPayload().hashCode();
-      hash = (37 * hash) + IMONUMBER_FIELD_NUMBER;
-      hash = (53 * hash) + getImoNumber().hashCode();
-      hash = (37 * hash) + VESSELID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
       hash = (37 * hash) + MESSAGETYPE_FIELD_NUMBER;
       hash = (53 * hash) + getMessageType().hashCode();
       hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
@@ -574,10 +477,6 @@ public final class EnvoyWriter {
         super.clear();
         jsonPayload_ = "";
 
-        imoNumber_ = "";
-
-        vesselId_ = 0L;
-
         messageType_ = "";
 
         clientId_ = "";
@@ -609,8 +508,6 @@ public final class EnvoyWriter {
         com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest result =
             new com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest(this);
         result.jsonPayload_ = jsonPayload_;
-        result.imoNumber_ = imoNumber_;
-        result.vesselId_ = vesselId_;
         result.messageType_ = messageType_;
         result.clientId_ = clientId_;
         onBuilt();
@@ -668,13 +565,6 @@ public final class EnvoyWriter {
         if (!other.getJsonPayload().isEmpty()) {
           jsonPayload_ = other.jsonPayload_;
           onChanged();
-        }
-        if (!other.getImoNumber().isEmpty()) {
-          imoNumber_ = other.imoNumber_;
-          onChanged();
-        }
-        if (other.getVesselId() != 0L) {
-          setVesselId(other.getVesselId());
         }
         if (!other.getMessageType().isEmpty()) {
           messageType_ = other.messageType_;
@@ -790,118 +680,9 @@ public final class EnvoyWriter {
         return this;
       }
 
-      private java.lang.Object imoNumber_ = "";
-      /**
-       * <code>string imoNumber = 2;</code>
-       *
-       * @return The imoNumber.
-       */
-      public java.lang.String getImoNumber() {
-        java.lang.Object ref = imoNumber_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          imoNumber_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string imoNumber = 2;</code>
-       *
-       * @return The bytes for imoNumber.
-       */
-      public com.google.protobuf.ByteString getImoNumberBytes() {
-        java.lang.Object ref = imoNumber_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          imoNumber_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string imoNumber = 2;</code>
-       *
-       * @param value The imoNumber to set.
-       * @return This builder for chaining.
-       */
-      public Builder setImoNumber(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        imoNumber_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string imoNumber = 2;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearImoNumber() {
-
-        imoNumber_ = getDefaultInstance().getImoNumber();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string imoNumber = 2;</code>
-       *
-       * @param value The bytes for imoNumber to set.
-       * @return This builder for chaining.
-       */
-      public Builder setImoNumberBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        imoNumber_ = value;
-        onChanged();
-        return this;
-      }
-
-      private long vesselId_;
-      /**
-       * <code>int64 vesselId = 3;</code>
-       *
-       * @return The vesselId.
-       */
-      public long getVesselId() {
-        return vesselId_;
-      }
-      /**
-       * <code>int64 vesselId = 3;</code>
-       *
-       * @param value The vesselId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setVesselId(long value) {
-
-        vesselId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 vesselId = 3;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearVesselId() {
-
-        vesselId_ = 0L;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object messageType_ = "";
       /**
-       * <code>string messageType = 4;</code>
+       * <code>string messageType = 2;</code>
        *
        * @return The messageType.
        */
@@ -917,7 +698,7 @@ public final class EnvoyWriter {
         }
       }
       /**
-       * <code>string messageType = 4;</code>
+       * <code>string messageType = 2;</code>
        *
        * @return The bytes for messageType.
        */
@@ -933,7 +714,7 @@ public final class EnvoyWriter {
         }
       }
       /**
-       * <code>string messageType = 4;</code>
+       * <code>string messageType = 2;</code>
        *
        * @param value The messageType to set.
        * @return This builder for chaining.
@@ -948,7 +729,7 @@ public final class EnvoyWriter {
         return this;
       }
       /**
-       * <code>string messageType = 4;</code>
+       * <code>string messageType = 2;</code>
        *
        * @return This builder for chaining.
        */
@@ -959,7 +740,7 @@ public final class EnvoyWriter {
         return this;
       }
       /**
-       * <code>string messageType = 4;</code>
+       * <code>string messageType = 2;</code>
        *
        * @param value The bytes for messageType to set.
        * @return This builder for chaining.
@@ -977,7 +758,7 @@ public final class EnvoyWriter {
 
       private java.lang.Object clientId_ = "";
       /**
-       * <code>string clientId = 5;</code>
+       * <code>string clientId = 3;</code>
        *
        * @return The clientId.
        */
@@ -993,7 +774,7 @@ public final class EnvoyWriter {
         }
       }
       /**
-       * <code>string clientId = 5;</code>
+       * <code>string clientId = 3;</code>
        *
        * @return The bytes for clientId.
        */
@@ -1009,7 +790,7 @@ public final class EnvoyWriter {
         }
       }
       /**
-       * <code>string clientId = 5;</code>
+       * <code>string clientId = 3;</code>
        *
        * @param value The clientId to set.
        * @return This builder for chaining.
@@ -1024,7 +805,7 @@ public final class EnvoyWriter {
         return this;
       }
       /**
-       * <code>string clientId = 5;</code>
+       * <code>string clientId = 3;</code>
        *
        * @return This builder for chaining.
        */
@@ -1035,7 +816,7 @@ public final class EnvoyWriter {
         return this;
       }
       /**
-       * <code>string clientId = 5;</code>
+       * <code>string clientId = 3;</code>
        *
        * @param value The bytes for clientId to set.
        * @return This builder for chaining.
@@ -2195,16 +1976,15 @@ public final class EnvoyWriter {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\022envoy_writer.proto\032\014common.proto\"u\n\022En"
-          + "voyWriterRequest\022\023\n\013jsonPayload\030\001 \001(\t\022\021\n"
-          + "\timoNumber\030\002 \001(\t\022\020\n\010vesselId\030\003 \001(\003\022\023\n\013me"
-          + "ssageType\030\004 \001(\t\022\020\n\010clientId\030\005 \001(\t\"j\n\013Wri"
-          + "terReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022\021\n\tmessageId\030\002 \001(\t\022\016\n\006shipId\030\003"
-          + " \001(\t\022\017\n\007message\030\004 \001(\t2S\n\022EnvoyWriterServ"
-          + "ice\022=\n\026GetCommunicationServer\022\023.EnvoyWri"
-          + "terRequest\032\014.WriterReply\"\000B\036\n\032com.cpdss."
-          + "common.generatedP\000b\006proto3"
+      "\n\022envoy_writer.proto\032\014common.proto\"P\n\022En"
+          + "voyWriterRequest\022\023\n\013jsonPayload\030\001 \001(\t\022\023\n"
+          + "\013messageType\030\002 \001(\t\022\020\n\010clientId\030\003 \001(\t\"j\n\013"
+          + "WriterReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
+          + "sponseStatus\022\021\n\tmessageId\030\002 \001(\t\022\016\n\006shipI"
+          + "d\030\003 \001(\t\022\017\n\007message\030\004 \001(\t2S\n\022EnvoyWriterS"
+          + "ervice\022=\n\026GetCommunicationServer\022\023.Envoy"
+          + "WriterRequest\032\014.WriterReply\"\000B\036\n\032com.cpd"
+          + "ss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -2217,7 +1997,7 @@ public final class EnvoyWriter {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_EnvoyWriterRequest_descriptor,
             new java.lang.String[] {
-              "JsonPayload", "ImoNumber", "VesselId", "MessageType", "ClientId",
+              "JsonPayload", "MessageType", "ClientId",
             });
     internal_static_WriterReply_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_WriterReply_fieldAccessorTable =
