@@ -38,9 +38,6 @@ public class EnvoyReaderService {
 
   @Autowired private RestTemplate restTemplate;
 
-  @Value("${cpdss.communication.salt}")
-  private String salt;
-
   @Value("${cpdss.communucation.reader.url}")
   private String downloadUrl;
 
@@ -68,8 +65,6 @@ public class EnvoyReaderService {
                 return responseUrl;
               });
 
-      System.out.println("-- " + response.getResponseHeader().getFirst("message-info"));
-
       // read message info from header
       ObjectMapper mapper = new ObjectMapper();
       ReaderResponse responseDto =
@@ -91,7 +86,8 @@ public class EnvoyReaderService {
         if (!entry.isDirectory()) {
 
           StringBuilder out = getTxtFiles(zipFile.getInputStream(entry));
-          decryptedData = decrypt(out.toString(), "123", salt);
+          decryptedData = decrypt(out.toString(), request.getShipId());
+          System.out.println("-- " + decryptedData);
         }
       }
 

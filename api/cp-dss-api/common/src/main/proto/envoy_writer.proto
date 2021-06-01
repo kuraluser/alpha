@@ -15,6 +15,7 @@ message EnvoyWriterRequest {
   string jsonPayload = 1;
   string messageType = 2;
   string clientId = 3;
+  string imoNumber = 4;
 }
 message WriterReply {
   ResponseStatus responseStatus = 1;

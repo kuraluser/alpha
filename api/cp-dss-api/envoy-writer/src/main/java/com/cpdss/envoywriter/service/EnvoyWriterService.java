@@ -40,9 +40,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EnvoyWriterService {
 
-  @Value("${cpdss.communication.salt}")
-  private String salt;
-
   @Value("${cpdss.communucation.writer.url}")
   private String writerUrl;
 
@@ -64,7 +61,7 @@ public class EnvoyWriterService {
     Long sequenceNumber = numberOpt.get().getSequenceNumber();
     updateSequenceNumber(sequenceNumber, numberOpt.get());
     String uuid = UUID.randomUUID().toString();
-    String encryptedString = encrypt(request.getJsonPayload(), "123", salt);
+    String encryptedString = encrypt(request.getJsonPayload(), request.getImoNumber());
     FileOutputStream out = null;
     try {
       // creating temp zip file

@@ -5473,6 +5473,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       writerRequest.setJsonPayload(loadableStudyJson);
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
+      writerRequest.setImoNumber(vesselReply.getImoNumber());
       return this.envoyWriterGrpcService.getCommunicationServer(writerRequest.build());
 
     } catch (JsonProcessingException e) {
