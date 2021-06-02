@@ -13,9 +13,11 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service
+@Transactional
 public class LoadingDelayServiceImpl implements LoadingDelayService {
 
   @Autowired LoadingDelayRepository loadingDelayRepository;
@@ -68,6 +70,9 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
 
     loadingDelay.setDuration(
         StringUtils.isEmpty(delay.getDuration()) ? null : new BigDecimal(delay.getDuration()));
+    Optional.ofNullable(delay.getCargoId()).ifPresent(loadingDelay::setCargoXId);
+    // loadingDelay.setQuantity(StringUtils.isEmpty(delay.getQuantity()) ? null : new
+    // BigDecimal(delay.getQuantity()));
     loadingDelay.setIsActive(true);
   }
 }

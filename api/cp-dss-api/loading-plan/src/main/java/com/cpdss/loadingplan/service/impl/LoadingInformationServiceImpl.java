@@ -15,18 +15,19 @@ import com.cpdss.loadingplan.service.LoadingDelayService;
 import com.cpdss.loadingplan.service.LoadingInformationBuilderService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
-import com.cpdss.loadingplan.service.LoadingStageService;
-
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
+@Transactional
 public class LoadingInformationServiceImpl implements LoadingInformationService {
 
   @Autowired LoadingInformationRepository loadingInformationRepository;
@@ -50,9 +51,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingBerthService loadingBerthService;
   @Autowired LoadingDelayService loadingDelayService;
   @Autowired LoadingMachineryInUseService loadingMachineryInUseService;
-  @Autowired LoadingStageService loadingStageService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
-
 
   @Override
   public LoadingInformation saveLoadingInformationDetail(
@@ -68,6 +67,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         .ifPresent(loadingInformation::setSynopticalTableXId);
     Optional.ofNullable(loadingInformationDetail.getVesselId())
         .ifPresent(loadingInformation::setVesselXId);
+    Optional.ofNullable(loadingInformationDetail.getVoyageId())
+        .ifPresent(loadingInformation::setVoyageId);
     loadingInformation.setIsActive(true);
     return loadingInformationRepository.save(loadingInformation);
   }
@@ -185,44 +186,101 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Override
   public void saveLoadingInformation(
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-          request)
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request)
       throws Exception {
     Optional<LoadingInformation> loadingInformationOpt =
-        loadingInformationRepository.findByIdAndIsActiveTrue(
-            request.getLoadingDetail().getId());
+        loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingDetail().getId());
     if (loadingInformationOpt.isPresent()) {
-      buildLoadingInformation(request, loadingInformationOpt.get());
+      LoadingInformation loadingInformation = loadingInformationOpt.get();
+      buildLoadingInformation(request, loadingInformation);
+      loadingInformationRepository.save(loadingInformation);
       // TODO loading information details
       loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList());
       loadingDelayService.saveLoadingDelayList(request.getLoadingDelays());
-      // loadingInformation.getLoadingDetail();
-      // loadingInformation.getLoadingInformation();
-      loadingMachineryInUseService.saveLoadingMachineryList(
-          request.getLoadingMachinesList());
-      // request.getLoadingRate();
-      loadingStageService.saveLoadingStages(request.getLoadingStage());
-      toppingOffSequenceService.saveCargoToppingOffSequences(
-          request.getToppingOffSequenceList());
+      loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList());
+      toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
     } else {
-    	throw new Exception("Cannot find loading information for the active voyage");
+      throw new Exception("Cannot find loading information for the active voyage");
     }
   }
 
-private void buildLoadingInformation(
-		com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
-		LoadingInformation loadingInformation) {
-	//loadingInformation.setStartTime(request.getLoadingDetail().getStartTime());
-	loadingInformation.setFinalTrim(StringUtils.isEmpty(request.getLoadingDetail().getTrimAllowed().getFinalTrim()) ? null : new BigDecimal(request.getLoadingDetail().getTrimAllowed().getFinalTrim()));
-	loadingInformation.setInitialTrim(StringUtils.isEmpty(request.getLoadingDetail().getTrimAllowed().getInitialTrim()) ? null : new BigDecimal(request.getLoadingDetail().getTrimAllowed().getInitialTrim()));
-	loadingInformation.setMaximumTrim(StringUtils.isEmpty(request.getLoadingDetail().getTrimAllowed().getMaximumTrim()) ? null : new BigDecimal(request.getLoadingDetail().getTrimAllowed().getMaximumTrim()));
-	loadingInformation.setLineContentRemaining(StringUtils.isEmpty(request.getLoadingRate().getLineContentRemaining()) ? null : new BigDecimal(request.getLoadingRate().getLineContentRemaining()));
-	loadingInformation.setMaxDeBallastRate(StringUtils.isEmpty(request.getLoadingRate().getMaxDeBallastingRate()) ? null : new BigDecimal(request.getLoadingRate().getMaxDeBallastingRate()));
-	loadingInformation.setMaxLoadingRate(StringUtils.isEmpty(request.getLoadingRate().getMaxLoadingRate()) ? null : new BigDecimal(request.getLoadingRate().getMaxLoadingRate()));
-	loadingInformation.setMinDeBallastRate(StringUtils.isEmpty(request.getLoadingRate().getMinDeBallastingRate()) ? null : new BigDecimal(request.getLoadingRate().getMinDeBallastingRate()));
-	loadingInformation.setReducedLoadingRate(StringUtils.isEmpty(request.getLoadingRate().getReducedLoadingRate()) ? null : new BigDecimal(request.getLoadingRate().getReducedLoadingRate()));
-	// minLoadingRate missing
-	loadingInformation.setNoticeTimeForRateReduction(StringUtils.isEmpty(request.getLoadingRate().getNoticeTimeRateReduction()) ? null : Integer.valueOf(request.getLoadingRate().getNoticeTimeRateReduction()));
-	loadingInformation.setNoticeTimeForStopLoading(StringUtils.isEmpty(request.getLoadingRate().getNoticeTimeStopLoading()) ? null : Integer.valueOf(request.getLoadingRate().getNoticeTimeStopLoading()));
-}
+  private void buildLoadingInformation(
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+      LoadingInformation loadingInformation)
+      throws Exception {
+    // loadingInformation.setStartTime(request.getLoadingDetail().getStartTime());
+    if (Optional.ofNullable(request.getLoadingStage().getDuration().getId()).isPresent()) {
+      Optional<StageDuration> stageDurationOpt =
+          stageDurationRepository.findByIdAndIsActiveTrue(
+              request.getLoadingStage().getDuration().getId());
+      if (stageDurationOpt.isPresent()) {
+        loadingInformation.setStageDuration(stageDurationOpt.get());
+      } else {
+        throw new Exception("Invalid stage duration");
+      }
+    }
+
+    if (Optional.ofNullable(request.getLoadingStage().getOffset().getId()).isPresent()) {
+      Optional<StageOffset> stageOffsetOpt =
+          stageOffsetRepository.findByIdAndIsActiveTrue(
+              request.getLoadingStage().getOffset().getId());
+      if (stageOffsetOpt.isPresent()) {
+        loadingInformation.setStageOffset(stageOffsetOpt.get());
+      } else {
+        throw new Exception("Invalid stage offset");
+      }
+    }
+    loadingInformation.setStartTime(
+        StringUtils.isEmpty(request.getLoadingDetail().getStartTime())
+            ? null
+            : LocalTime.from(TIME_FORMATTER.parse(request.getLoadingDetail().getStartTime())));
+    loadingInformation.setFinalTrim(
+        StringUtils.isEmpty(request.getLoadingDetail().getTrimAllowed().getFinalTrim())
+            ? null
+            : new BigDecimal(request.getLoadingDetail().getTrimAllowed().getFinalTrim()));
+    loadingInformation.setInitialTrim(
+        StringUtils.isEmpty(request.getLoadingDetail().getTrimAllowed().getInitialTrim())
+            ? null
+            : new BigDecimal(request.getLoadingDetail().getTrimAllowed().getInitialTrim()));
+    loadingInformation.setMaximumTrim(
+        StringUtils.isEmpty(request.getLoadingDetail().getTrimAllowed().getMaximumTrim())
+            ? null
+            : new BigDecimal(request.getLoadingDetail().getTrimAllowed().getMaximumTrim()));
+    loadingInformation.setLineContentRemaining(
+        StringUtils.isEmpty(request.getLoadingRate().getLineContentRemaining())
+            ? null
+            : new BigDecimal(request.getLoadingRate().getLineContentRemaining()));
+    loadingInformation.setMaxDeBallastRate(
+        StringUtils.isEmpty(request.getLoadingRate().getMaxDeBallastingRate())
+            ? null
+            : new BigDecimal(request.getLoadingRate().getMaxDeBallastingRate()));
+    loadingInformation.setMaxLoadingRate(
+        StringUtils.isEmpty(request.getLoadingRate().getMaxLoadingRate())
+            ? null
+            : new BigDecimal(request.getLoadingRate().getMaxLoadingRate()));
+    loadingInformation.setMinDeBallastRate(
+        StringUtils.isEmpty(request.getLoadingRate().getMinDeBallastingRate())
+            ? null
+            : new BigDecimal(request.getLoadingRate().getMinDeBallastingRate()));
+    loadingInformation.setReducedLoadingRate(
+        StringUtils.isEmpty(request.getLoadingRate().getReducedLoadingRate())
+            ? null
+            : new BigDecimal(request.getLoadingRate().getReducedLoadingRate()));
+    loadingInformation.setMinLoadingRate(
+        StringUtils.isEmpty(request.getLoadingRate().getMinLoadingRate())
+            ? null
+            : new BigDecimal(request.getLoadingRate().getMinLoadingRate()));
+    loadingInformation.setInitialLoadingRate(
+        StringUtils.isEmpty(request.getLoadingRate().getInitialLoadingRate())
+            ? null
+            : new BigDecimal(request.getLoadingRate().getInitialLoadingRate()));
+    loadingInformation.setNoticeTimeForRateReduction(
+        StringUtils.isEmpty(request.getLoadingRate().getNoticeTimeRateReduction())
+            ? null
+            : Integer.valueOf(request.getLoadingRate().getNoticeTimeRateReduction()));
+    loadingInformation.setNoticeTimeForStopLoading(
+        StringUtils.isEmpty(request.getLoadingRate().getNoticeTimeStopLoading())
+            ? null
+            : Integer.valueOf(request.getLoadingRate().getNoticeTimeStopLoading()));
+  }
 }

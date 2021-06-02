@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service
+@Transactional
 public class LoadingBerthServiceImpl implements LoadingBerthService {
 
   @Autowired LoadingBerthDetailsRepository loadingBerthDetailRepository;
@@ -26,6 +28,7 @@ public class LoadingBerthServiceImpl implements LoadingBerthService {
     for (LoadingPlanModels.LoadingBerths berth : loadingBerthsList) {
       LoadingBerthDetail loadingBerthDetail = null;
       if (berth.getId() == 0) {
+
         loadingBerthDetail = new LoadingBerthDetail();
       } else {
         Optional<LoadingBerthDetail> loadingBerthDetailOpt =
@@ -67,6 +70,12 @@ public class LoadingBerthServiceImpl implements LoadingBerthService {
         StringUtils.isEmpty(berth.getSeaDraftLimitation())
             ? null
             : new BigDecimal(berth.getSeaDraftLimitation()));
+    Optional.ofNullable(berth.getSpecialRegulationRestriction())
+        .ifPresent(loadingBerthDetail::setSpecialRegulationRestriction);
+    Optional.ofNullable(berth.getHoseConnections())
+        .ifPresent(loadingBerthDetail::setHoseConnections);
+    Optional.ofNullable(berth.getItemsToBeAgreedWith())
+        .ifPresent(loadingBerthDetail::setItemToBeAgreedWith);
     loadingBerthDetail.setIsActive(true);
   }
 }

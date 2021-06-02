@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service
+@Transactional
 public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequenceService {
 
   @Autowired CargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
@@ -99,13 +101,15 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
     }
     Optional.ofNullable(toppingOff.getCargoId()).ifPresent(cargoToppingOff::setCargoXId);
     cargoToppingOff.setFillingRatio(
-        StringUtils.isEmpty(toppingOff.getFillingRation())
+        StringUtils.isEmpty(toppingOff.getFillingRatio())
             ? null
-            : new BigDecimal(toppingOff.getFillingRation()));
-    //        Optional.ofNullable(toppingOff.getOrderNumber())
-    //            .ifPresent(cargoToppingOff::setOrderNumber);
-    //        Optional.ofNullable(toppingOff.getR)
-    //            .ifPresent(cargoToppingOff::setRemarks);
+            : new BigDecimal(toppingOff.getFillingRatio()));
+    Optional.ofNullable(toppingOff.getOrderNumber()).ifPresent(cargoToppingOff::setOrderNumber);
+    Optional.ofNullable(toppingOff.getRemark()).ifPresent(cargoToppingOff::setRemarks);
+    cargoToppingOff.setQuantity(
+        StringUtils.isEmpty(toppingOff.getQuantity())
+            ? null
+            : new BigDecimal(toppingOff.getQuantity()));
     Optional.ofNullable(toppingOff.getTankId()).ifPresent(cargoToppingOff::setTankXId);
     cargoToppingOff.setUllage(
         StringUtils.isEmpty(toppingOff.getUllage())

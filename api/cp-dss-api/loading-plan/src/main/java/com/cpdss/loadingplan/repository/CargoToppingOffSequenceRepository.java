@@ -23,4 +23,9 @@ public interface CargoToppingOffSequenceRepository
   List<CargoToppingOffSequence> findAllByLoadingInformationAndIsActiveTrue(LoadingInformation var1);
 
   public Optional<CargoToppingOffSequence> findByIdAndIsActiveTrue(Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE CargoToppingOffSequence SET isActive = false WHERE loadingInformation.id = ?1")
+  public void deleteByLoadingInformationId(Long loadingInformationId);
 }

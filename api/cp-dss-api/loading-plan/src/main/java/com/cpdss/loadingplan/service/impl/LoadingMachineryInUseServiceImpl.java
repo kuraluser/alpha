@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service
+@Transactional
 public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseService {
 
   @Autowired LoadingMachineryInUseRepository loadingMachineryInUseRepository;
@@ -33,7 +35,7 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
         if (loadingMachineryOpt.isPresent()) {
           loadingMachineryInUse = loadingMachineryOpt.get();
         } else {
-          throw new Exception("Cannot find the loading delay");
+          throw new Exception("Cannot find cargo machinery");
         }
       }
 
@@ -52,12 +54,13 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
     } else {
       throw new Exception("Cannot find the loading information for the machinery");
     }
-    // TODO: pump id check
+    
     Optional.ofNullable(loadingMachinesInUse.getPumpId()).ifPresent(machinery::setPumpXId);
     machinery.setCapacity(
         StringUtils.isEmpty(loadingMachinesInUse.getCapacity())
             ? null
             : new BigDecimal(loadingMachinesInUse.getCapacity()));
+    machinery.setIsUsing(loadingMachinesInUse.getIsUsing());
     machinery.setIsActive(true);
   }
 }
