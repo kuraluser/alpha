@@ -1293,6 +1293,10 @@ message ActiveVoyage{
 	LoadableStudyDetail confirmedLoadableStudy = 11;
 	repeated PortRotationDetail portRotation = 12;
 	repeated CargoNominationDetail cargoNomination = 13;
+
+	int64 patternId = 14;
+	int64 patternCaseNo = 15;
+	int64 patternStatus = 16;
 }
 
 // Generic Request message
@@ -1301,11 +1305,16 @@ message ActiveVoyage{
 message LoadingPlanIdRequest {
 	int64 id = 1;
 	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY
+	int64 patternId = 3;
+	string operationType = 4;
+	int64 portRotationId = 5;
+	int64 portId = 6;
 }
 
 message LoadingPlanCommonResponse{
 	ResponseStatus responseStatus = 1;
 	repeated LoadingSynopticResponse synopticData = 2;
+	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
 }
 
 message LoadingSynopticResponse{

@@ -7,6 +7,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import java.util.List;
 
 public interface LoadingPlanGrpcService {
 
@@ -30,4 +31,7 @@ public interface LoadingPlanGrpcService {
       Long portId,
       Long portOrder,
       Long portRotationId);
+
+  List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
+      Long patternId, String operationType, Long portRotationId, Long portId);
 }

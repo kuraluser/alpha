@@ -192,6 +192,24 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     return cvt;
   }
 
+  @Override
+  public List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
+      Long patternId, String operationType, Long portRotationId, Long portId) {
+    LoadableStudy.LoadingPlanCommonResponse response =
+        this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
+            LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                .setPatternId(patternId)
+                .setOperationType(operationType)
+                .setPortRotationId(portRotationId)
+                .setPortId(portId)
+                .build());
+
+    if (response.getResponseStatus().getStatus().equals("SUCCESS")) {
+      return response.getLoadableQuantityCargoDetailsList();
+    }
+    return new ArrayList<>();
+  }
+
   public LoadableStudy.VoyageRequest buildVoyageRequest(Long vesselId) {
     LoadableStudy.VoyageRequest.Builder builder = LoadableStudy.VoyageRequest.newBuilder();
     builder.setVesselId(vesselId);

@@ -57,6 +57,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       Long vesselId, Long planId, Long portRId) throws GenericServiceException {
     LoadingInformation var1 = new LoadingInformation();
 
+    final String OPERATION_TYPE = "ARR";
+
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
         "Get Loading Info, Active Voyage Number and Id {} ",
@@ -116,6 +118,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.getToppingOffSequence(
             loadingInfo.getToppingOffSequenceList());
 
+    // Call No. 1 To synoptic table api (voyage-status)
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,
@@ -124,6 +127,16 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
             portRotation.get().getId());
+    // Call No. 2 To synoptic data for loading (same as port rotation in above code)
+    vesselTankDetails.setLoadableQuantityCargoDetails(
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId()));
+
+    LoadingSequences loadingSequences =
+        this.loadingInformationService.getLoadingSequence(loadingInfo.getLoadingDelays());
 
     var1.setLoadingDetails(loadingDetails);
     var1.setLoadingRates(loadingRates);
@@ -132,6 +145,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setLoadingStages(loadingStages);
     var1.setToppingOffSequence(toppingSequence);
     var1.setCargoVesselTankDetails(vesselTankDetails);
+    var1.setLoadingSequences(loadingSequences);
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }
