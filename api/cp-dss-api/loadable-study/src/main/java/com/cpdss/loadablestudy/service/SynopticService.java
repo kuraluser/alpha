@@ -8,7 +8,9 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,8 @@ public class SynopticService {
 
   @Autowired SynopticalTableRepository synopticalTableRepository;
 
+  @Autowired LoadablePlanQuantityRepository loadablePlanQuantityRepository;
+
   public void fetchLoadingInformationSynopticDetails(
       LoadableStudy.LoadingPlanIdRequest request,
       LoadableStudy.LoadingPlanCommonResponse.Builder builder,
@@ -43,6 +47,9 @@ public class SynopticService {
         log.info("Synoptic Data for Loading Plan Default Case");
         break;
     }
+
+    // Cargo details based on port, and operation type
+    this.buildCargoToBeLoadedForPort(request, builder, repBuilder);
   }
 
   // Single Entry with the Operation Type - ARR
@@ -94,5 +101,57 @@ public class SynopticService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  private void buildCargoToBeLoadedForPort(
+      LoadableStudy.LoadingPlanIdRequest request,
+      LoadableStudy.LoadingPlanCommonResponse.Builder builder,
+      Common.ResponseStatus.Builder repBuilder) {
+
+    List<LoadablePlanQuantity> list =
+        this.loadablePlanQuantityRepository.PORT_WISE_CARGO_DETAILS(
+            request.getPatternId(),
+            request.getOperationType(),
+            request.getPortRotationId(),
+            request.getPortId());
+
+    if (!list.isEmpty()) {
+      for (LoadablePlanQuantity var1 : list) {
+        LoadableStudy.LoadableQuantityCargoDetails.Builder builder1 =
+            LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+        Optional.ofNullable(var1.getId()).ifPresent(builder1::setId);
+        Optional.ofNullable(var1.getGrade()).ifPresent(builder1::setGrade);
+        Optional.ofNullable(var1.getEstimatedApi())
+            .ifPresent(v -> builder1.setEstimatedAPI(v.toString()));
+        Optional.ofNullable(var1.getOrderBblsDbs()).ifPresent(builder1::setOrderBblsdbs);
+        Optional.ofNullable(var1.getOrderBbls60f()).ifPresent(builder1::setOrderBbls60F);
+        Optional.ofNullable(var1.getMinTolerence()).ifPresent(builder1::setMinTolerence);
+        Optional.ofNullable(var1.getMaxTolerence()).ifPresent(builder1::setMaxTolerence);
+        Optional.ofNullable(var1.getLoadableBblsDbs()).ifPresent(builder1::setLoadableBblsdbs);
+        Optional.ofNullable(var1.getLoadableBbls60f()).ifPresent(builder1::setLoadableBbls60F);
+
+        Optional.ofNullable(var1.getLoadableLt()).ifPresent(builder1::setLoadableLT);
+        Optional.ofNullable(var1.getLoadableMt()).ifPresent(builder1::setLoadableMT);
+        Optional.ofNullable(var1.getLoadableKl()).ifPresent(builder1::setLoadableKL);
+        Optional.ofNullable(var1.getDifferencePercentage())
+            .ifPresent(builder1::setDifferencePercentage);
+        Optional.ofNullable(var1.getDifferenceColor()).ifPresent(builder1::setDifferenceColor);
+
+        Optional.ofNullable(var1.getCargoXId()).ifPresent(builder1::setCargoId);
+        Optional.ofNullable(var1.getCargoAbbreviation()).ifPresent(builder1::setCargoAbbreviation);
+        Optional.ofNullable(var1.getCargoColor()).ifPresent(builder1::setColorCode);
+        Optional.ofNullable(var1.getPriority()).ifPresent(builder1::setPriority);
+        Optional.ofNullable(var1.getLoadingOrder()).ifPresent(builder1::setLoadingOrder);
+        Optional.ofNullable(var1.getSlopQuantity()).ifPresent(builder1::setSlopQuantity);
+
+        Optional.ofNullable(var1.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
+        Optional.ofNullable(var1.getTimeRequiredForLoading())
+            .ifPresent(builder1::setTimeRequiredForLoading);
+        // loading port details no need
+        // cargo topping off no need
+        builder.addLoadableQuantityCargoDetails(builder1.build());
+      }
+    }
+    builder.setResponseStatus(repBuilder.setStatus(SUCCESS).build());
   }
 }

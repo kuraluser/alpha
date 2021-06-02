@@ -31,8 +31,8 @@ public class LoadingInformation {
   private LoadingRates loadingRates;
   private LoadingBerthDetails berthDetails;
   private CargoMachineryInUse machineryInUses;
-  // private CargoDetails cargoDetails; // call to LS and get by port rotation condition
   private LoadingStages loadingStages;
-  private LoadingSequences loadingSequences;
+  private LoadingSequences loadingSequences; // TO DO
   private List<ToppingOffSequence> toppingOffSequence;
+  private CargoVesselTankDetails cargoVesselTankDetails;
 }
