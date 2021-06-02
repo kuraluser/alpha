@@ -6,6 +6,7 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
@@ -84,6 +85,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             "Get Loading info, Sunrise/Sunset added from Port Info table {}, {}",
             response2.getSunriseTime(),
             response2.getSunsetTime());
+      } else {
+        log.info("Get Synoptic Table, Port Rotation Id {}", portRId);
       }
     } catch (GenericServiceException e) {
       e.printStackTrace();
@@ -128,6 +131,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           var1.getLineContentRemaining().isEmpty()
               ? BigDecimal.ZERO
               : new BigDecimal(var1.getLineContentRemaining()));
+      log.info("Loading Rates added from Loading plan Service");
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Failed to cast loading rates");
@@ -206,6 +210,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       var2.setRegulationAndRestriction(lb.getDepth());
       list.add(var2);
     }
+    log.info("Loading Plan Berth data added Size {}", var1.size());
     return list;
   }
 
@@ -256,6 +261,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
         list2.add(var2);
       }
+      log.info("Loading plan machine in use added, Size {}", var1.size());
       machineryInUse.setLoadingMachinesInUses(list2);
     }
     return machineryInUse;
@@ -282,6 +288,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       }
       loadingStages.setStageOffsetList(list1);
       loadingStages.setStageDurationList(list2);
+      log.info(
+          "Loading Plan Stages added Stage Id {}, Offset {}, Duration {}",
+          var1.getId(),
+          var1.getStageOffset(),
+          var1.getStageDuration());
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -313,10 +324,75 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 ? BigDecimal.ZERO
                 : new BigDecimal(var1.getFillingRatio()));
         list2.add(var2);
+        log.info("Loading Plan Topping off list Id {}", var1.getId());
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
     return list2;
+  }
+
+  @Override
+  public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
+      Long patternId, String operationType, Long portRotationId, Long portId) {
+    List<LoadableStudy.LoadableQuantityCargoDetails> list =
+        this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
+            patternId, operationType, portRotationId, portId);
+    return this.buildLoadablePlanQuantity(list);
+  }
+
+  @Override
+  public LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay) {
+    LoadingSequences loadingSequences = new LoadingSequences();
+    List<ReasonForDelay> reasonForDelays = new ArrayList<>();
+    for (LoadingPlanModels.DelayReasons var2 : loadingDelay.getReasonsList()) {
+      ReasonForDelay val1 = new ReasonForDelay();
+      BeanUtils.copyProperties(var2, val1);
+      reasonForDelays.add(val1);
+    }
+    List<LoadingDelays> loadingDelays = new ArrayList<>();
+    for (LoadingPlanModels.LoadingDelays var2 : loadingDelay.getDelaysList()) {
+      LoadingDelays val1 = new LoadingDelays();
+      BeanUtils.copyProperties(var2, val1);
+      loadingDelays.add(val1);
+    }
+    loadingSequences.setReasonForDelays(reasonForDelays);
+    loadingSequences.setLoadingDelays(loadingDelays);
+    log.info(
+        "manage sequence data added from  loading plan, Size {}", loadingDelay.getDelaysCount());
+    return loadingSequences;
+  }
+
+  private List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> buildLoadablePlanQuantity(
+      List<LoadableStudy.LoadableQuantityCargoDetails> list) {
+    List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> response = new ArrayList<>();
+    log.info("Cargo to be loaded data from LS, Size {}", list.size());
+    for (LoadableStudy.LoadableQuantityCargoDetails lqcd : list) {
+      com.cpdss.gateway.domain.LoadableQuantityCargoDetails cargoDetails =
+          new com.cpdss.gateway.domain.LoadableQuantityCargoDetails();
+      cargoDetails.setDifferenceColor(lqcd.getDifferenceColor());
+      cargoDetails.setDifferencePercentage(lqcd.getDifferencePercentage());
+      cargoDetails.setEstimatedAPI(lqcd.getEstimatedAPI());
+      cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
+      cargoDetails.setGrade(lqcd.getGrade());
+      cargoDetails.setId(lqcd.getId());
+      cargoDetails.setLoadableBbls60f(lqcd.getLoadableBbls60F());
+      cargoDetails.setLoadableBblsdbs(lqcd.getLoadableBblsdbs());
+      cargoDetails.setLoadableKL(lqcd.getLoadableKL());
+      cargoDetails.setLoadableLT(lqcd.getLoadableLT());
+      cargoDetails.setLoadableMT(lqcd.getLoadableMT());
+      cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+      cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+      cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
+      cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
+      cargoDetails.setCargoId(lqcd.getCargoId());
+      cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+      cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+      cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+      cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
+      cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
+      response.add(cargoDetails);
+    }
+    return response;
   }
 }

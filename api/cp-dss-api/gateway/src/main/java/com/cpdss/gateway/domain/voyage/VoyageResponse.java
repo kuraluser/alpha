@@ -21,4 +21,8 @@ public class VoyageResponse {
 
   List<PortRotation> portRotations;
   LoadableStudy activeLs;
+
+  private Long patternId;
+  private Long patternCaseNo;
+  private Long patternStatus;
 }

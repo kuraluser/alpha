@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.loadingplan.*;
 import java.util.List;
 
@@ -40,4 +41,9 @@ public interface LoadingInformationService {
   LoadingStages getLoadingStagesAndMasters(LoadingPlanModels.LoadingStages var1);
 
   List<ToppingOffSequence> getToppingOffSequence(List<LoadingPlanModels.LoadingToppingOff> var1);
+
+  List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
+      Long patternId, String operationType, Long portRotationId, Long portId);
+
+  LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay);
 }

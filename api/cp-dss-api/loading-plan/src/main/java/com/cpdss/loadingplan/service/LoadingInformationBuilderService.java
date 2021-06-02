@@ -169,8 +169,7 @@ public class LoadingInformationBuilderService {
           .ifPresent(value -> builder1.setDuration(value.toString()));
       builder.addDelays(builder1);
     }
-    // User Entry Delay TO DO
-    // Cargo List for drop down TO DO
+    // Cargo List for drop down, at gate way
     return builder.build();
   }
 
