@@ -98,7 +98,7 @@ public class EnvoyReaderService {
       readerBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("IOException in Envoy Writer micro service")
+              .setMessage("JsonProcessingException in Envoy Reader micro service")
               .setStatus(FAILED)
               .build());
     } catch (IOException e) {
@@ -106,7 +106,7 @@ public class EnvoyReaderService {
       readerBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("IOException in Envoy Writer micro service")
+              .setMessage("IOException in Envoy Reader micro service")
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
@@ -114,7 +114,7 @@ public class EnvoyReaderService {
       readerBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("IOException in Envoy Writer micro service")
+              .setMessage("IOException in Envoy Reader micro service")
               .setStatus(FAILED)
               .build());
     }

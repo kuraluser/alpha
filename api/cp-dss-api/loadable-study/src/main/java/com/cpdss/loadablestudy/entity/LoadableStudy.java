@@ -122,6 +122,6 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "feedback_loop_count")
   private Integer feedbackLoopCount;
 
-  @Column(name = "messageUUID")
+  @Column(name = "message_uuid")
   private String messageUUID;
 }

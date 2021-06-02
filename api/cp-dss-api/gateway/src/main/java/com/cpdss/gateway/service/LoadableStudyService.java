@@ -5675,7 +5675,7 @@ public class LoadableStudyService {
   public Object test1() {
     EnvoyReader.EnvoyReaderResultRequest.Builder error =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    error.setClientId("kazusa");
+    error.setClientId("KAZUSA");
     error.setMessageType("LOADABLESTUDY");
     error.setShipId("9513402");
     EnvoyReader.EnvoyReaderResultReply jsonResult =

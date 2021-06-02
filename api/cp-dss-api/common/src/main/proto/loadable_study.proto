@@ -183,6 +183,7 @@ message LoadableStudyShoreRequest{
 }
 message LoadableStudyShoreReply{
 	ResponseStatus responseStatus = 1;
+	string processId=2;
 }
 message LatestCargoRequest{
 	int64 vesselId = 1;

@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -12,6 +13,7 @@ import com.cpdss.loadablestudy.domain.MessageTypes;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.google.gson.Gson;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -29,7 +31,7 @@ import org.springframework.util.StringUtils;
 @Log4j2
 @Service
 @Transactional
-public class LoadableStudyServiceShore extends LoadableStudyService {
+public class LoadableStudyServiceShore {
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
@@ -41,7 +43,6 @@ public class LoadableStudyServiceShore extends LoadableStudyService {
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
-  @Autowired private LoadableStudyService loadableStudyService;
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
 
@@ -58,7 +59,7 @@ public class LoadableStudyServiceShore extends LoadableStudyService {
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
-    Voyage voyage = saveVoyageShore(loadableStudy.getVoyageId(), loadableStudy.getVoyageNo());
+    Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyageNo());
     if (null != checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
 
     } else {
@@ -70,6 +71,7 @@ public class LoadableStudyServiceShore extends LoadableStudyService {
         e.printStackTrace();
       }
     }
+    // return loadableStudy;
   }
 
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore() {
@@ -301,8 +303,8 @@ public class LoadableStudyServiceShore extends LoadableStudyService {
   private OnHandQuantity buildOnHandQuantity(
       OnHandQuantity entity, com.cpdss.loadablestudy.domain.OnHandQuantity request) {
     entity.setIsActive(true);
-    entity.setFuelTypeXId(0 == request.getFueltypeId() ? null : request.getFueltypeId());
-    entity.setTankXId(0 == request.getTankId() ? null : request.getTankId());
+    entity.setFuelTypeXId(null != request.getFueltypeId() ? request.getFueltypeId() : null);
+    entity.setTankXId(null != request.getTankId() ? request.getTankId() : null);
     entity.setArrivalQuantity(
         isEmpty(request.getArrivalQuantity())
             ? null
@@ -394,14 +396,12 @@ public class LoadableStudyServiceShore extends LoadableStudyService {
   }
 
   private Voyage saveVoyageShore(Long vesselId, String voyageNo) {
-    Voyage voyage =
-        voyageRepository
-            .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(1L, vesselId, voyageNo)
-            .get(0);
-    if (voyage != null) {
-      return voyage;
+    List<Voyage> voyageList =
+        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(1L, vesselId, voyageNo);
+    if (voyageList != null && voyageList.get(0) != null) {
+      return voyageList.get(0);
     } else {
-      voyage = new Voyage();
+      Voyage voyage = new Voyage();
       voyage.setVoyageNo(voyageNo);
       voyage.setVesselXId(vesselId);
       voyage = voyageRepository.save(voyage);
@@ -421,22 +421,34 @@ public class LoadableStudyServiceShore extends LoadableStudyService {
     entity.setSubCharterer(loadableStudy.getSubCharterer());
     entity.setDraftMark(new BigDecimal(loadableStudy.getDraftMark()));
     entity.setLoadLineXId(loadableStudy.getLoadlineId());
-    entity.setDraftRestriction(new BigDecimal(loadableStudy.getDraftRestriction()));
-    entity.setEstimatedMaxSag(new BigDecimal(loadableStudy.getEstimatedMaxSG()));
-    entity.setMaxAirTemperature(new BigDecimal(loadableStudy.getMaxAirTemp()));
-    entity.setMaxWaterTemperature(new BigDecimal(loadableStudy.getMaxWaterTemp()));
+    entity.setDraftRestriction(
+        loadableStudy.getDraftRestriction() != null
+            ? new BigDecimal(loadableStudy.getDraftRestriction())
+            : null);
+    entity.setEstimatedMaxSag(
+        loadableStudy.getEstimatedMaxSG() != null
+            ? new BigDecimal(loadableStudy.getEstimatedMaxSG())
+            : null);
+    entity.setMaxAirTemperature(
+        loadableStudy.getMaxAirTemp() != null
+            ? new BigDecimal(loadableStudy.getMaxAirTemp())
+            : null);
+    entity.setMaxWaterTemperature(
+        loadableStudy.getMaxWaterTemp() != null
+            ? new BigDecimal(loadableStudy.getMaxWaterTemp())
+            : null);
     entity.setActive(true);
     /*entity.setCaseNo(loadableStudy.getC);
     entity.setDischargeCargoId(loadableStudy.getD);*/
-    entity.setLoadOnTop(loadableStudy.getLoadOnTop());
+    entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
     /*entity.setIsCargoNominationComplete(loadableStudy.getIsCargoNominationComplete());
     entity.setIsDischargePortsComplete(loadableStudy.getIsDischargePortsComplete());
     entity.setIsObqComplete(loadableStudy.getIsObqComplete());
     entity.setIsOhqComplete(loadableStudy.getIsOhqComplete());
     entity.setIsPortsComplete(loadableStudy.getIsPortsComplete());*/
     Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
-    if (!loadableStudy.getLoadableStudyAttachment().isEmpty()) {
-      String folderLocation = loadableStudyService.constructFolderPath(entity);
+    if (null != loadableStudy.getLoadableStudyAttachment()) {
+      String folderLocation = constructFolderPath(entity);
       Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
       for (com.cpdss.loadablestudy.domain.LoadableStudyAttachment attachment :
           loadableStudy.getLoadableStudyAttachment()) {
@@ -462,5 +474,24 @@ public class LoadableStudyServiceShore extends LoadableStudyService {
     }
     entity = this.loadableStudyRepository.save(entity);
     return entity;
+  }
+
+  public String constructFolderPath(LoadableStudy loadableStudy) {
+    String separator = File.separator;
+    StringBuilder pathBuilder = new StringBuilder(separator);
+    pathBuilder
+        .append("company_")
+        .append(loadableStudy.getVoyage().getCompanyXId())
+        .append(separator)
+        .append("vessel_")
+        .append(loadableStudy.getVesselXId())
+        .append(separator)
+        .append(loadableStudy.getVoyage().getVoyageNo().replace(" ", "_"))
+        .append("_")
+        .append(loadableStudy.getVoyage().getId())
+        .append(separator)
+        .append(loadableStudy.getName().replace(" ", "_"))
+        .append(separator);
+    return valueOf(pathBuilder);
   }
 }
