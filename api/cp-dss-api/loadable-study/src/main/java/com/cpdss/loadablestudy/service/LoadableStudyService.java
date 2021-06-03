@@ -4689,9 +4689,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .findBySynopticalTableAndLoadablePatternIdAndIsActive(
                       synopticalTableOpt.get(), loadablePattern.getId(), true)
                   .getCalculatedTrimPlanned()));
-      // algoRequest.setTrim(
-      //    "0"); // ToDo - replace with above code once loaicator implementaion is done.
     }
+    algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
     return algoRequest;
   }
 

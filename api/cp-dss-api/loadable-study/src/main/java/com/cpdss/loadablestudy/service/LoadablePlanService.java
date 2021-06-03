@@ -181,6 +181,8 @@ public class LoadablePlanService {
           .ifPresent(item -> builder.setCorrectionFactor(valueOf(item)));
       Optional.ofNullable(temp.getQuantity())
           .ifPresent(item -> builder.setMetricTon(valueOf(item)));
+      Optional.ofNullable(temp.getFillingRatio())
+          .ifPresent(item -> builder.setPercentage(valueOf(item)));
     }
   }
 

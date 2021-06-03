@@ -28,7 +28,10 @@ public class ScheduledTaskProperties {
 
   private TaskTypeEnum taskType;
 
-  public enum TaskTypeEnum { SYNC, ASYNC };
+  public enum TaskTypeEnum {
+    SYNC,
+    ASYNC
+  };
 
   private Integer taskFrequency;
 
@@ -43,6 +46,4 @@ public class ScheduledTaskProperties {
 
   @JsonFormat(pattern = "HH:mm:ss")
   private LocalTime taskEndTime;
-
-
 }
