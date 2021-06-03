@@ -3,8 +3,10 @@ package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.PortRotation;
@@ -214,5 +216,10 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     LoadableStudy.VoyageRequest.Builder builder = LoadableStudy.VoyageRequest.newBuilder();
     builder.setVesselId(vesselId);
     return builder.build();
+  }
+
+  @Override
+  public ResponseStatus saveLoadingInformation(LoadingInformation loadingInformation) {
+    return this.loadingInfoServiceBlockingStub.saveLoadingInformation(loadingInformation);
   }
 }

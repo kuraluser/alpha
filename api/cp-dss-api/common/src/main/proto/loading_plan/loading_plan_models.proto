@@ -37,6 +37,7 @@ message LoadingDetails{
   string timeOfSunset =3;
   string startTime = 4;
   TrimAllowed trimAllowed = 5;
+  int64 voyageId = 6;
 }
 
 message TrimAllowed{
@@ -55,6 +56,7 @@ message LoadingRates{
   string noticeTimeRateReduction = 7;
   string noticeTimeStopLoading = 8;
   string lineContentRemaining = 9; // BA Clarification Pending
+  string minLoadingRate = 10; // Not added in gateway
 }
 
 message LoadingBerths{
@@ -66,6 +68,8 @@ message LoadingBerths{
   string airDraftLimitation = 6;
   string maxManifoldHeight = 7;
   string specialRegulationRestriction = 8;
+  string itemsToBeAgreedWith = 9; // Not added in gateway
+  string hoseConnections = 10; // Not added in gateway
 }
 
 message LoadingStages{
@@ -76,6 +80,8 @@ message LoadingStages{
   bool trackGradeSwitch = 5;
   repeated StageOffsets stageOffsets = 6; // master data
   repeated StageDuration stageDurations = 7; // master data
+  StageOffsets offset = 8;
+  StageDuration duration = 9;
 }
 
 // stage min_amount
@@ -94,6 +100,7 @@ message LoadingMachinesInUse{
   int64 loadingInfoId = 2;
   int64 pumpId = 3;
   string capacity = 4;
+  bool isUsing = 5; // Not added in gateway
 }
 
 // Object message for hold, master and user data
@@ -114,6 +121,7 @@ message LoadingDelays{
   int64 reasonForDelayId = 3;
   string duration = 4;
   int64 cargoId = 5;
+  string quantity = 6; // was added in gateway
 }
 
 // pure cargo details based on the port rotation
@@ -128,7 +136,7 @@ message LoadingDelayCargos{
 message LoadingToppingOff{
   int64 id = 1;
   int64 loadingInfoId = 2;
-  int64 orderNumber = 3; // sequence no
+  int32 orderNumber = 3; // sequence no
   int64 tankId = 4;
   string cargoName = 5;
   string cargoAbbreviation = 6;
@@ -146,6 +154,7 @@ message LoadingInformationDetail {
   int64 portId = 2;
   int64 synopticalTableId = 3;
   int64 vesselId = 4;
+  int64 voyageId = 5;
 }
 
 message LoadablePlanBallastDetail {

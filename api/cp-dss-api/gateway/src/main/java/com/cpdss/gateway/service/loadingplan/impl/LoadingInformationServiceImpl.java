@@ -2,16 +2,23 @@
 package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
+import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.PortInfoService;
 import com.cpdss.gateway.service.VesselInfoService;
+import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import java.math.BigDecimal;
@@ -33,11 +40,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoadingInformationServiceImpl implements LoadingInformationService {
 
+  public static final String SUCCESS = "SUCCESS";
+  public static final String FAILED = "FAILED";
+
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired PortInfoService portInfoService;
 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+
+  @Autowired LoadingInformationBuilderService loadingInfoBuilderService;
+
+  @Autowired LoadableStudyService loadableStudyService;
 
   /**
    * Sunset/Sunrise Only Collect from Synoptic Table in LS
@@ -393,6 +407,57 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
       response.add(cargoDetails);
     }
+    return response;
+  }
+
+  @Override
+  public LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
+      throws GenericServiceException {
+    try {
+      log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
+      LoadingInformation loadingInformation =
+          loadingInfoBuilderService.buildLoadingInformation(request);
+      ResponseStatus response =
+          this.loadingPlanGrpcService.saveLoadingInformation(loadingInformation);
+      if (response.getStatus().equalsIgnoreCase(SUCCESS)) {
+        // Updating synoptical table
+        this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
+        return buildLoadingInformationResponse();
+      } else {
+        log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
+        throw new GenericServiceException(
+            "Failed to save Loading Information",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Failed to save Loading Information",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Updates Synoptical table
+   *
+   * @param loadingDetails
+   * @param synopticalId
+   * @throws Exception
+   */
+  private void updateSynopticalTable(
+      com.cpdss.gateway.domain.loadingplan.LoadingDetails loadingDetails, Long synopticalId)
+      throws Exception {
+    this.loadableStudyService.saveLoadingInfoToSynopticalTable(
+        synopticalId, loadingDetails.getTimeOfSunrise(), loadingDetails.getTimeOfSunset());
+  }
+
+  LoadingInformationResponse buildLoadingInformationResponse() {
+    LoadingInformationResponse response = new LoadingInformationResponse();
+    CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+    response.setResponseStatus(successResponse);
     return response;
   }
 }

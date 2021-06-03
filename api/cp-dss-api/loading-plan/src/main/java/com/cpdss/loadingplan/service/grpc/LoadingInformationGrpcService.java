@@ -5,8 +5,10 @@ import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import io.grpc.stub.StreamObserver;
@@ -56,6 +58,30 @@ public class LoadingInformationGrpcService
               .build());
     } catch (Exception e) {
       e.printStackTrace();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveLoadingInformation(
+      LoadingInformation request, StreamObserver<ResponseStatus> responseObserver) {
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      log.info("Saving Loading Information for id {}", request.getLoadingDetail().getId());
+      this.loadingInformationService.saveLoadingInformation(request);
+      builder.setMessage("Successfully saved Loading information").setStatus(SUCCESS).build();
+    } catch (Exception e) {
+      log.error(
+          "Exception occured while saving Loading Information for id {}",
+          request.getLoadingDetail().getId());
+      e.printStackTrace();
+      builder
+          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+          .setMessage(e.getMessage())
+          .setStatus(FAILED)
+          .build();
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

@@ -2,9 +2,11 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import java.util.List;
@@ -34,4 +36,6 @@ public interface LoadingPlanGrpcService {
 
   List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
       Long patternId, String operationType, Long portRotationId, Long portId);
+
+  ResponseStatus saveLoadingInformation(LoadingInformation loadingInformation);
 }

@@ -9,6 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
@@ -52,6 +53,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetailsResults;
+import com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.LodicatorResultDetails;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
@@ -5690,5 +5692,19 @@ public class LoadableStudyService {
     error.setImoNumber("123");
     this.envoyWriterGrpcService.getCommunicationServer(error.build());
     return null;
+  }
+
+  public void saveLoadingInfoToSynopticalTable(
+      Long synopticalTableId, String sunriseTime, String sunsetTime) throws Exception {
+    LoadingInfoSynopticalUpdateRequest.Builder builder =
+        LoadingInfoSynopticalUpdateRequest.newBuilder();
+    builder.setSynopticalTableId(synopticalTableId);
+    builder.setTimeOfSunrise(sunriseTime);
+    builder.setTimeOfSunset(sunsetTime);
+    ResponseStatus response =
+        this.loadableStudyServiceBlockingStub.saveLoadingInfoToSynopticData(builder.build());
+    if (response.getStatus().equalsIgnoreCase("FAILED")) {
+      throw new Exception("Failed to update synoptical table " + synopticalTableId);
+    }
   }
 }

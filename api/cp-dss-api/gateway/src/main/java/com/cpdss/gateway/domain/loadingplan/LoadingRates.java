@@ -16,4 +16,5 @@ public class LoadingRates {
   private BigDecimal noticeTimeRateReduction;
   private BigDecimal noticeTimeStopLoading;
   private BigDecimal lineContentRemaining; // BA Clarification Pending
+  private BigDecimal minLoadingRate; // Newly added
 }

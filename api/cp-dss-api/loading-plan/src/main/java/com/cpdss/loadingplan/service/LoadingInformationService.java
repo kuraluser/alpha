@@ -10,7 +10,7 @@ import java.util.Optional;
 /** Master service for the Loading Information */
 public interface LoadingInformationService {
 
-  public LoadingInformation saveLoadingInformation(
+  public LoadingInformation saveLoadingInformationDetail(
       LoadingInformationDetail loadingInformationDetail, LoadingInformation loadingInformation);
 
   public void deleteLoadablePlanDetails(LoadingInformation loadingInformation);
@@ -21,4 +21,7 @@ public interface LoadingInformationService {
       LoadingPlanModels.LoadingInformationRequest request,
       LoadingPlanModels.LoadingInformation.Builder response)
       throws GenericServiceException;
+
+  public void saveLoadingInformation(LoadingPlanModels.LoadingInformation loadingInformation)
+      throws Exception;
 }

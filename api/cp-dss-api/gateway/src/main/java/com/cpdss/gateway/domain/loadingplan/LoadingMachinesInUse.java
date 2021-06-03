@@ -10,4 +10,5 @@ public class LoadingMachinesInUse {
   private Long loadingInfoId;
   private Long pumpId;
   private BigDecimal capacity;
+  private Boolean isUsing;
 }
