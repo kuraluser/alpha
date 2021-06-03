@@ -10209,9 +10209,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       } else {
         entityList =
-            voyageRepository.findByIsActiveAndVesselXIdOrderByLastModifiedDateTimeDesc(
-                true, request.getVesselId());
-      }
+                voyageRepository.findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
+                        true, request.getVesselId());      }
       for (Voyage entity : entityList) {
         VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
         detailbuilder.setId(entity.getId());
