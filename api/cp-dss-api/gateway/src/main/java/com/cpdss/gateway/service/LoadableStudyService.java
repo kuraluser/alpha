@@ -1730,8 +1730,7 @@ public class LoadableStudyService {
               cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
               cargoDetails.setMinTolerence(lqcd.getMinTolerence());
               cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
-              // Dummy value till actual from Alog
-              cargoDetails.setTimeRequiredForLoading("0");
+              cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               if (!lqcd.getLoadingPortsList().isEmpty()) {
                 List<String> ports =
                     lqcd.getLoadingPortsList().stream()
@@ -3595,6 +3594,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
     Optional.ofNullable(lpqcd.getCargoNominationId())
         .ifPresent(qunatityBuilder::setCargoNominationId);
+    Optional.ofNullable(lpqcd.getTimeRequiredForLoading())
+        .ifPresent(qunatityBuilder::setTimeRequiredForLoading);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3627,6 +3628,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
     Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+    Optional.ofNullable(lqccd.getTimeRequiredForLoading())
+        .ifPresent(builder::setTimeRequiredForLoading);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 

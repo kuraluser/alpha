@@ -66,6 +66,8 @@ public class LoadablePlanService {
           Optional.ofNullable(lpq.getOrderQuantity())
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           Optional.ofNullable(lpq.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+          Optional.ofNullable(lpq.getTimeRequiredForLoading())
+              .ifPresent(builder::setTimeRequiredForLoading);
 
           if (lpq.getCargoXId() != null) {
             log.info("Loadable Plan Quantity, Cargo Id {}", lpq.getCargoXId());
