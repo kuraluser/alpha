@@ -5563,7 +5563,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 false,
                 false,
                 algoResponse.getFeedbackLoopCount(),
-                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
                 LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
@@ -5590,7 +5590,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 true,
                 false,
                 algoResponse.getFeedbackLoopCount(),
-                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
                 LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
