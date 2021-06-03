@@ -39,6 +39,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingInformationBuilderService informationBuilderService;
   @Autowired LoadingBerthDetailsRepository berthDetailsRepository;
   @Autowired LoadingMachineryInUseRepository loadingMachineryInUserRepository;
+  @Autowired LoadingBerthDetailsRepository loadingBerthDetailsRepository;
 
   @Autowired StageOffsetRepository stageOffsetRepository;
 
@@ -92,6 +93,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     loadablePlanCommingleDetailsRepository.deleteByLoadingInformation(loadingInformation);
     loadablePlanQuantityRepository.deleteByLoadingInformation(loadingInformation);
     loadablePlanStowageDetailsRepository.deleteByLoadingInformation(loadingInformation);
+    loadingBerthDetailsRepository.deleteByLoadingInformationId(loadingInformation.getId());
+    loadingDelayRepository.deleteByLoadingInformationId(loadingInformation.getId());
+    loadingMachineryInUserRepository.deleteByLoadingInformationId(loadingInformation.getId());
   }
 
   @Override
@@ -199,7 +203,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList());
       toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
     } else {
-      throw new Exception("Cannot find loading information for the active voyage");
+      throw new Exception("Cannot find loading information with id " + request.getLoadingDetail().getId());
     }
   }
 
