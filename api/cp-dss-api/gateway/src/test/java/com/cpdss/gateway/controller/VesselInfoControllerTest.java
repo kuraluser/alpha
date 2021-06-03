@@ -10,8 +10,11 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
+import com.cpdss.gateway.domain.VesselRuleRequest;
 import com.cpdss.gateway.service.VesselInfoService;
+import com.cpdss.gateway.service.VesselInfoServiceTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -33,6 +36,8 @@ public class VesselInfoControllerTest {
 
   @MockBean private VesselInfoService vesselInfoService;
 
+  @MockBean private VesselInfoServiceTest vesselInfoServiceTest;
+
   private static final Long TEST_VESSEL_ID = 1L;
   private static final String CORRELATION_ID_HEADER = "correlationId";
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";
@@ -44,6 +49,13 @@ public class VesselInfoControllerTest {
       CLOUD_API_URL_PREFIX + GET_VESSEL_DETAILS_API_URL;
   private static final String GET_VESSEL_DETAILS_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_VESSEL_DETAILS_API_URL;
+  private static final String GET_VESSEL_RULE_URL =
+      "/vessel-rule/{vesselId}/ruleMasterSectionId/{sectionId}";
+  private static final String GET_VESSEL_RULE_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_VESSEL_RULE_URL;
+  private static final String GET_VESSEL_RULE_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_VESSEL_RULE_URL;
+  private static final Long TEST_RULE_SECTION_ID = 1L;
 
   @ValueSource(
       strings = {GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL, GET_VESSEL_DETAILS_SHIP_API_URL})
@@ -54,6 +66,20 @@ public class VesselInfoControllerTest {
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(strings = {GET_VESSEL_RULE_CLOUD_API_URL, GET_VESSEL_RULE_SHIP_API_URL})
+  @ParameterizedTest
+  void testGetAllRulesForVessel(String url) throws Exception {
+    VesselRuleRequest vesselRuleRequest = null;
+    when(this.vesselInfoService.getRulesByVesselIdAndSectionId(
+            anyLong(), anyLong(), vesselRuleRequest, anyString()))
+        .thenReturn(new RuleResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_RULE_SECTION_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isOk());
   }
