@@ -5333,6 +5333,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 load.setLoadableStudyId(request.getLoadableStudyId());
                 saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
         */
+
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
@@ -5348,6 +5349,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setProcesssId(algoResponse.getProcessId())
                 .setResponseStatus(
                     ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+        
       } else {
         log.info("INVALID_LOADABLE_STUDY {} - ", request.getLoadableStudyId());
         replyBuilder =
@@ -6149,11 +6151,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ofNullable(loadableQunty.getDeadWeight())
                 .ifPresent(
                     deadWeight -> loadableQuantityDto.setDeadWeight(String.valueOf(deadWeight)));
-            ofNullable(loadableQunty.getDisplacementAtDraftRestriction())
-                .ifPresent(
-                    displacementAtDraftRestriction ->
-                        loadableQuantityDto.setDisplacmentDraftRestriction(
-                            String.valueOf(displacementAtDraftRestriction)));
             ofNullable(loadableQunty.getDistanceFromLastPort())
                 .ifPresent(
                     distanceFromLastPort ->
@@ -6170,7 +6167,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ofNullable(loadableQunty.getEstimatedFOOnBoard())
                 .ifPresent(
                     estimatedFOOnBoard ->
-                        loadableQuantityDto.setEstDOOnBoard(String.valueOf(estimatedFOOnBoard)));
+                        loadableQuantityDto.setEstFOOnBoard(String.valueOf(estimatedFOOnBoard)));
             ofNullable(loadableQunty.getEstimatedFWOnBoard())
                 .ifPresent(
                     estimatedFWOnBoard ->
@@ -6180,20 +6177,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(
                     estimatedSagging ->
                         loadableQuantityDto.setEstSagging(String.valueOf(estimatedSagging)));
-            ofNullable(loadableQunty.getEstimatedSeaDensity())
-                .ifPresent(
-                    estimatedSeaDensity ->
-                        loadableQuantityDto.setEstSeaDensity(String.valueOf(estimatedSeaDensity)));
             ofNullable(loadableQunty.getFoConsumptionInSZ())
                 .ifPresent(
                     foConsumptionInSZ ->
                         loadableQuantityDto.setFoConInSZ(String.valueOf(foConsumptionInSZ)));
             ofNullable(loadableQunty.getId()).ifPresent(id -> loadableQuantityDto.setId(id));
-            ofNullable(loadableQunty.getLightWeight())
-                .ifPresent(
-                    vesselLightWeight ->
-                        loadableQuantityDto.setVesselLightWeight(
-                            String.valueOf(vesselLightWeight)));
             ofNullable(loadableQunty.getOtherIfAny())
                 .ifPresent(
                     otherIfAny -> loadableQuantityDto.setOtherIfAny(String.valueOf(otherIfAny)));
@@ -6215,8 +6203,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(
                     sgCorrection ->
                         loadableQuantityDto.setSgCorrection(String.valueOf(sgCorrection)));
-            ofNullable(loadableQunty.getSubTotal())
-                .ifPresent(subTotal -> loadableQuantityDto.setSubTotal(String.valueOf(subTotal)));
             ofNullable(loadableQunty.getTotalFoConsumption())
                 .ifPresent(
                     totalFoConsumption ->
@@ -6340,8 +6326,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             maxWaterTemperature ->
                 loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
 
-    Optional.ofNullable(loadableStudyOpt.get().getLoadOnTop())
-        .ifPresent(loadOnTop -> loadableStudy.setLoadOnTop(loadOnTop));
+     if(ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
+    	 loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
+     } else {
+    	 loadableStudy.setLoadOnTop(false);
+     }
+     Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId()); 
+     if(dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))){
+    	 loadableStudy.setCargoToBeDischargeFirstId(null);
+     } else {    	 
+     loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
+     }
   }
 
   /** Get on board quantity details corresponding to a loadable study */
