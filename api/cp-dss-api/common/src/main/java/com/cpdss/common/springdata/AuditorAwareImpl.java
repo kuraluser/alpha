@@ -5,10 +5,7 @@ import com.cpdss.common.utils.AppContext;
 import java.util.Optional;
 import org.springframework.data.domain.AuditorAware;
 
-/**
- * AuditorAware implementation
- *
- */
+/** AuditorAware implementation */
 public class AuditorAwareImpl implements AuditorAware<String> {
 
   @Override

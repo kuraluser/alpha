@@ -9,15 +9,9 @@ public class LoadableQuantity {
 
   private Long id;
 
-  private String estSeaDensity;
-
   private String tpc;
 
   private String estSagging;
-
-  private String displacmentDraftRestriction;
-
-  private String vesselLightWeight;
 
   private String deadWeight;
 
@@ -58,8 +52,6 @@ public class LoadableQuantity {
   private String foConInSZ;
 
   private String draftRestriction;
-
-  private String subTotal;
 
   private String totalFoConsumption;
 }

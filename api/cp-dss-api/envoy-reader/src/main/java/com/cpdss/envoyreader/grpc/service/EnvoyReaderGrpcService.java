@@ -22,15 +22,15 @@ public class EnvoyReaderGrpcService extends EnvoyReaderServiceImplBase {
 
   @Override
   public void getResultFromCommServer(
-          EnvoyReader.EnvoyReaderResultRequest request,
-          StreamObserver<EnvoyReader.EnvoyReaderResultReply> responseObserver) {
+      EnvoyReader.EnvoyReaderResultRequest request,
+      StreamObserver<EnvoyReader.EnvoyReaderResultReply> responseObserver) {
     log.info("Inside getResultFromCommServer in Envoy Reader micro service");
     EnvoyReader.EnvoyReaderResultReply.Builder builder =
-            EnvoyReader.EnvoyReaderResultReply.newBuilder();
+        EnvoyReader.EnvoyReaderResultReply.newBuilder();
     try {
 
       EnvoyReader.EnvoyReaderResultReply result =
-              envoyReaderService.getDataFromCommunicationServer(request, builder);
+          envoyReaderService.getDataFromCommunicationServer(request, builder);
 
       builder.setPatternResultJson(result.getPatternResultJson());
       builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -38,11 +38,11 @@ public class EnvoyReaderGrpcService extends EnvoyReaderServiceImplBase {
     } catch (Exception e) {
       log.error("Exception when getResultFromCommServer in Envoy Reader micro service", e);
       builder.setResponseStatus(
-              Common.ResponseStatus.newBuilder()
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                      .setMessage("Exception when getResultFromCommServer in Envoy Reader micro service")
-                      .setStatus(FAILED)
-                      .build());
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when getResultFromCommServer in Envoy Reader micro service")
+              .setStatus(FAILED)
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

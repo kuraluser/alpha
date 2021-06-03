@@ -62,4 +62,6 @@ public class LoadableQuantityCommingleCargoDetails {
   private String correctionFactor;
   private String slopQuantity;
   private BigDecimal actualQuantity;
+
+  private String timeRequiredForLoading;
 }
