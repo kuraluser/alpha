@@ -21,4 +21,6 @@ public class BerthDetails {
   private String regulationAndRestriction;
   private BigDecimal maxLoa;
   private BigDecimal maxDraft;
+  private BigDecimal depth;
+  private String itemsToBeAgreedWith;
 }

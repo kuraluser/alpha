@@ -180,6 +180,8 @@ service LoadableStudyService {
 	}
 
 	rpc GetSynopticDataForLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanCommonResponse) {}
+	
+	rpc SaveLoadingInfoToSynopticData(LoadingInfoSynopticalUpdateRequest) returns (ResponseStatus) {}
 }
 
 message LatestCargoRequest{
@@ -1325,6 +1327,12 @@ message LoadingSynopticResponse{
 	string operationType = 5;
 	string timeOfSunrise = 6;
 	string timeOfSunset = 7;
+}
+
+message LoadingInfoSynopticalUpdateRequest {
+	int64 synopticalTableId = 1;
+	string timeOfSunrise = 2;
+	string timeOfSunset = 3;
 }
 
 // <------ end loading plan, by john -------->

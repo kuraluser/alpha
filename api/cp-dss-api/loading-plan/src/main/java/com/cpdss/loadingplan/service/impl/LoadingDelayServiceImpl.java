@@ -11,11 +11,13 @@ import com.cpdss.loadingplan.repository.ReasonForDelayRepository;
 import com.cpdss.loadingplan.service.LoadingDelayService;
 import java.math.BigDecimal;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @Transactional
 public class LoadingDelayServiceImpl implements LoadingDelayService {
@@ -27,6 +29,8 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
   @Override
   public void saveLoadingDelayList(LoadingDelay loadingDelays) throws Exception {
     for (LoadingDelays delay : loadingDelays.getDelaysList()) {
+      log.info(
+          "Saving delay {} for LoadingInformation {}", delay.getId(), delay.getLoadingInfoId());
       com.cpdss.loadingplan.entity.LoadingDelay loadingDelay = null;
       if (delay.getId() == 0) {
         loadingDelay = new com.cpdss.loadingplan.entity.LoadingDelay();
@@ -36,6 +40,7 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
         if (loadingDelayOpt.isPresent()) {
           loadingDelay = loadingDelayOpt.get();
         } else {
+          log.error("Exception occured while saving delay {}", delay.getId());
           throw new Exception("Cannot find the loading delay with id " + delay.getId());
         }
       }
@@ -71,8 +76,8 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
     loadingDelay.setDuration(
         StringUtils.isEmpty(delay.getDuration()) ? null : new BigDecimal(delay.getDuration()));
     Optional.ofNullable(delay.getCargoId()).ifPresent(loadingDelay::setCargoXId);
-    // loadingDelay.setQuantity(StringUtils.isEmpty(delay.getQuantity()) ? null : new
-    // BigDecimal(delay.getQuantity()));
+    loadingDelay.setQuantity(
+        StringUtils.isEmpty(delay.getQuantity()) ? null : new BigDecimal(delay.getQuantity()));
     loadingDelay.setIsActive(true);
   }
 }

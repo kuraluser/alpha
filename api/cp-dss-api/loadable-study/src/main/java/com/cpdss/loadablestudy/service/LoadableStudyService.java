@@ -11772,19 +11772,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                               loadableStudy.get(), CONFIRMED_STATUS_ID, true);
                   if (confirmedLoadablePatternOpt.isPresent()) {
                     buildLoadingPlanSyncDetails(
-                        builder, confirmedLoadablePatternOpt.get(), portRotation);
-                    LoadablePlanDetailsReply.Builder planDetailsReplyBuilder =
-                        LoadablePlanDetailsReply.newBuilder();
-                    try {
-                      buildLoadablePlanDetails(
-                          confirmedLoadablePatternOpt, planDetailsReplyBuilder);
-                      builder.setLoadablePlanDetailsReply(planDetailsReplyBuilder);
-                    } catch (GenericServiceException e) {
-                      log.error(
-                          "Could not build loadable plan details for loading pattern "
-                              + confirmedLoadablePatternOpt.get().getId());
-                      e.printStackTrace();
-                    }
+                        builder,
+                        confirmedLoadablePatternOpt.get(),
+                        portRotation,
+                        request.getVoyageId());
+                    //                    LoadablePlanDetailsReply.Builder planDetailsReplyBuilder =
+                    //                        LoadablePlanDetailsReply.newBuilder();
+                    //                    try {
+                    //                      buildLoadablePlanDetails(
+                    //                          confirmedLoadablePatternOpt,
+                    // planDetailsReplyBuilder);
+                    //
+                    // builder.setLoadablePlanDetailsReply(planDetailsReplyBuilder);
+                    //                    } catch (GenericServiceException e) {
+                    //                      log.error(
+                    //                          "Could not build loadable plan details for loading
+                    // pattern "
+                    //                              + confirmedLoadablePatternOpt.get().getId());
+                    //                      e.printStackTrace();
+                    //                    }
                   }
                   LoadingPlanSyncReply loadablePlanSyncReply =
                       this.loadingPlanSynchronization(builder.build());
@@ -11874,8 +11880,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void buildLoadingPlanSyncDetails(
       LoadingPlanSyncDetails.Builder builder,
       LoadablePattern loadablePattern,
-      LoadableStudyPortRotation portRotation) {
-    buildLoadingInformationDetails(builder, loadablePattern, portRotation);
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
+    buildLoadingInformationDetails(builder, loadablePattern, portRotation, voyageId);
     buildCargoToppingOffSequence(builder, loadablePattern);
   }
 
@@ -11900,9 +11907,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void buildLoadingInformationDetails(
       LoadingPlanSyncDetails.Builder builder,
       LoadablePattern loadablePattern,
-      LoadableStudyPortRotation portRotation) {
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
     builder.getLoadingInformationDetailBuilder().setLoadablePatternId(loadablePattern.getId());
     builder.getLoadingInformationDetailBuilder().setPortId(portRotation.getPortXId());
+    builder.getLoadingInformationDetailBuilder().setVoyageId(voyageId);
     Optional<SynopticalTable> synopticalTableOpt =
         portRotation.getSynopticalTable().stream()
             .filter(
@@ -11910,7 +11919,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     synopticalTable.getIsActive()
                         && synopticalTable
                             .getOperationType()
-                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
             .findFirst();
     if (synopticalTableOpt.isPresent()) {
       builder
@@ -12559,6 +12568,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       repBuilder.setMessage(e.getMessage());
     } finally {
       builder.setResponseStatus(repBuilder.build());
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveLoadingInfoToSynopticData(
+      com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      this.synopticService.saveLoadingInformationToSynopticalTable(request);
+      builder.setStatus(SUCCESS);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to Get Synoptic Record ", request.getSynopticalTableId());
+      builder.setStatus(FAILED);
+      builder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      builder.setMessage(e.getMessage());
+    } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }

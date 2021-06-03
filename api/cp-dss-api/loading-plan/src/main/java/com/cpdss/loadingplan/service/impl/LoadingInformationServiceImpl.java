@@ -194,7 +194,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingInformation loadingInformation = loadingInformationOpt.get();
       buildLoadingInformation(request, loadingInformation);
       loadingInformationRepository.save(loadingInformation);
-      // TODO loading information details
       loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList());
       loadingDelayService.saveLoadingDelayList(request.getLoadingDelays());
       loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList());
@@ -208,7 +207,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
       LoadingInformation loadingInformation)
       throws Exception {
-    // loadingInformation.setStartTime(request.getLoadingDetail().getStartTime());
     if (Optional.ofNullable(request.getLoadingStage().getDuration().getId()).isPresent()) {
       Optional<StageDuration> stageDurationOpt =
           stageDurationRepository.findByIdAndIsActiveTrue(

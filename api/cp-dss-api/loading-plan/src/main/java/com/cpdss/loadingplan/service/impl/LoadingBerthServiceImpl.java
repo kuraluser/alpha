@@ -11,11 +11,13 @@ import com.cpdss.loadingplan.service.LoadingBerthService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @Transactional
 public class LoadingBerthServiceImpl implements LoadingBerthService {
@@ -26,9 +28,12 @@ public class LoadingBerthServiceImpl implements LoadingBerthService {
   @Override
   public void saveLoadingBerthList(List<LoadingBerths> loadingBerthsList) throws Exception {
     for (LoadingPlanModels.LoadingBerths berth : loadingBerthsList) {
+      log.info(
+          "Saving berth {} for LoadingInformation {}",
+          berth.getBerthId(),
+          berth.getLoadingInfoId());
       LoadingBerthDetail loadingBerthDetail = null;
       if (berth.getId() == 0) {
-
         loadingBerthDetail = new LoadingBerthDetail();
       } else {
         Optional<LoadingBerthDetail> loadingBerthDetailOpt =
@@ -36,6 +41,7 @@ public class LoadingBerthServiceImpl implements LoadingBerthService {
         if (loadingBerthDetailOpt.isPresent()) {
           loadingBerthDetail = loadingBerthDetailOpt.get();
         } else {
+          log.error("Cannot find the loading berth with id {}", berth.getId());
           throw new Exception("Cannot find the loading berth with id " + berth.getId());
         }
       }

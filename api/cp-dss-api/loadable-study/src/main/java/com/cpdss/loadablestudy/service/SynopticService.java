@@ -5,6 +5,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -12,6 +13,8 @@ import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -153,5 +156,27 @@ public class SynopticService {
       }
     }
     builder.setResponseStatus(repBuilder.setStatus(SUCCESS).build());
+  }
+
+  /**
+   * Save data from loading information like timeOfSunrise, timeOfSunset etc to SynopticalTable
+   *
+   * @param request
+   * @throws Exception
+   */
+  public void saveLoadingInformationToSynopticalTable(
+      LoadableStudy.LoadingInfoSynopticalUpdateRequest request) throws Exception {
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    Optional<SynopticalTable> synopticalOpt =
+        this.synopticalTableRepository.findByIdAndIsActive(request.getSynopticalTableId(), true);
+    if (synopticalOpt.isPresent()) {
+      SynopticalTable table = synopticalOpt.get();
+      table.setTimeOfSunrise(
+          LocalTime.from(DateTimeFormatter.ofPattern("HH:mm").parse(request.getTimeOfSunrise())));
+      table.setTimeOfSunSet(
+          LocalTime.from(DateTimeFormatter.ofPattern("HH:mm").parse(request.getTimeOfSunset())));
+      this.synopticalTableRepository.save(table);
+    } else
+      throw new Exception("Cannot find synoptical table with id " + request.getSynopticalTableId());
   }
 }

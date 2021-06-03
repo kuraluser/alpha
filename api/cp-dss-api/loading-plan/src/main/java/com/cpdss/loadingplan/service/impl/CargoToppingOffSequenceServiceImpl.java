@@ -10,11 +10,13 @@ import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @Transactional
 public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequenceService {
@@ -66,6 +68,10 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
   public void saveCargoToppingOffSequences(List<LoadingToppingOff> toppingOffSequenceList)
       throws Exception {
     for (LoadingToppingOff toppingOff : toppingOffSequenceList) {
+      log.info(
+          "Saving topping off sequence {} for LoadingInformation",
+          toppingOff.getId(),
+          toppingOff.getLoadingInfoId());
       com.cpdss.loadingplan.entity.CargoToppingOffSequence cargoToppingOff = null;
       if (toppingOff.getId() == 0) {
         cargoToppingOff = new com.cpdss.loadingplan.entity.CargoToppingOffSequence();
@@ -75,6 +81,7 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
         if (cargoToppingOffOpt.isPresent()) {
           cargoToppingOff = cargoToppingOffOpt.get();
         } else {
+          log.error("Exception occured while saving ToppingOffSequence {}", toppingOff.getId());
           throw new Exception("Cannot find the cargo topping off with id " + toppingOff.getId());
         }
       }

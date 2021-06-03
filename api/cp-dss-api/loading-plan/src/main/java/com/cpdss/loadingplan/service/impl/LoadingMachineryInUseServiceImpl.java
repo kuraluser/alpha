@@ -10,11 +10,13 @@ import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @Transactional
 public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseService {
@@ -26,6 +28,10 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
   public void saveLoadingMachineryList(List<LoadingMachinesInUse> loadingMachinesList)
       throws Exception {
     for (LoadingMachinesInUse machine : loadingMachinesList) {
+      log.info(
+          "Saving LoadingMachinery {} for LoadingInformation {}",
+          machine.getId(),
+          machine.getLoadingInfoId());
       LoadingMachineryInUse loadingMachineryInUse = null;
       if (machine.getId() == 0) {
         loadingMachineryInUse = new LoadingMachineryInUse();
@@ -35,6 +41,7 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
         if (loadingMachineryOpt.isPresent()) {
           loadingMachineryInUse = loadingMachineryOpt.get();
         } else {
+          log.error("Exception occured while saving LoadingMachineryInUse {}", machine.getId());
           throw new Exception("Cannot find cargo machinery");
         }
       }
@@ -54,7 +61,7 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
     } else {
       throw new Exception("Cannot find the loading information for the machinery");
     }
-    
+
     Optional.ofNullable(loadingMachinesInUse.getPumpId()).ifPresent(machinery::setPumpXId);
     machinery.setCapacity(
         StringUtils.isEmpty(loadingMachinesInUse.getCapacity())

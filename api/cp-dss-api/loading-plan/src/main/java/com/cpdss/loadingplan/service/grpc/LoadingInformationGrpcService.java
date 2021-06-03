@@ -69,9 +69,13 @@ public class LoadingInformationGrpcService
       LoadingInformation request, StreamObserver<ResponseStatus> responseObserver) {
     ResponseStatus.Builder builder = ResponseStatus.newBuilder();
     try {
+      log.info("Saving Loading Information for id {}", request.getLoadingDetail().getId());
       this.loadingInformationService.saveLoadingInformation(request);
       builder.setMessage("Successfully saved Loading information").setStatus(SUCCESS).build();
     } catch (Exception e) {
+      log.error(
+          "Exception occured while saving Loading Information for id {}",
+          request.getLoadingDetail().getId());
       e.printStackTrace();
       builder
           .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)

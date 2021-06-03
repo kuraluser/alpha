@@ -149,4 +149,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }
+
+  @Override
+  public LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
+      throws GenericServiceException {
+    return this.loadingInformationService.saveLoadingInformation(request);
+  }
 }
