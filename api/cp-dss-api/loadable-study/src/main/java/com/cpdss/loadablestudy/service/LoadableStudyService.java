@@ -825,9 +825,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository
-              .findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
-                  request.getVesselId(), voyageOpt.get(), true);
+          this.loadableStudyRepository.findAllLoadableStudy(
+              request.getVesselId(), voyageOpt.get(), (long) request.getPlanningTypeValue());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {

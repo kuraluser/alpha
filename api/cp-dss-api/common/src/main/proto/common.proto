@@ -9,3 +9,9 @@ message ResponseStatus {
 	string code = 3;
 	int32 httpStatusCode = 4;
 }
+
+enum PLANNING_TYPE {
+		VALUE_A = 0;
+		LOADABLE_STUDY = 1;
+		DISCHARGE_STUDY = 2;
+}

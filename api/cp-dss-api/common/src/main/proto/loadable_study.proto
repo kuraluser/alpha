@@ -670,6 +670,7 @@ message LoadableStudyRequest{
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
+	PLANNING_TYPE planningType = 5;
 }
 
 message LoadableStudyAttachment{

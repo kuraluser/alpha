@@ -51,4 +51,13 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   @Modifying
   @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1, LS.sequenceNo = ?2 WHERE id = ?3")
   public void updateLoadableStudyUUIDAndSeqNo(String messageUUID, String sequenceNo, Long id);*/
+
+  List<LoadableStudy>
+      findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
+          final Long vesselXId, final Voyage voyage, Long typeId);
+
+  default List<LoadableStudy> findAllLoadableStudy(Long vesselXId, Voyage voyage, Long planningId) {
+    return findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
+        vesselXId, voyage, planningId);
+  }
 }
