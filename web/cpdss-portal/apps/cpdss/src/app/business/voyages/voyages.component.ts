@@ -39,6 +39,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   filterDates: Date[];
   showDatePopup = false;
   selectedVoyageId: number;
+  selectedLoadablePlanId: number;
   permissionStart: IPermission;
   permissionStop: IPermission;
   defaultDate: Date;
@@ -236,6 +237,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     }
     this.defaultDate = dateValue !== undefined ? moment(dateValue).toDate() : new Date();
     this.selectedVoyageId = event?.data?.id;
+    this.selectedLoadablePlanId = event?.data?.confirmedLoadableStudyId;
     this.showDatePopup = true;
   }
 

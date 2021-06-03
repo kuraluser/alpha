@@ -486,13 +486,13 @@ export class PortsComponent implements OnInit, OnDestroy {
           this.portUpdate.emit(true);
           const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
           if (res) {
+            this.portUpdate.emit(false);
             row.markAsUntouched();
             for (const key in this.portsLists[rowIndex]) {
               if (this.portsLists[rowIndex]?.hasOwnProperty(key) && this.portsLists[rowIndex][key]?.hasOwnProperty('_isEditMode')) {
                 this.portsLists[rowIndex][key].isEditMode = false;
               }
             }
-            this.portUpdate.emit(false);
           }
         }
       }

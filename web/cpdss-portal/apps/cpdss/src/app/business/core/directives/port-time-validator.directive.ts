@@ -10,7 +10,7 @@ export function portTimeValidator(index): ValidatorFn {
         if (control.root && control.parent) {
             const portsData = control.root.value?.portsData
             const time = moment(control.value).subtract(control.parent?.value?.portTimezoneOffset, 'hours').toDate();
-            const date = moment(control.parent.value?.date).subtract(control.parent?.value?.portTimezoneOffset, 'hours').toDate();
+            const date = moment(control.parent.value?.date).toDate();
             if (date && time && control.value) {
                 date.setHours(0, 0, 0, 0);
                 let minDate: Date, maxDate: Date, minTime: Date, maxTime: Date, errors = null;

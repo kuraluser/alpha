@@ -9,7 +9,7 @@ export function portEtaEtdValidator(index): ValidatorFn {
     return (control): ValidationErrors | null => {
         if (control.root && control.parent) {
             const portsData = control.root.value?.portsData
-            const date = moment(control.value).subtract(control.parent?.value?.portTimezoneOffset, 'hours').toDate();
+            const date = moment(control.value).toDate();
             let minDate: Date, maxDate: Date, errors = null;
             
             if(!control.value || control.value === '') {

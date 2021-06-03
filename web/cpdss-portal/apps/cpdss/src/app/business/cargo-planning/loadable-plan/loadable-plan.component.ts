@@ -627,7 +627,7 @@ export class LoadablePlanComponent implements OnInit  {
    * @memberof LoadablePlanComponent
    */
   convertLoadablePlanSynRecordsDateTime(synopticalRecords: ILoadablePlanSynopticalRecord[]): ILoadablePlanSynopticalRecord[] {
-    synopticalRecords.map(record => (record.etaEtdPlanned = this.transformDateTimeToPortLocal(record.etaEtdPlanned, record.portTimezoneId)));
+    synopticalRecords.map(record => (record.etaEtdPlanned ? record.etaEtdPlanned = this.transformDateTimeToPortLocal(record.etaEtdPlanned, record.portTimezoneId) : null));
     return synopticalRecords;
   }
 

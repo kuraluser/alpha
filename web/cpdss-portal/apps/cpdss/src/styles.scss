@@ -2492,3 +2492,9 @@ textarea{
     }
 
 }
+.p-dropdown-panel{
+  max-width: 250px;
+  &.time-zone{
+    max-width: none;
+  }
+}

@@ -65,7 +65,7 @@
                 <div class="col-6">
                   <div class="row">
                     <div class="col">
-                      <p-dropdown [(ngModel)]="startDateTimeZone" id="new_voyage_start_date_time_zone"
+                      <p-dropdown [(ngModel)]="startDateTimeZone"  panelStyleClass="time-zone" id="new_voyage_start_date_time_zone"
                         styleClass="form-control" appendTo="body" formControlName="selectStartDateTimeZone"
                         [options]="globalTimeZones" optionLabel="timezone"
                         placeholder="{{'VOYAGE_POP_UP_START_DATE_TIME_ZONE_PLACEHOLDER'|translate}}" filter="true"
@@ -114,7 +114,7 @@
                 <div class="col-6">
                   <div class="row">
                     <div class="col">
-                      <p-dropdown [(ngModel)]="endDateTimeZone" styleClass="form-control"
+                      <p-dropdown [(ngModel)]="endDateTimeZone" panelStyleClass="time-zone" styleClass="form-control"
                         id="new_voyage_end_date_time_zone" appendTo="body" formControlName="selectEndDateTimeZone"
                         [options]="globalTimeZones" optionLabel="timezone"
                         placeholder="{{'VOYAGE_POP_UP_END_DATE_TIME_ZONE_PLACEHOLDER'|translate}}" filter="true"
