@@ -10415,7 +10415,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     Float.parseFloat(stowageDetails.getApi()),
                     Float.parseFloat(stowageDetails.getTemperature()),
                     ConversionUnit.MT);
-
+            float klValue = convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C);
+            float fillingPercentage = klValue/Float.parseFloat(vesselTankDetail.getFullCapacityCubm())*100;
             // TODO Remove check if not necessary
             String colorCode =
                 stowageDetails.getColorCode().isEmpty()
@@ -10431,10 +10432,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         stowageDetails.getRdgUllage().isEmpty()
                             ? "0.0"
                             : stowageDetails.getRdgUllage()))
-                .loadedPercentage(Float.parseFloat(stowageDetails.getFillingRatio()) / 100)
+                .loadedPercentage((float)(Math.round(fillingPercentage*100.0)/100.0))
                 .shipsNBbls(obsBbsValue)
                 .shipsMt(Float.parseFloat(stowageDetails.getWeight()))
-                .shipsKlAt15C(convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C));
+                .shipsKlAt15C(klValue);
           } else {
             //            Set default color to white if no stowage details found
             vesselTanksTableBuilder.colorCode(WHITE_COLOR_CODE);
@@ -10616,7 +10617,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 setMergedStyle(spreadsheet, CellBorder.OPEN_BOTTOM, mergeRange, cellStyle);
                 break;
               case LOADED_PERCENTAGE:
-                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getLoadedPercentage());
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getLoadedPercentage()+ "%");
                 cellStyle =
                     getCellStyle(
                         spreadsheet,
@@ -10844,10 +10845,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ltTotal += ltValue;
       diffBblsTotal += diffBbls;
       diffPercentageTotal += diffPercentage;
-
+      Long portId = cargoNominationDetails.get().getCargoNominationPortDetails().stream().findFirst().get().getPortId();
       GetPortInfoByPortIdsRequest request =
           GetPortInfoByPortIdsRequest.newBuilder()
-              .addId(loadableQuantityCargoDetails.getCargoId())
+              .addId(portId)
               .build();
       PortDetail portReply =
           getPortInfo(request).getPortsList().stream()
@@ -11192,7 +11193,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
               .findFirst()
               .orElse(new LoadableStudyPortRotation());
-
+      Optional<SynopticalTable> arrSynopticRecord = this.synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
+    	        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(arrSynopticRecord.get(), loadablePatterId, true);
+      Optional<SynopticalTable> depSynopticRecord = this.synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
+    	        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(depSynopticRecord.get(), loadablePatterId, true);
       OperationsTable operationsTableData =
           OperationsTable.builder()
               .operation(loadableStudyPortRotation.getOperation().getName())
@@ -11212,7 +11218,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       .findFirst()
                       .orElse(new PortDetails())
                       .getCountryName())
-              .cargoRange(
+              .laycanRange(
                   String.format(
                       "%s / %s",
                       null != loadableStudyPortRotation.getLayCanFrom()
@@ -11221,6 +11227,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       null != loadableStudyPortRotation.getLayCanTo()
                           ? loadableStudyPortRotation.getLayCanTo()
                           : ""))
+              .arrFwdDraft(arrSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
+              .depFwdDraft(depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
+              .arrAftDraft(arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
+              .depAftDraft(depSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
+              .arrDisplacement(arrSynopticRecord.get().getDisplacementPlanned().toString())
+              .depDisp(depSynopticRecord.get().getDisplacementPlanned().toString())
               .build();
       operationsTableList.add(operationsTableData);
     }
@@ -11268,8 +11280,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           case COUNTRY:
             operationsValueCell.setCellValue(portOperationDetails.getCountry());
             break;
-          case CARGO_RANGE:
-            operationsValueCell.setCellValue(portOperationDetails.getCargoRange());
+          case LAYCAN_RANGE:
+            operationsValueCell.setCellValue(portOperationDetails.getLaycanRange());
             break;
           case ETA:
             operationsValueCell.setCellValue(portOperationDetails.getEta());
