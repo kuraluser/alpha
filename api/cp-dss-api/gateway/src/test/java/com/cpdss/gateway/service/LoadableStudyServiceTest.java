@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
@@ -203,7 +204,7 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudies() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudies(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenCallRealMethod();
     Builder replyBuilder =
         LoadableStudyReply.newBuilder()
@@ -230,7 +231,11 @@ class LoadableStudyServiceTest {
         .thenReturn(replyBuilder.build());
     LoadableStudyResponse response =
         this.loadableStudyService.getLoadableStudies(
-            TEST_COMPANY_ID, TEST_VESSEL_ID, TEST_VOYAGE_ID, CORRELATION_ID_HEADER_VALUE);
+            TEST_COMPANY_ID,
+            TEST_VESSEL_ID,
+            TEST_VOYAGE_ID,
+            CORRELATION_ID_HEADER_VALUE,
+            (long) Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
     assertAll(
         () ->
             assertEquals(
@@ -249,7 +254,7 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudiesNegativeScenario() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudies(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenCallRealMethod();
     Builder replyBuilder =
         LoadableStudyReply.newBuilder()
@@ -268,7 +273,11 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadableStudies(
-                    TEST_COMPANY_ID, TEST_VESSEL_ID, TEST_VOYAGE_ID, CORRELATION_ID_HEADER_VALUE));
+                    TEST_COMPANY_ID,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    CORRELATION_ID_HEADER_VALUE,
+                    (long) Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
