@@ -165,8 +165,6 @@ import com.cpdss.loadablestudy.domain.VesselTanksTable;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.*;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
@@ -180,6 +178,7 @@ import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
@@ -6374,17 +6373,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             maxWaterTemperature ->
                 loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
 
-     if(ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
-    	 loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
-     } else {
-    	 loadableStudy.setLoadOnTop(false);
-     }
-     Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId());
-     if(dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))){
-    	 loadableStudy.setCargoToBeDischargeFirstId(null);
-     } else {
-     loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
-     }
+    if (ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
+      loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
+    } else {
+      loadableStudy.setLoadOnTop(false);
+    }
+    Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId());
+    if (dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))) {
+      loadableStudy.setCargoToBeDischargeFirstId(null);
+    } else {
+      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
+    }
   }
 
   /** Get on board quantity details corresponding to a loadable study */
@@ -10259,8 +10258,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       } else {
         entityList =
-                voyageRepository.findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
-                        true, request.getVesselId());      }
+            voyageRepository
+                .findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
+                    true, request.getVesselId());
+      }
       for (Voyage entity : entityList) {
         VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
         detailbuilder.setId(entity.getId());

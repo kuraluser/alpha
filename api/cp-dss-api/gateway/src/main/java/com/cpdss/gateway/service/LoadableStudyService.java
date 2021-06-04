@@ -5712,18 +5712,4 @@ public class LoadableStudyService {
       throw new Exception("Failed to update synoptical table " + synopticalTableId);
     }
   }
-
-  public void saveLoadingInfoToSynopticalTable(
-      Long synopticalTableId, String sunriseTime, String sunsetTime) throws Exception {
-    LoadingInfoSynopticalUpdateRequest.Builder builder =
-        LoadingInfoSynopticalUpdateRequest.newBuilder();
-    builder.setSynopticalTableId(synopticalTableId);
-    builder.setTimeOfSunrise(sunriseTime);
-    builder.setTimeOfSunset(sunsetTime);
-    ResponseStatus response =
-        this.loadableStudyServiceBlockingStub.saveLoadingInfoToSynopticData(builder.build());
-    if (response.getStatus().equalsIgnoreCase("FAILED")) {
-      throw new Exception("Failed to update synoptical table " + synopticalTableId);
-    }
-  }
 }
