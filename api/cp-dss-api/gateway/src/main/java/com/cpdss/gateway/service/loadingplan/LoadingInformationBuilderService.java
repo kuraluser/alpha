@@ -113,7 +113,8 @@ public class LoadingInformationBuilderService {
               .ifPresent(seaDraft -> builder.setSeaDraftLimitation(String.valueOf(seaDraft)));
           Optional.ofNullable(berth.getItemsToBeAgreedWith())
               .ifPresent(builder::setItemsToBeAgreedWith);
-          Optional.ofNullable(berth.getDepth())
+          // maxShipDepth is taken as depth in LoadingBerthDetails table
+          Optional.ofNullable(berth.getMaxShipDepth())
               .ifPresent(depth -> builder.setDepth(String.valueOf(depth)));
           berthList.add(builder.build());
         });
