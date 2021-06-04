@@ -9,6 +9,7 @@ import com.cpdss.common.generated.EnvoyReader;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.CargoNominationOperationDetails;
 import com.cpdss.loadablestudy.domain.MessageTypes;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -19,9 +20,13 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,13 +45,15 @@ public class LoadableStudyServiceShore {
 
   @Autowired private CommingleCargoRepository commingleCargoRepository;
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
+  @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
 
-  public void getDataFromEnvoyReaderShore(String patternJson) throws GenericServiceException {
+  public LoadableStudy getDataFromEnvoyReaderShore(String patternJson)
+      throws GenericServiceException {
     /*EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore();
     if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -55,23 +62,24 @@ public class LoadableStudyServiceShore {
           HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
     }*/
     // String jsonResult = erReply.getPatternResultJson();
+    LoadableStudy loadableStudyEntity = null;
     String jsonResult = patternJson;
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
     Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyageNo());
-    if (null != checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
-
-    } else {
+    loadableStudyEntity = checkIfLoadableStudyExist(loadableStudy.getName(), voyage);
+    if (null == loadableStudyEntity) {
 
       try {
-        LoadableStudy loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
-        saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy);
+        ModelMapper modelMapper = new ModelMapper();
+        loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
+        saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
-    // return loadableStudy;
+    return loadableStudyEntity;
   }
 
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore() {
@@ -83,7 +91,8 @@ public class LoadableStudyServiceShore {
 
   private void saveLoadableStudyDataShore(
       LoadableStudy loadableStudyEntity,
-      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
 
     List<CommingleCargo> commingleEntities = new ArrayList<>();
     loadableStudy
@@ -126,9 +135,16 @@ public class LoadableStudyServiceShore {
         .forEach(
             cargoNom -> {
               CargoNomination cargoNomination = new CargoNomination();
-              cargoNomination = buildCargoNomination(cargoNomination, cargoNom);
               // apiTempHistory = buildApiTempHistory(cargoNomination, cargoNom,
               // existingCargoPortIds);
+              cargoNomination =
+                  buildCargoNomination(
+                      cargoNomination,
+                      cargoNom,
+                      loadableStudy.getCargoNominationOperationDetails());
+              /*cargoNomination =
+              modelMapper.map(
+                      cargoNom, com.cpdss.loadablestudy.entity.CargoNomination.class);*/
               cargoNominationEntities.add(cargoNomination);
             });
     this.cargoNominationRepository.saveAll(cargoNominationEntities);
@@ -285,6 +301,52 @@ public class LoadableStudyServiceShore {
       }*/
       this.loadableQuantityRepository.save(loadableQuantity);
     }
+    List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
+    loadableStudy.getLoadableStudyPortRotation().stream()
+        .forEach(
+            portRotation -> {
+              LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+              loadableStudyPortRotation.setLoadableStudy(loadableStudyEntity);
+              loadableStudyPortRotation =
+                  buildLoadableStudyPortRotation(loadableStudyPortRotation, portRotation);
+              loadableStudyPortRotations.add(loadableStudyPortRotation);
+            });
+    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
+  }
+
+  private LoadableStudyPortRotation buildLoadableStudyPortRotation(
+      LoadableStudyPortRotation loadableStudyPortRotation,
+      com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portRotation) {
+    loadableStudyPortRotation.setPortXId(
+        portRotation.getPortId() != null ? portRotation.getPortId() : null);
+    loadableStudyPortRotation.setBerthXId(
+        portRotation.getBerthId() != null ? portRotation.getBerthId() : null);
+    loadableStudyPortRotation.setSeaWaterDensity(
+        portRotation.getSeaWaterDensity() != null ? portRotation.getSeaWaterDensity() : null);
+
+    loadableStudyPortRotation.setDistanceBetweenPorts(
+        portRotation.getDistanceBetweenPorts() != null
+            ? portRotation.getDistanceBetweenPorts()
+            : null);
+    loadableStudyPortRotation.setTimeOfStay(
+        isEmpty(portRotation.getTimeOfStay()) ? null : portRotation.getTimeOfStay());
+    loadableStudyPortRotation.setMaxDraft(
+        isEmpty(portRotation.getMaxDraft()) ? null : portRotation.getMaxDraft());
+    loadableStudyPortRotation.setEta(
+        isEmpty(portRotation.getEta()) ? null : LocalDateTime.parse(portRotation.getEta()));
+    loadableStudyPortRotation.setEtd(
+        isEmpty(portRotation.getEtd()) ? null : LocalDateTime.parse(portRotation.getEtd()));
+    loadableStudyPortRotation.setLayCanFrom(
+        isEmpty(portRotation.getLayCanFrom())
+            ? null
+            : LocalDate.parse(portRotation.getLayCanFrom()));
+    loadableStudyPortRotation.setLayCanTo(
+        isEmpty(portRotation.getLayCanTo()) ? null : LocalDate.parse(portRotation.getLayCanTo()));
+    loadableStudyPortRotation.setPortOrder(
+        isEmpty(portRotation.getPortOrder()) ? null : portRotation.getPortOrder());
+
+    loadableStudyPortRotation.setActive(true);
+    return loadableStudyPortRotation;
   }
 
   private OnBoardQuantity buildOnBoardQuantityEntity(
@@ -325,7 +387,9 @@ public class LoadableStudyServiceShore {
   }
 
   private CargoNomination buildCargoNomination(
-      CargoNomination cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination request) {
+      CargoNomination cargoNomination,
+      com.cpdss.loadablestudy.domain.CargoNomination request,
+      List<CargoNominationOperationDetails> cargoNominationOperationDetails) {
     cargoNomination.setLoadableStudyXId(request.getLoadableStudyId());
     cargoNomination.setPriority(request.getPriority());
     cargoNomination.setCargoXId(request.getCargoId());
@@ -347,6 +411,23 @@ public class LoadableStudyServiceShore {
     cargoNomination.setSegregationXId(request.getSegregationId());
     // activate the records to be saved
     cargoNomination.setIsActive(true);
+
+    if (!cargoNominationOperationDetails.isEmpty()) {
+      Set<CargoNominationPortDetails> cargoNominationPortDetailsList =
+          cargoNominationOperationDetails.stream()
+              .map(
+                  cargo -> {
+                    CargoNominationPortDetails cargoNominationPortDetails =
+                        new CargoNominationPortDetails();
+                    cargoNominationPortDetails.setCargoNomination(cargoNomination);
+                    cargoNominationPortDetails.setPortId(cargo.getPortId());
+                    cargoNominationPortDetails.setQuantity(new BigDecimal(cargo.getQuantity()));
+                    cargoNominationPortDetails.setIsActive(true);
+                    return cargoNominationPortDetails;
+                  })
+              .collect(Collectors.toSet());
+      cargoNomination.setCargoNominationPortDetails(cargoNominationPortDetailsList);
+    }
 
     return cargoNomination;
   }

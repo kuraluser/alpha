@@ -12444,10 +12444,80 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply>
           responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder();
     try {
-      loadableStudyServiceShore.getDataFromEnvoyReaderShore(request.getJsonResult());
+      LoadableStudy loadableStudyEntity =
+          loadableStudyServiceShore.getDataFromEnvoyReaderShore(request.getJsonResult());
+      if (loadableStudyEntity != null) {
+        this.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
+        this.validateLoadableStudyWithLQ(loadableStudyEntity);
+        ModelMapper modelMapper = new ModelMapper();
+        com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+            new com.cpdss.loadablestudy.domain.LoadableStudy();
+
+        buildLoadableStudy(
+            loadableStudyEntity.getId(), loadableStudyEntity, loadableStudy, modelMapper);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadableStudyFromShip_"
+                    + loadableStudyEntity.getId()
+                    + ".json"),
+            loadableStudy);
+
+        this.saveJsonToDatabase(
+            loadableStudyEntity.getId(),
+            LOADABLE_STUDY_REQUEST,
+            objectMapper.writeValueAsString(loadableStudy));
+
+        AlgoResponse algoResponse =
+            restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
+        updateProcessIdForLoadableStudy(
+            algoResponse.getProcessId(), loadableStudyEntity, LOADABLE_STUDY_PROCESSING_STARTED_ID);
+
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
+
+        replyBuilder =
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder()
+                .setProcessId(algoResponse.getProcessId())
+                .setResponseStatus(
+                    ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+      }
+
     } catch (GenericServiceException e) {
-      e.printStackTrace();
+      log.error("GenericServiceException when generating pattern", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
+    } catch (ResourceAccessException e) {
+      log.info("Error calling ALGO ");
+      replyBuilder =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder()
+              .setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setStatus(FAILED)
+                      .setMessage(ERRO_CALLING_ALGO)
+                      .setCode(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
+                      .build());
+    } catch (Exception e) {
+      log.error("Exception when when calling algo  ", e);
+      replyBuilder =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder()
+              .setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage("Error when calling algo ")
+                      .setHttpStatusCode(Integer.valueOf(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+                      .setStatus(FAILED)
+                      .build());
     }
   }
 }
