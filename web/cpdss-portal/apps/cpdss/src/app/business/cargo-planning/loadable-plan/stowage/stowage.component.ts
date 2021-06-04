@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
@@ -175,6 +175,7 @@ export class StowageComponent implements OnInit {
   initBallastTankDetails: IBallastTankDetailValueObject[];
   isStowageEditable: boolean;
   errorPopup: boolean;
+  stowageDataEditStatus: boolean;
 
 
   private _cargoTanks: ICargoTank[][];
@@ -191,6 +192,7 @@ export class StowageComponent implements OnInit {
   private quantityPipe: QuantityPipe = new QuantityPipe();
   private _loadableQuantityCargo: IloadableQuantityCargoDetails[];
   private _loadableQuantity: number;
+  
 
   constructor(
     private loadablePlanTransformationService: LoadablePlanTransformationService,
@@ -221,6 +223,9 @@ export class StowageComponent implements OnInit {
       if(value === 'savedCommentsPopup') {
         this.validateAndSave();
       }
+    })
+    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
+      this.validateAndSaveProcessing = value.validateAndSaveProcessing !== undefined ? value.validateAndSaveProcessing : this.validateAndSaveProcessing
     })
   }
 
@@ -362,6 +367,7 @@ export class StowageComponent implements OnInit {
    * @memberof StowageComponent
    */
   async onEditComplete(event: IPortsEvent) {
+    this.stowageDataEditStatus = true;
     setTimeout(() => {
       this.stowageDataEdit(event);
     }, 250)
@@ -376,6 +382,7 @@ export class StowageComponent implements OnInit {
   async stowageDataEdit(event: IPortsEvent) {
     const formControl = this.field(event.index, event.field, 'cargoTanks');
     if (formControl?.errors?.required) {
+      this.stowageDataEditStatus = false;
       return;
     }
     if (this.editMode && !this.openSaveStowagePopup) {
@@ -394,9 +401,10 @@ export class StowageComponent implements OnInit {
         try {
         const result: IUpdatedUllageResponse = await this.loadablePlanApiService.updateUllage(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, data).toPromise();
           if (result.responseStatus.status === '200') {
+            this.stowageDataEditStatus = false;
             this.ullageUpdate.emit(true);
             const unitConvertedTankDetails = {
-              observedM3: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, event.data.api['_value'], event.data.temperature['_value']),
+              observedM3: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSKL, event.data.api['_value'], event.data.temperature['_value']),
               observedBarrelsAt60: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, event.data.api['_value'], event.data.temperature['_value']),
               observedBarrels: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSBBLS, event.data.api['_value'], event.data.temperature['_value'])
             }
@@ -425,6 +433,7 @@ export class StowageComponent implements OnInit {
           }
         } catch (error) {
           if (error.error.errorCode === 'ERR-RICO-115') {
+            this.stowageDataEditStatus = false;
             this.updateField(event.index, event.field, this.initialCargoTankDetails[event.index][event.field]['_value'], 'cargoTanks');
             this.cargoTankDetails[event.index][event.field].value = this.initialCargoTankDetails[event.index][event.field]['_value'];
             this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS'], detail: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS'] });
@@ -433,6 +442,7 @@ export class StowageComponent implements OnInit {
         }
       }
     } else {
+      this.stowageDataEditStatus = false;
       this.updateField(event.index, event.field, this.initialCargoTankDetails[event.index][event.field]['_value'], 'cargoTanks');
       this.cargoTankDetails[event.index][event.field].value = this.initialCargoTankDetails[event.index][event.field]['_value'];
       this.ngxSpinnerService.hide();
@@ -441,13 +451,14 @@ export class StowageComponent implements OnInit {
 
   /**
    * Event handler for edit complete event for ballast
-   *
+   * @param {*} ref
    * @param {IPortsEvent} event
    * @memberof StowageComponent
    */
-  async ballastStowageDataEdit(event: IPortsEvent) {
+  async ballastStowageDataEdit(event: IPortsEvent, ref: any) {
     const formControl = this.field(event.index, event.field, 'ballastTanks');
     if (formControl?.errors?.required) {
+      ref.stowageDataEditStatus = false;
       return;
     }
     if (event.field === 'rdgLevel') {
@@ -465,6 +476,7 @@ export class StowageComponent implements OnInit {
       try {
       const result: IUpdatedUllageResponse = await this.loadablePlanApiService.updateUllage(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, data).toPromise();
         if (result.responseStatus.status === '200') {
+          ref.stowageDataEditStatus = false;
           this.ullageUpdate.emit(true);
           this.ballastTankDetails[event.index]['correctedLevel'].value = result.correctedUllage;
           this.ballastTankDetails[event.index]['correctionFactor'].value = result.correctionFactor;
@@ -482,6 +494,7 @@ export class StowageComponent implements OnInit {
         }
       } catch (error) {
         if (error.error.errorCode === 'ERR-RICO-115') {
+          ref.stowageDataEditStatus = false;
           this.ballastTankDetails[event.index][event.field].value = this.initBallastTankDetails[event.index][event.field].value;
           this.updateField(event.index, event.field, this.ballastTankDetails[event.index][event.field].value, 'ballastTanks');
           this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS'], detail: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS'] });
@@ -550,11 +563,12 @@ export class StowageComponent implements OnInit {
     if (this.loadablePlanForm.valid) {
       this.buttonStatus = 0;
       this.editMode = null;
+      this.validateAndSaveProcessing = true;
       this.loadablePlanTransformationService.ballastEditStatus({
         buttonStatus: this.buttonStatus,
-        editMode: this.editMode
+        editMode: this.editMode,
+        validateAndSaveProcessing: this.validateAndSaveProcessing
       })
-      this.validateAndSaveProcessing = true;
       this.ngxSpinnerService.show();
       const data: IValidateAndSaveStowage = {
         vesselId: this.vesselId,

@@ -32,6 +32,14 @@ export class PortRotationPopupTransformationService {
     const minDate = new Date();
     return [
       {
+        field: 'slNo',
+        header: 'PORT_ORDER',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        sortable: false,
+        fieldHeaderClass: 'column-portOrder',
+        fieldClass: 'sl'
+      },
+      {
         field: 'port',
         header: 'PORT',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
@@ -41,8 +49,7 @@ export class PortRotationPopupTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         listName: 'portList',
         listFilter: true,
-        sortable: true,
-        sortField: 'port.value.name',
+        sortable: false,
         filterField: 'port.value.name',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'SELECT_PORT',

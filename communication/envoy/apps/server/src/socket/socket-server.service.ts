@@ -3,9 +3,7 @@ import {
     OnGatewayConnection, OnGatewayDisconnect
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { InboundEventDataTransfer, CommonDBService, OutboundEventData, CommonLoggerService, CommonTransportEventService, CommonFinishEventService, ResendEventDataTransfer, CommonResendEventService, CommonConfirmEventService, LogEventDataTransfer, CommonUtilService, OutBoundEventDataEntity } from "@envoy/common";
-import { UseGuards } from '@nestjs/common';
-import { CommonDataStore } from '@envoy/common';
+import { InboundEventDataTransfer, CommonCancelEventService, CommonLoggerService, CommonTransportEventService, CommonFinishEventService, ResendEventDataTransfer, CommonResendEventService, CommonConfirmEventService, LogEventDataTransfer, CommonUtilService } from "@envoy/common";
 import { ServerUtilService } from '../utils/server-util.service';
 import { ConfigService } from '@nestjs/config';
 import { verify, Secret } from 'jsonwebtoken';
@@ -24,6 +22,7 @@ export class SocketServerService implements OnGatewayConnection, OnGatewayDiscon
         private commonFinishEventService: CommonFinishEventService,
         private commonResendEventService: CommonResendEventService,
         private commonConfirmEventService: CommonConfirmEventService,
+        private commonCancelEventService: CommonCancelEventService,
         private serverUtilService: ServerUtilService,
         private commonUtilService: CommonUtilService,
         private logger: CommonLoggerService) {
@@ -144,7 +143,7 @@ export class SocketServerService implements OnGatewayConnection, OnGatewayDiscon
 
 
     /**
-     * Confirm confirm event
+     * Handle confirm event
      * 
      * @param eventData 
      * @param socket 
@@ -179,6 +178,45 @@ export class SocketServerService implements OnGatewayConnection, OnGatewayDiscon
         const shipId: string = socket.nsp.name.substring(socket.nsp.name.indexOf('-') + 1, socket.nsp.name.length);
         this.logger.log("Confirm ack event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
         this.commonConfirmEventService.handleConfirmAckEvent(eventData, shipId);
+    }
+
+
+    /**
+     * Handle cancel event
+     * 
+     * @param eventData 
+     * @param socket 
+     */
+    @SubscribeMessage('cancel')
+    public handleCancelEvent(@MessageBody() eventData: InboundEventDataTransfer,
+        @ConnectedSocket() socket: Socket): void {
+        const shipId: string = socket.nsp.name.substring(socket.nsp.name.indexOf('-') + 1, socket.nsp.name.length);
+        this.logger.log("Recieved cancel event from client " + eventData.clientId + " message " + eventData.messageId + " from the ship " + shipId);
+        this.commonCancelEventService.handleCancelEvent(eventData, shipId).then(result => {
+            eventData.buf = result;
+            this.logger.log("Sending cancel ack event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
+            const ioClient = this.serverUtilService.getClientSocket(`/id-${shipId}`);
+            if (!ioClient || !ioClient.connected) {
+                this.logger.warn('Error socket connection');
+                return;
+            }
+            //Calling socket.emit to send the data packets. Receiving ack async
+            ioClient.emit('cancelack', eventData);
+        });
+    }
+
+    /**
+     * Handle cancelack event
+     * 
+     * @param eventData 
+     * @param socket 
+     */
+    @SubscribeMessage('cancelack')
+    public handleCancelAckEvent(@MessageBody() eventData: InboundEventDataTransfer,
+        @ConnectedSocket() socket: Socket): void {
+        const shipId: string = socket.nsp.name.substring(socket.nsp.name.indexOf('-') + 1, socket.nsp.name.length);
+        this.logger.log("Cancel ack event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
+        this.commonCancelEventService.handleCancelAckEvent(eventData, shipId);
     }
 
     /**

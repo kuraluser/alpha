@@ -1738,8 +1738,7 @@ public class LoadableStudyService {
               cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
               cargoDetails.setMinTolerence(lqcd.getMinTolerence());
               cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
-              // Dummy value till actual from Alog
-              cargoDetails.setTimeRequiredForLoading("0");
+              cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               if (!lqcd.getLoadingPortsList().isEmpty()) {
                 List<String> ports =
                     lqcd.getLoadingPortsList().stream()
@@ -5494,6 +5493,7 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getActualStartDate()).ifPresent(builder::setActualStartDate);
     Optional.ofNullable(request.getActualEndDate()).ifPresent(builder::setActualEndDate);
     Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
+    Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
     builder.setStatus(request.getStatus());
     SaveVoyageStatusReply reply = this.saveVoyageStatus(builder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
@@ -5697,6 +5697,20 @@ public class LoadableStudyService {
     error.setImoNumber("123");
     this.envoyWriterGrpcService.getCommunicationServer(error.build());
     return null;
+  }
+
+  public void saveLoadingInfoToSynopticalTable(
+      Long synopticalTableId, String sunriseTime, String sunsetTime) throws Exception {
+    LoadingInfoSynopticalUpdateRequest.Builder builder =
+        LoadingInfoSynopticalUpdateRequest.newBuilder();
+    builder.setSynopticalTableId(synopticalTableId);
+    builder.setTimeOfSunrise(sunriseTime);
+    builder.setTimeOfSunset(sunsetTime);
+    ResponseStatus response =
+        this.loadableStudyServiceBlockingStub.saveLoadingInfoToSynopticData(builder.build());
+    if (response.getStatus().equalsIgnoreCase("FAILED")) {
+      throw new Exception("Failed to update synoptical table " + synopticalTableId);
+    }
   }
 
   public void saveLoadingInfoToSynopticalTable(

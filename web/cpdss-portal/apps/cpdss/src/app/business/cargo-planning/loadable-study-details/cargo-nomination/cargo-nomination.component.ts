@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Form, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData, IApiTempPopupData } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
@@ -9,16 +9,16 @@ import { cargoNominationLoadingPortValidator } from '../../directives/validator/
 import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
 import { numberValidator } from '../../directives/validator/number-validator.directive'
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
-import { first, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
+import { QuantityDecimalFormatPipe } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 
 /**
  * Component class of cargonomination screen
@@ -141,8 +141,9 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private confirmationAlertService: ConfirmationAlertService,
-    private globalErrorHandler: GlobalErrorHandler) {
+    private confirmationService: ConfirmationService,
+    private globalErrorHandler: GlobalErrorHandler,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) {
   }
 
   /**
@@ -303,12 +304,25 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
     const savedCargoIndex = this.savedCargoNomination.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
     if (event.field === 'cargo' && !event.data?.isAdd && !this.savedCargoNomination[savedCargoIndex]['isAdd']) {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_SUMMARY', detail: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL', rejectLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-        if (response) {
+      const translationKeys = await this.translateService.get(['CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_SUMMARY', 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_DETAILS', 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL', 'CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL']).toPromise();
+
+      this.confirmationService.confirm({
+        key: 'confirmation-alert',
+        header: translationKeys['CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_SUMMARY'],
+        message: translationKeys['CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_DETAILS'],
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: translationKeys['CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL'],
+        acceptIcon: 'pi',
+        acceptButtonStyleClass: 'btn btn-main mr-5',
+        rejectVisible: true,
+        rejectLabel: translationKeys['CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL'],
+        rejectIcon: 'pi',
+        rejectButtonStyleClass: 'btn btn-main',
+        accept: () => {
           this.savedCargoNomination[savedCargoIndex]['isAdd'] = true;
           this.updateCargoNominationsDetails(valueIndex, event);
-        } else {
+        },
+        reject: () => {
           this.cargoNominations[valueIndex]['cargo'].value = this.savedCargoNomination[valueIndex]['cargo']['_value'];
           this.updateField(event.index, 'cargo', this.savedCargoNomination[valueIndex]['cargo']['_value']);
         }
@@ -412,34 +426,40 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   async onDeleteRow(event: ICargoNominationEvent) {
     if (event?.data?.isDelete) {
       const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
-      if (!event?.data?.isAdd) {
-        this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGO_NOMINATION_SAVED_CARGO_DETAILS', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
-      } else {
-        this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_DETAILS', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
-      }
-      this.confirmationAlertService.confirmAlert$
-        .pipe(first(), takeUntil(this.ngUnsubscribe))
-        .subscribe(async (response) => {
-          if (response) {
-            this.ngxSpinnerService.show();
-            let res;
-            if (!event?.data?.isAdd) {
-              res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
-            } else {
-              res = true;
-            }
-            if (res) {
-              this.cargoNominations.splice(event.index, 1);
-              this.cargoNominations = [...this.cargoNominations];
-              this.updateCommingleButton(false);
-              const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
-              dataTableControl.removeAt(event.index);
-              this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
-              this.updateFormValidity();
-            }
-            this.ngxSpinnerService.hide();
+      const translationKeys = await this.translateService.get(['CARGONOMINATION_DELETE_SUMMARY', 'PORT_CHANGE_CONFIRM_DETAILS', 'CARGONOMINATION_DELETE_CONFIRM_LABEL', 'CARGONOMINATION_DELETE_REJECT_LABEL', 'CARGO_NOMINATION_SAVED_CARGO_DETAILS', 'CARGONOMINATION_DELETE_DETAILS']).toPromise();
+
+      this.confirmationService.confirm({
+        key: 'confirmation-alert',
+        header: translationKeys['CARGONOMINATION_DELETE_SUMMARY'],
+        message: !event?.data?.isAdd ? translationKeys['CARGO_NOMINATION_SAVED_CARGO_DETAILS'] : translationKeys['CARGONOMINATION_DELETE_DETAILS'],
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: translationKeys['CARGONOMINATION_DELETE_CONFIRM_LABEL'],
+        acceptIcon: 'pi',
+        acceptButtonStyleClass: 'btn btn-main mr-5',
+        rejectVisible: true,
+        rejectLabel: translationKeys['CARGONOMINATION_DELETE_REJECT_LABEL'],
+        rejectIcon: 'pi',
+        rejectButtonStyleClass: 'btn btn-main',
+        accept: async () => {
+          this.ngxSpinnerService.show();
+          this.updateCommingleButton(true, false);
+          let res;
+          if (!event?.data?.isAdd) {
+            res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+          } else {
+            res = true;
           }
-        });
+          if (res) {
+            this.cargoNominations.splice(event.index, 1);
+            this.cargoNominations = [...this.cargoNominations];
+            const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
+            dataTableControl.removeAt(event.index);
+            this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+            this.updateFormValidity();
+          }
+          this.ngxSpinnerService.hide();
+        }
+      });
     }
   }
 
@@ -534,6 +554,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     const _cargoNomination = this.loadableStudyDetailsTransformationService.getCargoNominationAsValueObject(cargoNomination, true, this.listData);
     this.cargoNominations = [...this.cargoNominations, _cargoNomination];
     const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
+    _cargoNomination.quantity.value = Number(this.quantityDecimalFormatPipe.transform(_cargoNomination.quantity?.value).replace(/,/g, ''));
     dataTableControl.push(this.initCargoNominationFormGroup(_cargoNomination));
     this.cargoNominationForm.updateValueAndValidity();
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
@@ -650,9 +671,9 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
           this.cargoNominations[index].id = event.data.cargoNominationId;
           this.cargoNominations = [...this.cargoNominations];
           this.savedCargoNomination = JSON.parse(JSON.stringify(this.cargoNominations));
-          this.updateCommingleButton(false, false);
         }
       }
+      this.updateCommingleButton(false, false); // enable comingle button
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }

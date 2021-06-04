@@ -14,4 +14,5 @@ public class UllageUpdateRequest {
   private String trim;
   private String api;
   private String temp;
+  private String sg;
 }

@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import * as path from 'path';
 import * as _ from 'underscore';
 import * as fs from 'fs';
+import { promises as fspromise } from 'fs';
 import { OutBoundEventDataEntity } from '../entities/common-outbound-event.entity';
 import { InBoundEventDataEntity } from '../entities/common-inbound-event.entity';
 import { UpdateResult } from 'typeorm';
@@ -16,7 +17,7 @@ import { UpdateResult } from 'typeorm';
 @Injectable()
 export class CommonDownloadApiService {
 
-    constructor(private commonDbStore: CommonDataStore, private commonDbService: CommonDBService<OutBoundEventDataEntity, OutboundEventData>,
+    constructor(private configService: ConfigService, private commonDbStore: CommonDataStore, private commonDbService: CommonDBService<OutBoundEventDataEntity, OutboundEventData>,
         private commonInboundDbService: CommonDBService<InBoundEventDataEntity, InboundEventData>,
         private logger: CommonLoggerService) {
         this.logger.setContext('CommonDownloadApiService');
@@ -58,6 +59,15 @@ export class CommonDownloadApiService {
                     const updateResult: UpdateResult = await this.commonDbService.updateData(this.commonDbStore.getOutboundEventStore(), { clientId: outboundData.clientId, messageId: outboundData.messageId, uniqueId: outboundData.uniqueId, shipId: outboundData.shipId }, { process: 'shared' });
                     if (updateResult.affected === 0) {
                         this.logger.error(`Error in updating shared status for the client ${outboundData.clientId} with message ${outboundData.messageId}`, `Unique id ${outboundData.uniqueId} from the ship ${outboundData.shipId}`);
+                        return;
+                    }
+                    //Removing the entire file after sharing it successfully
+                    const directory = path.normalize(`${this.configService.get<string>('appPath')}/data/${outboundData.clientId}/${outboundData.shipId}/${outboundData.uniqueId}`);
+                    try {
+                        await fspromise.access(directory);
+                        await fspromise.rmdir(directory, { recursive: true });
+                    } catch (error) {
+                        // Not handled
                     }
                 });
                 stream.pipe(res);
@@ -83,15 +93,15 @@ export class CommonDownloadApiService {
             if (!existingInboundEventData) {
                 return { statusCode: "400", message: "Message Id doesnot exists", messageId: params.messageId };
             }
-            let response: EventStatusResponse = { statusCode: "200", message: "Message Id found", messageId: params.messageId}
+            let response: EventStatusResponse = { statusCode: "200", message: "Message Id found", messageId: params.messageId }
             response.eventUploadStatus = existingInboundEventData.processStatus;
-            response.eventUploadPacketStatus = existingInboundEventData.partNumber+"/"+existingInboundEventData.total;
+            response.eventUploadPacketStatus = existingInboundEventData.partNumber + "/" + existingInboundEventData.total;
             whereCondition = "outbound.clientId = :clientId AND outbound.messageId = :messageId AND outbound.shipId = :shipId";
             whereParams = { clientId: params.clientId, messageId: params.messageId, shipId: params.shipId };
             let existingOutboundEventData: OutboundEventData = await this.commonDbService.findOne(this.commonDbStore.getOutboundEventStore(), 'outbound', whereCondition, whereParams) as OutboundEventData;
             if (existingOutboundEventData) {
                 response.eventDownloadStatus = existingOutboundEventData.processStatus;
-                response.eventDownloadPacketStatus = existingOutboundEventData.partNumber+"/"+existingOutboundEventData.total;
+                response.eventDownloadPacketStatus = existingOutboundEventData.partNumber + "/" + existingOutboundEventData.total;
             }
             return response;
         } catch (err) {

@@ -14,9 +14,7 @@ import { InBoundEventDataEntity } from '../entities/common-inbound-event.entity'
  */
 @Injectable()
 export class CommonCancelTaskService {
-
-    private timerSleepInMs = 20000;
-
+    
     private ioClient: SocketIOClient.Socket | SocketIO.Socket;
 
     constructor(
@@ -58,12 +56,12 @@ export class CommonCancelTaskService {
             this.logger.error(`Error in cancel request ${err.message}`, err.stack);
         } finally {
             (async () => {
-                //Updating the confirm read timestamp to show the file is still under processing
+                //Updating the cancel read timestamp to show the file is still under processing
                 const updateResult: UpdateResult = await this.commonDbService.updateData(this.commonDbStore.getInboundEventStore(),
                     { clientId: eventData.clientId, messageId: eventData.messageId, uniqueId: eventData.uniqueId, shipId: eventData.shipId },
-                    { modifiedtimeStamp: new Date().getTime() });
+                    { cancelReadTimeStamp: new Date().getTime() });
                 if (updateResult.affected === 0) {
-                    this.logger.error(`Error in updating cancelled modified timestamp for the client ${eventData.clientId} 
+                    this.logger.error(`Error in updating cancel read timestamp for the client ${eventData.clientId} 
                     with message ${eventData.messageId}`, `Unique id ${eventData.uniqueId} for the ship ${eventData.shipId}`);
                 }
             })();
