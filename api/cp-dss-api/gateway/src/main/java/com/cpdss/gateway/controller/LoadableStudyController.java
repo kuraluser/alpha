@@ -202,7 +202,7 @@ public class LoadableStudyController {
   public LoadableStudyResponse getLoadableStudyByVoyage(
       @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @RequestParam(required = true, defaultValue = "1") long planningType,
+      @RequestParam(required = false, defaultValue = "1") long planningType,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
