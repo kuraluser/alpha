@@ -129,5 +129,5 @@ public class LoadableStudy extends EntityDoc {
   private String sequenceNo;*/
 
   @Column(name = "planning_type_xid")
-  private Integer planningTypeXId;
+  private Integer planningTypeXId = 1;
 }
