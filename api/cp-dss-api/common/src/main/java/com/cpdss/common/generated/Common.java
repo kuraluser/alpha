@@ -9,6 +9,102 @@ public final class Common {
   public static void registerAllExtensions(com.google.protobuf.ExtensionRegistry registry) {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
+  /** Protobuf enum {@code PLANNING_TYPE} */
+  public enum PLANNING_TYPE implements com.google.protobuf.ProtocolMessageEnum {
+    /** <code>VALUE_A = 0;</code> */
+    VALUE_A(0),
+    /** <code>LOADABLE_STUDY = 1;</code> */
+    LOADABLE_STUDY(1),
+    /** <code>DISCHARGE_STUDY = 2;</code> */
+    DISCHARGE_STUDY(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /** <code>VALUE_A = 0;</code> */
+    public static final int VALUE_A_VALUE = 0;
+    /** <code>LOADABLE_STUDY = 1;</code> */
+    public static final int LOADABLE_STUDY_VALUE = 1;
+    /** <code>DISCHARGE_STUDY = 2;</code> */
+    public static final int DISCHARGE_STUDY_VALUE = 2;
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static PLANNING_TYPE valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static PLANNING_TYPE forNumber(int value) {
+      switch (value) {
+        case 0:
+          return VALUE_A;
+        case 1:
+          return LOADABLE_STUDY;
+        case 2:
+          return DISCHARGE_STUDY;
+        default:
+          return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<PLANNING_TYPE> internalGetValueMap() {
+      return internalValueMap;
+    }
+
+    private static final com.google.protobuf.Internal.EnumLiteMap<PLANNING_TYPE> internalValueMap =
+        new com.google.protobuf.Internal.EnumLiteMap<PLANNING_TYPE>() {
+          public PLANNING_TYPE findValueByNumber(int number) {
+            return PLANNING_TYPE.forNumber(number);
+          }
+        };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
+      return getDescriptor().getValues().get(ordinal());
+    }
+
+    public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
+      return getDescriptor();
+    }
+
+    public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
+      return com.cpdss.common.generated.Common.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final PLANNING_TYPE[] VALUES = values();
+
+    public static PLANNING_TYPE valueOf(com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private PLANNING_TYPE(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:PLANNING_TYPE)
+  }
 
   public interface ResponseStatusOrBuilder
       extends
@@ -967,8 +1063,10 @@ public final class Common {
     java.lang.String[] descriptorData = {
       "\n\014common.proto\"W\n\016ResponseStatus\022\016\n\006stat"
           + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022"
-          + "\026\n\016httpStatusCode\030\004 \001(\005B\036\n\032com.cpdss.com"
-          + "mon.generatedP\000b\006proto3"
+          + "\026\n\016httpStatusCode\030\004 \001(\005*E\n\rPLANNING_TYPE"
+          + "\022\013\n\007VALUE_A\020\000\022\022\n\016LOADABLE_STUDY\020\001\022\023\n\017DIS"
+          + "CHARGE_STUDY\020\002B\036\n\032com.cpdss.common.gener"
+          + "atedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

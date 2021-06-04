@@ -9,6 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
@@ -400,11 +401,15 @@ public class LoadableStudyService {
    * @throws GenericServiceException
    */
   public LoadableStudyResponse getLoadableStudies(
-      Long companyId, Long vesselId, Long voyageId, String correlationdId)
+      Long companyId, Long vesselId, Long voyageId, String correlationdId, Long planningType)
       throws GenericServiceException {
     log.info("fetching loadable studies. correlationId: {}", correlationdId);
     LoadableStudyRequest request =
-        LoadableStudyRequest.newBuilder().setVesselId(vesselId).setVoyageId(voyageId).build();
+        LoadableStudyRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setPlanningType(Common.PLANNING_TYPE.forNumber(planningType.intValue()))
+            .setVoyageId(voyageId)
+            .build();
     LoadableStudyReply reply = this.getloadableStudyList(request);
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

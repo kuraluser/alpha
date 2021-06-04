@@ -203,7 +203,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList());
       toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
     } else {
-      throw new Exception("Cannot find loading information with id " + request.getLoadingDetail().getId());
+      throw new Exception(
+          "Cannot find loading information with id " + request.getLoadingDetail().getId());
     }
   }
 

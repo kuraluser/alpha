@@ -127,4 +127,7 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "sequence_no")
   private String sequenceNo;*/
+
+  @Column(name = "planning_type_xid")
+  private Integer planningTypeXId;
 }

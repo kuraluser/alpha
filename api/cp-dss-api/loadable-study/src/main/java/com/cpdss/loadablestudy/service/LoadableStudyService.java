@@ -825,9 +825,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository
-              .findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
-                  request.getVesselId(), voyageOpt.get(), true);
+          this.loadableStudyRepository.findAllLoadableStudy(
+              request.getVesselId(), voyageOpt.get(), request.getPlanningTypeValue());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
@@ -1167,8 +1166,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void validateLoadableStudyName(Voyage voyage, LoadableStudyDetail request)
       throws GenericServiceException {
     LoadableStudy duplicate =
-        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActive(
-            voyage, request.getName(), true);
+        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
+            voyage, request.getName(), true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
     if ((request.getId() == 0 && null != duplicate)
         || (null != duplicate && request.getId() != duplicate.getId().longValue())) {
       throw new GenericServiceException(
@@ -2608,8 +2607,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
               loadableStudyOpt.get(), portRotation, true);
       Optional<LoadableStudy> confirmedLoadableStudyOpt =
-          this.loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-              previousVoyage, CONFIRMED_STATUS_ID, true);
+          this.loadableStudyRepository
+              .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+                  previousVoyage,
+                  CONFIRMED_STATUS_ID,
+                  true,
+                  Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
 
       List<OnHandQuantity> onHandQuantityList = null;
       if (confirmedLoadableStudyOpt.isPresent()) {
@@ -11944,8 +11947,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   public void updateApiTempWithCargoNominations(Voyage voyage) {
     Optional<LoadableStudy> loadableStudy =
-        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-            voyage, CONFIRMED_STATUS_ID, true);
+        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+            voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
     if (loadableStudy.isPresent()) {
       log.info("Voyage Close, update api-temp - ls id {}", loadableStudy.get().getId());
       Optional<LoadablePattern> pattern =
