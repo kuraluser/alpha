@@ -1256,6 +1256,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      LoadableStudy loadableStudyRecord = loadableStudy.get();
       this.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudy.get());
 
@@ -1280,17 +1281,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .map(CargoNominationPortDetails::getPortId)
                   .collect(Collectors.toList());
         }
-        cargoNomination = buildCargoNomination(cargoNomination, request);
+        cargoNomination = buildCargoNomination(cargoNomination, request, loadableStudyRecord);
         apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
       } else if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() == 0) {
         cargoNomination = new CargoNomination();
-        cargoNomination = buildCargoNomination(cargoNomination, request);
+        cargoNomination = buildCargoNomination(cargoNomination, request, loadableStudyRecord);
         apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
       }
 
       // update port rotation table with loading ports from cargo nomination
-      LoadableStudy loadableStudyRecord = loadableStudy.get();
+
       // validate if requested are already added as transit ports
       if (!cargoNomination.getCargoNominationPortDetails().isEmpty()) {
         List<Long> requestedPortIds =
@@ -1555,7 +1556,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private CargoNomination buildCargoNomination(
-      CargoNomination cargoNomination, CargoNominationRequest request) {
+      CargoNomination cargoNomination, CargoNominationRequest request, LoadableStudy loadableStudy)
+      throws GenericServiceException {
+    if (!request.getCargoNominationDetail().getLoadingPortDetailsList().isEmpty()) {
+      List<Long> requestedPortIds =
+          request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
+              .map(LoadingPortDetail::getPortId)
+              .collect(Collectors.toList());
+      List<Long> transitPorts =
+          this.loadableStudyPortRotationRepository.getTransitPorts(loadableStudy, requestedPortIds);
+      if (!CollectionUtils.isEmpty(transitPorts)) {
+        throw new GenericServiceException(
+            "Ports exist as transit ports "
+                + StringUtils.collectionToCommaDelimitedString(transitPorts),
+            CommonErrorCodes.E_CPDSS_TRANSIT_PORT_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    }
     cargoNomination.setLoadableStudyXId(request.getCargoNominationDetail().getLoadableStudyId());
     cargoNomination.setPriority(request.getCargoNominationDetail().getPriority());
     cargoNomination.setCargoXId(request.getCargoNominationDetail().getCargoId());
@@ -5349,7 +5366,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setProcesssId(algoResponse.getProcessId())
                 .setResponseStatus(
                     ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
-        
+
       } else {
         log.info("INVALID_LOADABLE_STUDY {} - ", request.getLoadableStudyId());
         replyBuilder =
@@ -6326,19 +6343,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             maxWaterTemperature ->
                 loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
 
-     if(ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
-    	 loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
-     } else {
-    	 loadableStudy.setLoadOnTop(false);
-     }
-     Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId()); 
-     if(dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))){
-    	 loadableStudy.setCargoToBeDischargeFirstId(null);
-     } else if (!dischargeCargoId.isPresent()) {    	 
-         loadableStudy.setCargoToBeDischargeFirstId(null);
-     } else {    	 
-     loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
-     }
+    if (ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
+      loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
+    } else {
+      loadableStudy.setLoadOnTop(false);
+    }
+    Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId());
+    if (dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))) {
+      loadableStudy.setCargoToBeDischargeFirstId(null);
+    } else if (!dischargeCargoId.isPresent()) {
+      loadableStudy.setCargoToBeDischargeFirstId(null);
+    } else {
+      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
+    }
   }
 
   /** Get on board quantity details corresponding to a loadable study */
@@ -10211,8 +10228,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       } else {
         entityList =
-                voyageRepository.findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
-                        true, request.getVesselId());      }
+            voyageRepository
+                .findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
+                    true, request.getVesselId());
+      }
       for (Voyage entity : entityList) {
         VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
         detailbuilder.setId(entity.getId());
