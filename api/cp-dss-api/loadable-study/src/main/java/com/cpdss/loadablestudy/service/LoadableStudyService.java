@@ -6334,6 +6334,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
      Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId()); 
      if(dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))){
     	 loadableStudy.setCargoToBeDischargeFirstId(null);
+     } else if (!dischargeCargoId.isPresent()) {    	 
+         loadableStudy.setCargoToBeDischargeFirstId(null);
      } else {    	 
      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
      }
