@@ -52,7 +52,7 @@ public interface VoyageRepository
           "and v.vessel_xid = :vesselXId\n" +
           "and v.voyage_status notnull\n" +
           "order by v.created_date_time desc)\n" +
-          "select * from list1 union all select * from list2;", nativeQuery = true)
+          "select * from list1 union all select * from list2 where voyage_status != 3;", nativeQuery = true)
   public List<Voyage> findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
           boolean isActive, Long vesselXId);
   @Query("select V from Voyage V WHERE V.voyageStatus.id =?1 AND V.isActive=?2")
