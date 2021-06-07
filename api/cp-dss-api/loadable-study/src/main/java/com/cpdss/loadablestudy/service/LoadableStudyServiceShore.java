@@ -5,12 +5,10 @@ import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.EnvoyReader;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoNominationOperationDetails;
-import com.cpdss.loadablestudy.domain.MessageTypes;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.google.gson.Gson;
@@ -52,18 +50,8 @@ public class LoadableStudyServiceShore {
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
 
-  public LoadableStudy getDataFromEnvoyReaderShore(String patternJson)
-      throws GenericServiceException {
-    /*EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore();
-    if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to get Result from Communication Server",
-          erReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-    }*/
-    // String jsonResult = erReply.getPatternResultJson();
+  public LoadableStudy setLoadablestudyShore(String jsonResult) throws GenericServiceException {
     LoadableStudy loadableStudyEntity = null;
-    String jsonResult = patternJson;
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
@@ -80,13 +68,6 @@ public class LoadableStudyServiceShore {
       }
     }
     return loadableStudyEntity;
-  }
-
-  private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore() {
-    EnvoyReader.EnvoyReaderResultRequest.Builder request =
-        EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
-    return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 
   private void saveLoadableStudyDataShore(

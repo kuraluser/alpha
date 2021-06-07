@@ -12439,16 +12439,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private LoadableStudyServiceShore loadableStudyServiceShore;
 
-  @Override
-  public void saveLoadableStudyShore(
-      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
-      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply>
-          responseObserver) {
-    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.Builder replyBuilder =
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder();
+  public void saveLoadableStudyShore(Map<String, String> taskReqParams) {
+
     try {
+      EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
+      if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Failed to get Result from Communication Server",
+            erReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+      }
+      String jsonResult = erReply.getPatternResultJson();
       LoadableStudy loadableStudyEntity =
-          loadableStudyServiceShore.getDataFromEnvoyReaderShore(request.getJsonResult());
+          loadableStudyServiceShore.setLoadablestudyShore(jsonResult);
       if (loadableStudyEntity != null) {
         this.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.validateLoadableStudyWithLQ(loadableStudyEntity);
@@ -12480,44 +12483,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
-
-        replyBuilder =
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder()
-                .setProcessId(algoResponse.getProcessId())
-                .setResponseStatus(
-                    ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       }
 
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when generating pattern", e);
-      replyBuilder.setResponseStatus(
-          ResponseStatus.newBuilder()
-              .setCode(e.getCode())
-              .setMessage(e.getMessage())
-              .setStatus(FAILED)
-              .setHttpStatusCode(e.getStatus().value())
-              .build());
+
     } catch (ResourceAccessException e) {
       log.info("Error calling ALGO ");
-      replyBuilder =
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder()
-              .setResponseStatus(
-                  ResponseStatus.newBuilder()
-                      .setStatus(FAILED)
-                      .setMessage(ERRO_CALLING_ALGO)
-                      .setCode(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
-                      .build());
+
     } catch (Exception e) {
       log.error("Exception when when calling algo  ", e);
-      replyBuilder =
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreReply.newBuilder()
-              .setResponseStatus(
-                  ResponseStatus.newBuilder()
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                      .setMessage("Error when calling algo ")
-                      .setHttpStatusCode(Integer.valueOf(CommonErrorCodes.E_GEN_INTERNAL_ERR))
-                      .setStatus(FAILED)
-                      .build());
     }
+  }
+
+  public void saveAlgoPatternFromShore(Map<String, String> taskReqParams) {
+    try {
+      EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
+      if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Failed to get Result from Communication Server",
+            erReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+      }
+      String jsonResult = erReply.getPatternResultJson();
+      LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
+      // load.setLoadableStudyId(request.getLoadableStudyId());
+      saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving pattern", e);
+    }
+  }
+
+  private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
+      Map<String, String> taskReqParams) {
+    EnvoyReader.EnvoyReaderResultRequest.Builder request =
+        EnvoyReader.EnvoyReaderResultRequest.newBuilder();
+    request.setMessageType(taskReqParams.get("messageType"));
+    request.setClientId(taskReqParams.get("ClientId"));
+    request.setShipId(taskReqParams.get("ShipId"));
+    return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 }

@@ -5680,9 +5680,10 @@ public class LoadableStudyService {
     error.setShipId("9513402");
     EnvoyReader.EnvoyReaderResultReply jsonResult =
         this.envoyReaderGrpcService.getResultFromCommServer(error.build());
-    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder req =
+    return null;
+    /*com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder req =
         com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
     req.setJsonResult(jsonResult.getPatternResultJson());
-    return loadableStudyServiceBlockingStub.saveLoadableStudyShore(req.build());
+    return loadableStudyServiceBlockingStub.saveLoadableStudyShore(req.build());*/
   }
 }

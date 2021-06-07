@@ -95,4 +95,12 @@ public final class ScheduledTaskRequest<T extends ScheduledTaskProperties> {
         .setNanos(instant.getNano())
         .build();
   }
+
+  public void deleteScheduledTaskRequest(String taskName) throws GenericServiceException {
+    TaskManager.ScheduleTaskDeleteRequest.Builder deleteRequest =
+        TaskManager.ScheduleTaskDeleteRequest.newBuilder();
+    deleteRequest.setTaskName(taskName);
+    TaskManager.TaskManagerReply taskManagerReply =
+        this.taskManagerServiceBlockingStub.deleteScheduleTask(deleteRequest.build());
+  }
 }

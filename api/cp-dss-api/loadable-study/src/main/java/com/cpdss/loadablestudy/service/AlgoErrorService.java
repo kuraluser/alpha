@@ -1,21 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.scheduler.ScheduledTaskProperties;
 import com.cpdss.common.scheduler.ScheduledTaskRequest;
 import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
 import com.cpdss.loadablestudy.entity.AlgoErrors;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import io.grpc.stub.StreamObserver;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,34 +28,40 @@ public class AlgoErrorService {
 
   @Autowired ScheduledTaskRequest scheduledTaskRequest;
 
-  @PostConstruct
+  // @PostConstruct
   public void init() {
-    new Thread(
-            () -> {
-              try {
-                Thread.sleep(15 * 1000);
-                System.out.println("EXECUTING");
-                LocalDateTime dateTime = LocalDateTime.now();
-                LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(2));
-                ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                properties.setTaskName("TEST ASYNC TASK NAME");
-                properties.setTaskFrequency(30);
-                properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
-                properties.setTaskStartDate(dateTime.toLocalDate());
-                properties.setTaskStartTime(dateTime.toLocalTime());
-                properties.setTaskEndDate(endDateTime.toLocalDate());
-                properties.setTaskEndTime(endDateTime.toLocalTime());
-                properties.setTaskURI("localhost:9090");
-                Map<String, String> requestParam = new HashMap<>();
-                requestParam.put("test", "myval");
-                properties.setTaskReqParam(requestParam);
-                scheduledTaskRequest.createScheduledTaskRequest(properties);
+    /*new Thread(
+        () -> {
+          try {
+            Thread.sleep(15 * 1000);
+            System.out.println("EXECUTING");
+            LocalDateTime dateTime = LocalDateTime.now();
+            LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(2));
+            ScheduledTaskProperties properties = new ScheduledTaskProperties();
+            properties.setTaskName("TEST ASYNC TASK NAME");
+            properties.setTaskFrequency(30);
+            properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+            properties.setTaskStartDate(dateTime.toLocalDate());
+            properties.setTaskStartTime(dateTime.toLocalTime());
+            properties.setTaskEndDate(endDateTime.toLocalDate());
+            properties.setTaskEndTime(endDateTime.toLocalTime());
+            properties.setTaskURI("localhost:9090");
+            Map<String, String> requestParam = new HashMap<>();
+            requestParam.put("test", "myval");
+            properties.setTaskReqParam(requestParam);
+            scheduledTaskRequest.createScheduledTaskRequest(properties);
 
-              } catch (InterruptedException | GenericServiceException e) {
-                e.printStackTrace();
-              }
-            })
-        .start();
+          } catch (InterruptedException | GenericServiceException e) {
+            e.printStackTrace();
+          }
+        })
+    .start();*/
+    /*try {
+      scheduledTaskRequest.deleteScheduledTaskRequest("DOWNLOAD_RESULT");
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }*/
+
   }
 
   /** Save GRPC Algo Error into Entity Object */
