@@ -16,8 +16,7 @@ appConfig {
   logging = 'y'
   devTools = 'y'
   docker {
-      imageName = 'cpdss-loadable-study'
-      baseImage = 'openjdk:8u292-jre'
+      imageName = 'cpdss-loadable-study'     
       containerName = 'loadable-study-container'
       networkName = 'cpdss-network'
       hostVolumeMapping {
