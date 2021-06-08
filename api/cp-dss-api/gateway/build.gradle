@@ -27,8 +27,7 @@ appConfig {
   security = 'jwt'
   monitoring = 'y'
   docker {
-        imageName = 'cpdss-gateway'
-        baseImage = 'openjdk:8u292-jre'
+        imageName = 'cpdss-gateway'       
         containerName = 'gateway-container'
         networkName = 'cpdss-network'
         hostVolumeMapping {
