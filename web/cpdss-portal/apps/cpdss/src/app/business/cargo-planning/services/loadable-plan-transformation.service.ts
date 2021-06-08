@@ -413,7 +413,7 @@ export class LoadablePlanTransformationService {
         field: 'fillingRatio',
         header: 'LOADABLE_PLAN_CARGO_GRID_FILLING_RATIO',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberFormat: '1.2-2',
         editable: false,
       },
       {

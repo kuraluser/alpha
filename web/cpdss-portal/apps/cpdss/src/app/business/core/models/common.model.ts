@@ -295,7 +295,7 @@ export interface IPortList {
     portId: number;
     portTimezoneId?: number;
     operationId: number;
-    seaWaterDensity: number;
+    seaWaterDensity: any;
     distanceBetweenPorts: number;
     timeOfStay: number;
     maxDraft: number;

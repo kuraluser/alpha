@@ -166,7 +166,7 @@
                 <cpdss-portal-on-board-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-                    [loadableStudy]="selectedLoadableStudy" [quantitySelectedUnit]="currentUnit">
+                    [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
 
 

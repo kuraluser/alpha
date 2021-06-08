@@ -443,7 +443,7 @@
 	"PORT_MAX_DRAFT_MIN_ERROR": "Max draft must be greater than or equal to 0",
 	"PORT_MAX_AIR_DRAFT_MIN_ERROR": "Max air draft must be greater than or equal to 0",
 	"PORT_CHANGE_CONFIRM_SUMMARY": "Please confirm",
-	"PORT_CHANGE_CONFIRM_DETAILS": "Any change in port will affect the entries in OBQ, OHQ and Syoptical table. Please select yes to proceed?",
+	"PORT_CHANGE_CONFIRM_DETAILS": "Any change in port will affect the entries in OBQ, OHQ and Synoptical table. Please select yes to proceed?",
 	"PORT_CHANGE_CONFIRM_LABEL": "Yes",
 	"PORT_CHANGE_REJECT_LABEL": "No",
 	"LOADABLE_PLAN_HEADER": "LOADABLE PLAN",
@@ -780,7 +780,7 @@
 	"LOADABLE_PATTERN_HISTORY_NO_PATTERN_GENERATED": "Pattern is not generated for this Loadable study",
 	"PORT_LAY_CAN_DATE_EQUAL": "Laycan from and to cant be same date",
 	"SEARCH_VOYAGE": "Search Voyage",
-	"SEARCH_CHARTER": "Search Charter",
+	"SEARCH_CHARTER": "Search Charterer",
 	"SEARCH_DATE": "Search Date",
 	"SEARCH_LOADING_PORT": "Search Loading Ports",
 	"SEARCH_DISCHARGE_PORT": "Search Discharge Ports",
@@ -1037,5 +1037,14 @@
 	"LOADABLE_PLAN_EXPORT":"Export",
 	"LOADABLE_PLAN_MAX_LIMIT":"The quantity exceeds the maximum limit. Please check.",
 	"LOADABLE_PLAN_EXCEED_LOADABLE_QUANTITY":"The quantity exceeds the maximum limit. Please check.",
-	"LOADABLE_PLAN_EXCEED_TOLERANCE_LIMIT": "The quantity exceeds the maximum limit. Please check."
+	"LOADABLE_PLAN_EXCEED_TOLERANCE_LIMIT": "The quantity exceeds the maximum limit. Please check.",
+	"CHARTERER": "Charterer",
+	"VOYAGE_PLANNED_START_DATE": "PLANNED START DATE",
+	"VOYAGE_PLANNED_END_DATE":"PLANNED END DATE",
+	"VOYAGE_ACTUAL_START_DATE":"ACTUAL START DATE",
+	"VOYAGE_ACTUAL_END_DATE":"ACTUAL END DATE",
+	"VOYAGE_LOADING_PORTS":"LOADING PORTS",
+	"VOYAGE_DISCHARGE_PORTS":" DISCHARGE PORTS",
+	"VOYAGE_CARGO_LOADED":"CARGO LOADED",
+	"VOYAGE_STATUS":"STATUS"
 }

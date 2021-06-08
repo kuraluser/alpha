@@ -36,13 +36,13 @@ public class KeycloakService {
   @Value("${keycloak.auth-server-url}")
   private String keycloakApiUrl;
 
-  @Value("${kc.admin.username}")
+  @Value("${keycloak.admin.username}")
   private String keycloakApiUserName;
 
-  @Value("${kc.admin.password}")
+  @Value("${keycloak.admin.password}")
   private String keycloakApiPassword;
 
-  @Value("${kc.admin.clientId}")
+  @Value("${keycloak.admin.clientId}")
   private String getKeycloakApiClientId;
 
   public static final String REST_SERVICE_EXCEPTION_MSG = "Exception calling REST Service";

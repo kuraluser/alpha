@@ -58,7 +58,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    this.checkEditMode();
   }
 
   @Input()
@@ -158,6 +158,16 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getOBQDatatableColumns();
     this.initSubscriptions();
+    this.checkEditMode();
+  }
+
+  /**
+* Method for  enable/disable edit mode
+*
+* @memberof OnBoardQuantityComponent
+*/
+  checkEditMode() {
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
   }
 
   /**
@@ -296,11 +306,11 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     const volume = this.quantityPipe.transform(event?.data?.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.api?.value);
     event.data.volume = volume ?? 0;
 
-    if(event?.field === 'api'){
+    if (event?.field === 'api') {
       formGroup.controls.quantity.updateValueAndValidity();
     }
 
-    if (formGroup.valid  && formGroup.controls.api.value && formGroup.controls.quantity.value) {
+    if (formGroup.valid && formGroup.controls.api.value && formGroup.controls.quantity.value) {
       event.data.processing = true;
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
@@ -310,7 +320,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     }
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
-      if((this.selectedPortOBQTankDetails[event.index][key]).hasOwnProperty('_isEditMode')) {
+      if ((this.selectedPortOBQTankDetails[event.index][key]).hasOwnProperty('_isEditMode')) {
         this.selectedPortOBQTankDetails[event.index][key].isEditMode = control.invalid;
         control.markAsTouched();
         this.obqForm.updateValueAndValidity();
@@ -333,7 +343,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     this.enableOrDisableControls(this.obqForm, ['api', 'quantity']);
     const data = event.data
     this.selectedTank = data;
-    if(this.selectedIndex !== event.index) {
+    if (this.selectedIndex !== event.index) {
       this.selectedIndex = event.index;
       this.obqForm.controls.api.setValue(Number(data?.api.value));
       this.obqForm.controls.quantity.setValue(Number(data?.quantity.value));
@@ -391,7 +401,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['OBQ_UPDATE_ERROR'], detail: translationKeys['OBQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }
-      if(event?.data?.status === '401' && event?.data?.errorCode === '210'){
+      if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
         this.globalErrorHandler.sessionOutMessage();
       }
     }
@@ -551,7 +561,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
    * @memberof OnBoardQuantityComponent
    */
   async toggleLoadOnTop(event) {
-    if(this.editMode) {
+    if (this.editMode) {
       this.loadableStudy.loadOnTop = event.target.checked;
       this.ngxSpinnerService.show();
       const translationKeys = await this.translateService.get(['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_ERROR', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_STATUS_ERROR']).toPromise();
@@ -580,15 +590,15 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       if (obqTankDetail.api.value) {
         const _prevQuantitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
 
-          obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value , '' , -1);
-          obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value) : 0;
-          const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, QUANTITY_UNIT.OBSKL, obqTankDetail?.api?.value, obqTankDetail?.temperature);
-          obqTankDetail.volume = volume ?? 0;
+        obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value, '', -1);
+        obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value) : 0;
+        const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, QUANTITY_UNIT.OBSKL, obqTankDetail?.api?.value, obqTankDetail?.temperature);
+        obqTankDetail.volume = volume ?? 0;
 
-          // setting converted values to the form below tank layout
-          if(obqTankDetail.tankId === this.selectedTankId) {
-            this.obqForm.controls.quantity.setValue(obqTankDetail.quantity.value);
-          }
+        // setting converted values to the form below tank layout
+        if (obqTankDetail.tankId === this.selectedTankId) {
+          this.obqForm.controls.quantity.setValue(obqTankDetail.quantity.value);
+        }
 
         const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
         if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {

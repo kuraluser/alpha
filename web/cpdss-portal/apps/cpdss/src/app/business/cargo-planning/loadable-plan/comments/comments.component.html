@@ -7,13 +7,13 @@
         </div>
         <form class="row mb-15" [formGroup]="commentForm">
             <div class="col ml-30">
-                <textarea type="text" class="form-control" 
+                <textarea type="text" [disabled]="validateAndSaveProcessing" class="form-control" 
                 [placeholder]="'ENTER_COMMENTS' | translate" #comment  (keyup.enter)="submitComments()" maxlength="100" formControlName="comment"></textarea>
                 <cpdss-portal-validation-error [errors]="fieldError('comment')"
                 [errorMessages]="errorMessages">
                 </cpdss-portal-validation-error>
             </div>
-            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" [disabled]="!isPermissionAvaliable || commentButtonStatus || isVoyageClosed" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
+            <div><button type="button" [disabled]="validateAndSaveProcessing" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" [disabled]="!isPermissionAvaliable || commentButtonStatus || isVoyageClosed" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
             
         </form>
         <div class="row">

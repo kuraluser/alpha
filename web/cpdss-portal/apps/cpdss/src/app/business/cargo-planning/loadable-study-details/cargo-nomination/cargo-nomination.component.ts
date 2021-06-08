@@ -662,7 +662,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   private swMessageHandler = async (event) => {
-    const translationKeys = await this.translateService.get(['CARGONOMINATION_UPDATE_ERROR', 'CARGONOMINATION_UPDATE_STATUS_ERROR']).toPromise();
+    const translationKeys = await this.translateService.get(['CARGONOMINATION_UPDATE_ERROR', 'CARGONOMINATION_UPDATE_STATUS_ERROR', 'CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL']).toPromise();
     if (event?.data?.type === 'cargo_nomination_sync_finished') {
       const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
@@ -676,6 +676,9 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.updateCommingleButton(false, false); // enable comingle button
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-107') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL'], life: 10000, closable: false, sticky: false });
       }
       if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
         this.globalErrorHandler.sessionOutMessage();
