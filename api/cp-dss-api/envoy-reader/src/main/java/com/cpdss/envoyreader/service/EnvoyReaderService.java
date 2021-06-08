@@ -128,10 +128,9 @@ public class EnvoyReaderService {
    */
   private void buildReaderResponse(
       String decryptedData, ReaderResponse responseDto, Builder readerBuilder) {
-    /*   readerBuilder.setMessageType(responseDto.getMessageType());
-    readerBuilder.setUuid(responseDto.getUniqueId());
+    readerBuilder.setMessageId(responseDto.getUniqueId());
     readerBuilder.setClientId(responseDto.getClientId());
-    readerBuilder.setMessageType(responseDto.getMessageType());*/
+    readerBuilder.setMessageType(responseDto.getMessageType());
     readerBuilder.setPatternResultJson(decryptedData);
     readerBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }

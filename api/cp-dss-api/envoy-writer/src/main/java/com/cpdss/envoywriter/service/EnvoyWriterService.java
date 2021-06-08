@@ -9,6 +9,7 @@ import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply.Builder;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.envoywriter.domain.StatusCheckResponse;
 import com.cpdss.envoywriter.domain.WriterResponse;
 import com.cpdss.envoywriter.entity.SequenceNumber;
@@ -43,8 +44,11 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EnvoyWriterService {
 
-  @Value("${cpdss.communucation.writer.url}")
-  private String writerUrl;
+  @Value("${cpdss.communucation.ship.writer.url}")
+  private String writerShipUrl;
+
+  @Value("${cpdss.communucation.shore.writer.url}")
+  private String writerShoreUrl;
 
   @Autowired private SequenceNumberRepository sequenceNumberRepository;
   @Autowired private RestTemplate restTemplate;
@@ -185,7 +189,10 @@ public class EnvoyWriterService {
     String separator = "/";
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
-        .append(writerUrl)
+        .append(
+            request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+                ? writerShipUrl
+                : writerShoreUrl)
         .append(separator)
         .append("push")
         .append(separator)
@@ -213,7 +220,7 @@ public class EnvoyWriterService {
   }
 
   /**
-   * @param statusCheckbuilder
+   * @param statusCheckBuilder
    * @param statusCheckResponse void
    */
   private void buildStatusCheckResponse(
@@ -230,7 +237,9 @@ public class EnvoyWriterService {
     String separator = "/";
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
-        .append(writerUrl)
+        .append(request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+                ? writerShipUrl
+                : writerShoreUrl)
         .append(separator)
         .append("status")
         .append(separator)

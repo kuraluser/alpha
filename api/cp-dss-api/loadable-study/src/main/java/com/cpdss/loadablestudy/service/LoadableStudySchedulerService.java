@@ -8,7 +8,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.scheduler.ScheduledTaskProperties;
 import com.cpdss.common.scheduler.ScheduledTaskRequest;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.domain.MessageTypes;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.SchedulerRequest;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import java.time.Duration;

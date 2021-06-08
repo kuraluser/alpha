@@ -335,6 +335,7 @@ message LoadablePatternAlgoRequest {
 	bool validated = 5;
 	repeated AlgoErrors algoErrors = 6;
 	int64 loadablePatternId = 7;
+	string messageId = 8;
 	
 }
 

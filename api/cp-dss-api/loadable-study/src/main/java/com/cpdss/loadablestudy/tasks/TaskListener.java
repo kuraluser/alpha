@@ -3,7 +3,7 @@ package com.cpdss.loadablestudy.tasks;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.scheduler.ExecuteTaskListener;
-import com.cpdss.loadablestudy.domain.MessageTypes;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.service.LoadableStudyService;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;

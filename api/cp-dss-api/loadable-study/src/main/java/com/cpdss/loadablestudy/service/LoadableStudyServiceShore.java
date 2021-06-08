@@ -49,6 +49,7 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
+  @Autowired private CargoOperationRepository cargoOperationRepository;
 
   public LoadableStudy setLoadablestudyShore(String jsonResult) throws GenericServiceException {
     LoadableStudy loadableStudyEntity = null;
@@ -116,16 +117,12 @@ public class LoadableStudyServiceShore {
         .forEach(
             cargoNom -> {
               CargoNomination cargoNomination = new CargoNomination();
-              // apiTempHistory = buildApiTempHistory(cargoNomination, cargoNom,
-              // existingCargoPortIds);
+              cargoNomination.setLoadableStudyXId(loadableStudyEntity.getId());
               cargoNomination =
                   buildCargoNomination(
                       cargoNomination,
                       cargoNom,
                       loadableStudy.getCargoNominationOperationDetails());
-              /*cargoNomination =
-              modelMapper.map(
-                      cargoNom, com.cpdss.loadablestudy.entity.CargoNomination.class);*/
               cargoNominationEntities.add(cargoNomination);
             });
     this.cargoNominationRepository.saveAll(cargoNominationEntities);
@@ -160,10 +157,10 @@ public class LoadableStudyServiceShore {
           StringUtils.isEmpty(loadableQuantityDomain.getConstant())
               ? null
               : new BigDecimal(loadableQuantityDomain.getConstant()));
-      /* loadableQuantity.setDeadWeight(
-      StringUtils.isEmpty(loadableQuantityDomain.getDwt())
+      loadableQuantity.setDeadWeight(
+          StringUtils.isEmpty(loadableQuantityDomain.getDeadWeight())
               ? null
-              : new BigDecimal(loadableQuantityDomain.getDwt()));*/
+              : new BigDecimal(loadableQuantityDomain.getDeadWeight()));
 
       loadableQuantity.setDisplacementAtDraftRestriction(
           StringUtils.isEmpty(loadableQuantityDomain.getDisplacmentDraftRestriction())
@@ -313,6 +310,8 @@ public class LoadableStudyServiceShore {
         isEmpty(portRotation.getTimeOfStay()) ? null : portRotation.getTimeOfStay());
     loadableStudyPortRotation.setMaxDraft(
         isEmpty(portRotation.getMaxDraft()) ? null : portRotation.getMaxDraft());
+    loadableStudyPortRotation.setAirDraftRestriction(
+        isEmpty(portRotation.getMaxAirDraft()) ? null : portRotation.getMaxAirDraft());
     loadableStudyPortRotation.setEta(
         isEmpty(portRotation.getEta()) ? null : LocalDateTime.parse(portRotation.getEta()));
     loadableStudyPortRotation.setEtd(
@@ -327,6 +326,8 @@ public class LoadableStudyServiceShore {
         isEmpty(portRotation.getPortOrder()) ? null : portRotation.getPortOrder());
 
     loadableStudyPortRotation.setActive(true);
+    CargoOperation operation = this.cargoOperationRepository.getOne(portRotation.getOperationId());
+    loadableStudyPortRotation.setOperation(operation);
     return loadableStudyPortRotation;
   }
 
@@ -371,11 +372,12 @@ public class LoadableStudyServiceShore {
       CargoNomination cargoNomination,
       com.cpdss.loadablestudy.domain.CargoNomination request,
       List<CargoNominationOperationDetails> cargoNominationOperationDetails) {
-    cargoNomination.setLoadableStudyXId(request.getLoadableStudyId());
     cargoNomination.setPriority(request.getPriority());
     cargoNomination.setCargoXId(request.getCargoId());
     cargoNomination.setAbbreviation(request.getAbbreviation());
     cargoNomination.setColor(request.getColor());
+    cargoNomination.setApi(request.getApi());
+    cargoNomination.setTemperature(request.getTemperature());
     cargoNomination.setQuantity(
         !StringUtils.isEmpty(request.getQuantity())
             ? new BigDecimal(String.valueOf(request.getQuantity()))
@@ -503,6 +505,8 @@ public class LoadableStudyServiceShore {
     /*entity.setCaseNo(loadableStudy.getC);
     entity.setDischargeCargoId(loadableStudy.getD);*/
     entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
+    entity.setMessageUUID(
+        loadableStudy.getMessageId() != null ? loadableStudy.getMessageId() : null);
     /*entity.setIsCargoNominationComplete(loadableStudy.getIsCargoNominationComplete());
     entity.setIsDischargePortsComplete(loadableStudy.getIsDischargePortsComplete());
     entity.setIsObqComplete(loadableStudy.getIsObqComplete());

@@ -122,6 +122,7 @@ import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.ApiTempHistorySpecification;
 import com.cpdss.loadablestudy.domain.CargoDetailsTable;
@@ -140,7 +141,6 @@ import com.cpdss.loadablestudy.domain.LoadicatorAlgoResponse;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetails;
 import com.cpdss.loadablestudy.domain.LoadicatorPatternDetailsResults;
 import com.cpdss.loadablestudy.domain.LoadicatorResultDetails;
-import com.cpdss.loadablestudy.domain.MessageTypes;
 import com.cpdss.loadablestudy.domain.OperationsTable;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.PortOperationTable;
@@ -3197,6 +3197,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       builder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
           .build();
+      if (loadableStudyOpt.get().getMessageUUID() != null) {
+        passResultPayloadToEnvoyWriter(request, loadableStudyOpt.get());
+      }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in loadable pattern list", e);
       builder.setResponseStatus(
@@ -5483,17 +5486,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private EnvoyWriter.WriterReply passResultPayloadToEnvoyWriter(
-      LoadablePatternAlgoRequest loadablePatternAlgoRequest) throws GenericServiceException {
+      LoadablePatternAlgoRequest loadablePatternAlgoRequest, LoadableStudy loadableStudy)
+      throws GenericServiceException {
     String jsonPayload = null;
     try {
-      // VesselDetail vesselReply =
-      // this.getVesselDetailsForEnvoy(loadablePatternAlgoRequest.getV());
-      jsonPayload = JsonFormat.printer().print(loadablePatternAlgoRequest);
+      VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselXId());
+      LoadablePatternAlgoRequest.Builder payLoad = LoadablePatternAlgoRequest.newBuilder();
+      payLoad = loadablePatternAlgoRequest.toBuilder();
+      payLoad.setMessageId(loadableStudy.getMessageUUID());
+      jsonPayload = JsonFormat.printer().print(payLoad);
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
-      // loadableStudyValue.setImoNumber(vesselReply.getImoNumber());
-      // loadableStudyValue.setVesselId(vesselReply.getId());
+      writerRequest.setClientId(vesselReply.getName());
+      writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
       return this.envoyWriterGrpcService.getCommunicationServer(writerRequest.build());
 

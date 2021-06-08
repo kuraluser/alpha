@@ -32,4 +32,5 @@ public class LoadableStudy {
   private List<OnBoardQuantity> onBoardQuantity;
   private List<PortDetails> portDetails;
   private List<LoadableStudyAttachment> LoadableStudyAttachment;
+  private String messageId;
 }
