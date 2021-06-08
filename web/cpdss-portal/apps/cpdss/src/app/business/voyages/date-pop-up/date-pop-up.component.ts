@@ -27,6 +27,7 @@ export class DatePopUpComponent implements OnInit {
   @Input() voyageId: number;
   @Input() vesselId: number;
   @Input() isStart: boolean;
+  @Input() loadablePlanId: number;
   @Input()
   get defaultDate(): Date {
     return this._defaultDate;
@@ -87,6 +88,9 @@ export class DatePopUpComponent implements OnInit {
       try {
         const result = await this.voyageListApiService.startVoyage(this.vesselId, this.voyageId, formattedDate).toPromise();
         if (result.responseStatus.status === '200') {
+          localStorage.setItem("vesselId", this.vesselId.toString());
+          localStorage.setItem("voyageId", this.voyageId.toString());
+          localStorage.setItem("loadableStudyId", this.loadablePlanId.toString());
           this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START'] });
         }
       }

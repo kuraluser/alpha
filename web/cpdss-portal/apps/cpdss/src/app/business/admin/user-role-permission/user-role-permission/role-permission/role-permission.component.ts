@@ -35,9 +35,9 @@ export class RolePermissionComponent implements OnInit {
     treeNode: any;
     selectedNodes: TreeNode[] = [];
     cols = [
-        { field: 'view', header: 'View', isViewable: 'isViewVisible' , isReadOnly: 'isReadOnlyView'},
-        { field: 'add', header: 'Add', isViewable: 'isAddVisible' , isReadOnly: 'isReadOnlyAdd' },
-        { field: 'delete', header: 'Delete', isViewable: 'isDeleteVisible' , isReadOnly: 'isReadOnlyDelete'},
+        { field: 'view', header: 'View', isViewable: 'isViewVisible', isReadOnly: 'isReadOnlyView' },
+        { field: 'add', header: 'Add', isViewable: 'isAddVisible', isReadOnly: 'isReadOnlyAdd' },
+        { field: 'delete', header: 'Delete', isViewable: 'isDeleteVisible', isReadOnly: 'isReadOnlyDelete' },
         { field: 'edit', header: 'Edit', isViewable: 'isEditVisible', isReadOnly: 'isReadOnlyEdit' },
     ];
     roleId: number;
@@ -45,7 +45,7 @@ export class RolePermissionComponent implements OnInit {
     roleDetailsForm: FormGroup;
     errorMessages: any;
     userDetails: IUserDetail[] = [];
-    public saveRoleBtnPermissionContext:IPermissionContext;
+    public saveRoleBtnPermissionContext: IPermissionContext;
     public roleExistSta: boolean;
 
     // public method
@@ -72,7 +72,7 @@ export class RolePermissionComponent implements OnInit {
         this.getPagePermission();
         this.errorMessages = this.userRolePermissionTransformationService.setValidationErrorMessage();
         this.roleDetailsForm = this.fb.group({
-            'roleName': ['', [Validators.required , Validators.pattern('^[a-zA-Z0-9 ]+') , Validators.maxLength(10)]],
+            'roleName': ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+'), Validators.maxLength(10)]],
             'roleDescription': ['', [Validators.required]],
             'type': ['shore']
         });
@@ -83,17 +83,17 @@ export class RolePermissionComponent implements OnInit {
         })
     }
 
-      /**
-   * Get page permission
-   *
-   * @memberof RolePermissionComponent
-   */
-  getPagePermission() {
-    const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserRoleListing']);
-    if(!permission.edit) {
-        this.router.navigate(['/access-denied']);
+    /**
+ * Get page permission
+ *
+ * @memberof RolePermissionComponent
+ */
+    getPagePermission() {
+        const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserRoleListing']);
+        if (!permission.edit) {
+            this.router.navigate(['/access-denied']);
+        }
     }
-  }
 
     /**
     * get User Role Permission
@@ -122,24 +122,24 @@ export class RolePermissionComponent implements OnInit {
                     treeNode.push(value);
                     if (userDetail.childs && userDetail.childs.length) {
                         isChecked = this.innerNodes(treeNode[index], userDetail.childs);
-                        if(isChecked && treeStructure.isChecked) {
-                            (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes , treeNode[index]]);
+                        if (isChecked && treeStructure.isChecked) {
+                            (treeNode[index]['data']['nodeChecked'] = true, this.selectedNodes = [...this.selectedNodes, treeNode[index]]);
                         }
                     } else {
-                        if(treeStructure.isChecked) { 
-                            (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes, treeNode[index]]);
+                        if (treeStructure.isChecked) {
+                            (treeNode[index]['data']['nodeChecked'] = true, this.selectedNodes = [...this.selectedNodes, treeNode[index]]);
                         }
                     }
                 })
             }
             this.treeNode = [...treeNode];
             this.treeNode.map((node) => {
-                if(node.children.length) {
+                if (node.children.length) {
                     this.hideCheckBoxBasedOnParentNode(node);
                 }
                 node.data['rootNodeStatus'] = true;
             })
-            
+
         }
         catch (error) {
             if (error.error.errorCode === 'ERR-RICO-400') {
@@ -155,10 +155,10 @@ export class RolePermissionComponent implements OnInit {
     * @param {TreeNode} treeNode
     * @memberof RolePermissionComponent
     */
-    hideCheckBoxBasedOnParentNode(treeNode:TreeNode) {
+    hideCheckBoxBasedOnParentNode(treeNode: TreeNode) {
         treeNode.children?.map((node) => {
-            this.isCheckBoxIsReadOnly(node.data , treeNode.data);
-            if(node.children?.length) {
+            this.isCheckBoxIsReadOnly(node.data, treeNode.data);
+            if (node.children?.length) {
                 this.hideCheckBoxBasedOnParentNode(node);
             }
         })
@@ -168,12 +168,12 @@ export class RolePermissionComponent implements OnInit {
     * compare node
     * @memberof RolePermissionComponent
     */
-    isCheckBoxIsReadOnly(node: any , parentNode: any) {
+    isCheckBoxIsReadOnly(node: any, parentNode: any) {
         let rootNodeStatus = false;
-        parentNode.view ?  (node.isReadOnlyView = true , rootNodeStatus = true) : node.isReadOnlyView = false;
-        (parentNode.add || !parentNode.isAddVisible) && node.view && node.isAddVisible?  node.isReadOnlyAdd = true : (node.isReadOnlyAdd = false , node.add = false);
-        (parentNode.edit || !parentNode.isEditVisible) && node.view && node.isEditVisible ?  node.isReadOnlyEdit = true : (node.isReadOnlyEdit = false , node.edit = false);
-        (parentNode.delete || !parentNode.isDeleteVisible) && node.view && node.isDeleteVisible ?  node.isReadOnlyDelete = true : (node.isReadOnlyDelete = false , node.delete = false);
+        parentNode.view ? (node.isReadOnlyView = true, rootNodeStatus = true) : node.isReadOnlyView = false;
+        (parentNode.add || !parentNode.isAddVisible) && node.view && node.isAddVisible ? node.isReadOnlyAdd = true : (node.isReadOnlyAdd = false, node.add = false);
+        (parentNode.edit || !parentNode.isEditVisible) && node.view && node.isEditVisible ? node.isReadOnlyEdit = true : (node.isReadOnlyEdit = false, node.edit = false);
+        (parentNode.delete || !parentNode.isDeleteVisible) && node.view && node.isDeleteVisible ? node.isReadOnlyDelete = true : (node.isReadOnlyDelete = false, node.delete = false);
         node.rootNodeStatus = rootNodeStatus;
     }
 
@@ -195,15 +195,15 @@ export class RolePermissionComponent implements OnInit {
             parentNode['children'].push(value);
             if (child.childs?.length) {
                 isChecked = this.innerNodes(parentNode['children'][index], child.childs);
-                if(isChecked && treeStructure.isChecked){
+                if (isChecked && treeStructure.isChecked) {
                     value.data['nodeChecked'] = true;
-                    this.selectedNodes = [...this.selectedNodes , parentNode['children'][index]];
+                    this.selectedNodes = [...this.selectedNodes, parentNode['children'][index]];
                     treeNodesData.push(value)
-                } 
-            } else if(treeStructure.isChecked){
-                    value.data['nodeChecked'] = true;
-                    this.selectedNodes = ([...this.selectedNodes , value]);
-                    treeNodesData.push(value);
+                }
+            } else if (treeStructure.isChecked) {
+                value.data['nodeChecked'] = true;
+                this.selectedNodes = ([...this.selectedNodes, value]);
+                treeNodesData.push(value);
             }
         })
         if (parentNode['children'].length === treeNodesData.length) {
@@ -236,9 +236,9 @@ export class RolePermissionComponent implements OnInit {
             isEditVisible: data.isEditVisible,
             isViewVisible: data.isViewVisible,
             nodeChecked: false,
-            isReadOnlyAdd: true,
-            isReadOnlyEdit: true,
-            isReadOnlyDelete: true,
+            isReadOnlyAdd: roleScreen?.canView ? true : false,
+            isReadOnlyEdit: roleScreen?.canView ? true : false,
+            isReadOnlyDelete: roleScreen?.canView ? true : false,
             isReadOnlyView: true,
             rootNodeStatus: false
         }
@@ -252,10 +252,10 @@ export class RolePermissionComponent implements OnInit {
     nodeSelectUnSelect(node: any, selctionStatus: boolean) {
         node.children.map((value) => {
             this.cols.map((col) => {
-                if(value.data[col.isViewable]) {
+                if (value.data[col.isViewable]) {
                     value.data[col.field] = selctionStatus;
                 }
-                if(value.children?.length) {
+                if (value.children?.length) {
                     this.nodeSelectUnSelect(value, selctionStatus)
                 }
             })
@@ -269,19 +269,24 @@ export class RolePermissionComponent implements OnInit {
     parentNodeChange(node: any, rowData: any) {
         rowData['nodeChecked'] = !rowData['nodeChecked'];
         const treeNode = node?.node;
-        if(treeNode?.children?.length) {
+        if (treeNode?.children?.length) {
             this.nodeSelectUnSelect(treeNode, rowData['nodeChecked']);
-        } 
+        }
         this.cols.map((col) => {
-            if(treeNode.data[col.isViewable]) {
+            if (treeNode.data[col.isViewable]) {
                 treeNode.data[col.field] = rowData['nodeChecked'];
-            } 
+            }
         });
+
+        rowData.isReadOnlyAdd = rowData.isAddVisible && rowData['nodeChecked'] ? true : false;
+        rowData.isReadOnlyEdit = rowData.isEditVisible && rowData['nodeChecked'] ? true : false;
+        rowData.isReadOnlyDelete = rowData.isDeleteVisible && rowData['nodeChecked'] ? true : false;
+
         this.childParentNodeRelation(this.treeNode);
         this.treeNode.map((_node) => {
-            if(_node.children.length) {
+            if (_node.children.length) {
                 this.hideCheckBoxBasedOnParentNode(_node);
-            } 
+            }
             _node.data['rootNodeStatus'] = true;
         })
     }
@@ -291,16 +296,35 @@ export class RolePermissionComponent implements OnInit {
     * change check box status
     * @memberof RolePermissionComponent
     */
-    checkboxChange(rowData : any, rowNode: any, field: string) {
+    checkboxChange(rowData: any, rowNode: any, field: string) {
         rowData[field] = !rowData[field];
-        if(rowNode.node?.children) {
-            this.childNodeSelectUnselect(rowNode.node?.children , field , rowData[field])
+        if (rowNode.node?.children) {
+            this.childNodeSelectUnselect(rowNode.node?.children, field, rowData[field])
+        }
+        if (field === 'view') {
+            if (!rowData[field]) {
+                rowData.add = false;
+                rowData.edit = false;
+                rowData.delete = false;
+                rowData.isReadOnlyAdd = false;
+                rowData.isReadOnlyEdit = false;
+                rowData.isReadOnlyDelete = false;
+                if (rowNode.node?.children) {
+                    this.childNodeSelectUnselect(rowNode.node?.children, 'add', false);
+                    this.childNodeSelectUnselect(rowNode.node?.children, 'edit', false);
+                    this.childNodeSelectUnselect(rowNode.node?.children, 'delete', false);
+                }
+            } else {
+                rowData.isReadOnlyAdd = true;
+                rowData.isReadOnlyEdit = true;
+                rowData.isReadOnlyDelete = true;
+            }
         }
         this.childParentNodeRelation(this.treeNode);
         this.treeNode.map((node) => {
-            if(node.children.length) {
+            if (node.children.length) {
                 this.hideCheckBoxBasedOnParentNode(node);
-            } 
+            }
             node.data['rootNodeStatus'] = true;
         })
     }
@@ -311,12 +335,12 @@ export class RolePermissionComponent implements OnInit {
     *  @param {boolean} status
     * @memberof RolePermissionComponent
     */
-    childNodeSelectUnselect(childNode , fieldName: string , status: boolean) {
+    childNodeSelectUnselect(childNode, fieldName: string, status: boolean) {
         childNode?.map((nodeChildren) => {
             nodeChildren.data[fieldName] = status;
             if (nodeChildren.children?.length) {
-                this.childNodeSelectUnselect(nodeChildren.children , fieldName , status);
-            }                
+                this.childNodeSelectUnselect(nodeChildren.children, fieldName, status);
+            }
         })
     }
 
@@ -327,23 +351,23 @@ export class RolePermissionComponent implements OnInit {
     childParentNodeRelation(treeNode) {
         const treeNodesData = [];
         treeNode?.map((node) => {
-            let isChecked: boolean; 
+            let isChecked: boolean;
 
-            if(node.children?.length) {
+            if (node.children?.length) {
                 isChecked = this.childParentNodeRelation(node.children);
-                if(isChecked && this.isNodeChecked(node.data)) {
+                if (isChecked && this.isNodeChecked(node.data)) {
                     node.data['nodeChecked'] = true;
                     treeNodesData.push(node.children);
-                }  else {
+                } else {
                     node.data['nodeChecked'] = false;
                 }
-            } else if(this.isNodeChecked(node.data)){
+            } else if (this.isNodeChecked(node.data)) {
                 node.data['nodeChecked'] = true;
                 treeNodesData.push(node);
             } else {
                 node.data['nodeChecked'] = false;
             }
-            
+
         })
         if (treeNode?.length === treeNodesData.length) {
             return true
@@ -357,7 +381,7 @@ export class RolePermissionComponent implements OnInit {
     * @memberof RolePermissionComponent
     */
     isNodeChecked(nodeDetails) {
-        let isChecked:boolean;
+        let isChecked: boolean;
         (!nodeDetails.isAddVisible || nodeDetails?.add) && (!nodeDetails.isEditVisible || nodeDetails?.edit) && (!nodeDetails.isDeleteVisible || nodeDetails?.delete) && (!nodeDetails.isViewVisible || nodeDetails?.view) ? isChecked = true : isChecked = false;
         return isChecked
     }
@@ -396,10 +420,10 @@ export class RolePermissionComponent implements OnInit {
     * unselected user details
     * @memberof RolePermissionComponent
     */
-    deselectedUserId ()  {
+    deselectedUserId() {
         const spreaded = [...this.selectedUser, ...this.userDetails];
         return spreaded.filter(el => {
-           return !((this.selectedUser.includes(el) && this.userDetails.includes(el)))
+            return !((this.selectedUser.includes(el) && this.userDetails.includes(el)))
         })
     };
 
@@ -409,14 +433,14 @@ export class RolePermissionComponent implements OnInit {
     */
     async saveRoleDetails() {
         if (this.roleDetailsForm.valid) {
-            const translationKeys = await this.translateService.get(['USER_PERMISSION_SELECT_USER_ERROR', 'USER_PERMISSION_SELECT_USER','USER_PERMISSION_CREATE_SUCCESS', 'USER_PERMISSION_CREATED_SUCCESSFULLY', 'USER_PERMISSION_CREATE_ERROR', 'USER_PERMISSION_ALREADY_EXIST']).toPromise();
+            const translationKeys = await this.translateService.get(['USER_PERMISSION_SELECT_USER_ERROR', 'USER_PERMISSION_SELECT_USER', 'USER_PERMISSION_CREATE_SUCCESS', 'USER_PERMISSION_CREATED_SUCCESSFULLY', 'USER_PERMISSION_CREATE_ERROR', 'USER_PERMISSION_ALREADY_EXIST']).toPromise();
             const selectedUser = this.selectedUser?.map((user) => {
                 return user.id
             })
-            
+
             let deselectedUserDetails = [];
             const deselectedUserId = [];
-            if(this.selectedUser?.length) {
+            if (this.selectedUser?.length) {
                 deselectedUserDetails = this.deselectedUserId();
             } else {
                 deselectedUserDetails = this.userDetails;
@@ -424,7 +448,7 @@ export class RolePermissionComponent implements OnInit {
             deselectedUserDetails?.map((deselectedUserDetail) => {
                 deselectedUserId.push(deselectedUserDetail.id);
             })
-            
+
             const treeNodeScreen: IUserPermissionScreen[] = [];
             this.treeNode?.map((node) => {
                 this.setTreeNode(node, node.data, treeNodeScreen)
@@ -441,7 +465,7 @@ export class RolePermissionComponent implements OnInit {
             }
             this.ngxSpinnerService.show();
             try {
-            const savePermissionRes: ISavePermissionResponse = await this.userRolePermissionApiService.rolePermission(userPermission).toPromise();
+                const savePermissionRes: ISavePermissionResponse = await this.userRolePermissionApiService.rolePermission(userPermission).toPromise();
                 this.notificationService.getNotification.next(true);
                 this.ngxSpinnerService.hide();
                 if (savePermissionRes.responseStatus.status === '200') {
@@ -515,7 +539,7 @@ export class RolePermissionComponent implements OnInit {
             });
             users?.map((userId) => {
                 const selectedUser = this.userDetails?.filter((userDetail) => userDetail.id === userId.id);
-                if(selectedUser && selectedUser.length) {
+                if (selectedUser && selectedUser.length) {
                     this.selectedUser = [...this.selectedUser, selectedUser[0]];
                 }
             })

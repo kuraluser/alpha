@@ -346,16 +346,16 @@ hr{
 
 .p-dropdown-panel{
   background:$dropdown-bg;
-  max-width: 250px;
   .p-dropdown-item{
     background: $dropdown-bg!important;
     color: $text-primary!important;
-    &:hover{
+    &:hover, &.p-highlight{
       background:$dropdown-menu-hover-bg!important;
       color: $hover-color!important;
     }
   }
 }
+
 
 .p-datepicker:not(.p-datepicker-inline){
   background:$dropdown-bg;

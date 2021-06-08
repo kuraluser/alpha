@@ -1335,6 +1335,24 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * function to set current time input
+   *
+   * @param {*} ref
+   * @param {number} colIndex
+   * @param {string} key
+   * @memberof SynopticalTableComponent
+   */
+  setTimeInput(ref, colIndex: number, key: string): void {
+    if (!ref.value) {
+      const time = new Date();
+      time.setHours(ref.currentHour, ref.currentMinute);
+      const formControl = this.getControl(colIndex, key);
+      formControl.setValue(time);
+    }
+    ref.hideOverlay();
+  }
+
+  /**
    * Method to do validations on focusing out of an input
    *
    * @param {SynopticField} field

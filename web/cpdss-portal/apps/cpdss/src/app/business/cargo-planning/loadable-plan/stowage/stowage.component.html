@@ -58,7 +58,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="selectedTab === tankType.BALLAST">
+            <div *ngIf="selectedTab === tankType.BALLAST" class="col ml-30">
                 <cpdss-portal-ballast-stowage #ballastStowage (validateAndSave)="commentsPopup($event)" (ballastStowageDataEdit)="ballastStowageDataEdit($event,ballastStowage)" 
                 [initBallastTankDetails]="initBallastTankDetails" 
                 [ballastForm]="getFormGroup('ballastTanks')" 

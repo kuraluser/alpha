@@ -42,6 +42,9 @@ public class LoadablePlanStowageDetailsTemp extends EntityDoc {
   @Column(name = "is_ballast")
   private Boolean isBallast;
 
+  @Column(name = "is_commingle")
+  private Boolean isCommingle;
+
   @Column(name = "is_active")
   private Boolean isActive;
 
@@ -56,4 +59,8 @@ public class LoadablePlanStowageDetailsTemp extends EntityDoc {
   @JoinColumn(name = "loadable_pattern_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadablePattern loadablePattern;
+
+  @JoinColumn(name = "loadable_plan_commingle_details_xid", referencedColumnName = "id")
+  @ManyToOne
+  private LoadablePlanCommingleDetails loadablePlanCommingleDetails;
 }

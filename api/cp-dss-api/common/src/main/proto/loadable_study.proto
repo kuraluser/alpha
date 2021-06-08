@@ -428,6 +428,11 @@ message LoadablePlanBallastDetails {
 	string colorCode = 15;
 	string tankShortName = 16;
 	int32 tankDisplayOrder = 17;
+	string rdgLevelOrginal = 18;
+	string correctionFactorOrginal = 19;
+	string correctedLevelOrginal = 20; //same as corrected ullage
+	string metricTonOrginal = 21; //quantity
+	string percentageOrginal = 22;	
 }
 
 message LoadablePlanStowageDetails {
@@ -452,6 +457,12 @@ message LoadablePlanStowageDetails {
   string sg = 19;
   string tankShortName = 20;
   int32 tankDisplayOrder = 21;
+  
+  string correctedUllageOrginal = 22; // ullage(M)
+  string correctionFactorOrginal = 23;
+  string fillingRatioOrginal = 24;
+  string rdgUllageOrginal = 25; 
+  string weightOrginal = 26; // MT
  }
 
 
@@ -951,6 +962,7 @@ message LoadablePattern {
 	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 9;
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 10;
 	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 11;
+	bool validated = 12;
 }
 
 message LoadablePatternCargoDetails {
