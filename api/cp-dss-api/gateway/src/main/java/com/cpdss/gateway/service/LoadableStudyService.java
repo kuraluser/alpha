@@ -1584,6 +1584,8 @@ public class LoadableStudyService {
               loadablePatternDto.setLoadableStudyStatusId(
                   loadablePattern.getLoadableStudyStatusId());
               loadablePatternDto.setValidated(loadablePattern.getValidated());
+              loadablePatternDto.setLoadablePatternStatusId(
+                  loadablePattern.getLoadablePatternStatusId());
               loadablePatternDto.setLoadablePatternCargoDetails(
                   new ArrayList<LoadablePatternCargoDetails>());
               loadablePattern
@@ -4549,6 +4551,7 @@ public class LoadableStudyService {
       patternDto.setLoadablePatternId(pattern.getLoadablePatternId());
       patternDto.setCaseNumber(pattern.getCaseNumber());
       patternDto.setLoadableStudyStatusId(pattern.getLoadableStudyStatusId());
+
       response.getLoadablePatterns().add(patternDto);
     }
     response.setResponseStatus(
@@ -4692,7 +4695,7 @@ public class LoadableStudyService {
     builder.setApi(updateUllageRequest.getApi());
     builder.setTemperature(updateUllageRequest.getTemperature());
     builder.setSg(updateUllageRequest.getSg());
-    builder.setIsCommingle(updateUllageRequest.getIsCommingle());
+    builder.setIsCommingle(updateUllageRequest.isCommingle());
     grpcRequest.setLoadablePlanStowageDetails(builder.build());
   }
 

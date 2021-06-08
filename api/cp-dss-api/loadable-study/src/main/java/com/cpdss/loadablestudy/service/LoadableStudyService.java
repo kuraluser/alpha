@@ -4007,7 +4007,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .isEmpty()) loadablePatternBuilder.setValidated(true);
               ofNullable(loadablePattern.getCaseNumber())
                   .ifPresent(loadablePatternBuilder::setCaseNumber);
-
+              List<LoadablePatternAlgoStatus> patternStatus =
+                  loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              if (!patternStatus.isEmpty()) {
+                loadablePatternBuilder.setLoadablePatternStatusId(
+                    patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
+              }
               loadablePatternBuilder.setStabilityParameters(
                   buildStabilityParamter(loadablePattern));
 
