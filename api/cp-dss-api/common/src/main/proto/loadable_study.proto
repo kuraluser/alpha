@@ -963,6 +963,7 @@ message LoadablePattern {
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 10;
 	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 11;
 	bool validated = 12;
+	int64 loadablePatternStatusId = 13;
 }
 
 message LoadablePatternCargoDetails {
