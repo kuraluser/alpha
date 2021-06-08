@@ -41,6 +41,8 @@ export class StowageComponent implements OnInit {
 
   @Input() loadableStudyId: number;
 
+  @Input() validationPending: boolean;
+
   @Input()
   get loadableStudy(): LoadableStudy {
     return this._loadableStudy;

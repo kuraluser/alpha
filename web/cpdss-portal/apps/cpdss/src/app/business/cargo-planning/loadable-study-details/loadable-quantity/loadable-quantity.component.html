@@ -84,10 +84,10 @@
                     <div class="row form-group" *ngIf="caseNo === 3">
                         <label for="loadable_quantity_sea_water_density"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
-                        <div class="col">
-                            <input type="text" *ngIf="isEditable;else seaWaterDensityRef" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        <div class="col pt-5">
+                            <input type="text" *ngIf="isEditable && isEditableSeaWaterDensity;else seaWaterDensityRef" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_sea_water_density" formControlName="estSeaDensity"
-                                (change)="getSgCorrectionOnChange()" >
+                                (change)="getSgCorrectionOnChange()">
                                 <ng-template #seaWaterDensityRef>
                                     <label id="loadable_quantity_sea_water_density_label" >{{getControlLabel('estSeaDensity') | number :
                                     '1.4-4'}}</label>
@@ -102,7 +102,7 @@
                     <div class="row form-group" *ngIf="caseNo === 3">
                         <label for="loadable_quantity_sg_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_sg_correction">{{getControlLabel('sgCorrection') | number :
                                 '1.0-2'}}</label>
                         </div>

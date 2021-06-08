@@ -208,6 +208,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     const formatOpt: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat };
     const laycanFormat: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
     const _portsLists = portsLists?.map((item) => {
+      item.seaWaterDensity = item.seaWaterDensity.toFixed(Number(AppConfigurationService.settings.sgNumberFormat.slice(-1)));
       if (item.layCanFrom && item.layCanTo) {
         const layCanFrom = moment(item.layCanFrom, 'DD-MM-YYYY').startOf('d').toDate();
         item.layCanFrom = item.portTimezoneId ? this.convertDateTimeWithZone(layCanFrom, item.portTimezoneId, true) : this.timeZoneTransformationService.formatDateTime(item.layCanFrom, laycanFormat);
@@ -263,7 +264,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       portOrder: this.fb.control(ports.portOrder),
       portcode: this.fb.control(ports.portcode.value, [Validators.required]),
       operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator('operation')]),
-      seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 2)]),
+      seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 1)]),
       layCan: this.fb.control({ value: layCanFrom && layCanTo ? layCanArray : null, disabled: layCanData }, { validators: [] }),
       layCanFrom: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[0]?.trim(), true), disabled: layCanData }, layCanData ? [] : { validators: [] }),
       layCanTo: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[1]?.trim(), true), disabled: layCanData }, layCanData ? [] : { validators: [] }),
@@ -486,13 +487,13 @@ export class PortsComponent implements OnInit, OnDestroy {
           this.portUpdate.emit(true);
           const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.portsForm.valid);
           if (res) {
-            this.portUpdate.emit(false);
             row.markAsUntouched();
             for (const key in this.portsLists[rowIndex]) {
               if (this.portsLists[rowIndex]?.hasOwnProperty(key) && this.portsLists[rowIndex][key]?.hasOwnProperty('_isEditMode')) {
                 this.portsLists[rowIndex][key].isEditMode = false;
               }
             }
+            this.portUpdate.emit(false);
           }
         }
       }
@@ -821,6 +822,14 @@ export class PortsComponent implements OnInit, OnDestroy {
           form.controls.etd.disable();
           this.portsLists[index].eta.value = loadingPortData.eta.value ? loadingPortData.eta.value : '';
           this.portsLists[index].etd.value = loadingPortData.etd.value ? loadingPortData.etd.value : '';
+          this.portsLists[index].eta.isEditable = false;
+          this.portsLists[index].etd.isEditable = false;
+          this.updateValidityAndEditMode(index, 'eta');
+          this.updateValidityAndEditMode(index, 'etd');
+          return;
+        } else if( this.portsLists[index + 1] && portId === this.portsLists[index + 1].port?.value?.id && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING].includes(this.portsLists[index + 1].operation?.value?.id)){
+          form.controls.eta.disable();
+          form.controls.etd.disable();
           this.portsLists[index].eta.isEditable = false;
           this.portsLists[index].etd.isEditable = false;
           this.updateValidityAndEditMode(index, 'eta');

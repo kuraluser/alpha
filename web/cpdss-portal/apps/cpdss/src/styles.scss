@@ -1013,14 +1013,18 @@ input[type=number] {
     }
     &.api, &.temperature{
       > div{
-        min-width: 60px!important;
-        max-width: 60px;
+        min-width: 80px!important;
+        max-width: 80px;
         height: 25px;
         line-height: 25px;
         .icon-api-temp{
           right: -20px!important;
           position: absolute;
           top: 5px;
+        }
+        input{
+          padding-left: 5px;
+          padding-right: 5px;
         }
       }
     }
@@ -1370,8 +1374,8 @@ td.sl div{
           font-size: 12px;
           overflow: hidden;
           text-overflow: ellipsis;
-          padding-left: 2px;
-          padding-right: 1px;
+          padding-left: 0px;
+          padding-right: 2px;
         }
         .tank-btn-rounded{
           margin-left: 2px;
@@ -2497,4 +2501,8 @@ textarea{
   &.time-zone{
     max-width: none;
   }
+}
+
+.loadable-plan-ballast .tank-outer-pattern .tank-filling-percentage{
+ max-width: none; 
 }

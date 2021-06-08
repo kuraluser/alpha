@@ -106,6 +106,7 @@ export class LoadablePlanComponent implements OnInit  {
   public loadableQuantity: number;
   loadableQuantityCargo: IloadableQuantityCargoDetails[];
   portRotationId: number;
+  validateAndSaveProcessing: boolean;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -151,6 +152,10 @@ export class LoadablePlanComponent implements OnInit  {
       this.getGlobalTimeZones();
       this.getVoyages(this.vesselId, this.voyageId);
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    });
+
+    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value:any)=>{
+      this.validateAndSaveProcessing = value.validateAndSaveProcessing;
     });
 
   }

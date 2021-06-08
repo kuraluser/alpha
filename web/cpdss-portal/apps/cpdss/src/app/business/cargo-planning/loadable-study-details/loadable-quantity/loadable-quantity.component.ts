@@ -54,6 +54,7 @@ export class LoadableQuantityComponent implements OnInit {
   errorMesages: any;
   permission: IPermission;
   isEditable = false;
+  isEditableSeaWaterDensity = false;
   caseNo: number;
   selectedZone: string;
   loadableQuantityId: number;
@@ -517,6 +518,10 @@ export class LoadableQuantityComponent implements OnInit {
    * Get form control value to label
    */
   getControlLabel(type: string) {
+    if (type === 'sgCorrection' && !this.loadableQuantityForm.controls[type].value) {
+      const sgCorrectionValue = (Number(this.loadableQuantityForm.get('estSeaDensity').value) - 1.025) / 1.025 * Number(this.loadableQuantityForm.get('displacement').value);
+      this.loadableQuantityForm.controls.sgCorrection.setValue(sgCorrectionValue);
+    }
     return this.loadableQuantityForm.controls[type].value;
   }
 

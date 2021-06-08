@@ -19,14 +19,18 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
  
       if(Number(control['parent']?.get(field)?.value) > Number(compareValue)) {
         const formControl = <FormControl>control.parent.controls[errorField];
-        formControl.markAsTouched();
-        formControl.markAsDirty();
-        formControl.setErrors({greaterThanTankCapacity: true})
-      } else if(Number(control['parent']?.get(fillingRatio)?.value) > Number(AppConfigurationService.settings.maxFillingPercentage)) {
+        setTimeout(() => {
+          formControl.markAsTouched();
+          formControl.markAsDirty();
+          formControl.setErrors({ greaterThanTankCapacity: true })
+        }, 250)
+      } else if (Number(control['parent']?.get(fillingRatio)?.value) > Number(AppConfigurationService.settings.maxFillingPercentage)) {
         const formControl = <FormControl>control.parent.controls[errorField];
-        formControl.markAsTouched();
-        formControl.markAsDirty();
-        formControl.setErrors({maxLimit: true})
+        setTimeout(() => {
+          formControl.markAsTouched();
+          formControl.markAsDirty();
+          formControl.setErrors({ maxLimit: true })
+        }, 250)
       } else {
         const formControl = <FormControl>control.parent.controls[errorField];
         formControl.setErrors(null)

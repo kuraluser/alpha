@@ -34,6 +34,7 @@ export class CommentsComponent implements OnInit {
   @Input() voyageId: number;
   @Input() loadablePatternId: number;
   @Input() enableSubmit: boolean;
+  @Input() validateAndSaveProcessing: boolean;
 
   @Input() set commentsDetails(value: ILoadablePlanCommentsDetails[]) {
     this._commentsDetails = value && this.showCommentedDateTimeInUTC(value);

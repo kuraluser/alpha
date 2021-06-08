@@ -37,7 +37,20 @@ export function portEtaEtdValidator(key: string, index: number): ValidatorFn {
           firstValue.setSeconds(0, 0)
           secondValue.setSeconds(0, 0)
           if (secondValue <= firstValue) {
-            return error;
+            if(key === 'eta'){
+              if(formArray[control.parent.value.portOrder - 2].port.id === control.parent.value.port.id && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING, OPERATIONS.BUNKERING].includes(formArray[control.parent.value.portOrder - 2].operation?.id)){
+                return null;
+              } else {
+                return error;
+              }
+            }
+            if(key === 'etd'){
+              if(formArray[control.parent.value.portOrder].port.id === control.parent.value.port.id && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING, OPERATIONS.BUNKERING].includes(formArray[control.parent.value.portOrder].operation?.id)){
+                return null;
+              } else {
+                return error;
+              }
+            }
           }
         }
       }

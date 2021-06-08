@@ -357,7 +357,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
-          validators: ['dddd.dddd.+'],
+          validators: ['d.dddd.+'],
           numberFormat: AppConfigurationService.settings?.sgNumberFormat
         }],
         editable: true,
@@ -487,6 +487,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftFwdPlanned",
                       type: this.fieldType.NUMBER,
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                       validators: ['required']
                     }],
                     editable: false,
@@ -496,7 +497,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftFwdActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd.+']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -510,6 +512,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftAftPlanned",
                       type: this.fieldType.NUMBER,
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                       validators: ['required']
                     }],
                     editable: false,
@@ -519,7 +522,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftAftActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required','dd.dd.+']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -533,6 +537,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftMidPlanned",
                       type: this.fieldType.NUMBER,
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                       validators: ['required']
                     }],
                     editable: false,
@@ -542,7 +547,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftMidActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd.+']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -558,6 +564,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 fields: [{
                   key: "calculatedTrimPlanned",
                   type: this.fieldType.NUMBER,
+                  numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                   validators: ['required']
                 }],
                 editable: false,
@@ -567,7 +574,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 fields: [{
                   key: "calculatedTrimActual",
                   type: this.fieldType.NUMBER,
-                  validators: ['required']
+                  numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                  validators: ['required', 'dd.dd.+']
                 }],
                 editable: this.checkIfConfirmed(),
               },
