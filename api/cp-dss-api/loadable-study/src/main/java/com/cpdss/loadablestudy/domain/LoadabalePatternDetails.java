@@ -9,4 +9,5 @@ import lombok.Data;
 public class LoadabalePatternDetails {
   private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
   private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
+  private List<LoadablePlanStowageDetails> loadablePlanCommingleDetails;
 }
