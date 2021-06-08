@@ -38,10 +38,10 @@
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_M' | translate }}</div>
                         <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="isNoArrivalMaxDraft"
+                            <cpdss-portal-validation-error [hidden]="!loadableQuantityForm?.controls?.portName.value" [errors]="isNoArrivalMaxDraft"
                             [errorMessages]="errorMesages.arrivalMaxDraft"></cpdss-portal-validation-error>
                         </div>
-                       
+
                     </div>
                     <div class="row form-group" *ngIf="caseNo == 3">
                         <label for="loadable_quantity_displacement"
@@ -143,7 +143,7 @@
                         <label for="loadable_quantity_fo_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_ONBOARD' | translate}}</label>
                         <div class="col">
-                            <input type="text" 
+                            <input type="text"
                                 id="loadable_quantity_fo_onboard" class="form-control" [value]="getControlLabel('foOnboard')| number :'1.0-2'"
                                 (change)="getSubTotal()" [disabled]="true">
                         </div>
@@ -157,7 +157,7 @@
                         <label for="loadable_quantity_do_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DO_ONBOARD' | translate}}</label>
                         <div class="col">
-                            <input type="text" 
+                            <input type="text"
                                 id="loadable_quantity_do_onboard" class="form-control" [value]="getControlLabel('doOnboard')| number :'1.0-2'"
                                 (change)="getSubTotal()"  [disabled]="true">
                         </div>
@@ -204,8 +204,8 @@
                                 id="loadable_quantity_ballast" class="form-control" formControlName="ballast"
                                 (change)="getSubTotal()">
                                 <ng-template #labelRef>
-                                    <label id="loadable_quantity_ballast_label" >{{getControlLabel('ballast') | number :
-                                    '1.0.-2'}}</label>
+                                    <input type="text" class="form-control" id="loadable_quantity_ballast_label" [value]="getControlLabel('ballast')| number :'1.0-2'"
+                                (change)="getSubTotal()" [disabled]="true">
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -232,8 +232,8 @@
                                 class="form-control" formControlName="others" (change)="getSubTotal()"
                                 >
                                 <ng-template #constLabelRef>
-                                    <label id="loadable_quantity_ballast_label" >{{getControlLabel('others') | number :
-                                    '1.0.-2'}}</label>
+                                    <input type="text" class="form-control" id="loadable_quantity_others" [value]="getControlLabel('others')| number :'1.0-2'"
+                                 [disabled]="true">
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -265,7 +265,7 @@
                         </div>
                     </div>
                     <div class="row" *ngIf="caseNo !== 1">
-                        <div class="col">
+                        <div class="col error-container">
                             <div class="text-danger" *ngIf="isNegative">
                                 {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoTpc">
@@ -390,7 +390,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col error-container">
                             <div class="pt-5 text-danger" *ngIf="isNegative">
                                 {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoTpc">
@@ -412,7 +412,7 @@
             <button class="btn btn-main mr-10" id="lodable_quantity_cancel"
                 (click)="cancel()">{{'LOADABLE_QUANTITY_CANCEL' | translate}}
             </button>
-            <ng-container *ngIf="isEditable && ports">
+            <ng-container *ngIf="isEditable && ports && buttonLabel">
                 <button class="btn btn-main" type="submit" id="lodable_quantity_submit" form="fg_loadableQunatity"
                     *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{ buttonLabel | translate}}</button>
             </ng-container>

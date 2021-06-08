@@ -67,7 +67,10 @@ public class Utils {
 
   public static String dataBaseType;
 
-  public enum STATUS { SUCCESS , FAILED };
+  public enum STATUS {
+    SUCCESS,
+    FAILED
+  };
 
   public static boolean propertyHasTrailingSpaces(String property) {
     Character lastCharacter = property.charAt(property.length() - 1);

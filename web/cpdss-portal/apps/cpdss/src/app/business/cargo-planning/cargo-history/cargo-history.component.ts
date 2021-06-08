@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -62,6 +62,7 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
     this.vesselInfo = res[0] ?? <IVessel>{};
     this.userPermission = this.userPermissionService.getPermission(AppConfigurationService.settings.permissionMapping['CargoHistoryComponent'], false);
     this.getCargoHistoryDetails$.pipe(
+      debounceTime(1000), // By setting this we can avoid multiple api calls
       switchMap(() => {
         return this.cargoHistoryApiService.getCargoHistoryData(this.cargoHistoryPageState);
       })

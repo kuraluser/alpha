@@ -119,7 +119,7 @@ export class CommonUploadApiService {
                 return { statusCode: "400", message: "Message Id doesnot exists", messageId: params.messageId, shipId: params.shipId };
             }
             //Creating event data
-            existingEventData.process = 'cancel';
+            existingEventData.process = 'init-cancel';
             //Verifying event data and returns with metadata
             await this.commonDbService.updateObject(this.commonDbStore.getInboundEventStore(), existingEventData);
             const cancelledCacheData: CancelledCacheData = { clientId: existingEventData.clientId, messageId: existingEventData.messageId, shipId: existingEventData.shipId, uniqueId: existingEventData.uniqueId };
@@ -131,7 +131,7 @@ export class CommonUploadApiService {
         }
     }
 
-    /**
+   /**
    * Method to move and verify the input file to the output directory
    *
    * @param eventData

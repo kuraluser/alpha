@@ -30,12 +30,18 @@ export class PatternViewMorePopUpComponent implements OnInit {
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
   @Input() display;
-  @Input() selectedLoadablePattern: ILoadablePattern;
   @Input() cargoTankList: ICargoTank[][];
   @Input() rearBallastTanks: IBallastTank[][];
   @Input() centerBallastTanks: IBallastTank[][];
   @Input() frontBallastTanks: IBallastTank[][];
   @Input() cargos: ICargo[];
+  @Input()
+  get selectedLoadablePattern(): ILoadablePattern {
+    return this._selectedLoadablePattern;
+  }
+  set selectedLoadablePattern(value: ILoadablePattern) {
+    this._selectedLoadablePattern = JSON.parse(JSON.stringify(value));
+  }
 
   get loadablePlanBallastDetails(): IBallastStowageDetails[] {
     return this._loadablePlanBallastDetails;
@@ -62,6 +68,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM', showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
 
   private _loadablePlanBallastDetails: IBallastStowageDetails[];
+  private _selectedLoadablePattern: ILoadablePattern;
 
   constructor(private router: Router,
     private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService,
@@ -77,7 +84,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   */
   ngOnInit(): void {
     this.cargoTableCol = this.loadableStudyPatternTransformationService.getCargoPriorityGridMoreTableColumn();
-    this.cargoTobeLoadedColumns = this.loadableStudyPatternTransformationService.getCargotobeLoadedDatatableColumns();
+    this.cargoTobeLoadedColumns = this.loadableStudyPatternTransformationService.getCargotobeLoadedDatatableColumns(this.currentQuantitySelectedUnit);
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.updateCargoTobeLoadedData();
     this.updateLoadablePlanStowageData();
@@ -174,20 +181,20 @@ export class PatternViewMorePopUpComponent implements OnInit {
       if (loadable) {
         const minTolerence = this.loadableStudyPatternTransformationService.decimalConvertion(this._decimalPipe, loadable.minTolerence, '0.2-2');
         const maxTolerence = this.loadableStudyPatternTransformationService.decimalConvertion(this._decimalPipe, loadable.maxTolerence, '0.2-2');
-        loadable.minMaxTolerance = maxTolerence +  (minTolerence ? "/" + minTolerence : '');
+        loadable.minMaxTolerance = maxTolerence + (minTolerence ? "/" + minTolerence : '');
         loadable.differencePercentage = loadable.differencePercentage ? (loadable.differencePercentage.includes('%') ? loadable.differencePercentage : loadable.differencePercentage + '%') : '';
         loadable.grade = this.fingCargo(loadable);
 
-        const orderedQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity, this.currentQuantitySelectedUnit);
+        const orderedQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
+        loadable.orderedQuantity = orderedQuantity.toString();
 
-        const loadableMT = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadableMT, this.currentQuantitySelectedUnit);
+        const loadableMT = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
+        loadable.loadableMT = loadableMT.toString();
 
-        const slopQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.slopQuantity = Number(this.quantityDecimalFormatPipe.transform(slopQuantity, this.currentQuantitySelectedUnit).replace(/,/g, ''));
+        const slopQuantity = loadable?.slopQuantity ? this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1) : 0;
+        loadable.slopQuantity = slopQuantity;
 
-        loadable.loadingPort = loadable?.loadingPorts?.join(',');
+          loadable.loadingPort = loadable?.loadingPorts?.join(',');
       }
       return loadable;
     })
@@ -195,7 +202,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
 
 
   /**
-  * Method to find out cargo 
+  * Method to find out cargo
   *
   * @memberof PatternViewMorePopUpComponent
   */
@@ -219,6 +226,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
     this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     if (this.prevQuantitySelectedUnit) {
+      this.cargoTobeLoadedColumns = this.loadableStudyPatternTransformationService.getCargotobeLoadedDatatableColumns(this.currentQuantitySelectedUnit);
       this.convertQuantityToSelectedUnit();
     }
   }
@@ -233,14 +241,14 @@ export class PatternViewMorePopUpComponent implements OnInit {
     this.updateLoadablePatternCargoDetails();
     this.cargoTobeLoaded = this.cargoTobeLoaded?.map(loadable => {
       if (loadable) {
-        const orderedQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity, this.currentQuantitySelectedUnit);
+        const orderedQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
+        loadable.orderedQuantity = orderedQuantity.toString();
 
-        const loadableMT = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadableMT, this.currentQuantitySelectedUnit);
+        const loadableMT = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
+        loadable.loadableMT = loadableMT.toString();
 
-        const slopQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI);
-        loadable.slopQuantity = Number(this.quantityDecimalFormatPipe.transform(slopQuantity, this.currentQuantitySelectedUnit).replace(/,/g, ''));
+        const slopQuantity = loadable?.slopQuantity ? this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1) : 0;
+        loadable.slopQuantity = slopQuantity;
 
       }
       return loadable;

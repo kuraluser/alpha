@@ -156,7 +156,7 @@ public class SpringDataConfig {
       throws SQLException {
     LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
     HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-    if(this.autoGenerate) {
+    if (this.autoGenerate) {
       vendorAdapter.setGenerateDdl(true);
     }
     if (this.isMultenant && dataBaseType.equals("postgres")) {

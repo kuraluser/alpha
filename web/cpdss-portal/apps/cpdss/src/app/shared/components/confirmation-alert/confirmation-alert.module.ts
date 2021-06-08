@@ -4,6 +4,8 @@ import { ConfirmationAlertComponent } from './confirmation-alert.component';
 import { ConfirmationAlertService } from './confirmation-alert.service';
 import { ToastModule } from 'primeng/toast';
 import { TranslateModule } from '@ngx-translate/core';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 
 /**
@@ -17,7 +19,8 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [
     CommonModule,
     ToastModule,
-    TranslateModule
+    TranslateModule,
+    ConfirmDialogModule
   ],
   exports: [ConfirmationAlertComponent]
 })
@@ -33,7 +36,8 @@ export class ConfirmationAlertModule {
     return {
       ngModule: ConfirmationAlertModule,
       providers: [
-        { provide: ConfirmationAlertService }
+        { provide: ConfirmationAlertService },
+        { provide: ConfirmationService}
       ]
     };
   }

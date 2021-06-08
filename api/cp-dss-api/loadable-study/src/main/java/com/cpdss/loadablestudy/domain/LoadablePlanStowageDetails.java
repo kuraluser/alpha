@@ -10,6 +10,8 @@ import lombok.Data;
 public class LoadablePlanStowageDetails {
   private Long id;
   private Long tankId;
+
+  @JsonInclude(Include.NON_NULL)
   private Long cargoNominationId;
 
   @JsonInclude(Include.NON_NULL)
