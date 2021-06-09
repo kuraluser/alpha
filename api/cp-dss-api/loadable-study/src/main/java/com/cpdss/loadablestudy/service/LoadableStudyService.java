@@ -3214,50 +3214,50 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
   // uncomment with communication service implementation
-  /*private void savePatternDtails(
-          LoadablePatternAlgoRequest request, Optional<LoadableStudy> loadableStudyOpt) {
+  private void savePatternDtails(
+      LoadablePatternAlgoRequest request, Optional<LoadableStudy> loadableStudyOpt) {
     Long lastLoadingPort =
-            getLastPort(
-                    loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+        getLastPort(
+            loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
     request
-            .getLoadablePlanDetailsList()
-            .forEach(
-                    lpd -> {
-                      LoadablePattern loadablePattern = saveloadablePattern(lpd, loadableStudyOpt.get());
+        .getLoadablePlanDetailsList()
+        .forEach(
+            lpd -> {
+              LoadablePattern loadablePattern = saveloadablePattern(lpd, loadableStudyOpt.get());
 
-                      Optional<LoadablePlanPortWiseDetails> lppwdOptional =
-                              lpd.getLoadablePlanPortWiseDetailsList().stream()
-                                      .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-                                      .findAny();
+              Optional<LoadablePlanPortWiseDetails> lppwdOptional =
+                  lpd.getLoadablePlanPortWiseDetailsList().stream()
+                      .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
+                      .findAny();
 
-                      if (lppwdOptional.isPresent()) {
-                        saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
-                        saveLoadablePlanCommingleCargo(
-                                lppwdOptional
-                                        .get()
-                                        .getDepartureCondition()
-                                        .getLoadableQuantityCommingleCargoDetailsList(),
-                                loadablePattern);
-                        saveLoadablePlanStowageDetails(
-                                lppwdOptional.get().getDepartureCondition().getLoadablePlanStowageDetailsList(),
-                                loadablePattern);
-                        saveLoadablePlanBallastDetails(
-                                lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
-                                loadablePattern);
-                      }
+              if (lppwdOptional.isPresent()) {
+                saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
+                saveLoadablePlanCommingleCargo(
+                    lppwdOptional
+                        .get()
+                        .getDepartureCondition()
+                        .getLoadableQuantityCommingleCargoDetailsList(),
+                    loadablePattern);
+                saveLoadablePlanStowageDetails(
+                    lppwdOptional.get().getDepartureCondition().getLoadablePlanStowageDetailsList(),
+                    loadablePattern);
+                saveLoadablePlanBallastDetails(
+                    lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
+                    loadablePattern);
+              }
 
-                      saveLoadableQuantityCommingleCargoPortwiseDetails(
-                              lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
-                      saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
-                      saveLoadablePlanStowageDetails(loadablePattern, lpd);
-                      saveLoadablePlanBallastDetails(loadablePattern, lpd);
-                      saveStabilityParameterForNonLodicator(
-                              request.getHasLodicator(), loadablePattern, lpd);
-                    });
+              saveLoadableQuantityCommingleCargoPortwiseDetails(
+                  lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+              saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
+              saveLoadablePlanStowageDetails(loadablePattern, lpd);
+              saveLoadablePlanBallastDetails(loadablePattern, lpd);
+              saveStabilityParameterForNonLodicator(
+                  request.getHasLodicator(), loadablePattern, lpd);
+            });
     if (request.getHasLodicator()) {
       this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
     }
-  }*/
+  }
 
   private void saveStabilityParameterForNonLodicator(
       boolean hasLodicator, LoadablePattern loadablePattern, LoadablePlanDetails lpd) {
@@ -3498,6 +3498,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
+              LoadableStudyPortRotation portRotation =
+                  loadableStudyPortRotationRepository.findByIdAndIsActive(
+                      lppwd.getPortRotationId(), true);
+              if (Objects.isNull(portRotation)) {
+                portRotation =
+                    loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                        loadablePattern.getLoadableStudy(), lppwd.getPortId(),true);
+              }
+              Long portRotationid = portRotation.getId();
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanStowageDetailsList()
@@ -3507,7 +3516,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            portRotationid,
                             loadablePattern);
                       });
               lppwd
@@ -3519,7 +3528,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            portRotationid,
                             loadablePattern);
                       });
             });
@@ -5455,17 +5464,34 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       String patternResultJson, LoadablePatternAlgoRequest.Builder load) {
     // String patternResponse = erReply.getPatternResultJson();
     try {
+      JsonFormat.parser().ignoringUnknownFields().merge(patternResultJson, load);
+      LoadablePatternAlgoRequest patternResult = load.build();
       Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findByIdAndIsActive(load.getLoadableStudyId(), true);
+          this.loadableStudyRepository.findByMessageUUIDAndIsActive(
+              patternResult.getMessageId(), true);
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
             "Loadable study does not exist",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      JsonFormat.parser().ignoringUnknownFields().merge(patternResultJson, load);
-      // savePatternDtails(load.build(), loadableStudyOpt);
-
+      updateProcessIdForLoadableStudy(
+          patternResult.getProcesssId(),
+          loadableStudyOpt.get(),
+          LOADABLE_STUDY_PROCESSING_STARTED_ID);
+      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+          LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, patternResult.getProcesssId(), true);
+      if (patternResult.getLoadablePlanDetailsList().isEmpty()) {
+        log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, patternResult.getProcesssId(), true);
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
+      } else {
+        savePatternDtails(patternResult, loadableStudyOpt);
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
+      }
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
     }
@@ -12528,7 +12554,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       String jsonResult = erReply.getPatternResultJson();
       LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
       // load.setLoadableStudyId(request.getLoadableStudyId());
-      saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
+      if (!jsonResult.isEmpty()) saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving pattern", e);
     }

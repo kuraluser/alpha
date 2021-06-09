@@ -51,4 +51,6 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   @Modifying
   @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1 WHERE id = ?2 ")
   public void updateLoadableStudyUUID(String messageUUID, Long id);
+
+  public Optional<LoadableStudy> findByMessageUUIDAndIsActive(String messageUUID, boolean isActive);
 }

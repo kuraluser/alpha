@@ -34,6 +34,7 @@ public class LoadableStudySchedulerService {
   @Value("${cpdss.build.env}")
   private String environment;
 
+  // @PostConstruct
   public void init() {
     List<SchedulerRequest> vesselList = getAllVessel();
     vesselList.forEach(
@@ -46,14 +47,14 @@ public class LoadableStudySchedulerService {
                       LocalDateTime dateTime = LocalDateTime.now();
                       LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(2));
                       ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                      properties.setTaskName("DOWNLOAD_RESULT" + vesssel.getVesselId());
+                      properties.setTaskName("DOWNLOAD_RESULT_SHIP" + vesssel.getVesselId());
                       properties.setTaskFrequency(1);
                       properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                       properties.setTaskStartDate(dateTime.toLocalDate());
                       properties.setTaskStartTime(dateTime.toLocalTime());
                       properties.setTaskEndDate(endDateTime.toLocalDate());
                       properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI("localhost:9090");
+                      properties.setTaskURI("localhost:9098");
                       Map<String, String> requestParam = new HashMap<>();
                       if (environment.equals("shore"))
                         requestParam.put("messageType", String.valueOf(MessageTypes.LOADABLESTUDY));

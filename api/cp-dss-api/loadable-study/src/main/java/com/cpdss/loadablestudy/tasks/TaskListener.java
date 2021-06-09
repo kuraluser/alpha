@@ -25,10 +25,10 @@ public class TaskListener implements ExecuteTaskListener {
       throws GenericServiceException {
     // To-Do Task Execution
     System.out.println("Executing task " + taskName);
-    if (taskName.equals("DOWNLOAD_RESULT1")) {
+    if (taskName.equals("DOWNLOAD_RESULT_SHIP1")) {
       if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.LOADABLESTUDY)))
         loadableStudyService.saveLoadableStudyShore(taskReqParams);
-      else if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.LOADABLESTUDY)))
+      else if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.ALGORESULT)))
         loadableStudyService.saveAlgoPatternFromShore(taskReqParams);
     }
   }
