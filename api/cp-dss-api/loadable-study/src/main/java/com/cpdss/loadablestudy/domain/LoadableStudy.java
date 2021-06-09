@@ -33,4 +33,5 @@ public class LoadableStudy {
   private List<PortDetails> portDetails;
   private List<LoadableStudyAttachment> LoadableStudyAttachment;
   private String messageId;
+  private List<SynopticalTable> synopticalTableDetails;
 }

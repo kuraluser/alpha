@@ -1997,7 +1997,7 @@ public class LoadableStudyController {
   public void test(@RequestHeader HttpHeaders headers) throws CommonRestException {
     try {
       log.info("getAlgoError: {}", getClientIp());
-      this.loadableStudyService.test();
+      this.loadableStudyService.test2();
 
     } catch (Exception e) {
       log.error("Error when getAlgoError", e);

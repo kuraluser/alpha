@@ -396,21 +396,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
   private static final String ERRO_CALLING_ALGO = "ERROR_CALLING_ALGO";
-  private static final int CASE_1 = 1;
-  private static final int CASE_2 = 2;
-  private static final int CASE_3 = 3;
+
   private static final String INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID =
       "INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID";
   private static final String INVALID_LOADABLE_PATTERN_ID = "INVALID_LOADABLE_PATTERN_ID";
   private static final Long LOAD_LINE_TROPICAL_TO_SUMMER_ID = 7L;
   private static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
   private static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
-
-  private static final List<Long> CASE_1_LOAD_LINES =
-      Arrays.asList(
-          LOAD_LINE_TROPICAL_TO_SUMMER_ID,
-          LOAD_LINE_TROPICAL_TO_WINTER_ID,
-          LOAD_LINE_SUMMER_TO_WINTER_ID);
 
   private static final Long FRESH_WATER_TANK_CATEGORY_ID = 3L;
   private static final Long FUEL_OIL_TANK_CATEGORY_ID = 5L;
@@ -1146,11 +1138,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private void setCaseNo(LoadableStudy entity) {
     if (null != entity.getDraftRestriction()) {
-      entity.setCaseNo(CASE_3);
-    } else if (CASE_1_LOAD_LINES.contains(entity.getLoadLineXId())) {
-      entity.setCaseNo(CASE_1);
+      entity.setCaseNo(LoadableStudiesConstants.CASE_3);
+    } else if (LoadableStudiesConstants.CASE_1_LOAD_LINES.contains(entity.getLoadLineXId())) {
+      entity.setCaseNo(LoadableStudiesConstants.CASE_1);
     } else {
-      entity.setCaseNo(CASE_2);
+      entity.setCaseNo(LoadableStudiesConstants.CASE_2);
     }
   }
 
@@ -5302,6 +5294,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         buildLoadableStudy(
             request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
         buildLoadableAttachment(request.getLoadableStudyId(), loadableStudy);
+        buildSynopticalTable(request.getLoadableStudyId(), loadableStudy);
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.writeValue(
@@ -5396,6 +5389,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private void buildSynopticalTable(
+      long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    List<LoadableStudyPortRotation> portRotations =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(loadableStudyId, true);
+    loadableStudy.setSynopticalTableDetails(new ArrayList<>());
+    List<SynopticalTable> synopticalTableList =
+        this.synopticalTableRepository.findByLoadableStudyPortRotationAndIsActive(
+            portRotations, true);
+    synopticalTableList.forEach(
+        synopticalTableData -> {
+          com.cpdss.loadablestudy.domain.SynopticalTable synopticalTableDto =
+              new com.cpdss.loadablestudy.domain.SynopticalTable();
+          synopticalTableDto.setLoadableStudyPortRotationId(
+              synopticalTableData.getLoadableStudyPortRotation().getId());
+          synopticalTableDto.setId(synopticalTableData.getId());
+          synopticalTableDto.setPortId(synopticalTableData.getPortXid());
+          synopticalTableDto.setOperationType(synopticalTableData.getOperationType());
+          loadableStudy.getSynopticalTableDetails().add(synopticalTableDto);
+        });
   }
 
   private void buildLoadableAttachment(
@@ -6204,7 +6218,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ofNullable(loadableQunty.getEstimatedFOOnBoard())
                 .ifPresent(
                     estimatedFOOnBoard ->
-                        loadableQuantityDto.setEstDOOnBoard(String.valueOf(estimatedFOOnBoard)));
+                        loadableQuantityDto.setEstFOOnBoard(String.valueOf(estimatedFOOnBoard)));
             ofNullable(loadableQunty.getEstimatedFWOnBoard())
                 .ifPresent(
                     estimatedFWOnBoard ->

@@ -165,11 +165,15 @@ import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -5685,5 +5689,38 @@ public class LoadableStudyService {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
     req.setJsonResult(jsonResult.getPatternResultJson());
     return loadableStudyServiceBlockingStub.saveLoadableStudyShore(req.build());*/
+  }
+
+  public Object test2() {
+    Long loadableStudiesId = 7258L;
+    try {
+      LoadablePlanRequest loadablePlanrequest =
+          new Gson()
+              .fromJson(
+                  new String(
+                      Files.readAllBytes(
+                          Paths.get(
+                              this.rootFolder
+                                  + "/json/loadableStudyResult_"
+                                  + loadableStudiesId
+                                  + ".json"))),
+                  LoadablePlanRequest.class);
+      LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
+      request.setLoadableStudyId(loadableStudiesId);
+      request.setHasLodicator(loadablePlanrequest.getHasLoadicator());
+      buildLoadablePlanDetails(loadablePlanrequest, request);
+
+      if (loadablePlanrequest.getErrors() != null && !loadablePlanrequest.getErrors().isEmpty()) {
+        this.buildAlgoError(loadablePlanrequest.getErrors(), request);
+      }
+
+      AlgoReply algoReply = this.saveLoadablePatterns(request);
+
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

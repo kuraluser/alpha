@@ -11,6 +11,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoNominationOperationDetails;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
@@ -126,7 +127,20 @@ public class LoadableStudyServiceShore {
               cargoNominationEntities.add(cargoNomination);
             });
     this.cargoNominationRepository.saveAll(cargoNominationEntities);
-
+    List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
+    loadableStudy.getLoadableStudyPortRotation().stream()
+        .forEach(
+            portRotation -> {
+              LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+              loadableStudyPortRotation.setLoadableStudy(loadableStudyEntity);
+              loadableStudyPortRotation =
+                  buildLoadableStudyPortRotation(
+                      loadableStudyPortRotation,
+                      portRotation,
+                      loadableStudy.getSynopticalTableDetails());
+              loadableStudyPortRotations.add(loadableStudyPortRotation);
+            });
+    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
     List<OnHandQuantity> onHandQuantityEntities = new ArrayList<>();
     loadableStudy.getOnHandQuantity().stream()
         .forEach(
@@ -265,36 +279,21 @@ public class LoadableStudyServiceShore {
               ? null
               : new BigDecimal(loadableQuantityDomain.getFoConsumptionPerDay()));
       loadableQuantity.setIsActive(true);
-
-      /*if (loadableQuantityDomain.getPortRotationId() > 0) {
-        log.info(
-                "Save Loadable Quantity, port rotation id : {}",
-                loadableQuantityDomain.getPortRotationId());
-        long id = loadableQuantityDomain.getPortRotationId();
+      if (loadableQuantityDomain.getPortId() != null) {
         LoadableStudyPortRotation lsPortRot =
-                loadableStudyPortRotationRepository.findByIdAndIsActive(id, true);
-        if (lsPortRot != null) {
-          loadableQuantity.setLoadableStudyPortRotation(lsPortRot);
-        }
-      }*/
+            loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                loadableStudyEntity, loadableQuantityDomain.getPortId(), true);
+        loadableQuantity.setLoadableStudyPortRotation(lsPortRot);
+      }
+
       this.loadableQuantityRepository.save(loadableQuantity);
     }
-    List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
-    loadableStudy.getLoadableStudyPortRotation().stream()
-        .forEach(
-            portRotation -> {
-              LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
-              loadableStudyPortRotation.setLoadableStudy(loadableStudyEntity);
-              loadableStudyPortRotation =
-                  buildLoadableStudyPortRotation(loadableStudyPortRotation, portRotation);
-              loadableStudyPortRotations.add(loadableStudyPortRotation);
-            });
-    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
   private LoadableStudyPortRotation buildLoadableStudyPortRotation(
       LoadableStudyPortRotation loadableStudyPortRotation,
-      com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portRotation) {
+      com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portRotation,
+      List<com.cpdss.loadablestudy.domain.SynopticalTable> synopticalTableDetails) {
     loadableStudyPortRotation.setPortXId(
         portRotation.getPortId() != null ? portRotation.getPortId() : null);
     loadableStudyPortRotation.setBerthXId(
@@ -328,6 +327,24 @@ public class LoadableStudyServiceShore {
     loadableStudyPortRotation.setActive(true);
     CargoOperation operation = this.cargoOperationRepository.getOne(portRotation.getOperationId());
     loadableStudyPortRotation.setOperation(operation);
+    if (!synopticalTableDetails.isEmpty()) {
+      List<SynopticalTable> synopticalTableList =
+          synopticalTableDetails.stream()
+              .filter(data -> data.getLoadableStudyPortRotationId().equals(portRotation.getId()))
+              .map(
+                  synopticalTable -> {
+                    SynopticalTable entitySynoptical = new SynopticalTable();
+                    entitySynoptical.setLoadableStudyPortRotation(loadableStudyPortRotation);
+                    entitySynoptical.setPortXid(synopticalTable.getPortId());
+                    entitySynoptical.setOperationType(synopticalTable.getOperationType());
+                    entitySynoptical.setIsActive(true);
+                    entitySynoptical.setLoadableStudyXId(
+                        loadableStudyPortRotation.getLoadableStudy().getId());
+                    return entitySynoptical;
+                  })
+              .collect(Collectors.toList());
+      loadableStudyPortRotation.setSynopticalTable(synopticalTableList);
+    }
     return loadableStudyPortRotation;
   }
 
@@ -347,8 +364,9 @@ public class LoadableStudyServiceShore {
   private OnHandQuantity buildOnHandQuantity(
       OnHandQuantity entity, com.cpdss.loadablestudy.domain.OnHandQuantity request) {
     entity.setIsActive(true);
-    entity.setFuelTypeXId(null != request.getFueltypeId() ? request.getFueltypeId() : null);
-    entity.setTankXId(null != request.getTankId() ? request.getTankId() : null);
+    entity.setFuelTypeXId(null != request.getFuelTypeXId() ? request.getFuelTypeXId() : null);
+    entity.setTankXId(null != request.getTankXId() ? request.getTankXId() : null);
+    entity.setPortXId(null != request.getPortXId() ? request.getPortXId() : null);
     entity.setArrivalQuantity(
         isEmpty(request.getArrivalQuantity())
             ? null
@@ -363,9 +381,26 @@ public class LoadableStudyServiceShore {
         isEmpty(request.getDepartureVolume())
             ? null
             : new BigDecimal(request.getDepartureVolume()));
+
     // entity.setDensity(isEmpty(request.getDensity()) ? null : new
     // BigDecimal(request.getDensity()));
+    if (request.getPortXId() != null) {
+      LoadableStudyPortRotation lsPortRot =
+          loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+              entity.getLoadableStudy(), request.getPortXId(), true);
+      entity.setPortRotation(lsPortRot);
+    }
     return entity;
+  }
+
+  private void setCaseNo(LoadableStudy entity) {
+    if (null != entity.getDraftRestriction()) {
+      entity.setCaseNo(LoadableStudiesConstants.CASE_3);
+    } else if (LoadableStudiesConstants.CASE_1_LOAD_LINES.contains(entity.getLoadLineXId())) {
+      entity.setCaseNo(LoadableStudiesConstants.CASE_1);
+    } else {
+      entity.setCaseNo(LoadableStudiesConstants.CASE_2);
+    }
   }
 
   private CargoNomination buildCargoNomination(
@@ -502,8 +537,8 @@ public class LoadableStudyServiceShore {
             ? new BigDecimal(loadableStudy.getMaxWaterTemp())
             : null);
     entity.setActive(true);
-    /*entity.setCaseNo(loadableStudy.getC);
-    entity.setDischargeCargoId(loadableStudy.getD);*/
+    this.setCaseNo(entity);
+    /*entity.setDischargeCargoId(loadableStudy.getD);*/
     entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
     entity.setMessageUUID(
         loadableStudy.getMessageId() != null ? loadableStudy.getMessageId() : null);

@@ -1,6 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.utility;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class LoadableStudiesConstants {
 
   public static final String SUCCESS = "SUCCESS";
@@ -33,4 +36,15 @@ public class LoadableStudiesConstants {
 
   public static final Long LS_STATUS_PENDING = 1l;
   public static final Long LS_STATUS_CONFIRMED = 2l;
+  private static final Long LOAD_LINE_TROPICAL_TO_SUMMER_ID = 7L;
+  private static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
+  private static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
+  public static final int CASE_1 = 1;
+  public static final int CASE_2 = 2;
+  public static final int CASE_3 = 3;
+  public static final List<Long> CASE_1_LOAD_LINES =
+      Arrays.asList(
+          LOAD_LINE_TROPICAL_TO_SUMMER_ID,
+          LOAD_LINE_TROPICAL_TO_WINTER_ID,
+          LOAD_LINE_SUMMER_TO_WINTER_ID);
 }

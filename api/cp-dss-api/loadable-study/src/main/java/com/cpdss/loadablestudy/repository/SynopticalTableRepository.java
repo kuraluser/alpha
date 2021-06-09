@@ -56,4 +56,8 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
   @Modifying
   @Query("Update SynopticalTable set isActive = false where loadableStudyPortRotation.id = ?1")
   public void deleteByPortRotationId(Long id);
+
+  @Query("FROM SynopticalTable ST WHERE ST.loadableStudyPortRotation in ?1 AND ST.isActive = ?2")
+  public List<SynopticalTable> findByLoadableStudyPortRotationAndIsActive(
+      List<LoadableStudyPortRotation> loadableStudyPortRotations, Boolean isActive);
 }

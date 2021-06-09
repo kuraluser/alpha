@@ -198,6 +198,11 @@ public class EnvoyWriterService {
         .append(separator)
         .append(request.getClientId())
         .append(separator)
+        .append(
+            request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+                ? ""
+                : request.getImoNumber())
+        .append(request.getMessageType().equals(MessageTypes.LOADABLESTUDY) ? "" : separator)
         .append(request.getMessageType())
         .append(separator)
         .append(uuid)
@@ -237,7 +242,8 @@ public class EnvoyWriterService {
     String separator = "/";
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
-        .append(request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+        .append(
+            request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
                 ? writerShipUrl
                 : writerShoreUrl)
         .append(separator)
