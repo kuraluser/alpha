@@ -3147,23 +3147,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Long lastLoadingPort =
             getLastPort(
                 loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-        request.getLoadablePlanDetailsList().stream()
-            .filter(
-                v -> {
-                  Optional<LoadablePattern> lp =
-                      loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
-                          loadableStudyOpt.get(), v.getCaseNumber());
-                  return !lp.isPresent();
-                })
+        request
+            .getLoadablePlanDetailsList()
             .forEach(
                 lpd -> {
                   LoadablePattern loadablePattern =
                       saveloadablePattern(lpd, loadableStudyOpt.get());
-                  log.info(
-                      "Loadable Pattern Saved, LS Id {}, Case Number {}",
-                      loadableStudyOpt.get().getId(),
-                      lpd.getCaseNumber());
-
                   Optional<LoadablePlanPortWiseDetails> lppwdOptional =
                       lpd.getLoadablePlanPortWiseDetailsList().stream()
                           .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
@@ -3748,7 +3737,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePattern.setIsActive(true);
     loadablePattern.setLoadableStudy(loadableStudy);
     loadablePattern.setLoadableStudyStatus(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+    Optional<LoadablePattern> lp =
+        loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
+            loadableStudy, lpd.getCaseNumber());
+    if (lp.isPresent()) { // Delete old one and add new pattern
+      log.info(
+          "Lodable Pattern delete for LS Id {}, Case Number {}",
+          loadableStudy.getId(),
+          lpd.getCaseNumber());
+      loadablePatternRepository.deleteLoadablePattern(lp.get().getId());
+    }
     loadablePatternRepository.save(loadablePattern);
+    log.info(
+        "Loadable Pattern Saved for LS Id {}, Case Number {}",
+        loadableStudy.getId(),
+        lpd.getCaseNumber());
     return loadablePattern;
   }
 
