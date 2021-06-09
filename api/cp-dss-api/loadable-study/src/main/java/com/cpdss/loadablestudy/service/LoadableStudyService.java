@@ -3147,12 +3147,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Long lastLoadingPort =
             getLastPort(
                 loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-        request
-            .getLoadablePlanDetailsList()
+        request.getLoadablePlanDetailsList().stream()
+            .filter(
+                v -> {
+                  Optional<LoadablePattern> lp =
+                      loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
+                          loadableStudyOpt.get(), v.getCaseNumber());
+                  return !lp.isPresent();
+                })
             .forEach(
                 lpd -> {
                   LoadablePattern loadablePattern =
                       saveloadablePattern(lpd, loadableStudyOpt.get());
+                  log.info(
+                      "Loadable Pattern Saved, LS Id {}, Case Number {}",
+                      loadableStudyOpt.get().getId(),
+                      lpd.getCaseNumber());
 
                   Optional<LoadablePlanPortWiseDetails> lppwdOptional =
                       lpd.getLoadablePlanPortWiseDetailsList().stream()

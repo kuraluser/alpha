@@ -65,4 +65,7 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
   @Query("UPDATE LoadablePattern SET feedbackLoop = ?1, feedbackLoopCount = ?2 WHERE id = ?3")
   public void updateLoadablePatternFeedbackLoopAndFeedbackLoopCount(
       Boolean feedbackLoop, Integer feedbackLoopCount, Long id);
+
+  Optional<LoadablePattern> findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
+      LoadableStudy ls, Integer cn);
 }
