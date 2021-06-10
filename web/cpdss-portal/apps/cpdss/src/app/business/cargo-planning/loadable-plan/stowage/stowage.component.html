@@ -32,7 +32,7 @@
         </div>
         <div class="row pt-15 pb-15">
             <div class="col text-center">
-                <button class="btn btn-main" id="grid_toggle_btn" 
+                <button class="btn btn-main" id="grid_toggle_btn"
                     (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
             </div>
         </div>
@@ -59,11 +59,11 @@
                 </div>
             </div>
             <div *ngIf="selectedTab === tankType.BALLAST" class="col ml-30">
-                <cpdss-portal-ballast-stowage #ballastStowage (validateAndSave)="commentsPopup($event)" (ballastStowageDataEdit)="ballastStowageDataEdit($event,ballastStowage)" 
-                [initBallastTankDetails]="initBallastTankDetails" 
-                [ballastForm]="getFormGroup('ballastTanks')" 
-                [ballastDetails]="ballastTankDetails" 
-                [isEditable]="isEditable" 
+                <cpdss-portal-ballast-stowage #ballastStowage (validateAndSave)="commentsPopup($event)" (ballastStowageDataEdit)="ballastStowageDataEdit($event,ballastStowage)"
+                [initBallastTankDetails]="initBallastTankDetails"
+                [ballastForm]="getFormGroup('ballastTanks')"
+                [ballastDetails]="ballastTankDetails"
+                [isEditable]="isEditable"
                 [isPermissionAvaliable]="isPermissionAvaliable"
                 [loadableStudyStatus]="loadableStudyStatus"
                 [isStowageEditable]="isStowageEditable"

@@ -1,4 +1,4 @@
-<p-dialog [(visible)]="visible" styleClass="loading-port-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
+<p-dialog [(visible)]="visible" styleClass="loading-port-pop-up" [modal]="true" [draggable]="false" [responsive]="true" [minY]="70"
     [closable]="false">
     <p-header>
         {{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_HEADER'| translate}}
@@ -11,7 +11,7 @@
                         class="col-form-label pr-10">{{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT'| translate}}</label>
                     <textarea class="form-control" type="text" id="txt_enquiryDetails"
                         placeholder="{{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_PLACEHOLDER'| translate}}"
-                        formControlName="comment" focusTrap></textarea>
+                        formControlName="comment" focusTrap (blur)="trimFormControl('comment')"></textarea>
                     <cpdss-portal-validation-error [errors]="fieldError('comment') | async"
                         [errorMessages]="errorMessages">
                     </cpdss-portal-validation-error>

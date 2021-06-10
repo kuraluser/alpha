@@ -144,12 +144,17 @@ export class CommingleComponent implements OnInit {
 
 
       let cargoGroupsTemp = this.commingleCargo?.cargoGroups?.filter((item) => {
-        let cargoIds = this.cargoNominationsCargo?.map(cargoNominationCargo => cargoNominationCargo.cargoId);
-        if (cargoIds.includes(item.cargo1Id) && cargoIds?.includes(item.cargo2Id) && item.cargo1Id != item.cargo2Id) {
-          return item;
-        }
+        let cargoIds = this.cargoNominationsCargo?.map(cargoNominationCargo => cargoNominationCargo.cargoId);        
+        if (cargoIds.includes(item.cargo1Id) && cargoIds?.includes(item.cargo2Id)) {
+          if (item.cargo1Id == item.cargo2Id && cargoIds[0] == cargoIds[1]) {
+            return item;
+          }
+          if (item.cargo1Id !== item.cargo2Id && cargoIds[0] !== cargoIds[1]) {
+            return item;
+          }
+        }     
       })
-
+      
       if (this.commingleCargo) {
         this.commingleCargo.cargoGroups = cargoGroupsTemp;
       }

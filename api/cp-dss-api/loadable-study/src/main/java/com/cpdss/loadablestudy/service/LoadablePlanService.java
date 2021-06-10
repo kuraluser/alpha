@@ -69,6 +69,8 @@ public class LoadablePlanService {
           Optional.ofNullable(lpq.getTimeRequiredForLoading())
               .ifPresent(builder::setTimeRequiredForLoading);
 
+          Optional.ofNullable(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
+
           if (lpq.getCargoXId() != null) {
             log.info("Loadable Plan Quantity, Cargo Id {}", lpq.getCargoXId());
           }

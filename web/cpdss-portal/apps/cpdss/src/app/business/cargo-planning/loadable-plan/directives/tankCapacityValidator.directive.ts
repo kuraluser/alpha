@@ -12,28 +12,23 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
  */
  export function tankCapacityValidator(field: string, compareValue: string , errorField: string , fillingRatio: string): ValidatorFn {
     return (control: FormControl): ValidationErrors | null => {
-      
+
       if (!control.root || !control.parent) {
         return null;
       }
- 
+
       if(Number(control['parent']?.get(field)?.value) > Number(compareValue)) {
         const formControl = <FormControl>control.parent.controls[errorField];
-        setTimeout(() => {
-          formControl.markAsTouched();
-          formControl.markAsDirty();
-          formControl.setErrors({ greaterThanTankCapacity: true })
-        }, 250)
-      } else if (Number(control['parent']?.get(fillingRatio)?.value) > Number(AppConfigurationService.settings.maxFillingPercentage)) {
+        formControl.markAsTouched();
+        formControl.markAsDirty();
+        return { greaterThanTankCapacity: true };
+      } else if(Number(control['parent']?.get(fillingRatio)?.value) > Number(AppConfigurationService.settings.maxFillingPercentage)) {
         const formControl = <FormControl>control.parent.controls[errorField];
-        setTimeout(() => {
-          formControl.markAsTouched();
-          formControl.markAsDirty();
-          formControl.setErrors({ maxLimit: true })
-        }, 250)
+        formControl.markAsTouched();
+        formControl.markAsDirty();
+        return { maxLimit: true };
       } else {
-        const formControl = <FormControl>control.parent.controls[errorField];
-        formControl.setErrors(null)
+        return null;
       }
     }
-  } 
+  }

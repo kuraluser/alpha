@@ -57,6 +57,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'invalid': 'SYNOPTICAL_INVALID',
     'pattern': 'SYNOPTICAL_INVALID',
     'fromMax': 'SYNOPTICAL_FROM_MAX',
+    "sunRiseGreater":"SYNOPTICAL_SUNRISE_GREATER",
+    "sunSetGreater":"SYNOPTICAL_SUNSET_GREATER",
     'toMin': 'SYNOPTICAL_TO_MIN',
     'timeFromMax': 'SYNOPTICAL_TIME_FROM_MAX',
     'timeToMin': 'SYNOPTICAL_TIME_TO_MIN',
@@ -1400,6 +1402,24 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           fcMax.setValue(fcMax.value, { emitEvent: false })
         }
         break;
+
+      case 'timeOfSunrise':
+        fcMax = this.getControl(colIndex, 'timeOfSunset')
+        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
+          fc.setErrors({ sunRiseGreater: true })
+        } else if (fcMax.hasError('sunSetGreater')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
+
+      case 'timeOfSunset':
+        fcMax = this.getControl(colIndex, 'timeOfSunrise')
+        if (typeof fcMax.value !== 'undefined' && fc.value <= fcMax.value) {
+          fc.setErrors({ sunSetGreater: true })
+        } else if (fcMax.hasError('sunRiseGreater')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
       case 'lwTideTo':
         fcMin = this.getControl(colIndex, 'lwTideFrom')
         if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
@@ -1410,6 +1430,15 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'hwTideTimeFrom':
         fcMax = this.getControl(colIndex, 'hwTideTimeTo')
+         
+        if (fcMax.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
+          
         if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
@@ -1417,7 +1446,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }
         break;
       case 'hwTideTimeTo':
-        fcMin = this.getControl(colIndex, 'hwTideTimeFrom')
+        fcMin = this.getControl(colIndex, 'hwTideTimeFrom')                
+        if (fcMin.value) {
+          fcMin.value.setSeconds(0, 0);
+        }
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
+          
         if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
@@ -1426,6 +1462,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideTimeFrom':
         fcMax = this.getControl(colIndex, 'lwTideTimeTo')
+        if (fcMax.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
         if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
@@ -1434,6 +1476,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideTimeTo':
         fcMin = this.getControl(colIndex, 'lwTideTimeFrom')
+        if (fcMin.value) {
+          fcMin.value.setSeconds(0, 0);
+        }
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
         if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {

@@ -495,9 +495,11 @@ message LoadableQuantityCommingleCargoDetails {
 	 string correctedUllage = 26;
  	 string rdgUllage = 27;
      string correctionFactor = 28;
-      string slopQuantity = 29;
+     string slopQuantity = 29;
      string actualQuantity=30;
-	string timeRequiredForLoading = 33;
+	 string timeRequiredForLoading = 31;
+	 int64 cargo1NominationId = 32;
+	 int64 cargo2NominationId = 33;
 }
 
 message LoadableQuantityCargoDetails {
@@ -536,6 +538,8 @@ message ConfirmPlanRequest {
 message ConfirmPlanReply {
 	ResponseStatus responseStatus = 1;
 	bool confirmed = 2;
+	int64 loadablePatternStatusId = 3;
+	bool validated = 4;
 }
 
 message LoadableStudyStatusRequest {
