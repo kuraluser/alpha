@@ -3150,7 +3150,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 lpd -> {
                   LoadablePattern loadablePattern =
                       saveloadablePattern(lpd, loadableStudyOpt.get());
-
                   Optional<LoadablePlanPortWiseDetails> lppwdOptional =
                       lpd.getLoadablePlanPortWiseDetailsList().stream()
                           .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
@@ -3735,7 +3734,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePattern.setIsActive(true);
     loadablePattern.setLoadableStudy(loadableStudy);
     loadablePattern.setLoadableStudyStatus(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+    Optional<LoadablePattern> lp =
+        loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
+            loadableStudy, lpd.getCaseNumber());
+    if (lp.isPresent()) { // Delete old one and add new pattern
+      log.info(
+          "Lodable Pattern delete for LS Id {}, Case Number {}",
+          loadableStudy.getId(),
+          lpd.getCaseNumber());
+      loadablePatternRepository.deleteLoadablePattern(lp.get().getId());
+    }
     loadablePatternRepository.save(loadablePattern);
+    log.info(
+        "Loadable Pattern Saved for LS Id {}, Case Number {}",
+        loadableStudy.getId(),
+        lpd.getCaseNumber());
     return loadablePattern;
   }
 
