@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IDataTableColumn } from 'apps/cpdss/src/app/shared/components/datatable/datatable.model';
+import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { ILoadablePatternCargoDetail } from '../../models/loadable-pattern.model';
 
 
@@ -32,22 +32,22 @@ export class CargoPriorityGridComponent implements OnInit {
 
   set loadablePatternCargoDetails(loadablePatternCargoDetails: ILoadablePatternCargoDetail[]) {
     if (loadablePatternCargoDetails) {
+      this.hasCommingle = loadablePatternCargoDetails?.some(cargo => cargo?.isCommingle);
       this._loadablePatternCargoDetails = loadablePatternCargoDetails.sort((a, b) => (a.loadingOrder >= b.loadingOrder) ? 1 : -1);
-      this.totalQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
-        return Number(a) + Number(b?.quantity);
-      }, 0);
       const totalQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
-        return Number(a) + Number(b?.quantity);
+        return b?.isCommingle ? Number(a) : Number(a) + Number(b?.quantity);
       }, 0);
       const totalOrderedQuantity = loadablePatternCargoDetails.reduce(function (a, b) {
-        return Number(a) + Number(b?.orderedQuantity);
+        return b?.isCommingle ? Number(a) : Number(a) + Number(b?.orderedQuantity);
       }, 0);
+      this.totalQuantity = totalQuantity
       this.totalDifference = ((totalQuantity - totalOrderedQuantity)/totalOrderedQuantity) * 100;
     }
   }
 
   totalQuantity = 0;
   totalDifference = 0;
+  hasCommingle = false;
 
   unit:string;
 

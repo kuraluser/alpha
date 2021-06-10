@@ -1476,7 +1476,7 @@ export class LoadableStudyDetailsTransformationService {
     _obqTankDetail.colorCode = obqTankDetail.colorCode;
     _obqTankDetail.abbreviation = obqTankDetail.abbreviation;
     _obqTankDetail.volume = obqTankDetail.volume;
-
+    _obqTankDetail.temperature = obqTankDetail.temperature;
     return _obqTankDetail;
   }
 
@@ -1514,6 +1514,15 @@ export class LoadableStudyDetailsTransformationService {
   /** Set port grid complete status */
   setObqValidity(isValid: boolean) {
     this._obqValiditySource.next(isValid);
+  }
+
+  /**
+   * parse number from formatted string
+   * @returns {number}
+   */
+   convertToNumber(value: string) {
+    value = value?.replace(/,/g, '');
+    return Number(value)
   }
 
   /**

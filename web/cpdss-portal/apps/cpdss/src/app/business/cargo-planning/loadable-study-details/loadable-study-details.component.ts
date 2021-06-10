@@ -378,6 +378,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   private swMessageHandler = async event => {
     if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isGenerateClicked = true;
         this.processingMessage();
       } else {
         this.messageService.clear();
@@ -656,6 +657,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    }
 
   /**
+   * function to emit incomplete status change
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async portOhqStatusUpdate(event) {
+    this.portsComplete = event;
+    this.ohqComplete = event;
+  }
+
+  /**
  * Take the user to particular pattern history
  */
   navigateToPatternHistory(isViewPattern) {
@@ -890,6 +901,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.isGenerateClicked = true;
         this.selectedLoadableStudy.statusId = 4;
         this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING;
+        this.selectedLoadableStudy = JSON.parse(JSON.stringify(this.selectedLoadableStudy));
         data.processId = res.processId;
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });

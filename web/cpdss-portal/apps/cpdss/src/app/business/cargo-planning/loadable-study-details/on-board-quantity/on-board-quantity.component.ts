@@ -17,7 +17,8 @@ import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
-
+import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service'
+import { QuantityDecimalFormatPipe } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 /**
  * Component for OBQ tab
  *
@@ -72,6 +73,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     this._quantitySelectedUnit = value;
     if (this._prevQuantitySelectedUnit) {
       this.convertSelectedPortOBQTankDetails();
+      this.updateTankList();
     }
   }
 
@@ -119,7 +121,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   tanks: ITank[][] = [];
   dataTableLoading: boolean;
   obqCheckUpdatesTimer;
-  cargoTankOptions: ITankOptions = { showTooltip: true, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
+  cargoTankOptions: ITankOptions = { showTooltip: true, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
   progress = true;
 
   private _selectedTank: IPortOBQTankDetailValueObject;
@@ -139,6 +141,8 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private messageService: MessageService,
     private quantityPipe: QuantityPipe,
+    private quantityDecimalService: QuantityDecimalService,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
     private globalErrorHandler: GlobalErrorHandler) { }
 
   /**
@@ -266,11 +270,14 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
  * @memberof OnBoardQuantityComponent
  */
   private initOBQFormGroup(obqTankDetail: IPortOBQTankDetailValueObject) {
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal();
+    const quantity = this.loadableStudyDetailsTransformationService.convertToNumber(this.quantityDecimalFormatPipe.transform(obqTankDetail.quantity.value));
+    
     return this.fb.group({
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
       api: this.fb.control(obqTankDetail.api.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
-      quantity: this.fb.control(obqTankDetail.quantity.value, [Validators.required, Validators.min(0), numberValidator(2, 7), maximumVolumeValidator('api', obqTankDetail)]),
+      quantity: this.fb.control(quantity, [Validators.required, Validators.min(0), numberValidator(quantityDecimal, 7), maximumVolumeValidator('api', obqTankDetail)]),
     });
   }
 
@@ -592,6 +599,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
         obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value, '', -1);
         obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value) : 0;
+        
         const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, QUANTITY_UNIT.OBSKL, obqTankDetail?.api?.value, obqTankDetail?.temperature);
         obqTankDetail.volume = volume ?? 0;
 
@@ -623,7 +631,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
    */
   convertToStandardUnitForSave(selectedPortOBQTankDetails: IPortOBQTankDetailValueObject): IPortOBQTankDetail {
     const _selectedPortOBQTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(selectedPortOBQTankDetails);
-    _selectedPortOBQTankDetail.quantity = this.quantityPipe.transform(_selectedPortOBQTankDetail?.quantity, this.quantitySelectedUnit, QUANTITY_UNIT?.MT, _selectedPortOBQTankDetail?.api);
+    _selectedPortOBQTankDetail.quantity = this.quantityPipe.transform(_selectedPortOBQTankDetail?.quantity, this.quantitySelectedUnit, QUANTITY_UNIT?.MT, _selectedPortOBQTankDetail?.api, '' ,-1);
     return _selectedPortOBQTankDetail;
   }
 

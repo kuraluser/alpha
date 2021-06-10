@@ -30,7 +30,7 @@ export class DepartureConditionComponent implements OnInit {
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   currentQuantitySelectedUnit: any = null;
 
@@ -586,7 +586,7 @@ export class DepartureConditionComponent implements OnInit {
       "showTooltip": true,
       "isSelectable": false,
       "ullageField": "correctedUllage",
-      "ullageUnit": "CM",
+      "ullageUnit": AppConfigurationService.settings?.ullageUnit,
       "densityField": "api",
       "weightField": "actualWeight",
       "commodityNameField": "abbreviation"
