@@ -3409,6 +3409,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .correctionFactor(it.getCorrectionFactor())
                     .correctedUllage(it.getCorrectedUllage())
                     .rdgUllage(it.getRdgUllage())
+                    .cargo1NominationId(it.getCargo1NominationId())
+                    .cargo2NominationId(it.getCargo2NominationId())
                     .portRotationXid(portRotationXid)
                     // .actualQuantity(it.getActualQuantity()!=  null ? new
                     // BigDecimal(it.getActualQuantity()): null)
@@ -3692,6 +3694,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableQuantityCommingleCargoDetailsList.get(i).getSlopQuantity());
       loadablePlanCommingleDetails.setTimeRequiredForLoading(
           loadableQuantityCommingleCargoDetailsList.get(i).getTimeRequiredForLoading());
+      loadablePlanCommingleDetails.setCargo2NominationId(
+          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
+      loadablePlanCommingleDetails.setCargo2NominationId(
+          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
     }
   }
@@ -5059,33 +5065,34 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Long loadablePatternId) {
     List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails> stowageDetails =
         new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>();
-    if (isLastPortDeparture) {
-      stowageDetailsTempRepository
-          .findByLoadablePlanCommingleTempDetailsAndIsActive(loadablePatternId, true)
-          .forEach(
-              lpsd -> {
-                com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
-                    new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
-                Object[] obA = (Object[]) lpsd;
-                details.setId((Long) obA[0]);
-                // details.setCargoNominationId((Long) obA[1]);
-                details.setTankId((Long) obA[1]);
-                details.setQuantityMT(String.valueOf(obA[2]));
-                stowageDetails.add(details);
-              });
-    } else {
 
-      loadablePatternCommingleDetails.forEach(
-          lpsd -> {
-            com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
-                new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
-            details.setId(lpsd.getId());
-            // details.setCargoNominationId(lpsd.getCargoNominationId());
-            details.setTankId(lpsd.getTankId());
-            details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
-            stowageDetails.add(details);
-          });
-    }
+    // commenting the below code since commingle is not editing for last loading port as of now
+    /*
+     * if (isLastPortDeparture) { stowageDetailsTempRepository
+     * .findByLoadablePlanCommingleTempDetailsAndIsActive(loadablePatternId, true)
+     * .forEach( lpsd -> { com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails
+     * details = new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+     * Object[] obA = (Object[]) lpsd; details.setId((Long) obA[0]); //
+     * details.setCargoNominationId((Long) obA[1]); details.setTankId((Long)
+     * obA[1]); details.setQuantityMT(String.valueOf(obA[2]));
+     * stowageDetails.add(details); }); } else {
+     */
+
+    loadablePatternCommingleDetails.forEach(
+        lpsd -> {
+          com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
+              new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+          details.setId(lpsd.getId());
+          // details.setCargoNominationId(lpsd.getCargoNominationId());
+          details.setTankId(lpsd.getTankId());
+          details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
+          details.setCargo1QuantityMT(lpsd.getCargo1Mt());
+          details.setCargo2QuantityMT(lpsd.getCargo2Mt());
+          details.setCargo1NominationId(lpsd.getCargo1NominationId());
+          details.setCargo2NominationId(lpsd.getCargo2NominationId());
+          stowageDetails.add(details);
+        });
+    // }
     return stowageDetails;
   }
 
@@ -5336,7 +5343,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePatternOpt.get());
                   }
-                  // saveStabilityParameters(loadablePatternOpt.get(), lpd, lastLoadingPort);
+                  saveLoadableQuantityCommingleCargoPortwiseDetails(
+                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePatternOpt.get());
                   saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                   saveStabilityParameterForNonLodicator(
@@ -8745,6 +8753,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(builder::setFillingRatioOrginal);
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeightOrginal);
           Optional.ofNullable(lpsd.getRdgUllage()).ifPresent(builder::setRdgUllageOrginal);
+
+          Optional.ofNullable(lpsd.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
 
           this.setTempStowageDetails(lpsd, tempStowageDetails, builder);
           builder.setIsCommingle(false);
