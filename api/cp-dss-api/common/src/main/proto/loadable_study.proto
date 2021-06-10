@@ -536,6 +536,8 @@ message ConfirmPlanRequest {
 message ConfirmPlanReply {
 	ResponseStatus responseStatus = 1;
 	bool confirmed = 2;
+	int64 loadablePatternStatusId = 3;
+	bool validated = 4;
 }
 
 message LoadableStudyStatusRequest {
