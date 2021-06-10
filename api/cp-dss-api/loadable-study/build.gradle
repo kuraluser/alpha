@@ -16,7 +16,7 @@ appConfig {
   logging = 'y'
   devTools = 'y'
   docker {
-      imageName = 'cpdss-loadable-study'     
+      imageName = 'cpdss-loadable-study'
       containerName = 'loadable-study-container'
       networkName = 'cpdss-network'
       hostVolumeMapping {
