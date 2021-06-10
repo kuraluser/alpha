@@ -9,4 +9,6 @@ import lombok.Data;
 public class ConfirmPlanStatusResponse {
   private Boolean confirmed;
   private CommonSuccessResponse responseStatus;
+  private Long loadablePatternStatusId;
+  private Boolean validated;
 }

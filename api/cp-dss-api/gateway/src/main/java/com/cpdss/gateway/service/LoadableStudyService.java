@@ -4594,6 +4594,8 @@ public class LoadableStudyService {
     confirmPlanStatusResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     confirmPlanStatusResponse.setConfirmed(grpcReply.getConfirmed());
+    confirmPlanStatusResponse.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    confirmPlanStatusResponse.setValidated(grpcReply.getValidated());
     return confirmPlanStatusResponse;
   }
 
