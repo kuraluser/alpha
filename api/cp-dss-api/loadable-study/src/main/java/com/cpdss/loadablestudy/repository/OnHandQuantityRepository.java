@@ -7,7 +7,6 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import java.math.BigDecimal;
 import java.util.List;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,10 +58,9 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
       " SELECT SUM(OHQ.arrivalQuantity) FROM OnHandQuantity OHQ WHERE OHQ.portXId= ?1 AND OHQ.fuelTypeXId =?2 AND OHQ.isActive = ?3")
   public BigDecimal getOnHandQuantityByPortXIdAndFuelTypeAndIsActive(
       Long portXId, Long fuelType, Boolean isActive);
-  
+
   @Transactional
   @Modifying
-  @Query(
-      "UPDATE OnHandQuantity SET isActive = false WHERE loadableStudy = ?1 AND portXId = ?2")
+  @Query("UPDATE OnHandQuantity SET isActive = false WHERE loadableStudy = ?1 AND portXId = ?2")
   public void deleteByLoadableStudyAndPortXId(LoadableStudy loadableStudy, Long requestPortId);
 }

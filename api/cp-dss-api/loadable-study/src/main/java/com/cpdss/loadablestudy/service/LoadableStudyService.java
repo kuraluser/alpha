@@ -2382,7 +2382,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadableStudyOpt.get(), requestPortId);
                   synopticalTableRepository.deleteSynopticalPorts(
                       loadableStudyOpt.get().getId(), requestPortId);
-                  onHandQuantityRepository.deleteByLoadableStudyAndPortXId(loadableStudyOpt.get(), requestPortId);
+                  onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+                      loadableStudyOpt.get(), requestPortId);
                 }
               });
         }
@@ -4024,9 +4025,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .ifPresent(builder::setLoadablePatternCreatedDate);
               ofNullable(loadablePattern.getLoadableStudyStatus())
                   .ifPresent(loadablePatternBuilder::setLoadableStudyStatusId);
-                            if (stowageDetailsTempRepository
-                                .findByLoadablePatternAndIsActive(loadablePattern, true)
-                                .isEmpty()) loadablePatternBuilder.setValidated(true);
+              if (stowageDetailsTempRepository
+                  .findByLoadablePatternAndIsActive(loadablePattern, true)
+                  .isEmpty()) loadablePatternBuilder.setValidated(true);
               ofNullable(loadablePattern.getCaseNumber())
                   .ifPresent(loadablePatternBuilder::setCaseNumber);
               List<LoadablePatternAlgoStatus> patternStatus =
@@ -8515,24 +8516,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           status.get(status.size() - 1).getLoadableStudyStatus().getId());
     }
     replyBuilder.setLoadableStudyStatusId(loadablePattern.getLoadableStudyStatus());
-//    if (stowageDetailsTempRepository
-//        .findByLoadablePatternAndIsActive(loadablePattern, true)
-//        .isEmpty()) replyBuilder.setValidated(true);
+    //    if (stowageDetailsTempRepository
+    //        .findByLoadablePatternAndIsActive(loadablePattern, true)
+    //        .isEmpty()) replyBuilder.setValidated(true);
     if (!status.isEmpty()) {
-        if (stowageDetailsTempRepository
-                .findByLoadablePatternAndIsActive(loadablePattern, true)
-                .isEmpty()
-            || VALIDATED_CONDITIONS.contains(
-                replyBuilder.getLoadablePatternStatusId())) {
-          replyBuilder.setValidated(true);
-        }
-      } else {
-        if (stowageDetailsTempRepository
-            .findByLoadablePatternAndIsActive(loadablePattern, true)
-            .isEmpty()) {
-          replyBuilder.setValidated(true);
-        }
+      if (stowageDetailsTempRepository
+              .findByLoadablePatternAndIsActive(loadablePattern, true)
+              .isEmpty()
+          || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
+        replyBuilder.setValidated(true);
       }
+    } else {
+      if (stowageDetailsTempRepository
+          .findByLoadablePatternAndIsActive(loadablePattern, true)
+          .isEmpty()) {
+        replyBuilder.setValidated(true);
+      }
+    }
   }
 
   /**
