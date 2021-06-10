@@ -543,6 +543,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private static final String TYPE_DEPARTURE = "Departure";
 
+  private static final List<Long> VALIDATED_CONDITIONS =
+      Arrays.asList(
+          LOADABLE_PATTERN_VALIDATION_STARTED_ID,
+          LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
+          LOADABLE_PATTERN_VALIDATION_FAILED_ID);
   /**
    * method for save voyage
    *
@@ -1414,36 +1419,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private void setPortOrdering(LoadableStudy loadableStudy) {
-    AtomicLong portOrder = new AtomicLong(0L);
     List<LoadableStudyPortRotation> loadableStudyPortRotations =
         this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             loadableStudy, true);
-    loadableStudyPortRotations.stream()
-        .filter(portRotation -> portRotation.getOperation().getId() == 1L)
-        .forEach(
-            portRotation -> {
-              portRotation.setPortOrder(portOrder.incrementAndGet());
-              this.loadableStudyPortRotationRepository.save(portRotation);
-            });
 
-    loadableStudyPortRotations.stream()
-        .filter(
-            portRotation ->
-                (portRotation.getOperation().getId() != 1L)
-                    && (portRotation.getOperation().getId() != 2L))
-        .forEach(
-            portRotation -> {
-              portRotation.setPortOrder(portOrder.incrementAndGet());
-              this.loadableStudyPortRotationRepository.save(portRotation);
-            });
-
-    loadableStudyPortRotations.stream()
-        .filter(portRotation -> portRotation.getOperation().getId() == 2L)
-        .forEach(
-            portRotation -> {
-              portRotation.setPortOrder(portOrder.incrementAndGet());
-              this.loadableStudyPortRotationRepository.save(portRotation);
-            });
+    for (int rep = 0; rep < loadableStudyPortRotations.size(); rep++) {
+      for (int index = 0; index < loadableStudyPortRotations.size(); index++) {
+        try {
+          if ((loadableStudyPortRotations.get(index).getOperation().getId() == 2L
+                  && loadableStudyPortRotations.get(index + 1).getOperation().getId() == 1L)
+              && (loadableStudyPortRotations.get(index).getPortOrder()
+                  < loadableStudyPortRotations.get(index + 1).getPortOrder())) {
+            Long tempOrder = loadableStudyPortRotations.get(index).getPortOrder();
+            loadableStudyPortRotations
+                .get(index)
+                .setPortOrder(loadableStudyPortRotations.get(index + 1).getPortOrder());
+            loadableStudyPortRotations.get(index + 1).setPortOrder(tempOrder);
+            loadableStudyPortRotations =
+                loadableStudyPortRotations.stream()
+                    .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
+                    .collect(Collectors.toList());
+          }
+        } catch (IndexOutOfBoundsException e) {
+          break;
+        }
+      }
+    }
+    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
   /**
@@ -2083,7 +2085,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyOpt.get().getId(), request.getIsPortsComplete());
 
       // set port order after update
-      this.setPortOrdering(loadableStudyOpt.get());
+      // this.setPortOrdering(loadableStudyOpt.get());
 
       replyBuilder.setPortRotationId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -4015,9 +4017,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .ifPresent(builder::setLoadablePatternCreatedDate);
               ofNullable(loadablePattern.getLoadableStudyStatus())
                   .ifPresent(loadablePatternBuilder::setLoadableStudyStatusId);
-              if (stowageDetailsTempRepository
-                  .findByLoadablePatternAndIsActive(loadablePattern, true)
-                  .isEmpty()) loadablePatternBuilder.setValidated(true);
+              //              if (stowageDetailsTempRepository
+              //                  .findByLoadablePatternAndIsActive(loadablePattern, true)
+              //                  .isEmpty()) loadablePatternBuilder.setValidated(true);
               ofNullable(loadablePattern.getCaseNumber())
                   .ifPresent(loadablePatternBuilder::setCaseNumber);
               List<LoadablePatternAlgoStatus> patternStatus =
@@ -4027,6 +4029,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadablePatternBuilder.setLoadablePatternStatusId(
                     patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
               }
+
+              if (!patternStatus.isEmpty()) {
+                if (stowageDetailsTempRepository
+                        .findByLoadablePatternAndIsActive(loadablePattern, true)
+                        .isEmpty()
+                    || VALIDATED_CONDITIONS.contains(
+                        loadablePatternBuilder.getLoadablePatternStatusId())) {
+                  loadablePatternBuilder.setValidated(true);
+                }
+              } else {
+                if (stowageDetailsTempRepository
+                    .findByLoadablePatternAndIsActive(loadablePattern, true)
+                    .isEmpty()) {
+                  loadablePatternBuilder.setValidated(true);
+                }
+              }
+
               loadablePatternBuilder.setStabilityParameters(
                   buildStabilityParamter(loadablePattern));
 
@@ -8825,13 +8844,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_PATTERN_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
+        List<LoadablePatternAlgoStatus> patternStatus =
+            loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
+                loadablePatternOpt.get(), true);
+        if (!patternStatus.isEmpty()) {
+          replyBuilder.setLoadablePatternStatusId(
+              patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
+        }
+
+        if (!patternStatus.isEmpty()) {
+          if (stowageDetailsTempRepository
+                  .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+                  .isEmpty()
+              || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
+            replyBuilder.setValidated(true);
+          }
+        } else {
+          if (stowageDetailsTempRepository
+              .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+              .isEmpty()) {
+            replyBuilder.setValidated(true);
+          }
+        }
         List<LoadablePattern> loadablePatternConfirmedOpt =
             loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
                 request.getVoyageId(), CONFIRMED_STATUS_ID, true);
-        if (!loadablePatternConfirmedOpt.isEmpty()
-            || !stowageDetailsTempRepository
-                .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
-                .isEmpty()) {
+        if (!loadablePatternConfirmedOpt.isEmpty()) {
           // set confirm status to false since some other plan is already confirmed
           log.info("other plan is in confirmed status or verification pending");
           replyBuilder.setConfirmed(false);
