@@ -1873,7 +1873,7 @@ height: 15px;
     }
   }
   .tank-outer-ohq{
-    height: calc(100% - 36px)!important;
+    height: calc(100% - 6px)!important;
     max-height: 350px;
   }
 }
@@ -2505,4 +2505,8 @@ textarea{
 
 .loadable-plan-ballast .tank-outer-pattern .tank-filling-percentage{
  max-width: none; 
+}
+
+.calculated-column{
+  width: 92px;
 }

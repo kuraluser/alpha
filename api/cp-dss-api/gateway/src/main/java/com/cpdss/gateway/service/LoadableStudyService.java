@@ -3647,6 +3647,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
     Optional.ofNullable(lqccd.getTimeRequiredForLoading())
         .ifPresent(builder::setTimeRequiredForLoading);
+    Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
+    Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -4013,6 +4015,7 @@ public class LoadableStudyService {
               loadablePlanStowageDetails.setFillingRatioOrginal(lpsd.getFillingRatioOrginal());
               loadablePlanStowageDetails.setWeightOrginal(lpsd.getWeightOrginal());
               loadablePlanStowageDetails.setRdgUllageOrginal(lpsd.getRdgUllageOrginal());
+              loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
 
               response.getLoadablePlanStowageDetails().add(loadablePlanStowageDetails);
             });
@@ -4050,6 +4053,7 @@ public class LoadableStudyService {
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
               cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
+              cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
@@ -4594,6 +4598,8 @@ public class LoadableStudyService {
     confirmPlanStatusResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     confirmPlanStatusResponse.setConfirmed(grpcReply.getConfirmed());
+    confirmPlanStatusResponse.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    confirmPlanStatusResponse.setValidated(grpcReply.getValidated());
     return confirmPlanStatusResponse;
   }
 

@@ -64,6 +64,7 @@ export class LoadingPortsPopupComponent implements OnInit {
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() popupDataChange = new EventEmitter<ILoadingPopupData>();
+  @Output() portOhqTabStatusUpdate = new EventEmitter<boolean>();
 
   loadingPortsFrom: FormGroup;
   columns: IDataTableColumn[];
@@ -174,6 +175,7 @@ export class LoadingPortsPopupComponent implements OnInit {
       this.popupData.isUpdate = true;
       this.popupData.rowData.loadingPorts.value = this.loadingPort?.reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValue(port));
       this.popupDataChange.emit(this.popupData);
+      this.portOhqTabStatusUpdate.emit(false);
       this.closePopup();
     } else {
       if (this.loadingPortsFrom.controls.dataTable?.errors?.required) {

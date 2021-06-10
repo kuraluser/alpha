@@ -371,7 +371,7 @@ export class LoadablePlanComponent implements OnInit  {
       loadableQuantityCargoDetail['grade'] = this.fingCargo(loadableQuantityCargoDetail);
       const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence)/100)* Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
       const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence)/100)* Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
-      this.loadableQuantityCargo.push({'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, total: 0 , minTolerence: minTolerence , maxTolerence: maxTolerence})
+      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence })
     })
     loadablePlanRes.loadableQuantity ? this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) : this.getLoadableQuantity();
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
@@ -401,6 +401,7 @@ export class LoadablePlanComponent implements OnInit  {
     if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
       this.getAlgoErrorMessage(false);
     } else if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED) {
+      this.validationPending =  false;
       this.listenEvents();
     }
 
@@ -578,12 +579,22 @@ export class LoadablePlanComponent implements OnInit  {
       return;
     }
     this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS', 'LOADABLE_PATTERN_CONFIRM_SUMMARY', 'LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS', 'LOADABLE_PATTERN_CONFIRM_SUMMARY', 'LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL'
+     , 'VALIDATE_AND_SAVE_ERROR','VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING']).toPromise();
 
     try {
       const result = await this.loadablePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
       this.ngxSpinnerService.hide();
       let detail;
+      if(!result.validated) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: translationKeys['VALIDATE_AND_SAVE_PENDING'] });
+        return;
+      }
+      else if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
+        const errorDetails = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED === result.loadablePatternStatusId ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
+        this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail:  errorDetails });
+        return;
+      }
       if (result.confirmed) {
         detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
       } else {
