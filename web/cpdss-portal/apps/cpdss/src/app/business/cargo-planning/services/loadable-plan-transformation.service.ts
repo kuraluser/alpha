@@ -307,7 +307,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.fillingRatioOrginal = Number(cargoTankDetail?.fillingRatioOrginal);
     _cargoTankDetail.tankName = cargoTankDetail?.tankName;
     _cargoTankDetail.tankShortName = cargoTankDetail?.tankShortName;
-    _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, isNewValue);
+    _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, !cargoTankDetail?.isCommingle, false, !cargoTankDetail?.isCommingle);
     _cargoTankDetail.rdgUllageOrginal = cargoTankDetail?.rdgUllageOrginal;
     _cargoTankDetail.correctionFactor = new ValueObject<number>(cargoTankDetail?.correctionFactor, true, false);
     _cargoTankDetail.correctionFactorOrginal = cargoTankDetail?.correctionFactorOrginal;
@@ -469,12 +469,12 @@ export class LoadablePlanTransformationService {
           'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
         }
       },
-      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.0-2'},
-      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat}
+      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
+      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
+      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat }
     ]
   }
 

@@ -1560,6 +1560,17 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           this.getControl(otherIndex, 'runningHours')?.setValue(runningHours)
         }
         break;
+      case 'calculatedDraftAftPlanned': case 'calculatedDraftAftActual':
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] = this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+        break;
+
+      case 'calculatedDraftFwdPlanned': case 'calculatedDraftFwdActual':
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+
+      case 'calculatedDraftMidPlanned': case 'calculatedDraftMidActual':
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+        break;
+
       default:
         const planIndex = field.key.includes('plan') ? 0 : 1
         const dynamicCols = this.cols.filter(col => col.dynamicKey)
