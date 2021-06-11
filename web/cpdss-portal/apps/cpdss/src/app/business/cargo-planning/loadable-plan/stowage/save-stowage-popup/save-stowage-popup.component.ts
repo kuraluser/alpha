@@ -44,7 +44,6 @@ export class SaveStowagePopupComponent implements OnInit {
 
   saveStowageForm: FormGroup;
   errorMessages = {
-    'required': 'Required',
     'maxlength': 'LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH',
     'whitespace': 'COMMENTS_REQUIRED'
   };
@@ -60,7 +59,7 @@ export class SaveStowagePopupComponent implements OnInit {
 
   ngOnInit(): void {
     this.saveStowageForm = this.fb.group({
-      comment: this.fb.control(null, [Validators.required, Validators.maxLength(100), whiteSpaceValidator])
+      comment: this.fb.control(null, [Validators.maxLength(100), whiteSpaceValidator])
     });
   }
 
