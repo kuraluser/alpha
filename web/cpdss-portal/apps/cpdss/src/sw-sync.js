@@ -102,7 +102,8 @@
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
-
+                  const refreshedToken = syncResponse.headers.get('token');
+                  sync.refreshedToken = refreshedToken;
                   //on success of api call remove all rows of selected primary keys
                   primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey))
                   return notifyClients(sync);
@@ -127,7 +128,8 @@
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
-
+                  const refreshedToken = syncResponse.headers.get('token');
+                  sync.refreshedToken = refreshedToken;
                   // update id of cargo nomination if there are any new rows with same storekey
                   const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'id': cargoNomination?.id });
                   if (updated) {
@@ -181,7 +183,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 //on success of api call remove all rows of selected primary keys
                 primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey))
                 return notifyClients(sync);
@@ -205,7 +208,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 // update id of port if there are any new rows with same storekey
                 const updated = await db.ports.where({ 'storeKey': key }).modify({ 'id': port?.id });
                 if (updated) {
@@ -261,7 +265,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = ohq.storeKey;
                 sync.type = 'ohq_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 // update id of ohq if there are any new rows with same storekey
                 const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'id': ohq?.id });
                 if (updated) {
@@ -316,7 +321,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = obq.storeKey;
                 sync.type = 'obq_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 // update id of obq if there are any new rows with same storekey
                 const updated = await db.obq.where({ 'storeKey': key }).modify({ 'id': obq?.id });
                 if (updated) {
@@ -389,6 +395,7 @@
       sync.refreshedToken = refreshedToken;
       sync.pattern = data;
       if (syncView?.responseStatus?.status === '200') {
+        sync.status = syncView?.responseStatus?.status;
         if (syncView?.loadableStudyStatusId === 12) {
           clearInterval(timer);
           sync.type = 'loadable-pattern-validation-success';
@@ -433,6 +440,7 @@
       sync.refreshedToken = refreshedToken;
       sync.pattern = data;
       if (syncView?.responseStatus?.status === '200') {
+        sync.status = syncView?.responseStatus?.status;
         currentStatus = syncView?.loadableStudyStatusId;
         if (syncView?.loadableStudyStatusId === 4 || syncView?.loadableStudyStatusId === 5) {
           sync.type = 'loadable-pattern-processing';
