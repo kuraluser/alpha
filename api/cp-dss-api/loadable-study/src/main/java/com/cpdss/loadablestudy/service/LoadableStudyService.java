@@ -8699,6 +8699,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(stowageBuilder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);
           stowageBuilder.setIsCommingle(true);
+
+          Optional.ofNullable(lpcd.getCorrectedUllage())
+              .ifPresent(stowageBuilder::setCorrectedUllageOrginal);
+          Optional.ofNullable(lpcd.getCorrectionFactor())
+              .ifPresent(stowageBuilder::setCorrectionFactorOrginal);
+          Optional.ofNullable(lpcd.getFillingRatio())
+              .ifPresent(stowageBuilder::setFillingRatioOrginal);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeightOrginal);
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(stowageBuilder::setRdgUllageOrginal);
+
           addTankShortName(vesselReplyCommingle, lpcd.getTankId(), stowageBuilder);
           replyBuilder.addLoadablePlanStowageDetails(stowageBuilder);
         });
