@@ -3504,7 +3504,7 @@ public class LoadableStudyService {
                                   buildLoadablePlanBallstDetails(lpbd, detailsBuilderArrival);
                                 });
 
-                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                        Optional.ofNullable(lppwd.getArrivalCondition().getStabilityParameters())
                             .ifPresent(
                                 stabilityParameter ->
                                     detailsBuilderArrival.setStabilityParameter(
