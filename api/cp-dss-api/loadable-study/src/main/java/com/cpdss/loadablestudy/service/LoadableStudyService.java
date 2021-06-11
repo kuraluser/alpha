@@ -3195,19 +3195,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 });
         if (request.getHasLodicator()) {
           this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+        } else {
+
+          loadableStudyRepository.updateLoadableStudyStatus(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
         }
-
-        loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-            loadableStudyOpt
-                .get()
-                .getId()); // ToDo - remove this code once Lodicator is implemented
-        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-            request.getProcesssId(),
-            true); // ToDo - remove this code once Lodicator is implemented
       }
-
       if (request.getAlgoErrorsCount() > 0) {
         algoErrorsRepository.deleteAlgoErrorByLSId(false, request.getLoadableStudyId());
         algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(
