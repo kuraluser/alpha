@@ -75,4 +75,10 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
 
   @Column(name = "operation_xid")
   private Long operationId;
+  
+  @Column(name = "bending_moment")
+  private BigDecimal bendingMoment;
+  
+  @Column(name = "shearing_force")
+  private BigDecimal shearingForce;
 }

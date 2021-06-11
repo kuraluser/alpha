@@ -3340,6 +3340,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           isEmpty(stabilityParameter.getTrim())
               ? null
               : new BigDecimal(stabilityParameter.getTrim()));
+      synopticalTableLoadicatorData.setBendingMoment(
+              isEmpty(stabilityParameter.getBendinMoment())
+                  ? null
+                  : new BigDecimal(stabilityParameter.getBendinMoment()));
+      synopticalTableLoadicatorData.setShearingForce(
+              isEmpty(stabilityParameter.getShearForce())
+                  ? null
+                  : new BigDecimal(stabilityParameter.getShearForce()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
@@ -5949,6 +5957,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? null
             : new BigDecimal(result.getCalculatedTrimPlanned()));
     entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    entity.setBendingMoment(isEmpty(result.getBm()) ? null : new BigDecimal(result.getBm()));
+    entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
     return entity;
   }
 
@@ -6217,6 +6227,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
           onHandQuantityDto =
               modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
+          onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
+          onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
+          onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
   }
@@ -7741,6 +7754,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .ifPresent(item -> dataBuilder.setCalculatedTrimPlanned(valueOf(item)));
       this.setFinalDraftValues(dataBuilder, loadicatorData);
       ofNullable(loadicatorData.getList()).ifPresent(list -> dataBuilder.setList(valueOf(list)));
+      ofNullable(loadicatorData.getBendingMoment()).ifPresent(bm -> dataBuilder.setBendingMoment(valueOf(bm)));
+      ofNullable(loadicatorData.getShearingForce()).ifPresent(sf -> dataBuilder.setShearingForce(valueOf(sf)));
       builder.setLoadicatorData(dataBuilder.build());
       ofNullable(loadicatorData.getBallastActual())
           .ifPresent(item -> builder.setBallastActual(valueOf(item)));

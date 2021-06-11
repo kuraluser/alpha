@@ -2946,6 +2946,10 @@ public class LoadableStudyService {
         isEmpty(proto.getBlindSector()) ? BigDecimal.ZERO : new BigDecimal(proto.getBlindSector()));
     synopticalRecord.setList(
         isEmpty(proto.getList()) ? BigDecimal.ZERO : new BigDecimal(proto.getList()));
+    synopticalRecord.setBm(
+            isEmpty(proto.getBendingMoment()) ? BigDecimal.ZERO : new BigDecimal(proto.getBendingMoment()));
+    synopticalRecord.setSf(
+            isEmpty(proto.getShearingForce()) ? BigDecimal.ZERO : new BigDecimal(proto.getShearingForce()));
   }
 
   /**
@@ -3894,6 +3898,8 @@ public class LoadableStudyService {
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
               synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
               synopticalRecord.setPortTimezoneId(str.getPortTimezoneId());
+              synopticalRecord.setBm(str.getBm());
+              synopticalRecord.setSf(str.getSf());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
