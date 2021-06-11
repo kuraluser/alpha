@@ -22,6 +22,8 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 import { SecurityService } from '../../../shared/services/security/security.service';
+import * as moment from 'moment';
+import { environment } from 'apps/cpdss/src/environments/environment';
 
 
 /**
@@ -335,17 +337,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.onCargoNominationChange();
       })
-      let portRotationId;
-      this.loadableStudyDetailsTransformationService.portUpdate$?.pipe(takeUntil(this.ngUnsubscribe),
-        switchMap(() => {
-          return  this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId);
-        })
-      ).subscribe((portResult) => {
-        if (portResult.responseStatus?.status === "200") {
-          portRotationId = portResult?.lastModifiedPortId;
-          this.loadableStudyDetailsTransformationService.ohqUpdated();
-        }
-      });
+    let portRotationId;
+    this.loadableStudyDetailsTransformationService.portUpdate$?.pipe(takeUntil(this.ngUnsubscribe),
+      switchMap(() => {
+        return this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId);
+      })
+    ).subscribe((portResult) => {
+      if (portResult.responseStatus?.status === "200") {
+        portRotationId = portResult?.lastModifiedPortId;
+        this.loadableStudyDetailsTransformationService.ohqUpdated();
+      }
+    });
 
     this.loadableStudyDetailsTransformationService.ohqUpdate$?.pipe(takeUntil(this.ngUnsubscribe),
       switchMap(() => {
@@ -380,8 +382,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   private swMessageHandler = async event => {
     if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
-    } else {
-      SecurityService.refreshToken(event.data.refreshedToken)
+    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
+      SecurityService.refreshToken(event?.data?.refreshedToken)
     }
     if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
@@ -394,7 +396,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     else if (event.data.type === 'loadable-pattern-completed') {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isPatternGenerated = true;
-        this.selectedLoadableStudy.statusId = 3;
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_GENERATED;
         this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_GENERATED;
       }
       this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
@@ -453,6 +455,32 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     loadableStudies = loadableStudies ?? this.loadableStudies;
     const _loadableStudies = loadableStudies?.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
+        loadableStudy.statusId = statusId;
+        switch (statusId) {
+          case 1:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_PENDING
+            break;
+          case 2:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_CONFIRMED
+            break;
+          case 3:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_GENERATED
+            break;
+          case 4:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING
+            break;
+          case 5:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING_COMPETED
+            break;
+          case 6:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_NO_SOLUTION
+            break;
+          case 11:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR
+            break;
+          default:
+            break;
+        }
         if ([4, 5].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
         }
@@ -912,7 +940,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
           this.selectedLoadableStudy.isActionsEnabled = false;
-          this.selectedLoadableStudy = {...this.selectedLoadableStudy};
+          this.selectedLoadableStudy = { ...this.selectedLoadableStudy };
         } else {
           this.isGenerateClicked = false;
         }
@@ -1008,15 +1036,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   */
   inProcessing() {
     if (this.selectedLoadableStudy?.statusId === 4) {
-      const dateString = this.selectedLoadableStudy?.loadableStudyStatusLastModifiedTime;
+      let dateString = this.selectedLoadableStudy?.loadableStudyStatusLastModifiedTime;
       const dateTimeParts = dateString?.split(' ');
-      const timeParts = dateTimeParts[1]?.split(':');
       const dateParts = dateTimeParts[0]?.split('-');
+
       if (dateParts?.length) {
-        const modifiedDate = new Date(Number(dateParts[2]), parseInt(dateParts[1], 10) - 1, Number(dateParts[0]), Number(timeParts[0]), Number(timeParts[1]));
-        const addFiveMinute = new Date(modifiedDate.getTime() + AppConfigurationService.settings.processingTimeout);
+        dateString = Number(dateParts[1]) + "/" + Number(dateParts[0]) + "/" + Number(dateParts[2]) + " " + dateTimeParts[1];
+        var modifiedDate = moment.utc(dateString).toDate();
+        const addProcessingTimeout = new Date(modifiedDate.getTime() + 600);
         const now = new Date();
-        if (addFiveMinute < now) {
+        if (addProcessingTimeout < now) {
           return false;
         } else {
           return true;
