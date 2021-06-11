@@ -64,7 +64,7 @@ public class Screen extends EntityDoc {
 
   @Column(name = "is_edit_visible")
   private Boolean isEditVisisble;
-  
-  @Column( name = "screen_order")
+
+  @Column(name = "screen_order")
   private Long screenOrder;
 }

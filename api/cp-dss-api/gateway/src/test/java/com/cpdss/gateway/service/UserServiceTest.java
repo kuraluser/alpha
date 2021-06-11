@@ -180,7 +180,8 @@ class UserServiceTest {
     when(this.rolesRepository.findByIdAndCompanyXIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
         .thenReturn(Optional.of(roleEntity));
     List<Screen> screenDataList = this.createScreenDataList();
-    when(this.screenRepository.findByCompanyXIdAndIsActiveOrderByScreenOrderAsc(anyLong(), anyBoolean()))
+    when(this.screenRepository.findByCompanyXIdAndIsActiveOrderByScreenOrderAsc(
+            anyLong(), anyBoolean()))
         .thenReturn(screenDataList);
     com.cpdss.gateway.entity.RoleScreen roleScreen = new com.cpdss.gateway.entity.RoleScreen();
     roleScreen.setId(1L);
