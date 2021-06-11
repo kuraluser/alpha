@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , ViewChild , ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 
@@ -15,6 +15,7 @@ import { LoadablePlanTransformationService } from '../../services/loadable-plan-
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { whiteSpaceValidator } from '../../../core/directives/space-validator.directive';
 
 /**
  * Component class of comments component in loadable plan
@@ -29,6 +30,9 @@ import { TimeZoneTransformationService } from './../../../../shared/services/tim
   styleUrls: ['./comments.component.scss']
 })
 export class CommentsComponent implements OnInit {
+
+  @ViewChild('submitBtn') submitBtnRef: ElementRef;
+
   @Input() vesselId: number;
   @Input() loadableStudyId: number;
   @Input() voyageId: number;
@@ -71,7 +75,9 @@ export class CommentsComponent implements OnInit {
   public formError: boolean;
   public isPermissionAvaliable: boolean;
   public errorMessages = {
-    'required': 'COMMENTS_REQUIRED'
+    'required': 'COMMENTS_REQUIRED',
+    'maxlength': 'LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH',
+    'whitespace': 'COMMENTS_REQUIRED'
   };
 
   constructor(
@@ -96,7 +102,7 @@ export class CommentsComponent implements OnInit {
   ngOnInit(): void {
     this.isPermissionAvaliable = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePlanAddComments'], false).view;
     this.commentForm = this.fb.group({
-      comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.required, Validators.maxLength(100)]]
+      comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.required, Validators.maxLength(100) , whiteSpaceValidator]]
     })
 
   }
@@ -119,6 +125,7 @@ export class CommentsComponent implements OnInit {
         const commentDetails: ILoadablePlanCommentsDetails  = response.comment;
         commentDetails['dataAndTime'] = this.timeZoneTransformationService.formatDateTime(commentDetails.dataAndTime, {utcFormat: true});
         this.commentsDetails.unshift(commentDetails);
+        this.submitBtnRef.nativeElement.focus();
         this.commentForm.reset();
         this.formError = false;
       }
@@ -162,5 +169,14 @@ export class CommentsComponent implements OnInit {
     commentArray.map(comment => (comment.dataAndTime = this.timeZoneTransformationService.formatDateTime(comment.dataAndTime, {utcFormat: true})));
     return commentArray;
   }
+
+    /**
+   * Trim blank space 
+   * @param {string} formControlName
+   * @memberof CommentsComponent
+   */
+    trimFormControl(formControlName: string) {
+      this.commentForm.controls[formControlName].setValue((this.commentForm.get(formControlName).value).trim());
+    }
 
 }

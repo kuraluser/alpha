@@ -216,11 +216,15 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               new BigDecimal(request.getDraftExtreme()));
 
       VesselLoadableQuantityDetails.Builder builder = VesselLoadableQuantityDetails.newBuilder();
+      
+      Vessel vessel = vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
+      Optional<HydrostaticTable> hydrostaticTable = hydrostaticService.fetchAllDataByDraftAndVessel(
+    		  vessel,  new BigDecimal(request.getDraftExtreme())).stream().findFirst();
       List<BigDecimal> tpc =
           hydrostaticTableRepository.getTPCFromDraf(
               request.getVesselId(), new BigDecimal(request.getDraftExtreme()), true);
       if (null != vesselDetails) {
-        Optional.ofNullable(vesselDetails.getDisplacmentDraftRestriction())
+        Optional.ofNullable(hydrostaticTable.get().getDisplacement())
             .ifPresent(item -> builder.setDisplacmentDraftRestriction(item.toString()));
         Optional.ofNullable(vesselDetails.getVesselLightWeight())
             .ifPresent(item -> builder.setVesselLightWeight(item.toString()));

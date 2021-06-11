@@ -49,7 +49,8 @@
                                 *cpdssPortalPermission="loadablePlanPermissionContext">{{'LOADABLE_PATTERN_HISTORY_VIEW_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main mr-10" (click)="onConfirmPlanClick(loadablePattern?.loadablePatternId)" id="pattern-history-confirm-btn"
+                            <button class="btn btn-main mr-10" [disabled]="!loadablePattern.validated || [VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(loadablePattern.loadablePatternStatusId)" 
+                                (click)="onConfirmPlanClick(loadablePattern?.loadablePatternId)" id="pattern-history-confirm-btn"
                                 *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>

@@ -39,7 +39,7 @@ export interface IVessels {
 }
 
 /**
- * Model for voyage list 
+ * Model for voyage list
  */
 export class Voyage {
     public voyageNo: string;
@@ -50,8 +50,8 @@ export class Voyage {
     public endDate?: string;
     public noOfDays?: number;
     statusId?: VOYAGE_STATUS;
-    actualStartDate?: string; 
-    actualEndDate?: string; 
+    actualStartDate?: string;
+    actualEndDate?: string;
 }
 
 /**
@@ -182,18 +182,23 @@ export interface ILoadableCargo {
  * Interface for ballast stowage
  *
  * @export
- * @interface 
+ * @interface
  */
 export interface IBallastStowageDetails {
     id: number,
     tankName?: string,
     tankId: number,
     rdgLevel: string,
+    rdgLevelOrginal: string,
     correctionFactor: string,
+    correctionFactorOrginal: string,
     correctedLevel: string,
+    correctedLevelOrginal: string,
     metricTon: string,
+    metricTonOrginal: string,
     cubicMeter: string,
     percentage: string,
+    percentageOrginal: string,
     sg: string,
     lcg: string,
     vcg: string,
@@ -210,7 +215,7 @@ export interface IBallastStowageDetails {
 /**
  * Interface for ballast Tank details
  * @export
- * @interface 
+ * @interface
  */
 export interface IBallastTank extends ITank {
     id: number,
@@ -371,7 +376,7 @@ export enum LOADABLE_STUDY_STATUS {
 }
 
 /**
- * Interface for Edit port rotation response 
+ * Interface for Edit port rotation response
  */
  export interface IPortResponseModel {
     responseStatus: IResponseStatus;
@@ -385,7 +390,7 @@ export interface IEditPortRotationModel {
 }
 
 /**
- *  Interface for edit port rotation 
+ *  Interface for edit port rotation
  */
 export interface IEditPortRotation{
     id: number;

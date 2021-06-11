@@ -193,6 +193,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -2382,6 +2383,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadableStudyOpt.get(), requestPortId);
                   synopticalTableRepository.deleteSynopticalPorts(
                       loadableStudyOpt.get().getId(), requestPortId);
+                  onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+                      loadableStudyOpt.get(), requestPortId);
                 }
               });
         }
@@ -4023,9 +4026,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .ifPresent(builder::setLoadablePatternCreatedDate);
               ofNullable(loadablePattern.getLoadableStudyStatus())
                   .ifPresent(loadablePatternBuilder::setLoadableStudyStatusId);
-              //              if (stowageDetailsTempRepository
-              //                  .findByLoadablePatternAndIsActive(loadablePattern, true)
-              //                  .isEmpty()) loadablePatternBuilder.setValidated(true);
+              if (stowageDetailsTempRepository
+                  .findByLoadablePatternAndIsActive(loadablePattern, true)
+                  .isEmpty()) loadablePatternBuilder.setValidated(true);
               ofNullable(loadablePattern.getCaseNumber())
                   .ifPresent(loadablePatternBuilder::setCaseNumber);
               List<LoadablePatternAlgoStatus> patternStatus =
@@ -4034,22 +4037,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               if (!patternStatus.isEmpty()) {
                 loadablePatternBuilder.setLoadablePatternStatusId(
                     patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
-              }
-
-              if (!patternStatus.isEmpty()) {
-                if (stowageDetailsTempRepository
-                        .findByLoadablePatternAndIsActive(loadablePattern, true)
-                        .isEmpty()
-                    || VALIDATED_CONDITIONS.contains(
-                        loadablePatternBuilder.getLoadablePatternStatusId())) {
-                  loadablePatternBuilder.setValidated(true);
-                }
-              } else {
-                if (stowageDetailsTempRepository
-                    .findByLoadablePatternAndIsActive(loadablePattern, true)
-                    .isEmpty()) {
-                  loadablePatternBuilder.setValidated(true);
-                }
               }
 
               loadablePatternBuilder.setStabilityParameters(
@@ -5560,15 +5547,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
-    List<LoadableQuantity> lQs =
-        loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(ls.getId(), true);
-    if (lQs.isEmpty()) {
-      log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
-      throw new GenericServiceException(
-          "No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
-          CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
+	List<PortRotationIdAndPortId> ports = loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(ls.getId(), true);
+	boolean valid = false;
+	for(PortRotationIdAndPortId port : ports) {		
+		Optional<LoadableQuantity> lQs =
+				loadableQuantityRepository.findByLSIdAndPortRotationId(ls.getId(), port.getId(), true);
+		if (lQs.isPresent()) {
+			valid = true;
+			break;
+		}
+	}
+	if(!valid) {
+		log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
+		throw new GenericServiceException(
+				"No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
+				CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
+				HttpStatusCode.INTERNAL_SERVER_ERROR);
+		
+	}
+		
   }
 
   public void saveLoadablePatternDetails(
@@ -8530,9 +8527,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           status.get(status.size() - 1).getLoadableStudyStatus().getId());
     }
     replyBuilder.setLoadableStudyStatusId(loadablePattern.getLoadableStudyStatus());
-    if (stowageDetailsTempRepository
-        .findByLoadablePatternAndIsActive(loadablePattern, true)
-        .isEmpty()) replyBuilder.setValidated(true);
+    //    if (stowageDetailsTempRepository
+    //        .findByLoadablePatternAndIsActive(loadablePattern, true)
+    //        .isEmpty()) replyBuilder.setValidated(true);
+    if (!status.isEmpty()) {
+      if (stowageDetailsTempRepository
+              .findByLoadablePatternAndIsActive(loadablePattern, true)
+              .isEmpty()
+          || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
+        replyBuilder.setValidated(true);
+      }
+    } else {
+      if (stowageDetailsTempRepository
+          .findByLoadablePatternAndIsActive(loadablePattern, true)
+          .isEmpty()) {
+        replyBuilder.setValidated(true);
+      }
+    }
   }
 
   /**
