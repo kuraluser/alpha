@@ -1024,11 +1024,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       : new BigDecimal(request.getDraftMark()));
           this.loadableQuantityRepository.save(loadableQuantity.get(0));
         }
-        entity.setIsCargoNominationComplete(request.getIsCargoNominationComplete());
-        entity.setIsPortsComplete(request.getIsPortsComplete());
-        entity.setIsOhqComplete(request.getIsOhqComplete());
-        entity.setIsObqComplete(request.getIsObqComplete());
-        entity.setIsDischargePortsComplete(request.getIsDischargingPortComplete());
+        // entity.setIsCargoNominationComplete(request.getIsCargoNominationComplete());
+        // entity.setIsPortsComplete(request.getIsPortsComplete());
+        // entity.setIsOhqComplete(request.getIsOhqComplete());
+        // entity.setIsObqComplete(request.getIsObqComplete());
+        // entity.setIsDischargePortsComplete(request.getIsDischargingPortComplete());
       } else {
 
         entity = new LoadableStudy();
@@ -8714,6 +8714,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(stowageBuilder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);
           stowageBuilder.setIsCommingle(true);
+
+          Optional.ofNullable(lpcd.getCorrectedUllage())
+              .ifPresent(stowageBuilder::setCorrectedUllageOrginal);
+          Optional.ofNullable(lpcd.getCorrectionFactor())
+              .ifPresent(stowageBuilder::setCorrectionFactorOrginal);
+          Optional.ofNullable(lpcd.getFillingRatio())
+              .ifPresent(stowageBuilder::setFillingRatioOrginal);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeightOrginal);
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(stowageBuilder::setRdgUllageOrginal);
+
           addTankShortName(vesselReplyCommingle, lpcd.getTankId(), stowageBuilder);
           replyBuilder.addLoadablePlanStowageDetails(stowageBuilder);
         });
