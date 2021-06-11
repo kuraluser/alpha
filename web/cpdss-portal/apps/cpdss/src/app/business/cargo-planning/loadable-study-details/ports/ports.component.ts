@@ -440,6 +440,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       form.controls.port.updateValueAndValidity();
       this.updateValidityAndEditMode(index, 'layCan');
       this.updateValidityAndEditMode(index, 'eta');
+      this.updateValidityAndEditMode(index, 'etd');
       form.controls.layCanTo.updateValueAndValidity();
       form.controls.layCanFrom.updateValueAndValidity();
       this.updateValuesIfBunkering(event.data, form, index);
@@ -841,8 +842,8 @@ export class PortsComponent implements OnInit, OnDestroy {
     if (field) {
       field.updateValueAndValidity();
       field.markAsTouched();
-      const row = this.portsLists[index]
-      row[key].isEditMode = field.invalid && field.enabled || row.isAdd;
+      const row = this.portsLists[index];
+      row[key].isEditMode = field.invalid && field.enabled || (row.isAdd && key !== 'eta' && key !== 'etd')
     }
   }
 

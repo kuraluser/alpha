@@ -100,9 +100,9 @@ export class LoadableQuantityComponent implements OnInit {
      getTotalDiffClass(value: number) {
       if (!isNaN(Number(value))) {
         if (value > 0) {
-          return 'success';
+          return 'badge-custom success';
         } else if (value < 0) {
-          return 'error';
+          return 'badge-custom error';
         } else {
           return '';
         }

@@ -82,6 +82,17 @@ export class SecurityService {
   }
 
   /**
+   * Refresh token update
+   *
+   * @static
+   * @memberof SecurityService
+   */
+   static refreshToken(refreshedToken: string) {
+    SecurityService.setAuthToken(refreshedToken)
+    SecurityService.initPropertiesDB(refreshedToken);
+  }
+
+  /**
    * Initialise properties db in indexed db while login
    *
    * @static

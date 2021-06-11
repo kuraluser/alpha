@@ -75,7 +75,6 @@ export class CommentsComponent implements OnInit {
   public formError: boolean;
   public isPermissionAvaliable: boolean;
   public errorMessages = {
-    'required': 'COMMENTS_REQUIRED',
     'maxlength': 'LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH',
     'whitespace': 'COMMENTS_REQUIRED'
   };
@@ -102,7 +101,7 @@ export class CommentsComponent implements OnInit {
   ngOnInit(): void {
     this.isPermissionAvaliable = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePlanAddComments'], false).view;
     this.commentForm = this.fb.group({
-      comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.required, Validators.maxLength(100) , whiteSpaceValidator]]
+      comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.maxLength(100) , whiteSpaceValidator]]
     })
 
   }

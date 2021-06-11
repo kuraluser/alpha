@@ -23,6 +23,8 @@ import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { saveAs } from 'file-saver';
+import { SecurityService } from '../../../shared/services/security/security.service';
+import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 
 /**
  * Component class of loadable plan
@@ -127,7 +129,8 @@ export class LoadablePlanComponent implements OnInit  {
     private permissionsService: PermissionsService,
     private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private globalErrorHandler: GlobalErrorHandler
   ) { }
 
   /**
@@ -177,6 +180,11 @@ export class LoadablePlanComponent implements OnInit  {
    * @memberof LoadablePlanComponent
    */
   private swMessageHandler = async event => {
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
+      this.globalErrorHandler.sessionOutMessage();
+    } else {
+      SecurityService.refreshToken(event.data.refreshedToken)
+    }
     if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
       if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
         this.processingMessage();
