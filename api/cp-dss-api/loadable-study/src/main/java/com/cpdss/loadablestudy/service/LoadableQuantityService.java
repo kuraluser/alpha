@@ -62,9 +62,23 @@ public class LoadableQuantityService {
       LoadableQuantityResponse.Builder builder, Long loadableStudyId, Long portRotationId)
       throws GenericServiceException {
 
-    Optional<LoadableQuantity> loadableQuantity =
-        loadableQuantityRepository.findByLSIdAndPortRotationId(
-            loadableStudyId, portRotationId, true);
+	 Optional<LoadableQuantity> loadableQuantity = null;
+	//If portRotationId is -1 then it will fetch value for synoptical table page
+	//otherwise fetch value for cargo nomination page
+	if(portRotationId == -1) {
+		List<LoadableQuantity> lQuantity = loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+	            loadableStudyId, true);
+		if(lQuantity.size() > 0) {
+			loadableQuantity = Optional.ofNullable(lQuantity.get(0));  
+		}else {
+			loadableQuantity = Optional.ofNullable(null);  
+		}
+	}else {
+		 loadableQuantity =
+		        loadableQuantityRepository.findByLSIdAndPortRotationId(
+		            loadableStudyId, portRotationId, true);
+	}
+    
 
     Optional<LoadableStudy> loadableStudy =
         loadableStudyRepository.findByIdAndIsActive(loadableStudyId, true);

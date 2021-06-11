@@ -1162,11 +1162,21 @@ public class LoadableStudyService {
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
     LoadableQuantity loadableQuantity = new LoadableQuantity();
-    LoadableQuantityReply loadableQuantityRequest =
-        LoadableQuantityReply.newBuilder()
-            .setLoadableStudyId(loadableStudyId)
-            .setPortRotationId(portRotationId)
-            .build();
+    Optional<Long> nullCheckPortRotationId = Optional.ofNullable(portRotationId);
+    LoadableQuantityReply loadableQuantityRequest;
+    //If portRotationId is null then it will fetch value for synoptical table page
+  	//otherwise fetch value for cargo nomination page
+    if(nullCheckPortRotationId.isPresent()) {
+    	loadableQuantityRequest = LoadableQuantityReply.newBuilder()
+                .setLoadableStudyId(loadableStudyId)
+                .setPortRotationId(portRotationId)
+                .build();
+    }else{
+    	loadableQuantityRequest = LoadableQuantityReply.newBuilder()
+                .setLoadableStudyId(loadableStudyId)
+                .setPortRotationId(-1)
+                .build();
+    }
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
         this.getLoadableQuantityResponse(loadableQuantityRequest);
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getStatus())) {
