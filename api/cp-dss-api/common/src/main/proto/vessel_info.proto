@@ -160,6 +160,16 @@ message VesselReply {
 		ResponseStatus responseStatus = 7;
 		repeated UllageDetails ullageDetails = 8;
 		repeated UllageTrimCorrection ullageTrimCorrection = 9;
+		repeated SelectableParameter selectableParameter = 10;
+	}
+	
+	message SelectableParameter {
+		string paramterName = 1;
+		repeated ParameterValue values = 2;
+	}
+	message ParameterValue {
+		int64 type = 1;
+		string value = 2;
 	}
 	
 	message UllageDetails {

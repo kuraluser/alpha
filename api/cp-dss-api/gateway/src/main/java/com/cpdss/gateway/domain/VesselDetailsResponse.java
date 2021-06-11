@@ -5,7 +5,9 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import java.util.List;
 import lombok.Data;
 
-/** @Author jerin.g */
+/** @Author jerin.g
+ *  @Author arun.j
+ *  */
 @Data
 public class VesselDetailsResponse {
 
@@ -26,4 +28,6 @@ public class VesselDetailsResponse {
   private List<UllageDetails> ullageDetails;
 
   private List<UllageTrimCorrection> ullageTrimCorrections;
+  
+  private List<SelectableParameter> selectableParameter;
 }
