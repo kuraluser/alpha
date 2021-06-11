@@ -248,10 +248,13 @@ public class LoadableQuantityService {
       loadableQuantityRequest.setLastUpdatedTime(lastUpdatedTime);
       loadableQuantityRequest.setPortRotationId(portRotationId);
       loadableQuantityRequest.setId(loadableQuantity.get().getId());
-      if(Optional.ofNullable(loadableQuantity.get().getDisplacementAtDraftRestriction()).isPresent()) {   	  
-    	  loadableQuantityRequest.setDisplacmentDraftRestriction(loadableQuantity.get().getDisplacementAtDraftRestriction().toString());
+      if (Optional.ofNullable(loadableQuantity.get().getDisplacementAtDraftRestriction())
+          .isPresent()) {
+        loadableQuantityRequest.setDisplacmentDraftRestriction(
+            loadableQuantity.get().getDisplacementAtDraftRestriction().toString());
       } else {
-    	  loadableQuantityRequest.setDisplacmentDraftRestriction(vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction()); 
+        loadableQuantityRequest.setDisplacmentDraftRestriction(
+            vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction());
       }
       Optional.ofNullable(loadableQuantity.get().getConstant())
           .ifPresent(cons -> loadableQuantityRequest.setConstant(cons.toString()));
@@ -288,10 +291,12 @@ public class LoadableQuantityService {
           .ifPresent(
               vesselAverageSpeed ->
                   loadableQuantityRequest.setVesselAverageSpeed(vesselAverageSpeed.toString()));
-      if(Optional.ofNullable(loadableQuantity.get().getLightWeight()).isPresent()) {   	  
-    	  loadableQuantityRequest.setVesselLightWeight(loadableQuantity.get().getLightWeight().toString());
+      if (Optional.ofNullable(loadableQuantity.get().getLightWeight()).isPresent()) {
+        loadableQuantityRequest.setVesselLightWeight(
+            loadableQuantity.get().getLightWeight().toString());
       } else {
-    	  loadableQuantityRequest.setVesselLightWeight(vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight()); 
+        loadableQuantityRequest.setVesselLightWeight(
+            vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight());
       }
       Optional.ofNullable(loadableQuantity.get().getLastModifiedDateTime())
           .ifPresent(

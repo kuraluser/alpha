@@ -5542,25 +5542,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
-	List<PortRotationIdAndPortId> ports = loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(ls.getId(), true);
-	boolean valid = false;
-	for(PortRotationIdAndPortId port : ports) {		
-		Optional<LoadableQuantity> lQs =
-				loadableQuantityRepository.findByLSIdAndPortRotationId(ls.getId(), port.getId(), true);
-		if (lQs.isPresent()) {
-			valid = true;
-			break;
-		}
-	}
-	if(!valid) {
-		log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
-		throw new GenericServiceException(
-				"No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
-				CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
-				HttpStatusCode.INTERNAL_SERVER_ERROR);
-		
-	}
-		
+    List<PortRotationIdAndPortId> ports =
+        loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(ls.getId(), true);
+    boolean valid = false;
+    for (PortRotationIdAndPortId port : ports) {
+      Optional<LoadableQuantity> lQs =
+          loadableQuantityRepository.findByLSIdAndPortRotationId(ls.getId(), port.getId(), true);
+      if (lQs.isPresent()) {
+        valid = true;
+        break;
+      }
+    }
+    if (!valid) {
+      log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
+      throw new GenericServiceException(
+          "No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
+          CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
   }
 
   public void saveLoadablePatternDetails(
@@ -8836,6 +8835,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           Optional.of(lpq.getCargoColor()).ifPresent(builder::setColorCode);
           Optional.of(lpq.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
+          Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }
