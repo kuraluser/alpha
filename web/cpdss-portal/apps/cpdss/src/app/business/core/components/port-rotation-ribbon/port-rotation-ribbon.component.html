@@ -25,7 +25,7 @@
                                             {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
                                         </ng-container>
                                     </div>
-                                    <div class="relative pr-15" *ngIf="port?.isDistanceEditable">
+                                    <div class="relative error-icon-wrapper pr-15" *ngIf="port?.isDistanceEditable">
                                         <input class="form-control" type="number" name="distance"
                                             id="distance_{{portList.indexOf(port)}}" formControlName="distance"
                                             (onBlur)="onBlur($event, port, 'distance')">
@@ -51,7 +51,7 @@
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETA' | translate }}</label>
                                 <div *ngIf="!port?.isDateEditable" class="col text-secondary text-capitalise">
                                     {{port.portDate}}</div>
-                                <div class="col text-secondary relative mr-10" *ngIf="port?.isDateEditable">
+                                <div class="col text-secondary error-icon-wrapper relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
                                         (onClose)="onBlur($event, port, 'date')"
                                         id="eta_date_{{portList.indexOf(port)}}" [minDate]="minDate"
@@ -69,7 +69,7 @@
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETD' | translate }}</label>
                                 <div *ngIf="!port?.isDateEditable" class="col text-secondary text-capitalise" >
                                     {{port.portDate}}</div>
-                                <div class="col text-secondary relative mr-10" *ngIf="port?.isDateEditable">
+                                <div class="col text-secondary validation-error relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
                                         (onClose)="onBlur($event, port, 'date')"
                                         id="etd_date_{{portList.indexOf(port)}}" [minDate]="minDate"
@@ -88,7 +88,7 @@
                                 <div *ngIf="!port?.isTimeEditable" class="col text-secondary">
                                     {{port.portTime}}
                                 </div>
-                                <div class="col text-secondary relative mr-10" *ngIf="port?.isTimeEditable">
+                                <div class="col text-secondary relative error-icon-wrapper mr-10" *ngIf="port?.isTimeEditable">
                                     <p-calendar appendTo="body"
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="time" [timeOnly]="true"
@@ -96,7 +96,7 @@
                                         #portRibbonArrTime>
                                         <p-footer>
                                             <button class="btn btn-default"
-                                                (click)="portRibbonArrTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                                (click)="setTimeInput($event, port, 'time', portRibbonArrTime)">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                                                 translate}}</button>
                                         </p-footer>
                                     </p-calendar>
@@ -113,7 +113,7 @@
                                 <div *ngIf="!port?.isTimeEditable" class="col text-secondary">
                                     {{port.portTime}}
                                 </div>
-                                <div class="col text-secondary relative mr-10" *ngIf="port?.isTimeEditable">
+                                <div class="col text-secondary relative error-icon-wrapper mr-10" *ngIf="port?.isTimeEditable">
                                     <p-calendar appendTo="body"
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="time" [timeOnly]="true" inputId="timeonly"
@@ -121,7 +121,7 @@
                                         (onBlur)="onBlur($event, port, 'time')" #portRibbonDepTime>
                                         <p-footer>
                                             <button class="btn btn-default"
-                                                (click)="portRibbonDepTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                                (click)="setTimeInput($event, port, 'time', portRibbonDepTime)">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                                                 translate}}</button>
                                         </p-footer>
                                     </p-calendar>

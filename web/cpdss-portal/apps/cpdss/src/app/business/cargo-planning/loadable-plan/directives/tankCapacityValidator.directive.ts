@@ -12,24 +12,23 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
  */
  export function tankCapacityValidator(field: string, compareValue: string , errorField: string , fillingRatio: string): ValidatorFn {
     return (control: FormControl): ValidationErrors | null => {
-      
+
       if (!control.root || !control.parent) {
         return null;
       }
- 
+
       if(Number(control['parent']?.get(field)?.value) > Number(compareValue)) {
         const formControl = <FormControl>control.parent.controls[errorField];
         formControl.markAsTouched();
         formControl.markAsDirty();
-        formControl.setErrors({greaterThanTankCapacity: true})
+        return { greaterThanTankCapacity: true };
       } else if(Number(control['parent']?.get(fillingRatio)?.value) > Number(AppConfigurationService.settings.maxFillingPercentage)) {
         const formControl = <FormControl>control.parent.controls[errorField];
         formControl.markAsTouched();
         formControl.markAsDirty();
-        formControl.setErrors({maxLimit: true})
+        return { maxLimit: true };
       } else {
-        const formControl = <FormControl>control.parent.controls[errorField];
-        formControl.setErrors(null)
+        return null;
       }
     }
-  } 
+  }

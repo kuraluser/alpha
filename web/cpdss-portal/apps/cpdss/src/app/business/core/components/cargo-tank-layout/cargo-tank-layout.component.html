@@ -23,7 +23,7 @@
                             </li>
                             <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                             <li class="col-7">
-                                {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.0-2') : 0}}
+                                {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.2-2') : 0}}
                                 {{options?.ullageUnit}}</li>
                             <li class="col-5">{{'TANK_LAYOUT_API'| translate}}</li>
                             <li class="col-7">
@@ -43,8 +43,7 @@
                 <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseenter)="tank && op.toggle($event)"
                 (mouseleave)="tank && op.toggle($event)"></div>
 
-                <h5 class="tank-name">
-                    {{tank?.shortName}}
+                <h5 class="tank-name">{{tank?.shortName}}
                 </h5>
                 <ng-container *ngIf="tank?.commodity">
                     <span *ngIf="options?.showCommodityName"
@@ -60,7 +59,7 @@
                     
                     </div>
                     <span *ngIf="options?.showUllage"
-                    class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.0-2' }}
+                    class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.2-2' }}
                     {{options?.ullageUnit}}</span>
                     <span *ngIf="options?.showFillingPercentage"
                         class="tank-filling-percentage">{{options?.fillingPercentageField ?

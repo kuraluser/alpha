@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IBallastStowageDetails, IBallastTank } from '../../core/models/common.model';
 import { ICommingleDetails } from '../models/cargo-planning.model';
 
@@ -171,7 +173,9 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
 * @returns {IDataTableColumn[]}
 * @memberof LoadableStudyPatternTransformationService
 */
-  getCargotobeLoadedDatatableColumns(): IDataTableColumn[] {
+  getCargotobeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColumn[] {
+    const quantityNumberFormat = AppConfigurationService.settings['quantityNumberFormat' + quantityUnit];
+
     return [
       {
         field: 'grade',
@@ -193,7 +197,8 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
       },
       {
         field: 'orderedQuantity',
-        header: 'CARGO_TO_BE_LOADED_NOMINATION'
+        header: 'CARGO_TO_BE_LOADED_NOMINATION',
+        numberFormat: quantityNumberFormat
       },
       {
         field: 'minMaxTolerance',
@@ -201,7 +206,8 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
       },
       {
         field: 'loadableMT',
-        header: 'CARGO_TO_BE_LOADED_SHIP_LOADABLE'
+        header: 'CARGO_TO_BE_LOADED_SHIP_LOADABLE',
+        numberFormat: quantityNumberFormat
       },
       {
         field: 'differencePercentage',
@@ -214,7 +220,7 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
       {
         field: 'slopQuantity',
         header: 'CARGO_TO_BE_LOADED_SLOP_QTY',
-        numberFormat: '1.2-2'
+        numberFormat: quantityNumberFormat
       }
     ]
   }

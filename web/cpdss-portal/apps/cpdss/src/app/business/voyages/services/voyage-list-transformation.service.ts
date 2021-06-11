@@ -32,7 +32,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'voyageNo',
-        header: 'VOYAGE NO',
+        header: 'VOYAGE_NO',
         fieldHeaderClass: 'column-voyage-no',
         filter: true,
         filterPlaceholder: 'SEARCH_VOYAGE',
@@ -45,7 +45,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'charterer',
-        header: 'CHARTER',
+        header: 'CHARTERER',
         fieldHeaderClass: 'column-charterer',
         filter: true,
         filterPlaceholder: 'SEARCH_CHARTER',
@@ -58,7 +58,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'plannedStartDate',
-        header: 'PLANNED START DATE',
+        header: 'VOYAGE_PLANNED_START_DATE',
         fieldHeaderClass: 'column-planned-start-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
@@ -72,7 +72,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'plannedEndDate',
-        header: 'PLANNED END DATE',
+        header: 'VOYAGE_PLANNED_END_DATE',
         fieldHeaderClass: 'column-planned-end-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
@@ -86,7 +86,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'actualStartDate',
-        header: 'ACTUAL START DATE',
+        header: 'VOYAGE_ACTUAL_START_DATE',
         fieldHeaderClass: 'column-actual-start-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
@@ -100,7 +100,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'actualEndDate',
-        header: 'ACTUAL END DATE',
+        header: 'VOYAGE_ACTUAL_END_DATE',
         fieldHeaderClass: 'column-actual-end-date',
         filter: true,
         filterPlaceholder: 'SEARCH_DATE',
@@ -114,7 +114,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'loading',
-        header: 'LOADING PORTS',
+        header: 'VOYAGE_LOADING_PORTS',
         fieldHeaderClass: 'column-loading',
         filter: true,
         filterPlaceholder: 'SEARCH_LOADING_PORT',
@@ -125,7 +125,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'discharging',
-        header: 'DISCHARGE PORTS',
+        header: 'VOYAGE_DISCHARGE_PORTS',
         fieldHeaderClass: 'column-discharging',
         filter: true,
         filterPlaceholder: 'SEARCH_DISCHARGE_PORT',
@@ -136,7 +136,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'cargo',
-        header: 'CARGO LOADED',
+        header: 'VOYAGE_CARGO_LOADED',
         fieldHeaderClass: 'column-cargo',
         filter: true,
         filterPlaceholder: 'SEARCH_CARGO_LOADED',
@@ -147,7 +147,7 @@ export class VoyageListTransformationService {
       },
       {
         field: 'status',
-        header: 'STATUS',
+        header: 'VOYAGE_STATUS',
         fieldHeaderClass: 'column-status',
         filter: true,
         filterPlaceholder: 'SEARCH_STATUS',

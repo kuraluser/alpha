@@ -19,6 +19,7 @@ import { InBoundEventDataEntity } from './entities/common-inbound-event.entity';
 import { OutBoundEventDataEntity } from './entities/common-outbound-event.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonCancelTaskService } from './tasks/common-cancel-task.service';
+import { CommonCancelEventService } from './events/common-cancel-event.service';
 
 /**
  * Common modules
@@ -30,11 +31,11 @@ import { CommonCancelTaskService } from './tasks/common-cancel-task.service';
     CommonUtilService, CommonDataStore, CommonSplitTaskService, CommonTransportTaskService,
     CommonTransportEventService, CommonFinishTaskService, CommonFinishEventService, CommonVerifyTaskService,
     CommonResendTaskService, CommonResendEventService, CommonConfirmTaskService, CommonCancelTaskService, CommonConfirmEventService,
-    CommonDownloadApiService],
+    CommonCancelEventService, CommonDownloadApiService],
   exports: [CommonDBService, CommonUploadApiService, CommonLoggerService,
     CommonUtilService, CommonDataStore, CommonSplitTaskService, CommonTransportTaskService,
     CommonTransportEventService, CommonFinishTaskService, CommonFinishEventService, CommonVerifyTaskService,
     CommonResendTaskService, CommonResendEventService, CommonConfirmTaskService, CommonCancelTaskService, CommonConfirmEventService,
-    CommonDownloadApiService]
+    CommonCancelEventService, CommonDownloadApiService]
 })
 export class CommonModule { }

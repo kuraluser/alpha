@@ -13,10 +13,9 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { ICargo, ICargoResponseModel, IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { first } from 'rxjs/operators';
+import { VALIDATION_AND_SAVE_STATUS } from '../models/loadable-plan.model';
 
 /**
  * Component class of pattern history screen
@@ -79,6 +78,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePlanPermissionContext: IPermissionContext;
   showPortRotationPopup = false;
   selectedLoadablePatternId: number;
+  readonly VALIDATION_AND_SAVE_STATUS = VALIDATION_AND_SAVE_STATUS;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -89,7 +89,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
     private loadablePatternApiService: LoadablePatternHistoryApiService,
     private permissionsService: PermissionsService,
     private quantityPipe: QuantityPipe,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private translateService: TranslateService) { }
 
@@ -320,18 +320,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
   convertQuantityToSelectedUnit() {
     const loadablePatterns = this.loadablePatterns?.map(pattern => {
       const loadablePatternCargoDetails = pattern.loadablePatternCargoDetails.map(cargo => {
-        if (!cargo?.isCommingle) {
-          pattern?.loadableQuantityCommingleCargoDetails.forEach(commingleCargo => {
-            if (cargo.cargoAbbreviation === commingleCargo.cargo1Abbreviation) {
-              cargo.quantity = Number(cargo.quantity) - Number(commingleCargo?.cargo1MT);
-              cargo.orderedQuantity = Number(cargo.orderedQuantity) - Number(commingleCargo?.cargo1MT);
-            }
-            else if (cargo.cargoAbbreviation === commingleCargo.cargo2Abbreviation) {
-              cargo.quantity = Number(cargo.quantity) - Number(commingleCargo?.cargo2MT);
-              cargo.orderedQuantity = Number(cargo.orderedQuantity) - Number(commingleCargo?.cargo2MT);
-            }
-          });
-        }
         const orderedQuantity = this.quantityPipe.transform(cargo.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
         cargo.orderedQuantity = orderedQuantity ? orderedQuantity : 0;
         const quantity = this.quantityPipe.transform(cargo.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
@@ -368,15 +356,38 @@ export class LoadablePatternHistoryComponent implements OnInit {
     const result = await this.loadablePatternApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, loadablePatternId).toPromise();
     this.ngxSpinnerService.hide();
     let detail;
+    
     if (result.confirmed) {
       detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
     } else {
       detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
     }
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-      if (response) {
-        const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
+
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_SUMMARY', detail, 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL', 'LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR',
+    , 'VALIDATE_AND_SAVE_ERROR','VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING']).toPromise();
+    if(!result.validated) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: translationKeys['VALIDATE_AND_SAVE_PENDING'] });
+      return;
+    }
+    else if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
+      const errorDetails = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED === result.loadablePatternStatusId ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
+      this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail:  errorDetails });
+      return;
+    }
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['LOADABLE_PATTERN_CONFIRM_SUMMARY'],
+      message: translationKeys[detail],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['LOADABLE_PATTERN_CONFIRM_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
         try {
           const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePatternId).toPromise();
           if (confirmResult.responseStatus.status === '200') {
@@ -390,7 +401,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
           }
         }
       }
-    })
+    });
   }
 
 
@@ -472,6 +483,11 @@ export class LoadablePatternHistoryComponent implements OnInit {
   */
   setPatternViewMorePopupVisibility(emittedValue) {
     this.viewMore = emittedValue;
+    if(!emittedValue) {
+      this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit;
+      this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+      this.convertQuantityToSelectedUnit();
+    }
   }
 
   /**

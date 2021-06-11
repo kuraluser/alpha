@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { LoadingDischargingCargoDetailsTransformationService } from './loading-discharging-cargo-details-transformation.service';
 
 @Component({
@@ -572,7 +573,7 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
       "showTooltip": true,
       "isSelectable": false,
       "ullageField": "correctedUllage",
-      "ullageUnit": "CM",
+      "ullageUnit": AppConfigurationService.settings?.ullageUnit,
       "densityField": "api",
       "weightField": "actualWeight",
       "commodityNameField": "abbreviation"

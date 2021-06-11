@@ -336,6 +336,7 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onRowSave() {
+    console.log('datatableRowsave' + Date.now()); // TODO: Need to remove after testing.
     this.saveRow.emit(this.selectedRowEvent);
   }
 
@@ -648,7 +649,7 @@ export class DatatableComponent implements OnInit {
       this.currentPageChange.emit(this._currentPage);
       this.dataStateChange.emit(data);
     } else {
-      if (col?.dateFormat && col?.dateFormat === this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)) {
+      if (value && col?.dateFormat && col?.dateFormat === this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)) {
         this.datatable.filter(moment(value).format(AppConfigurationService.settings?.dateFormat.split(' ')[0]), field, filterMatchMode);
       } else {
         this.datatable.filter(this.formatDateTime(value), field, filterMatchMode);

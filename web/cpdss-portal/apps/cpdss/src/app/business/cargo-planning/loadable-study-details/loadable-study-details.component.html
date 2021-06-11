@@ -153,7 +153,7 @@
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew && (cargoNominationTabPermission?.view || cargoNominationTabPermission?.view === undefined)"
                     [permission]="cargoNominationTabPermission" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
                     [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"
-                    (cargoNominationUpdate)="cargoNominationUpdate($event)"  ></cpdss-portal-cargo-nomination>
+                    (cargoNominationUpdate)="cargoNominationUpdate($event)" (portOhqStatusUpdate)="portOhqStatusUpdate($event)"></cpdss-portal-cargo-nomination>
                 <cpdss-portal-ports
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && portsTabPermission?.view" [permission]="portsTabPermission" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy" (portUpdate)="portUpdate($event)">
@@ -166,7 +166,7 @@
                 <cpdss-portal-on-board-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-                    [loadableStudy]="selectedLoadableStudy" [quantitySelectedUnit]="currentUnit">
+                    [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
 
 
@@ -185,7 +185,7 @@
                                     [errorMessages]="errorMesages.dischargePort"></cpdss-portal-validation-error>
                             </span>
                             <ng-container
-                                *ngIf="dischargingPorts && dischargingPorts.length && dischargeCargos && dischargeCargos.length">
+                                *ngIf="dischargingPorts && dischargingPorts.length && dischargeCargos && dischargeCargos.length>1">
                                 <label class="col-form-label pr-10 ml-15">{{'CARGO_DISCHARGE_FIRST' |
                                     translate}}</label>
                                 <p-dropdown id="cargo_discharge" styleClass="w-150" [(ngModel)]="selectedDischargeCargo"

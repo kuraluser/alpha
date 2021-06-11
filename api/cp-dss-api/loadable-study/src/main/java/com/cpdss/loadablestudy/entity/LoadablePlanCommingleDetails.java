@@ -116,4 +116,13 @@ public class LoadablePlanCommingleDetails extends EntityDoc {
 
   @Column(name = "slop_quantity")
   private String slopQuantity;
+
+  @Column(name = "time_required_for_loading")
+  private String timeRequiredForLoading;
+
+  @Column(name = "cargo1_nomination_xid")
+  private Long cargo1NominationId;
+
+  @Column(name = "cargo2_nomination_xid")
+  private Long cargo2NominationId;
 }

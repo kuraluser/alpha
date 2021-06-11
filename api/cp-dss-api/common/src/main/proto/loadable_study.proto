@@ -429,6 +429,11 @@ message LoadablePlanBallastDetails {
 	string colorCode = 15;
 	string tankShortName = 16;
 	int32 tankDisplayOrder = 17;
+	string rdgLevelOrginal = 18;
+	string correctionFactorOrginal = 19;
+	string correctedLevelOrginal = 20; //same as corrected ullage
+	string metricTonOrginal = 21; //quantity
+	string percentageOrginal = 22;	
 }
 
 message LoadablePlanStowageDetails {
@@ -453,6 +458,12 @@ message LoadablePlanStowageDetails {
   string sg = 19;
   string tankShortName = 20;
   int32 tankDisplayOrder = 21;
+  
+  string correctedUllageOrginal = 22; // ullage(M)
+  string correctionFactorOrginal = 23;
+  string fillingRatioOrginal = 24;
+  string rdgUllageOrginal = 25; 
+  string weightOrginal = 26; // MT
  }
 
 
@@ -485,8 +496,11 @@ message LoadableQuantityCommingleCargoDetails {
 	 string correctedUllage = 26;
  	 string rdgUllage = 27;
      string correctionFactor = 28;
-      string slopQuantity = 29;
+     string slopQuantity = 29;
      string actualQuantity=30;
+	 string timeRequiredForLoading = 31;
+	 int64 cargo1NominationId = 32;
+	 int64 cargo2NominationId = 33;
 }
 
 message LoadableQuantityCargoDetails {
@@ -514,6 +528,7 @@ message LoadableQuantityCargoDetails {
 	 string slopQuantity = 22;
 	 int64 cargoNominationId = 23;
 	 repeated LoadingPortDetail loadingPorts = 24;
+	 string timeRequiredForLoading = 25;
 }
 
 message ConfirmPlanRequest {
@@ -524,6 +539,8 @@ message ConfirmPlanRequest {
 message ConfirmPlanReply {
 	ResponseStatus responseStatus = 1;
 	bool confirmed = 2;
+	int64 loadablePatternStatusId = 3;
+	bool validated = 4;
 }
 
 message LoadableStudyStatusRequest {
@@ -950,6 +967,8 @@ message LoadablePattern {
 	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 9;
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 10;
 	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 11;
+	bool validated = 12;
+	int64 loadablePatternStatusId = 13;
 }
 
 message LoadablePatternCargoDetails {

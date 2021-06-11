@@ -248,9 +248,14 @@ public class LoadableQuantityService {
       loadableQuantityRequest.setLastUpdatedTime(lastUpdatedTime);
       loadableQuantityRequest.setPortRotationId(portRotationId);
       loadableQuantityRequest.setId(loadableQuantity.get().getId());
-      Optional.ofNullable(loadableQuantity.get().getDisplacementAtDraftRestriction())
-          .ifPresent(
-              disp -> loadableQuantityRequest.setDisplacmentDraftRestriction(disp.toString()));
+      if (Optional.ofNullable(loadableQuantity.get().getDisplacementAtDraftRestriction())
+          .isPresent()) {
+        loadableQuantityRequest.setDisplacmentDraftRestriction(
+            loadableQuantity.get().getDisplacementAtDraftRestriction().toString());
+      } else {
+        loadableQuantityRequest.setDisplacmentDraftRestriction(
+            vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction());
+      }
       Optional.ofNullable(loadableQuantity.get().getConstant())
           .ifPresent(cons -> loadableQuantityRequest.setConstant(cons.toString()));
       Optional.ofNullable(loadableQuantity.get().getDistanceFromLastPort())
@@ -286,10 +291,13 @@ public class LoadableQuantityService {
           .ifPresent(
               vesselAverageSpeed ->
                   loadableQuantityRequest.setVesselAverageSpeed(vesselAverageSpeed.toString()));
-      Optional.ofNullable(loadableQuantity.get().getLightWeight())
-          .ifPresent(
-              vesselLightWeight ->
-                  loadableQuantityRequest.setVesselLightWeight(vesselLightWeight.toString()));
+      if (Optional.ofNullable(loadableQuantity.get().getLightWeight()).isPresent()) {
+        loadableQuantityRequest.setVesselLightWeight(
+            loadableQuantity.get().getLightWeight().toString());
+      } else {
+        loadableQuantityRequest.setVesselLightWeight(
+            vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight());
+      }
       Optional.ofNullable(loadableQuantity.get().getLastModifiedDateTime())
           .ifPresent(
               updateDateAndTime ->

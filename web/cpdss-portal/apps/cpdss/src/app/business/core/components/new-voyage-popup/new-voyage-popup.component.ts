@@ -135,6 +135,7 @@ export class NewVoyagePopupComponent implements OnInit {
    * Save button click
    */
   saveNewVoyagePopup() {
+    console.log('saveNewVoyage' + Date.now()); // TODO: Need to remove after testing
     this.isSubmitted = true;
     if (this.newVoyageForm.valid) {
       this.onSubmit();

@@ -158,7 +158,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   setPagePermissionContext() {
-    
+
 
     this.cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
     this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW] };
@@ -173,7 +173,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 
     this.obqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], false);
     this.obqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
-    
+
     this.tabPermission();
     this.addComminglePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoCommingle'], false);
 
@@ -231,9 +231,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
-    this.loadableStudies = result?.loadableStudies ?? [];
-    if (this.loadableStudies.length) {
-      this.setProcessingLoadableStudyActions(0, 0);
+    const loadableStudies = result?.loadableStudies ?? [];
+    if (loadableStudies.length) {
+      this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
       this.isDischargePortAvailable();
       if(this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION) {
@@ -246,6 +246,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.loadableStudyDetailsTransformationService.portUpdated();
     } else {
       this.selectedLoadableStudy = null;
+      this.loadableStudies = [];
     }
     this.ngxSpinnerService.hide();
   }
@@ -274,7 +275,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts = [];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
-    
+
     // if no loadable study is selected set 1st loadable study as selected one and reload
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
@@ -301,6 +302,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   addCargoNomination() {
+    console.log('addCargoNomination' + Date.now()); // TODO: Need to remove after testing.
     this.loadableStudyDetailsTransformationService.addCargoNomination();
   }
 
@@ -376,6 +378,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   private swMessageHandler = async event => {
     if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isGenerateClicked = true;
         this.processingMessage();
       } else {
         this.messageService.clear();
@@ -439,8 +442,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @param {*} event
    * @memberof LoadableStudyDetailsComponent
    */
-  setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
-    const loadableStudies = this.loadableStudies?.map(loadableStudy => {
+  setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number, loadableStudies: LoadableStudy[] = null) {
+    loadableStudies = loadableStudies ?? this.loadableStudies;
+    const _loadableStudies = loadableStudies?.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
         if ([4, 5].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
@@ -460,7 +464,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       return loadableStudy;
     });
-    this.loadableStudies = loadableStudies;
+    this.loadableStudies = _loadableStudies;
   }
 
   /**
@@ -653,6 +657,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    }
 
   /**
+   * function to emit incomplete status change
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async portOhqStatusUpdate(event) {
+    this.portsComplete = event;
+    this.ohqComplete = event;
+  }
+
+  /**
  * Take the user to particular pattern history
  */
   navigateToPatternHistory(isViewPattern) {
@@ -675,9 +689,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
       this.isGenerateClicked = false;
       const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselId, this.voyageId).toPromise();
-      this.loadableStudies = result?.loadableStudies ?? [];
-      if (this.loadableStudies.length) { 
+      const loadableStudies = result?.loadableStudies ?? [];
+      if (loadableStudies.length) {
+        this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
         this.selectedLoadableStudy = this.loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === this.loadableStudyId) : this.loadableStudies[0];
+      } else {
+        this.loadableStudies = [];
       }
       this.tabPermission();
       this.ngxSpinnerService.hide();
@@ -877,13 +894,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       selectedLoadableStudyName: selectedLoadableStudyName,
       processId: null
     }
-    
+
     try {
       const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
       if (res.responseStatus.status === '200') {
         this.isGenerateClicked = true;
         this.selectedLoadableStudy.statusId = 4;
         this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING;
+        this.selectedLoadableStudy = JSON.parse(JSON.stringify(this.selectedLoadableStudy));
         data.processId = res.processId;
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });

@@ -46,13 +46,13 @@ subprojects {
   apply plugin: 'com.diffplug.gradle.spotless'
   
   // Applying sonarlint plugin
-  sonarlint {
+ /* sonarlint {
      ignoreFailures = true
 	 excludes {
-	      source 'ro/common/generated/*'
+	      source 'com/cpdss/common/generated/*'
 	 }
    }
-   
+   */
   // Applying spotless plugin with google java formatter
    spotless {
     java {

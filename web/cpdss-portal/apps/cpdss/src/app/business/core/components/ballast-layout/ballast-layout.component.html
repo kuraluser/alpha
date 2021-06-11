@@ -27,7 +27,7 @@
                                 <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
                                     <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                                     <li class="col-7">
-                                        {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.0-2') : 0}}
+                                        {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.2-2') : 0}}
                                         {{options?.ullageUnit}}</li>
                                     <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                                     <li class="col-7">
@@ -80,7 +80,7 @@
                             <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
                                 <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                                 <li class="col-7">
-                                    {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.0-2') : 0}}
+                                    {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.2-2') : 0}}
                                     {{options?.ullageUnit}}</li>
                                 <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                                 <li class="col-7">
@@ -131,7 +131,7 @@
                         <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
                             <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                             <li class="col-7">
-                                {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.0-2' ) : 0}}
+                                {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.2-2' ) : 0}}
                                 {{options?.ullageUnit}}</li>
                             <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                             <li class="col-7">
@@ -155,7 +155,7 @@
                 </h5>
                 <ng-container *ngIf="tank?.commodity">
                     <span *ngIf="options?.showUllage"
-                        class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.0-2' }}
+                        class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField] | number :'1.2-2' }}
                         {{options?.ullageUnit}}</span>
                     <span *ngIf="options?.showFillingPercentage"
                         class="tank-filling-percentage">{{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>

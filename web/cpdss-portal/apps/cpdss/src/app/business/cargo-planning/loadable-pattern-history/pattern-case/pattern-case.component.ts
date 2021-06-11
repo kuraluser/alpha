@@ -24,8 +24,8 @@ export class PatternCaseComponent implements OnInit {
   @Output() displayPatternViewMorePopup = new EventEmitter();
 
   @Input() index: number;
- 
-  @Input() 
+
+  @Input()
   set loadablePattern(loadablePattern: ILoadablePattern){
     this._loadablePattern = loadablePattern;
     this.loadablePatternDetailsId = loadablePattern?.loadablePatternId;
@@ -35,12 +35,12 @@ export class PatternCaseComponent implements OnInit {
     return this._loadablePattern
   }
   @Input() tankList: ICargoTank[][];
-  
+
   private _loadablePattern: ILoadablePattern;
   tableCol: IDataTableColumn[];
   loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantity', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantity', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api' }
   constructor(private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService) { }
 
   /**

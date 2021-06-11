@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Valid
 import { TranslateService } from '@ngx-translate/core';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { ICargo, ICargoNomination } from '../../models/cargo-planning.model';
 import { ICargoGroup, ICommingleCargo, ICommingleManual, ICommingleManualEvent, ICommingleResponseModel, ICommingleValueObject, IPercentage, IPurpose, IVesselCargoTank } from '../../models/commingle.model';
@@ -16,12 +16,10 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { CargoDuplicateValidator } from '../../directives/validator/cargo-duplicate-validator.directive';
 import { commingleQuantityValidator } from '../../directives/validator/commingle-quantity-validator.directive';
 import { PercentageValidator } from '../../directives/validator/percentage-validator.directive';
-import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
-import { first } from 'rxjs/operators';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
-import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service' 
+import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service'
 /**
  * Component class of commingle pop up
  *
@@ -93,7 +91,7 @@ export class CommingleComponent implements OnInit {
     private translateService: TranslateService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private permissionsService: PermissionsService,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private quantityDecimalService: QuantityDecimalService
   ) { }
@@ -136,22 +134,27 @@ export class CommingleComponent implements OnInit {
         purpose: this.purposeOfCommingle[0]
       });
       this.cargoNominationsCargo = this.commingleData.cargoNominations?.map((itm, index) => {
-        itm.loadingPorts = this.loadableStudyDetailsApiService.cargoNominations[index].loadingPorts.value
+        const cargoDetails = this.loadableStudyDetailsApiService.cargoNominations.find(cargo => cargo.id === itm.id)
+        itm.loadingPorts = cargoDetails?.loadingPorts.value
         return {
           ...this.cargos.find((item) => (item.id === itm.cargoId) && item),
-          api: this.loadableStudyDetailsApiService.cargoNominations[index].api?.value,
           ...itm
         }
       });
 
-     
-      let cargoGroupsTemp = this.commingleCargo?.cargoGroups?.filter((item) => {
-        let cargoIds = this.cargoNominationsCargo?.map(cargoNominationCargo => cargoNominationCargo.cargoId);
-        if (cargoIds.includes(item.cargo1Id) && cargoIds?.includes(item.cargo2Id)) {
-          return item;
-        }
-      })
 
+      let cargoGroupsTemp = this.commingleCargo?.cargoGroups?.filter((item) => {
+        let cargoIds = this.cargoNominationsCargo?.map(cargoNominationCargo => cargoNominationCargo.cargoId);        
+        if (cargoIds.includes(item.cargo1Id) && cargoIds?.includes(item.cargo2Id)) {
+          if (item.cargo1Id == item.cargo2Id && cargoIds[0] == cargoIds[1]) {
+            return item;
+          }
+          if (item.cargo1Id !== item.cargo2Id && cargoIds[0] !== cargoIds[1]) {
+            return item;
+          }
+        }     
+      })
+      
       if (this.commingleCargo) {
         this.commingleCargo.cargoGroups = cargoGroupsTemp;
       }
@@ -248,7 +251,7 @@ export class CommingleComponent implements OnInit {
   }
 
   /**
- * Save volume maxmisation 
+ * Save volume maxmisation
  */
   async saveVolumeMaximisation() {
     if (this.commingleForm.valid) {
@@ -276,8 +279,8 @@ export class CommingleComponent implements OnInit {
             }
             this.close();
           }
-        
-        
+
+
       } catch (errorResponse) {
         if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
           this.messageService.add({ severity: 'error', summary: translationKeys['COMMINGLE_SAVE_ERROR'], detail: translationKeys['COMMINGLE_SAVE_STATUS_ERROR'], life: 10000 });
@@ -294,7 +297,7 @@ export class CommingleComponent implements OnInit {
 
   /**
    * Event handler for edit complete event
-   * @param event 
+   * @param event
    */
   async onEditComplete(event: ICommingleManualEvent) {
     const form = this.row(event.index);
@@ -322,6 +325,13 @@ export class CommingleComponent implements OnInit {
       form.controls.cargo1IdPct.updateValueAndValidity();
       form.controls.cargo2IdPct.updateValueAndValidity();
     }
+  
+    if (event.field == 'cargo1' || event.field === 'cargo2') {
+      (<FormArray>this.commingleManualForm.get('dataTable')).controls.forEach((row: FormGroup) => {
+        row.controls.cargo1.updateValueAndValidity();
+        row.controls.cargo2.updateValueAndValidity();
+      });
+    }
   }
 
   /**
@@ -342,25 +352,27 @@ export class CommingleComponent implements OnInit {
 
   /**
    * Method for initializing manual commingle row
-   * @param commingle 
+   * @param commingle
    */
   private initCommingleManualFormGroup(commingle: ICommingleValueObject) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal();
+    const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
+      sl :0,
       cargo1: this.fb.control(commingle?.cargo1?.value, [Validators.required, CargoDuplicateValidator('cargo1', 'cargo2')]),
       cargo2: this.fb.control(commingle?.cargo2?.value, [Validators.required, CargoDuplicateValidator('cargo2', 'cargo1')]),
       cargo1pct: this.fb.control(commingle?.cargo1IdPct?.value?.id, [Validators.required]),
       cargo2pct: this.fb.control(commingle?.cargo2IdPct?.value?.id, [Validators.required]),
       cargo1IdPct: this.fb.control(commingle?.cargo1IdPct?.value, [Validators.required, PercentageValidator('cargo2IdPct')]),
       cargo2IdPct: this.fb.control(commingle?.cargo2IdPct?.value, [Validators.required, PercentageValidator('cargo1IdPct')]),
-      quantity: this.fb.control(commingle?.quantity?.value, [Validators.required, numberValidator(quantityDecimal, 7), Validators.min(0.01), commingleQuantityValidator()]),
+      quantity: this.fb.control(commingle?.quantity?.value, [Validators.required, numberValidator(quantityDecimal, 7), Validators.min(min), commingleQuantityValidator()]),
 
     });
   }
 
   /**
    * Method for updating manual commingle form
-   * 
+   *
    */
   private async initCommingleManualArray(commingleData: ICargoGroup[]) {
     this.ngxSpinnerService.show();
@@ -419,21 +431,46 @@ export class CommingleComponent implements OnInit {
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
       this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]);
       this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
+      this.resetSlNo();
     }
     else if (this.manualCommingleList?.length >= 3) {
       this.isMaxCargo = true;
     }
+  }
 
+  /**
+   * Method to reset sl no
+   *
+   * @memberof CommingleComponent
+   */
+
+  resetSlNo() {
+    const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
+    dataTableControl.controls.forEach((row, index) => {
+      row.get("sl").setValue(index);
+    });
   }
 
   /**
    * Delete row
-   * 
+   *
    */
-  onDeleteRow(event: ICommingleManualEvent) {
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'COMMINGLE_CARGO_DELETE_SUMMARY', detail: 'COMMINGLE_CARGO_DELETE_DETAILS', data: { confirmLabel: 'COMMINGLE_CARGO_DELETE_CONFIRM_LABEL', rejectLabel: 'COMMINGLE_CARGO_DELETE_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-      if (response) {
+  async onDeleteRow(event: ICommingleManualEvent) {
+    const translationKeys = await this.translateService.get(['COMMINGLE_CARGO_DELETE_SUMMARY', 'COMMINGLE_CARGO_DELETE_DETAILS', 'COMMINGLE_CARGO_DELETE_CONFIRM_LABEL', 'COMMINGLE_CARGO_DELETE_REJECT_LABEL']).toPromise();
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['COMMINGLE_CARGO_DELETE_SUMMARY'],
+      message: translationKeys['COMMINGLE_CARGO_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['COMMINGLE_CARGO_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['COMMINGLE_CARGO_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: () => {
         if (event?.data?.isDelete) {
           this.manualCommingleList.splice(event.index, 1);
           this.manualCommingleList = [...this.manualCommingleList];
@@ -587,7 +624,7 @@ export class CommingleComponent implements OnInit {
   }
 
   /**
-* Get form control of loadableQuantityForm 
+* Get form control of loadableQuantityForm
 *
 *
 * @param {string} formControlName
@@ -609,10 +646,22 @@ export class CommingleComponent implements OnInit {
    * reset cargo
    * @memberof CommingleComponent
    */
-  clearCargo() {
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'COMMINGLE_CARGO_DELETE_SUMMARY', detail: 'COMMINGLE_CARGO_DELETE_DETAILS', data: { confirmLabel: 'COMMINGLE_CARGO_DELETE_CONFIRM_LABEL', rejectLabel: 'COMMINGLE_CARGO_DELETE_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-      if (response) {
+  async clearCargo() {
+    const translationKeys = await this.translateService.get(['COMMINGLE_CARGO_DELETE_SUMMARY', 'COMMINGLE_CARGO_DELETE_DETAILS', 'COMMINGLE_CARGO_DELETE_CONFIRM_LABEL', 'COMMINGLE_CARGO_DELETE_REJECT_LABEL']).toPromise();
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['COMMINGLE_CARGO_DELETE_SUMMARY'],
+      message: translationKeys['COMMINGLE_CARGO_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['COMMINGLE_CARGO_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['COMMINGLE_CARGO_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: () => {
         this.commingleForm.controls['cargo1'].setValue(null);
         this.commingleForm.controls['cargo2'].setValue(null);
         this.selectedCargo1 = null;

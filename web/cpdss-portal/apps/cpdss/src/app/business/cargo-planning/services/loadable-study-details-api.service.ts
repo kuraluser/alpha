@@ -373,7 +373,7 @@ export class LoadableStudyDetailsApiService {
     * @returns {number}
     */
     convertToNumber(value: string) {
-        value = value?.replace(',', '');
+        value = value?.replace(/,/g, '');
         return value
     }
     /**

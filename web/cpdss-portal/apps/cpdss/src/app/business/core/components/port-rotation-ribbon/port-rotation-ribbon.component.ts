@@ -473,6 +473,25 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * function to set current time input
+   *
+   * @param {*} event
+   * @param {*} port
+   * @param {*} type
+   * @param {*} ref
+   * @memberof PortRotationRibbonComponent
+   */
+  setTimeInput(event, port, type, ref: any): void {
+    if (type === 'time' && !ref.value) {
+      const time = new Date();
+      time.setHours(ref.currentHour, ref.currentMinute);
+      const form = this.row(this.portList.indexOf(port));
+      form.controls.time.setValue(time);
+    }
+    ref.hideOverlay();
+  }
+
+  /**
   * Convert to date time(dd-mm-yyyy hh:mm)
   *
   */

@@ -57,6 +57,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'invalid': 'SYNOPTICAL_INVALID',
     'pattern': 'SYNOPTICAL_INVALID',
     'fromMax': 'SYNOPTICAL_FROM_MAX',
+    "sunRiseGreater":"SYNOPTICAL_SUNRISE_GREATER",
+    "sunSetGreater":"SYNOPTICAL_SUNSET_GREATER",
     'toMin': 'SYNOPTICAL_TO_MIN',
     'timeFromMax': 'SYNOPTICAL_TIME_FROM_MAX',
     'timeToMin': 'SYNOPTICAL_TIME_TO_MIN',
@@ -357,7 +359,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
-          validators: ['dddd.dddd.+'],
+          validators: ['d.dddd.+'],
           numberFormat: AppConfigurationService.settings?.sgNumberFormat
         }],
         editable: true,
@@ -487,6 +489,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftFwdPlanned",
                       type: this.fieldType.NUMBER,
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                       validators: ['required']
                     }],
                     editable: false,
@@ -496,7 +499,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftFwdActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd.+']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -510,6 +514,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftAftPlanned",
                       type: this.fieldType.NUMBER,
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                       validators: ['required']
                     }],
                     editable: false,
@@ -519,7 +524,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftAftActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required','dd.dd.+']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -533,6 +539,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftMidPlanned",
                       type: this.fieldType.NUMBER,
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                       validators: ['required']
                     }],
                     editable: false,
@@ -542,7 +549,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftMidActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd.+']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -558,6 +566,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 fields: [{
                   key: "calculatedTrimPlanned",
                   type: this.fieldType.NUMBER,
+                  numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
                   validators: ['required']
                 }],
                 editable: false,
@@ -567,7 +576,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 fields: [{
                   key: "calculatedTrimActual",
                   type: this.fieldType.NUMBER,
-                  validators: ['required']
+                  numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                  validators: ['required', 'dd.dd.+']
                 }],
                 editable: this.checkIfConfirmed(),
               },
@@ -1335,6 +1345,24 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * function to set current time input
+   *
+   * @param {*} ref
+   * @param {number} colIndex
+   * @param {string} key
+   * @memberof SynopticalTableComponent
+   */
+  setTimeInput(ref, colIndex: number, key: string): void {
+    if (!ref.value) {
+      const time = new Date();
+      time.setHours(ref.currentHour, ref.currentMinute);
+      const formControl = this.getControl(colIndex, key);
+      formControl.setValue(time);
+    }
+    ref.hideOverlay();
+  }
+
+  /**
    * Method to do validations on focusing out of an input
    *
    * @param {SynopticField} field
@@ -1374,6 +1402,24 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           fcMax.setValue(fcMax.value, { emitEvent: false })
         }
         break;
+
+      case 'timeOfSunrise':
+        fcMax = this.getControl(colIndex, 'timeOfSunset')
+        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
+          fc.setErrors({ sunRiseGreater: true })
+        } else if (fcMax.hasError('sunSetGreater')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
+
+      case 'timeOfSunset':
+        fcMax = this.getControl(colIndex, 'timeOfSunrise')
+        if (typeof fcMax.value !== 'undefined' && fc.value <= fcMax.value) {
+          fc.setErrors({ sunSetGreater: true })
+        } else if (fcMax.hasError('sunRiseGreater')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
       case 'lwTideTo':
         fcMin = this.getControl(colIndex, 'lwTideFrom')
         if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
@@ -1384,6 +1430,15 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'hwTideTimeFrom':
         fcMax = this.getControl(colIndex, 'hwTideTimeTo')
+         
+        if (fcMax.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
+          
         if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
@@ -1391,7 +1446,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }
         break;
       case 'hwTideTimeTo':
-        fcMin = this.getControl(colIndex, 'hwTideTimeFrom')
+        fcMin = this.getControl(colIndex, 'hwTideTimeFrom')                
+        if (fcMin.value) {
+          fcMin.value.setSeconds(0, 0);
+        }
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
+          
         if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
@@ -1400,6 +1462,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideTimeFrom':
         fcMax = this.getControl(colIndex, 'lwTideTimeTo')
+        if (fcMax.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
         if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
@@ -1408,6 +1476,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideTimeTo':
         fcMin = this.getControl(colIndex, 'lwTideTimeFrom')
+        if (fcMin.value) {
+          fcMin.value.setSeconds(0, 0);
+        }
+         if(fc.value){
+          fc.value.setSeconds(0, 0);
+         }
         if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {

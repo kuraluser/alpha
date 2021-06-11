@@ -66,6 +66,10 @@ public class LoadablePlanService {
           Optional.ofNullable(lpq.getOrderQuantity())
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           Optional.ofNullable(lpq.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+          Optional.ofNullable(lpq.getTimeRequiredForLoading())
+              .ifPresent(builder::setTimeRequiredForLoading);
+
+          Optional.ofNullable(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
 
           if (lpq.getCargoXId() != null) {
             log.info("Loadable Plan Quantity, Cargo Id {}", lpq.getCargoXId());
@@ -179,6 +183,8 @@ public class LoadablePlanService {
           .ifPresent(item -> builder.setCorrectionFactor(valueOf(item)));
       Optional.ofNullable(temp.getQuantity())
           .ifPresent(item -> builder.setMetricTon(valueOf(item)));
+      Optional.ofNullable(temp.getFillingRatio())
+          .ifPresent(item -> builder.setPercentage(valueOf(item)));
     }
   }
 

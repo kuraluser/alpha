@@ -1,4 +1,4 @@
-import { CommonLoggerService, InboundEventDataTransfer, CommonTransportEventService, CommonFinishEventService, CommonResendEventService, CommonConfirmEventService } from '@envoy/common';
+import { CommonLoggerService, InboundEventDataTransfer, CommonTransportEventService, CommonFinishEventService, CommonResendEventService, CommonConfirmEventService, CommonCancelEventService } from '@envoy/common';
 import { ResendEventDataTransfer } from '@envoy/common';
 import { SocketClientService } from '../socket/socket-client.service';
 import { Injectable } from '@nestjs/common';
@@ -16,6 +16,7 @@ export class SocketListenerService {
         private commonFinishEventService: CommonFinishEventService,
         private commonResendEventService: CommonResendEventService,
         private commonConfirmEventService: CommonConfirmEventService,
+        private commonCancelEventService: CommonCancelEventService,
         private logger: CommonLoggerService) {
         this.logger.setContext('SocketListenerService');
 
@@ -43,8 +44,8 @@ export class SocketListenerService {
             });
         });
 
-         // Listening for finish ack events
-         socketService.getListenerSocket(true).on('finishack', (eventData: InboundEventDataTransfer) => {
+        // Listening for finish ack events
+        socketService.getListenerSocket(true).on('finishack', (eventData: InboundEventDataTransfer) => {
             const shipId = this.configService.get<string>('shipId');
             this.logger.log("Finish ack event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
             this.commonFinishEventService.handleFinishAckEvent(eventData, shipId);
@@ -78,6 +79,30 @@ export class SocketListenerService {
             const shipId = this.configService.get<string>('shipId');
             this.logger.log("Confirm ack event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
             this.commonConfirmEventService.handleConfirmAckEvent(eventData, shipId);
+        });
+
+        // Listening for cancel events
+        socketService.getListenerSocket(true).on('cancel', (eventData: InboundEventDataTransfer) => {
+            const shipId = this.configService.get<string>('shipId');
+            this.logger.log("Cancel event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
+            this.commonCancelEventService.handleCancelEvent(eventData, shipId).then(result => {
+                eventData.buf = result;
+                this.logger.log("Sending cancel ack event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
+                const ioClient = socketService.getSocket();
+                if (!ioClient || !ioClient.connected) {
+                    this.logger.warn('Error socket connection');
+                    return;
+                }
+                //Calling socket.emit to send the data packets. Sending cancel ack as async
+                ioClient.emit('cancelack', eventData);
+            });
+        });
+
+        // Listening for cancel ack events
+        socketService.getListenerSocket(true).on('cancelack', (eventData: InboundEventDataTransfer) => {
+            const shipId = this.configService.get<string>('shipId');
+            this.logger.log("Cancel ack event received for client" + eventData.clientId + " with messageId " + eventData.messageId);
+            this.commonCancelEventService.handleCancelAckEvent(eventData, shipId);
         });
     }
 }

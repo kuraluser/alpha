@@ -8,6 +8,7 @@ import { IResponse } from '../../../../../shared/models/common.model';
 import { LoadablePlanApiService } from '../../../services/loadable-plan-api.service';
 import { ISaveComment } from '../../../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
+import { whiteSpaceValidator } from '../../../../core/directives/space-validator.directive';
 
 /**
  * Component class for Save stowage Comment Popup
@@ -44,7 +45,8 @@ export class SaveStowagePopupComponent implements OnInit {
   saveStowageForm: FormGroup;
   errorMessages = {
     'required': 'Required',
-    'maxlength': 'LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH'
+    'maxlength': 'LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH',
+    'whitespace': 'COMMENTS_REQUIRED'
   };
 
   private _visible: boolean;
@@ -58,7 +60,7 @@ export class SaveStowagePopupComponent implements OnInit {
 
   ngOnInit(): void {
     this.saveStowageForm = this.fb.group({
-      comment: this.fb.control(null, [Validators.required, Validators.maxLength(100)])
+      comment: this.fb.control(null, [Validators.required, Validators.maxLength(100), whiteSpaceValidator])
     });
   }
 
@@ -72,6 +74,15 @@ export class SaveStowagePopupComponent implements OnInit {
     this.visibleChange.emit(this.visible);
     this.saveStowageForm.reset();
   }
+
+    /**
+   * Trim blank space 
+   * @param {string} formControlName
+   * @memberof SaveStowagePopupComponent
+   */
+    trimFormControl(formControlName: string) {
+      this.saveStowageForm.controls[formControlName].setValue((this.saveStowageForm.get(formControlName).value).trim());
+    }
 
   /**
    * Method for save popup
