@@ -2,7 +2,6 @@
 package com.cpdss.loadablestudy.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -18,10 +17,10 @@ public class LoadicatorResultDetails {
   private String calculatedTrimPlanned;
   private String blindSector;
   private String list;
-  
+
   @JsonProperty(value = "BM")
   private String bm;
-  
+
   @JsonProperty(value = "SF")
   private String sf;
 }

@@ -3341,13 +3341,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               ? null
               : new BigDecimal(stabilityParameter.getTrim()));
       synopticalTableLoadicatorData.setBendingMoment(
-              isEmpty(stabilityParameter.getBendinMoment())
-                  ? null
-                  : new BigDecimal(stabilityParameter.getBendinMoment()));
+          isEmpty(stabilityParameter.getBendinMoment())
+              ? null
+              : new BigDecimal(stabilityParameter.getBendinMoment()));
       synopticalTableLoadicatorData.setShearingForce(
-              isEmpty(stabilityParameter.getShearForce())
-                  ? null
-                  : new BigDecimal(stabilityParameter.getShearForce()));
+          isEmpty(stabilityParameter.getShearForce())
+              ? null
+              : new BigDecimal(stabilityParameter.getShearForce()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
@@ -7754,8 +7754,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .ifPresent(item -> dataBuilder.setCalculatedTrimPlanned(valueOf(item)));
       this.setFinalDraftValues(dataBuilder, loadicatorData);
       ofNullable(loadicatorData.getList()).ifPresent(list -> dataBuilder.setList(valueOf(list)));
-      ofNullable(loadicatorData.getBendingMoment()).ifPresent(bm -> dataBuilder.setBendingMoment(valueOf(bm)));
-      ofNullable(loadicatorData.getShearingForce()).ifPresent(sf -> dataBuilder.setShearingForce(valueOf(sf)));
+      ofNullable(loadicatorData.getBendingMoment())
+          .ifPresent(bm -> dataBuilder.setBendingMoment(valueOf(bm)));
+      ofNullable(loadicatorData.getShearingForce())
+          .ifPresent(sf -> dataBuilder.setShearingForce(valueOf(sf)));
       builder.setLoadicatorData(dataBuilder.build());
       ofNullable(loadicatorData.getBallastActual())
           .ifPresent(item -> builder.setBallastActual(valueOf(item)));

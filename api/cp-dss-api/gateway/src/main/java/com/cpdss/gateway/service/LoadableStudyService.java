@@ -2947,9 +2947,13 @@ public class LoadableStudyService {
     synopticalRecord.setList(
         isEmpty(proto.getList()) ? BigDecimal.ZERO : new BigDecimal(proto.getList()));
     synopticalRecord.setBm(
-            isEmpty(proto.getBendingMoment()) ? BigDecimal.ZERO : new BigDecimal(proto.getBendingMoment()));
+        isEmpty(proto.getBendingMoment())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getBendingMoment()));
     synopticalRecord.setSf(
-            isEmpty(proto.getShearingForce()) ? BigDecimal.ZERO : new BigDecimal(proto.getShearingForce()));
+        isEmpty(proto.getShearingForce())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getShearingForce()));
   }
 
   /**
