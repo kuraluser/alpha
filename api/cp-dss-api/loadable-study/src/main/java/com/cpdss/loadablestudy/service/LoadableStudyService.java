@@ -1016,11 +1016,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       : new BigDecimal(request.getDraftMark()));
           this.loadableQuantityRepository.save(loadableQuantity.get(0));
         }
-        entity.setIsCargoNominationComplete(request.getIsCargoNominationComplete());
-        entity.setIsPortsComplete(request.getIsPortsComplete());
-        entity.setIsOhqComplete(request.getIsOhqComplete());
-        entity.setIsObqComplete(request.getIsObqComplete());
-        entity.setIsDischargePortsComplete(request.getIsDischargingPortComplete());
+        // entity.setIsCargoNominationComplete(request.getIsCargoNominationComplete());
+        // entity.setIsPortsComplete(request.getIsPortsComplete());
+        // entity.setIsOhqComplete(request.getIsOhqComplete());
+        // entity.setIsObqComplete(request.getIsObqComplete());
+        // entity.setIsDischargePortsComplete(request.getIsDischargingPortComplete());
       } else {
 
         entity = new LoadableStudy();
@@ -8909,6 +8909,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           Optional.of(lpq.getCargoColor()).ifPresent(builder::setColorCode);
           Optional.of(lpq.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
+          Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }

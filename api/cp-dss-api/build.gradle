@@ -40,7 +40,7 @@ subprojects {
     mavenCentral()
   }
 
-  apply plugin: 'name.remal.sonarlint'
+  /*applyplugin: 'name.remal.sonarlint'*/
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'io.freefair.lombok'
   apply plugin: 'com.diffplug.gradle.spotless'
