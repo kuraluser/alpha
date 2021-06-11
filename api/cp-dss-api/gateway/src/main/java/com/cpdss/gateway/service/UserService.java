@@ -274,7 +274,8 @@ public class UserService {
 
     List<ScreenData> list = new ArrayList<>();
 
-    List<Screen> screens = this.screenRepository.findByCompanyXIdAndIsActive(companyId, true);
+    List<Screen> screens =
+        this.screenRepository.findByCompanyXIdAndIsActiveOrderByScreenOrderAsc(companyId, true);
 
     List<ScreenData> info = new ArrayList<>();
     if (screens != null && !screens.isEmpty()) {
