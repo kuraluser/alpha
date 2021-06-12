@@ -110,7 +110,7 @@ export class CommentsComponent implements OnInit {
    * add new comments
   */
   async submitComments() {
-    if (this.commentForm.valid) {
+    if (this.commentForm.valid && !this.isVoyageClosed) {
       const translationKeys = await this.translateService.get(['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS', 'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS']).toPromise();
       const comments: ISaveComment = {
         comment: this.commentForm.controls['comment'].value
@@ -130,6 +130,10 @@ export class CommentsComponent implements OnInit {
       }
     } else {
       this.formError = true;
+      const translationKeys = await this.translateService.get(['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL', 'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL_DETAILS']).toPromise();
+      if(this.isVoyageClosed) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL'], detail: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL_DETAILS'] });
+      }
     }
   }
 

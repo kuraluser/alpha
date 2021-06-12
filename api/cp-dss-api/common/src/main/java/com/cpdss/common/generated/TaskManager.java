@@ -131,7 +131,6 @@ public final class TaskManager {
     private ScheduleTaskRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private ScheduleTaskRequest() {
       taskName_ = "";
       taskURI_ = "";
@@ -304,7 +303,6 @@ public final class TaskManager {
       TASKFREQUENCY(7),
       TASKINTERVAL_NOT_SET(0);
       private final int value;
-
       private TaskIntervalCase(int value) {
         this.value = value;
       }
@@ -617,7 +615,6 @@ public final class TaskManager {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -796,14 +793,12 @@ public final class TaskManager {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static com.cpdss.common.generated.TaskManager.ScheduleTaskRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static com.cpdss.common.generated.TaskManager.ScheduleTaskRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
@@ -1909,7 +1904,6 @@ public final class TaskManager {
     private ScheduleTaskDeleteRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private ScheduleTaskDeleteRequest() {
       taskName_ = "";
     }
@@ -2020,7 +2014,6 @@ public final class TaskManager {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2099,7 +2092,6 @@ public final class TaskManager {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static com.cpdss.common.generated.TaskManager.ScheduleTaskDeleteRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -2417,7 +2409,6 @@ public final class TaskManager {
         onChanged();
         return this;
       }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2611,7 +2602,6 @@ public final class TaskManager {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2695,14 +2685,12 @@ public final class TaskManager {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static com.cpdss.common.generated.TaskManager.TaskManagerReply parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static com.cpdss.common.generated.TaskManager.TaskManagerReply parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
@@ -3053,7 +3041,6 @@ public final class TaskManager {
         }
         return responseStatusBuilder_;
       }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -3071,7 +3058,6 @@ public final class TaskManager {
 
     // @@protoc_insertion_point(class_scope:TaskManagerReply)
     private static final com.cpdss.common.generated.TaskManager.TaskManagerReply DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new com.cpdss.common.generated.TaskManager.TaskManagerReply();
     }
@@ -3148,7 +3134,6 @@ public final class TaskManager {
     private ExecuteTaskRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private ExecuteTaskRequest() {
       taskName_ = "";
     }
@@ -3351,7 +3336,6 @@ public final class TaskManager {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -3447,14 +3431,12 @@ public final class TaskManager {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static com.cpdss.common.generated.TaskManager.ExecuteTaskRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
@@ -3704,7 +3686,6 @@ public final class TaskManager {
         }
         return this;
       }
-
       private int bitField0_;
 
       private java.lang.Object taskName_ = "";
@@ -3899,7 +3880,6 @@ public final class TaskManager {
 
     // @@protoc_insertion_point(class_scope:ExecuteTaskRequest)
     private static final com.cpdss.common.generated.TaskManager.ExecuteTaskRequest DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new com.cpdss.common.generated.TaskManager.ExecuteTaskRequest();
     }
@@ -4072,7 +4052,6 @@ public final class TaskManager {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -4156,14 +4135,12 @@ public final class TaskManager {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static com.cpdss.common.generated.TaskManager.ExecuteTaskReply parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
@@ -4514,7 +4491,6 @@ public final class TaskManager {
         }
         return responseStatusBuilder_;
       }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4532,7 +4508,6 @@ public final class TaskManager {
 
     // @@protoc_insertion_point(class_scope:ExecuteTaskReply)
     private static final com.cpdss.common.generated.TaskManager.ExecuteTaskReply DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new com.cpdss.common.generated.TaskManager.ExecuteTaskReply();
     }

@@ -1281,6 +1281,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         cargoNomination = existingCargoNomination.get();
+
+        if (existingCargoNomination.get().getCargoXId()
+            != request.getCargoNominationDetail().getCargoId()) {
+          this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(
+              loadableStudyRecord.getId());
+        }
+
         if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
           existingCargoPortIds =
               cargoNomination.getCargoNominationPortDetails().stream()
@@ -3340,6 +3347,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           isEmpty(stabilityParameter.getTrim())
               ? null
               : new BigDecimal(stabilityParameter.getTrim()));
+      synopticalTableLoadicatorData.setBendingMoment(
+          isEmpty(stabilityParameter.getBendinMoment())
+              ? null
+              : new BigDecimal(stabilityParameter.getBendinMoment()));
+      synopticalTableLoadicatorData.setShearingForce(
+          isEmpty(stabilityParameter.getShearForce())
+              ? null
+              : new BigDecimal(stabilityParameter.getShearForce()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
@@ -4458,6 +4473,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 });
         // save all entities
         this.commingleCargoRepository.saveAll(commingleEntities);
+      } else {
+        List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoEntityList =
+            this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+                request.getLoadableStudyId(), true);
+        List<Long> existingCommingleCargoIds = null;
+        if (!commingleCargoEntityList.isEmpty()) {
+          existingCommingleCargoIds =
+              commingleCargoEntityList.stream()
+                  .map(com.cpdss.loadablestudy.entity.CommingleCargo::getId)
+                  .collect(Collectors.toList());
+        }
+        if (!CollectionUtils.isEmpty(existingCommingleCargoIds)) {
+          commingleCargoRepository.deleteCommingleCargo(existingCommingleCargoIds);
+        }
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
@@ -5667,6 +5696,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void getLoadicatorData(
       LoadicatorDataRequest request, StreamObserver<LoadicatorDataReply> responseObserver) {
     log.info("Inside getLoadicatorData service");
@@ -5719,9 +5749,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-                algoResponse.getProcessId(),
-                true);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
           }
         } else {
           if (algoResponse.getFeedbackLoop()) {
@@ -5746,17 +5774,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-                algoResponse.getProcessId(),
-                true);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
           }
         }
       } else {
         this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-            algoResponse.getProcessId(),
-            true);
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
       }
       replyBuilder =
           LoadicatorDataReply.newBuilder()
@@ -5949,6 +5973,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? null
             : new BigDecimal(result.getCalculatedTrimPlanned()));
     entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    entity.setBendingMoment(isEmpty(result.getBm()) ? null : new BigDecimal(result.getBm()));
+    entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
     return entity;
   }
 
@@ -6217,6 +6243,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
           onHandQuantityDto =
               modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
+          onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
+          onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
+          onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
   }
@@ -6490,7 +6519,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else if (!dischargeCargoId.isPresent()) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else {
-      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
+      loadableStudy.setCargoToBeDischargeFirstId(null);
     }
   }
 
@@ -7741,6 +7770,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .ifPresent(item -> dataBuilder.setCalculatedTrimPlanned(valueOf(item)));
       this.setFinalDraftValues(dataBuilder, loadicatorData);
       ofNullable(loadicatorData.getList()).ifPresent(list -> dataBuilder.setList(valueOf(list)));
+      ofNullable(loadicatorData.getBendingMoment())
+          .ifPresent(bm -> dataBuilder.setBendingMoment(valueOf(bm)));
+      ofNullable(loadicatorData.getShearingForce())
+          .ifPresent(sf -> dataBuilder.setShearingForce(valueOf(sf)));
       builder.setLoadicatorData(dataBuilder.build());
       ofNullable(loadicatorData.getBallastActual())
           .ifPresent(item -> builder.setBallastActual(valueOf(item)));

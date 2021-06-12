@@ -1157,6 +1157,8 @@ message SynopticalTableLoadicatorData{
 	string calculatedTrimActual = 13;
 	string blindSector = 14;
 	string list = 15;
+	string bendingMoment = 16;
+	string shearingForce = 17;
 }
 
 message LoadableStudyAttachmentRequest{

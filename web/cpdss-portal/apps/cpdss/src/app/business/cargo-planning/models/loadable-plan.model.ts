@@ -138,6 +138,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     fullCapacityCubm: string;
     isCommingle?: boolean;
     tankShortName?: string;
+    cargoNominationId?: number;
 }
 
 /**
@@ -172,6 +173,7 @@ export interface ICargoTankDetailValueObject {
     fullCapacityCubm: string;
     tankShortName: string;
     isCommingle?: boolean;
+    cargoNominationId?: number;
 }
 
 /**
@@ -265,7 +267,9 @@ export interface ISynopticalRecordArrangeModel {
     finalDraftMid: string,
     calculatedTrimPlanned: string,
     cargoPlannedTotal: string,
-    ballastPlanned: string
+    ballastPlanned: string;
+    sf: number;
+    bm: number;
 }
 
 /**
@@ -446,6 +450,7 @@ export enum VALIDATION_AND_SAVE_STATUS {
      cargoAbbreviation: string;
      minTolerence: number;
      maxTolerence: number;
+     cargoNominationId? : number;
  }
 
 

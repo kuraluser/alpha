@@ -522,7 +522,7 @@ export class StowageComponent implements OnInit {
     this.loadableQuantityCargo.map(loadableQuantityCargo => {
       let total = 0;
       this.cargoTankDetails.map((cargoDetail) => {
-        if (loadableQuantityCargo?.cargoAbbreviation === cargoDetail?.cargoAbbreviation) {
+        if (loadableQuantityCargo?.cargoNominationId === cargoDetail?.cargoNominationId) {
           total += Number(cargoDetail.weight?.value);
           cargoQuantity += Number(cargoDetail?.weight?.value);
         }

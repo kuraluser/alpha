@@ -54,6 +54,7 @@ export class PortRotationPopupComponent implements OnInit {
   portEtaEtdPermission: IPermission;
   listData = <IPortAllDropdownData>{};
   portLoaded = false;
+  enableSaveButton: boolean = false;
 
   private _visible: boolean;
 
@@ -283,6 +284,7 @@ export class PortRotationPopupComponent implements OnInit {
       control.markAsDirty();
       control.markAsTouched();
     }
+    this.portsForm.valid ? this.enableSaveButton = true : this.enableSaveButton = false; 
   }
 
   /**
