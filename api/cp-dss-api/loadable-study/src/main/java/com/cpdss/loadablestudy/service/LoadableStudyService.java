@@ -5682,6 +5682,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void getLoadicatorData(
       LoadicatorDataRequest request, StreamObserver<LoadicatorDataReply> responseObserver) {
     log.info("Inside getLoadicatorData service");
@@ -6504,7 +6505,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else if (!dischargeCargoId.isPresent()) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else {
-      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
+      loadableStudy.setCargoToBeDischargeFirstId(null);
     }
   }
 
