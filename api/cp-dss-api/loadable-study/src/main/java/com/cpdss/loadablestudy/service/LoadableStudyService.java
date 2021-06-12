@@ -1281,11 +1281,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         cargoNomination = existingCargoNomination.get();
-        
-        if (existingCargoNomination.get().getCargoXId() != request.getCargoNominationDetail().getCargoId()) {
-        	this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(loadableStudyRecord.getId());
+
+        if (existingCargoNomination.get().getCargoXId()
+            != request.getCargoNominationDetail().getCargoId()) {
+          this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(
+              loadableStudyRecord.getId());
         }
-        
+
         if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
           existingCargoPortIds =
               cargoNomination.getCargoNominationPortDetails().stream()
@@ -5732,9 +5734,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            		LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-                algoResponse.getProcessId(),
-                true);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
           }
         } else {
           if (algoResponse.getFeedbackLoop()) {
@@ -5759,17 +5759,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            		LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-                algoResponse.getProcessId(),
-                true);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
           }
         }
       } else {
         this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-        		LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-            algoResponse.getProcessId(),
-            true);
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
       }
       replyBuilder =
           LoadicatorDataReply.newBuilder()
