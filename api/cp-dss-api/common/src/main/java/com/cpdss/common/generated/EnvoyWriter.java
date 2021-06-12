@@ -65,7 +65,6 @@ public final class EnvoyWriter {
     private EnvoyWriterRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private EnvoyWriterRequest() {
       jsonPayload_ = "";
       imoNumber_ = "";
@@ -250,7 +249,6 @@ public final class EnvoyWriter {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -356,14 +354,12 @@ public final class EnvoyWriter {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
@@ -776,7 +772,6 @@ public final class EnvoyWriter {
        * @return This builder for chaining.
        */
       public Builder setVesselId(long value) {
-
         vesselId_ = value;
         onChanged();
         return this;
@@ -809,7 +804,6 @@ public final class EnvoyWriter {
        * @return This builder for chaining.
        */
       public Builder setRequestType(int value) {
-
         requestType_ = value;
         onChanged();
         return this;
@@ -825,7 +819,6 @@ public final class EnvoyWriter {
         onChanged();
         return this;
       }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -843,7 +836,6 @@ public final class EnvoyWriter {
 
     // @@protoc_insertion_point(class_scope:EnvoyWriterRequest)
     private static final com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest();
     }
@@ -934,7 +926,6 @@ public final class EnvoyWriter {
     private WriterReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private WriterReply() {
       lsUUID_ = "";
       sequenceNo_ = "";
@@ -1128,7 +1119,6 @@ public final class EnvoyWriter {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1230,14 +1220,12 @@ public final class EnvoyWriter {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static com.cpdss.common.generated.EnvoyWriter.WriterReply parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static com.cpdss.common.generated.EnvoyWriter.WriterReply parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
@@ -1752,7 +1740,6 @@ public final class EnvoyWriter {
         onChanged();
         return this;
       }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1770,7 +1757,6 @@ public final class EnvoyWriter {
 
     // @@protoc_insertion_point(class_scope:WriterReply)
     private static final com.cpdss.common.generated.EnvoyWriter.WriterReply DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new com.cpdss.common.generated.EnvoyWriter.WriterReply();
     }

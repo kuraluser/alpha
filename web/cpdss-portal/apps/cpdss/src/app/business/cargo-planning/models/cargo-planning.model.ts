@@ -821,6 +821,7 @@ export interface ICargoHistoryDetails {
     loadingPorts?: string[];
     loadingPort?: string;
     cargoAbbreviation?: string;
+    cargoNominationId?: number;
 }
 
 
@@ -849,4 +850,6 @@ export interface ICargoHistoryDetails {
     calculatedTrimPlanned: number;
     cargoPlannedTotal: number;
     ballastPlanned: number;
+    sf: number;
+    bm: number;
 }

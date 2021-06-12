@@ -1374,8 +1374,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @returns {any}
    * @memberof SynopticalTableComponent
   */
-  onBlur(field: SynopticField, colIndex: number, updateValues = true) {   
-
+   onBlur(field: SynopticField, colIndex: number, updateValues = true) {
     const fc = this.getControl(colIndex, field.key)
     const operationType = this.synopticalService.synopticalRecords[colIndex].operationType;
     const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
@@ -1423,39 +1422,39 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
 
       case 'timeOfSunrise':
         fcMax = this.getControl(colIndex, 'timeOfSunset')
-        if (fcMax.value) {
+        if (fcMax?.value) {
           fcMax.value.setSeconds(0, 0);
         }
 
-        if (fc.value) {
-          fc.value.setSeconds(0, 0);
+        if (fc?.value) {
+          fc?.value?.setSeconds(0, 0);
         }
-        if (!fcMax.value && !fc.value) {
-          fcMax.setErrors(null);
-          fc.setErrors(null);
+        if (!fcMax?.value && !fc?.value) {
+          fcMax?.setErrors(null);
+          fc?.setErrors(null);
         }
-        else if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value && fc.value && fcMax.value) {
-          fc.setErrors({ sunRiseGreater: true })
-        } else if (fcMax.hasError('sunSetGreater')) {
-          fcMax.setValue(fcMax.value, { emitEvent: false })
+        else if (typeof fcMax?.value !== 'undefined' && fc?.value >= fcMax?.value && fc?.value && fcMax?.value) {
+          fc?.setErrors({ sunRiseGreater: true })
+        } else if (fcMax?.hasError('sunSetGreater')) {
+          fcMax?.setValue(fcMax?.value, { emitEvent: false })
         }
         break;
 
       case 'timeOfSunset':
         fcMax = this.getControl(colIndex, 'timeOfSunrise')
-        if (fcMax.value) {
+        if (fcMax?.value) {
           fcMax.value.setSeconds(0, 0);
         }
-        if (fc.value) {
+        if (fc?.value) {
           fc.value.setSeconds(0, 0);
         }
-        if (!fcMax.value && !fc.value) {
-          fcMax.setErrors(null);
-          fc.setErrors(null);
+        if (!fcMax?.value && !fc?.value) {
+          fcMax?.setErrors(null);
+          fc?.setErrors(null);
         }
-        else if (typeof fcMax.value !== 'undefined' && fc.value <= fcMax.value && fc.value && fcMax.value) {
-          fc.setErrors({ sunSetGreater: true })
-        } else if (fcMax.hasError('sunRiseGreater')) {
+        else if (typeof fcMax?.value !== 'undefined' && fc?.value <= fcMax?.value && fc?.value && fcMax?.value) {
+          fc?.setErrors({ sunSetGreater: true })
+        } else if (fcMax?.hasError('sunRiseGreater')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
         }
         break;
@@ -1647,7 +1646,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
     }
   }
-
   /**
    * Method to check if the loadable study is confirmed
    *

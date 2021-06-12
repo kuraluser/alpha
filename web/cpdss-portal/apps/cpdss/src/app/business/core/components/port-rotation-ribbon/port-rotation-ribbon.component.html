@@ -54,7 +54,7 @@
                                 <div class="col text-secondary error-icon-wrapper relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
                                         (onClose)="onBlur($event, port, 'date')"
-                                        id="eta_date_{{portList.indexOf(port)}}" [minDate]="minDate"
+                                        id="eta_date_{{portList.indexOf(port)}}" [maxDate]="maxDate"
                                         dateFormat="{{carouselDateFormat}}"
                                         placeholder="{{'CHOOSE_ETA' | translate}}">
                                     </p-calendar>
@@ -72,7 +72,7 @@
                                 <div class="col text-secondary validation-error relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
                                         (onClose)="onBlur($event, port, 'date')"
-                                        id="etd_date_{{portList.indexOf(port)}}" [minDate]="minDate"
+                                        id="etd_date_{{portList.indexOf(port)}}" [maxDate]="maxDate"
                                         dateFormat="{{carouselDateFormat}}"
                                         placeholder="{{'CHOOSE_ETD' | translate}}">
                                     </p-calendar>

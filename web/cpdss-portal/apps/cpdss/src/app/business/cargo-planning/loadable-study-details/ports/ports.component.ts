@@ -231,11 +231,15 @@ export class PortsComponent implements OnInit, OnDestroy {
       dataTable: this.fb.array([...portListArray])
     });
     this.portsLists = _portsLists;
-    setTimeout(() => {
+    setTimeout(async () => {
       this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0 && !this.portOrderValidation());
       this.updatePortOrder();
       this.ngxSpinnerService.hide();
       this.updateFormValidity(portListArray);
+      if (this.portOrderValidation()) {
+        const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
+        this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+      }
     }, 500);
 
   }
@@ -502,12 +506,12 @@ export class PortsComponent implements OnInit, OnDestroy {
     this.portsLists = [...this.portsLists];
     if (this.portsForm.valid && this.portOrderValidation()) {
       const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-      this.messageService.add({ severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+      this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+    } else if(!this.portOrderValidation()){
+      this.messageService.clear('isPortOrderValid');
     }
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => item?.isAdd).length <= 0 && !this.portOrderValidation());
-
   }
-
 
   /**
  * Method for Port order validation
@@ -530,6 +534,9 @@ export class PortsComponent implements OnInit, OnDestroy {
     }
     return orderError;
   }
+
+
+
 
   /**
  * Method for fetching form group
@@ -578,7 +585,9 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.portUpdate.emit(false);
         if (this.portOrderValidation()) {
           const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-          this.messageService.add({ severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+          this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+        } else {
+          this.messageService.clear('isPortOrderValid');   
         }
         this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0 && !this.portOrderValidation());
       }
@@ -712,8 +721,10 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.portsLists.splice(event.dropIndex, 1);
       this.portsLists.splice(event.dragIndex, 0, dropData);
       const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-      this.messageService.add({ severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+      this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
       return;
+    } else {
+      this.messageService.clear('isPortOrderValid');   
     }
     this.ngxSpinnerService.show();
     if (this.portsLists[event.dragIndex]?.id !== 0 && this.portsLists[event.dropIndex]?.id !== 0) {

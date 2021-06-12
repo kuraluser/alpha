@@ -48,6 +48,8 @@ export class LoadablePlanTransformationService {
       { field: 'finalDraftAft', header: "", subHeader: 'ETA_ETD_DRAFT_AFT' },
       { field: 'finalDraftMid', header: "", subHeader: 'ETA_ETD_DRAFT_MID' },
       { field: 'calculatedTrimPlanned', header: 'ETA_ETD_TRIM' },
+      { field: 'bm', header: 'ETA_ETD_BM' },
+      { field: 'sf', header: 'ETA_ETD_SF' },
       { field: 'cargoPlannedTotal', header: 'ETA_ETD_CARGO' },
       { field: 'plannedFOTotal', header: 'ETA_ETD_FO' },
       { field: 'plannedDOTotal', header: 'ETA_ETD_DO' },
@@ -256,6 +258,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.id = cargoTankDetail.id;
     _cargoTankDetail.tankId = cargoTankDetail.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail.cargoAbbreviation;
+    _cargoTankDetail.cargoNominationId = cargoTankDetail.cargoNominationId;
     _cargoTankDetail.weight = cargoTankDetail.weight;
     _cargoTankDetail.weightOrginal = cargoTankDetail.weightOrginal;
     _cargoTankDetail.correctedUllage = cargoTankDetail.correctedUllage;
@@ -299,6 +302,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.id = cargoTankDetail?.id;
     _cargoTankDetail.tankId = cargoTankDetail?.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail?.cargoAbbreviation;
+    _cargoTankDetail.cargoNominationId = cargoTankDetail?.cargoNominationId;
     _cargoTankDetail.weight = new ValueObject<number>(Number(cargoTankDetail?.weight), true, false);
     _cargoTankDetail.weightOrginal = Number(cargoTankDetail?.weightOrginal);
     _cargoTankDetail.correctedUllage = new ValueObject<number>(cargoTankDetail?.correctedUllage, true, false);
@@ -553,6 +557,8 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, AppConfigurationService.settings?.sgNumberFormat);
     _synopticalRecord.cargoPlannedTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.cargoPlannedTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.ballastPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.ballastPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.sf = synopticalRecord.sf ? this.decimalConvertion(_decimalPipe, synopticalRecord.sf , '1.2-2') : '0.00';
+    _synopticalRecord.bm = synopticalRecord.bm ? this.decimalConvertion(_decimalPipe, synopticalRecord.bm , '1.2-2') : '0.00';
 
     _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.2-2') + 'm';
     _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.2-2') + 'm';
