@@ -4891,9 +4891,9 @@ public class LoadableStudyService {
             synopticalRecord.get().getCalculatedDraftMidActual());
         stabilityConditions.setCalculatedDraftFwdActual(
             synopticalRecord.get().getCalculatedDraftFwdActual());
-        stabilityConditions.setFinalDraftAft(synopticalRecord.get().getFinalDraftAft());
-        stabilityConditions.setFinalDraftMid(synopticalRecord.get().getFinalDraftMid());
-        stabilityConditions.setFinalDraftFwd(synopticalRecord.get().getFinalDraftFwd());
+        stabilityConditions.setFinalDraftAft(synopticalRecord.get().getCalculatedDraftAftPlanned());
+        stabilityConditions.setFinalDraftMid(synopticalRecord.get().getCalculatedDraftMidPlanned());
+        stabilityConditions.setFinalDraftFwd(synopticalRecord.get().getCalculatedDraftFwdPlanned());
         voyageStatusResponse.setStabilityConditions(stabilityConditions);
       }
     }
