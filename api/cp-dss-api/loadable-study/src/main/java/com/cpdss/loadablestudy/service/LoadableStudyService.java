@@ -1281,6 +1281,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         cargoNomination = existingCargoNomination.get();
+        
+        if (existingCargoNomination.get().getCargoXId() != request.getCargoNominationDetail().getCargoId()) {
+        	this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(loadableStudyRecord.getId());
+        }
+        
         if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
           existingCargoPortIds =
               cargoNomination.getCargoNominationPortDetails().stream()
@@ -5727,7 +5732,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+            		LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
                 algoResponse.getProcessId(),
                 true);
           }
@@ -5754,7 +5759,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+            		LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
                 algoResponse.getProcessId(),
                 true);
           }
@@ -5762,7 +5767,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+        		LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             algoResponse.getProcessId(),
             true);
       }
