@@ -139,12 +139,12 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   private void updateStowageDetails(List<StowagePlan> stowagePlanList) {
     stowagePlanList.forEach(
         stowagePlan -> {
-          Optional<CargoData> cargoDataOpt =
+          List<CargoData> cargoDatas =
               this.cargoDataRepository.findByStowagePlan(stowagePlan);
-          if (cargoDataOpt.isPresent()) {
-            this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
-                stowagePlan, cargoDataOpt.get().getCargoId());
-          }
+          cargoDatas.forEach(cargoData -> {
+              this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
+                  stowagePlan, cargoData.getCargoId(), cargoData.getCargoAbbrev());
+          });
         });
   }
 
