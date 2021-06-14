@@ -317,6 +317,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'etaEtdPlanned',
                 type: this.fieldType.DATETIME,
+                minValue: this.today,
                 validators: (this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) && 
                 (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined) ? ['required'] : []
               }],
@@ -327,6 +328,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'etaEtdActual',
                 type: this.fieldType.DATETIME,
+                maxValue: this.today,
                 validators: ((this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) && 
                   (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined)) ? ['required'] : []
               }],
@@ -494,7 +496,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftFwdPlanned",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required']
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: false,
                   },
@@ -504,7 +506,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftFwdActual",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required', 'dd.dd.+']
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -519,7 +521,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftAftPlanned",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required']
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: false,
                   },
@@ -529,7 +531,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftAftActual",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required','dd.dd.+']
+                      validators: ['required','dd.dd']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -544,7 +546,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftMidPlanned",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required']
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: false,
                   },
@@ -554,7 +556,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftMidActual",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required', 'dd.dd.+']
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -571,7 +573,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                   key: "calculatedTrimPlanned",
                   type: this.fieldType.NUMBER,
                   numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                  validators: ['required']
+                  validators: ['required', 'dd.dd']
                 }],
                 editable: false,
               },
@@ -581,7 +583,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                   key: "calculatedTrimActual",
                   type: this.fieldType.NUMBER,
                   numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                  validators: ['required', 'dd.dd.+']
+                  validators: ['required', 'dd.dd']
                 }],
                 editable: this.checkIfConfirmed(),
               },

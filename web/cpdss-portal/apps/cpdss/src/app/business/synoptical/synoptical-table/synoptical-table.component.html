@@ -92,7 +92,7 @@
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
                                         inputId="{{field.key + colIndex}}" id="{{field.key + colIndex}}"
                                         [formControl]="getControl(colIndex,field.key)" [hideOnDateTimeSelect]="false"
-                                        [minDate]="today" dateFormat="{{editDateFormat}}" (onClose)="onBlur(field,colIndex)"
+                                        [minDate]="field.minValue" [maxDate]="field.maxValue" dateFormat="{{editDateFormat}}" (onClose)="onBlur(field,colIndex)"
                                         #subcoldatetime>
                                         <p-footer>
                                             <button class="btn btn-main"

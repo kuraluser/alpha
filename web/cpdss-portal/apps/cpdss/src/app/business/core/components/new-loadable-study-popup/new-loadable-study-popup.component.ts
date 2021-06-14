@@ -180,11 +180,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
                 this.loadableStudyDetailsTransformationService.setLoadLineChange();
               }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
+              this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
             }
             this.closeDialog();
-            this.addedNewLoadableStudy.emit(result.loadableStudyId)
+            this.addedNewLoadableStudy.emit(result.loadableStudyId);
           }
         } catch (error) {
           if (error.error.errorCode === 'ERR-RICO-105') {

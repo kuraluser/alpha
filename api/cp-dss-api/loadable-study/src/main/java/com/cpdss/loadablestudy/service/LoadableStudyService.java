@@ -5469,6 +5469,734 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         false, loadablePattern.getId());
   }
 
+  /**
+   * Call algo - ullage update api and validate the resonse
+   *
+   * @param algoRequest
+   * @return
+   * @throws GenericServiceException
+   */
+  private UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
+      throws GenericServiceException {
+    ResponseEntity<UllageUpdateResponse> responseEntity =
+        this.restTemplate.postForEntity(
+            this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);
+    if (HttpStatusCode.OK.value() != responseEntity.getStatusCodeValue()) {
+      throw new GenericServiceException(
+          "Error calling algo: invalid status received",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return responseEntity.getBody();
+  }
+
+  /**
+   * Prepare ullage upate request for algo
+   *
+   * @param request
+   * @param loadablePattern
+   * @return
+   */
+  private UllageUpdateRequest prepareUllageUpdateRequest(
+      UpdateUllageRequest request, LoadablePattern loadablePattern) {
+    UllageUpdateRequest algoRequest = new UllageUpdateRequest();
+    algoRequest.setRdgUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
+    algoRequest.setId(request.getLoadablePlanStowageDetails().getId());
+    algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
+    algoRequest.setApi(request.getLoadablePlanStowageDetails().getApi());
+    algoRequest.setTemp(request.getLoadablePlanStowageDetails().getTemperature());
+    Optional<SynopticalTable> synopticalTableOpt =
+        synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            getLastPortRotationId(
+                loadablePattern.getLoadableStudy(),
+                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID)),
+            SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+            true);
+    if (synopticalTableOpt.isPresent()) {
+      algoRequest.setTrim(
+          String.valueOf(
+              synopticalTableLoadicatorDataRepository
+                  .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                      synopticalTableOpt.get(), loadablePattern.getId(), true)
+                  .getCalculatedTrimPlanned()));
+    }
+    algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
+    return algoRequest;
+  }
+
+  @Override
+  public void validateLoadablePlan(
+      LoadablePlanDetailsRequest request, StreamObserver<AlgoReply> responseObserver) {
+    log.info("Inside get validateLoadablePlan in loadable study micro service");
+    AlgoReply.Builder replyBuilder = AlgoReply.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (!loadablePatternOpt.isPresent()) {
+        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+        replyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_PATTERN_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+
+      } else {
+        LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+            new LoadabalePatternValidateRequest();
+
+        ModelMapper modelMapper = new ModelMapper();
+        com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+            new com.cpdss.loadablestudy.domain.LoadableStudy();
+
+        buildLoadableStudy(
+            loadablePatternOpt.get().getLoadableStudy().getId(),
+            loadablePatternOpt.get().getLoadableStudy(),
+            loadableStudy,
+            modelMapper);
+
+        buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
+
+        loadabalePatternValidateRequest.setLoadableStudy(loadableStudy);
+
+        loadabalePatternValidateRequest.setBallastEdited(
+            stowageDetailsTempRepository.isBallastEdited(request.getLoadablePatternId(), true));
+        loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
+        loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
+        ObjectMapper objectMapper = new ObjectMapper();
+        this.saveJsonToDatabase(
+            request.getLoadablePatternId(),
+            LOADABLE_PATTERN_EDIT_REQUEST,
+            objectMapper.writeValueAsString(loadabalePatternValidateRequest));
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadablePattern_request_"
+                    + request.getLoadablePatternId()
+                    + ".json"),
+            loadabalePatternValidateRequest);
+        AlgoResponse algoResponse =
+            restTemplate.postForObject(
+                loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+
+        updateProcessIdForLoadablePattern(
+            algoResponse.getProcessId(),
+            loadablePatternOpt.get(),
+            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+
+        replyBuilder =
+            AlgoReply.newBuilder()
+                .setProcesssId(algoResponse.getProcessId())
+                .setResponseStatus(
+                    ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+      }
+
+    } catch (Exception e) {
+      log.error("Exception while validateLoadablePlan", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception while validate Loadable Plan")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param loadablePattern
+   * @param loadabalePatternValidateRequest void
+   */
+  private void buildLoadablePlanPortWiseDetails(
+      LoadablePattern loadablePattern,
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
+    List<LoadableStudyPortRotation> entityList =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            loadablePattern.getLoadableStudy(), true);
+    Long lastLoadingRotationId =
+        getLastPortRotationId(
+            loadablePattern.getLoadableStudy(),
+            this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+
+    Long lastLoadingPortId =
+        getLastPort(
+            loadablePattern.getLoadableStudy(),
+            this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+
+    GetPortInfoByPortIdsRequest.Builder reqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
+    entityList.stream()
+        .map(LoadableStudyPortRotation::getPortXId)
+        .collect(Collectors.toList())
+        .forEach(
+            port -> {
+              reqBuilder.addId(port);
+            });
+    PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
+
+    List<com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails =
+        new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails>();
+    entityList.stream()
+        .filter(portRotation -> !portRotation.getId().equals(lastLoadingRotationId))
+        .collect(Collectors.toList())
+        .forEach(
+            portRotate -> {
+              com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails portWiseDetails =
+                  new com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails();
+              portWiseDetails.setPortId(portRotate.getPortXId());
+              portWiseDetails.setPortRotationId(portRotate.getId());
+              portWiseDetails.setPortCode(
+                  portReply.getPortsList().stream()
+                      .filter(
+                          portDetail -> Objects.equals(portRotate.getPortXId(), portDetail.getId()))
+                      .findAny()
+                      .get()
+                      .getCode());
+              LoadabalePatternDetails arrivalCondition = new LoadabalePatternDetails();
+              LoadabalePatternDetails departureCondition = new LoadabalePatternDetails();
+
+              arrivalCondition.setLoadablePlanStowageDetails(
+                  addLoadablePatternsStowageDetails(
+                      loadablePatternCargoDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+              departureCondition.setLoadablePlanStowageDetails(
+                  addLoadablePatternsStowageDetails(
+                      loadablePatternCargoDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              arrivalCondition.setLoadablePlanBallastDetails(
+                  addLoadablePlanBallastDetails(
+                      loadablePlanStowageBallastDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+              departureCondition.setLoadablePlanBallastDetails(
+                  addLoadablePlanBallastDetails(
+                      loadablePlanStowageBallastDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              arrivalCondition.setLoadablePlanCommingleDetails(
+                  addLoadablePlanCommingleDetails(
+                      loadablePlanCommingleDetailsPortwiseRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              departureCondition.setLoadablePlanCommingleDetails(
+                  addLoadablePlanCommingleDetails(
+                      loadablePlanCommingleDetailsPortwiseRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              portWiseDetails.setArrivalCondition(arrivalCondition);
+              portWiseDetails.setDepartureCondition(departureCondition);
+              loadablePlanPortWiseDetails.add(portWiseDetails);
+            });
+
+    com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails portWiseDetails =
+        new com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails();
+
+    portWiseDetails.setPortId(lastLoadingPortId);
+    portWiseDetails.setPortRotationId(lastLoadingRotationId);
+    portWiseDetails.setPortCode(
+        portReply.getPortsList().stream()
+            .filter(portDetail -> Objects.equals(lastLoadingPortId, portDetail.getId()))
+            .findAny()
+            .get()
+            .getCode());
+    LoadabalePatternDetails arrivalCondition = new LoadabalePatternDetails();
+    LoadabalePatternDetails departureCondition = new LoadabalePatternDetails();
+
+    arrivalCondition.setLoadablePlanStowageDetails(
+        addLoadablePatternsStowageDetails(
+            loadablePatternCargoDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                    true),
+            false,
+            loadablePattern.getId()));
+    departureCondition.setLoadablePlanStowageDetails(
+        addLoadablePatternsStowageDetails(
+            loadablePatternCargoDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                    true),
+            true,
+            loadablePattern.getId()));
+    arrivalCondition.setLoadablePlanBallastDetails(
+        addLoadablePlanBallastDetails(
+            loadablePlanStowageBallastDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                    true),
+            false,
+            loadablePattern.getId()));
+    departureCondition.setLoadablePlanBallastDetails(
+        addLoadablePlanBallastDetails(
+            loadablePlanStowageBallastDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                    true),
+            true,
+            loadablePattern.getId()));
+
+    arrivalCondition.setLoadablePlanCommingleDetails(
+        addLoadablePlanCommingleDetails(
+            loadablePlanCommingleDetailsPortwiseRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                    true),
+            false,
+            loadablePattern.getId()));
+    departureCondition.setLoadablePlanCommingleDetails(
+        addLoadablePlanCommingleDetails(
+            loadablePlanCommingleDetailsPortwiseRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                    true),
+            true,
+            loadablePattern.getId()));
+
+    portWiseDetails.setArrivalCondition(arrivalCondition);
+    portWiseDetails.setDepartureCondition(departureCondition);
+    loadablePlanPortWiseDetails.add(portWiseDetails);
+
+    loadabalePatternValidateRequest.setLoadablePlanPortWiseDetails(loadablePlanPortWiseDetails);
+  }
+
+  /**
+   * @param findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive
+   * @param b
+   * @param id
+   * @return List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+   */
+  private List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+      addLoadablePlanCommingleDetails(
+          List<LoadablePlanComminglePortwiseDetails> loadablePatternCommingleDetails,
+          boolean isLastPortDeparture,
+          Long loadablePatternId) {
+    List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails> stowageDetails =
+        new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>();
+
+    // commenting the below code since commingle is not editing for last loading port as of now
+    /*
+     * if (isLastPortDeparture) { stowageDetailsTempRepository
+     * .findByLoadablePlanCommingleTempDetailsAndIsActive(loadablePatternId, true)
+     * .forEach( lpsd -> { com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails
+     * details = new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+     * Object[] obA = (Object[]) lpsd; details.setId((Long) obA[0]); //
+     * details.setCargoNominationId((Long) obA[1]); details.setTankId((Long)
+     * obA[1]); details.setQuantityMT(String.valueOf(obA[2]));
+     * stowageDetails.add(details); }); } else {
+     */
+
+    loadablePatternCommingleDetails.forEach(
+        lpsd -> {
+          com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
+              new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+          details.setId(lpsd.getId());
+          // details.setCargoNominationId(lpsd.getCargoNominationId());
+          details.setTankId(lpsd.getTankId());
+          details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
+          details.setCargo1QuantityMT(lpsd.getCargo1Mt());
+          details.setCargo2QuantityMT(lpsd.getCargo2Mt());
+          details.setCargo1NominationId(lpsd.getCargo1NominationId());
+          details.setCargo2NominationId(lpsd.getCargo2NominationId());
+          stowageDetails.add(details);
+        });
+    // }
+    return stowageDetails;
+  }
+
+  /**
+   * @param findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive
+   * @param synopticalTableOpTypeArrival
+   * @return List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>
+   */
+  private List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>
+      addLoadablePlanBallastDetails(
+          List<LoadablePlanStowageBallastDetails> loadablePlanStowageBallastDetails,
+          Boolean isLastPortDeparture,
+          Long loadablePatternId) {
+    List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails> ballastDetails =
+        new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>();
+
+    if (isLastPortDeparture) {
+      stowageDetailsTempRepository
+          .findByLoadablePlanBallastTempDetailsAndIsActive(loadablePatternId, true)
+          .forEach(
+              lpsd -> {
+                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
+                    new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
+                Object[] obA = (Object[]) lpsd;
+                details.setId((Long) obA[0]);
+                details.setTankId((Long) obA[1]);
+                details.setQuantityMT(String.valueOf(obA[2]));
+                ballastDetails.add(details);
+              });
+    } else {
+      loadablePlanStowageBallastDetails.forEach(
+          lpsd -> {
+            com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
+                new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
+
+            details.setId(lpsd.getId());
+            details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
+            details.setTankId(lpsd.getTankXId());
+            ballastDetails.add(details);
+          });
+    }
+    return ballastDetails;
+  }
+
+  /**
+   * @param findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive
+   * @param synopticalTableOpTypeArrival
+   * @return List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+   */
+  private List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+      addLoadablePatternsStowageDetails(
+          List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails>
+              loadablePatternCargoDetails,
+          Boolean isLastPortDeparture,
+          Long loadablePatternId) {
+    List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails> stowageDetails =
+        new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>();
+    if (isLastPortDeparture) {
+      stowageDetailsTempRepository
+          .findByLoadablePlanStowageTempDetailsAndIsActive(loadablePatternId, true)
+          .forEach(
+              lpsd -> {
+                com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
+                    new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+                Object[] obA = (Object[]) lpsd;
+                details.setId((Long) obA[0]);
+                details.setCargoNominationId((Long) obA[1]);
+                details.setTankId((Long) obA[2]);
+                details.setQuantityMT(String.valueOf(obA[3]));
+                stowageDetails.add(details);
+              });
+    } else {
+
+      loadablePatternCargoDetails.forEach(
+          lpsd -> {
+            com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
+                new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+            details.setId(lpsd.getId());
+            details.setCargoNominationId(lpsd.getCargoNominationId());
+            details.setTankId(lpsd.getTankId());
+            details.setQuantityMT(String.valueOf(lpsd.getPlannedQuantity()));
+            stowageDetails.add(details);
+          });
+    }
+    return stowageDetails;
+  }
+
+  /**
+   * @param processId
+   * @param loadablePattern
+   * @param loadableStudyProcessingStartedId void
+   */
+  private void updateProcessIdForLoadablePattern(
+      String processId, LoadablePattern loadablePattern, Long loadablePatternProcessingStartedId) {
+    LoadablePatternAlgoStatus status = new LoadablePatternAlgoStatus();
+    status.setLoadablePattern(loadablePattern);
+    status.setIsActive(true);
+    status.setLoadableStudyStatus(
+        loadableStudyStatusRepository.getOne(loadablePatternProcessingStartedId));
+    status.setProcessId(processId);
+    status.setVesselxid(loadablePattern.getLoadableStudy().getVesselXId());
+    loadablePatternAlgoStatusRepository.save(status);
+  }
+
+  @Override
+  public void getLoadablePatternCommingleDetails(
+      LoadablePatternCommingleDetailsRequest request,
+      StreamObserver<LoadablePatternCommingleDetailsReply> responseObserver) {
+    log.info("Inside get Loadable Pattern Commingle Details in loadable study micro service");
+    LoadablePatternCommingleDetailsReply.Builder builder =
+        LoadablePatternCommingleDetailsReply.newBuilder();
+    try {
+      Optional<LoadablePlanCommingleDetails> loadablePlanComingleDetails =
+          loadablePlanCommingleDetailsRepository.findByIdAndIsActive(
+              request.getLoadablePatternCommingleDetailsId(), true);
+      if (!loadablePlanComingleDetails.isPresent()) {
+        log.info(
+            INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID,
+            request.getLoadablePatternCommingleDetailsId());
+        builder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else {
+
+        buildLoadablePatternComingleDetails(loadablePlanComingleDetails.get(), builder);
+        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+
+    } catch (Exception e) {
+      log.error("Exception when fetching get Loadable Pattern Details", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when fetching Loadable Pattern Commingle Details")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param loadablePatternComingleDetails void
+   * @param builder
+   */
+  private void buildLoadablePatternComingleDetails(
+      LoadablePlanCommingleDetails loadablePlanCommingleDetails,
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.Builder
+          builder) {
+    ofNullable(loadablePlanCommingleDetails.getApi())
+        .ifPresent(api -> builder.setApi(String.valueOf(api)));
+    ofNullable(loadablePlanCommingleDetails.getCargo1Abbreviation())
+        .ifPresent(cargo1Abbrivation -> builder.setCargo1Abbrivation(cargo1Abbrivation));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo2Abbreviation())
+        .ifPresent(cargo2Abbrivation -> builder.setCargo2Abbrivation(cargo2Abbrivation));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo1Percentage())
+        .ifPresent(
+            cargo1Percentage -> builder.setCargo1Percentage(String.valueOf(cargo1Percentage)));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo2Percentage())
+        .ifPresent(
+            cargo2Percentage -> builder.setCargo2Percentage(String.valueOf(cargo2Percentage)));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo1Mt())
+        .ifPresent(cargo1Quantity -> builder.setCargo1Quantity(String.valueOf(cargo1Quantity)));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo2Mt())
+        .ifPresent(cargo2Quantity -> builder.setCargo2Quantity(String.valueOf(cargo2Quantity)));
+
+    ofNullable(loadablePlanCommingleDetails.getGrade()).ifPresent(grade -> builder.setGrade(grade));
+
+    ofNullable(loadablePlanCommingleDetails.getQuantity())
+        .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
+
+    ofNullable(loadablePlanCommingleDetails.getTankName())
+        .ifPresent(tankShortName -> builder.setTankShortName(tankShortName));
+
+    ofNullable(loadablePlanCommingleDetails.getTemperature())
+        .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
+
+    ofNullable(loadablePlanCommingleDetails.getId()).ifPresent(id -> builder.setId(id));
+  }
+
+  @Override
+  public void savePatternValidateResult(
+      LoadablePatternAlgoRequest request, StreamObserver<AlgoReply> responseObserver) {
+    AlgoReply.Builder builder = AlgoReply.newBuilder();
+    try {
+
+      log.info("savePatternValidateResult - loadable study micro service");
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (!loadablePatternOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable pattern does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
+      if (!request.getValidated()) {
+        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+            LOADABLE_PATTERN_VALIDATION_FAILED_ID, request.getProcesssId(), true);
+
+        algoErrorsRepository.deleteAlgoError(false, request.getLoadablePatternId());
+        algoErrorHeadingRepository.deleteAlgoErrorHeading(false, request.getLoadablePatternId());
+
+        saveAlgoErrorToDB(request, loadablePatternOpt.get(), new LoadableStudy(), true);
+
+      } else {
+
+        deleteExistingPlanDetails(loadablePatternOpt.get());
+
+        Long lastLoadingPort =
+            getLastPort(
+                loadablePatternOpt.get().getLoadableStudy(),
+                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+        request
+            .getLoadablePlanDetailsList()
+            .forEach(
+                lpd -> {
+                  Optional<LoadablePlanPortWiseDetails> lppwdOptional =
+                      lpd.getLoadablePlanPortWiseDetailsList().stream()
+                          .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
+                          .findAny();
+                  if (lppwdOptional.isPresent()) {
+                    saveLoadableQuantity(lppwdOptional.get(), loadablePatternOpt.get());
+                    saveLoadablePlanCommingleCargo(
+                        lppwdOptional
+                            .get()
+                            .getDepartureCondition()
+                            .getLoadableQuantityCommingleCargoDetailsList(),
+                        loadablePatternOpt.get());
+                    saveLoadablePlanStowageDetails(
+                        lppwdOptional
+                            .get()
+                            .getDepartureCondition()
+                            .getLoadablePlanStowageDetailsList(),
+                        loadablePatternOpt.get());
+                    saveLoadablePlanBallastDetails(
+                        lppwdOptional
+                            .get()
+                            .getDepartureCondition()
+                            .getLoadablePlanBallastDetailsList(),
+                        loadablePatternOpt.get());
+                  }
+                  saveLoadableQuantityCommingleCargoPortwiseDetails(
+                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePatternOpt.get());
+                  saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
+                  saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
+                  saveStabilityParameterForNonLodicator(
+                      request.getHasLodicator(), loadablePatternOpt.get(), lpd);
+                });
+        if (request.getHasLodicator()) {
+          this.saveLoadicatorInfo(
+              loadablePatternOpt.get().getLoadableStudy(),
+              request.getProcesssId(),
+              request.getLoadablePatternId());
+        }
+        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
+      }
+
+      builder
+          .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
+          .build();
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in loadable pattern list", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception in loadable pattern list", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in getLoadablePatternList")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param request
+   * @param loadableStudy
+   * @param loadablePattern
+   * @param b void
+   */
+  private void saveAlgoErrorToDB(
+      LoadablePatternAlgoRequest request,
+      LoadablePattern loadablePattern,
+      LoadableStudy loadableStudy,
+      boolean isPatternErrorSaving) {
+    request
+        .getAlgoErrorsList()
+        .forEach(
+            algoError -> {
+              AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+              algoErrorHeading.setErrorHeading(algoError.getErrorHeading());
+              if (isPatternErrorSaving) {
+                algoErrorHeading.setLoadablePattern(loadablePattern);
+              } else {
+                algoErrorHeading.setLoadableStudy(loadableStudy);
+              }
+              algoErrorHeading.setIsActive(true);
+              algoErrorHeadingRepository.save(algoErrorHeading);
+              algoError
+                  .getErrorMessagesList()
+                  .forEach(
+                      error -> {
+                        com.cpdss.loadablestudy.entity.AlgoErrors algoErrors =
+                            new com.cpdss.loadablestudy.entity.AlgoErrors();
+                        algoErrors.setAlgoErrorHeading(algoErrorHeading);
+                        algoErrors.setErrorMessage(error);
+                        algoErrors.setIsActive(true);
+                        algoErrorsRepository.save(algoErrors);
+                      });
+            });
+  }
+
+  /** @param loadablePattern void */
+  private void deleteExistingPlanDetails(LoadablePattern loadablePattern) {
+    stowageDetailsTempRepository.deleteLoadablePlanStowageDetailsTemp(
+        false, loadablePattern.getId());
+    loadablePlanQuantityRepository.deleteLoadablePlanQuantity(false, loadablePattern.getId());
+    loadablePlanCommingleDetailsRepository.deleteLoadablePlanCommingleDetails(
+        false, loadablePattern.getId());
+    loadablePlanStowageDetailsRespository.deleteLoadablePlanStowageDetails(
+        false, loadablePattern.getId());
+    loadablePatternCargoDetailsRepository.deleteLoadablePatternCargoDetails(
+        false, loadablePattern.getId());
+    loadablePlanBallastDetailsRepository.deleteLoadablePlanBallastDetails(
+        false, loadablePattern.getId());
+    loadablePlanStowageBallastDetailsRepository.deleteLoadablePlanStowageBallastDetails(
+        false, loadablePattern.getId());
+    synopticalTableLoadicatorDataRepository.deleteByLoadablePatternId(
+        false, loadablePattern.getId());
+  }
+
   @Override
   public void generateLoadablePatterns(
       AlgoRequest request, StreamObserver<AlgoReply> responseObserver) {

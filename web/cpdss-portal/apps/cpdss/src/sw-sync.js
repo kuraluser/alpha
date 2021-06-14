@@ -462,7 +462,7 @@
       }else if (syncView?.status === '401' || syncView?.status === '400'){
         notifyClients(syncView);
       }
-      else if (syncView?.responseStatus.status === '500') {
+      else if (syncView?.responseStatus?.status === '500') {
         clearInterval(timer);
       }
     }, 3500);
