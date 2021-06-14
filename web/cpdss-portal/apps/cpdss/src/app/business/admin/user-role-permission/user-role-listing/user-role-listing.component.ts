@@ -1,10 +1,9 @@
 import { Component, OnInit , OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { first } from 'rxjs/operators';
 
 import { TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { IRoleDetails, IRoleResponse, IRoleDeleteResponse, IDataStateChange } from '../../models/user-role-permission.model';
@@ -12,12 +11,11 @@ import { IDataTableColumn, DATATABLE_ACTION } from '../../../../shared/component
 
 import { UserRolePermissionApiService } from '../../services/user-role-permission-api.service';
 import { UserRolePermissionTransformationService } from '../../services/user-role-permission-transformation.service';
-import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 /**
  * Component class of user allocation
@@ -58,7 +56,7 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
     private userRolePermissionApiService: UserRolePermissionApiService,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private permissionsService: PermissionsService,
     private userRolePermissionTransformationService: UserRolePermissionTransformationService
   ) { }
@@ -75,6 +73,7 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
     this.columns = this.userRolePermissionTransformationService.getRoleListDatatableColumns();
     this.getPagePermission();
     this.getUserDetails$.pipe(
+      debounceTime(1000), // By setting this we can avoid multiple api calls
       switchMap(() => {
         return this.userRolePermissionApiService.getRoleDetails(this.pageState);
       })
@@ -122,7 +121,7 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
       const roles = roleDetailsRes.roles;
       if(this.totalRecords &&  !roles?.length) {
         this.loading = true;
-        this.currentPage = this.currentPage ? this.currentPage - 1 :  0; 
+        this.currentPage = this.currentPage ? this.currentPage - 1 :  0;
         this.pageState['page'] =  this.currentPage;
         this.getUserDetails$.next();
       }
@@ -132,16 +131,28 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
 
   /**
    * delete user role details
-   * @param event 
+   * @param event
    * @memberof UserRoleListingComponent
    */
   async onDeleteRow(event) {
     const roleId = event.data?.id;
     const deleteDetails =  event.data.isUserMapped ? 'USER_MAPPED_ROLE_DELETE_SUMMARY' : 'USER_ROLE_DELETE_DETAILS'
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'USER_ROLE_DELETE_SUMMARY', detail: deleteDetails , data: { confirmLabel: 'USER_ROLE_DELETE_CONFIRM_LABEL', rejectLabel: 'USER_ROLE_DELETE_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-      if (response) {
-        const translationKeys = await this.translateService.get(['ROLE_DELETE_SUCCESSFULLY', 'ROLE_DELETED_SUCCESS']).toPromise();
+
+    const translationKeys = await this.translateService.get(['USER_ROLE_DELETE_SUMMARY', deleteDetails, 'USER_ROLE_DELETE_CONFIRM_LABEL', 'USER_ROLE_DELETE_REJECT_LABEL', 'ROLE_DELETE_SUCCESSFULLY', 'ROLE_DELETED_SUCCESS']).toPromise();
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['USER_ROLE_DELETE_SUMMARY'],
+      message: translationKeys[deleteDetails],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['USER_ROLE_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['USER_ROLE_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
         this.ngxSpinnerService.show();
         const roleDeleteRes: IRoleDeleteResponse = await this.userRolePermissionApiService.deleteRole(roleId).toPromise();
         this.ngxSpinnerService.hide();
@@ -155,7 +166,7 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
 
   /**
    * route to edit role details page while clicking cloumn
-   * @param event 
+   * @param event
    * @memberof UserRoleListingComponent
    */
   columnClick(event) {
@@ -170,7 +181,7 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
 
   /**
    * route to edit role details page
-   * @param event 
+   * @param event
    * @memberof UserRoleListingComponent
    */
   editRow(event) {

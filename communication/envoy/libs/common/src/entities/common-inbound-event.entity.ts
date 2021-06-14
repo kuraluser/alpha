@@ -89,5 +89,11 @@ export class InBoundEventDataEntity {
 
   @Column({ name: 'confirm_read_timestamp', type: 'bigint', nullable: true })
   confirmReadTimeStamp: bigint;
+
+  @Column({ name: 'cancel_read', nullable: true, default: null })
+  cancelRead: string;
+
+  @Column({ name: 'cancel_read_timestamp', type: 'bigint', nullable: true })
+  cancelReadTimeStamp: bigint;
   
 }

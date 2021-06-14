@@ -30,7 +30,7 @@
                             <ng-container *ngIf="col?.subColumns?.length;else col_content">
                                 <ng-container *ngFor="let subCol of col.subColumns;">
                                     <td>
-                                        <span>{{rowData[subCol.field]}}</span>
+                                        <span>{{subCol?.numberFormat === 'quantity' ? (rowData[subCol.field] | quantityDecimalFormat: subCol?.unit): rowData[subCol.field]}}</span>
                                     </td>
                                 </ng-container>
                             </ng-container>

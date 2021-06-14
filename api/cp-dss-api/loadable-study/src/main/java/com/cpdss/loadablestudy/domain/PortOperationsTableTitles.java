@@ -11,7 +11,7 @@ public enum PortOperationsTableTitles {
   OPERATION("Operation"),
   PORT_NAME("Name of Port"),
   COUNTRY("Country"),
-  CARGO_RANGE("Cargo Range"),
+  LAYCAN_RANGE("Laycan Range"),
   ETA("ETA"),
   ETD("ETD"),
   ARR_FWD_DRAFT("Arr. FWD Draft"),

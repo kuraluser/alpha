@@ -1,15 +1,13 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { IVessel } from '../../../core/models/vessel-details.model';
-import { first } from 'rxjs/operators';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
@@ -28,7 +26,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
   styleUrls: ['./side-panel-loadable-study-list.component.scss']
 })
 export class SidePanelLoadableStudyListComponent implements OnInit {
-  
+
   @ViewChild('sidepaneDatatable') sidepaneDatatable: ElementRef;
   @Input()
   get loadableStudies(): LoadableStudy[] {
@@ -75,7 +73,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     private translateService: TranslateService,
     private messageService: MessageService,
     private ngxSpinnerService: NgxSpinnerService,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
@@ -113,11 +111,22 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   async onDelete(event) {
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_STUDY_DELETE_SUMMARY', detail: 'LOADABLE_STUDY_DELETE_DETAILS', data: { confirmLabel: 'LOADABLE_STUDY_DELETE_CONFIRM_LABEL', rejectLabel: 'LOADABLE_STUDY_DELETE_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-      if (response) {
+    const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY', 'LOADABLE_STUDY_DELETE_ERROR', 'LOADABLE_STUDY_DELETE_STATUS_ERROR', 'LOADABLE_STUDY_DELETE_SUMMARY', 'LOADABLE_STUDY_DELETE_DETAILS', 'LOADABLE_STUDY_DELETE_CONFIRM_LABEL', 'LOADABLE_STUDY_DELETE_REJECT_LABEL']).toPromise();
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['LOADABLE_STUDY_DELETE_SUMMARY'],
+      message: translationKeys['LOADABLE_STUDY_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['LOADABLE_STUDY_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['LOADABLE_STUDY_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
         this.ngxSpinnerService.show();
-        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY', 'LOADABLE_STUDY_DELETE_ERROR', 'LOADABLE_STUDY_DELETE_STATUS_ERROR']).toPromise();
         try {
           const res = await this.loadableStudyListApiService.deleteLodableStudy(this.vesselInfo?.id, this.voyage?.id, event?.data?.id).toPromise();
           if (res?.responseStatus?.status === "200") {

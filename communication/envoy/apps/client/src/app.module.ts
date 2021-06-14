@@ -19,6 +19,7 @@ import { LogShippingService } from './utils/log-shipping.service';
 import { ClientSimulateService } from './utils/client-simulate.service';
 import { ClientAuthService } from './utils/client-auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CancelTaskService } from './scheduler/cancelled-task.service';
 
 /**
  * Root module for Envoy client
@@ -45,7 +46,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [UploadController, DownloadController],
   providers: [
     SocketClientService, ClientAuthService, ClientUtilService, SplitTaskService, TransportTaskService, FinishTaskService,
-    ConfirmTaskService, VerifyTaskService, ResendTaskService, SocketListenerService, LogShippingService,
+    ConfirmTaskService, CancelTaskService, VerifyTaskService, ResendTaskService, SocketListenerService, LogShippingService,
     ClientSimulateService
   ]
 })

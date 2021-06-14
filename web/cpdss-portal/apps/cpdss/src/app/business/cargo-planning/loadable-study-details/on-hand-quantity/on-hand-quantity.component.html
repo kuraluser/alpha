@@ -19,7 +19,7 @@
                                 <ul class="list-unstyled list-inline port-list pb-10 mb-0">
                                     <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}"
                                         *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">
-                                        {{port?.name}} 
+                                        {{port?.name}}
                                         <span *ngIf="!loadableStudyDetailsTransformationService.getOHQPortValidity(port.id)"
                                          class="error-icon" pTooltip="{{'INCOMPLETE'|translate}}">!</span>
                                     </li>
@@ -126,9 +126,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-7"
-                                [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.ARRIVAL ? 'visible': 'hidden'}"
-                                [ngClass]="{'order-last': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE}">
+                            <div class="col-7" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.ARRIVAL">
                                 <div class="row">
                                     <label for="" class="col-12 text-center no-wrap">{{'OHQ_ARRIVAL'| translate}}
                                         {{'OHQ_QUANTITY'| translate}}</label>
@@ -144,8 +142,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6"
-                                [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE ? 'visible': 'hidden'}">
+                            <div class="col-6" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE">
                                 <div class="row">
                                     <label for="" class="col-12 text-center no-wrap">{{'OHQ_DEPARTURE'| translate}}
                                         {{'OHQ_QUANTITY'| translate}}</label>

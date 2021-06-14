@@ -267,7 +267,8 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {LOADABLE_STUDY_LIST_CLOUD_API_URL, LOADABLE_STUDY_LIST_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadableStudyByVoyage(String url) throws Exception {
-    when(this.loadableStudyService.getLoadableStudies(anyLong(), anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadableStudies(
+            anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenReturn(new LoadableStudyResponse());
     this.mockMvc
         .perform(
@@ -287,7 +288,8 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {LOADABLE_STUDY_LIST_CLOUD_API_URL, LOADABLE_STUDY_LIST_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadableStudyByVoyageServiceException(String url) throws Exception {
-    when(this.loadableStudyService.getLoadableStudies(anyLong(), anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadableStudies(
+            anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenThrow(
             new GenericServiceException(
                 "service exception",
@@ -311,7 +313,8 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {LOADABLE_STUDY_LIST_CLOUD_API_URL, LOADABLE_STUDY_LIST_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadableStudyByVoyageRuntimeException(String url) throws Exception {
-    when(this.loadableStudyService.getLoadableStudies(anyLong(), anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadableStudies(
+            anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(

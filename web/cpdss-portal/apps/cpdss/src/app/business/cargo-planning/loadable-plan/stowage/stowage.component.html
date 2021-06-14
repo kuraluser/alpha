@@ -40,10 +40,10 @@
             <div class="col"  *ngIf="selectedTab === tankType.CARGO">
                 <div class="text-right mb-10" *ngIf="isEditable">
                     <button class="btn btn-main mr-10" *ngIf="loadablePatternValidationStatus === validateAndSaveStatus.LOADABLE_PLAN_FAILED" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
-                    <button class="btn btn-main mr-10" [hidden]="loadableStudyStatus" *ngIf="!buttonStatus" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable || !cargoTankDetails?.length || isStowageEditable"
+                    <button class="btn btn-main mr-10" [hidden]="loadableStudyStatus" *ngIf="!buttonStatus" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable || !cargoTankDetails?.length || isStowageEditable || validateAndSaveProcessing"
                         (click)="changeGridToEditMode()">{{'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL'| translate}}
                     </button>
-                    <button class="btn btn-main mr-10" (click)="commentsPopup(true)" *ngIf="buttonStatus === 1">
+                    <button class="btn btn-main mr-10" (click)="commentsPopup(true)" *ngIf="buttonStatus === 1" [disabled]="stowageDataEditStatus">
                         {{'LOADABLE_PLAN_VALIDATE_AND_SAVE'| translate}}
                     </button>
                     <button class="btn btn-main" *ngIf="buttonStatus === 1" (click)="cancelStowageEdit()">
@@ -58,8 +58,8 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="selectedTab === tankType.BALLAST">
-                <cpdss-portal-ballast-stowage (validateAndSave)="commentsPopup($event)" (ballastStowageDataEdit)="ballastStowageDataEdit($event)" 
+            <div *ngIf="selectedTab === tankType.BALLAST" class="col ml-30">
+                <cpdss-portal-ballast-stowage #ballastStowage (validateAndSave)="commentsPopup($event)" (ballastStowageDataEdit)="ballastStowageDataEdit($event,ballastStowage)" 
                 [initBallastTankDetails]="initBallastTankDetails" 
                 [ballastForm]="getFormGroup('ballastTanks')" 
                 [ballastDetails]="ballastTankDetails" 

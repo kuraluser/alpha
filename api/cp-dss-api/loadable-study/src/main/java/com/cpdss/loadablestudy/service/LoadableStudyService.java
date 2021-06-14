@@ -165,7 +165,45 @@ import com.cpdss.loadablestudy.domain.VesselTanksTable;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
+import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
+import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.JsonDataRepository;
+import com.cpdss.loadablestudy.repository.JsonTypeRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
+import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
+import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -825,9 +863,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository
-              .findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
-                  request.getVesselId(), voyageOpt.get(), true);
+          this.loadableStudyRepository.findAllLoadableStudy(
+              request.getVesselId(), voyageOpt.get(), request.getPlanningTypeValue());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
@@ -1167,8 +1204,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void validateLoadableStudyName(Voyage voyage, LoadableStudyDetail request)
       throws GenericServiceException {
     LoadableStudy duplicate =
-        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActive(
-            voyage, request.getName(), true);
+        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
+            voyage, request.getName(), true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
     if ((request.getId() == 0 && null != duplicate)
         || (null != duplicate && request.getId() != duplicate.getId().longValue())) {
       throw new GenericServiceException(
@@ -2608,8 +2645,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
               loadableStudyOpt.get(), portRotation, true);
       Optional<LoadableStudy> confirmedLoadableStudyOpt =
-          this.loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-              previousVoyage, CONFIRMED_STATUS_ID, true);
+          this.loadableStudyRepository
+              .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+                  previousVoyage,
+                  CONFIRMED_STATUS_ID,
+                  true,
+                  Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
 
       List<OnHandQuantity> onHandQuantityList = null;
       if (confirmedLoadableStudyOpt.isPresent()) {
@@ -4696,9 +4737,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .findBySynopticalTableAndLoadablePatternIdAndIsActive(
                       synopticalTableOpt.get(), loadablePattern.getId(), true)
                   .getCalculatedTrimPlanned()));
-      // algoRequest.setTrim(
-      //    "0"); // ToDo - replace with above code once loaicator implementaion is done.
     }
+    algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
     return algoRequest;
   }
 
@@ -5356,6 +5396,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setProcesssId(algoResponse.getProcessId())
                 .setResponseStatus(
                     ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+
       } else {
         log.info("INVALID_LOADABLE_STUDY {} - ", request.getLoadableStudyId());
         replyBuilder =
@@ -5569,7 +5610,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 false,
                 false,
                 algoResponse.getFeedbackLoopCount(),
-                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
                 LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
@@ -5596,7 +5637,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 true,
                 false,
                 algoResponse.getFeedbackLoopCount(),
-                LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
                 LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
@@ -6157,11 +6198,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ofNullable(loadableQunty.getDeadWeight())
                 .ifPresent(
                     deadWeight -> loadableQuantityDto.setDeadWeight(String.valueOf(deadWeight)));
-            ofNullable(loadableQunty.getDisplacementAtDraftRestriction())
-                .ifPresent(
-                    displacementAtDraftRestriction ->
-                        loadableQuantityDto.setDisplacmentDraftRestriction(
-                            String.valueOf(displacementAtDraftRestriction)));
             ofNullable(loadableQunty.getDistanceFromLastPort())
                 .ifPresent(
                     distanceFromLastPort ->
@@ -6178,7 +6214,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ofNullable(loadableQunty.getEstimatedFOOnBoard())
                 .ifPresent(
                     estimatedFOOnBoard ->
-                        loadableQuantityDto.setEstDOOnBoard(String.valueOf(estimatedFOOnBoard)));
+                        loadableQuantityDto.setEstFOOnBoard(String.valueOf(estimatedFOOnBoard)));
             ofNullable(loadableQunty.getEstimatedFWOnBoard())
                 .ifPresent(
                     estimatedFWOnBoard ->
@@ -6188,20 +6224,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(
                     estimatedSagging ->
                         loadableQuantityDto.setEstSagging(String.valueOf(estimatedSagging)));
-            ofNullable(loadableQunty.getEstimatedSeaDensity())
-                .ifPresent(
-                    estimatedSeaDensity ->
-                        loadableQuantityDto.setEstSeaDensity(String.valueOf(estimatedSeaDensity)));
             ofNullable(loadableQunty.getFoConsumptionInSZ())
                 .ifPresent(
                     foConsumptionInSZ ->
                         loadableQuantityDto.setFoConInSZ(String.valueOf(foConsumptionInSZ)));
             ofNullable(loadableQunty.getId()).ifPresent(id -> loadableQuantityDto.setId(id));
-            ofNullable(loadableQunty.getLightWeight())
-                .ifPresent(
-                    vesselLightWeight ->
-                        loadableQuantityDto.setVesselLightWeight(
-                            String.valueOf(vesselLightWeight)));
             ofNullable(loadableQunty.getOtherIfAny())
                 .ifPresent(
                     otherIfAny -> loadableQuantityDto.setOtherIfAny(String.valueOf(otherIfAny)));
@@ -6223,8 +6250,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(
                     sgCorrection ->
                         loadableQuantityDto.setSgCorrection(String.valueOf(sgCorrection)));
-            ofNullable(loadableQunty.getSubTotal())
-                .ifPresent(subTotal -> loadableQuantityDto.setSubTotal(String.valueOf(subTotal)));
             ofNullable(loadableQunty.getTotalFoConsumption())
                 .ifPresent(
                     totalFoConsumption ->
@@ -6348,8 +6373,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             maxWaterTemperature ->
                 loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
 
-    Optional.ofNullable(loadableStudyOpt.get().getLoadOnTop())
-        .ifPresent(loadOnTop -> loadableStudy.setLoadOnTop(loadOnTop));
+    if (ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
+      loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
+    } else {
+      loadableStudy.setLoadOnTop(false);
+    }
+    Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId());
+    if (dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))) {
+      loadableStudy.setCargoToBeDischargeFirstId(null);
+    } else {
+      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
+    }
   }
 
   /** Get on board quantity details corresponding to a loadable study */
@@ -10224,8 +10258,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       } else {
         entityList =
-            voyageRepository.findByIsActiveAndVesselXIdOrderByLastModifiedDateTimeDesc(
-                true, request.getVesselId());
+            voyageRepository
+                .findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
+                    true, request.getVesselId());
       }
       for (Voyage entity : entityList) {
         VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
@@ -10430,7 +10465,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     Float.parseFloat(stowageDetails.getApi()),
                     Float.parseFloat(stowageDetails.getTemperature()),
                     ConversionUnit.MT);
-
+            float klValue = convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C);
+            float fillingPercentage =
+                klValue / Float.parseFloat(vesselTankDetail.getFullCapacityCubm()) * 100;
             // TODO Remove check if not necessary
             String colorCode =
                 stowageDetails.getColorCode().isEmpty()
@@ -10446,10 +10483,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         stowageDetails.getRdgUllage().isEmpty()
                             ? "0.0"
                             : stowageDetails.getRdgUllage()))
-                .loadedPercentage(Float.parseFloat(stowageDetails.getFillingRatio()) / 100)
+                .loadedPercentage((float) (Math.round(fillingPercentage * 100.0) / 100.0))
                 .shipsNBbls(obsBbsValue)
                 .shipsMt(Float.parseFloat(stowageDetails.getWeight()))
-                .shipsKlAt15C(convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C));
+                .shipsKlAt15C(klValue);
           } else {
             //            Set default color to white if no stowage details found
             vesselTanksTableBuilder.colorCode(WHITE_COLOR_CODE);
@@ -10631,7 +10668,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 setMergedStyle(spreadsheet, CellBorder.OPEN_BOTTOM, mergeRange, cellStyle);
                 break;
               case LOADED_PERCENTAGE:
-                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getLoadedPercentage());
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getLoadedPercentage() + "%");
                 cellStyle =
                     getCellStyle(
                         spreadsheet,
@@ -10859,11 +10896,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ltTotal += ltValue;
       diffBblsTotal += diffBbls;
       diffPercentageTotal += diffPercentage;
-
+      Long portId =
+          cargoNominationDetails.get().getCargoNominationPortDetails().stream()
+              .findFirst()
+              .get()
+              .getPortId();
       GetPortInfoByPortIdsRequest request =
-          GetPortInfoByPortIdsRequest.newBuilder()
-              .addId(loadableQuantityCargoDetails.getCargoId())
-              .build();
+          GetPortInfoByPortIdsRequest.newBuilder().addId(portId).build();
       PortDetail portReply =
           getPortInfo(request).getPortsList().stream()
               .findFirst()
@@ -11207,7 +11246,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
               .findFirst()
               .orElse(new LoadableStudyPortRotation());
-
+      Optional<SynopticalTable> arrSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  arrSynopticRecord.get(), loadablePatterId, true);
+      Optional<SynopticalTable> depSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  depSynopticRecord.get(), loadablePatterId, true);
       OperationsTable operationsTableData =
           OperationsTable.builder()
               .operation(loadableStudyPortRotation.getOperation().getName())
@@ -11227,7 +11281,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       .findFirst()
                       .orElse(new PortDetails())
                       .getCountryName())
-              .cargoRange(
+              .laycanRange(
                   String.format(
                       "%s / %s",
                       null != loadableStudyPortRotation.getLayCanFrom()
@@ -11236,6 +11290,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       null != loadableStudyPortRotation.getLayCanTo()
                           ? loadableStudyPortRotation.getLayCanTo()
                           : ""))
+              .arrFwdDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
+              .depFwdDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
+              .arrAftDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
+              .depAftDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
+              .arrDisplacement(arrSynopticRecord.get().getDisplacementPlanned().toString())
+              .depDisp(depSynopticRecord.get().getDisplacementPlanned().toString())
               .build();
       operationsTableList.add(operationsTableData);
     }
@@ -11283,8 +11347,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           case COUNTRY:
             operationsValueCell.setCellValue(portOperationDetails.getCountry());
             break;
-          case CARGO_RANGE:
-            operationsValueCell.setCellValue(portOperationDetails.getCargoRange());
+          case LAYCAN_RANGE:
+            operationsValueCell.setCellValue(portOperationDetails.getLaycanRange());
             break;
           case ETA:
             operationsValueCell.setCellValue(portOperationDetails.getEta());
@@ -11944,8 +12008,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   public void updateApiTempWithCargoNominations(Voyage voyage) {
     Optional<LoadableStudy> loadableStudy =
-        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-            voyage, CONFIRMED_STATUS_ID, true);
+        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+            voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
     if (loadableStudy.isPresent()) {
       log.info("Voyage Close, update api-temp - ls id {}", loadableStudy.get().getId());
       Optional<LoadablePattern> pattern =

@@ -96,7 +96,7 @@
                                         #portRibbonArrTime>
                                         <p-footer>
                                             <button class="btn btn-default"
-                                                (click)="portRibbonArrTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                                (click)="setTimeInput($event, port, 'time', portRibbonArrTime)">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                                                 translate}}</button>
                                         </p-footer>
                                     </p-calendar>
@@ -121,7 +121,7 @@
                                         (onBlur)="onBlur($event, port, 'time')" #portRibbonDepTime>
                                         <p-footer>
                                             <button class="btn btn-default"
-                                                (click)="portRibbonDepTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                                (click)="setTimeInput($event, port, 'time', portRibbonDepTime)">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                                                 translate}}</button>
                                         </p-footer>
                                     </p-calendar>
