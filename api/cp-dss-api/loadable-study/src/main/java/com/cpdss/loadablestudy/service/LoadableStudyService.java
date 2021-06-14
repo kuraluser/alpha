@@ -4049,6 +4049,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
               }
 
+              if (!patternStatus.isEmpty()) {
+                if (stowageDetailsTempRepository
+                        .findByLoadablePatternAndIsActive(loadablePattern, true)
+                        .isEmpty()
+                    || VALIDATED_CONDITIONS.contains(
+                        loadablePatternBuilder.getLoadablePatternStatusId())) {
+                  loadablePatternBuilder.setValidated(true);
+                }
+              } else {
+                if (stowageDetailsTempRepository
+                    .findByLoadablePatternAndIsActive(loadablePattern, true)
+                    .isEmpty()) {
+                  loadablePatternBuilder.setValidated(true);
+                }
+              }
+
               loadablePatternBuilder.setStabilityParameters(
                   buildStabilityParamter(loadablePattern));
 
