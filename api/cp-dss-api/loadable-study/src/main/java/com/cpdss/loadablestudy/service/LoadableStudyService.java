@@ -1371,7 +1371,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       existingPortIds =
           loadableStudyPortRotations.stream()
               .map(LoadableStudyPortRotation::getPortXId)
-              .collect(Collectors.toList());  
+              .collect(Collectors.toList());
     }
     // remove existing cargo portIds from port rotation and synoptical if not
     // available in request
@@ -1419,9 +1419,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
-      this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(loadableStudy.getId(), true).forEach(portRotation -> {
-    	  portRotation.setIsPortRotationOhqComplete(false);
-      });
+      this.loadableStudyPortRotationRepository
+          .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+          .forEach(
+              portRotation -> {
+                portRotation.setIsPortRotationOhqComplete(false);
+              });
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
       loadableStudy.setIsPortsComplete(false);
       this.loadableStudyRepository.save(loadableStudy);
@@ -2182,9 +2185,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             && !CollectionUtils.isEmpty(portReply.getPortsList())) {
           dischargingPorts =
               this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
-          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(loadableStudy.getId(), true).forEach(portRotation -> {
-        	  portRotation.setIsPortRotationOhqComplete(false);
-          });
+          this.loadableStudyPortRotationRepository
+              .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+              .forEach(
+                  portRotation -> {
+                    portRotation.setIsPortRotationOhqComplete(false);
+                  });
           loadableStudy.setIsPortsComplete(false);
           this.loadableStudyRepository.save(loadableStudy);
           this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
