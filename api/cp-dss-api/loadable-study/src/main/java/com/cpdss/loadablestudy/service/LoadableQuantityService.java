@@ -185,7 +185,7 @@ public class LoadableQuantityService {
             onHandQuantityList.stream()
                 .filter(
                     ohq ->
-                        ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                    	ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
                             && null != ohq.getPortRotation()
                             && ohq.getPortRotation().getId().equals(portRotationId)
                             && ohq.getIsActive())
@@ -229,12 +229,13 @@ public class LoadableQuantityService {
     loadableStudy.ifPresent(study -> lastUpdateTimeList.add(study.getLastModifiedDateTime()));
     LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
     lastUpdatedTime = formatter.format(maxOne);
+    double displacement = Double.parseDouble(vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight()) + Double.parseDouble(dwtValue);
 
     if (!loadableQuantity.isPresent()) {
       com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest =
           com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.newBuilder()
               .setDisplacmentDraftRestriction(
-                  vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction())
+            		  Double.toString(displacement))
               .setVesselLightWeight(
                   vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight())
               .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
@@ -261,14 +262,7 @@ public class LoadableQuantityService {
       loadableQuantityRequest.setLastUpdatedTime(lastUpdatedTime);
       loadableQuantityRequest.setPortRotationId(portRotationId);
       loadableQuantityRequest.setId(loadableQuantity.get().getId());
-      if (Optional.ofNullable(loadableQuantity.get().getDisplacementAtDraftRestriction())
-          .isPresent()) {
-        loadableQuantityRequest.setDisplacmentDraftRestriction(
-            loadableQuantity.get().getDisplacementAtDraftRestriction().toString());
-      } else {
-        loadableQuantityRequest.setDisplacmentDraftRestriction(
-            vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction());
-      }
+      loadableQuantityRequest.setDisplacmentDraftRestriction(Double.toString(displacement)); 
       Optional.ofNullable(loadableQuantity.get().getConstant())
           .ifPresent(cons -> loadableQuantityRequest.setConstant(cons.toString()));
       Optional.ofNullable(loadableQuantity.get().getDistanceFromLastPort())
@@ -304,12 +298,10 @@ public class LoadableQuantityService {
           .ifPresent(
               vesselAverageSpeed ->
                   loadableQuantityRequest.setVesselAverageSpeed(vesselAverageSpeed.toString()));
-      if (Optional.ofNullable(loadableQuantity.get().getLightWeight()).isPresent()) {
-        loadableQuantityRequest.setVesselLightWeight(
-            loadableQuantity.get().getLightWeight().toString());
+      if(Optional.ofNullable(loadableQuantity.get().getLightWeight()).isPresent()) {   	  
+    	  loadableQuantityRequest.setVesselLightWeight(loadableQuantity.get().getLightWeight().toString());
       } else {
-        loadableQuantityRequest.setVesselLightWeight(
-            vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight());
+    	  loadableQuantityRequest.setVesselLightWeight(vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight()); 
       }
       Optional.ofNullable(loadableQuantity.get().getLastModifiedDateTime())
           .ifPresent(
