@@ -1869,10 +1869,12 @@ public class LoadableStudyService {
                 synopticalRecord.setPortName(str.getPortName());
                 synopticalRecord.setSpecificGravity(str.getSpecificGravity());
                 synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
-                synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
-                synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
-                synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+
+                synopticalRecord.setFinalDraftAft(str.getCalculatedDraftAftPlanned());
+                synopticalRecord.setFinalDraftFwd(str.getCalculatedDraftFwdPlanned());
+                synopticalRecord.setFinalDraftMid(str.getCalculatedDraftMidPlanned());
                 synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
+
                 synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
                 synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
                 response.setLoadablePlanSynopticRecord(synopticalRecord);
@@ -3907,9 +3909,9 @@ public class LoadableStudyService {
               synopticalRecord.setPortName(str.getPortName());
               synopticalRecord.setSpecificGravity(str.getSpecificGravity());
               synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
-              synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
-              synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
-              synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+              synopticalRecord.setFinalDraftAft(str.getCalculatedDraftAftPlanned());
+              synopticalRecord.setFinalDraftFwd(str.getCalculatedDraftFwdPlanned());
+              synopticalRecord.setFinalDraftMid(str.getCalculatedDraftMidPlanned());
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
               synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
@@ -4891,9 +4893,9 @@ public class LoadableStudyService {
             synopticalRecord.get().getCalculatedDraftMidActual());
         stabilityConditions.setCalculatedDraftFwdActual(
             synopticalRecord.get().getCalculatedDraftFwdActual());
-        stabilityConditions.setFinalDraftAft(synopticalRecord.get().getCalculatedDraftAftPlanned());
-        stabilityConditions.setFinalDraftMid(synopticalRecord.get().getCalculatedDraftMidPlanned());
-        stabilityConditions.setFinalDraftFwd(synopticalRecord.get().getCalculatedDraftFwdPlanned());
+        stabilityConditions.setFinalDraftAft(synopticalRecord.get().getFinalDraftAft());
+        stabilityConditions.setFinalDraftMid(synopticalRecord.get().getFinalDraftMid());
+        stabilityConditions.setFinalDraftFwd(synopticalRecord.get().getFinalDraftFwd());
         voyageStatusResponse.setStabilityConditions(stabilityConditions);
       }
     }

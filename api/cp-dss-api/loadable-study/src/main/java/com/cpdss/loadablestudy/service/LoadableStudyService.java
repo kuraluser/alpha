@@ -1419,8 +1419,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
+      this.loadableStudyPortRotationRepository
+          .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+          .forEach(
+              portRotation -> {
+                portRotation.setIsPortRotationOhqComplete(false);
+              });
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
-
+      loadableStudy.setIsPortsComplete(false);
+      this.loadableStudyRepository.save(loadableStudy);
       // Set port ordering after updation
       this.setPortOrdering(loadableStudy);
     }
@@ -2178,6 +2185,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             && !CollectionUtils.isEmpty(portReply.getPortsList())) {
           dischargingPorts =
               this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
+          this.loadableStudyPortRotationRepository
+              .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+              .forEach(
+                  portRotation -> {
+                    portRotation.setIsPortRotationOhqComplete(false);
+                  });
+          loadableStudy.setIsPortsComplete(false);
+          this.loadableStudyRepository.save(loadableStudy);
           this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
         }
       }
@@ -4322,6 +4337,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
           Optional.ofNullable(lpcd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
           Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(builder::setFillingRatio);
+
+          Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(builder::setFillingRatioOrginal);
+          Optional.ofNullable(lpcd.getCorrectedUllage())
+              .ifPresent(builder::setCorrectedUllageOrginal);
+          Optional.ofNullable(lpcd.getCorrectionFactor())
+              .ifPresent(builder::setCorrectionFactorOrginal);
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllageOrginal);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setWeightOrginal);
 
           Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllage);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
@@ -8808,7 +8831,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
-
           Optional.ofNullable(lpsd.getCorrectedUllage())
               .ifPresent(builder::setCorrectedUllageOrginal);
           Optional.ofNullable(lpsd.getCorrectionFactor())
@@ -10137,8 +10159,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     synopticalWiseList =
         synopticalWiseList.stream()
             .filter(
-                distinctByKeys(
-                    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getCargoId))
+            		cargo ->
+                    synopticalEntity
+                            .getLoadableStudyPortRotation()
+                            .getId()
+                            .equals(cargo.getPortRotationId()))
+            .filter(distinctByKeys(
+                             com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getAbbreviation))
             .collect(Collectors.toList());
     synopticalWiseList.forEach(
         patternCargo ->
@@ -10154,6 +10181,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getId()
                             .equals(cargo.getPortRotationXid())
                         && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
+            .filter(distinctByKeys(
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails::getCargo1Abbreviation,
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails::getCargo2Abbreviation))
             .collect(Collectors.toList());
     synopticalWiseCommingleList.forEach(
         commingleCargo ->
