@@ -429,6 +429,10 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
       this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
       this.updateField(event.index, 'portOrder', this.portOrder);
+      this.portsLists[valueIndex]['eta'].value = null;
+      this.portsLists[valueIndex]['etd'].value = null;
+      this.updateField(event.index, 'eta', null);
+      this.updateField(event.index, 'etd', null);
       form.controls.operation.updateValueAndValidity();
       this.updateValuesIfBunkering(event.data, form, index);
     }
@@ -469,10 +473,30 @@ export class PortsComponent implements OnInit, OnDestroy {
       for (let i = 0; i < this.portsLists.length; i++) {
         this.updateValidityAndEditMode(i, 'eta')
       }
+      const previousRow = this.portsLists[valueIndex - 1] ? this.portsLists[valueIndex - 1] : null;
+      if (previousRow && previousRow.port.value.id === this.portsLists[valueIndex].port.value.id && this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING && previousRow.operation.value.id === OPERATIONS.BUNKERING) {
+        this.portsLists[valueIndex - 1]['etd'].value = event.data.etd.value;
+        this.updateValidityAndEditMode(valueIndex - 1, 'etd');
+      }
+      const nextRow = this.portsLists[valueIndex + 1] ? this.portsLists[valueIndex + 1] : null;
+      if (nextRow && nextRow.port.value.id === this.portsLists[valueIndex].port.value.id && this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING && nextRow.operation.value.id === OPERATIONS.BUNKERING) {
+        this.portsLists[valueIndex + 1]['etd'].value = event.data.etd.value;
+        this.updateValidityAndEditMode(valueIndex - 1, 'etd');
+      }
     }
     if (event.field === 'eta') {
       for (let i = 0; i < this.portsLists.length; i++) {
         this.updateValidityAndEditMode(i, 'etd')
+      }
+      const previousRow = this.portsLists[valueIndex - 1] ? this.portsLists[valueIndex - 1] : null;
+      if (previousRow && previousRow.port.value.id === this.portsLists[valueIndex].port.value.id && this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING && previousRow.operation.value.id === OPERATIONS.BUNKERING) {
+        this.portsLists[valueIndex - 1]['eta'].value = event.data.eta.value;
+        this.updateValidityAndEditMode(valueIndex - 1, 'eta');
+      }
+      const nextRow = this.portsLists[valueIndex + 1] ? this.portsLists[valueIndex + 1] : null;
+      if (nextRow && nextRow.port.value.id === this.portsLists[valueIndex].port.value.id && this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING && nextRow.operation.value.id === OPERATIONS.BUNKERING) {
+        this.portsLists[valueIndex + 1]['eta'].value = event.data.eta.value;
+        this.updateValidityAndEditMode(valueIndex - 1, 'eta');
       }
     }
     form.markAsTouched();
@@ -489,15 +513,19 @@ export class PortsComponent implements OnInit, OnDestroy {
       if (row.valid && !event.data?.isAdd && row.touched) {
         event.data.processing = true;
         if (this.portsLists[rowIndex]?.id !== 0) {
-          this.portUpdate.emit(true);
-          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId, (this.portsForm.valid && !this.portOrderValidation()));
-          if (res) {
-            row.markAsUntouched();
-            for (const key in this.portsLists[rowIndex]) {
-              if (this.portsLists[rowIndex]?.hasOwnProperty(key) && this.portsLists[rowIndex][key]?.hasOwnProperty('_isEditMode')) {
-                this.portsLists[rowIndex][key].isEditMode = false;
+          try {
+            this.portUpdate.emit(true);
+            const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId, (this.portsForm.valid && !this.portOrderValidation()));
+            if (res) {
+              row.markAsUntouched();
+              for (const key in this.portsLists[rowIndex]) {
+                if (this.portsLists[rowIndex]?.hasOwnProperty(key) && this.portsLists[rowIndex][key]?.hasOwnProperty('_isEditMode')) {
+                  this.portsLists[rowIndex][key].isEditMode = false;
+                }
               }
+              this.portUpdate.emit(false);
             }
+          } catch (e) {
             this.portUpdate.emit(false);
           }
         }
@@ -568,28 +596,32 @@ export class PortsComponent implements OnInit, OnDestroy {
     const form = this.row(event.index);
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (form.valid) {
-      this.portUpdate.emit(true);
-      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, (this.portsForm.valid && !this.portOrderValidation()));
-      if (res) {
-        this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
-        this.loadableStudyDetailsTransformationService.portUpdated();
-        this.portsLists[valueIndex].isAdd = false;
+      try {
+        this.portUpdate.emit(true);
+        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, (this.portsForm.valid && !this.portOrderValidation()));
+        if (res) {
+          this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
+          this.loadableStudyDetailsTransformationService.portUpdated();
+          this.portsLists[valueIndex].isAdd = false;
 
-        for (const key in this.portsLists[valueIndex]) {
-          if (this.portsLists[valueIndex]?.hasOwnProperty(key) && this.portsLists[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
-            this.portsLists[valueIndex][key].isEditMode = false;
+          for (const key in this.portsLists[valueIndex]) {
+            if (this.portsLists[valueIndex]?.hasOwnProperty(key) && this.portsLists[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
+              this.portsLists[valueIndex][key].isEditMode = false;
+            }
           }
+          this.portsLists = [...this.portsLists];
+          this.portsForm.updateValueAndValidity();
+          this.portUpdate.emit(false);
+          if (this.portOrderValidation()) {
+            const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
+            this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+          } else {
+            this.messageService.clear('isPortOrderValid');   
+          }
+          this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0 && !this.portOrderValidation());
         }
-        this.portsLists = [...this.portsLists];
-        this.portsForm.updateValueAndValidity();
+      } catch (e) {
         this.portUpdate.emit(false);
-        if (this.portOrderValidation()) {
-          const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-          this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
-        } else {
-          this.messageService.clear('isPortOrderValid');   
-        }
-        this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0 && !this.portOrderValidation());
       }
 
     } else {
@@ -690,6 +722,9 @@ export class PortsComponent implements OnInit, OnDestroy {
     formArray.removeAt(event.index)
     setTimeout(() => {
       this.updateFormValidity(formArray)
+      if (!this.portOrderValidation()) {
+        this.messageService.clear('isPortOrderValid');
+      }
     }, 500);
   }
 
@@ -741,6 +776,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       });
       setTimeout(async () => {
         this.updateFormValidity(portListArray);
+        this.bunkeringDIsableEnable(event);
         for (let i = 0; i < this.portsLists.length; i++) {
           if (this.portsLists[i].id !== 0) {
             await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId, (this.portsForm.valid && !this.portOrderValidation()));
@@ -749,6 +785,102 @@ export class PortsComponent implements OnInit, OnDestroy {
       }, 500);
     }
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Event handler for bunkering eta/etd enable and disable
+   *
+   * @memberof PortsComponent
+   * @param {Event}
+   */
+  bunkeringDIsableEnable(event, recursive?, index?) {
+    if (recursive) {
+      event.dropIndex = index;
+      event.dragIndex = null;
+    }
+    let previousCheck = false, nextCheck = false;
+    const previousRow = this.portsLists[event.dropIndex - 1] ? this.portsLists[event.dropIndex - 1] : null;
+    if (previousRow && previousRow.port.value.id === this.portsLists[event.dropIndex].port.value.id && [OPERATIONS.DISCHARGING, OPERATIONS.BUNKERING].includes(this.portsLists[event.dropIndex].operation.value.id) && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING].includes(previousRow.operation.value.id)) {
+      let rowIndex = null;
+      if (this.portsLists[event.dropIndex].operation.value.id === OPERATIONS.BUNKERING) {
+        rowIndex = event.dropIndex;
+        this.portsLists[rowIndex].eta.value = this.portsLists[event.dropIndex - 1].eta.value;
+        this.portsLists[rowIndex].etd.value = this.portsLists[event.dropIndex - 1].etd.value;
+      }
+      if (this.portsLists[event.dropIndex - 1].operation.value.id === OPERATIONS.BUNKERING) {
+        rowIndex = event.dropIndex - 1;
+        this.portsLists[rowIndex].eta.value = this.portsLists[event.dropIndex].eta.value;
+        this.portsLists[rowIndex].etd.value = this.portsLists[event.dropIndex].etd.value;
+      }
+
+      this.enableDisableBunkeringControl(false, rowIndex);
+    } else {
+      previousCheck = true;
+    }
+    const nextRow = this.portsLists[event.dropIndex + 1] ? this.portsLists[event.dropIndex + 1] : null;
+    if (nextRow && nextRow.port.value.id === this.portsLists[event.dropIndex].port.value.id && [OPERATIONS.DISCHARGING, OPERATIONS.BUNKERING].includes(this.portsLists[event.dropIndex].operation.value.id) && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING].includes(nextRow.operation.value.id)) {
+      let rowIndex = null;
+      if (this.portsLists[event.dropIndex].operation.value.id === OPERATIONS.BUNKERING) {
+        rowIndex = event.dropIndex;
+        this.portsLists[rowIndex].eta.value = this.portsLists[event.dropIndex + 1].eta.value;
+        this.portsLists[rowIndex].etd.value = this.portsLists[event.dropIndex + 1].etd.value;
+      }
+      if (this.portsLists[event.dropIndex + 1].operation.value.id === OPERATIONS.BUNKERING) {
+        rowIndex = event.dropIndex + 1;
+        this.portsLists[rowIndex].eta.value = this.portsLists[event.dropIndex].eta.value;
+        this.portsLists[rowIndex].etd.value = this.portsLists[event.dropIndex].etd.value;
+      }
+      this.enableDisableBunkeringControl(false, rowIndex);
+    } else {
+      nextCheck = true;
+    }
+
+    if (this.portsLists[event.dropIndex].operation.value.id !== OPERATIONS.BUNKERING && previousRow && nextRow) {
+      if (previousRow.port.value.id === nextRow.port.value.id && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING].includes(previousRow.operation.value.id) && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING].includes(nextRow.operation.value.id)) {
+        let rowIndex = null;
+        if (previousRow.operation.value.id === OPERATIONS.BUNKERING) {
+          rowIndex = event.dropIndex - 1;
+          this.portsLists[rowIndex].eta.value = this.portsLists[event.dropIndex + 1].eta.value;
+          this.portsLists[rowIndex].etd.value = this.portsLists[event.dropIndex + 1].etd.value;
+        }
+        if (nextRow.operation.value.id === OPERATIONS.BUNKERING) {
+          rowIndex = event.dropIndex + 1;
+          this.portsLists[rowIndex].eta.value = this.portsLists[event.dropIndex - 1].eta.value;
+          this.portsLists[rowIndex].etd.value = this.portsLists[event.dropIndex - 1].etd.value;
+        }
+        this.enableDisableBunkeringControl(true, rowIndex);
+      }
+    }
+
+    if (event.dragIndex && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING].includes(this.portsLists[event.dragIndex].operation.value.id)) {
+      this.bunkeringDIsableEnable({}, true, event.dragIndex);
+    }
+
+    if (this.portsLists[event.dropIndex].operation.value.id === OPERATIONS.BUNKERING && previousCheck && nextCheck) {
+      this.enableDisableBunkeringControl(true, event.dropIndex);
+    }
+  }
+
+  /**
+   * Event handler for enable/disable bunkering control
+   *
+   * @param editable
+   * @param index
+   * @memberof PortsComponent
+   */
+  enableDisableBunkeringControl(editable, index) {
+    this.portsLists[index].eta.isEditable = editable;
+    this.portsLists[index].etd.isEditable = editable;
+    this.updateValidityAndEditMode(index, 'eta');
+    this.updateValidityAndEditMode(index, 'etd');
+    const form = this.row(index);
+    if (editable) {
+      form.controls.eta.enable();
+      form.controls.etd.enable();
+    } else {
+      form.controls.eta.disable();
+      form.controls.etd.disable();
+    }
   }
 
   /**
