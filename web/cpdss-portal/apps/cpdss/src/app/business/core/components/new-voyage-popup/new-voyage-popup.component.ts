@@ -150,7 +150,6 @@ export class NewVoyagePopupComponent implements OnInit {
    */
   trimVoyageNo() {
     this.newVoyageForm.controls['voyageNo'].setValue((this.newVoyageForm.get('voyageNo').value).trim());
-    this.newVoyageForm.controls['voyageNo'].setErrors(null);
   }
 
   /**

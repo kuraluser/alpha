@@ -102,7 +102,8 @@
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
-
+                  const refreshedToken = syncResponse.headers.get('token');
+                  sync.refreshedToken = refreshedToken;
                   //on success of api call remove all rows of selected primary keys
                   primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey))
                   return notifyClients(sync);
@@ -127,7 +128,8 @@
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
-
+                  const refreshedToken = syncResponse.headers.get('token');
+                  sync.refreshedToken = refreshedToken;
                   // update id of cargo nomination if there are any new rows with same storekey
                   const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'id': cargoNomination?.id });
                   if (updated) {
@@ -181,7 +183,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 //on success of api call remove all rows of selected primary keys
                 primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey))
                 return notifyClients(sync);
@@ -205,7 +208,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 // update id of port if there are any new rows with same storekey
                 const updated = await db.ports.where({ 'storeKey': key }).modify({ 'id': port?.id });
                 if (updated) {
@@ -261,7 +265,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = ohq.storeKey;
                 sync.type = 'ohq_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 // update id of ohq if there are any new rows with same storekey
                 const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'id': ohq?.id });
                 if (updated) {
@@ -316,7 +321,8 @@
                 const sync = await syncResponse.json();
                 sync.storeKey = obq.storeKey;
                 sync.type = 'obq_sync_finished';
-
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
                 // update id of obq if there are any new rows with same storekey
                 const updated = await db.obq.where({ 'storeKey': key }).modify({ 'id': obq?.id });
                 if (updated) {
@@ -384,30 +390,32 @@
         headers: headers
       });
       const syncView = await syncResponse.json();
-      if (syncView.responseStatus.status === '200') {
-        if (syncView.loadableStudyStatusId === 12) {
+      const refreshedToken = syncResponse.headers.get('token');
+      const sync = {};
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+      if (syncView?.responseStatus?.status === '200') {
+        sync.status = syncView?.responseStatus?.status;
+        if (syncView?.loadableStudyStatusId === 12) {
           clearInterval(timer);
-          const sync = {};
-          sync.pattern = data;
           sync.type = 'loadable-pattern-validation-success';
-          sync.statusId = syncView.loadableStudyStatusId;
+          sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
-        } else if (syncView.loadableStudyStatusId === 13) {
+        } else if (syncView?.loadableStudyStatusId === 13) {
           clearInterval(timer);
-          const sync = {};
-          sync.pattern = data;
           sync.type = 'loadable-pattern-validation-failed';
-          sync.statusId = syncView.loadableStudyStatusId;
+          sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
-        } else if (syncView.loadableStudyStatusId === 14) {
-          const sync = {};
-          sync.pattern = data;
+        } else if (syncView?.loadableStudyStatusId === 14) {
           sync.type = 'loadable-pattern-validation-started';
-          sync.statusId = syncView.loadableStudyStatusId;
+          sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
         }
       }
-      if (syncView.responseStatus.status === '500') {
+      else if (syncView?.status === '401' || syncView?.status === '400'){
+        notifyClients(syncView);
+      }
+      else if (syncView?.responseStatus?.status === '500') {
         clearInterval(timer);
       }
     }, 5000);
@@ -415,6 +423,7 @@
 
   async function checkLoadableStudyStatus(data) {
     let currentStatus;
+    const sync = {};
     const timer = setInterval(async () => {
       var headers = {
         'Accept': 'application/json',
@@ -427,40 +436,38 @@
         headers: headers
       });
       const syncView = await syncResponse.json();
-      if (syncView.responseStatus.status === '200') {
-        currentStatus = syncView.loadableStudyStatusId;
-        if (syncView.loadableStudyStatusId === 4 || syncView.loadableStudyStatusId === 5) {
-          const sync = {};
-          sync.pattern = data;
+      const refreshedToken = syncResponse.headers.get('token');
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+      if (syncView?.responseStatus?.status === '200') {
+        sync.status = syncView?.responseStatus?.status;
+        currentStatus = syncView?.loadableStudyStatusId;
+        if (syncView?.loadableStudyStatusId === 4 || syncView?.loadableStudyStatusId === 5) {
           sync.type = 'loadable-pattern-processing';
-          sync.statusId = syncView.loadableStudyStatusId;
+          sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView.loadableStudyStatusId === 3) {
+        if (syncView?.loadableStudyStatusId === 3) {
           clearInterval(timer);
-          const sync = {};
-          sync.pattern = data;
           sync.type = 'loadable-pattern-completed';
-          sync.statusId = syncView.loadableStudyStatusId;
+          sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView.loadableStudyStatusId === 6) {
+        if (syncView?.loadableStudyStatusId === 6) {
           clearInterval(timer);
-          const sync = {};
-          sync.pattern = data;
           sync.type = 'loadable-pattern-no-solution';
-          sync.statusId = syncView.loadableStudyStatusId;
+          sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
         }
+      }else if (syncView?.status === '401' || syncView?.status === '400'){
+        notifyClients(syncView);
       }
-      if (syncView.responseStatus.status === '500') {
+      else if (syncView?.responseStatus?.status === '500') {
         clearInterval(timer);
       }
     }, 3500);
     setTimeout(() => {
       if (currentStatus === 4) {
-        const sync = {};
-        sync.pattern = data;
         sync.type = 'loadable-pattern-no-response';
         // sending default status
         sync.statusId = 1;

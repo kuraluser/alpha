@@ -1162,11 +1162,23 @@ public class LoadableStudyService {
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
     LoadableQuantity loadableQuantity = new LoadableQuantity();
-    LoadableQuantityReply loadableQuantityRequest =
-        LoadableQuantityReply.newBuilder()
-            .setLoadableStudyId(loadableStudyId)
-            .setPortRotationId(portRotationId)
-            .build();
+    Optional<Long> nullCheckPortRotationId = Optional.ofNullable(portRotationId);
+    LoadableQuantityReply loadableQuantityRequest;
+    // If portRotationId is null then it will fetch value for synoptical table page
+    // otherwise fetch value for cargo nomination page
+    if (nullCheckPortRotationId.isPresent()) {
+      loadableQuantityRequest =
+          LoadableQuantityReply.newBuilder()
+              .setLoadableStudyId(loadableStudyId)
+              .setPortRotationId(portRotationId)
+              .build();
+    } else {
+      loadableQuantityRequest =
+          LoadableQuantityReply.newBuilder()
+              .setLoadableStudyId(loadableStudyId)
+              .setPortRotationId(-1)
+              .build();
+    }
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
         this.getLoadableQuantityResponse(loadableQuantityRequest);
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getStatus())) {
@@ -1857,10 +1869,12 @@ public class LoadableStudyService {
                 synopticalRecord.setPortName(str.getPortName());
                 synopticalRecord.setSpecificGravity(str.getSpecificGravity());
                 synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
-                synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
-                synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
-                synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+
+                synopticalRecord.setFinalDraftAft(str.getCalculatedDraftAftPlanned());
+                synopticalRecord.setFinalDraftFwd(str.getCalculatedDraftFwdPlanned());
+                synopticalRecord.setFinalDraftMid(str.getCalculatedDraftMidPlanned());
                 synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
+
                 synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
                 synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
                 response.setLoadablePlanSynopticRecord(synopticalRecord);
@@ -2946,6 +2960,14 @@ public class LoadableStudyService {
         isEmpty(proto.getBlindSector()) ? BigDecimal.ZERO : new BigDecimal(proto.getBlindSector()));
     synopticalRecord.setList(
         isEmpty(proto.getList()) ? BigDecimal.ZERO : new BigDecimal(proto.getList()));
+    synopticalRecord.setBm(
+        isEmpty(proto.getBendingMoment())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getBendingMoment()));
+    synopticalRecord.setSf(
+        isEmpty(proto.getShearingForce())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getShearingForce()));
   }
 
   /**
@@ -3504,7 +3526,7 @@ public class LoadableStudyService {
                                   buildLoadablePlanBallstDetails(lpbd, detailsBuilderArrival);
                                 });
 
-                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                        Optional.ofNullable(lppwd.getArrivalCondition().getStabilityParameters())
                             .ifPresent(
                                 stabilityParameter ->
                                     detailsBuilderArrival.setStabilityParameter(
@@ -3887,13 +3909,15 @@ public class LoadableStudyService {
               synopticalRecord.setPortName(str.getPortName());
               synopticalRecord.setSpecificGravity(str.getSpecificGravity());
               synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
-              synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
-              synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
-              synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+              synopticalRecord.setFinalDraftAft(str.getCalculatedDraftAftPlanned());
+              synopticalRecord.setFinalDraftFwd(str.getCalculatedDraftFwdPlanned());
+              synopticalRecord.setFinalDraftMid(str.getCalculatedDraftMidPlanned());
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
               synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
               synopticalRecord.setPortTimezoneId(str.getPortTimezoneId());
+              synopticalRecord.setBm(str.getBm());
+              synopticalRecord.setSf(str.getSf());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }

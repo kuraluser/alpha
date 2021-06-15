@@ -25,4 +25,11 @@ public interface CommingleCargoRepository extends CommonCrudRepository<Commingle
   @Modifying
   @Query("Update CommingleCargo CC set CC.isActive = false where CC.loadableStudyXId = ?1 ")
   public void deleteCommingleCargoByLodableStudyXId(long loadableStudyXId);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update CommingleCargo CC set CC.isActive = false where CC.loadableStudyXId = ?1 and (CC.cargo1Xid = ?2 or CC.cargo2Xid = ?2)")
+  public void deleteCommingleCargoByLodableStudyXIdAndCargoXId(
+      Long loadableStudyXId, Long cargoXid);
 }

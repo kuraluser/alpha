@@ -48,6 +48,8 @@ export class LoadablePlanTransformationService {
       { field: 'finalDraftAft', header: "", subHeader: 'ETA_ETD_DRAFT_AFT' },
       { field: 'finalDraftMid', header: "", subHeader: 'ETA_ETD_DRAFT_MID' },
       { field: 'calculatedTrimPlanned', header: 'ETA_ETD_TRIM' },
+      { field: 'bm', header: 'ETA_ETD_BM' },
+      { field: 'sf', header: 'ETA_ETD_SF' },
       { field: 'cargoPlannedTotal', header: 'ETA_ETD_CARGO' },
       { field: 'plannedFOTotal', header: 'ETA_ETD_FO' },
       { field: 'plannedDOTotal', header: 'ETA_ETD_DO' },
@@ -256,6 +258,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.id = cargoTankDetail.id;
     _cargoTankDetail.tankId = cargoTankDetail.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail.cargoAbbreviation;
+    _cargoTankDetail.cargoNominationId = cargoTankDetail.cargoNominationId;
     _cargoTankDetail.weight = cargoTankDetail.weight;
     _cargoTankDetail.weightOrginal = cargoTankDetail.weightOrginal;
     _cargoTankDetail.correctedUllage = cargoTankDetail.correctedUllage;
@@ -299,6 +302,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.id = cargoTankDetail?.id;
     _cargoTankDetail.tankId = cargoTankDetail?.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail?.cargoAbbreviation;
+    _cargoTankDetail.cargoNominationId = cargoTankDetail?.cargoNominationId;
     _cargoTankDetail.weight = new ValueObject<number>(Number(cargoTankDetail?.weight), true, false);
     _cargoTankDetail.weightOrginal = Number(cargoTankDetail?.weightOrginal);
     _cargoTankDetail.correctedUllage = new ValueObject<number>(cargoTankDetail?.correctedUllage, true, false);
@@ -307,7 +311,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.fillingRatioOrginal = Number(cargoTankDetail?.fillingRatioOrginal);
     _cargoTankDetail.tankName = cargoTankDetail?.tankName;
     _cargoTankDetail.tankShortName = cargoTankDetail?.tankShortName;
-    _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, isNewValue);
+    _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, !cargoTankDetail?.isCommingle, false, !cargoTankDetail?.isCommingle);
     _cargoTankDetail.rdgUllageOrginal = cargoTankDetail?.rdgUllageOrginal;
     _cargoTankDetail.correctionFactor = new ValueObject<number>(cargoTankDetail?.correctionFactor, true, false);
     _cargoTankDetail.correctionFactorOrginal = cargoTankDetail?.correctionFactorOrginal;
@@ -469,12 +473,12 @@ export class LoadablePlanTransformationService {
           'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
         }
       },
-      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.0-2'},
-      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat}
+      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
+      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
+      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat }
     ]
   }
 
@@ -553,6 +557,8 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, AppConfigurationService.settings?.sgNumberFormat);
     _synopticalRecord.cargoPlannedTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.cargoPlannedTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.ballastPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.ballastPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.sf = synopticalRecord.sf ? this.decimalConvertion(_decimalPipe, synopticalRecord.sf , '1.2-2') : '0.00';
+    _synopticalRecord.bm = synopticalRecord.bm ? this.decimalConvertion(_decimalPipe, synopticalRecord.bm , '1.2-2') : '0.00';
 
     _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.2-2') + 'm';
     _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.2-2') + 'm';

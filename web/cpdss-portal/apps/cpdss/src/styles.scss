@@ -1425,10 +1425,10 @@ td.sl div{
         }
       }
       .tank-name{
-        top: 0px!important;
+        top: 4px!important;
         text-align: left!important;
         margin-top: 0!important;
-        left: 11px;
+        left: 13px;
         width: calc(48% - 15px)!important;
       }
       .tank-commodity-name{
@@ -1866,6 +1866,9 @@ height: 15px;
       top: 14px;
       left: 5px;
       bottom: auto;
+      right: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       }
       .tank-btn-rounded{
         margin-left: 5px;
@@ -2309,10 +2312,10 @@ tr:hover{
     margin-left: 2px;
   }
   .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
-    top: 0!important;
-    left: 12px!important;
-    margin-top: 0!important;
-    width: auto!important;
+    top: 3px !important;
+    left: 14px !important;
+    margin-top: 0 !important;
+    width: auto !important;
   }
   .tank-item-valign{
     position: absolute;
@@ -2323,6 +2326,10 @@ tr:hover{
     position: absolute;
     bottom: 5px;
     right: 5px;
+    left: 2px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .p-datatable table{
     table-layout: auto!important;
@@ -2509,4 +2516,10 @@ textarea{
 
 .calculated-column{
   width: 92px;
+}
+.icon-chat{
+  display: inline-block;
+  width: 21px;
+  height: 18px;
+  vertical-align: bottom;
 }
