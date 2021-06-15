@@ -11,7 +11,6 @@ import com.google.protobuf.Timestamp;
 import java.time.*;
 import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
-import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public final class ScheduledTaskRequest<T extends ScheduledTaskProperties> {
 
-  @GrpcClient("taskManagerService")
+  // @GrpcClient("taskManagerService")
   private TaskManagerServiceGrpc.TaskManagerServiceBlockingStub taskManagerServiceBlockingStub;
 
   /**

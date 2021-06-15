@@ -142,17 +142,6 @@ export class CommingleComponent implements OnInit {
         }
       });
 
-
-      let cargoGroupsTemp = this.commingleCargo?.cargoGroups?.filter((item) => {
-        let cargoIds = this.cargoNominationsCargo?.map(cargoNominationCargo => cargoNominationCargo.cargoId);
-        if (cargoIds.includes(item.cargo1Id) && cargoIds?.includes(item.cargo2Id)) {
-          return item;
-        }
-      })
-
-      if (this.commingleCargo) {
-        this.commingleCargo.cargoGroups = cargoGroupsTemp;
-      }
       this.cargoNominationsCargo1 = this.cargoNominationsCargo;
       this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo;
@@ -320,6 +309,13 @@ export class CommingleComponent implements OnInit {
       form.controls.cargo1IdPct.updateValueAndValidity();
       form.controls.cargo2IdPct.updateValueAndValidity();
     }
+  
+    if (event.field == 'cargo1' || event.field === 'cargo2') {
+      (<FormArray>this.commingleManualForm.get('dataTable')).controls.forEach((row: FormGroup) => {
+        row.controls.cargo1.updateValueAndValidity();
+        row.controls.cargo2.updateValueAndValidity();
+      });
+    }
   }
 
   /**
@@ -346,6 +342,7 @@ export class CommingleComponent implements OnInit {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal();
     const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
+      sl :0,
       cargo1: this.fb.control(commingle?.cargo1?.value, [Validators.required, CargoDuplicateValidator('cargo1', 'cargo2')]),
       cargo2: this.fb.control(commingle?.cargo2?.value, [Validators.required, CargoDuplicateValidator('cargo2', 'cargo1')]),
       cargo1pct: this.fb.control(commingle?.cargo1IdPct?.value?.id, [Validators.required]),
@@ -418,11 +415,24 @@ export class CommingleComponent implements OnInit {
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
       this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]);
       this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
+      this.resetSlNo();
     }
     else if (this.manualCommingleList?.length >= 3) {
       this.isMaxCargo = true;
     }
+  }
 
+  /**
+   * Method to reset sl no
+   *
+   * @memberof CommingleComponent
+   */
+
+  resetSlNo() {
+    const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
+    dataTableControl.controls.forEach((row, index) => {
+      row.get("sl").setValue(index);
+    });
   }
 
   /**

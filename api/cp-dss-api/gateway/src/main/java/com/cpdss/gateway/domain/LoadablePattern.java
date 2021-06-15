@@ -19,4 +19,6 @@ public class LoadablePattern {
   private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
   private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
   private LoadablePlanSynopticalRecord loadablePlanSynopticRecord;
+  private Boolean validated;
+  private Long loadablePatternStatusId;
 }

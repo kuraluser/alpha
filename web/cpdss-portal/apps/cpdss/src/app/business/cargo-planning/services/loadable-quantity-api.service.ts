@@ -22,7 +22,7 @@ export class LoadableQuantityApiService {
    * Get api for loadable quantity
    */
   getLoadableQuantity(vesselId: number, voyageId: number, loadableStudyId: number, portRotationId: number): Observable<LoadableQuantityModel> {
-    return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity?portRotationId=${portRotationId}`);
+    return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity?portRotationId=${portRotationId ? portRotationId : 0}`);
   }
 
   /**

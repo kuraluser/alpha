@@ -655,15 +655,15 @@ a{
 }
 .tank-outer-ohq{
   .rear-top-ohq{
-    border-top: 25px solid $tank-ohq-border;
+    border-top: 12px solid $tank-ohq-border;
     &:after{
-      border-top: 25px solid $body-bg;
+      border-top: 11px solid $body-bg;
     }
   }
   .rear-bottom-ohq{
-    border-bottom: 25px solid $tank-ohq-border;
+    border-bottom: 12px solid $tank-ohq-border;
     &:after{
-      border-bottom: 25px solid $body-bg;
+      border-bottom: 12px solid $body-bg;
     }
   }
 }
@@ -1330,4 +1330,7 @@ header{
 }
 .action-btn {
   color: $main-head!important;
+}
+.icon-chat{
+  background: url($images-theme + 'chat-icon.png') no-repeat center center;
 }

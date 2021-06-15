@@ -43,20 +43,20 @@
                         </div>
 
                     </div>
-                    <div class="row form-group" *ngIf="caseNo == 3">
+                    <div class="row form-group" >
                         <label for="loadable_quantity_displacement"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DISPLACEMENT' | translate}}</label>
                         <div class="col pt-5">
                             <label id="loadable_quantity_displacement">{{getControlLabel('displacement')| number :
-                                '1.0-2'}}</label>
+                                '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                     </div>
-                    <div class="row form-group" *ngIf="caseNo === 3">
+                    <div class="row form-group" >
                         <label for="loadable_quantity_lwt" class="col col-form-label">{{'LOADABLE_QUANTITY_LWT' |
                             translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_lwt">{{getControlLabel('lwt')| number : '1.0-2'}}</label>
+                            <label id="loadable_quantity_lwt">{{getControlLabel('lwt')| number : '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                     </div>
@@ -67,27 +67,29 @@
                             class="col col-form-label strong ">{{selectedZone}} {{'LOADABLE_QUANTITY_DWT' |
                             translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_dwt">{{getControlLabel('dwt')| number : '1.0-2'}}</label>
+                            <label id="loadable_quantity_dwt">{{getControlLabel('dwt')| number : '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column strong sub-heading-size">{{'LOADABLE_QUANTITY_UNIT_MT' | translate
                             }}</div>
+                            <div class="col error-column text-center"></div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_tpc" class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' |
                             translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_tpc">{{getControlLabel('tpc') | number : '1.0-2'}}</label>
+                            <label id="loadable_quantity_tpc">{{getControlLabel('tpc') | number : '1.2-2'}}</label>
 
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_TONNE' | translate }}</div>
+                        <div class="col error-column text-center"></div>
                     </div>
-                    <div class="row form-group" *ngIf="caseNo === 3">
+                    <div class="row form-group">
                         <label for="loadable_quantity_sea_water_density"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
-                        <div class="col">
-                            <input type="text" *ngIf="isEditable;else seaWaterDensityRef" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                        <div class="col pt-5">
+                            <input type="text" *ngIf="isEditable && isEditableSeaWaterDensity;else seaWaterDensityRef" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_sea_water_density" formControlName="estSeaDensity"
-                                (change)="getSgCorrectionOnChange()" >
+                                (change)="getSgCorrectionOnChange()">
                                 <ng-template #seaWaterDensityRef>
                                     <label id="loadable_quantity_sea_water_density_label" >{{getControlLabel('estSeaDensity') | number :
                                     '1.4-4'}}</label>
@@ -99,12 +101,12 @@
                                 [errorMessages]="errorMesages.estSeaDensity"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group" *ngIf="caseNo === 3">
+                    <div class="row form-group" >
                         <label for="loadable_quantity_sg_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_sg_correction">{{getControlLabel('sgCorrection') | number :
-                                '1.0-2'}}</label>
+                                '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -118,7 +120,11 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_estimate_sag" class="form-control" formControlName="estimateSag"
-                                (change)="getSagCorrectionOnChange()" [readonly]="!isEditable">
+                                (change)="getSagCorrectionOnChange()" *ngIf="isEditable; else estimateRef">
+                                <ng-template #estimateRef>
+                                    <input type="text" class="form-control" id="loadable_quantity_estimate_sag_label" [value]="getControlLabel('estimateSag')| number :'1.2-2'"
+                                     [disabled]="true">
+                                </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
                         <div class="col error-column text-center">
@@ -131,7 +137,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
                         <div class="col pt-5">
                             <label id="loadable_quantity_sag_correction">{{getControlLabel('safCorrection')| number :
-                                '1.0-2'}}</label>
+                                '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -144,7 +150,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_ONBOARD' | translate}}</label>
                         <div class="col">
                             <input type="text"
-                                id="loadable_quantity_fo_onboard" class="form-control" [value]="getControlLabel('foOnboard')| number :'1.0-2'"
+                                id="loadable_quantity_fo_onboard" class="form-control" [value]="getControlLabel('foOnboard')| number :'1.2-2'"
                                 (change)="getSubTotal()" [disabled]="true">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -158,7 +164,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DO_ONBOARD' | translate}}</label>
                         <div class="col">
                             <input type="text"
-                                id="loadable_quantity_do_onboard" class="form-control" [value]="getControlLabel('doOnboard')| number :'1.0-2'"
+                                id="loadable_quantity_do_onboard" class="form-control" [value]="getControlLabel('doOnboard')| number :'1.2-2'"
                                 (change)="getSubTotal()"  [disabled]="true">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -173,7 +179,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FRESH_WATER_ON_BOARD' | translate}}</label>
                         <div class="col">
                             <input type="text"  class="form-control"
-                                id="loadable_quantity_fresh_water_onboard" [value]="getControlLabel('freshWaterOnboard')| number :'1.0-2'"
+                                id="loadable_quantity_fresh_water_onboard" [value]="getControlLabel('freshWaterOnboard')| number :'1.2-2'"
                                 (change)="getSubTotal()"  [disabled]="true">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -187,7 +193,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_BOILER_WATER_ON_BOARD' | translate}}</label>
                         <div class="col">
                             <input type="text" class="form-control"
-                                id="loadable_quantity_boiler_water_onboard" [value]="getControlLabel('boilerWaterOnboard')| number :'1.0-2'"
+                                id="loadable_quantity_boiler_water_onboard" [value]="getControlLabel('boilerWaterOnboard')| number :'1.2-2'"
                                 (change)="getSubTotal()" [disabled]="true">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -204,7 +210,7 @@
                                 id="loadable_quantity_ballast" class="form-control" formControlName="ballast"
                                 (change)="getSubTotal()">
                                 <ng-template #labelRef>
-                                    <input type="text" class="form-control" id="loadable_quantity_ballast_label" [value]="getControlLabel('ballast')| number :'1.0-2'"
+                                    <input type="text" class="form-control" id="loadable_quantity_ballast_label" [value]="getControlLabel('ballast')| number :'1.2-2'"
                                 (change)="getSubTotal()" [disabled]="true">
                                 </ng-template>
                         </div>
@@ -223,6 +229,7 @@
                                 '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column text-center"></div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_others" class="col col-form-label">{{'LOADABLE_QUANTITY_OTHERS' |
@@ -232,7 +239,7 @@
                                 class="form-control" formControlName="others" (change)="getSubTotal()"
                                 >
                                 <ng-template #constLabelRef>
-                                    <input type="text" class="form-control" id="loadable_quantity_others" [value]="getControlLabel('others')| number :'1.0-2'"
+                                    <input type="text" class="form-control" id="loadable_quantity_others" [value]="getControlLabel('others')| number :'1.2-2'"
                                  [disabled]="true">
                                 </ng-template>
                         </div>
@@ -247,7 +254,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</label>
                         <div class="col pt-5">
                             <label id="loadable_quantity_sub_total">{{getControlLabel('subTotal')| number :
-                                '1.0-2'}}</label>
+                                '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column pt-5">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -272,9 +279,9 @@
                                 {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoDwt">
                                 {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNodisplacement && caseNo === 3">
+                            <div class="text-danger" *ngIf="isNodisplacement">
                                 {{'LOADABLE_QUANTITY_DISPLACEMENT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoLwt && caseNo === 3">
+                            <div class="text-danger" *ngIf="isNoLwt">
                                 {{'LOADABLE_QUANTITY_LWT_REQUIRED' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoConstant">
                                 {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
@@ -289,7 +296,11 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_dist_in_summery" formControlName="distanceInSummerzone"
-                                (change)="getRunningHours()" [readonly]="!isEditable">
+                                (change)="getRunningHours()" *ngIf="isEditable; else distanceInRef">
+                                <ng-template #distanceInRef>
+                                    <label id="loadable_quantity_dist_in_summery_label">{{getControlLabel('distanceInSummerzone')| number :'1.2-2'}}</label>
+                                    
+                                </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MILES' | translate }}</div>
                         <div class="col error-column text-center">
@@ -307,7 +318,7 @@
                                 (change)="getRunningHours()">
                                 <ng-template #spedInSzRef>
                                     <label id="loadable_quantity_fo_con_day_label" >{{getControlLabel('speedInSz') | number :
-                                    '1.0.-2'}}</label>
+                                    '1.2-2'}}</label>
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_KNOTS' | translate }}</div>
@@ -320,8 +331,9 @@
                         <label for="loadable_quantity_running_hours"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_HOURS' | translate}}</label>
                         <div class="col">
-                            <input type="text" cpdssPortalNumberDecimal [negative]="false"
-                                id="loadable_quantity_running_hours" class="form-control" formControlName="runningHours"
+                            <input type="text" 
+                                id="loadable_quantity_running_hours" class="form-control" [value]="getControlLabel('runningHours')| number :'1.2-2'" 
+                               
                                 (change)="getRunningDays()" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_HOURS' | translate }}</div>
@@ -334,7 +346,7 @@
                         <label for="loadable_quantity_running_days"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_DAYS' | translate}}</label>
                         <div class="col">
-                            <input type="text" cpdssPortalNumberDecimal [negative]="false"
+                            <input type="text" 
                                 id="loadable_quantity_running_days" class="form-control" formControlName="runningDays"
                                 (change)="getFoConsumptionInSz()" readonly>
                         </div>
@@ -353,7 +365,7 @@
                                 (change)="getFoConsumptionInSz()">
                                 <ng-template #foConRef>
                                     <label id="loadable_quantity_fo_con_day_label" >{{getControlLabel('foConday') | number :
-                                    '1.0.-2'}}</label>
+                                    '1.2-2'}}</label>
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT/DAY' | translate }}</div>
@@ -368,7 +380,7 @@
                             {{selectedZone}}</label>
                         <div class="col">
                             <input type="text"  class="form-control"
-                                id="loadable_quantity_fo_cons_in_sz" [value]="getControlLabel('foConsInSz')| number :'1.0-2'" readonly>
+                                id="loadable_quantity_fo_cons_in_sz" [value]="getControlLabel('foConsInSz')| number :'1.2-2'" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column">

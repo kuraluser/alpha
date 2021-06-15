@@ -54,7 +54,8 @@ public class LoadableQuantityCommingleCargoDetails {
   private String orderedQuantity;
   private Integer priority;
   private Integer loadingOrder;
-  private Long cargoNominationId;
+  private Long cargo1NominationId;
+  private Long cargo2NominationId;
 
   private Long tankId;
   private String fillingRatio;

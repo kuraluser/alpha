@@ -35,7 +35,7 @@
                                 </ng-container>
                             </ng-container>
                             <ng-template #col_content>
-                                <td><span  [ngClass]="col.field === 'differencePercentage' ? (convertPercentageToNumber(rowData[col.field]) >= 0  ? 'badge-custom success' : 'badge-custom error') : ''">{{rowData[col.field]}}</span></td>
+                                <td><span  [ngClass]="col.field === 'differencePercentage' ? getDiffClass(rowData[col.field]) : ''">{{col.field === 'differencePercentage' ? (rowData[col.field]+'%') : rowData[col.field] }}</span></td>
                             </ng-template>
                         </ng-container>
                     </tr>
@@ -51,7 +51,7 @@
                         <td>{{total?.loadableLT | quantityDecimalFormat: 'LT'}}</td>
                         <td>{{total?.loadableMT | quantityDecimalFormat: 'MT'}}</td>
                         <td>{{total?.loadableKL | quantityDecimalFormat: 'KL'}}</td>
-                        <td><span class="badge-custom" [ngClass]="total?.differencePercentage >= 0  ? 'success' : 'error'">{{total?.differencePercentage | number :'1.2-2'}} %</span></td>
+                        <td><span  [ngClass]="getTotalDiffClass(total?.differencePercentage)">{{total?.differencePercentage | number :'1.2-2'}} %</span></td>
                     </tr>
                 </ng-template>
             </p-table>

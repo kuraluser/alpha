@@ -320,6 +320,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const fromGroup = this.row(event.index);
     event.data.fullCapacity = event?.data?.fullCapacityCubm * event?.data?.density.value ?? 0;
+    const formControl = this.field(event?.index, event?.field);
 
     let dependentKeys = [];
     switch (event?.field) {
@@ -350,16 +351,15 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
         formControl2.updateValueAndValidity();
       }
     } else {
-      const formControl = this.field(event?.index, event?.field);
       event.data[event.field].value = 0;
       formControl.setValue(0);
-      formControl.updateValueAndValidity();
     }
 
     event.data.arrivalVolume = event?.data?.density?.value ? event?.data?.arrivalQuantity?.value / event?.data?.density?.value : 0;
     event.data.departureVolume = event?.data?.density?.value ? event?.data.departureQuantity?.value / event?.data?.density?.value : 0;
 
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
+    formControl.updateValueAndValidity();
     if (fromGroup.valid) {
       event.data.processing = true;
       const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);

@@ -1170,11 +1170,23 @@ public class LoadableStudyService {
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
     LoadableQuantity loadableQuantity = new LoadableQuantity();
-    LoadableQuantityReply loadableQuantityRequest =
-        LoadableQuantityReply.newBuilder()
-            .setLoadableStudyId(loadableStudyId)
-            .setPortRotationId(portRotationId)
-            .build();
+    Optional<Long> nullCheckPortRotationId = Optional.ofNullable(portRotationId);
+    LoadableQuantityReply loadableQuantityRequest;
+    // If portRotationId is null then it will fetch value for synoptical table page
+    // otherwise fetch value for cargo nomination page
+    if (nullCheckPortRotationId.isPresent()) {
+      loadableQuantityRequest =
+          LoadableQuantityReply.newBuilder()
+              .setLoadableStudyId(loadableStudyId)
+              .setPortRotationId(portRotationId)
+              .build();
+    } else {
+      loadableQuantityRequest =
+          LoadableQuantityReply.newBuilder()
+              .setLoadableStudyId(loadableStudyId)
+              .setPortRotationId(-1)
+              .build();
+    }
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
         this.getLoadableQuantityResponse(loadableQuantityRequest);
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getStatus())) {
@@ -1591,6 +1603,9 @@ public class LoadableStudyService {
                   buildStabilityParameter(loadablePattern.getStabilityParameters()));
               loadablePatternDto.setLoadableStudyStatusId(
                   loadablePattern.getLoadableStudyStatusId());
+              loadablePatternDto.setValidated(loadablePattern.getValidated());
+              loadablePatternDto.setLoadablePatternStatusId(
+                  loadablePattern.getLoadablePatternStatusId());
               loadablePatternDto.setLoadablePatternCargoDetails(
                   new ArrayList<LoadablePatternCargoDetails>());
               loadablePattern
@@ -1703,6 +1718,13 @@ public class LoadableStudyService {
               details.setVcg(lpbd.getVcg());
               details.setTankName(lpbd.getTankName());
               details.setColorCode(lpbd.getColorCode());
+
+              details.setCorrectedLevelOrginal(lpbd.getCorrectedLevelOrginal());
+              details.setCorrectionFactorOrginal(lpbd.getCorrectionFactor());
+              details.setMetricTonOrginal(lpbd.getMetricTonOrginal());
+              details.setPercentageOrginal(lpbd.getPercentageOrginal());
+              details.setRdgLevelOrginal(lpbd.getRdgLevelOrginal());
+
               response.getLoadablePlanBallastDetails().add(details);
             });
   }
@@ -1855,10 +1877,12 @@ public class LoadableStudyService {
                 synopticalRecord.setPortName(str.getPortName());
                 synopticalRecord.setSpecificGravity(str.getSpecificGravity());
                 synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
-                synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
-                synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
-                synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+
+                synopticalRecord.setFinalDraftAft(str.getCalculatedDraftAftPlanned());
+                synopticalRecord.setFinalDraftFwd(str.getCalculatedDraftFwdPlanned());
+                synopticalRecord.setFinalDraftMid(str.getCalculatedDraftMidPlanned());
                 synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
+
                 synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
                 synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
                 response.setLoadablePlanSynopticRecord(synopticalRecord);
@@ -1929,6 +1953,13 @@ public class LoadableStudyService {
               details.setCorrectedUllage(lpsdl.getCorrectedUllage());
               details.setTankShortName(lpsdl.getTankShortName());
               details.setTankDisplayOrder(lpsdl.getTankDisplayOrder());
+
+              details.setCorrectionFactorOrginal(lpsdl.getCorrectionFactorOrginal());
+              details.setCorrectedUllageOrginal(lpsdl.getCorrectedUllageOrginal());
+              details.setWeightOrginal(lpsdl.getWeightOrginal());
+              details.setFillingRatioOrginal(lpsdl.getFillingRatioOrginal());
+              details.setRdgUllageOrginal(lpsdl.getRdgUllageOrginal());
+
               loadablePlanStowageDetails.add(details);
             });
     return loadablePlanStowageDetails;
@@ -2937,6 +2968,14 @@ public class LoadableStudyService {
         isEmpty(proto.getBlindSector()) ? BigDecimal.ZERO : new BigDecimal(proto.getBlindSector()));
     synopticalRecord.setList(
         isEmpty(proto.getList()) ? BigDecimal.ZERO : new BigDecimal(proto.getList()));
+    synopticalRecord.setBm(
+        isEmpty(proto.getBendingMoment())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getBendingMoment()));
+    synopticalRecord.setSf(
+        isEmpty(proto.getShearingForce())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getShearingForce()));
   }
 
   /**
@@ -3495,7 +3534,7 @@ public class LoadableStudyService {
                                   buildLoadablePlanBallstDetails(lpbd, detailsBuilderArrival);
                                 });
 
-                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                        Optional.ofNullable(lppwd.getArrivalCondition().getStabilityParameters())
                             .ifPresent(
                                 stabilityParameter ->
                                     detailsBuilderArrival.setStabilityParameter(
@@ -3650,6 +3689,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
     Optional.ofNullable(lqccd.getTimeRequiredForLoading())
         .ifPresent(builder::setTimeRequiredForLoading);
+    Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
+    Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     lqccd
         .getToppingSequence()
         .forEach(
@@ -3901,13 +3942,15 @@ public class LoadableStudyService {
               synopticalRecord.setPortName(str.getPortName());
               synopticalRecord.setSpecificGravity(str.getSpecificGravity());
               synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
-              synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
-              synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
-              synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+              synopticalRecord.setFinalDraftAft(str.getCalculatedDraftAftPlanned());
+              synopticalRecord.setFinalDraftFwd(str.getCalculatedDraftFwdPlanned());
+              synopticalRecord.setFinalDraftMid(str.getCalculatedDraftMidPlanned());
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
               synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
               synopticalRecord.setPortTimezoneId(str.getPortTimezoneId());
+              synopticalRecord.setBm(str.getBm());
+              synopticalRecord.setSf(str.getSf());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
@@ -3941,6 +3984,13 @@ public class LoadableStudyService {
               details.setColorCode(lpbd.getColorCode());
               details.setTankShortName(lpbd.getTankShortName());
               details.setTankDisplayOrder(lpbd.getTankDisplayOrder());
+
+              details.setRdgLevelOrginal(lpbd.getRdgLevelOrginal());
+              details.setCorrectedLevelOrginal(lpbd.getCorrectedLevelOrginal());
+              details.setCorrectionFactorOrginal(lpbd.getCorrectionFactorOrginal());
+              details.setMetricTonOrginal(lpbd.getMetricTonOrginal());
+              details.setPercentageOrginal(lpbd.getPercentageOrginal());
+
               response.getLoadablePlanBallastDetails().add(details);
             });
   }
@@ -4014,6 +4064,16 @@ public class LoadableStudyService {
               loadablePlanStowageDetails.setIsCommingle(lpsd.getIsCommingle());
               loadablePlanStowageDetails.setTankShortName(lpsd.getTankShortName());
               loadablePlanStowageDetails.setTankDisplayOrder(lpsd.getTankDisplayOrder());
+
+              loadablePlanStowageDetails.setCorrectedUllageOrginal(
+                  lpsd.getCorrectedUllageOrginal());
+              loadablePlanStowageDetails.setCorrectionFactorOrginal(
+                  lpsd.getCorrectionFactorOrginal());
+              loadablePlanStowageDetails.setFillingRatioOrginal(lpsd.getFillingRatioOrginal());
+              loadablePlanStowageDetails.setWeightOrginal(lpsd.getWeightOrginal());
+              loadablePlanStowageDetails.setRdgUllageOrginal(lpsd.getRdgUllageOrginal());
+              loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
+
               response.getLoadablePlanStowageDetails().add(loadablePlanStowageDetails);
             });
   }
@@ -4050,6 +4110,7 @@ public class LoadableStudyService {
               cargoDetails.setCargoId(lqcd.getCargoId());
               cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
               cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
+              cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }
@@ -4551,6 +4612,7 @@ public class LoadableStudyService {
       patternDto.setLoadablePatternId(pattern.getLoadablePatternId());
       patternDto.setCaseNumber(pattern.getCaseNumber());
       patternDto.setLoadableStudyStatusId(pattern.getLoadableStudyStatusId());
+
       response.getLoadablePatterns().add(patternDto);
     }
     response.setResponseStatus(
@@ -4593,6 +4655,8 @@ public class LoadableStudyService {
     confirmPlanStatusResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     confirmPlanStatusResponse.setConfirmed(grpcReply.getConfirmed());
+    confirmPlanStatusResponse.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    confirmPlanStatusResponse.setValidated(grpcReply.getValidated());
     return confirmPlanStatusResponse;
   }
 
@@ -4694,6 +4758,7 @@ public class LoadableStudyService {
     builder.setApi(updateUllageRequest.getApi());
     builder.setTemperature(updateUllageRequest.getTemperature());
     builder.setSg(updateUllageRequest.getSg());
+    builder.setIsCommingle(updateUllageRequest.isCommingle());
     grpcRequest.setLoadablePlanStowageDetails(builder.build());
   }
 

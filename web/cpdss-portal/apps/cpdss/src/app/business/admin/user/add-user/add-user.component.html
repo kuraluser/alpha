@@ -63,7 +63,7 @@
         <button class="btn btn-main mr-10" id="role_user_popup_cancel" (click)="cancel()">{{
           'USER_CANCEL_BUTTON' | translate }}</button>
         <button class="btn btn-main" type="submit" id="role_user_popup_submit" (click)="saveNewUserRole()" *ngIf="popupStatus !== 'VIEW'">{{
-          'USER_SAVE_BUTTON' | translate }}</button>
+          popupStatus === 'ADD' ? ('USER_SAVE_BUTTON' | translate) : ('USER_UPDATE_BUTTON' | translate)}}</button>
       </div>
     </div>
 

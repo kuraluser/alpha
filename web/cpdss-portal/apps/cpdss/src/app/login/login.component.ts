@@ -8,7 +8,7 @@ import { PermissionsService } from '../shared/services/permissions/permissions.s
 import { environment } from '../../environments/environment';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
-import { AppConfigurationService } from '../shared/services/app-configuration/app-configuration.service';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  *  CPDSS-main application login component
@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
 
   private kycloakService: KeycloakService
 
-  constructor(protected readonly router: Router, private injector: Injector, private loginService: LoginService, private ngxSpinnerService: NgxSpinnerService, private permissionsService: PermissionsService, private messageService: MessageService) {
+  constructor(protected readonly router: Router, private injector: Injector, private loginService: LoginService, private ngxSpinnerService: NgxSpinnerService, private permissionsService: PermissionsService, private messageService: MessageService, private translateService: TranslateService) {
     if (environment.name === 'shore') {
       this.kycloakService = <KeycloakService>this.injector.get(KeycloakService);
     }
@@ -76,8 +76,8 @@ export class LoginComponent implements OnInit {
             localStorage.removeItem('_USER_PERMISSIONS');
           }
         }
-        
-        
+
+
       }
     }
     catch (ex) {
@@ -90,10 +90,14 @@ export class LoginComponent implements OnInit {
   private async loadTokenProperties() {
     this.ngxSpinnerService.show();
     try {
-      const daysRemain = Number(localStorage.getItem('daysRemain'))
+      const daysRemain = Number(localStorage.getItem('daysRemain'));
       if(daysRemain){
-        this.messageService.add({severity:'warn', summary:'Password Expiry Remainder', detail:'Your Password will expire in ' + (daysRemain > 1? daysRemain + ' days': '24 hours') 
-        + '. Please contact administrator to reset the password'});
+        const days = (daysRemain > 1 ? daysRemain + ' days' : '24 hours');
+        const translationKeys = await this.translateService.get(['PASSWORD_EXPIRY_REMINDER', 'PASSWORD_EXPIRY_REMINDER_DETAILS'], { days: days }).toPromise();
+
+        this.messageService.add({
+          severity: 'warn', summary: translationKeys['PASSWORD_EXPIRY_REMINDER'], detail: translationKeys['PASSWORD_EXPIRY_REMINDER_DETAILS']
+        });
         localStorage.removeItem('daysRemain')
       }
       const token = localStorage.getItem('token');
@@ -109,7 +113,7 @@ export class LoginComponent implements OnInit {
     catch (ex) {
       console.log('Exception:loginComponent', ex);
     }
-    this.ngxSpinnerService.hide();   
+    this.ngxSpinnerService.hide();
   }
 
   /**

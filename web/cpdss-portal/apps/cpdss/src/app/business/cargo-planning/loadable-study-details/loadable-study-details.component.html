@@ -128,7 +128,7 @@
         </div>
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
-                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                <a id="add_port_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !loadableStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
                     (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|
                     translate}}</a>
@@ -153,7 +153,7 @@
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew && (cargoNominationTabPermission?.view || cargoNominationTabPermission?.view === undefined)"
                     [permission]="cargoNominationTabPermission" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
                     [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"
-                    (cargoNominationUpdate)="cargoNominationUpdate($event)"  ></cpdss-portal-cargo-nomination>
+                    (cargoNominationUpdate)="cargoNominationUpdate($event)" (portOhqStatusUpdate)="portOhqStatusUpdate($event)"></cpdss-portal-cargo-nomination>
                 <cpdss-portal-ports
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && portsTabPermission?.view" [permission]="portsTabPermission" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy" (portUpdate)="portUpdate($event)">
@@ -166,7 +166,7 @@
                 <cpdss-portal-on-board-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-                    [loadableStudy]="selectedLoadableStudy" [quantitySelectedUnit]="currentUnit">
+                    [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
 
 

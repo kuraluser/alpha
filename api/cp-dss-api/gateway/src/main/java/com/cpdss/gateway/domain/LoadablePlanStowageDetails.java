@@ -46,4 +46,19 @@ public class LoadablePlanStowageDetails {
 
   @JsonInclude(Include.NON_NULL)
   private Integer tankDisplayOrder;
+
+  @JsonInclude(Include.NON_NULL)
+  private String correctedUllageOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String correctionFactorOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String weightOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String fillingRatioOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String rdgUllageOrginal;
 }

@@ -32,7 +32,7 @@
         </div>
         <div class="row pt-15 pb-15">
             <div class="col text-center">
-                <button class="btn btn-main" id="grid_toggle_btn" 
+                <button class="btn btn-main" id="grid_toggle_btn"
                     (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
             </div>
         </div>
@@ -43,7 +43,7 @@
                     <button class="btn btn-main mr-10" [hidden]="loadableStudyStatus" *ngIf="!buttonStatus" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable || !cargoTankDetails?.length || isStowageEditable || validateAndSaveProcessing"
                         (click)="changeGridToEditMode()">{{'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL'| translate}}
                     </button>
-                    <button class="btn btn-main mr-10" (click)="commentsPopup(true)" *ngIf="buttonStatus === 1" [disabled]="stowageDataEditStatus">
+                    <button class="btn btn-main mr-10" (click)="commentsPopup(true)" *ngIf="buttonStatus === 1" [disabled]="stowageDataEditStatus || !validationPending">
                         {{'LOADABLE_PLAN_VALIDATE_AND_SAVE'| translate}}
                     </button>
                     <button class="btn btn-main" *ngIf="buttonStatus === 1" (click)="cancelStowageEdit()">
@@ -59,11 +59,11 @@
                 </div>
             </div>
             <div *ngIf="selectedTab === tankType.BALLAST" class="col ml-30">
-                <cpdss-portal-ballast-stowage #ballastStowage (validateAndSave)="commentsPopup($event)" (ballastStowageDataEdit)="ballastStowageDataEdit($event,ballastStowage)" 
-                [initBallastTankDetails]="initBallastTankDetails" 
-                [ballastForm]="getFormGroup('ballastTanks')" 
-                [ballastDetails]="ballastTankDetails" 
-                [isEditable]="isEditable" 
+                <cpdss-portal-ballast-stowage #ballastStowage (validateAndSave)="commentsPopup($event)" (ballastStowageDataEdit)="ballastStowageDataEdit($event,ballastStowage)"
+                [initBallastTankDetails]="initBallastTankDetails"
+                [ballastForm]="getFormGroup('ballastTanks')"
+                [ballastDetails]="ballastTankDetails"
+                [isEditable]="isEditable"
                 [isPermissionAvaliable]="isPermissionAvaliable"
                 [loadableStudyStatus]="loadableStudyStatus"
                 [isStowageEditable]="isStowageEditable"

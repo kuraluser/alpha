@@ -57,6 +57,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'invalid': 'SYNOPTICAL_INVALID',
     'pattern': 'SYNOPTICAL_INVALID',
     'fromMax': 'SYNOPTICAL_FROM_MAX',
+    "sunRiseGreater":"SYNOPTICAL_SUNRISE_GREATER",
+    "sunSetGreater":"SYNOPTICAL_SUNSET_GREATER",
     'toMin': 'SYNOPTICAL_TO_MIN',
     'timeFromMax': 'SYNOPTICAL_TIME_FROM_MAX',
     'timeToMin': 'SYNOPTICAL_TIME_TO_MIN',
@@ -315,6 +317,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'etaEtdPlanned',
                 type: this.fieldType.DATETIME,
+                minValue: this.today,
                 validators: (this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) && 
                 (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined) ? ['required'] : []
               }],
@@ -325,6 +328,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'etaEtdActual',
                 type: this.fieldType.DATETIME,
+                maxValue: this.today,
                 validators: ((this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) && 
                   (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined)) ? ['required'] : []
               }],
@@ -357,7 +361,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
-          validators: ['dddd.dddd.+'],
+          validators: ['d.dddd.+'],
           numberFormat: AppConfigurationService.settings?.sgNumberFormat
         }],
         editable: true,
@@ -388,11 +392,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [
                 {
                   key: 'hwTideTimeFrom',
-                  type: this.fieldType.TIME
+                  type: this.fieldType.TIME,
+                  validators: ['required']
                 },
                 {
                   key: 'hwTideTimeTo',
-                  type: this.fieldType.TIME
+                  type: this.fieldType.TIME,
+                  validators: ['required']
                 }
               ],
               editable: true,
@@ -427,11 +433,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [
                 {
                   key: 'lwTideTimeFrom',
-                  type: this.fieldType.TIME
+                  type: this.fieldType.TIME,
+                  validators: ['required']
                 },
                 {
                   key: 'lwTideTimeTo',
-                  type: this.fieldType.TIME
+                  type: this.fieldType.TIME,
+                  validators: ['required']
                 }
               ],
               editable: true,
@@ -487,7 +495,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftFwdPlanned",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: false,
                   },
@@ -496,7 +505,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftFwdActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -510,7 +520,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftAftPlanned",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: false,
                   },
@@ -519,7 +530,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftAftActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required','dd.dd']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -533,7 +545,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftMidPlanned",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: false,
                   },
@@ -542,7 +555,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                     fields: [{
                       key: "calculatedDraftMidActual",
                       type: this.fieldType.NUMBER,
-                      validators: ['required']
+                      numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                      validators: ['required', 'dd.dd']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -558,7 +572,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 fields: [{
                   key: "calculatedTrimPlanned",
                   type: this.fieldType.NUMBER,
-                  validators: ['required']
+                  numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                  validators: ['required', 'dd.dd']
                 }],
                 editable: false,
               },
@@ -567,7 +582,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 fields: [{
                   key: "calculatedTrimActual",
                   type: this.fieldType.NUMBER,
-                  validators: ['required']
+                  numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
+                  validators: ['required', 'dd.dd']
                 }],
                 editable: this.checkIfConfirmed(),
               },
@@ -1360,73 +1376,173 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @returns {any}
    * @memberof SynopticalTableComponent
   */
-  onBlur(field: SynopticField, colIndex: number, updateValues = true) {
+   onBlur(field: SynopticField, colIndex: number, updateValues = true) {
     const fc = this.getControl(colIndex, field.key)
     const operationType = this.synopticalService.synopticalRecords[colIndex].operationType;
     const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
     if (!fc || fc.invalid)
-      return;
+    return;
     let fcMax, fcMin;
     switch (field.key) {
       case 'hwTideFrom':
         fcMax = this.getControl(colIndex, 'hwTideTo')
-        if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
+        if (fc.value != 0 && !fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
+        else if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ fromMax: true })
         } else if (fcMax.hasError('toMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
         }
+
         break;
       case 'hwTideTo':
         fcMin = this.getControl(colIndex, 'hwTideFrom')
-        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
+        if (fc.value != 0 && !fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
+        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ toMin: true })
         } else if (fcMin.hasError('fromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
         }
         break;
       case 'lwTideFrom':
+        if (!fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
         fcMax = this.getControl(colIndex, 'lwTideTo')
-        if (typeof fcMax.value !=='undefined' &&fc.value >= fcMax.value) {
+        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ fromMax: true })
         } else if (fcMax.hasError('toMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
         }
         break;
+
+      case 'timeOfSunrise':
+        fcMax = this.getControl(colIndex, 'timeOfSunset')
+        if (fcMax?.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+
+        if (fc?.value) {
+          fc?.value?.setSeconds(0, 0);
+        }
+        if (!fcMax?.value && !fc?.value) {
+          fcMax?.setErrors(null);
+          fc?.setErrors(null);
+        }
+        else if (typeof fcMax?.value !== 'undefined' && fc?.value >= fcMax?.value && fc?.value && fcMax?.value) {
+          fc?.setErrors({ sunRiseGreater: true })
+        } else if (fcMax?.hasError('sunSetGreater')) {
+          fcMax?.setValue(fcMax?.value, { emitEvent: false })
+        }
+        break;
+
+      case 'timeOfSunset':
+        fcMax = this.getControl(colIndex, 'timeOfSunrise')
+        if (fcMax?.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+        if (fc?.value) {
+          fc.value.setSeconds(0, 0);
+        }
+        if (!fcMax?.value && !fc?.value) {
+          fcMax?.setErrors(null);
+          fc?.setErrors(null);
+        }
+        else if (typeof fcMax?.value !== 'undefined' && fc?.value <= fcMax?.value && fc?.value && fcMax?.value) {
+          fc?.setErrors({ sunSetGreater: true })
+        } else if (fcMax?.hasError('sunRiseGreater')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
       case 'lwTideTo':
+        if (!fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
         fcMin = this.getControl(colIndex, 'lwTideFrom')
-        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
+        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ toMin: true })
         } else if (fcMin.hasError('fromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
         }
         break;
       case 'hwTideTimeFrom':
+        if (!fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
         fcMax = this.getControl(colIndex, 'hwTideTimeTo')
-        if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
+
+        if (fcMax.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+
+        if (fc.value) {
+          fc.value.setSeconds(0, 0);
+        }
+
+        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
         }
         break;
       case 'hwTideTimeTo':
+        if (!fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
         fcMin = this.getControl(colIndex, 'hwTideTimeFrom')
-        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
+        if (fcMin.value) {
+          fcMin.value.setSeconds(0, 0);
+        }
+        if (fc.value) {
+          fc.value.setSeconds(0, 0);
+        }
+
+        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
         }
         break;
       case 'lwTideTimeFrom':
+        if (!fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
         fcMax = this.getControl(colIndex, 'lwTideTimeTo')
-        if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
+        if (fcMax.value) {
+          fcMax.value.setSeconds(0, 0);
+        }
+        if (fc.value) {
+          fc.value.setSeconds(0, 0);
+        }
+        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
         }
         break;
       case 'lwTideTimeTo':
+        if (!fc.value) {
+          fc.setErrors(null);
+          fc.setErrors({ required: true })
+        }
         fcMin = this.getControl(colIndex, 'lwTideTimeFrom')
-        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
+        if (fcMin.value) {
+          fcMin.value.setSeconds(0, 0);
+        }
+        if (fc.value) {
+          fc.value.setSeconds(0, 0);
+        }
+        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1504,6 +1620,17 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           this.getControl(otherIndex, 'runningHours')?.setValue(runningHours)
         }
         break;
+      case 'calculatedDraftAftPlanned': case 'calculatedDraftAftActual':
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] = this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+        break;
+
+      case 'calculatedDraftFwdPlanned': case 'calculatedDraftFwdActual':
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+
+      case 'calculatedDraftMidPlanned': case 'calculatedDraftMidActual':
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+        break;
+
       default:
         const planIndex = field.key.includes('plan') ? 0 : 1
         const dynamicCols = this.cols.filter(col => col.dynamicKey)
@@ -1521,7 +1648,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
     }
   }
-
   /**
    * Method to check if the loadable study is confirmed
    *

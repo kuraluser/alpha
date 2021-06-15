@@ -298,6 +298,8 @@ export interface ICargo {
  export interface IConfirmStatusResponse {
     responseStatus: IResponse;
     confirmed: boolean;
+    loadablePatternStatusId: number;
+    validated: boolean;
 }
 
 /**

@@ -51,7 +51,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   loadableStudyId: number;
   portList: IEditPortRotation[] = [];
   portRotationForm: FormGroup;
-  minDate = new Date();
+  maxDate = new Date();
   isCurrentPortSelected = false;
   errorMesages: any;
   carouselDateFormat: string;

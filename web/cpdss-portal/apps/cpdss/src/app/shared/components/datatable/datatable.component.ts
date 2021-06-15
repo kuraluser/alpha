@@ -336,6 +336,7 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onRowSave() {
+    console.log('datatableRowsave' + Date.now()); // TODO: Need to remove after testing.
     this.saveRow.emit(this.selectedRowEvent);
   }
 

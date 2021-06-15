@@ -41,6 +41,8 @@ export class StowageComponent implements OnInit {
 
   @Input() loadableStudyId: number;
 
+  @Input() validationPending: boolean;
+
   @Input()
   get loadableStudy(): LoadableStudy {
     return this._loadableStudy;
@@ -164,8 +166,8 @@ export class StowageComponent implements OnInit {
   selectedTab = TANKTYPE.CARGO;
   showGrid = false;
   cargoGridColumns: any[];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true,showFillingPercentage: true, showWeight: true, showUllage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrelsAt60', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: AppConfigurationService.settings.baseUnit, ullageField: 'correctedUllage', ullageUnit: 'CM', showTooltip: true, commodityNameField: 'cargoAbbreviation', showDensity: true, densityField: 'api' };
-  ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM', showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showFillingPercentage: true, showWeight: true, showUllage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatioOrginal', volumeField: 'observedBarrelsAt60Original', volumeUnit: 'BBLS', weightField: 'weightOrginal', weightUnit: AppConfigurationService.settings.baseUnit, ullageField: 'correctedUllageOrginal', ullageUnit: AppConfigurationService.settings?.ullageUnit, showTooltip: true, commodityNameField: 'cargoAbbreviation', showDensity: true, densityField: 'api' };
+  ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentageOrginal', ullageField: 'correctedLevelOrginal', ullageUnit: AppConfigurationService.settings?.ullageUnit, showTooltip: true, weightField: 'metricTonOrginal', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
   isPermissionAvaliable: boolean;
   isEditable: boolean;
   buttonStatus: number;
@@ -192,7 +194,7 @@ export class StowageComponent implements OnInit {
   private quantityPipe: QuantityPipe = new QuantityPipe();
   private _loadableQuantityCargo: IloadableQuantityCargoDetails[];
   private _loadableQuantity: number;
-  
+
 
   constructor(
     private loadablePlanTransformationService: LoadablePlanTransformationService,
@@ -395,7 +397,8 @@ export class StowageComponent implements OnInit {
           isBallast: false,
           api: event.data.api['_value'],
           temperature: event.data.temperature['_value'],
-          sg: ''
+          sg: '',
+          isCommingle: event?.data?.isCommingle
         }
         const translationKeys = await this.translateService.get(['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS']).toPromise();
         try {
@@ -408,25 +411,27 @@ export class StowageComponent implements OnInit {
               observedBarrelsAt60: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, event.data.api['_value'], event.data.temperature['_value']),
               observedBarrels: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSBBLS, event.data.api['_value'], event.data.temperature['_value'])
             }
+            this.cargoTankDetails[event.index]['fillingRatio'].value = Number(result.fillingRatio);
+            this.updateField(event.index, 'fillingRatio', this.cargoTankDetails[event.index]['fillingRatio'].value, 'cargoTanks');
             this.updateField(event.index, 'correctionFactor', Number(result.correctionFactor), 'cargoTanks');
             this.updateField(event.index, 'correctedUllage', Number(result.correctedUllage), 'cargoTanks');
             this.updateField(event.index, 'weight', Number(result.quantityMt), 'cargoTanks');
             this.updateField(event.index, 'observedM3', unitConvertedTankDetails.observedM3, 'cargoTanks');
             this.updateField(event.index, 'observedBarrelsAt60', unitConvertedTankDetails.observedBarrelsAt60, 'cargoTanks');
             this.updateField(event.index, 'observedBarrels', unitConvertedTankDetails.observedBarrels, 'cargoTanks');
+            this.updateField(event.index, 'rdgUllage', Number(event.data.rdgUllage['_value']), 'cargoTanks');
 
-            const fillingRatio = this.decimalPipe.transform(this.loadablePlanTransformationService.calculatePercentage(Number(this.cargoTankDetails[event.index]['observedM3'].value), Number(this.cargoTankDetails[event.index]['fullCapacityCubm'])), '1.2-2');
-            this.cargoTankDetails[event.index]['fillingRatio'].value = Number(result.fillingRatio);
-            this.updateField(event.index, 'fillingRatio', this.cargoTankDetails[event.index]['fillingRatio'].value , 'cargoTanks');
-           
-            
+
+
             this.cargoTankDetails[event.index]['correctionFactor'].value = Number(result.correctionFactor);
             this.cargoTankDetails[event.index]['correctedUllage'].value = Number(result.correctedUllage);
             this.cargoTankDetails[event.index]['weight'].value = Number(result.quantityMt);
             this.cargoTankDetails[event.index]['observedM3'].value = unitConvertedTankDetails.observedM3;
             this.cargoTankDetails[event.index]['observedBarrelsAt60'].value = unitConvertedTankDetails.observedBarrelsAt60;
             this.cargoTankDetails[event.index]['observedBarrels'].value = unitConvertedTankDetails.observedBarrels;
-            
+
+            this.loadablePlanForm.updateValueAndValidity();
+
             this.initialCargoTankDetails = JSON.parse(JSON.stringify(this.cargoTankDetails));
             this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS'] });
             this.ngxSpinnerService.hide();
@@ -481,14 +486,14 @@ export class StowageComponent implements OnInit {
           this.ballastTankDetails[event.index]['correctedLevel'].value = result.correctedUllage;
           this.ballastTankDetails[event.index]['correctionFactor'].value = result.correctionFactor;
           this.ballastTankDetails[event.index]['metricTon'].value = result.quantityMt;
-          const fillingRatio = this.decimalPipe.transform(this.loadablePlanTransformationService.calculatePercentage(Number(this.ballastTankDetails[event.index]['cubicMeter'].value), Number(this.ballastTankDetails[event.index]['fullCapacityCubm'])), '1.2-2');
           this.ballastTankDetails[event.index]['percentage'].value = result.fillingRatio + '';
           this.updateField(event.index, 'percentage', this.ballastTankDetails[event.index]['percentage'].value, 'ballastTanks');
           const unitConvertedTankDetails = {
-            observedM3: (Number(this.ballastTankDetails[event.index]['metricTon'].value) / Number(this.ballastTankDetails[event.index]['sg'].value)).toFixed(2)
-          }
-          this.ballastTankDetails[event.index]['cubicMeter'].value = this.decimalPipe.transform(unitConvertedTankDetails.observedM3, '1.2-2');
+            observedM3: (Number(this.ballastTankDetails[event.index]['metricTon'].value) / Number(this.ballastTankDetails[event.index]['sg'].value)).toString()
+          };
+          this.ballastTankDetails[event.index]['cubicMeter'].value = unitConvertedTankDetails.observedM3;
           this.updateField(event.index, 'cubicMeter', this.ballastTankDetails[event.index]['cubicMeter'].value, 'ballastTanks');
+          this.loadablePlanForm.updateValueAndValidity();
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS'] });
           this.ngxSpinnerService.hide();
         }
@@ -513,18 +518,22 @@ export class StowageComponent implements OnInit {
     const translationKeys = await this.translateService.get(['LOADABLE_PLAN_EXCEED_TOLERANCE_LIMIT','LOADABLE_PLAN_EXCEED_LOADABLE_QUANTITY','LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
     let cargoQuantity = 0;
     let exceedToleranceLimit;
-    this.cargoTankDetails.map((cargoDetail) => {
-      cargoQuantity += Number(cargoDetail?.weight?.value);
-      this.loadableQuantityCargo.map(loadableQuantityCargo => { 
-        if(loadableQuantityCargo?.cargoAbbreviation === cargoDetail?.cargoAbbreviation) { 
-          loadableQuantityCargo.total += Number(cargoDetail.weight?.value);
-          if(loadableQuantityCargo?.total > loadableQuantityCargo?.maxTolerence) {
-            exceedToleranceLimit = loadableQuantityCargo;
-          }
+
+    this.loadableQuantityCargo.map(loadableQuantityCargo => {
+      let total = 0;
+      this.cargoTankDetails.map((cargoDetail) => {
+        if (loadableQuantityCargo?.cargoNominationId === cargoDetail?.cargoNominationId) {
+          total += Number(cargoDetail.weight?.value);
+          cargoQuantity += Number(cargoDetail?.weight?.value);
         }
-      })
-    })
-    this.loadableQuantityCargo.map((loadableQuantityCargo) => loadableQuantityCargo.total = 0);
+      });
+      if (total > loadableQuantityCargo?.maxTolerence) {
+        exceedToleranceLimit = loadableQuantityCargo;
+      } else if (total < loadableQuantityCargo?.minTolerence) {
+        exceedToleranceLimit = loadableQuantityCargo;
+      }
+    });
+
     if(this.loadableQuantity < cargoQuantity) {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_EXCEED_LOADABLE_QUANTITY'] });
       return;
@@ -636,6 +645,7 @@ export class StowageComponent implements OnInit {
     control.setValue(value);
     control.markAsDirty();
     control.markAsTouched();
+    control.updateValueAndValidity();
   }
 
   /**
