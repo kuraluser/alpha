@@ -10208,13 +10208,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     synopticalWiseList =
         synopticalWiseList.stream()
             .filter(
-            		cargo ->
+                cargo ->
                     synopticalEntity
-                            .getLoadableStudyPortRotation()
-                            .getId()
-                            .equals(cargo.getPortRotationId()))
-            .filter(distinctByKeys(
-                             com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getAbbreviation))
+                        .getLoadableStudyPortRotation()
+                        .getId()
+                        .equals(cargo.getPortRotationId()))
+            .filter(
+                distinctByKeys(
+                    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getAbbreviation))
             .collect(Collectors.toList());
     synopticalWiseList.forEach(
         patternCargo ->
@@ -10230,9 +10231,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getId()
                             .equals(cargo.getPortRotationXid())
                         && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
-            .filter(distinctByKeys(
-                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails::getCargo1Abbreviation,
-                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails::getCargo2Abbreviation))
+            .filter(
+                distinctByKeys(
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
+                        ::getCargo1Abbreviation,
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
+                        ::getCargo2Abbreviation))
             .collect(Collectors.toList());
     synopticalWiseCommingleList.forEach(
         commingleCargo ->
