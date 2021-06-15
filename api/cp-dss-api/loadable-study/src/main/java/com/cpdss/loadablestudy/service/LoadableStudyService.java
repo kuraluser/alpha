@@ -4339,6 +4339,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
           Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(builder::setFillingRatio);
 
+          Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(builder::setFillingRatioOrginal);
+          Optional.ofNullable(lpcd.getCorrectedUllage())
+              .ifPresent(builder::setCorrectedUllageOrginal);
+          Optional.ofNullable(lpcd.getCorrectionFactor())
+              .ifPresent(builder::setCorrectionFactorOrginal);
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllageOrginal);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setWeightOrginal);
+
           Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllage);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpcd.getTankId()).ifPresent(builder::setTankId);
@@ -8824,7 +8832,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
-
           Optional.ofNullable(lpsd.getCorrectedUllage())
               .ifPresent(builder::setCorrectedUllageOrginal);
           Optional.ofNullable(lpsd.getCorrectionFactor())

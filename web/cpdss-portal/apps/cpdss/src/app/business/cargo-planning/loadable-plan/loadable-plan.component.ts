@@ -187,14 +187,17 @@ export class LoadablePlanComponent implements OnInit {
       SecurityService.refreshToken(event?.data?.refreshedToken)
     }
     if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
-      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+      const urlsplit = this.router.url?.split('/');
+      let  loadablePatternId;
+      if(urlsplit?.length) {
+        loadablePatternId = urlsplit[urlsplit.length - 1];
+      }
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
         this.processingMessage();
         this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
         this.validationPending = false;
         this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
-      } else {
-        this.messageService.clear("process");
-      }
+      } 
     } else if (event.data.type === 'loadable-pattern-validation-failed') {
       if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
         navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);

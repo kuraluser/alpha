@@ -680,7 +680,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-107') {
-        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL'], life: 10000, closable: false, sticky: false });
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL'], life: 10000, closable: true, sticky: false });
         this.getCargoNominations();
       }
       if (event?.data?.status === '401' && event?.data?.errorCode === '210') {

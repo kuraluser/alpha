@@ -37,6 +37,7 @@ export class LoadableStudyDetailsTransformationService {
   private _portUpdate: Subject<any> = new Subject();
   private OPERATIONS: OPERATIONS;
   private _loadLineChangeSource: Subject<any> = new Subject();
+  private _loadableStudyUpdate: Subject<any> = new Subject();
 
   // public fields
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
@@ -49,6 +50,7 @@ export class LoadableStudyDetailsTransformationService {
   ohqUpdate$ = this._ohqUpdate.asObservable();
   portUpdate$ = this._portUpdate.asObservable();
   loadLineChange$ = this._loadLineChangeSource.asObservable();
+  loadableStudyUpdate$ = this._loadableStudyUpdate.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
   constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
@@ -1631,5 +1633,15 @@ export class LoadableStudyDetailsTransformationService {
       - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.boilerWaterOnboard) - Number(data.ballast)
       - Number(data.constant) - Number(data.others);
     return Number(subTotal);
+  }
+
+  /**
+ * Method for updating loadable study list
+ *
+ * @param value
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  updateLoadableStudyData(value){
+    this._loadableStudyUpdate.next(value);
   }
 }

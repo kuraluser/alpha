@@ -331,7 +331,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     })
     this.loadableStudyDetailsTransformationService.obqValidity$.subscribe((res) => {
       this.obqComplete = res;
-    })
+    });
+    this.loadableStudyDetailsTransformationService.loadableStudyUpdate$.subscribe(value=>{
+      if(value){
+        this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      }
+    });
     this.loadableStudyDetailsApiService.cargoNominationChange.asObservable()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
