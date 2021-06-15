@@ -139,12 +139,12 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   private void updateStowageDetails(List<StowagePlan> stowagePlanList) {
     stowagePlanList.forEach(
         stowagePlan -> {
-          List<CargoData> cargoDatas =
-              this.cargoDataRepository.findByStowagePlan(stowagePlan);
-          cargoDatas.forEach(cargoData -> {
-              this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
-                  stowagePlan, cargoData.getCargoId(), cargoData.getCargoAbbrev());
-          });
+          List<CargoData> cargoDatas = this.cargoDataRepository.findByStowagePlan(stowagePlan);
+          cargoDatas.forEach(
+              cargoData -> {
+                this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
+                    stowagePlan, cargoData.getCargoId(), cargoData.getCargoAbbrev());
+              });
         });
   }
 
@@ -211,7 +211,6 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   private Set<OtherTankDetails> buildBallastDetailSet(
       com.cpdss.common.generated.Loadicator.StowagePlan plan, StowagePlan entity) {
-      System.out.println("saving ballast in other");
     Set<OtherTankDetails> set = new HashSet<>();
     for (BallastInfo ballast : plan.getBallastInfoList()) {
       OtherTankDetails otherTankDetails = new OtherTankDetails();
@@ -225,7 +224,6 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
               : new BigDecimal(ballast.getQuantity()));
       otherTankDetails.setShortName(
           StringUtils.isEmpty(ballast.getShortName()) ? null : ballast.getShortName());
-      System.out.println("tank inserted" + ballast.getTankName());
       otherTankDetails.setStowagePlan(entity);
       set.add(otherTankDetails);
     }

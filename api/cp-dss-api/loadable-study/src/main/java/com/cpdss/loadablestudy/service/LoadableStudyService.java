@@ -1285,8 +1285,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         if (existingCargoNomination.get().getCargoXId()
             != request.getCargoNominationDetail().getCargoId()) {
-          this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(
-              loadableStudyRecord.getId());
+          this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXIdAndCargoXId(
+              loadableStudyRecord.getId(), existingCargoNomination.get().getCargoXId());
         }
 
         if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
@@ -10032,10 +10032,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .collect(Collectors.toList());
     synopticalWiseCommingleList.forEach(
         patternCmomingleCargo -> {
-        	if (stowagePlanBuilder.getStowageId() == patternCmomingleCargo.getLoadablePattern().getId()) {
-        		this.buildLoadicatorStowagePlanDetailsForCommingleCargo(
-        	              patternCmomingleCargo, stowagePlanBuilder, cargoReply, vesselReply, commingleCount);
-        	}
+          if (stowagePlanBuilder.getStowageId()
+              == patternCmomingleCargo.getLoadablePattern().getId()) {
+            this.buildLoadicatorStowagePlanDetailsForCommingleCargo(
+                patternCmomingleCargo, stowagePlanBuilder, cargoReply, vesselReply, commingleCount);
+          }
         });
   }
 
@@ -10080,15 +10081,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional.ofNullable(tankDetail.get().getShortName())
           .ifPresent(stowageDetailsBuilder::setShortName);
     }
-//    Optional<CargoDetail> cargoDetail =
-//        cargoReply.getCargosList().stream()
-//            .filter(c -> Long.valueOf(c.getId()).equals(patternCmomingleCargo.getId()))
-//            .findAny();
-//    if (cargoDetail.isPresent()) {
-//      Optional.ofNullable(cargoDetail.get().getCrudeType())
-//          .ifPresent(stowageDetailsBuilder::setCargoName);
-//    }
-    stowageDetailsBuilder.setCargoName("COM"+ commingleCount.incrementAndGet());
+    //    Optional<CargoDetail> cargoDetail =
+    //        cargoReply.getCargosList().stream()
+    //            .filter(c -> Long.valueOf(c.getId()).equals(patternCmomingleCargo.getId()))
+    //            .findAny();
+    //    if (cargoDetail.isPresent()) {
+    //      Optional.ofNullable(cargoDetail.get().getCrudeType())
+    //          .ifPresent(stowageDetailsBuilder::setCargoName);
+    //    }
+    stowageDetailsBuilder.setCargoName("COM" + commingleCount.incrementAndGet());
     stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
   }
 
@@ -10164,8 +10165,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .collect(Collectors.toList());
     synopticalWiseList =
         synopticalWiseList.stream()
-            .filter(distinctByKeys(
-                             com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getAbbreviation))
+            .filter(
+                distinctByKeys(
+                    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getAbbreviation))
             .collect(Collectors.toList());
     synopticalWiseList.forEach(
         patternCargo ->
@@ -10181,9 +10183,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getId()
                             .equals(cargo.getPortRotationXid())
                         && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
-            .filter(distinctByKeys(
-                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails::getCargo1Abbreviation,
-                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails::getCargo2Abbreviation))
+            .filter(
+                distinctByKeys(
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
+                        ::getCargo1Abbreviation,
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
+                        ::getCargo2Abbreviation))
             .collect(Collectors.toList());
     AtomicInteger commingleCount = new AtomicInteger(0);
     synopticalWiseCommingleList.forEach(
@@ -10200,7 +10205,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return
    */
   private List<CargoInfo> buildLoadicatorCargoDetails(
-      LoadablePlanComminglePortwiseDetails commingleCargo, CargoReply cargoReply, AtomicInteger commingleCount) {
+      LoadablePlanComminglePortwiseDetails commingleCargo,
+      CargoReply cargoReply,
+      AtomicInteger commingleCount) {
     List<CargoInfo> list = new ArrayList<>();
     CargoInfo.Builder cargoBuilder = CargoInfo.newBuilder();
     cargoBuilder.setCargoAbbrev("COM" + commingleCount.incrementAndGet());
@@ -10211,17 +10218,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (null != commingleCargo.getLoadablePattern()) {
       cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
     }
-//    list.add(cargoBuilder.build());
-//    cargoBuilder = CargoInfo.newBuilder();
-//    Optional.ofNullable(String.valueOf(commingleCargo.getCargo2Abbreviation()))
-//        .ifPresent(cargoBuilder::setCargoAbbrev);
-//    Optional.ofNullable(String.valueOf(commingleCargo.getApi())).ifPresent(cargoBuilder::setApi);
-//    Optional.ofNullable(String.valueOf(commingleCargo.getTemperature()))
-//        .ifPresent(cargoBuilder::setStandardTemp);
-//    Optional.ofNullable(commingleCargo.getPortId()).ifPresent(cargoBuilder::setPortId);
-//    if (null != commingleCargo.getLoadablePattern()) {
-//      cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
-//    }
+    //    list.add(cargoBuilder.build());
+    //    cargoBuilder = CargoInfo.newBuilder();
+    //    Optional.ofNullable(String.valueOf(commingleCargo.getCargo2Abbreviation()))
+    //        .ifPresent(cargoBuilder::setCargoAbbrev);
+    //
+    // Optional.ofNullable(String.valueOf(commingleCargo.getApi())).ifPresent(cargoBuilder::setApi);
+    //    Optional.ofNullable(String.valueOf(commingleCargo.getTemperature()))
+    //        .ifPresent(cargoBuilder::setStandardTemp);
+    //    Optional.ofNullable(commingleCargo.getPortId()).ifPresent(cargoBuilder::setPortId);
+    //    if (null != commingleCargo.getLoadablePattern()) {
+    //      cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
+    //    }
     list.add(cargoBuilder.build());
     return list;
   }
@@ -10271,9 +10279,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .collect(Collectors.toList());
     synopticalWiseList.forEach(
         patternBallast -> {
-        	if (stowagePlanBuilder.getStowageId() == patternBallast.getLoadablePatternId()) {
-        		this.buildLoadicatorBallastDetails(patternBallast, stowagePlanBuilder, vesselReply);
-        	}
+          if (stowagePlanBuilder.getStowageId() == patternBallast.getLoadablePatternId()) {
+            this.buildLoadicatorBallastDetails(patternBallast, stowagePlanBuilder, vesselReply);
+          }
         });
   }
 
