@@ -14,8 +14,16 @@ service TaskManagerService {
     }
     rpc ExecuteTask (ExecuteTaskRequest) returns (ExecuteTaskReply) {
     }
+	rpc getScheduledTasks (SchedulededTaskRequest) returns (SchedulededTaskReply) {
+	}
 }
-
+message SchedulededTaskRequest {
+ string jobGroup = 1;
+}
+message SchedulededTaskReply {
+	repeated string taskName = 1;
+	ResponseStatus responseStatus = 2;
+}
 message ScheduleTaskRequest {
 	string taskName = 1;
 	string taskURI = 2;
