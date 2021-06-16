@@ -17,6 +17,9 @@ public interface CargoNominationRepository extends CommonCrudRepository<CargoNom
   public List<CargoNomination> findByLoadableStudyXIdAndIsActive(
       Long loadableStudyXId, Boolean isActive);
 
+  public List<CargoNomination> findByLoadableStudyXIdAndIsActiveOrderById(
+          Long loadableStudyXId, Boolean isActive);
+
   public List<CargoNomination> findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
       Long loadableStudyXId, Boolean isActive);
 
