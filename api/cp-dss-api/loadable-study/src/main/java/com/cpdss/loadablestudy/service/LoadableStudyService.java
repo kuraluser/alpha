@@ -9270,7 +9270,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       try {
 
         List<CargoNomination> cargoNominationList =
-            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
                 request.getDuplicatedFromId(), true);
         Map<Long, Long> cargoNominationIdMap = new HashMap<>();
         if (!cargoNominationList.isEmpty()) {
