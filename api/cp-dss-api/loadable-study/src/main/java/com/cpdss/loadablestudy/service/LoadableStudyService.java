@@ -15,9 +15,9 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
-import com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoDetails;
@@ -5624,10 +5624,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       JsonFormat.parser().ignoringUnknownFields().merge(patternResultJson, load);
       AlgoResponseCommunication responseCommunication = load.build();
-      LoadablePatternAlgoRequest patternResult = responseCommunication.getLoadablePatternAlgoRequest();
+      LoadablePatternAlgoRequest patternResult =
+          responseCommunication.getLoadablePatternAlgoRequest();
       Optional<LoadableStudy> loadableStudyOpt =
           this.loadableStudyRepository.findByMessageUUIDAndIsActive(
-                  responseCommunication.getMessageId(), true);
+              responseCommunication.getMessageId(), true);
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
             "Loadable study does not exist",
@@ -5650,7 +5651,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         savePatternDtails(patternResult, loadableStudyOpt);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
-        if(responseCommunication.getLoadicatorResultsRequest() != null){
+        if (responseCommunication.getLoadicatorResultsRequest() != null) {
           saveLoadicatorResults(responseCommunication.getLoadicatorResultsRequest());
         }
       }
@@ -5689,7 +5690,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private EnvoyWriter.WriterReply passResultPayloadToEnvoyWriter(
-          AlgoResponseCommunication.Builder algoResponseCommunication, LoadableStudy loadableStudy)
+      AlgoResponseCommunication.Builder algoResponseCommunication, LoadableStudy loadableStudy)
       throws GenericServiceException {
     String jsonPayload = null;
     try {
@@ -5842,13 +5843,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
         if (loadableStudyOpt.get().getMessageUUID() != null) {
           AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
-          LoadicatorResultsRequest.Builder loadicatorResultsRequest = LoadicatorResultsRequest.newBuilder();
-          JsonFormat.parser().ignoringUnknownFields().merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
+          LoadicatorResultsRequest.Builder loadicatorResultsRequest =
+              LoadicatorResultsRequest.newBuilder();
+          JsonFormat.parser()
+              .ignoringUnknownFields()
+              .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
           algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
-          Optional<JsonData> patternJson = this.jsonDataRepository.findByJsonTypeXIdAndReferenceXId(LOADABLE_STUDY_RESULT_JSON_ID,loadableStudyOpt.get().getId());
-          if(patternJson != null){
-            LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest = LoadablePatternAlgoRequest.newBuilder();
-            JsonFormat.parser().ignoringUnknownFields().merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+          Optional<JsonData> patternJson =
+              this.jsonDataRepository.findByJsonTypeXIdAndReferenceXId(
+                  LOADABLE_STUDY_RESULT_JSON_ID, loadableStudyOpt.get().getId());
+          if (patternJson != null) {
+            LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
+                LoadablePatternAlgoRequest.newBuilder();
+            JsonFormat.parser()
+                .ignoringUnknownFields()
+                .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
             algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
           }
           passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());

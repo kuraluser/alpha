@@ -15,7 +15,7 @@ public class ReaderResponse {
   private HttpHeaders responseHeader;
   private HttpStatus httpStatus;
   private String checksum;
-  private String uniqueId;
+  private String messageId;
   private String messageType;
   private String clientId;
 }
