@@ -500,6 +500,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 string timeRequiredForLoading = 31;
 	 int64 cargo1NominationId = 32;
 	 int64 cargo2NominationId = 33;
+	 string tankShortName = 34;
 }
 
 message LoadableQuantityCargoDetails {
