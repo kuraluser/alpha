@@ -25,7 +25,7 @@ public class TaskListener implements ExecuteTaskListener {
       throws GenericServiceException {
     // To-Do Task Execution
     System.out.println("Executing task " + taskName);
-    if (taskName.equals("DOWNLOAD_RESULT_SHIP1")) {
+    if (taskName.contains("DOWNLOAD_RESULT_")) {
       if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.LOADABLESTUDY)))
         loadableStudyService.saveLoadableStudyShore(taskReqParams);
       else if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.ALGORESULT)))
