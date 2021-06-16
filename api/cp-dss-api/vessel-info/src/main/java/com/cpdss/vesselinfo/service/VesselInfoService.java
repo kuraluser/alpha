@@ -13,9 +13,11 @@ import com.cpdss.common.generated.VesselInfo.HydrostaticData;
 import com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
 import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
+import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.RulePlans;
 import com.cpdss.common.generated.VesselInfo.Rules;
 import com.cpdss.common.generated.VesselInfo.RulesInputs;
+import com.cpdss.common.generated.VesselInfo.SelectableParameter;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
 import com.cpdss.common.generated.VesselInfo.StationValues;
 import com.cpdss.common.generated.VesselInfo.UllageDetails;
@@ -57,6 +59,7 @@ import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
+import com.cpdss.vesselinfo.entity.VesselFlowRate;
 import com.cpdss.vesselinfo.entity.VesselTank;
 import com.cpdss.vesselinfo.entity.VesselTankTcg;
 import com.cpdss.vesselinfo.repository.BendingMomentRepository;
@@ -75,6 +78,7 @@ import com.cpdss.vesselinfo.repository.TankCategoryRepository;
 import com.cpdss.vesselinfo.repository.UllageTableDataRepository;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
+import com.cpdss.vesselinfo.repository.VesselFlowRateRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
 import com.cpdss.vesselinfo.repository.VesselTankRepository;
 import com.cpdss.vesselinfo.repository.VesselTankTcgRepository;
@@ -123,6 +127,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private StationValuesRepository stationValuesRepository;
   @Autowired private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
   @Autowired private UllageTableDataRepository ullageTableDataRepository;
+  @Autowired private VesselFlowRateRepository vesselFlowRateRepository;
   @Autowired HydrostaticService hydrostaticService;
   @Autowired VesselPumpService vesselPumpService;
   @Autowired RuleTypeRepository ruleTypeRepository;
@@ -570,6 +575,16 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             }
           }
         }
+
+        vesselFlowRateRepository
+            .findByVessel(vessel)
+            .forEach(
+                flowRate -> {
+                  SelectableParameter.Builder selectableBuilder = SelectableParameter.newBuilder();
+                  replyBuilder.addSelectableParameter(
+                      selectableParameterBuilder(flowRate, selectableBuilder));
+                });
+
         replyBuilder.setBMAndSF(bMAndSFBuilder);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
@@ -585,6 +600,48 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private SelectableParameter selectableParameterBuilder(
+      VesselFlowRate flowRate,
+      com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder selectableBuilder) {
+    Optional.ofNullable(flowRate.getFlowRateParameter())
+        .ifPresent(
+            flowRateName -> selectableBuilder.setParamterName(flowRateName.getFlowRateParameter()));
+    Optional.ofNullable(flowRate.getFlowRateOne())
+        .ifPresent(
+            flowRateOne -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateOne));
+              parameterBuilder.setType(1);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateSix())
+        .ifPresent(
+            flowRateSix -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateSix));
+              parameterBuilder.setType(6);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateSeven())
+        .ifPresent(
+            flowRateSeven -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateSeven));
+              parameterBuilder.setType(7);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateTwelve())
+        .ifPresent(
+            flowRateTwelve -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateTwelve));
+              parameterBuilder.setType(12);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+
+    return selectableBuilder.build();
   }
 
   /**
@@ -1444,7 +1501,6 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   }
 
   /** To retrieve vessel rule based on vessel id OR To save rule for vessel */
- 
   @Override
   @Transactional
   public void getRulesByVesselIdAndSectionId(
@@ -1473,12 +1529,14 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                         .getRulesList()
                         .forEach(
                             rule -> {
-                            RuleVesselMapping ruleVesselMapping = new RuleVesselMapping();
-                              if(rule.getId() != null && rule.getId().trim() != "") {
-                            	 Optional<RuleVesselMapping> rVesselMapping = ruleVesselMappingRepository.findById(Long.valueOf(rule.getId()));
-                            	 if(rVesselMapping.isPresent()) {
-                            		 ruleVesselMapping = rVesselMapping.get();
-                            	 }
+                              RuleVesselMapping ruleVesselMapping = new RuleVesselMapping();
+                              if (rule.getId() != null && rule.getId().trim() != "") {
+                                Optional<RuleVesselMapping> rVesselMapping =
+                                    ruleVesselMappingRepository.findById(
+                                        Long.valueOf(rule.getId()));
+                                if (rVesselMapping.isPresent()) {
+                                  ruleVesselMapping = rVesselMapping.get();
+                                }
                               }
                               ruleVesselMapping.setIsActive(true);
                               Optional.ofNullable(rule.getDisableInSettigs())
@@ -1486,55 +1544,64 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                               Optional.ofNullable(rule.getEnable())
                                   .ifPresent(ruleVesselMapping::setIsEnable);
                               ruleVesselMapping.setVessel(vessel);
-                              if (!CollectionUtils.isEmpty(ruleTypeList) && rule.getRuleType() != null && rule.getRuleType().trim() != "") {
-                                          ruleTypeList.stream()
-                                              .filter(
-                                                  rType ->
-                                                      rType
-                                                          .getRuleType()
-                                                          .equalsIgnoreCase(rule.getRuleType()))
-                                              .findAny().ifPresent(ruleVesselMapping::setRuleType);
-                                    
+                              if (!CollectionUtils.isEmpty(ruleTypeList)
+                                  && rule.getRuleType() != null
+                                  && rule.getRuleType().trim() != "") {
+                                ruleTypeList.stream()
+                                    .filter(
+                                        rType ->
+                                            rType
+                                                .getRuleType()
+                                                .equalsIgnoreCase(rule.getRuleType()))
+                                    .findAny()
+                                    .ifPresent(ruleVesselMapping::setRuleType);
                               }
-                              if (!CollectionUtils.isEmpty(ruleTemplateList) && rule.getRuleTemplateId() != null && rule.getRuleTemplateId().trim() != "") {
-                                        ruleTemplateList.stream()
-                                                  .filter(
-                                                      rTemplate ->
-                                                          rTemplate.getId() == Long.parseLong(rule.getRuleTemplateId()))
-                                                  .findAny().ifPresent(ruleVesselMapping::setRuleTemplate);     
+                              if (!CollectionUtils.isEmpty(ruleTemplateList)
+                                  && rule.getRuleTemplateId() != null
+                                  && rule.getRuleTemplateId().trim() != "") {
+                                ruleTemplateList.stream()
+                                    .filter(
+                                        rTemplate ->
+                                            rTemplate.getId()
+                                                == Long.parseLong(rule.getRuleTemplateId()))
+                                    .findAny()
+                                    .ifPresent(ruleVesselMapping::setRuleTemplate);
                               }
                               List<RuleVesselMappingInput> ruleVesselMappingInputList =
                                   new ArrayList<>();
-                              for(RulesInputs input :rule.getInputsList()) {
-                            	  RuleVesselMappingInput ruleTemplateInput =
-                                          new RuleVesselMappingInput();
-                                      if(input.getId() != null && input.getId().trim() != "") {
-                                      	 Optional<RuleVesselMappingInput> rTemplateInput = ruleVesselMappingInputRespository.findById(Long.valueOf(input.getId()));
-                                      	 if(rTemplateInput.isPresent()) {
-                                      		 ruleTemplateInput = rTemplateInput.get();
-                                      	 }
-                                      }
-                                      Optional.ofNullable(input.getDefaultValue())
-                                          .ifPresent(ruleTemplateInput::setDefaultValue);
-                                      Optional.ofNullable(input.getMax())
-                                          .ifPresent(ruleTemplateInput::setMaxValue);
-                                      Optional.ofNullable(input.getMin())
-                                          .ifPresent(ruleTemplateInput::setMinValue);
-                                      Optional.ofNullable(input.getSuffix())
-                                          .ifPresent(ruleTemplateInput::setSuffix);
-                                      Optional.ofNullable(input.getPrefix())
-                                          .ifPresent(ruleTemplateInput::setPrefix);
-                                      Optional.ofNullable(input.getType())
-                                          .ifPresent(ruleTemplateInput::setTypeValue);
-                                      ruleTemplateInput.setIsActive(true);
-                                      ruleTemplateInput.setRuleVesselMapping(ruleVesselMapping);
-                                      ruleVesselMappingInputList.add(ruleTemplateInput);
+                              for (RulesInputs input : rule.getInputsList()) {
+                                RuleVesselMappingInput ruleTemplateInput =
+                                    new RuleVesselMappingInput();
+                                if (input.getId() != null && input.getId().trim() != "") {
+                                  Optional<RuleVesselMappingInput> rTemplateInput =
+                                      ruleVesselMappingInputRespository.findById(
+                                          Long.valueOf(input.getId()));
+                                  if (rTemplateInput.isPresent()) {
+                                    ruleTemplateInput = rTemplateInput.get();
+                                  }
+                                }
+                                Optional.ofNullable(input.getDefaultValue())
+                                    .ifPresent(ruleTemplateInput::setDefaultValue);
+                                Optional.ofNullable(input.getMax())
+                                    .ifPresent(ruleTemplateInput::setMaxValue);
+                                Optional.ofNullable(input.getMin())
+                                    .ifPresent(ruleTemplateInput::setMinValue);
+                                Optional.ofNullable(input.getSuffix())
+                                    .ifPresent(ruleTemplateInput::setSuffix);
+                                Optional.ofNullable(input.getPrefix())
+                                    .ifPresent(ruleTemplateInput::setPrefix);
+                                Optional.ofNullable(input.getType())
+                                    .ifPresent(ruleTemplateInput::setTypeValue);
+                                ruleTemplateInput.setIsActive(true);
+                                ruleTemplateInput.setRuleVesselMapping(ruleVesselMapping);
+                                ruleVesselMappingInputList.add(ruleTemplateInput);
                               }
-                              ruleVesselMapping.setRuleVesselMappingInput(ruleVesselMappingInputList);
+                              ruleVesselMapping.setRuleVesselMappingInput(
+                                  ruleVesselMappingInputList);
                               ruleVesselMappingList.add(ruleVesselMapping);
                             });
                   });
-            ruleVesselMappingRepository.saveAll(ruleVesselMappingList);
+          ruleVesselMappingRepository.saveAll(ruleVesselMappingList);
         }
       } else {
         List<VesselRule> vesselRuleList = null;
@@ -1565,9 +1632,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     }
   }
 
- 
-
-private void buildReponseForVesselRules(
+  private void buildReponseForVesselRules(
       com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
       List<VesselRule> vesselRuleList,
       boolean isDisplayId) {

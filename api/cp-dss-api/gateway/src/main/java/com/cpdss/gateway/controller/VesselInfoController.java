@@ -84,7 +84,7 @@ public class VesselInfoController {
   }
 
   /**
-   *  To save rule for vessel
+   * To save rule for vessel
    *
    * @param vesselId
    * @param sectionId
@@ -122,7 +122,7 @@ public class VesselInfoController {
           e);
     }
   }
-  
+
   /**
    * To retrieve rule for vessel
    *

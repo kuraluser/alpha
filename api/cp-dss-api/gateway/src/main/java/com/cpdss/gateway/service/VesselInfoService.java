@@ -6,6 +6,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
@@ -26,10 +27,12 @@ import com.cpdss.gateway.domain.HydrostaticData;
 import com.cpdss.gateway.domain.InnerBulkHeadValues;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
+import com.cpdss.gateway.domain.Parameter;
 import com.cpdss.gateway.domain.RulePlans;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.Rules;
 import com.cpdss.gateway.domain.RulesInputs;
+import com.cpdss.gateway.domain.SelectableParameter;
 import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.StationValues;
 import com.cpdss.gateway.domain.UllageDetails;
@@ -213,7 +216,27 @@ public class VesselInfoService {
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     vesselDetailsResponse.setUllageTrimCorrections(
         this.buildUllageTrimCorrections(vesselAlgoReply));
+    vesselDetailsResponse.setSelectableParameter(this.buildSelectableParameters(vesselAlgoReply));
     return vesselDetailsResponse;
+  }
+
+  private List<SelectableParameter> buildSelectableParameters(VesselAlgoReply vesselAlgoReply) {
+    List<SelectableParameter> selectableParameters = new ArrayList<>();
+    for (com.cpdss.common.generated.VesselInfo.SelectableParameter dbValue :
+        vesselAlgoReply.getSelectableParameterList()) {
+      SelectableParameter parameter = new SelectableParameter();
+      parameter.setName(dbValue.getParamterName());
+      List<Parameter> parameterValues = new ArrayList<>();
+      for (ParameterValue value : dbValue.getValuesList()) {
+        Parameter flowrateValue = new Parameter();
+        flowrateValue.setType(value.getType());
+        flowrateValue.setValue(value.getValue());
+        parameterValues.add(flowrateValue);
+      }
+      parameter.setValues(parameterValues);
+      selectableParameters.add(parameter);
+    }
+    return selectableParameters;
   }
 
   /**
@@ -705,8 +728,8 @@ public class VesselInfoService {
           Rules rule = new Rules();
           Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
           Optional.ofNullable(rList.getDisableInSettigs()).ifPresent(rule::setDisableInSettigs);
-          if(isBlankString(rList.getId())) {
-        	  rule.setId(rList.getId());
+          if (isBlankString(rList.getId())) {
+            rule.setId(rList.getId());
           }
           Optional.ofNullable(rList.getRuleTemplateId()).ifPresent(rule::setRuleTemplateId);
           Optional.ofNullable(rList.getRuleType()).ifPresent(rule::setRuleType);
@@ -725,26 +748,26 @@ public class VesselInfoService {
     inputsList.forEach(
         rInputsList -> {
           RulesInputs rulesInputs = new RulesInputs();
-          if(isBlankString(rInputsList.getDefaultValue())) {
-        	  rulesInputs.setDefaultValue(rInputsList.getDefaultValue());
+          if (isBlankString(rInputsList.getDefaultValue())) {
+            rulesInputs.setDefaultValue(rInputsList.getDefaultValue());
           }
-          if(isBlankString(rInputsList.getMax())) {
-        	  rulesInputs.setMax(rInputsList.getMax());
+          if (isBlankString(rInputsList.getMax())) {
+            rulesInputs.setMax(rInputsList.getMax());
           }
-          if(isBlankString(rInputsList.getMin())) {
-        	  rulesInputs.setMin(rInputsList.getMin());
+          if (isBlankString(rInputsList.getMin())) {
+            rulesInputs.setMin(rInputsList.getMin());
           }
-          if(isBlankString(rInputsList.getPrefix())) {
-        	  rulesInputs.setPrefix(rInputsList.getPrefix());
+          if (isBlankString(rInputsList.getPrefix())) {
+            rulesInputs.setPrefix(rInputsList.getPrefix());
           }
-          if(isBlankString(rInputsList.getPrefix())) {
-        	  rulesInputs.setPrefix(rInputsList.getPrefix());
+          if (isBlankString(rInputsList.getPrefix())) {
+            rulesInputs.setPrefix(rInputsList.getPrefix());
           }
-          if(isBlankString(rInputsList.getSuffix())) {
-        	  rulesInputs.setSuffix(rInputsList.getSuffix());
+          if (isBlankString(rInputsList.getSuffix())) {
+            rulesInputs.setSuffix(rInputsList.getSuffix());
           }
-          if(isBlankString(rInputsList.getId())) {
-        	  rulesInputs.setId(rInputsList.getId());
+          if (isBlankString(rInputsList.getId())) {
+            rulesInputs.setId(rInputsList.getId());
           }
           Optional.ofNullable(rInputsList.getType()).ifPresent(rulesInputs::setType);
           ruleInputsList.add(rulesInputs);
@@ -813,11 +836,11 @@ public class VesselInfoService {
               });
     }
   }
-  
+
   Boolean isBlankString(String value) {
-	  if(value != null && value.trim() != "") {
-		  return true;
-	  }
-	  return false;
+    if (value != null && value.trim() != "") {
+      return true;
+    }
+    return false;
   }
 }

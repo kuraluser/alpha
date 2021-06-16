@@ -7,16 +7,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
-import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RulePlans;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.Rules;
@@ -26,8 +20,8 @@ import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.VesselInfoServiceTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.dom4j.rule.Rule;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -115,7 +109,7 @@ public class VesselInfoControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
   }
-  
+
   @ValueSource(strings = {GET_VESSEL_RULE_CLOUD_API_URL, GET_VESSEL_RULE_SHIP_API_URL})
   @ParameterizedTest
   void testSaveRulesForVessel(String url) throws Exception {
@@ -129,32 +123,33 @@ public class VesselInfoControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isOk());
   }
-  
+
   private String createRuleRequest() throws JsonProcessingException {
-	      VesselRuleRequest request = new VesselRuleRequest();
-		  List<RulePlans> rulePlanList = new ArrayList<RulePlans>();
-		  List<Rules> rules = new ArrayList<Rules>();
-		  List<com.cpdss.gateway.domain.RulesInputs> ruleInputList = new ArrayList<com.cpdss.gateway.domain.RulesInputs>();
-		  RulePlans rulePlan = new RulePlans();
-		  Rules rule = new Rules();
-		  rule.setDisableInSettigs(true);
-		  rule.setEnable(true);
-		  //rule.setId("1");
-		  rule.setRuleTemplateId("701");
-		  rule.setRuleType("Absolute");
-		  com.cpdss.gateway.domain.RulesInputs input = new com.cpdss.gateway.domain.RulesInputs();
-		  input.setPrefix("Condensate cargo can only be put in a tank for");
-		  input.setType("Number");
-		  input.setMax("10");
-		  input.setMin("1");
-		  //input.setId("1");
-		  input.setSuffix("voyages apart");
-		  ruleInputList.add(input);
-		  rule.setInputs(ruleInputList);
-		  rules.add(rule);
-		  rulePlan.setRules(rules);
-		  request.setPlan(rulePlanList);
-		  ObjectMapper mapper = new ObjectMapper();
-		  return mapper.writeValueAsString(request);
-	  }
+    VesselRuleRequest request = new VesselRuleRequest();
+    List<RulePlans> rulePlanList = new ArrayList<RulePlans>();
+    List<Rules> rules = new ArrayList<Rules>();
+    List<com.cpdss.gateway.domain.RulesInputs> ruleInputList =
+        new ArrayList<com.cpdss.gateway.domain.RulesInputs>();
+    RulePlans rulePlan = new RulePlans();
+    Rules rule = new Rules();
+    rule.setDisableInSettigs(true);
+    rule.setEnable(true);
+    // rule.setId("1");
+    rule.setRuleTemplateId("701");
+    rule.setRuleType("Absolute");
+    com.cpdss.gateway.domain.RulesInputs input = new com.cpdss.gateway.domain.RulesInputs();
+    input.setPrefix("Condensate cargo can only be put in a tank for");
+    input.setType("Number");
+    input.setMax("10");
+    input.setMin("1");
+    // input.setId("1");
+    input.setSuffix("voyages apart");
+    ruleInputList.add(input);
+    rule.setInputs(ruleInputList);
+    rules.add(rule);
+    rulePlan.setRules(rules);
+    request.setPlan(rulePlanList);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
+  }
 }
