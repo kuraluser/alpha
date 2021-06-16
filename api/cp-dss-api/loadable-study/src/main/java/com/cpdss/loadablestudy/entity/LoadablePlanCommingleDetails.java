@@ -125,4 +125,7 @@ public class LoadablePlanCommingleDetails extends EntityDoc {
 
   @Column(name = "cargo2_nomination_xid")
   private Long cargo2NominationId;
+
+  @Column(name = "short_name")
+  private String tankShortName;
 }
