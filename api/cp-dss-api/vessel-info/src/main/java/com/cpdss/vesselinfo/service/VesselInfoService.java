@@ -13,6 +13,8 @@ import com.cpdss.common.generated.VesselInfo.HydrostaticData;
 import com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
 import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
+import com.cpdss.common.generated.VesselInfo.ParameterValue;
+import com.cpdss.common.generated.VesselInfo.SelectableParameter;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
 import com.cpdss.common.generated.VesselInfo.StationValues;
 import com.cpdss.common.generated.VesselInfo.UllageDetails;
@@ -46,6 +48,7 @@ import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
+import com.cpdss.vesselinfo.entity.VesselFlowRate;
 import com.cpdss.vesselinfo.entity.VesselTank;
 import com.cpdss.vesselinfo.entity.VesselTankTcg;
 import com.cpdss.vesselinfo.repository.BendingMomentRepository;
@@ -60,6 +63,7 @@ import com.cpdss.vesselinfo.repository.TankCategoryRepository;
 import com.cpdss.vesselinfo.repository.UllageTableDataRepository;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
+import com.cpdss.vesselinfo.repository.VesselFlowRateRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
 import com.cpdss.vesselinfo.repository.VesselTankRepository;
 import com.cpdss.vesselinfo.repository.VesselTankTcgRepository;
@@ -107,6 +111,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private StationValuesRepository stationValuesRepository;
   @Autowired private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
   @Autowired private UllageTableDataRepository ullageTableDataRepository;
+  @Autowired private VesselFlowRateRepository vesselFlowRateRepository;
   @Autowired HydrostaticService hydrostaticService;
   @Autowired VesselPumpService vesselPumpService;
 
@@ -550,6 +555,16 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             }
           }
         }
+
+        vesselFlowRateRepository
+            .findByVessel(vessel)
+            .forEach(
+                flowRate -> {
+                  SelectableParameter.Builder selectableBuilder = SelectableParameter.newBuilder();
+                  replyBuilder.addSelectableParameter(
+                      selectableParameterBuilder(flowRate, selectableBuilder));
+                });
+
         replyBuilder.setBMAndSF(bMAndSFBuilder);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
@@ -565,6 +580,48 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private SelectableParameter selectableParameterBuilder(
+      VesselFlowRate flowRate,
+      com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder selectableBuilder) {
+    Optional.ofNullable(flowRate.getFlowRateParameter())
+        .ifPresent(
+            flowRateName -> selectableBuilder.setParamterName(flowRateName.getFlowRateParameter()));
+    Optional.ofNullable(flowRate.getFlowRateOne())
+        .ifPresent(
+            flowRateOne -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateOne));
+              parameterBuilder.setType(1);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateSix())
+        .ifPresent(
+            flowRateSix -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateSix));
+              parameterBuilder.setType(6);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateSeven())
+        .ifPresent(
+            flowRateSeven -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateSeven));
+              parameterBuilder.setType(7);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateTwelve())
+        .ifPresent(
+            flowRateTwelve -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateTwelve));
+              parameterBuilder.setType(12);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+
+    return selectableBuilder.build();
   }
 
   /**

@@ -6,6 +6,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
@@ -23,6 +24,8 @@ import com.cpdss.gateway.domain.HydrostaticData;
 import com.cpdss.gateway.domain.InnerBulkHeadValues;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
+import com.cpdss.gateway.domain.Parameter;
+import com.cpdss.gateway.domain.SelectableParameter;
 import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.StationValues;
 import com.cpdss.gateway.domain.UllageDetails;
@@ -205,7 +208,27 @@ public class VesselInfoService {
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     vesselDetailsResponse.setUllageTrimCorrections(
         this.buildUllageTrimCorrections(vesselAlgoReply));
+    vesselDetailsResponse.setSelectableParameter(this.buildSelectableParameters(vesselAlgoReply));
     return vesselDetailsResponse;
+  }
+
+  private List<SelectableParameter> buildSelectableParameters(VesselAlgoReply vesselAlgoReply) {
+    List<SelectableParameter> selectableParameters = new ArrayList<>();
+    for (com.cpdss.common.generated.VesselInfo.SelectableParameter dbValue :
+        vesselAlgoReply.getSelectableParameterList()) {
+      SelectableParameter parameter = new SelectableParameter();
+      parameter.setName(dbValue.getParamterName());
+      List<Parameter> parameterValues = new ArrayList<>();
+      for (ParameterValue value : dbValue.getValuesList()) {
+        Parameter flowrateValue = new Parameter();
+        flowrateValue.setType(value.getType());
+        flowrateValue.setValue(value.getValue());
+        parameterValues.add(flowrateValue);
+      }
+      parameter.setValues(parameterValues);
+      selectableParameters.add(parameter);
+    }
+    return selectableParameters;
   }
 
   /**
