@@ -1,20 +1,33 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.RulePlans;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.Rules;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselRuleRequest;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.VesselInfoServiceTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.dom4j.rule.Rule;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -43,14 +56,14 @@ public class VesselInfoControllerTest {
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";
 
   private static final String CLOUD_API_URL_PREFIX = "/api/cloud";
-  private static final String SHIP_API_URL_PREFIX = "/api/cloud";
+  private static final String SHIP_API_URL_PREFIX = "/api/ship";
   private static final String GET_VESSEL_DETAILS_API_URL = "/vessel-details/{vesselId}";
   private static final String GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + GET_VESSEL_DETAILS_API_URL;
   private static final String GET_VESSEL_DETAILS_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_VESSEL_DETAILS_API_URL;
   private static final String GET_VESSEL_RULE_URL =
-      "/vessel-rule/{vesselId}/ruleMasterSectionId/{sectionId}";
+      "/vessel-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}";
   private static final String GET_VESSEL_RULE_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + GET_VESSEL_RULE_URL;
   private static final String GET_VESSEL_RULE_SHIP_API_URL =
@@ -73,9 +86,8 @@ public class VesselInfoControllerTest {
   @ValueSource(strings = {GET_VESSEL_RULE_CLOUD_API_URL, GET_VESSEL_RULE_SHIP_API_URL})
   @ParameterizedTest
   void testGetAllRulesForVessel(String url) throws Exception {
-    VesselRuleRequest vesselRuleRequest = null;
     when(this.vesselInfoService.getRulesByVesselIdAndSectionId(
-            anyLong(), anyLong(), vesselRuleRequest, anyString()))
+            anyLong(), anyLong(), null, anyString()))
         .thenReturn(new RuleResponse());
     this.mockMvc
         .perform(
@@ -103,4 +115,46 @@ public class VesselInfoControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
   }
+  
+  @ValueSource(strings = {GET_VESSEL_RULE_CLOUD_API_URL, GET_VESSEL_RULE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSaveRulesForVessel(String url) throws Exception {
+    when(this.vesselInfoService.getRulesByVesselIdAndSectionId(
+            anyLong(), anyLong(), any(VesselRuleRequest.class), anyString()))
+        .thenReturn(new RuleResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_RULE_SECTION_ID)
+                .content(createRuleRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+  
+  private String createRuleRequest() throws JsonProcessingException {
+	      VesselRuleRequest request = new VesselRuleRequest();
+		  List<RulePlans> rulePlanList = new ArrayList<RulePlans>();
+		  List<Rules> rules = new ArrayList<Rules>();
+		  List<com.cpdss.gateway.domain.RulesInputs> ruleInputList = new ArrayList<com.cpdss.gateway.domain.RulesInputs>();
+		  RulePlans rulePlan = new RulePlans();
+		  Rules rule = new Rules();
+		  rule.setDisableInSettigs(true);
+		  rule.setEnable(true);
+		  //rule.setId("1");
+		  rule.setRuleTemplateId("701");
+		  rule.setRuleType("Absolute");
+		  com.cpdss.gateway.domain.RulesInputs input = new com.cpdss.gateway.domain.RulesInputs();
+		  input.setPrefix("Condensate cargo can only be put in a tank for");
+		  input.setType("Number");
+		  input.setMax("10");
+		  input.setMin("1");
+		  //input.setId("1");
+		  input.setSuffix("voyages apart");
+		  ruleInputList.add(input);
+		  rule.setInputs(ruleInputList);
+		  rules.add(rule);
+		  rulePlan.setRules(rules);
+		  request.setPlan(rulePlanList);
+		  ObjectMapper mapper = new ObjectMapper();
+		  return mapper.writeValueAsString(request);
+	  }
 }

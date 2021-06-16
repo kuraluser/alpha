@@ -84,7 +84,7 @@ public class VesselInfoController {
   }
 
   /**
-   * To retrieve vessel rule OR To save rule for vessel
+   *  To save rule for vessel
    *
    * @param vesselId
    * @param sectionId
@@ -94,10 +94,10 @@ public class VesselInfoController {
    * @throws CommonRestException
    */
   @PostMapping(
-      value = "/vessel-rule/{vesselId}/ruleMasterSectionId/{sectionId}",
+      value = "/vessel-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
-  public RuleResponse getAllRulesForVessel(
+  public RuleResponse saveRulesForVessel(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable
           @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -109,6 +109,45 @@ public class VesselInfoController {
     try {
       return this.vesselInfoService.getRulesByVesselIdAndSectionId(
           vesselId, sectionId, vesselRuleRequest, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching vessels", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching vessels", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  
+  /**
+   * To retrieve rule for vessel
+   *
+   * @param vesselId
+   * @param sectionId
+   * @param vesselRuleRequest
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value = "/vessel-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}",
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public RuleResponse getAllRulesForVessel(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long sectionId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.vesselInfoService.getRulesByVesselIdAndSectionId(
+          vesselId, sectionId, null, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching vessels", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

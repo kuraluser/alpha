@@ -705,7 +705,9 @@ public class VesselInfoService {
           Rules rule = new Rules();
           Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
           Optional.ofNullable(rList.getDisableInSettigs()).ifPresent(rule::setDisableInSettigs);
-          Optional.ofNullable(rList.getId()).ifPresent(rule::setId);
+          if(isBlankString(rList.getId())) {
+        	  rule.setId(rList.getId());
+          }
           Optional.ofNullable(rList.getRuleTemplateId()).ifPresent(rule::setRuleTemplateId);
           Optional.ofNullable(rList.getRuleType()).ifPresent(rule::setRuleType);
           Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
@@ -723,14 +725,28 @@ public class VesselInfoService {
     inputsList.forEach(
         rInputsList -> {
           RulesInputs rulesInputs = new RulesInputs();
-          Optional.ofNullable(rInputsList.getDefaultValue())
-              .ifPresent(rulesInputs::setDefaultValue);
-          Optional.ofNullable(rInputsList.getMax()).ifPresent(rulesInputs::setMax);
-          Optional.ofNullable(rInputsList.getMin()).ifPresent(rulesInputs::setMin);
-          Optional.ofNullable(rInputsList.getPrefix()).ifPresent(rulesInputs::setPrefix);
-          Optional.ofNullable(rInputsList.getSuffix()).ifPresent(rulesInputs::setSuffix);
+          if(isBlankString(rInputsList.getDefaultValue())) {
+        	  rulesInputs.setDefaultValue(rInputsList.getDefaultValue());
+          }
+          if(isBlankString(rInputsList.getMax())) {
+        	  rulesInputs.setMax(rInputsList.getMax());
+          }
+          if(isBlankString(rInputsList.getMin())) {
+        	  rulesInputs.setMin(rInputsList.getMin());
+          }
+          if(isBlankString(rInputsList.getPrefix())) {
+        	  rulesInputs.setPrefix(rInputsList.getPrefix());
+          }
+          if(isBlankString(rInputsList.getPrefix())) {
+        	  rulesInputs.setPrefix(rInputsList.getPrefix());
+          }
+          if(isBlankString(rInputsList.getSuffix())) {
+        	  rulesInputs.setSuffix(rInputsList.getSuffix());
+          }
+          if(isBlankString(rInputsList.getId())) {
+        	  rulesInputs.setId(rInputsList.getId());
+          }
           Optional.ofNullable(rInputsList.getType()).ifPresent(rulesInputs::setType);
-          Optional.ofNullable(rInputsList.getId()).ifPresent(rulesInputs::setId);
           ruleInputsList.add(rulesInputs);
         });
     return ruleInputsList;
@@ -739,7 +755,7 @@ public class VesselInfoService {
   private void buildRuleListForSave(
       com.cpdss.gateway.domain.VesselRuleRequest vesselRuleRequest, Builder vesselRuleBuilder) {
 
-    if (!CollectionUtils.isEmpty(vesselRuleRequest.getPlan())) {
+    if (vesselRuleRequest != null && !CollectionUtils.isEmpty(vesselRuleRequest.getPlan())) {
       vesselRuleRequest
           .getPlan()
           .forEach(
@@ -796,5 +812,12 @@ public class VesselInfoService {
                 }
               });
     }
+  }
+  
+  Boolean isBlankString(String value) {
+	  if(value != null && value.trim() != "") {
+		  return true;
+	  }
+	  return false;
   }
 }
