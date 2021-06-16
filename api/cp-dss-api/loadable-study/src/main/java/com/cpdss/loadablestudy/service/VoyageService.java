@@ -4,8 +4,10 @@ package com.cpdss.loadablestudy.service;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -24,6 +26,8 @@ import org.springframework.stereotype.Service;
 public class VoyageService {
 
   @Autowired private VoyageRepository voyageRepository;
+
+  @Autowired private LoadablePatternRepository loadablePatternRepository;
 
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
@@ -56,6 +60,11 @@ public class VoyageService {
       Optional.ofNullable(voyage.getVoyageStatus())
           .ifPresent(status -> builder.setStatusId(status.getId()));
 
+      log.info(
+          "Get Active voyage, for vessel {}, Voyage No {}, Id {}",
+          vesselId,
+          voyage.getVoyageNo(),
+          voyage.getId());
       // set confirmed loadable study
       if (voyage.getVoyageStatus() != null
           && (STATUS_ACTIVE.equalsIgnoreCase(voyage.getVoyageStatus().getName())
@@ -81,6 +90,23 @@ public class VoyageService {
                   LoadableStudy.PortRotationDetail.newBuilder();
               this.buildPortRotationForLs(grpcPRBuilder, lsPr);
               builder.addPortRotation(grpcPRBuilder.build());
+              log.info(
+                  "Get Active voyage, Loadable Study Name {}, Id {}",
+                  confirmedLs.get().getName(),
+                  confirmedLs.get().getId());
+              List<LoadablePattern> patterns =
+                  loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+                      confirmedLs.get().getId(), LS_STATUS_CONFIRMED);
+              Long id = patterns.stream().findFirst().get().getId();
+              builder.setPatternId(patterns.stream().findFirst().get().getId());
+              builder.setPatternCaseNo(patterns.stream().findFirst().get().getCaseNumber());
+              builder.setPatternStatus(
+                  patterns.stream().findFirst().get().getLoadableStudyStatus());
+              log.info(
+                  "Get Active voyage, Confirmed Pattern Id {}, Case No {}, Status",
+                  patterns.stream().findFirst().get().getId(),
+                  patterns.stream().findFirst().get().getCaseNumber(),
+                  patterns.stream().findFirst().get().getLoadableStudyStatus());
             }
           }
         }
@@ -111,6 +137,7 @@ public class VoyageService {
       LoadableStudy.PortRotationDetail.Builder builder, LoadableStudyPortRotation entity) {
     Optional.ofNullable(entity.getId()).ifPresent(builder::setId);
     Optional.ofNullable(entity.getPortXId()).ifPresent(builder::setPortId);
+    Optional.ofNullable(entity.getPortOrder()).ifPresent(builder::setPortOrder);
     Optional.ofNullable(entity.getBerthXId()).ifPresent(builder::setBerthId);
     Optional.ofNullable(entity.getOperation().getId()).ifPresent(builder::setOperationId);
     Optional.ofNullable(entity.getSeaWaterDensity())

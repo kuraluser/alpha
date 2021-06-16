@@ -147,6 +147,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   // post newLoadableStudyFormGroup for saving newly created loadable-study
   public async saveLoadableStudy() {
+    console.log('saveLoadableStudy' + Date.now()); // TODO: Need to remove after testing
     if (this.newLoadableStudyFormGroup.valid) {
       const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
       this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
@@ -179,11 +180,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
                 this.loadableStudyDetailsTransformationService.setLoadLineChange();
               }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
+              this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
             }
             this.closeDialog();
-            this.addedNewLoadableStudy.emit(result.loadableStudyId)
+            this.addedNewLoadableStudy.emit(result.loadableStudyId);
           }
         } catch (error) {
           if (error.error.errorCode === 'ERR-RICO-105') {
@@ -301,7 +303,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.updateLoadableStudyFormGroup(event.value, false);
   }
 
-  //for edit/duplicate update the values 
+  //for edit/duplicate update the values
   updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
     if (isEdit) {
       this.savedloadableDetails = {
@@ -367,7 +369,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   /**
    *
-   * @param type 
+   * @param type
    * Get form control value to label
    */
   getControlLabel(type: string) {

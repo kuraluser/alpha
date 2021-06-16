@@ -40,11 +40,8 @@ public class CargoToppingOffSequence extends EntityDoc {
   @Column(name = "ullage")
   private BigDecimal ullage;
 
-  @Column(name = "volume")
-  private BigDecimal volume;
-
-  @Column(name = "weight")
-  private BigDecimal weight;
+  @Column(name = "quantity")
+  private BigDecimal quantity;
 
   @Column(name = "filling_ratio")
   private BigDecimal fillingRatio;

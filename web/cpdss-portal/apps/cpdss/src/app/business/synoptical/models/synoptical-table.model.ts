@@ -51,6 +51,8 @@ export interface SynopticField {
         fieldKey?:string,
         value?:string
     },
+    minValue?: any,
+    maxValue?: any,
     numberFormat?: string;
     numberType?: string;
     unit?: string;

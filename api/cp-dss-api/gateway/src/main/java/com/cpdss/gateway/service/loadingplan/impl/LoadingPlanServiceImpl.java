@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -56,35 +57,102 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       Long vesselId, Long planId, Long portRId) throws GenericServiceException {
     LoadingInformation var1 = new LoadingInformation();
 
+    final String OPERATION_TYPE = "ARR";
+
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
-    log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
+    log.info(
+        "Get Loading Info, Active Voyage Number and Id {} ",
+        activeVoyage.getVoyageNumber(),
+        activeVoyage.getId());
     Optional<PortRotation> portRotation =
         activeVoyage.getPortRotations().stream().filter(v -> v.getId().equals(portRId)).findFirst();
-    if (!portRotation.isPresent()) {
+
+    LoadingPlanModels.LoadingInformation loadingInfo =
+        this.loadingPlanGrpcService.fetchLoadingInformation(
+            vesselId, activeVoyage.getId(), planId, null);
+
+    if (!portRotation.isPresent() || portRotation.get().getPortId() == null) {
       log.error("Port Rotation Id cannot be empty");
       throw new GenericServiceException(
           "Port Rotation Id Cannot be empty",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    log.info(
+        "Get Loading Info, Port rotation id is available in Active Voyage, Port Id is {}",
+        portRotation.get().getPortId());
 
-    // call to synoptic
+    // call to synoptic/port master table for sunrise/sunset data
     LoadingDetails loadingDetails =
         this.loadingInformationService.getLoadingDetailsByPortRotationId(
-            vesselId, activeVoyage.getId(), portRId);
+            loadingInfo.getLoadingDetail(),
+            vesselId,
+            activeVoyage.getId(),
+            portRId,
+            portRotation.get().getPortId());
 
     // from loading info table, loading plan service
-    LoadingRates loadingRates = this.loadingInformationService.getLoadingRateForVessel(vesselId);
+    LoadingRates loadingRates =
+        this.loadingInformationService.getLoadingRateForVessel(
+            loadingInfo.getLoadingRate(), vesselId);
 
-    // done
-    List<BerthDetails> berthDetails =
-        this.loadingInformationService.getBerthDetailsByPortId(portRotation.get().getPortId());
-    var1.setBerthDetails(new LoadingBerthDetails(berthDetails));
-    // all done
+    // Berth data from master, call to port Info service
+    List<BerthDetails> masterBerthDetails =
+        this.loadingInformationService.getMasterBerthDetailsByPortId(
+            portRotation.get().getPortId());
+    List<BerthDetails> loadingBerthDetails =
+        this.loadingInformationService.buildLoadingPlanBerthDetails(
+            loadingInfo.getLoadingBerthsList());
+
+    // Call to vessel and set value from loading plan
     CargoMachineryInUse machineryInUse =
-        this.loadingInformationService.getCargoMachinesInUserFromVessel(vesselId);
+        this.loadingInformationService.getCargoMachinesInUserFromVessel(
+            loadingInfo.getLoadingMachinesList(), vesselId);
+
+    // from loading plan, user data + master data
+    LoadingStages loadingStages =
+        this.loadingInformationService.getLoadingStagesAndMasters(loadingInfo.getLoadingStage());
+
+    // Topping Off Sequence
+    List<ToppingOffSequence> toppingSequence =
+        this.loadingInformationService.getToppingOffSequence(
+            loadingInfo.getToppingOffSequenceList());
+
+    // Call No. 1 To synoptic table api (voyage-status)
+    CargoVesselTankDetails vesselTankDetails =
+        this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
+            vesselId,
+            activeVoyage.getId(),
+            activeVoyage.getActiveLs().getId(),
+            portRotation.get().getPortId(),
+            portRotation.get().getPortOrder(),
+            portRotation.get().getId());
+    // Call No. 2 To synoptic data for loading (same as port rotation in above code)
+    vesselTankDetails.setLoadableQuantityCargoDetails(
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId()));
+
+    LoadingSequences loadingSequences =
+        this.loadingInformationService.getLoadingSequence(loadingInfo.getLoadingDelays());
+
+    var1.setLoadingDetails(loadingDetails);
+    var1.setLoadingRates(loadingRates);
+    var1.setBerthDetails(new LoadingBerthDetails(masterBerthDetails, loadingBerthDetails));
     var1.setMachineryInUses(machineryInUse);
+    var1.setLoadingStages(loadingStages);
+    var1.setToppingOffSequence(toppingSequence);
+    var1.setCargoVesselTankDetails(vesselTankDetails);
+    var1.setLoadingSequences(loadingSequences);
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
+  }
+
+  @Override
+  public LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
+      throws GenericServiceException {
+    return this.loadingInformationService.saveLoadingInformation(request);
   }
 }

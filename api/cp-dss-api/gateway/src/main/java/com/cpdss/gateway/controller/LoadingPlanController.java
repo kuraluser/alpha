@@ -6,7 +6,10 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +78,7 @@ public class LoadingPlanController {
           Long portRotationId)
       throws CommonRestException {
     try {
+      log.info("Get Loading Info, api for vessel {}, Port Rotation {}", vesselId, portRotationId);
       LoadingInformation var1 =
           this.loadingPlanService.getLoadingInformationByPortRotation(
               vesselId, planId, portRotationId);
@@ -85,6 +89,29 @@ public class LoadingPlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception in Get Loading Information API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-plan/{planId}/loading-information")
+  public LoadingInformationResponse saveLoadingInformation(
+      @RequestBody @Valid LoadingInformationRequest request,
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long planId)
+      throws CommonRestException {
+    try {
+      log.info("Save Loading Info, api for vessel {}", vesselId);
+      return this.loadingPlanService.saveLoadingInformation(request);
+    } catch (GenericServiceException e) {
+      log.error("Exception in Save Loading Information API");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

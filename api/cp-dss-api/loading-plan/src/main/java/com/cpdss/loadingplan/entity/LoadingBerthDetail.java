@@ -48,4 +48,10 @@ public class LoadingBerthDetail extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "hose_connections")
+  private String hoseConnections;
+
+  @Column(name = "item_to_be_agreed")
+  private String itemToBeAgreedWith;
 }

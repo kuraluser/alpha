@@ -11,7 +11,7 @@ public class OperationsTable {
   private String operation;
   private String portName;
   private String country;
-  private String cargoRange;
+  private String laycanRange;
   private String eta;
   private String etd;
   private String arrFwdDraft;

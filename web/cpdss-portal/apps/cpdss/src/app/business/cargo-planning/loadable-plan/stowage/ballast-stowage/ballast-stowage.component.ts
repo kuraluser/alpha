@@ -37,6 +37,8 @@ export class BallastStowageComponent implements OnInit {
   private _loadableStudyStatus: boolean;
   private _initBallastTankDetails: IBallastTankDetailValueObject[];
   private _isStowageEditable: boolean;
+  stowageDataEditStatus: boolean;
+  validateAndSaveProcessing: boolean;
 
   @Input() set ballastDetails(ballastStowageDetails: IBallastTankDetailValueObject[]) {
     this.ballastTankDetails = ballastStowageDetails;
@@ -120,8 +122,9 @@ export class BallastStowageComponent implements OnInit {
     this.buttonStatus = 0;
     this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns();
     this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
-      this.buttonStatus = value.buttonStatus;
-      this.editMode = value.editMode;
+      this.buttonStatus = value.buttonStatus !== undefined ? value.buttonStatus : this.buttonStatus;
+      this.editMode = value.editMode !== undefined ? value.editMode : this.editMode;
+      this.validateAndSaveProcessing = value.validateAndSaveProcessing !== undefined ? value.validateAndSaveProcessing : this.validateAndSaveProcessing
     })
   }
 
@@ -132,6 +135,7 @@ export class BallastStowageComponent implements OnInit {
  * @memberof BallastStowageComponent
  */
   async onEditComplete(event: IPortsEvent) {
+    this.stowageDataEditStatus = true;
     setTimeout(() => {
       if (this.editMode) {
         this.ballastStowageDataEdit.emit(event);

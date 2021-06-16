@@ -1,4 +1,4 @@
-import { Component, OnInit , OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -9,23 +9,23 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError , IloadableQuantityCargoDetails , ILoadablePlanCommentsDetails , VALIDATION_AND_SAVE_STATUS , IAlgoResponse } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError, IloadableQuantityCargoDetails, ILoadablePlanCommentsDetails, VALIDATION_AND_SAVE_STATUS, IAlgoResponse } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
-
-import { ICargoResponseModel, ICargo, ITimeZone , ISubTotal } from '../../../shared/models/common.model';
-import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
-
+import { ICargoResponseModel, ICargo, ITimeZone, ISubTotal } from '../../../shared/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { saveAs } from 'file-saver';
+import { SecurityService } from '../../../shared/services/security/security.service';
+import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
+import { environment } from 'apps/cpdss/src/environments/environment';
 
 /**
  * Component class of loadable plan
@@ -39,7 +39,7 @@ import { saveAs } from 'file-saver';
   templateUrl: './loadable-plan.component.html',
   styleUrls: ['./loadable-plan.component.scss']
 })
-export class LoadablePlanComponent implements OnInit  {
+export class LoadablePlanComponent implements OnInit {
 
   get cargoTanks(): ICargoTank[][] {
     return this._cargoTanks;
@@ -75,7 +75,7 @@ export class LoadablePlanComponent implements OnInit  {
   set frontBallastTanks(tanks: IBallastTank[][]) {
     this._frontBallastTanks = tanks?.map(group => group.map(tank => this.loadablePlanTransformationService.formatBallastTanks(tank, this.loadablePlanBallastDetails)));
   }
-  
+
   readonly validateAndSaveStatus = VALIDATION_AND_SAVE_STATUS;
   voyageId: number;
   loadableStudyId: number;
@@ -109,6 +109,7 @@ export class LoadablePlanComponent implements OnInit  {
   public loadableQuantity: number;
   loadableQuantityCargo: IloadableQuantityCargoDetails[];
   portRotationId: number;
+  validateAndSaveProcessing: boolean;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -123,13 +124,14 @@ export class LoadablePlanComponent implements OnInit  {
     private loadablePlanApiService: LoadablePlanApiService,
     private loadablePlanTransformationService: LoadablePlanTransformationService,
     private _decimalPipe: DecimalPipe,
-    private confirmationAlertService: ConfirmationAlertService,
+    private confirmationService: ConfirmationService,
     private voyageService: VoyageService,
     private loadableStudyListApiService: LoadableStudyListApiService,
     private permissionsService: PermissionsService,
     private timeZoneTransformationService: TimeZoneTransformationService,
     private messageService: MessageService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private globalErrorHandler: GlobalErrorHandler
   ) { }
 
   /**
@@ -144,16 +146,20 @@ export class LoadablePlanComponent implements OnInit  {
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
       this.loadablePatternId = Number(params.get('loadablePatternId'))
-      localStorage.setItem("vesselId",this.vesselId.toString())
-      localStorage.setItem("voyageId",this.voyageId.toString())
-      localStorage.setItem("loadableStudyId",this.loadableStudyId.toString())
-      localStorage.setItem("loadablePatternId",this.loadablePatternId.toString())
+      localStorage.setItem("vesselId", this.vesselId.toString())
+      localStorage.setItem("voyageId", this.voyageId.toString())
+      localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
+      localStorage.setItem("loadablePatternId", this.loadablePatternId.toString())
       this.getCargos()
       this.getVesselInfo();
       this.initSubsciptions();
       this.getGlobalTimeZones();
       this.getVoyages(this.vesselId, this.voyageId);
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    });
+
+    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
+      this.validateAndSaveProcessing = value.validateAndSaveProcessing;
     });
 
   }
@@ -168,25 +174,37 @@ export class LoadablePlanComponent implements OnInit  {
     navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
   }
 
-    /**
-   * Handler for service worker message event
-   *
-   * @private
-   * @memberof LoadablePlanComponent
-   */
+  /**
+ * Handler for service worker message event
+ *
+ * @private
+ * @memberof LoadablePlanComponent
+ */
   private swMessageHandler = async event => {
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
+      this.globalErrorHandler.sessionOutMessage();
+    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
+      SecurityService.refreshToken(event?.data?.refreshedToken)
+    }
     if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
-      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+      const urlsplit = this.router.url?.split('/');
+      let  loadablePatternId;
+      if(urlsplit?.length) {
+        loadablePatternId = urlsplit[urlsplit.length - 1];
+      }
+      if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
         this.processingMessage();
         this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
-      } else {
-        this.messageService.clear("process");
-      }
+        this.validationPending = false;
+        this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+      } 
     } else if (event.data.type === 'loadable-pattern-validation-failed') {
       if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
         navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
         this.validationFailed();
         this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED;
+        this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+        this.validationPending = false;
         this.getAlgoErrorMessage(true);
       }
 
@@ -195,23 +213,25 @@ export class LoadablePlanComponent implements OnInit  {
         navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
         this.validationCompleted();
         this.getLoadablePlanDetails();
+        this.validationPending = false;
+        this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
         this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS;
       }
     }
     this.setProcessingLoadableStudyActions();
   }
 
-    /**
-   * Enable/ Disable buttons of currently processing/processed loadable pattern
-   * @memberof LoadablePlanComponent
-   */
-   setProcessingLoadableStudyActions() {
-     if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
-       this.confirmButtonStatus = true;
-     } else {
+  /**
+ * Enable/ Disable buttons of currently processing/processed loadable pattern
+ * @memberof LoadablePlanComponent
+ */
+  setProcessingLoadableStudyActions() {
+    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
+      this.confirmButtonStatus = true;
+    } else {
       this.confirmButtonStatus = false;
-     }
-   }
+    }
+  }
 
   /**
    * Toast to show validating pattern started
@@ -225,13 +245,13 @@ export class LoadablePlanComponent implements OnInit  {
   }
 
   /**
- * Toast to show validating pattern completed 
+ * Toast to show validating pattern completed
  *
  * @memberof LoadablePlanComponent
  */
   async validationCompleted() {
     const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_SUCCESS', 'LOADABLE_PATTERN_VALIDATION_SUCCESSFULLY']).toPromise();
-    this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESS'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESSFULLY'], sticky: true, closable: true });
+    this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESS'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_SUCCESSFULLY'] });
   }
 
   /**
@@ -241,7 +261,7 @@ export class LoadablePlanComponent implements OnInit  {
   */
   async validationFailed() {
     const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_ERROR', 'LOADABLE_PATTERN_VALIDATION_ERROR_DETAILS']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR'], detail:  translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR_DETAILS'], sticky: true, closable: true });
+    this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_ERROR_DETAILS'] });
   }
 
 
@@ -361,9 +381,9 @@ export class LoadablePlanComponent implements OnInit  {
     this.portRotationId = loadablePlanRes.lastModifiedPort;
     this.loadableQuantityCargoDetails.map((loadableQuantityCargoDetail) => {
       loadableQuantityCargoDetail['grade'] = this.fingCargo(loadableQuantityCargoDetail);
-      const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence)/100)* Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
-      const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence)/100)* Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
-      this.loadableQuantityCargo.push({'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, total: 0 , minTolerence: minTolerence , maxTolerence: maxTolerence})
+      const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
+      const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
+      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence })
     })
     loadablePlanRes.loadableQuantity ? this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) : this.getLoadableQuantity();
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
@@ -390,18 +410,19 @@ export class LoadablePlanComponent implements OnInit  {
     this.caseNumber = loadablePlanRes.caseNumber;
     this.isVoyageClosed = loadablePlanRes.voyageStatusId === 2 ? true : false;
     this.loadablePatternValidationStatus = loadablePlanRes.loadablePatternStatusId;
-    if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
+    if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
       this.getAlgoErrorMessage(false);
-    } else if(this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED) {
+    } else if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED) {
+      this.validationPending = false;
       this.listenEvents();
     }
-    
+
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
     this.setProcessingLoadableStudyActions();
     this.validationPending = !loadablePlanRes.validated;
     this.ngxSpinnerService.hide();
   }
-  
+
   /**
   * Calculation for subtotal
   * @memberof LoadablePlanComponent
@@ -412,12 +433,12 @@ export class LoadablePlanComponent implements OnInit  {
       loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantity = Number(loadableQuantityResult.loadableQuantity.totalQuantity);
     }
   }
-  
+
   /**
   * Calculation for subtotal
   * @memberof LoadablePlanComponent
   */
-   getSubTotal(loadableQuantityResult: any) {
+  getSubTotal(loadableQuantityResult: any) {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     let subTotal = 0;
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
@@ -487,7 +508,7 @@ export class LoadablePlanComponent implements OnInit  {
   */
   async getAlgoErrorMessage(status: boolean) {
     const algoError: IAlgoResponse = await this.loadablePlanApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
-    if(algoError.responseStatus.status === '200') {
+    if (algoError.responseStatus.status === '200') {
       this.errorMessage = algoError.algoErrors;
       this.errorPopup = status;
     }
@@ -532,7 +553,7 @@ export class LoadablePlanComponent implements OnInit  {
   }
 
   /**
-    * Method to find out cargo 
+    * Method to find out cargo
     *
     * @memberof LoadablePlanComponent
   */
@@ -546,18 +567,18 @@ export class LoadablePlanComponent implements OnInit  {
     return cargoDetail.name;
   }
 
-   /**
- * Handler for confirm plan button
- *
- * @memberof LoadablePlanComponent
- */
-    onConfirmPlanClick() {
-      if (this.confirmPlanEligibility) {
-        this.confirmPlan();
-      } else {
-        this.showPortRotationPopup = true;
-      }
+  /**
+* Handler for confirm plan button
+*
+* @memberof LoadablePlanComponent
+*/
+  onConfirmPlanClick() {
+    if (this.confirmPlanEligibility) {
+      this.confirmPlan();
+    } else {
+      this.showPortRotationPopup = true;
     }
+  }
 
   /**
    * for confirm stowage plan
@@ -570,20 +591,41 @@ export class LoadablePlanComponent implements OnInit  {
       return;
     }
     this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR','LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS']).toPromise();
-    
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS', 'LOADABLE_PATTERN_CONFIRM_SUMMARY', 'LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL'
+      , 'VALIDATE_AND_SAVE_ERROR', 'VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING']).toPromise();
+
     try {
       const result = await this.loadablePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
       this.ngxSpinnerService.hide();
       let detail;
+      if (!result.validated) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: translationKeys['VALIDATE_AND_SAVE_PENDING'] });
+        return;
+      }
+      else if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
+        const errorDetails = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED === result.loadablePatternStatusId ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
+        this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: errorDetails });
+        return;
+      }
       if (result.confirmed) {
         detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
       } else {
         detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
       }
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
-        if (response) {
+
+      this.confirmationService.confirm({
+        key: 'confirmation-alert',
+        header: translationKeys['LOADABLE_PATTERN_CONFIRM_SUMMARY'],
+        message: translationKeys[detail],
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: translationKeys['LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL'],
+        acceptIcon: 'pi',
+        acceptButtonStyleClass: 'btn btn-main mr-5',
+        rejectVisible: true,
+        rejectLabel: translationKeys['LOADABLE_PATTERN_CONFIRM_REJECT_LABEL'],
+        rejectIcon: 'pi',
+        rejectButtonStyleClass: 'btn btn-main',
+        accept: async () => {
           try {
             const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
             if (confirmResult.responseStatus.status === '200') {
@@ -595,14 +637,14 @@ export class LoadablePlanComponent implements OnInit  {
             }
           }
         }
-      })
-    } catch(error) {
+      });
+    } catch (error) {
       if (error.error.errorCode === 'ERR-RICO-115') {
         this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS'], detail: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS'] });
         this.ngxSpinnerService.hide();
       }
     }
-    
+
   }
 
   /**
@@ -613,7 +655,7 @@ export class LoadablePlanComponent implements OnInit  {
    * @memberof LoadablePlanComponent
    */
   convertLoadablePlanSynRecordsDateTime(synopticalRecords: ILoadablePlanSynopticalRecord[]): ILoadablePlanSynopticalRecord[] {
-    synopticalRecords.map(record => (record.etaEtdPlanned = this.transformDateTimeToPortLocal(record.etaEtdPlanned, record.portTimezoneId)));
+    synopticalRecords.map(record => (record.etaEtdPlanned ? record.etaEtdPlanned = this.transformDateTimeToPortLocal(record.etaEtdPlanned, record.portTimezoneId) : null));
     return synopticalRecords;
   }
 
@@ -647,17 +689,17 @@ export class LoadablePlanComponent implements OnInit  {
     });
   }
 
-   /**
-  * Method to close port rotation pop up
-  *
-  * @memberof LoadablePlanComponent
-  */
-    closePortRotationPopup(e) {
-      this.showPortRotationPopup = e.hide;
-      if (e.success) {
-        this.confirmPlanEligibility = false;
-        this.confirmPlan();
-      }
+  /**
+ * Method to close port rotation pop up
+ *
+ * @memberof LoadablePlanComponent
+ */
+  closePortRotationPopup(e) {
+    this.showPortRotationPopup = e.hide;
+    if (e.success) {
+      this.confirmPlanEligibility = false;
+      this.confirmPlan();
     }
+  }
 
 }

@@ -55,4 +55,19 @@ public class LoadablePlanBallastDetails {
 
   @JsonInclude(Include.NON_NULL)
   private Integer tankDisplayOrder;
+
+  @JsonInclude(Include.NON_NULL)
+  private String rdgLevelOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String correctionFactorOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String correctedLevelOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String metricTonOrginal;
+
+  @JsonInclude(Include.NON_NULL)
+  private String percentageOrginal;
 }

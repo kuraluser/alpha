@@ -2,6 +2,7 @@
 package com.cpdss.gateway.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.gateway.entity.UserStatus;
 import com.cpdss.gateway.entity.Users;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +25,10 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
 
   public List<Users> findByIsActive(boolean isActive);
 
-  public List<Users> findByIsActiveOrderById(boolean isActive);
+  public List<Users> findByIsActiveAndStatusOrderById(boolean isActive, UserStatus status);
+
+  public List<Users> findByKeycloakIdInAndStatusAndIsActiveOrderById(
+      List<String> keycloakIds, UserStatus status, boolean isActive);
 
   public List<Users> findByKeycloakIdInOrderById(List<String> keycloakIds);
 

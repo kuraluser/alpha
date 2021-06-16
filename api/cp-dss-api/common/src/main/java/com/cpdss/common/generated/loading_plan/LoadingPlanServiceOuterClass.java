@@ -19,22 +19,26 @@ public final class LoadingPlanServiceOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\'loading_plan/loading_plan_service.prot"
-          + "o\032&loading_plan/loading_plan_models.prot"
-          + "o2a\n\031LoadingInformationService\022D\n\025GetLoa"
-          + "dingInformation\022\023.LoadingPlanRequest\032\024.L"
-          + "oadingPlanResponse\"\0002\033\n\031LoadingInstructi"
-          + "onService2d\n\022LoadingPlanService\022N\n\032Loadi"
-          + "ngPlanSynchronization\022\027.LoadingPlanSyncD"
-          + "etails\032\025.LoadingPlanSyncReply\"\000B+\n\'com.c"
-          + "pdss.common.generated.loading_planP\000b\006pr"
-          + "oto3"
+          + "o\032\014common.proto\032&loading_plan/loading_pl"
+          + "an_models.proto2\251\001\n\031LoadingInformationSe"
+          + "rvice\022J\n\025GetLoadingInformation\022\032.Loading"
+          + "InformationRequest\032\023.LoadingInformation\""
+          + "\000\022@\n\026SaveLoadingInformation\022\023.LoadingInf"
+          + "ormation\032\017.ResponseStatus\"\0002\033\n\031LoadingIn"
+          + "structionService2d\n\022LoadingPlanService\022N"
+          + "\n\032LoadingPlanSynchronization\022\027.LoadingPl"
+          + "anSyncDetails\032\025.LoadingPlanSyncReply\"\000B+"
+          + "\n\'com.cpdss.common.generated.loading_pla"
+          + "nP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
             descriptorData,
             new com.google.protobuf.Descriptors.FileDescriptor[] {
+              com.cpdss.common.generated.Common.getDescriptor(),
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor(),
             });
+    com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();
   }
 

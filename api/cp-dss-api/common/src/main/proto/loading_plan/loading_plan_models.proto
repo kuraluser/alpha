@@ -7,22 +7,154 @@ option java_package = "com.cpdss.common.generated.loading_plan";
 import "common.proto";
 import "loadable_study.proto";
 
-message LoadingPlanRequest{
+// A generic request with Optional params
+message LoadingInformationRequest{
   int64 companyId = 1;
   int64 vesselId = 2;
   int64 voyageId = 3;
+  int64 loadingPlanId = 4;
+  int64 loadingPatternId = 5;
 }
 
 // Plane response, can edit
-message LoadingPlanResponse{
+message LoadingInformation{
   ResponseStatus responseStatus = 1;
+
+  LoadingInformationDetail loadingInformation = 2;
+  LoadingDetails loadingDetail = 3;
+  LoadingRates loadingRate = 4;
+  repeated LoadingBerths loadingBerths = 5;
+  repeated LoadingMachinesInUse loadingMachines = 7;
+  // cargo data = 8
+  LoadingStages loadingStage = 9;
+  LoadingDelay loadingDelays = 10;
+  repeated LoadingToppingOff toppingOffSequence = 11;
 }
+
+message LoadingDetails{
+  int64 id = 1;
+  string timeOfSunrise = 2;
+  string timeOfSunset =3;
+  string startTime = 4;
+  TrimAllowed trimAllowed = 5;
+  int64 voyageId = 6;
+}
+
+message TrimAllowed{
+  string initialTrim = 1;
+  string maximumTrim = 2;
+  string finalTrim = 3;
+}
+
+message LoadingRates{
+  int64 id = 1; // loading info id
+  string initialLoadingRate = 2;
+  string maxLoadingRate = 3;
+  string reducedLoadingRate = 4;
+  string minDeBallastingRate = 5;
+  string maxDeBallastingRate = 6;
+  string noticeTimeRateReduction = 7;
+  string noticeTimeStopLoading = 8;
+  string lineContentRemaining = 9; // BA Clarification Pending
+  string minLoadingRate = 10; // Not added in gateway
+}
+
+message LoadingBerths{
+  int64 id = 1;
+  int64 loadingInfoId = 2;
+  int64 berthId = 3;
+  string depth = 4;
+  string seaDraftLimitation = 5;
+  string airDraftLimitation = 6;
+  string maxManifoldHeight = 7;
+  string specialRegulationRestriction = 8;
+  string itemsToBeAgreedWith = 9; // Not added in gateway
+  string hoseConnections = 10; // Not added in gateway
+}
+
+message LoadingStages{
+  int64 id = 1; // loading info id
+  int32 stageOffset = 2;
+  int32 stageDuration = 3;
+  bool trackStartEndStage = 4;
+  bool trackGradeSwitch = 5;
+  repeated StageOffsets stageOffsets = 6; // master data
+  repeated StageDuration stageDurations = 7; // master data
+  StageOffsets offset = 8;
+  StageDuration duration = 9;
+}
+
+// stage min_amount
+message StageOffsets{
+  int64 id = 1;
+  int64 stageOffsetVal = 2;
+}
+
+message StageDuration{
+  int64 id =1;
+  int64 duration = 2;
+}
+
+message LoadingMachinesInUse{
+  int64 id = 1;
+  int64 loadingInfoId = 2;
+  int64 pumpId = 3;
+  string capacity = 4;
+  bool isUsing = 5; // Not added in gateway
+}
+
+// Object message for hold, master and user data
+message LoadingDelay{
+  repeated DelayReasons reasons = 1; // master data
+  repeated LoadingDelays delays = 2; // user data
+  repeated LoadingDelayCargos cargos = 3; // cargo data
+}
+
+message DelayReasons{
+  int64 id = 1;
+  string reason = 2;
+}
+
+message LoadingDelays{
+  int64 id = 1;
+  int64 loadingInfoId = 2;
+  int64 reasonForDelayId = 3;
+  string duration = 4;
+  int64 cargoId = 5;
+  string quantity = 6; // was added in gateway
+}
+
+// pure cargo details based on the port rotation
+message LoadingDelayCargos{
+  int64 cargoId = 1;
+  string colourCode  = 2;
+  string cargoName = 3;
+  string cargoShorName = 4;
+  string quantity = 5;
+}
+
+message LoadingToppingOff{
+  int64 id = 1;
+  int64 loadingInfoId = 2;
+  int32 orderNumber = 3; // sequence no
+  int64 tankId = 4;
+  string cargoName = 5;
+  string cargoAbbreviation = 6;
+  string colourCode = 7;
+  string ullage = 8;
+  string quantity = 9;
+  string fillingRatio = 10;
+  string remark = 11;
+  int64 cargoId = 12;
+}
+
 
 message LoadingInformationDetail {
   int64 loadablePatternId = 1;
   int64 portId = 2;
   int64 synopticalTableId = 3;
   int64 vesselId = 4;
+  int64 voyageId = 5;
 }
 
 message LoadablePlanBallastDetail {

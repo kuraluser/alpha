@@ -5,7 +5,11 @@
                 <div class="col">
                     <div class="row">
                         <div class="col text-secondary pt-25">{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</div>
-                        <div class="col text-center pt-10">{{'VOYAGE_STATUS_TRIM' | translate}} <h5 class="text-secondary"> {{trim | number}}{{'VOYAGE_STATUS_TRIM_UNIT'| translate}}</h5></div>
+                        <div class="col text-center pt-10">
+                            {{'VOYAGE_STATUS_TRIM' | translate}}
+                            <h5 class="text-secondary" *ngIf="trim !== 0">{{trim | number}}{{(trim > 0 ? 'VOYAGE_STATUS_TRIM_STERN_UNIT' : 'VOYAGE_STATUS_TRIM_HEAD_UNIT')| translate}}</h5>
+                            <h5 class="text-secondary" *ngIf="trim === 0">{{'VOYAGE_STATUS_TRIM_ZERO_UNIT'| translate}}</h5>
+                        </div>
                     </div>
                 </div>
                 <div class="col text-center sag">

@@ -12,8 +12,10 @@ public interface StowageDetailsRepository extends CommonCrudRepository<StowageDe
 
   @Transactional
   @Modifying
-  @Query("UPDATE StowageDetails SD SET SD.cargoId = ?2 WHERE SD.stowagePlan = ?1")
-  public void updateCargoIdInStowageDetailsByStowagePlan(StowagePlan stowagePlan, Long cargoId);
+  @Query(
+      "UPDATE StowageDetails SD SET SD.cargoId = ?2 WHERE SD.stowagePlan = ?1 and SD.cargoName = ?3")
+  public void updateCargoIdInStowageDetailsByStowagePlan(
+      StowagePlan stowagePlan, Long cargoId, String abbr);
 
   @Transactional
   @Modifying

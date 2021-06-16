@@ -54,6 +54,7 @@ export class PortRotationPopupComponent implements OnInit {
   portEtaEtdPermission: IPermission;
   listData = <IPortAllDropdownData>{};
   portLoaded = false;
+  enableSaveButton: boolean = false;
 
   private _visible: boolean;
 
@@ -269,7 +270,7 @@ export class PortRotationPopupComponent implements OnInit {
     }
     if (event.field === 'etd') {
       for (let i = 0; i < this.ports.length; i++) {
-        this.updateValidityAndEditMode(i, 'eta')
+        this.updateValidityAndEditMode(i, 'eta');
       }
     }
     if (event.field === 'eta') {
@@ -279,7 +280,11 @@ export class PortRotationPopupComponent implements OnInit {
     }
     if (event.field === 'eta' || event.field === 'etd') {
       this.updateValuesIfBunkering(event.data, form, index);
+      const control = this.field(index, 'layCan');
+      control.markAsDirty();
+      control.markAsTouched();
     }
+    this.portsForm.valid ? this.enableSaveButton = true : this.enableSaveButton = false; 
   }
 
   /**

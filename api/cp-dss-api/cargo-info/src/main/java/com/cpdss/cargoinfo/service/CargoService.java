@@ -10,6 +10,9 @@ import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceImplBase;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import io.grpc.stub.StreamObserver;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,11 @@ public class CargoService extends CargoInfoServiceImplBase {
   public void getCargoInfo(CargoRequest request, StreamObserver<CargoReply> responseObserver) {
     CargoReply.Builder cargoReply = CargoReply.newBuilder();
     try {
-      Iterable<Cargo> cargoList = cargoRepository.findAll();
+      List<Cargo> cargoList = cargoRepository.findAll();
+      cargoList =
+          cargoList.stream()
+              .sorted(Comparator.comparing(Cargo::getCrudeType, String.CASE_INSENSITIVE_ORDER))
+              .collect(Collectors.toList());
       cargoList.forEach(
           cargo -> {
             CargoDetail.Builder cargoDetail = CargoDetail.newBuilder();

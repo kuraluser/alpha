@@ -135,6 +135,7 @@ export class NewVoyagePopupComponent implements OnInit {
    * Save button click
    */
   saveNewVoyagePopup() {
+    console.log('saveNewVoyage' + Date.now()); // TODO: Need to remove after testing
     this.isSubmitted = true;
     if (this.newVoyageForm.valid) {
       this.onSubmit();
@@ -149,7 +150,6 @@ export class NewVoyagePopupComponent implements OnInit {
    */
   trimVoyageNo() {
     this.newVoyageForm.controls['voyageNo'].setValue((this.newVoyageForm.get('voyageNo').value).trim());
-    this.newVoyageForm.controls['voyageNo'].setErrors(null);
   }
 
   /**

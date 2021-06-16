@@ -507,7 +507,7 @@ a {
     font-weight: normal;
     font-size: $heading-font-size;
     }
-  } 
+  }
   .p-dialog-content{
     font-size: $font-size-normal;
     border-radius: 0 0 10px 10px;
@@ -632,7 +632,7 @@ h5{
  z-index: 9999 !important;
 }
 
-.p-dropdown{ 
+.p-dropdown{
   border-radius: 0;
   border: 0;
   background: none;
@@ -665,7 +665,7 @@ h5{
   height: 6px;
 }
 
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
   border-radius:3px;
@@ -833,7 +833,7 @@ tr{
 .column-color{
   width: 70px !important;
 }
-.column-loader { 
+.column-loader {
   width: 20px!important;
 }
 .icon-api-temp{
@@ -867,7 +867,7 @@ input[type=number] {
 }
 
 
-.p-datepicker table{ 
+.p-datepicker table{
 
   th{
     padding: 1px;
@@ -1013,8 +1013,8 @@ input[type=number] {
     }
     &.api, &.temperature{
       > div{
-        min-width: 60px!important;
-        max-width: 60px;
+        min-width: 80px!important;
+        max-width: 80px;
         height: 25px;
         line-height: 25px;
         .icon-api-temp{
@@ -1022,9 +1022,13 @@ input[type=number] {
           position: absolute;
           top: 5px;
         }
+        input{
+          padding-left: 5px;
+          padding-right: 5px;
+        }
       }
     }
- } 
+ }
 }
 
 .cargo-nomination-table .p-datatable table{
@@ -1216,7 +1220,7 @@ td.sl div{
   padding-right: 0!important;
 }
 
-.loadable-quantity-pop-up{ 
+.loadable-quantity-pop-up{
   .col-form-label{
    min-width: 160px;
   text-transform: uppercase;
@@ -1305,11 +1309,11 @@ td.sl div{
     font-size: 10px;
     top: 11px;
   }
-} 
+}
 
 
 
- 
+
 
 
 .error-icon{
@@ -1370,8 +1374,8 @@ td.sl div{
           font-size: 12px;
           overflow: hidden;
           text-overflow: ellipsis;
-          padding-left: 2px;
-          padding-right: 1px;
+          padding-left: 0px;
+          padding-right: 2px;
         }
         .tank-btn-rounded{
           margin-left: 2px;
@@ -1421,10 +1425,10 @@ td.sl div{
         }
       }
       .tank-name{
-        top: 0px!important;
+        top: 4px!important;
         text-align: left!important;
         margin-top: 0!important;
-        left: 11px;
+        left: 13px;
         width: calc(48% - 15px)!important;
       }
       .tank-commodity-name{
@@ -1625,7 +1629,7 @@ th{
 .commingle-pop-up{
   .p-datatable table{
     table-layout: auto!important;
-    
+
   }
   .column-class{
     min-width: 5%!important;
@@ -1635,7 +1639,7 @@ th{
       max-width: 30px;
     }
   }
-  
+
 }
 .column-class.commingle-cargo1-color{
   min-width:25px;
@@ -1660,7 +1664,7 @@ th{
 th .p-calendar .p-inputtext{
   min-width: 130px;
 }
- 
+
 .p-datatable .p-datatable-tbody > tr:focus{
   outline: none!important;
 }
@@ -1723,7 +1727,7 @@ th .p-calendar .p-inputtext{
   .p-orderlist-list{
     min-height: 50px;
   }
-   
+
 }
 .p-orderlist .p-orderlist-list{
   background: none;
@@ -1779,7 +1783,7 @@ td > div .p-calendar{
   width: 100%;
 }
 .p-button.p-button-text{
-  
+
 }
 th .p-button.p-button-icon-only.p-button-rounded{
   vertical-align: middle;
@@ -1862,6 +1866,9 @@ height: 15px;
       top: 14px;
       left: 5px;
       bottom: auto;
+      right: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       }
       .tank-btn-rounded{
         margin-left: 5px;
@@ -1869,7 +1876,7 @@ height: 15px;
     }
   }
   .tank-outer-ohq{
-    height: calc(100% - 36px)!important;
+    height: calc(100% - 6px)!important;
     max-height: 350px;
   }
 }
@@ -2026,7 +2033,7 @@ width: 50px !important;
   }
 }
 .synoptical-table-wrapper{
-  .p-datatable .p-datatable-thead > tr{ 
+  .p-datatable .p-datatable-thead > tr{
     > th{
     padding: 2px 5px;
   }
@@ -2091,7 +2098,7 @@ width: 50px !important;
     margin: auto;
     right: 0;
   }
-} 
+}
 
 .p-datatable-scrollable-header-table .p-calendar .p-inputtext{
   padding: 0;
@@ -2207,7 +2214,7 @@ width: 50px !important;
      bottom: auto!important;
    }
  }
-} 
+}
 
 .tank-wrapper-obq{
   .tank-inner-wrapper-pattern .tank-column-pattern > div{
@@ -2242,6 +2249,10 @@ tr:hover{
 
 .p-dropdown-panel.index-9{
   z-index: 99999!important;
+}
+
+.confirmation-dialog .p-dialog-mask.p-component-overlay {
+  z-index: 10000 !important;
 }
 
 .api-temp-pop-up{
@@ -2301,10 +2312,10 @@ tr:hover{
     margin-left: 2px;
   }
   .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
-    top: 0!important;
-    left: 12px!important;
-    margin-top: 0!important;
-    width: auto!important;
+    top: 3px !important;
+    left: 14px !important;
+    margin-top: 0 !important;
+    width: auto !important;
   }
   .tank-item-valign{
     position: absolute;
@@ -2315,6 +2326,10 @@ tr:hover{
     position: absolute;
     bottom: 5px;
     right: 5px;
+    left: 2px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .p-datatable table{
     table-layout: auto!important;
@@ -2379,7 +2394,7 @@ tr:hover{
       min-width: 98%;
       width: 98%;
     }
-  }  
+  }
 
    .data-table-outer, .data-table-inner{
      height: 100%;
@@ -2410,7 +2425,7 @@ textarea{
   resize: none;
 }
 
-.error-pop-up{ 
+.error-pop-up{
   width: 720px;
   .p-datatable .p-datatable-tbody > tr:first-child > td{
     border-top: 0!important;
@@ -2446,7 +2461,7 @@ textarea{
   .error-icon{
     margin-left: 2px;
   }
-} 
+}
 
 #countryMap, #fleetMap
 {
@@ -2474,10 +2489,37 @@ textarea{
   .table-pattern.p-datatable .p-datatable-tbody>tr>td, .table-pattern.p-datatable .p-datatable-thead>tr>th, .table-pattern.p-datatable .p-datatable-tfoot > tr > td {
     font-size: 11px;
   }
-  
+
 }
 
 .loadable-plan.p-datatable table{
     min-width: 100%!important;
     width: auto!important;
   }
+.p-confirm-dialog.p-dialog{ 
+  border-radius: 2px;
+    .p-dialog-footer{
+      border-top: 0;
+    }
+
+}
+.p-dropdown-panel{
+  max-width: 250px;
+  &.time-zone{
+    max-width: none;
+  }
+}
+
+.loadable-plan-ballast .tank-outer-pattern .tank-filling-percentage{
+ max-width: none; 
+}
+
+.calculated-column{
+  width: 92px;
+}
+.icon-chat{
+  display: inline-block;
+  width: 21px;
+  height: 18px;
+  vertical-align: bottom;
+}

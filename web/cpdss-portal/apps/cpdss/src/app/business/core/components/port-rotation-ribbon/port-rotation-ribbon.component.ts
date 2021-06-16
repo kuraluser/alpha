@@ -51,7 +51,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   loadableStudyId: number;
   portList: IEditPortRotation[] = [];
   portRotationForm: FormGroup;
-  minDate = new Date();
+  maxDate = new Date();
   isCurrentPortSelected = false;
   errorMesages: any;
   carouselDateFormat: string;
@@ -470,6 +470,25 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.portCarousel = [...this.transformCarouselData(this.portList)];
     }, 50)
+  }
+
+  /**
+   * function to set current time input
+   *
+   * @param {*} event
+   * @param {*} port
+   * @param {*} type
+   * @param {*} ref
+   * @memberof PortRotationRibbonComponent
+   */
+  setTimeInput(event, port, type, ref: any): void {
+    if (type === 'time' && !ref.value) {
+      const time = new Date();
+      time.setHours(ref.currentHour, ref.currentMinute);
+      const form = this.row(this.portList.indexOf(port));
+      form.controls.time.setValue(time);
+    }
+    ref.hideOverlay();
   }
 
   /**

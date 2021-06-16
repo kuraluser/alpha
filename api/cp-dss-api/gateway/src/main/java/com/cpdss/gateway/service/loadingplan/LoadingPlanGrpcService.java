@@ -2,11 +2,40 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
+import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import java.util.List;
 
 public interface LoadingPlanGrpcService {
 
   VoyageResponse getActiveVoyageDetails(Long vesselId) throws GenericServiceException;
 
   Object getPortRotationDetailsForActiveVoyage(Long vesselId);
+
+  LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotationArrivalCondition(
+      Long portRId) throws GenericServiceException;
+
+  PortInfo.PortDetail fetchPortDetailByPortId(Long portId) throws GenericServiceException;
+
+  LoadingPlanModels.LoadingInformation fetchLoadingInformation(
+      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId)
+      throws GenericServiceException;
+
+  CargoVesselTankDetails fetchPortWiseCargoDetails(
+      Long vesselId,
+      Long voyageId,
+      Long loadableStudyId,
+      Long portId,
+      Long portOrder,
+      Long portRotationId);
+
+  List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
+      Long patternId, String operationType, Long portRotationId, Long portId);
+
+  ResponseStatus saveLoadingInformation(LoadingInformation loadingInformation);
 }

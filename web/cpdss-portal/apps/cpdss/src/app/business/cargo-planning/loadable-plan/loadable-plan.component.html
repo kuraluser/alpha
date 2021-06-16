@@ -52,7 +52,7 @@
                 [cargoTankDetails]="cargoTankDetails" [ballastDetails]="loadablePlanBallastDetails"
                 [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
                 [loadableStudyId]="loadableStudyId" [voyage]="selectedVoyage" [loadableStudy]="loadableStudy" [loadablePatternValidationStatus]="loadablePatternValidationStatus"
-                [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup" (ullageUpdate)="validationPending = $event"
+                [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup" [validationPending]="validationPending" (ullageUpdate)="validationPending = $event"
                 (registerEvents)="listenEvents()" [loadableQuantityCargo]="loadableQuantityCargo" [loadableQuantity]="loadableQuantity">
             </cpdss-portal-stowage>
         </div>
@@ -61,7 +61,7 @@
             </cpdss-portal-port-eta-etd-condition>
         </div>
         <div>
-            <cpdss-portal-comments [loadablePatternId]="loadablePatternId" [loadableStudyId]="loadableStudyId" [isVoyageClosed]="isVoyageClosed"
+            <cpdss-portal-comments [validateAndSaveProcessing]="validateAndSaveProcessing" [loadablePatternId]="loadablePatternId" [loadableStudyId]="loadableStudyId" [isVoyageClosed]="isVoyageClosed"
                 [commentsDetails]="loadablePlanComments" [loadablePatternValidationStatus]="loadablePatternValidationStatus" [vesselId]="vesselId" [voyageId]="voyageId" [enableSubmit]="true">
             </cpdss-portal-comments>
         </div>

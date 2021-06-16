@@ -35,4 +35,6 @@ public class UpdateUllage {
   private String observedM3;
 
   private String sg;
+
+  private boolean isCommingle;
 }

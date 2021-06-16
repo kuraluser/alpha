@@ -20,6 +20,8 @@ export class UnitDropdownComponent implements OnInit {
 
   @Input() disableUnitChange = false;
 
+  @Input() selectedUnit: { value: string };
+
   @Output() unitChange: EventEmitter<any> = new EventEmitter();
   @Output() changeBlocked: EventEmitter<any> = new EventEmitter();
 
@@ -28,7 +30,7 @@ export class UnitDropdownComponent implements OnInit {
     { value: QUANTITY_UNIT.BBLS },
     { value: QUANTITY_UNIT.KL },
   ];
-  selectedUnit: { value: string };
+
   constructor() { }
 
   // Component lifecycle hook on initialization of component

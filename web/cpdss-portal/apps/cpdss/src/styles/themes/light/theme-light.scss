@@ -187,7 +187,7 @@ header .header-nav .nav li.active {
 }
 .p-dialog {
   background:$body-bg;
-    border: 1px solid $outline-border;
+    border: 1px solid $border-color;
     .p-dialog-header{
         background: $body-bg;
         color:$main-head;
@@ -234,12 +234,15 @@ hr{
 .btn{
   color: $link-color;
   &.btn-main{
-    border: 1px solid $outline-border;
+    border: 1px solid $outline-border!important;
+    background: none!important;
     &:hover{
       color: $text-secondary!important;
+      background: none!important;
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($outline-border, 0.25);
+      background: none!important;
     }
   }
 }
@@ -343,16 +346,16 @@ hr{
 
 .p-dropdown-panel{
   background:$dropdown-bg;
-  max-width: 250px;
   .p-dropdown-item{
     background: $dropdown-bg!important;
     color: $text-primary!important;
-    &:hover{
+    &:hover, &.p-highlight{
       background:$dropdown-menu-hover-bg!important;
       color: $hover-color!important;
     }
   }
 }
+
 
 .p-datepicker:not(.p-datepicker-inline){
   background:$dropdown-bg;
@@ -652,15 +655,15 @@ a{
 }
 .tank-outer-ohq{
   .rear-top-ohq{
-    border-top: 25px solid $tank-ohq-border;
+    border-top: 12px solid $tank-ohq-border;
     &:after{
-      border-top: 25px solid $body-bg;
+      border-top: 11px solid $body-bg;
     }
   }
   .rear-bottom-ohq{
-    border-bottom: 25px solid $tank-ohq-border;
+    border-bottom: 12px solid $tank-ohq-border;
     &:after{
-      border-bottom: 25px solid $body-bg;
+      border-bottom: 12px solid $body-bg;
     }
   }
 }
@@ -1327,4 +1330,7 @@ header{
 }
 .action-btn {
   color: $main-head!important;
+}
+.icon-chat{
+  background: url($images-theme + 'chat-icon.png') no-repeat center center;
 }
