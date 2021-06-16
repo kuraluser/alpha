@@ -335,7 +335,7 @@ message LoadablePatternAlgoRequest {
 	bool validated = 5;
 	repeated AlgoErrors algoErrors = 6;
 	int64 loadablePatternId = 7;
-	string messageId = 8;
+
 	
 }
 
@@ -1279,4 +1279,10 @@ message AlgoErrors{
 	string errorHeading = 2;
 	repeated string errorMessages = 3;
 	ResponseStatus responseStatus = 4;
+}
+
+message AlgoResponseCommunication{
+		LoadablePatternAlgoRequest loadablePatternAlgoRequest = 1;
+		LoadicatorResultsRequest loadicatorResultsRequest = 2;
+	  string messageId = 3;
 }

@@ -15,6 +15,7 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
+import com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
@@ -382,6 +383,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
+  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
@@ -3194,7 +3196,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
           if (loadableStudyOpt.get().getMessageUUID() != null) {
-            passResultPayloadToEnvoyWriter(request, loadableStudyOpt.get());
+
+            AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
+            algoRespComm.setLoadablePatternAlgoRequest(request);
+            passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
           }
         }
       }
@@ -5614,14 +5619,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   public void saveLoadablePatternDetails(
-      String patternResultJson, LoadablePatternAlgoRequest.Builder load) {
+      String patternResultJson, AlgoResponseCommunication.Builder load) {
     // String patternResponse = erReply.getPatternResultJson();
     try {
       JsonFormat.parser().ignoringUnknownFields().merge(patternResultJson, load);
-      LoadablePatternAlgoRequest patternResult = load.build();
+      AlgoResponseCommunication responseCommunication = load.build();
+      LoadablePatternAlgoRequest patternResult = responseCommunication.getLoadablePatternAlgoRequest();
       Optional<LoadableStudy> loadableStudyOpt =
           this.loadableStudyRepository.findByMessageUUIDAndIsActive(
-              patternResult.getMessageId(), true);
+                  responseCommunication.getMessageId(), true);
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
             "Loadable study does not exist",
@@ -5644,6 +5650,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         savePatternDtails(patternResult, loadableStudyOpt);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
+        if(responseCommunication.getLoadicatorResultsRequest() != null){
+          saveLoadicatorResults(responseCommunication.getLoadicatorResultsRequest());
+        }
       }
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
@@ -5680,15 +5689,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private EnvoyWriter.WriterReply passResultPayloadToEnvoyWriter(
-      LoadablePatternAlgoRequest loadablePatternAlgoRequest, LoadableStudy loadableStudy)
+          AlgoResponseCommunication.Builder algoResponseCommunication, LoadableStudy loadableStudy)
       throws GenericServiceException {
     String jsonPayload = null;
     try {
       VesselDetail vesselReply = this.getVesselDetailsForEnvoy(loadableStudy.getVesselXId());
-      LoadablePatternAlgoRequest.Builder payLoad = LoadablePatternAlgoRequest.newBuilder();
-      payLoad = loadablePatternAlgoRequest.toBuilder();
-      payLoad.setMessageId(loadableStudy.getMessageUUID());
-      jsonPayload = JsonFormat.printer().print(payLoad);
+
+      algoResponseCommunication.setMessageId(loadableStudy.getMessageUUID());
+      jsonPayload = JsonFormat.printer().print(algoResponseCommunication);
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
@@ -5833,8 +5841,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Optional<LoadableStudy> loadableStudyOpt =
             this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
         if (loadableStudyOpt.get().getMessageUUID() != null) {
-
-          passResultPayloadToEnvoyWriter(algoResponse, loadableStudyOpt.get());
+          AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
+          LoadicatorResultsRequest.Builder loadicatorResultsRequest = LoadicatorResultsRequest.newBuilder();
+          JsonFormat.parser().ignoringUnknownFields().merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
+          algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
+          Optional<JsonData> patternJson = this.jsonDataRepository.findByJsonTypeXIdAndReferenceXId(LOADABLE_STUDY_RESULT_JSON_ID,loadableStudyOpt.get().getId());
+          if(patternJson != null){
+            LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest = LoadablePatternAlgoRequest.newBuilder();
+            JsonFormat.parser().ignoringUnknownFields().merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+            algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
+          }
+          passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
         }
       }
       replyBuilder =
@@ -12793,7 +12810,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
       }
       String jsonResult = erReply.getPatternResultJson();
-      LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
+      AlgoResponseCommunication.Builder load = AlgoResponseCommunication.newBuilder();
       // load.setLoadableStudyId(request.getLoadableStudyId());
       if (!jsonResult.isEmpty()) saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
     } catch (GenericServiceException e) {
