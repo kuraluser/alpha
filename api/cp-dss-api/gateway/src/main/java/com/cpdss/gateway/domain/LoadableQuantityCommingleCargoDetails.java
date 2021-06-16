@@ -65,4 +65,5 @@ public class LoadableQuantityCommingleCargoDetails {
   private BigDecimal actualQuantity;
 
   private String timeRequiredForLoading;
+  private String tankShortName;
 }

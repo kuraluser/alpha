@@ -3441,6 +3441,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .cargo1NominationId(it.getCargo1NominationId())
                     .cargo2NominationId(it.getCargo2NominationId())
                     .portRotationXid(portRotationXid)
+                    .tankName(it.getTankShortName())
                     // .actualQuantity(it.getActualQuantity()!=  null ? new
                     // BigDecimal(it.getActualQuantity()): null)
                     .build();
@@ -3727,6 +3728,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
       loadablePlanCommingleDetails.setCargo2NominationId(
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
+      loadablePlanCommingleDetails.setTankShortName(
+          loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
     }
   }
@@ -4349,6 +4352,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
           Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllage);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
+          Optional.ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
           Optional.ofNullable(lpcd.getTankId()).ifPresent(builder::setTankId);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setWeight);
@@ -8752,6 +8756,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
           ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
           ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
+          ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
@@ -8768,6 +8773,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
           Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(stowageBuilder::setRdgUllage);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(stowageBuilder::setTankName);
+          Optional.ofNullable(lpcd.getTankShortName()).ifPresent(stowageBuilder::setTankShortName);
           Optional.ofNullable(lpcd.getTankId()).ifPresent(stowageBuilder::setTankId);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(stowageBuilder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);
