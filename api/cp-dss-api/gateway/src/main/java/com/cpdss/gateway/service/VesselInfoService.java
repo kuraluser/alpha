@@ -12,6 +12,9 @@ import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
+import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
+import com.cpdss.common.generated.VesselInfo.VesselRuleRequest.Builder;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -25,6 +28,10 @@ import com.cpdss.gateway.domain.InnerBulkHeadValues;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
 import com.cpdss.gateway.domain.Parameter;
+import com.cpdss.gateway.domain.RulePlans;
+import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.Rules;
+import com.cpdss.gateway.domain.RulesInputs;
 import com.cpdss.gateway.domain.SelectableParameter;
 import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.StationValues;
@@ -49,6 +56,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Service class for vessel related operations
@@ -660,5 +668,179 @@ public class VesselInfoService {
       log.error("Vessel Info RPC call Failed, {}", response.getResponseStatus().getMessage());
       return null;
     }
+  }
+
+  /**
+   * To retrieve vessel rule OR To save rule for vessel
+   *
+   * @param vesselId
+   * @param sectionId
+   * @param vesselRuleRequest
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public RuleResponse getRulesByVesselIdAndSectionId(
+      Long vesselId,
+      Long sectionId,
+      com.cpdss.gateway.domain.VesselRuleRequest vesselRuleRequest,
+      String correlationId)
+      throws GenericServiceException {
+    VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+    vesselRuleBuilder.setSectionId(sectionId);
+    vesselRuleBuilder.setVesselId(vesselId);
+    buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder);
+    VesselRuleReply vesselRuleReply =
+        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+    RuleResponse ruleResponse = new RuleResponse();
+    if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Vessel Details ",
+          vesselRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+    }
+    ruleResponse.setPlan(buildVesselPlan(vesselRuleReply));
+    ruleResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return ruleResponse;
+  }
+
+  private List<RulePlans> buildVesselPlan(VesselRuleReply vesselRuleReply) {
+    List<RulePlans> rulePlans = new ArrayList<>();
+    vesselRuleReply
+        .getRulePlanList()
+        .forEach(
+            rulePlanList -> {
+              RulePlans rulePlan = new RulePlans();
+              Optional.ofNullable(rulePlanList.getHeader()).ifPresent(rulePlan::setHeader);
+              if (!CollectionUtils.isEmpty(rulePlanList.getRulesList())) {
+                rulePlan.setRules(buildRules(rulePlanList.getRulesList()));
+              }
+              rulePlans.add(rulePlan);
+            });
+    return rulePlans;
+  }
+
+  private List<Rules> buildRules(List<com.cpdss.common.generated.VesselInfo.Rules> rulesList) {
+    List<Rules> rules = new ArrayList<>();
+    rulesList.forEach(
+        rList -> {
+          Rules rule = new Rules();
+          Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
+          Optional.ofNullable(rList.getDisableInSettigs()).ifPresent(rule::setDisableInSettigs);
+          if (isBlankString(rList.getId())) {
+            rule.setId(rList.getId());
+          }
+          Optional.ofNullable(rList.getRuleTemplateId()).ifPresent(rule::setRuleTemplateId);
+          Optional.ofNullable(rList.getRuleType()).ifPresent(rule::setRuleType);
+          Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
+          if (!CollectionUtils.isEmpty(rList.getInputsList())) {
+            rule.setInputs(buildRuleInputs(rList.getInputsList()));
+          }
+          rules.add(rule);
+        });
+    return rules;
+  }
+
+  private List<RulesInputs> buildRuleInputs(
+      List<com.cpdss.common.generated.VesselInfo.RulesInputs> inputsList) {
+    List<RulesInputs> ruleInputsList = new ArrayList<>();
+    inputsList.forEach(
+        rInputsList -> {
+          RulesInputs rulesInputs = new RulesInputs();
+          if (isBlankString(rInputsList.getDefaultValue())) {
+            rulesInputs.setDefaultValue(rInputsList.getDefaultValue());
+          }
+          if (isBlankString(rInputsList.getMax())) {
+            rulesInputs.setMax(rInputsList.getMax());
+          }
+          if (isBlankString(rInputsList.getMin())) {
+            rulesInputs.setMin(rInputsList.getMin());
+          }
+          if (isBlankString(rInputsList.getPrefix())) {
+            rulesInputs.setPrefix(rInputsList.getPrefix());
+          }
+          if (isBlankString(rInputsList.getPrefix())) {
+            rulesInputs.setPrefix(rInputsList.getPrefix());
+          }
+          if (isBlankString(rInputsList.getSuffix())) {
+            rulesInputs.setSuffix(rInputsList.getSuffix());
+          }
+          if (isBlankString(rInputsList.getId())) {
+            rulesInputs.setId(rInputsList.getId());
+          }
+          Optional.ofNullable(rInputsList.getType()).ifPresent(rulesInputs::setType);
+          ruleInputsList.add(rulesInputs);
+        });
+    return ruleInputsList;
+  }
+
+  private void buildRuleListForSave(
+      com.cpdss.gateway.domain.VesselRuleRequest vesselRuleRequest, Builder vesselRuleBuilder) {
+
+    if (vesselRuleRequest != null && !CollectionUtils.isEmpty(vesselRuleRequest.getPlan())) {
+      vesselRuleRequest
+          .getPlan()
+          .forEach(
+              rulePlan -> {
+                if (!CollectionUtils.isEmpty(rulePlan.getRules())) {
+                  com.cpdss.common.generated.VesselInfo.RulePlans.Builder rulePlanBuilder =
+                      com.cpdss.common.generated.VesselInfo.RulePlans.newBuilder();
+                  rulePlan
+                      .getRules()
+                      .forEach(
+                          rule -> {
+                            com.cpdss.common.generated.VesselInfo.Rules.Builder ruleBuilder =
+                                com.cpdss.common.generated.VesselInfo.Rules.newBuilder();
+                            Optional.ofNullable(rule.getDisable())
+                                .ifPresent(ruleBuilder::setDisable);
+                            Optional.ofNullable(rule.getDisableInSettigs())
+                                .ifPresent(ruleBuilder::setDisableInSettigs);
+                            Optional.ofNullable(rule.getEnable()).ifPresent(ruleBuilder::setEnable);
+                            Optional.ofNullable(rule.getId()).ifPresent(ruleBuilder::setId);
+                            Optional.ofNullable(rule.getRuleTemplateId())
+                                .ifPresent(ruleBuilder::setRuleTemplateId);
+                            Optional.ofNullable(rule.getRuleType())
+                                .ifPresent(ruleBuilder::setRuleType);
+                            Optional.ofNullable(rule.getRuleType())
+                                .ifPresent(ruleBuilder::setRuleType);
+                            rule.getInputs()
+                                .forEach(
+                                    input -> {
+                                      com.cpdss.common.generated.VesselInfo.RulesInputs.Builder
+                                          ruleInputBuilder =
+                                              com.cpdss.common.generated.VesselInfo.RulesInputs
+                                                  .newBuilder();
+                                      Optional.ofNullable(input.getDefaultValue())
+                                          .ifPresent(ruleInputBuilder::setDefaultValue);
+                                      Optional.ofNullable(input.getId())
+                                          .ifPresent(ruleInputBuilder::setId);
+                                      Optional.ofNullable(input.getMax())
+                                          .ifPresent(ruleInputBuilder::setMax);
+                                      Optional.ofNullable(input.getMin())
+                                          .ifPresent(ruleInputBuilder::setMin);
+                                      Optional.ofNullable(input.getPrefix())
+                                          .ifPresent(ruleInputBuilder::setPrefix);
+                                      Optional.ofNullable(input.getSuffix())
+                                          .ifPresent(ruleInputBuilder::setSuffix);
+                                      Optional.ofNullable(input.getType())
+                                          .ifPresent(ruleInputBuilder::setType);
+                                      Optional.ofNullable(input.getValue())
+                                          .ifPresent(ruleInputBuilder::setValue);
+                                      ruleBuilder.addInputs(ruleInputBuilder);
+                                    });
+                            rulePlanBuilder.addRules(ruleBuilder);
+                          });
+                  vesselRuleBuilder.addRulePlan(rulePlanBuilder);
+                }
+              });
+    }
+  }
+
+  Boolean isBlankString(String value) {
+    if (value != null && value.trim() != "") {
+      return true;
+    }
+    return false;
   }
 }

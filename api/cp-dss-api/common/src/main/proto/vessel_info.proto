@@ -38,6 +38,8 @@ service VesselInfoService {
 	rpc GetVesselInfoByVesselId(VesselIdRequest) returns (VesselIdResponse){}
 
 	rpc GetVesselPumpsByVesselId(VesselIdRequest) returns (VesselPumpsResponse) {}
+	
+	rpc GetRulesByVesselIdAndSectionId(VesselRuleRequest) returns (VesselRuleReply) {}
 }
 
 message VesselRequestWithPaging{
@@ -367,4 +369,41 @@ message VesselReply {
 		string pumpName = 4;
 		string pumpCode = 5;
 		string pumpCapacity = 6;
+	}
+	
+	message VesselRuleRequest{
+	    int64 vesselId = 1;
+		int64 sectionId = 2;
+		repeated RulePlans rulePlan = 3;
+	}
+	
+	message VesselRuleReply{
+	   ResponseStatus responseStatus = 1;
+	   repeated RulePlans rulePlan = 2;
+	}
+	
+	message RulePlans{
+	  string header = 1;
+	  repeated Rules rules = 2;
+	}
+	
+	message Rules{
+	 string id = 1;
+	 bool enable = 2; 
+	 bool disable = 3;
+	 bool disableInSettigs = 4;
+	 string ruleType = 5;
+	 repeated RulesInputs inputs = 6;
+	 string ruleTemplateId = 7;
+	}
+	
+	message RulesInputs{
+	  string prefix = 1;
+	  string defaultValue = 2;
+	  string type = 3;
+	  string max = 4;
+	  string min = 5;
+	  string value = 6;
+	  string suffix = 7;
+	  string id = 8;
 	}
