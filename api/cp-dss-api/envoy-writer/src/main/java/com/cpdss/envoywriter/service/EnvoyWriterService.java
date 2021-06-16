@@ -1,7 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.envoywriter.service;
 
-import static com.cpdss.envoywriter.common.Utility.*;
+import static com.cpdss.envoywriter.common.Utility.encrypt;
+import static com.cpdss.envoywriter.common.Utility.getCheckSum;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -14,8 +15,6 @@ import com.cpdss.envoywriter.domain.StatusCheckResponse;
 import com.cpdss.envoywriter.domain.WriterResponse;
 import com.cpdss.envoywriter.entity.SequenceNumber;
 import com.cpdss.envoywriter.repository.SequenceNumberRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,11 +28,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -190,7 +185,7 @@ public class EnvoyWriterService {
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
         .append(
-            request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
                 ? writerShipUrl
                 : writerShoreUrl)
         .append(separator)
@@ -199,10 +194,13 @@ public class EnvoyWriterService {
         .append(request.getClientId())
         .append(separator)
         .append(
-            request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
                 ? ""
                 : request.getImoNumber())
-        .append(request.getMessageType().equals(MessageTypes.LOADABLESTUDY) ? "" : separator)
+        .append(
+            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
+                ? ""
+                : separator)
         .append(request.getMessageType())
         .append(separator)
         .append(uuid)
@@ -212,7 +210,7 @@ public class EnvoyWriterService {
   }
 
   public void checkStatus(EnvoyWriterRequest request, Builder statusCheckbuilder)
-      throws JsonMappingException, JsonProcessingException {
+      throws IOException {
 
     ResponseEntity<String> result =
         restTemplate.getForEntity(statucCheckUrlBuilder(request), String.class);
@@ -243,7 +241,7 @@ public class EnvoyWriterService {
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
         .append(
-            request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
                 ? writerShipUrl
                 : writerShoreUrl)
         .append(separator)

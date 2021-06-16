@@ -3193,6 +3193,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
+          if (loadableStudyOpt.get().getMessageUUID() != null) {
+            passResultPayloadToEnvoyWriter(request, loadableStudyOpt.get());
+          }
         }
       }
       if (request.getAlgoErrorsCount() > 0) {
@@ -3205,9 +3208,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       builder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
           .build();
-      if (loadableStudyOpt.get().getMessageUUID() != null) {
-        passResultPayloadToEnvoyWriter(request, loadableStudyOpt.get());
-      }
+
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in loadable pattern list", e);
       builder.setResponseStatus(
@@ -3270,9 +3271,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               saveStabilityParameterForNonLodicator(
                   request.getHasLodicator(), loadablePattern, lpd);
             });
-    if (request.getHasLodicator()) {
-      this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
-    }
   }
 
   private void saveStabilityParameterForNonLodicator(
@@ -5660,7 +5658,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
-      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) throws GenericServiceException {
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy)
+      throws GenericServiceException, IOException {
     ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String loadableStudyJson = null;
     try {
@@ -5831,6 +5830,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
             algoResponse.getProcessId(),
             true);
+        Optional<LoadableStudy> loadableStudyOpt =
+            this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+        if (loadableStudyOpt.get().getMessageUUID() != null) {
+
+          passResultPayloadToEnvoyWriter(algoResponse, loadableStudyOpt.get());
+        }
       }
       replyBuilder =
           LoadicatorDataReply.newBuilder()
@@ -12733,7 +12738,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       String jsonResult = erReply.getPatternResultJson();
       LoadableStudy loadableStudyEntity =
-          loadableStudyServiceShore.setLoadablestudyShore(jsonResult);
+          loadableStudyServiceShore.setLoadablestudyShore(jsonResult, erReply.getMessageId());
       if (loadableStudyEntity != null) {
         this.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.validateLoadableStudyWithLQ(loadableStudyEntity);

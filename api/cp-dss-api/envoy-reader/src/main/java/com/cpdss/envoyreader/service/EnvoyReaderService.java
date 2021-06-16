@@ -148,7 +148,7 @@ public class EnvoyReaderService {
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
         .append(
-            request.getMessageType().equals(MessageTypes.LOADABLESTUDY)
+            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
                 ? downloadShoreUrl
                 : downloadShipUrl)
         .append(separator)

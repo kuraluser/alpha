@@ -52,7 +52,8 @@ public class LoadableStudyServiceShore {
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
 
-  public LoadableStudy setLoadablestudyShore(String jsonResult) throws GenericServiceException {
+  public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
+      throws GenericServiceException {
     LoadableStudy loadableStudyEntity = null;
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
@@ -63,7 +64,7 @@ public class LoadableStudyServiceShore {
 
       try {
         ModelMapper modelMapper = new ModelMapper();
-        loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
+        loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage, messageId);
         saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
       } catch (IOException e) {
         e.printStackTrace();
@@ -176,10 +177,6 @@ public class LoadableStudyServiceShore {
               ? null
               : new BigDecimal(loadableQuantityDomain.getDeadWeight()));
 
-      loadableQuantity.setDisplacementAtDraftRestriction(
-          StringUtils.isEmpty(loadableQuantityDomain.getDisplacmentDraftRestriction())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getDisplacmentDraftRestriction()));
       loadableQuantity.setDistanceFromLastPort(
           StringUtils.isEmpty(loadableQuantityDomain.getDistanceFromLastPort())
               ? null
@@ -202,16 +199,6 @@ public class LoadableStudyServiceShore {
           StringUtils.isEmpty(loadableQuantityDomain.getEstSagging())
               ? null
               : new BigDecimal(loadableQuantityDomain.getEstSagging()));
-
-      loadableQuantity.setEstimatedSeaDensity(
-          StringUtils.isEmpty(loadableQuantityDomain.getEstSeaDensity())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getEstSeaDensity()));
-
-      loadableQuantity.setLightWeight(
-          StringUtils.isEmpty(loadableQuantityDomain.getVesselLightWeight())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getVesselLightWeight()));
 
       loadableQuantity.setOtherIfAny(
           StringUtils.isEmpty(loadableQuantityDomain.getOtherIfAny())
@@ -270,10 +257,6 @@ public class LoadableStudyServiceShore {
               ? null
               : new BigDecimal(loadableQuantityDomain.getDraftRestriction()));
 
-      loadableQuantity.setSubTotal(
-          StringUtils.isEmpty(loadableQuantityDomain.getSubTotal())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getSubTotal()));
       loadableQuantity.setFoConsumptionPerDay(
           StringUtils.isEmpty(loadableQuantityDomain.getFoConsumptionPerDay())
               ? null
@@ -509,7 +492,7 @@ public class LoadableStudyServiceShore {
   }
 
   private LoadableStudy saveLoadableStudyShore(
-      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy, Voyage voyage)
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy, Voyage voyage, String messageId)
       throws IOException {
     LoadableStudy entity = new LoadableStudy();
     entity.setVesselXId(loadableStudy.getVesselId());
@@ -540,8 +523,7 @@ public class LoadableStudyServiceShore {
     this.setCaseNo(entity);
     /*entity.setDischargeCargoId(loadableStudy.getD);*/
     entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
-    entity.setMessageUUID(
-        loadableStudy.getMessageId() != null ? loadableStudy.getMessageId() : null);
+    entity.setMessageUUID(messageId);
     /*entity.setIsCargoNominationComplete(loadableStudy.getIsCargoNominationComplete());
     entity.setIsDischargePortsComplete(loadableStudy.getIsDischargePortsComplete());
     entity.setIsObqComplete(loadableStudy.getIsObqComplete());
