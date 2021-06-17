@@ -8070,6 +8070,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .filter(cargo -> cargo.getTankId().equals(tank.getTankId()))
                 .findAny();
         if (tankDataOpt.isPresent()) {
+          ofNullable(tankDataOpt.get().getCargoNominationId())
+              .ifPresent(v -> cargoBuilder.setCargoNominationId(v));
+          ofNullable(tankDataOpt.get().getId()).ifPresent(v -> cargoBuilder.setLpCargoDetailId(v));
           ofNullable(tankDataOpt.get().getPlannedQuantity())
               .ifPresent(item -> cargoBuilder.setPlannedWeight(valueOf(item)));
           ofNullable(tankDataOpt.get().getActualQuantity())
@@ -12293,6 +12296,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       builder
           .getLoadingInformationDetailBuilder()
           .setSynopticalTableId(synopticalTableOpt.get().getId());
+      builder.getLoadingInformationDetailBuilder()
+              .setPortRotationId(portRotation.getId());
     }
     builder
         .getLoadingInformationDetailBuilder()

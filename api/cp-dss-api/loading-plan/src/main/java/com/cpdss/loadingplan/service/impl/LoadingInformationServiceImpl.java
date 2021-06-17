@@ -100,21 +100,23 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Override
   public Optional<LoadingInformation> getLoadingInformation(
-      Long id, Long vesselId, Long patternId) {
+      Long id, Long vesselId, Long voyageId, Long patternId, Long portRotationId) {
     Optional<LoadingInformation> information = Optional.empty();
-
-    Optional<LoadingInformation> val1 = this.loadingInformationRepository.findById(id);
-
-    if ((id != null && id > 0) && (vesselId != null && vesselId > 0)) {
-      information =
-          this.loadingInformationRepository.findByIdAndVesselXIdAndIsActiveTrue(id, vesselId);
-      log.info("Loading Information found for Id {}, Vessel Id {}", id, vesselId);
-    } else if ((patternId != null && patternId > 0) && (vesselId != null && vesselId > 0)) {
-      information =
-          this.loadingInformationRepository.findByVesselXIdAndLoadablePatternXIdAndIsActiveTrue(
-              vesselId, patternId);
-      log.info("Loading Information found for Vessel {}, Pattern Id {}", vesselId, patternId);
+    if (id != 0){
+      information = this.loadingInformationRepository.findById(id);
+      log.info("Loading Information found for Id {}", id);
+      if (information.isPresent())
+        return information;
     }
+    if (vesselId != 0 && voyageId != 0 && portRotationId != 0){
+      information = this.loadingInformationRepository.findByVesselXIdAndVoyageIdAndPortRotationXId(vesselId, voyageId, portRotationId);
+      if (information.isPresent()){
+        log.info("Loading Information found Id {}, for Voyage Id {}, Port Rotation Id {}", information.get().getId(), voyageId, portRotationId);
+        return information;
+      }
+
+    }
+    log.info("No data found for Loading Information");
     return information;
   }
 
@@ -129,10 +131,14 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
     Optional<LoadingInformation> var1 =
         this.getLoadingInformation(
-            request.getLoadingPlanId(), request.getVesselId(), request.getLoadingPatternId());
+            request.getLoadingPlanId(), request.getVesselId(), request.getVoyageId(), request.getLoadingPatternId(), request.getPortRotationId());
     if (!var1.isPresent()) {
       log.info("No Loading Information found for Id {}", request.getLoadingPlanId());
     }
+
+    // Common fields
+    var1.ifPresent(v -> builder.setLoadingInfoId(v.getId()));
+    var1.ifPresent(v -> builder.setSynopticTableId(v.getSynopticalTableXId()));
 
     // Loading Details
     LoadingPlanModels.LoadingDetails details =

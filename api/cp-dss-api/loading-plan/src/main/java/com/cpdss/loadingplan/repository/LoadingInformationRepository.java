@@ -28,4 +28,7 @@ public interface LoadingInformationRepository
       Long vesselId, Long patternId);
 
   Optional<LoadingInformation> findByIdAndIsActiveTrue(Long id);
+
+  Optional<LoadingInformation> findByVesselXIdAndVoyageIdAndPortRotationXId(Long var1, Long var2, Long var3);
+
 }

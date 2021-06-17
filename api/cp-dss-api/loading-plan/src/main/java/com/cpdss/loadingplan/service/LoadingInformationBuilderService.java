@@ -81,6 +81,8 @@ public class LoadingInformationBuilderService {
           .ifPresent(v -> builder.setMaxManifoldHeight(v.toString()));
       Optional.ofNullable(var1.getSpecialRegulationRestriction())
           .ifPresent(v -> builder.setSpecialRegulationRestriction(v.toString()));
+      Optional.ofNullable(var1.getItemToBeAgreedWith())
+          .ifPresent(v -> builder.setItemsToBeAgreedWith(v));
       berths.add(builder.build());
     }
     return berths;
@@ -109,10 +111,10 @@ public class LoadingInformationBuilderService {
     LoadingStages.Builder builder = LoadingStages.newBuilder();
     if (var1 != null) {
       Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
-      Optional.ofNullable(var1.getStageOffset().getId())
-          .ifPresent(value -> builder.setStageOffset(value.intValue()));
-      Optional.ofNullable(var1.getStageDuration().getId())
-          .ifPresent(value -> builder.setStageDuration(value.intValue()));
+      Optional.ofNullable(var1.getStageOffset())
+          .ifPresent(value -> builder.setStageOffset(value.getId().intValue()));
+      Optional.ofNullable(var1.getStageDuration())
+          .ifPresent(value -> builder.setStageDuration(value.getId().intValue()));
       Optional.ofNullable(var1.getTrackStartEndStage()).ifPresent(builder::setTrackStartEndStage);
       Optional.ofNullable(var1.getTrackGradeSwitch()).ifPresent(builder::setTrackGradeSwitch);
     }

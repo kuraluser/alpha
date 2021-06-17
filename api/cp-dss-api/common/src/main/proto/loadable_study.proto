@@ -1111,6 +1111,8 @@ message SynopticalCargoRecord{
 	bool isCommingleCargo=12;
 	string temperature = 13;
 	string fillingRatio = 14;
+	int64 cargoNominationId = 15;
+	int64 lpCargoDetailId = 16; // loadable_pattern_cargo_detail ID
 }
 
 message SynopticalOhqRecord{

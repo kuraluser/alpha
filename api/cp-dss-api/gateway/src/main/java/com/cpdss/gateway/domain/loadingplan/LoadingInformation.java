@@ -27,6 +27,8 @@ import lombok.Data;
 public class LoadingInformation {
 
   private CommonSuccessResponse responseStatus;
+  private Long loadingInfoId;
+  private Long synopticTableId;
   private LoadingDetails loadingDetails;
   private LoadingRates loadingRates;
   private LoadingBerthDetails berthDetails;

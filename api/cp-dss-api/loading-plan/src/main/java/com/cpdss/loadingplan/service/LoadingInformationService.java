@@ -15,7 +15,7 @@ public interface LoadingInformationService {
 
   public void deleteLoadablePlanDetails(LoadingInformation loadingInformation);
 
-  Optional<LoadingInformation> getLoadingInformation(Long id, Long vesselId, Long patternId);
+  Optional<LoadingInformation> getLoadingInformation(Long id, Long vesselId, Long voyageId, Long patternId, Long portRotationId);
 
   LoadingPlanModels.LoadingInformation getLoadingInformation(
       LoadingPlanModels.LoadingInformationRequest request,

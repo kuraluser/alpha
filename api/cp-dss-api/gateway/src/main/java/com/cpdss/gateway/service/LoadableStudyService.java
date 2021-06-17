@@ -3243,6 +3243,8 @@ public class LoadableStudyService {
     for (com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord protoRec :
         synopticalProtoRecord.getCargoList()) {
       SynopticalCargoBallastRecord rec = new SynopticalCargoBallastRecord();
+      rec.setLpCargoDetailId(protoRec.getLpCargoDetailId());
+      rec.setCargoNominationId(protoRec.getCargoNominationId());
       rec.setTankId(protoRec.getTankId());
       rec.setTankName(protoRec.getTankName());
       rec.setActualWeight(
@@ -4867,6 +4869,8 @@ public class LoadableStudyService {
                           Collectors.reducing(
                               (index, accum) ->
                                   new SynopticalCargoBallastRecord(
+                                      index.getLpCargoDetailId(),
+                                      index.getCargoNominationId(),
                                       index.getTankId(),
                                       index.getTankName(),
                                       index.getActualWeight().add(accum.getActualWeight()),

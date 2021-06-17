@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SynopticalCargoBallastRecord {
 
+  private Long lpCargoDetailId;
+
+  private Long cargoNominationId;
+
   private Long tankId;
 
   private String tankName;
