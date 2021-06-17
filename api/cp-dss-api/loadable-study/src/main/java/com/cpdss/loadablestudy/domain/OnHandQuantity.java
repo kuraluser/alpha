@@ -8,7 +8,7 @@ import lombok.Data;
 public class OnHandQuantity {
   private Long id;
   private Long portId;
-  private Long fuelTypeId;
+  private Long fueltypeId;
   private Long tankId;
   private String arrivalVolume;
   private String arrivalQuantity;

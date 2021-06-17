@@ -347,7 +347,7 @@ public class LoadableStudyServiceShore {
   private OnHandQuantity buildOnHandQuantity(
       OnHandQuantity entity, com.cpdss.loadablestudy.domain.OnHandQuantity request) {
     entity.setIsActive(true);
-    entity.setFuelTypeXId(null != request.getFuelTypeId() ? request.getFuelTypeId() : null);
+    entity.setFuelTypeXId(null != request.getFueltypeId() ? request.getFueltypeId() : null);
     entity.setTankXId(null != request.getTankId() ? request.getTankId() : null);
     entity.setPortXId(null != request.getPortId() ? request.getPortId() : null);
     entity.setArrivalQuantity(

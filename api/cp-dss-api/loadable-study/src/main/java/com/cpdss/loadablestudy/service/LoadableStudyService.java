@@ -5485,7 +5485,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
 
         */
-       /* AlgoResponse algoResponse =
+        /* AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
             algoResponse.getProcessId(),
@@ -6325,7 +6325,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           onHandQuantityDto.setDepartureVolume(String.valueOf(onHandQuantity.getDepartureVolume()));
           onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
           onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
-          onHandQuantityDto.setFuelTypeId(onHandQuantity.getFuelTypeXId());
+          onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
           onHandQuantityDto.setId(onHandQuantity.getId());
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
