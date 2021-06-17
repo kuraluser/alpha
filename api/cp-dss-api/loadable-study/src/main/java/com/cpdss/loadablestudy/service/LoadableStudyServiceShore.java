@@ -211,7 +211,7 @@ public class LoadableStudyServiceShore {
 
       loadableQuantity.setSgCorrection(
           StringUtils.isEmpty(loadableQuantityDomain.getSgCorrection())
-              ? null
+              ? new BigDecimal("0.0000")
               : new BigDecimal(loadableQuantityDomain.getSgCorrection()));
 
       loadableQuantity.setTotalQuantity(
@@ -347,9 +347,9 @@ public class LoadableStudyServiceShore {
   private OnHandQuantity buildOnHandQuantity(
       OnHandQuantity entity, com.cpdss.loadablestudy.domain.OnHandQuantity request) {
     entity.setIsActive(true);
-    entity.setFuelTypeXId(null != request.getFuelTypeXId() ? request.getFuelTypeXId() : null);
-    entity.setTankXId(null != request.getTankXId() ? request.getTankXId() : null);
-    entity.setPortXId(null != request.getPortXId() ? request.getPortXId() : null);
+    entity.setFuelTypeXId(null != request.getFuelTypeId() ? request.getFuelTypeId() : null);
+    entity.setTankXId(null != request.getTankId() ? request.getTankId() : null);
+    entity.setPortXId(null != request.getPortId() ? request.getPortId() : null);
     entity.setArrivalQuantity(
         isEmpty(request.getArrivalQuantity())
             ? null
@@ -367,10 +367,10 @@ public class LoadableStudyServiceShore {
 
     // entity.setDensity(isEmpty(request.getDensity()) ? null : new
     // BigDecimal(request.getDensity()));
-    if (request.getPortXId() != null) {
+    if (request.getPortId() != null) {
       LoadableStudyPortRotation lsPortRot =
           loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-              entity.getLoadableStudy(), request.getPortXId(), true);
+              entity.getLoadableStudy(), request.getPortId(), true);
       entity.setPortRotation(lsPortRot);
     }
     return entity;

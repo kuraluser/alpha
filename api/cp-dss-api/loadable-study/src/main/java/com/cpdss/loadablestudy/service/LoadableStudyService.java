@@ -260,7 +260,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -5486,7 +5485,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
 
         */
-        AlgoResponse algoResponse =
+       /* AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
         updateProcessIdForLoadableStudy(
             algoResponse.getProcessId(),
@@ -5494,11 +5493,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             LOADABLE_STUDY_PROCESSING_STARTED_ID);
 
         loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
+            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());*/
 
         replyBuilder =
             AlgoReply.newBuilder()
-                .setProcesssId(algoResponse.getProcessId())
+                .setProcesssId("42435656547")
                 .setResponseStatus(
                     ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
 
@@ -6319,9 +6318,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         onHandQuantity -> {
           com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
               new com.cpdss.loadablestudy.domain.OnHandQuantity();
-          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-          onHandQuantityDto =
-              modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
+          onHandQuantityDto.setArrivalQuantity(String.valueOf(onHandQuantity.getArrivalQuantity()));
+          onHandQuantityDto.setDepartureQuantity(
+              String.valueOf(onHandQuantity.getDepartureQuantity()));
+          onHandQuantityDto.setArrivalVolume(String.valueOf(onHandQuantity.getArrivalVolume()));
+          onHandQuantityDto.setDepartureVolume(String.valueOf(onHandQuantity.getDepartureVolume()));
+          onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
+          onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
+          onHandQuantityDto.setFuelTypeId(onHandQuantity.getFuelTypeXId());
+          onHandQuantityDto.setId(onHandQuantity.getId());
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
   }
