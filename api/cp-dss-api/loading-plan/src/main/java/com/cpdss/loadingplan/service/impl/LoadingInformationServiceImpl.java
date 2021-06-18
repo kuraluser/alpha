@@ -70,6 +70,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         .ifPresent(loadingInformation::setVesselXId);
     Optional.ofNullable(loadingInformationDetail.getVoyageId())
         .ifPresent(loadingInformation::setVoyageId);
+    Optional.ofNullable(loadingInformationDetail.getPortRotationId())
+        .ifPresent(loadingInformation::setPortRotationXId);
     loadingInformation.setIsActive(true);
     return loadingInformationRepository.save(loadingInformation);
   }
