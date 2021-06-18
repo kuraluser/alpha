@@ -219,7 +219,7 @@ public class VesselInfoService {
       SelectableParameter parameter = new SelectableParameter();
       parameter.setName(dbValue.getParamterName());
       List<Parameter> parameterValues = new ArrayList<>();
-      if (dbValue.getValuesList().isEmpty()) {
+      if (dbValue.getValuesList()==null||dbValue.getValuesList().isEmpty()) {
         parameterValues.add(createFlowRateParameter(1));
         parameterValues.add(createFlowRateParameter(6));
         parameterValues.add(createFlowRateParameter(7));
