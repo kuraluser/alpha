@@ -12148,8 +12148,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualStartDate()))
                   : null);
         }
-      } else {
-
         // Synchronizing with Loading Plan Microservice
         loadableStudy.get().getPortRotations().stream()
             .filter(portRotation -> portRotation.isActive())
@@ -12194,7 +12192,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             + confirmedLoadablePatternOpt.get().getId());
                   }
                 });
-
+      } else {
         Optional<VoyageStatus> status =
             this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
         if (!status.isPresent()) {
