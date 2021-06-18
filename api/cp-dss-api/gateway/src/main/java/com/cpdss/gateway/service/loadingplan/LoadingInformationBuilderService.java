@@ -14,8 +14,6 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
-import com.cpdss.gateway.domain.loadingplan.StageDuration;
-import com.cpdss.gateway.domain.loadingplan.StageOffset;
 import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +36,7 @@ public class LoadingInformationBuilderService {
     builder.setLoadingDelays(loadingDelayBuilder.build());
     builder.addAllLoadingMachines(buildLoadingMachineries(request.getLoadingMachineries()));
     builder.addAllToppingOffSequence(buildToppingOffSequences(request.getToppingOffSequence()));
-    builder.setLoadingStage(
-        buildLoadingStage(request.getStageDuration(), request.getStageOffset()));
+    builder.setLoadingStage(buildLoadingStage(request));
     return builder.build();
   }
 
@@ -184,16 +181,20 @@ public class LoadingInformationBuilderService {
     return cargoToppingOffList;
   }
 
-  public LoadingStages buildLoadingStage(StageDuration duration, StageOffset offset) {
+  public LoadingStages buildLoadingStage(LoadingInformationRequest request) {
     LoadingStages.Builder builder = LoadingStages.newBuilder();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder
         durationBuilder =
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder();
     StageOffsets.Builder offsetBuilder = StageOffsets.newBuilder();
-    Optional.ofNullable(duration.getId()).ifPresent(durationBuilder::setId);
-    Optional.ofNullable(duration.getDuration()).ifPresent(durationBuilder::setDuration);
-    Optional.ofNullable(offset.getId()).ifPresent(offsetBuilder::setId);
-    Optional.ofNullable(offset.getStageOffsetVal()).ifPresent(offsetBuilder::setStageOffsetVal);
+    Optional.ofNullable(request.getStageDuration().getId()).ifPresent(durationBuilder::setId);
+    Optional.ofNullable(request.getStageDuration().getDuration())
+        .ifPresent(durationBuilder::setDuration);
+    Optional.ofNullable(request.getStageOffset().getId()).ifPresent(offsetBuilder::setId);
+    Optional.ofNullable(request.getStageOffset().getStageOffsetVal())
+        .ifPresent(offsetBuilder::setStageOffsetVal);
+    Optional.ofNullable(request.getTrackGradeSwitch()).ifPresent(builder::setTrackGradeSwitch);
+    Optional.ofNullable(request.getTrackStartEndStage()).ifPresent(builder::setTrackStartEndStage);
     builder.setDuration(durationBuilder.build());
     builder.setOffset(offsetBuilder.build());
     return builder.build();
