@@ -11589,45 +11589,49 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findBySynopticalTableAndLoadablePatternIdAndIsActive(
                   depSynopticRecord.get(), loadablePatterId, true);
       OperationsTable operationsTableData =
-          OperationsTable.builder()
-              .operation(loadableStudyPortRotation.getOperation().getName())
-              .portName(
-                  loadableStudy.getPortDetails().stream()
-                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
-                      .findFirst()
-                      .orElse(new PortDetails())
-                      .getName())
-              .eta(
-                  DateTimeFormatter.ofPattern(ET_FORMAT).format(loadableStudyPortRotation.getEta()))
-              .etd(
-                  DateTimeFormatter.ofPattern(ET_FORMAT).format(loadableStudyPortRotation.getEtd()))
-              .country(
-                  loadableStudy.getPortDetails().stream()
-                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
-                      .findFirst()
-                      .orElse(new PortDetails())
-                      .getCountryName())
-              .laycanRange(
-                  String.format(
-                      "%s / %s",
-                      null != loadableStudyPortRotation.getLayCanFrom()
-                          ? loadableStudyPortRotation.getLayCanFrom()
-                          : "",
-                      null != loadableStudyPortRotation.getLayCanTo()
-                          ? loadableStudyPortRotation.getLayCanTo()
-                          : ""))
-              .arrFwdDraft(
-                  arrSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
-              .depFwdDraft(
-                  depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
-              .arrAftDraft(
-                  arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
-              .depAftDraft(
-                  depSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
-              .arrDisplacement(arrSynopticRecord.get().getDisplacementPlanned().toString())
-              .depDisp(depSynopticRecord.get().getDisplacementPlanned().toString())
-              .build();
-      operationsTableList.add(operationsTableData);
+              OperationsTable.builder()
+                  .operation(loadableStudyPortRotation.getOperation().getName())
+                  .portName(
+                      loadableStudy.getPortDetails().stream()
+                          .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                          .findFirst()
+                          .orElse(new PortDetails())
+                          .getName())
+                  .eta(
+                		  loadableStudyPortRotation.getEta() != null? DateTimeFormatter.ofPattern(ET_FORMAT).format(loadableStudyPortRotation.getEta()) : ""
+                				  )
+                  .etd(
+                		  loadableStudyPortRotation.getEtd() != null ? DateTimeFormatter.ofPattern(ET_FORMAT).format(loadableStudyPortRotation.getEtd()) : ""
+                      )
+                  .country(
+                      loadableStudy.getPortDetails().stream()
+                          .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                          .findFirst()
+                          .orElse(new PortDetails())
+                          .getCountryName())
+                  .laycanRange(
+                      String.format(
+                          "%s / %s",
+                          null != loadableStudyPortRotation.getLayCanFrom()
+                              ? loadableStudyPortRotation.getLayCanFrom()
+                              : "",
+                          null != loadableStudyPortRotation.getLayCanTo()
+                              ? loadableStudyPortRotation.getLayCanTo()
+                              : ""))
+                  .arrFwdDraft(
+                      arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString() : "")
+                  .depFwdDraft(
+                      depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString() : "")
+                  .arrAftDraft(
+                      arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString() : "")
+                  .depAftDraft(
+                      depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString() : "")
+                  .arrDisplacement(
+                	  arrSynopticRecord.get().getDisplacementPlanned() != null ? arrSynopticRecord.get().getDisplacementPlanned().toString() : "")
+                  .depDisp(
+                	  depSynopticRecord.get().getDisplacementPlanned() != null ? depSynopticRecord.get().getDisplacementPlanned().toString() : "")
+                  .build();
+          operationsTableList.add(operationsTableData);
     }
     return PortOperationTable.builder().operationsTableList(operationsTableList).build();
   }
