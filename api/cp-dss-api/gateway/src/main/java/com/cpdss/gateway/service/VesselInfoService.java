@@ -227,16 +227,31 @@ public class VesselInfoService {
       SelectableParameter parameter = new SelectableParameter();
       parameter.setName(dbValue.getParamterName());
       List<Parameter> parameterValues = new ArrayList<>();
-      for (ParameterValue value : dbValue.getValuesList()) {
-        Parameter flowrateValue = new Parameter();
-        flowrateValue.setType(value.getType());
-        flowrateValue.setValue(value.getValue());
-        parameterValues.add(flowrateValue);
+      if (dbValue.getValuesList()==null||dbValue.getValuesList().isEmpty()) {
+        parameterValues.add(createFlowRateParameter(1));
+        parameterValues.add(createFlowRateParameter(6));
+        parameterValues.add(createFlowRateParameter(7));
+        parameterValues.add(createFlowRateParameter(12));
+
+      } else {
+        for (ParameterValue value : dbValue.getValuesList()) {
+          Parameter flowrateValue = new Parameter();
+          flowrateValue.setType(value.getType());
+          flowrateValue.setValue(value.getValue());
+          parameterValues.add(flowrateValue);
+        }
       }
       parameter.setValues(parameterValues);
       selectableParameters.add(parameter);
     }
     return selectableParameters;
+  }
+
+  private Parameter createFlowRateParameter(int type) {
+    Parameter flowrateValue = new Parameter();
+    flowrateValue.setType(type);
+    flowrateValue.setValue("0");
+    return flowrateValue;
   }
 
   /**
