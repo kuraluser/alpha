@@ -12296,8 +12296,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       builder
           .getLoadingInformationDetailBuilder()
           .setSynopticalTableId(synopticalTableOpt.get().getId());
-      builder.getLoadingInformationDetailBuilder()
-              .setPortRotationId(portRotation.getId());
+      builder.getLoadingInformationDetailBuilder().setPortRotationId(portRotation.getId());
     }
     builder
         .getLoadingInformationDetailBuilder()

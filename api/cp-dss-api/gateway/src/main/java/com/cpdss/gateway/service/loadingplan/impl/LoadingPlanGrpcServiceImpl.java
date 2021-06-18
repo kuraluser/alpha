@@ -158,8 +158,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     builder.setVoyageId(voyageId);
     builder.setLoadingPlanId(loadingInfoId);
     if (patternId != null) builder.setLoadingPatternId(patternId);
-    if (portRotationId != null)
-      builder.setPortRotationId(portRotationId);
+    if (portRotationId != null) builder.setPortRotationId(portRotationId);
     LoadingPlanModels.LoadingInformation replay =
         loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
     if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {

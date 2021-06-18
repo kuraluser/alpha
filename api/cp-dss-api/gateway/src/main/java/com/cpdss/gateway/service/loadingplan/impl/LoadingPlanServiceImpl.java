@@ -75,10 +75,13 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-
     LoadingPlanModels.LoadingInformation loadingInfo =
-            this.loadingPlanGrpcService.fetchLoadingInformation(
-                    vesselId, activeVoyage.getId(), planId, activeVoyage.getPatternId(), portRotation.get().getId());
+        this.loadingPlanGrpcService.fetchLoadingInformation(
+            vesselId,
+            activeVoyage.getId(),
+            planId,
+            activeVoyage.getPatternId(),
+            portRotation.get().getId());
 
     log.info(
         "Get Loading Info, Port rotation id is available in Active Voyage, Port Id is {}",
