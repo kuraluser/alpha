@@ -301,5 +301,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         StringUtils.isEmpty(request.getLoadingRate().getNoticeTimeStopLoading())
             ? null
             : Integer.valueOf(request.getLoadingRate().getNoticeTimeStopLoading()));
+    loadingInformation.setTrackGradeSwitch(request.getLoadingStage().getTrackGradeSwitch());
+    loadingInformation.setTrackStartEndStage(request.getLoadingStage().getTrackStartEndStage());
   }
 }

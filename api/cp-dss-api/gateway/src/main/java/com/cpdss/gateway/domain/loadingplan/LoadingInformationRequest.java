@@ -26,4 +26,8 @@ public class LoadingInformationRequest {
   private List<LoadingDelays> loadingDelays;
 
   private List<ToppingOffSequence> toppingOffSequence;
+
+  private Boolean trackStartEndStage;
+
+  private Boolean trackGradeSwitch;
 }
