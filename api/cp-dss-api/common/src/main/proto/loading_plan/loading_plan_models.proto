@@ -14,6 +14,8 @@ message LoadingInformationRequest{
   int64 voyageId = 3;
   int64 loadingPlanId = 4;
   int64 loadingPatternId = 5;
+  int64 portRotationId = 6;
+  int64 synopticTableId = 7;
 }
 
 // Plane response, can edit
@@ -29,6 +31,8 @@ message LoadingInformation{
   LoadingStages loadingStage = 9;
   LoadingDelay loadingDelays = 10;
   repeated LoadingToppingOff toppingOffSequence = 11;
+  int64 loadingInfoId = 12;
+  int64 synopticTableId = 13;
 }
 
 message LoadingDetails{
@@ -155,6 +159,7 @@ message LoadingInformationDetail {
   int64 synopticalTableId = 3;
   int64 vesselId = 4;
   int64 voyageId = 5;
+  int64 portRotationId = 6;
 }
 
 message LoadablePlanBallastDetail {

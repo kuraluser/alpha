@@ -23,7 +23,7 @@ public interface LoadingPlanGrpcService {
   PortInfo.PortDetail fetchPortDetailByPortId(Long portId) throws GenericServiceException;
 
   LoadingPlanModels.LoadingInformation fetchLoadingInformation(
-      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId)
+      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
       throws GenericServiceException;
 
   CargoVesselTankDetails fetchPortWiseCargoDetails(

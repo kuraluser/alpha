@@ -109,4 +109,7 @@ public class LoadingInformation extends EntityDoc {
 
   @OneToMany(mappedBy = "loadingInformation")
   private Set<LoadingMachineryInUse> loadingMachineriesInUse;
+
+  @Column(name = "port_rotation_xid")
+  private Long portRotationXId;
 }

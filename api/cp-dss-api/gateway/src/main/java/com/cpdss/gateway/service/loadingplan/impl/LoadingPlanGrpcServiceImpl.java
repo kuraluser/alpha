@@ -150,7 +150,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public LoadingPlanModels.LoadingInformation fetchLoadingInformation(
-      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId)
+      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
       throws GenericServiceException {
     LoadingPlanModels.LoadingInformationRequest.Builder builder =
         LoadingPlanModels.LoadingInformationRequest.newBuilder();
@@ -158,6 +158,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     builder.setVoyageId(voyageId);
     builder.setLoadingPlanId(loadingInfoId);
     if (patternId != null) builder.setLoadingPatternId(patternId);
+    if (portRotationId != null) builder.setPortRotationId(portRotationId);
     LoadingPlanModels.LoadingInformation replay =
         loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
     if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {
@@ -188,6 +189,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
               request, vesselId, voyageId, loadableStudyId, portId, null);
       cvt.setCargoTanks(rpcResponse.getCargoTanks());
       cvt.setCargoQuantities(rpcResponse.getCargoQuantities());
+      cvt.setCargoConditions(rpcResponse.getCargoConditions());
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }

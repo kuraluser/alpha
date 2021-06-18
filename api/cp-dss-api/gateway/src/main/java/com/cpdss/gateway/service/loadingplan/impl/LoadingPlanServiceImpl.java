@@ -67,10 +67,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     Optional<PortRotation> portRotation =
         activeVoyage.getPortRotations().stream().filter(v -> v.getId().equals(portRId)).findFirst();
 
-    LoadingPlanModels.LoadingInformation loadingInfo =
-        this.loadingPlanGrpcService.fetchLoadingInformation(
-            vesselId, activeVoyage.getId(), planId, null);
-
     if (!portRotation.isPresent() || portRotation.get().getPortId() == null) {
       log.error("Port Rotation Id cannot be empty");
       throw new GenericServiceException(
@@ -78,6 +74,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+
+    LoadingPlanModels.LoadingInformation loadingInfo =
+        this.loadingPlanGrpcService.fetchLoadingInformation(
+            vesselId,
+            activeVoyage.getId(),
+            planId,
+            activeVoyage.getPatternId(),
+            portRotation.get().getId());
+
     log.info(
         "Get Loading Info, Port rotation id is available in Active Voyage, Port Id is {}",
         portRotation.get().getPortId());
@@ -138,6 +143,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     LoadingSequences loadingSequences =
         this.loadingInformationService.getLoadingSequence(loadingInfo.getLoadingDelays());
 
+    var1.setLoadingInfoId(loadingInfo.getLoadingInfoId());
+    var1.setSynopticTableId(loadingInfo.getSynopticTableId());
     var1.setLoadingDetails(loadingDetails);
     var1.setLoadingRates(loadingRates);
     var1.setBerthDetails(new LoadingBerthDetails(masterBerthDetails, loadingBerthDetails));
