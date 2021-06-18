@@ -67,5 +67,6 @@ public class LoadableQuantityCommingleCargoDetails {
 
   private List<CargoToppingOffSequence> toppingSequence;
   private String timeRequiredForLoading;
+  private String tankShortName;
   private Long toppingOffCargoId;
 }

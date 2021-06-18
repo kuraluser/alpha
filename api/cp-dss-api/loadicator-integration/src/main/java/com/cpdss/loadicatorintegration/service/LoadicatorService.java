@@ -225,6 +225,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       otherTankDetails.setShortName(
           StringUtils.isEmpty(ballast.getShortName()) ? null : ballast.getShortName());
       otherTankDetails.setStowagePlan(entity);
+      set.add(otherTankDetails);
     }
     return set;
   }
