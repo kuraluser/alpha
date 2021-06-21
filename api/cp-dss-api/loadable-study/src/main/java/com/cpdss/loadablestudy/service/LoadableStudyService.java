@@ -4082,8 +4082,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         boolean status = this.validateLoadableStudyForConfimPlan(loadableStudy.get());
         builder.setConfirmPlanEligibility(status);
-        com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePatternBuilder =
-            com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
         List<LoadablePattern> loadablePatterns =
             loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
                 loadableStudy.get(), true);
@@ -4094,6 +4092,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             loadableStudy.get().getId());
         loadablePatterns.forEach(
             loadablePattern -> {
+              com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder
+                  loadablePatternBuilder =
+                      com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
               loadablePatternBuilder.setLoadablePatternId(loadablePattern.getId());
               ofNullable(loadableStudy.get().getName()).ifPresent(builder::setLoadableStudyName);
               DateTimeFormatter dateTimeFormatter =
@@ -4103,9 +4104,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .ifPresent(builder::setLoadablePatternCreatedDate);
               ofNullable(loadablePattern.getLoadableStudyStatus())
                   .ifPresent(loadablePatternBuilder::setLoadableStudyStatusId);
-              if (stowageDetailsTempRepository
-                  .findByLoadablePatternAndIsActive(loadablePattern, true)
-                  .isEmpty()) loadablePatternBuilder.setValidated(true);
+              //              if (stowageDetailsTempRepository
+              //                  .findByLoadablePatternAndIsActive(loadablePattern, true)
+              //                  .isEmpty()) loadablePatternBuilder.setValidated(true);
               ofNullable(loadablePattern.getCaseNumber())
                   .ifPresent(loadablePatternBuilder::setCaseNumber);
               List<LoadablePatternAlgoStatus> patternStatus =
