@@ -9,3 +9,20 @@ message ResponseStatus {
 	string code = 3;
 	int32 httpStatusCode = 4;
 }
+
+enum PLANNING_TYPE {
+		VALUE_A = 0;
+		LOADABLE_STUDY = 1;
+		DISCHARGE_STUDY = 2;
+}
+
+message BillOfLadding{
+  int64 id = 1;
+  int64 portId = 2;
+  int64 cargoId = 3;
+  string quantityBbls = 4;
+  string quantityMt = 5;
+  string quantityKl = 6;
+  string api = 7;
+  string temperature = 8;
+}

@@ -10357,6 +10357,3431 @@ public final class PortInfo {
     }
   }
 
+  public interface PortIdRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:PortIdRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 portId = 1;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+  }
+  /** Protobuf type {@code PortIdRequest} */
+  public static final class PortIdRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:PortIdRequest)
+      PortIdRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use PortIdRequest.newBuilder() to construct.
+    private PortIdRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private PortIdRequest() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new PortIdRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private PortIdRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_PortIdRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo.internal_static_PortIdRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.PortIdRequest.class,
+              com.cpdss.common.generated.PortInfo.PortIdRequest.Builder.class);
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 1;
+    private long portId_;
+    /**
+     * <code>int64 portId = 1;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (portId_ != 0L) {
+        output.writeInt64(1, portId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, portId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.PortIdRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.PortIdRequest other =
+          (com.cpdss.common.generated.PortInfo.PortIdRequest) obj;
+
+      if (getPortId() != other.getPortId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.PortInfo.PortIdRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code PortIdRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:PortIdRequest)
+        com.cpdss.common.generated.PortInfo.PortIdRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo.internal_static_PortIdRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo.internal_static_PortIdRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.PortIdRequest.class,
+                com.cpdss.common.generated.PortInfo.PortIdRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.PortIdRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        portId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo.internal_static_PortIdRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.PortIdRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.PortIdRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.PortIdRequest build() {
+        com.cpdss.common.generated.PortInfo.PortIdRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.PortIdRequest buildPartial() {
+        com.cpdss.common.generated.PortInfo.PortIdRequest result =
+            new com.cpdss.common.generated.PortInfo.PortIdRequest(this);
+        result.portId_ = portId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.PortIdRequest) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.PortIdRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.PortIdRequest other) {
+        if (other == com.cpdss.common.generated.PortInfo.PortIdRequest.getDefaultInstance())
+          return this;
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.PortIdRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.PortIdRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 1;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 1;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:PortIdRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:PortIdRequest)
+    private static final com.cpdss.common.generated.PortInfo.PortIdRequest DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.PortIdRequest();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.PortIdRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PortIdRequest> PARSER =
+        new com.google.protobuf.AbstractParser<PortIdRequest>() {
+          @java.lang.Override
+          public PortIdRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new PortIdRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<PortIdRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PortIdRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.PortIdRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface BerthInfoResponseOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:BerthInfoResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> getBerthsList();
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    com.cpdss.common.generated.PortInfo.BerthDetail getBerths(int index);
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    int getBerthsCount();
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+        getBerthsOrBuilderList();
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder getBerthsOrBuilder(int index);
+  }
+  /** Protobuf type {@code BerthInfoResponse} */
+  public static final class BerthInfoResponse extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:BerthInfoResponse)
+      BerthInfoResponseOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use BerthInfoResponse.newBuilder() to construct.
+    private BerthInfoResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private BerthInfoResponse() {
+      berths_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new BerthInfoResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private BerthInfoResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  berths_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.PortInfo.BerthDetail>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                berths_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.PortInfo.BerthDetail.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          berths_ = java.util.Collections.unmodifiableList(berths_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_BerthInfoResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo
+          .internal_static_BerthInfoResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.BerthInfoResponse.class,
+              com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int BERTHS_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> berths_;
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> getBerthsList() {
+      return berths_;
+    }
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+        getBerthsOrBuilderList() {
+      return berths_;
+    }
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    public int getBerthsCount() {
+      return berths_.size();
+    }
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    public com.cpdss.common.generated.PortInfo.BerthDetail getBerths(int index) {
+      return berths_.get(index);
+    }
+    /** <code>repeated .BerthDetail berths = 2;</code> */
+    public com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder getBerthsOrBuilder(int index) {
+      return berths_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < berths_.size(); i++) {
+        output.writeMessage(2, berths_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < berths_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, berths_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.BerthInfoResponse)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.BerthInfoResponse other =
+          (com.cpdss.common.generated.PortInfo.BerthInfoResponse) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!getBerthsList().equals(other.getBerthsList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getBerthsCount() > 0) {
+        hash = (37 * hash) + BERTHS_FIELD_NUMBER;
+        hash = (53 * hash) + getBerthsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.PortInfo.BerthInfoResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code BerthInfoResponse} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:BerthInfoResponse)
+        com.cpdss.common.generated.PortInfo.BerthInfoResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo.internal_static_BerthInfoResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo
+            .internal_static_BerthInfoResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.BerthInfoResponse.class,
+                com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.BerthInfoResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getBerthsFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (berthsBuilder_ == null) {
+          berths_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          berthsBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo.internal_static_BerthInfoResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthInfoResponse getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.BerthInfoResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthInfoResponse build() {
+        com.cpdss.common.generated.PortInfo.BerthInfoResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthInfoResponse buildPartial() {
+        com.cpdss.common.generated.PortInfo.BerthInfoResponse result =
+            new com.cpdss.common.generated.PortInfo.BerthInfoResponse(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (berthsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            berths_ = java.util.Collections.unmodifiableList(berths_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.berths_ = berths_;
+        } else {
+          result.berths_ = berthsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.BerthInfoResponse) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.BerthInfoResponse) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.BerthInfoResponse other) {
+        if (other == com.cpdss.common.generated.PortInfo.BerthInfoResponse.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (berthsBuilder_ == null) {
+          if (!other.berths_.isEmpty()) {
+            if (berths_.isEmpty()) {
+              berths_ = other.berths_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureBerthsIsMutable();
+              berths_.addAll(other.berths_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.berths_.isEmpty()) {
+            if (berthsBuilder_.isEmpty()) {
+              berthsBuilder_.dispose();
+              berthsBuilder_ = null;
+              berths_ = other.berths_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              berthsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getBerthsFieldBuilder()
+                      : null;
+            } else {
+              berthsBuilder_.addAllMessages(other.berths_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.BerthInfoResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.BerthInfoResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> berths_ =
+          java.util.Collections.emptyList();
+
+      private void ensureBerthsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          berths_ =
+              new java.util.ArrayList<com.cpdss.common.generated.PortInfo.BerthDetail>(berths_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.BerthDetail,
+              com.cpdss.common.generated.PortInfo.BerthDetail.Builder,
+              com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+          berthsBuilder_;
+
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> getBerthsList() {
+        if (berthsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(berths_);
+        } else {
+          return berthsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public int getBerthsCount() {
+        if (berthsBuilder_ == null) {
+          return berths_.size();
+        } else {
+          return berthsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail getBerths(int index) {
+        if (berthsBuilder_ == null) {
+          return berths_.get(index);
+        } else {
+          return berthsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder setBerths(int index, com.cpdss.common.generated.PortInfo.BerthDetail value) {
+        if (berthsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBerthsIsMutable();
+          berths_.set(index, value);
+          onChanged();
+        } else {
+          berthsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder setBerths(
+          int index, com.cpdss.common.generated.PortInfo.BerthDetail.Builder builderForValue) {
+        if (berthsBuilder_ == null) {
+          ensureBerthsIsMutable();
+          berths_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          berthsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder addBerths(com.cpdss.common.generated.PortInfo.BerthDetail value) {
+        if (berthsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBerthsIsMutable();
+          berths_.add(value);
+          onChanged();
+        } else {
+          berthsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder addBerths(int index, com.cpdss.common.generated.PortInfo.BerthDetail value) {
+        if (berthsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBerthsIsMutable();
+          berths_.add(index, value);
+          onChanged();
+        } else {
+          berthsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder addBerths(
+          com.cpdss.common.generated.PortInfo.BerthDetail.Builder builderForValue) {
+        if (berthsBuilder_ == null) {
+          ensureBerthsIsMutable();
+          berths_.add(builderForValue.build());
+          onChanged();
+        } else {
+          berthsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder addBerths(
+          int index, com.cpdss.common.generated.PortInfo.BerthDetail.Builder builderForValue) {
+        if (berthsBuilder_ == null) {
+          ensureBerthsIsMutable();
+          berths_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          berthsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder addAllBerths(
+          java.lang.Iterable<? extends com.cpdss.common.generated.PortInfo.BerthDetail> values) {
+        if (berthsBuilder_ == null) {
+          ensureBerthsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, berths_);
+          onChanged();
+        } else {
+          berthsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder clearBerths() {
+        if (berthsBuilder_ == null) {
+          berths_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          berthsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public Builder removeBerths(int index) {
+        if (berthsBuilder_ == null) {
+          ensureBerthsIsMutable();
+          berths_.remove(index);
+          onChanged();
+        } else {
+          berthsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail.Builder getBerthsBuilder(int index) {
+        return getBerthsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder getBerthsOrBuilder(
+          int index) {
+        if (berthsBuilder_ == null) {
+          return berths_.get(index);
+        } else {
+          return berthsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+          getBerthsOrBuilderList() {
+        if (berthsBuilder_ != null) {
+          return berthsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(berths_);
+        }
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail.Builder addBerthsBuilder() {
+        return getBerthsFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.PortInfo.BerthDetail.getDefaultInstance());
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail.Builder addBerthsBuilder(int index) {
+        return getBerthsFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.PortInfo.BerthDetail.getDefaultInstance());
+      }
+      /** <code>repeated .BerthDetail berths = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail.Builder>
+          getBerthsBuilderList() {
+        return getBerthsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.BerthDetail,
+              com.cpdss.common.generated.PortInfo.BerthDetail.Builder,
+              com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+          getBerthsFieldBuilder() {
+        if (berthsBuilder_ == null) {
+          berthsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.PortInfo.BerthDetail,
+                  com.cpdss.common.generated.PortInfo.BerthDetail.Builder,
+                  com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>(
+                  berths_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          berths_ = null;
+        }
+        return berthsBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:BerthInfoResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:BerthInfoResponse)
+    private static final com.cpdss.common.generated.PortInfo.BerthInfoResponse DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.BerthInfoResponse();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthInfoResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BerthInfoResponse> PARSER =
+        new com.google.protobuf.AbstractParser<BerthInfoResponse>() {
+          @java.lang.Override
+          public BerthInfoResponse parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new BerthInfoResponse(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<BerthInfoResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BerthInfoResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.BerthInfoResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface BerthDetailOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:BerthDetail)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>int64 portId = 2;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+
+    /**
+     * <code>int64 loadingInfoId = 12;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    long getLoadingInfoId();
+
+    /**
+     * <code>string maxShipChannel = 3;</code>
+     *
+     * @return The maxShipChannel.
+     */
+    java.lang.String getMaxShipChannel();
+    /**
+     * <code>string maxShipChannel = 3;</code>
+     *
+     * @return The bytes for maxShipChannel.
+     */
+    com.google.protobuf.ByteString getMaxShipChannelBytes();
+
+    /**
+     * <code>string berthName = 4;</code>
+     *
+     * @return The berthName.
+     */
+    java.lang.String getBerthName();
+    /**
+     * <code>string berthName = 4;</code>
+     *
+     * @return The bytes for berthName.
+     */
+    com.google.protobuf.ByteString getBerthNameBytes();
+
+    /**
+     * <code>string maxShipDepth = 5;</code>
+     *
+     * @return The maxShipDepth.
+     */
+    java.lang.String getMaxShipDepth();
+    /**
+     * <code>string maxShipDepth = 5;</code>
+     *
+     * @return The bytes for maxShipDepth.
+     */
+    com.google.protobuf.ByteString getMaxShipDepthBytes();
+
+    /**
+     * <code>string seaDraftLimitation = 6;</code>
+     *
+     * @return The seaDraftLimitation.
+     */
+    java.lang.String getSeaDraftLimitation();
+    /**
+     * <code>string seaDraftLimitation = 6;</code>
+     *
+     * @return The bytes for seaDraftLimitation.
+     */
+    com.google.protobuf.ByteString getSeaDraftLimitationBytes();
+
+    /**
+     * <code>string airDraftLimitation = 7;</code>
+     *
+     * @return The airDraftLimitation.
+     */
+    java.lang.String getAirDraftLimitation();
+    /**
+     * <code>string airDraftLimitation = 7;</code>
+     *
+     * @return The bytes for airDraftLimitation.
+     */
+    com.google.protobuf.ByteString getAirDraftLimitationBytes();
+
+    /**
+     * <code>string maxManifoldHeight = 8;</code>
+     *
+     * @return The maxManifoldHeight.
+     */
+    java.lang.String getMaxManifoldHeight();
+    /**
+     * <code>string maxManifoldHeight = 8;</code>
+     *
+     * @return The bytes for maxManifoldHeight.
+     */
+    com.google.protobuf.ByteString getMaxManifoldHeightBytes();
+
+    /**
+     * <code>string regulationAndRestriction = 9;</code>
+     *
+     * @return The regulationAndRestriction.
+     */
+    java.lang.String getRegulationAndRestriction();
+    /**
+     * <code>string regulationAndRestriction = 9;</code>
+     *
+     * @return The bytes for regulationAndRestriction.
+     */
+    com.google.protobuf.ByteString getRegulationAndRestrictionBytes();
+
+    /**
+     * <code>string maxLoa = 10;</code>
+     *
+     * @return The maxLoa.
+     */
+    java.lang.String getMaxLoa();
+    /**
+     * <code>string maxLoa = 10;</code>
+     *
+     * @return The bytes for maxLoa.
+     */
+    com.google.protobuf.ByteString getMaxLoaBytes();
+
+    /**
+     * <code>string maxDraft = 11;</code>
+     *
+     * @return The maxDraft.
+     */
+    java.lang.String getMaxDraft();
+    /**
+     * <code>string maxDraft = 11;</code>
+     *
+     * @return The bytes for maxDraft.
+     */
+    com.google.protobuf.ByteString getMaxDraftBytes();
+  }
+  /** Protobuf type {@code BerthDetail} */
+  public static final class BerthDetail extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:BerthDetail)
+      BerthDetailOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use BerthDetail.newBuilder() to construct.
+    private BerthDetail(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private BerthDetail() {
+      maxShipChannel_ = "";
+      berthName_ = "";
+      maxShipDepth_ = "";
+      seaDraftLimitation_ = "";
+      airDraftLimitation_ = "";
+      maxManifoldHeight_ = "";
+      regulationAndRestriction_ = "";
+      maxLoa_ = "";
+      maxDraft_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new BerthDetail();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private BerthDetail(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxShipChannel_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                berthName_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxShipDepth_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                seaDraftLimitation_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                airDraftLimitation_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxManifoldHeight_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                regulationAndRestriction_ = s;
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxLoa_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxDraft_ = s;
+                break;
+              }
+            case 96:
+              {
+                loadingInfoId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_BerthDetail_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo.internal_static_BerthDetail_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.BerthDetail.class,
+              com.cpdss.common.generated.PortInfo.BerthDetail.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 2;
+    private long portId_;
+    /**
+     * <code>int64 portId = 2;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    public static final int LOADINGINFOID_FIELD_NUMBER = 12;
+    private long loadingInfoId_;
+    /**
+     * <code>int64 loadingInfoId = 12;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    public long getLoadingInfoId() {
+      return loadingInfoId_;
+    }
+
+    public static final int MAXSHIPCHANNEL_FIELD_NUMBER = 3;
+    private volatile java.lang.Object maxShipChannel_;
+    /**
+     * <code>string maxShipChannel = 3;</code>
+     *
+     * @return The maxShipChannel.
+     */
+    public java.lang.String getMaxShipChannel() {
+      java.lang.Object ref = maxShipChannel_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxShipChannel_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxShipChannel = 3;</code>
+     *
+     * @return The bytes for maxShipChannel.
+     */
+    public com.google.protobuf.ByteString getMaxShipChannelBytes() {
+      java.lang.Object ref = maxShipChannel_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxShipChannel_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BERTHNAME_FIELD_NUMBER = 4;
+    private volatile java.lang.Object berthName_;
+    /**
+     * <code>string berthName = 4;</code>
+     *
+     * @return The berthName.
+     */
+    public java.lang.String getBerthName() {
+      java.lang.Object ref = berthName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        berthName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string berthName = 4;</code>
+     *
+     * @return The bytes for berthName.
+     */
+    public com.google.protobuf.ByteString getBerthNameBytes() {
+      java.lang.Object ref = berthName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        berthName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXSHIPDEPTH_FIELD_NUMBER = 5;
+    private volatile java.lang.Object maxShipDepth_;
+    /**
+     * <code>string maxShipDepth = 5;</code>
+     *
+     * @return The maxShipDepth.
+     */
+    public java.lang.String getMaxShipDepth() {
+      java.lang.Object ref = maxShipDepth_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxShipDepth_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxShipDepth = 5;</code>
+     *
+     * @return The bytes for maxShipDepth.
+     */
+    public com.google.protobuf.ByteString getMaxShipDepthBytes() {
+      java.lang.Object ref = maxShipDepth_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxShipDepth_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SEADRAFTLIMITATION_FIELD_NUMBER = 6;
+    private volatile java.lang.Object seaDraftLimitation_;
+    /**
+     * <code>string seaDraftLimitation = 6;</code>
+     *
+     * @return The seaDraftLimitation.
+     */
+    public java.lang.String getSeaDraftLimitation() {
+      java.lang.Object ref = seaDraftLimitation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        seaDraftLimitation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string seaDraftLimitation = 6;</code>
+     *
+     * @return The bytes for seaDraftLimitation.
+     */
+    public com.google.protobuf.ByteString getSeaDraftLimitationBytes() {
+      java.lang.Object ref = seaDraftLimitation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        seaDraftLimitation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AIRDRAFTLIMITATION_FIELD_NUMBER = 7;
+    private volatile java.lang.Object airDraftLimitation_;
+    /**
+     * <code>string airDraftLimitation = 7;</code>
+     *
+     * @return The airDraftLimitation.
+     */
+    public java.lang.String getAirDraftLimitation() {
+      java.lang.Object ref = airDraftLimitation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        airDraftLimitation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string airDraftLimitation = 7;</code>
+     *
+     * @return The bytes for airDraftLimitation.
+     */
+    public com.google.protobuf.ByteString getAirDraftLimitationBytes() {
+      java.lang.Object ref = airDraftLimitation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        airDraftLimitation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXMANIFOLDHEIGHT_FIELD_NUMBER = 8;
+    private volatile java.lang.Object maxManifoldHeight_;
+    /**
+     * <code>string maxManifoldHeight = 8;</code>
+     *
+     * @return The maxManifoldHeight.
+     */
+    public java.lang.String getMaxManifoldHeight() {
+      java.lang.Object ref = maxManifoldHeight_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxManifoldHeight_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxManifoldHeight = 8;</code>
+     *
+     * @return The bytes for maxManifoldHeight.
+     */
+    public com.google.protobuf.ByteString getMaxManifoldHeightBytes() {
+      java.lang.Object ref = maxManifoldHeight_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxManifoldHeight_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int REGULATIONANDRESTRICTION_FIELD_NUMBER = 9;
+    private volatile java.lang.Object regulationAndRestriction_;
+    /**
+     * <code>string regulationAndRestriction = 9;</code>
+     *
+     * @return The regulationAndRestriction.
+     */
+    public java.lang.String getRegulationAndRestriction() {
+      java.lang.Object ref = regulationAndRestriction_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        regulationAndRestriction_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string regulationAndRestriction = 9;</code>
+     *
+     * @return The bytes for regulationAndRestriction.
+     */
+    public com.google.protobuf.ByteString getRegulationAndRestrictionBytes() {
+      java.lang.Object ref = regulationAndRestriction_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        regulationAndRestriction_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXLOA_FIELD_NUMBER = 10;
+    private volatile java.lang.Object maxLoa_;
+    /**
+     * <code>string maxLoa = 10;</code>
+     *
+     * @return The maxLoa.
+     */
+    public java.lang.String getMaxLoa() {
+      java.lang.Object ref = maxLoa_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxLoa_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxLoa = 10;</code>
+     *
+     * @return The bytes for maxLoa.
+     */
+    public com.google.protobuf.ByteString getMaxLoaBytes() {
+      java.lang.Object ref = maxLoa_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxLoa_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXDRAFT_FIELD_NUMBER = 11;
+    private volatile java.lang.Object maxDraft_;
+    /**
+     * <code>string maxDraft = 11;</code>
+     *
+     * @return The maxDraft.
+     */
+    public java.lang.String getMaxDraft() {
+      java.lang.Object ref = maxDraft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxDraft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxDraft = 11;</code>
+     *
+     * @return The bytes for maxDraft.
+     */
+    public com.google.protobuf.ByteString getMaxDraftBytes() {
+      java.lang.Object ref = maxDraft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxDraft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(2, portId_);
+      }
+      if (!getMaxShipChannelBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, maxShipChannel_);
+      }
+      if (!getBerthNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, berthName_);
+      }
+      if (!getMaxShipDepthBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, maxShipDepth_);
+      }
+      if (!getSeaDraftLimitationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, seaDraftLimitation_);
+      }
+      if (!getAirDraftLimitationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, airDraftLimitation_);
+      }
+      if (!getMaxManifoldHeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, maxManifoldHeight_);
+      }
+      if (!getRegulationAndRestrictionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, regulationAndRestriction_);
+      }
+      if (!getMaxLoaBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, maxLoa_);
+      }
+      if (!getMaxDraftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, maxDraft_);
+      }
+      if (loadingInfoId_ != 0L) {
+        output.writeInt64(12, loadingInfoId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, portId_);
+      }
+      if (!getMaxShipChannelBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, maxShipChannel_);
+      }
+      if (!getBerthNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, berthName_);
+      }
+      if (!getMaxShipDepthBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, maxShipDepth_);
+      }
+      if (!getSeaDraftLimitationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, seaDraftLimitation_);
+      }
+      if (!getAirDraftLimitationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, airDraftLimitation_);
+      }
+      if (!getMaxManifoldHeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, maxManifoldHeight_);
+      }
+      if (!getRegulationAndRestrictionBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(9, regulationAndRestriction_);
+      }
+      if (!getMaxLoaBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, maxLoa_);
+      }
+      if (!getMaxDraftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, maxDraft_);
+      }
+      if (loadingInfoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, loadingInfoId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.BerthDetail)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.BerthDetail other =
+          (com.cpdss.common.generated.PortInfo.BerthDetail) obj;
+
+      if (getId() != other.getId()) return false;
+      if (getPortId() != other.getPortId()) return false;
+      if (getLoadingInfoId() != other.getLoadingInfoId()) return false;
+      if (!getMaxShipChannel().equals(other.getMaxShipChannel())) return false;
+      if (!getBerthName().equals(other.getBerthName())) return false;
+      if (!getMaxShipDepth().equals(other.getMaxShipDepth())) return false;
+      if (!getSeaDraftLimitation().equals(other.getSeaDraftLimitation())) return false;
+      if (!getAirDraftLimitation().equals(other.getAirDraftLimitation())) return false;
+      if (!getMaxManifoldHeight().equals(other.getMaxManifoldHeight())) return false;
+      if (!getRegulationAndRestriction().equals(other.getRegulationAndRestriction())) return false;
+      if (!getMaxLoa().equals(other.getMaxLoa())) return false;
+      if (!getMaxDraft().equals(other.getMaxDraft())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      hash = (37 * hash) + LOADINGINFOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadingInfoId());
+      hash = (37 * hash) + MAXSHIPCHANNEL_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxShipChannel().hashCode();
+      hash = (37 * hash) + BERTHNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getBerthName().hashCode();
+      hash = (37 * hash) + MAXSHIPDEPTH_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxShipDepth().hashCode();
+      hash = (37 * hash) + SEADRAFTLIMITATION_FIELD_NUMBER;
+      hash = (53 * hash) + getSeaDraftLimitation().hashCode();
+      hash = (37 * hash) + AIRDRAFTLIMITATION_FIELD_NUMBER;
+      hash = (53 * hash) + getAirDraftLimitation().hashCode();
+      hash = (37 * hash) + MAXMANIFOLDHEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxManifoldHeight().hashCode();
+      hash = (37 * hash) + REGULATIONANDRESTRICTION_FIELD_NUMBER;
+      hash = (53 * hash) + getRegulationAndRestriction().hashCode();
+      hash = (37 * hash) + MAXLOA_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxLoa().hashCode();
+      hash = (37 * hash) + MAXDRAFT_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxDraft().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.PortInfo.BerthDetail prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code BerthDetail} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:BerthDetail)
+        com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo.internal_static_BerthDetail_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo.internal_static_BerthDetail_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.BerthDetail.class,
+                com.cpdss.common.generated.PortInfo.BerthDetail.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.BerthDetail.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        portId_ = 0L;
+
+        loadingInfoId_ = 0L;
+
+        maxShipChannel_ = "";
+
+        berthName_ = "";
+
+        maxShipDepth_ = "";
+
+        seaDraftLimitation_ = "";
+
+        airDraftLimitation_ = "";
+
+        maxManifoldHeight_ = "";
+
+        regulationAndRestriction_ = "";
+
+        maxLoa_ = "";
+
+        maxDraft_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo.internal_static_BerthDetail_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthDetail getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.BerthDetail.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthDetail build() {
+        com.cpdss.common.generated.PortInfo.BerthDetail result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthDetail buildPartial() {
+        com.cpdss.common.generated.PortInfo.BerthDetail result =
+            new com.cpdss.common.generated.PortInfo.BerthDetail(this);
+        result.id_ = id_;
+        result.portId_ = portId_;
+        result.loadingInfoId_ = loadingInfoId_;
+        result.maxShipChannel_ = maxShipChannel_;
+        result.berthName_ = berthName_;
+        result.maxShipDepth_ = maxShipDepth_;
+        result.seaDraftLimitation_ = seaDraftLimitation_;
+        result.airDraftLimitation_ = airDraftLimitation_;
+        result.maxManifoldHeight_ = maxManifoldHeight_;
+        result.regulationAndRestriction_ = regulationAndRestriction_;
+        result.maxLoa_ = maxLoa_;
+        result.maxDraft_ = maxDraft_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.BerthDetail) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.BerthDetail) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.BerthDetail other) {
+        if (other == com.cpdss.common.generated.PortInfo.BerthDetail.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        if (other.getLoadingInfoId() != 0L) {
+          setLoadingInfoId(other.getLoadingInfoId());
+        }
+        if (!other.getMaxShipChannel().isEmpty()) {
+          maxShipChannel_ = other.maxShipChannel_;
+          onChanged();
+        }
+        if (!other.getBerthName().isEmpty()) {
+          berthName_ = other.berthName_;
+          onChanged();
+        }
+        if (!other.getMaxShipDepth().isEmpty()) {
+          maxShipDepth_ = other.maxShipDepth_;
+          onChanged();
+        }
+        if (!other.getSeaDraftLimitation().isEmpty()) {
+          seaDraftLimitation_ = other.seaDraftLimitation_;
+          onChanged();
+        }
+        if (!other.getAirDraftLimitation().isEmpty()) {
+          airDraftLimitation_ = other.airDraftLimitation_;
+          onChanged();
+        }
+        if (!other.getMaxManifoldHeight().isEmpty()) {
+          maxManifoldHeight_ = other.maxManifoldHeight_;
+          onChanged();
+        }
+        if (!other.getRegulationAndRestriction().isEmpty()) {
+          regulationAndRestriction_ = other.regulationAndRestriction_;
+          onChanged();
+        }
+        if (!other.getMaxLoa().isEmpty()) {
+          maxLoa_ = other.maxLoa_;
+          onChanged();
+        }
+        if (!other.getMaxDraft().isEmpty()) {
+          maxDraft_ = other.maxDraft_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.BerthDetail parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.BerthDetail) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long loadingInfoId_;
+      /**
+       * <code>int64 loadingInfoId = 12;</code>
+       *
+       * @return The loadingInfoId.
+       */
+      public long getLoadingInfoId() {
+        return loadingInfoId_;
+      }
+      /**
+       * <code>int64 loadingInfoId = 12;</code>
+       *
+       * @param value The loadingInfoId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingInfoId(long value) {
+
+        loadingInfoId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadingInfoId = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingInfoId() {
+
+        loadingInfoId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxShipChannel_ = "";
+      /**
+       * <code>string maxShipChannel = 3;</code>
+       *
+       * @return The maxShipChannel.
+       */
+      public java.lang.String getMaxShipChannel() {
+        java.lang.Object ref = maxShipChannel_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxShipChannel_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxShipChannel = 3;</code>
+       *
+       * @return The bytes for maxShipChannel.
+       */
+      public com.google.protobuf.ByteString getMaxShipChannelBytes() {
+        java.lang.Object ref = maxShipChannel_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxShipChannel_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxShipChannel = 3;</code>
+       *
+       * @param value The maxShipChannel to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxShipChannel(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxShipChannel_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxShipChannel = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxShipChannel() {
+
+        maxShipChannel_ = getDefaultInstance().getMaxShipChannel();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxShipChannel = 3;</code>
+       *
+       * @param value The bytes for maxShipChannel to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxShipChannelBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxShipChannel_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object berthName_ = "";
+      /**
+       * <code>string berthName = 4;</code>
+       *
+       * @return The berthName.
+       */
+      public java.lang.String getBerthName() {
+        java.lang.Object ref = berthName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          berthName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string berthName = 4;</code>
+       *
+       * @return The bytes for berthName.
+       */
+      public com.google.protobuf.ByteString getBerthNameBytes() {
+        java.lang.Object ref = berthName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          berthName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string berthName = 4;</code>
+       *
+       * @param value The berthName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBerthName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        berthName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string berthName = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBerthName() {
+
+        berthName_ = getDefaultInstance().getBerthName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string berthName = 4;</code>
+       *
+       * @param value The bytes for berthName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBerthNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        berthName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxShipDepth_ = "";
+      /**
+       * <code>string maxShipDepth = 5;</code>
+       *
+       * @return The maxShipDepth.
+       */
+      public java.lang.String getMaxShipDepth() {
+        java.lang.Object ref = maxShipDepth_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxShipDepth_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxShipDepth = 5;</code>
+       *
+       * @return The bytes for maxShipDepth.
+       */
+      public com.google.protobuf.ByteString getMaxShipDepthBytes() {
+        java.lang.Object ref = maxShipDepth_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxShipDepth_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxShipDepth = 5;</code>
+       *
+       * @param value The maxShipDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxShipDepth(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxShipDepth_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxShipDepth = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxShipDepth() {
+
+        maxShipDepth_ = getDefaultInstance().getMaxShipDepth();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxShipDepth = 5;</code>
+       *
+       * @param value The bytes for maxShipDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxShipDepthBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxShipDepth_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object seaDraftLimitation_ = "";
+      /**
+       * <code>string seaDraftLimitation = 6;</code>
+       *
+       * @return The seaDraftLimitation.
+       */
+      public java.lang.String getSeaDraftLimitation() {
+        java.lang.Object ref = seaDraftLimitation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          seaDraftLimitation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string seaDraftLimitation = 6;</code>
+       *
+       * @return The bytes for seaDraftLimitation.
+       */
+      public com.google.protobuf.ByteString getSeaDraftLimitationBytes() {
+        java.lang.Object ref = seaDraftLimitation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          seaDraftLimitation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string seaDraftLimitation = 6;</code>
+       *
+       * @param value The seaDraftLimitation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSeaDraftLimitation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        seaDraftLimitation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string seaDraftLimitation = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSeaDraftLimitation() {
+
+        seaDraftLimitation_ = getDefaultInstance().getSeaDraftLimitation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string seaDraftLimitation = 6;</code>
+       *
+       * @param value The bytes for seaDraftLimitation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSeaDraftLimitationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        seaDraftLimitation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object airDraftLimitation_ = "";
+      /**
+       * <code>string airDraftLimitation = 7;</code>
+       *
+       * @return The airDraftLimitation.
+       */
+      public java.lang.String getAirDraftLimitation() {
+        java.lang.Object ref = airDraftLimitation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          airDraftLimitation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string airDraftLimitation = 7;</code>
+       *
+       * @return The bytes for airDraftLimitation.
+       */
+      public com.google.protobuf.ByteString getAirDraftLimitationBytes() {
+        java.lang.Object ref = airDraftLimitation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          airDraftLimitation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string airDraftLimitation = 7;</code>
+       *
+       * @param value The airDraftLimitation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAirDraftLimitation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        airDraftLimitation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string airDraftLimitation = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAirDraftLimitation() {
+
+        airDraftLimitation_ = getDefaultInstance().getAirDraftLimitation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string airDraftLimitation = 7;</code>
+       *
+       * @param value The bytes for airDraftLimitation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAirDraftLimitationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        airDraftLimitation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxManifoldHeight_ = "";
+      /**
+       * <code>string maxManifoldHeight = 8;</code>
+       *
+       * @return The maxManifoldHeight.
+       */
+      public java.lang.String getMaxManifoldHeight() {
+        java.lang.Object ref = maxManifoldHeight_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxManifoldHeight_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxManifoldHeight = 8;</code>
+       *
+       * @return The bytes for maxManifoldHeight.
+       */
+      public com.google.protobuf.ByteString getMaxManifoldHeightBytes() {
+        java.lang.Object ref = maxManifoldHeight_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxManifoldHeight_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxManifoldHeight = 8;</code>
+       *
+       * @param value The maxManifoldHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxManifoldHeight(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxManifoldHeight_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxManifoldHeight = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxManifoldHeight() {
+
+        maxManifoldHeight_ = getDefaultInstance().getMaxManifoldHeight();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxManifoldHeight = 8;</code>
+       *
+       * @param value The bytes for maxManifoldHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxManifoldHeightBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxManifoldHeight_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object regulationAndRestriction_ = "";
+      /**
+       * <code>string regulationAndRestriction = 9;</code>
+       *
+       * @return The regulationAndRestriction.
+       */
+      public java.lang.String getRegulationAndRestriction() {
+        java.lang.Object ref = regulationAndRestriction_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          regulationAndRestriction_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string regulationAndRestriction = 9;</code>
+       *
+       * @return The bytes for regulationAndRestriction.
+       */
+      public com.google.protobuf.ByteString getRegulationAndRestrictionBytes() {
+        java.lang.Object ref = regulationAndRestriction_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          regulationAndRestriction_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string regulationAndRestriction = 9;</code>
+       *
+       * @param value The regulationAndRestriction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRegulationAndRestriction(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        regulationAndRestriction_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string regulationAndRestriction = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRegulationAndRestriction() {
+
+        regulationAndRestriction_ = getDefaultInstance().getRegulationAndRestriction();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string regulationAndRestriction = 9;</code>
+       *
+       * @param value The bytes for regulationAndRestriction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRegulationAndRestrictionBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        regulationAndRestriction_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxLoa_ = "";
+      /**
+       * <code>string maxLoa = 10;</code>
+       *
+       * @return The maxLoa.
+       */
+      public java.lang.String getMaxLoa() {
+        java.lang.Object ref = maxLoa_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxLoa_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxLoa = 10;</code>
+       *
+       * @return The bytes for maxLoa.
+       */
+      public com.google.protobuf.ByteString getMaxLoaBytes() {
+        java.lang.Object ref = maxLoa_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxLoa_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxLoa = 10;</code>
+       *
+       * @param value The maxLoa to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxLoa(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxLoa_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxLoa = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxLoa() {
+
+        maxLoa_ = getDefaultInstance().getMaxLoa();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxLoa = 10;</code>
+       *
+       * @param value The bytes for maxLoa to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxLoaBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxLoa_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxDraft_ = "";
+      /**
+       * <code>string maxDraft = 11;</code>
+       *
+       * @return The maxDraft.
+       */
+      public java.lang.String getMaxDraft() {
+        java.lang.Object ref = maxDraft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxDraft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxDraft = 11;</code>
+       *
+       * @return The bytes for maxDraft.
+       */
+      public com.google.protobuf.ByteString getMaxDraftBytes() {
+        java.lang.Object ref = maxDraft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxDraft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxDraft = 11;</code>
+       *
+       * @param value The maxDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxDraft(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxDraft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxDraft = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxDraft() {
+
+        maxDraft_ = getDefaultInstance().getMaxDraft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxDraft = 11;</code>
+       *
+       * @param value The bytes for maxDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxDraftBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxDraft_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:BerthDetail)
+    }
+
+    // @@protoc_insertion_point(class_scope:BerthDetail)
+    private static final com.cpdss.common.generated.PortInfo.BerthDetail DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.BerthDetail();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthDetail getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BerthDetail> PARSER =
+        new com.google.protobuf.AbstractParser<BerthDetail>() {
+          @java.lang.Override
+          public BerthDetail parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new BerthDetail(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<BerthDetail> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BerthDetail> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.BerthDetail getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_GetPortInfoByPortIdsRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -10397,6 +13822,18 @@ public final class PortInfo {
       internal_static_TimezoneResponse_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_TimezoneResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_PortIdRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_PortIdRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_BerthInfoResponse_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BerthInfoResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_BerthDetail_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BerthDetail_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -10434,18 +13871,30 @@ public final class PortInfo {
           + "\001(\t\022\023\n\013offsetValue\030\003 \001(\t\022\024\n\014abbreviation"
           + "\030\004 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016responseSt"
           + "atus\030\001 \001(\0132\017.ResponseStatus\022\034\n\ttimezones"
-          + "\030\002 \003(\0132\t.Timezone2\221\003\n\017PortInfoService\022)\n"
-          + "\013GetPortInfo\022\014.PortRequest\032\n.PortReply\"\000"
-          + "\022R\n\024GetPortInfoByCargoId\022\034.GetPortInfoBy"
-          + "CargoIdRequest\032\032.GetPortInfoByCargoIdRep"
-          + "ly\"\000\022B\n\024GetPortInfoByPortIds\022\034.GetPortIn"
-          + "foByPortIdsRequest\032\n.PortReply\"\000\022G\n\031GetP"
-          + "ortInfoDetailsForAlgo\022\034.GetPortInfoByPor"
-          + "tIdsRequest\032\n.PortReply\"\000\0225\n\013GetTimezone"
-          + "\022\021.PortEmptyRequest\032\021.TimezoneResponse\"\000"
-          + "\022;\n\023GetPortInfoByPaging\022\026.PortRequestWit"
-          + "hPaging\032\n.PortReply\"\000B\036\n\032com.cpdss.commo"
-          + "n.generatedP\000b\006proto3"
+          + "\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006po"
+          + "rtId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006bert"
+          + "hs\030\002 \003(\0132\014.BerthDetail\"\230\002\n\013BerthDetail\022\n"
+          + "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingInf"
+          + "oId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tber"
+          + "thName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022se"
+          + "aDraftLimitation\030\006 \001(\t\022\032\n\022airDraftLimita"
+          + "tion\030\007 \001(\t\022\031\n\021maxManifoldHeight\030\010 \001(\t\022 \n"
+          + "\030regulationAndRestriction\030\t \001(\t\022\016\n\006maxLo"
+          + "a\030\n \001(\t\022\020\n\010maxDraft\030\013 \001(\t2\322\003\n\017PortInfoSe"
+          + "rvice\022)\n\013GetPortInfo\022\014.PortRequest\032\n.Por"
+          + "tReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.GetPo"
+          + "rtInfoByCargoIdRequest\032\032.GetPortInfoByCa"
+          + "rgoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034.G"
+          + "etPortInfoByPortIdsRequest\032\n.PortReply\"\000"
+          + "\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPortI"
+          + "nfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013Get"
+          + "Timezone\022\021.PortEmptyRequest\032\021.TimezoneRe"
+          + "sponse\"\000\022;\n\023GetPortInfoByPaging\022\026.PortRe"
+          + "questWithPaging\032\n.PortReply\"\000\022?\n\027GetBert"
+          + "hDetailsByPortId\022\016.PortIdRequest\032\022.Berth"
+          + "InfoResponse\"\000B\036\n\032com.cpdss.common.gener"
+          + "atedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -10543,6 +13992,38 @@ public final class PortInfo {
             internal_static_TimezoneResponse_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Timezones",
+            });
+    internal_static_PortIdRequest_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_PortIdRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_PortIdRequest_descriptor,
+            new java.lang.String[] {
+              "PortId",
+            });
+    internal_static_BerthInfoResponse_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_BerthInfoResponse_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_BerthInfoResponse_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "Berths",
+            });
+    internal_static_BerthDetail_descriptor = getDescriptor().getMessageTypes().get(12);
+    internal_static_BerthDetail_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_BerthDetail_descriptor,
+            new java.lang.String[] {
+              "Id",
+              "PortId",
+              "LoadingInfoId",
+              "MaxShipChannel",
+              "BerthName",
+              "MaxShipDepth",
+              "SeaDraftLimitation",
+              "AirDraftLimitation",
+              "MaxManifoldHeight",
+              "RegulationAndRestriction",
+              "MaxLoa",
+              "MaxDraft",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

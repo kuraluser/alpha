@@ -15392,6 +15392,20 @@ public final class VesselInfo {
     /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
     com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder
         getUllageTrimCorrectionOrBuilder(int index);
+
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.SelectableParameter>
+        getSelectableParameterList();
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    com.cpdss.common.generated.VesselInfo.SelectableParameter getSelectableParameter(int index);
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    int getSelectableParameterCount();
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder>
+        getSelectableParameterOrBuilderList();
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder
+        getSelectableParameterOrBuilder(int index);
   }
   /** Protobuf type {@code VesselAlgoReply} */
   public static final class VesselAlgoReply extends com.google.protobuf.GeneratedMessageV3
@@ -15411,6 +15425,7 @@ public final class VesselInfo {
       vesselTankTCG_ = java.util.Collections.emptyList();
       ullageDetails_ = java.util.Collections.emptyList();
       ullageTrimCorrection_ = java.util.Collections.emptyList();
+      selectableParameter_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -15577,6 +15592,20 @@ public final class VesselInfo {
                         extensionRegistry));
                 break;
               }
+            case 82:
+              {
+                if (!((mutable_bitField0_ & 0x00000040) != 0)) {
+                  selectableParameter_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.SelectableParameter>();
+                  mutable_bitField0_ |= 0x00000040;
+                }
+                selectableParameter_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.SelectableParameter.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -15608,6 +15637,9 @@ public final class VesselInfo {
         }
         if (((mutable_bitField0_ & 0x00000020) != 0)) {
           ullageTrimCorrection_ = java.util.Collections.unmodifiableList(ullageTrimCorrection_);
+        }
+        if (((mutable_bitField0_ & 0x00000040) != 0)) {
+          selectableParameter_ = java.util.Collections.unmodifiableList(selectableParameter_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -15866,6 +15898,35 @@ public final class VesselInfo {
       return ullageTrimCorrection_.get(index);
     }
 
+    public static final int SELECTABLEPARAMETER_FIELD_NUMBER = 10;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.SelectableParameter>
+        selectableParameter_;
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.SelectableParameter>
+        getSelectableParameterList() {
+      return selectableParameter_;
+    }
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder>
+        getSelectableParameterOrBuilderList() {
+      return selectableParameter_;
+    }
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    public int getSelectableParameterCount() {
+      return selectableParameter_.size();
+    }
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    public com.cpdss.common.generated.VesselInfo.SelectableParameter getSelectableParameter(
+        int index) {
+      return selectableParameter_.get(index);
+    }
+    /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+    public com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder
+        getSelectableParameterOrBuilder(int index) {
+      return selectableParameter_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -15906,6 +15967,9 @@ public final class VesselInfo {
       }
       for (int i = 0; i < ullageTrimCorrection_.size(); i++) {
         output.writeMessage(9, ullageTrimCorrection_.get(i));
+      }
+      for (int i = 0; i < selectableParameter_.size(); i++) {
+        output.writeMessage(10, selectableParameter_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -15949,6 +16013,11 @@ public final class VesselInfo {
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 9, ullageTrimCorrection_.get(i));
       }
+      for (int i = 0; i < selectableParameter_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                10, selectableParameter_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -15983,6 +16052,7 @@ public final class VesselInfo {
       }
       if (!getUllageDetailsList().equals(other.getUllageDetailsList())) return false;
       if (!getUllageTrimCorrectionList().equals(other.getUllageTrimCorrectionList())) return false;
+      if (!getSelectableParameterList().equals(other.getSelectableParameterList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -16029,6 +16099,10 @@ public final class VesselInfo {
       if (getUllageTrimCorrectionCount() > 0) {
         hash = (37 * hash) + ULLAGETRIMCORRECTION_FIELD_NUMBER;
         hash = (53 * hash) + getUllageTrimCorrectionList().hashCode();
+      }
+      if (getSelectableParameterCount() > 0) {
+        hash = (37 * hash) + SELECTABLEPARAMETER_FIELD_NUMBER;
+        hash = (53 * hash) + getSelectableParameterList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -16170,6 +16244,7 @@ public final class VesselInfo {
           getVesselTankTCGFieldBuilder();
           getUllageDetailsFieldBuilder();
           getUllageTrimCorrectionFieldBuilder();
+          getSelectableParameterFieldBuilder();
         }
       }
 
@@ -16229,6 +16304,12 @@ public final class VesselInfo {
           bitField0_ = (bitField0_ & ~0x00000020);
         } else {
           ullageTrimCorrectionBuilder_.clear();
+        }
+        if (selectableParameterBuilder_ == null) {
+          selectableParameter_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+        } else {
+          selectableParameterBuilder_.clear();
         }
         return this;
       }
@@ -16325,6 +16406,15 @@ public final class VesselInfo {
           result.ullageTrimCorrection_ = ullageTrimCorrection_;
         } else {
           result.ullageTrimCorrection_ = ullageTrimCorrectionBuilder_.build();
+        }
+        if (selectableParameterBuilder_ == null) {
+          if (((bitField0_ & 0x00000040) != 0)) {
+            selectableParameter_ = java.util.Collections.unmodifiableList(selectableParameter_);
+            bitField0_ = (bitField0_ & ~0x00000040);
+          }
+          result.selectableParameter_ = selectableParameter_;
+        } else {
+          result.selectableParameter_ = selectableParameterBuilder_.build();
         }
         onBuilt();
         return result;
@@ -16546,6 +16636,33 @@ public final class VesselInfo {
                       : null;
             } else {
               ullageTrimCorrectionBuilder_.addAllMessages(other.ullageTrimCorrection_);
+            }
+          }
+        }
+        if (selectableParameterBuilder_ == null) {
+          if (!other.selectableParameter_.isEmpty()) {
+            if (selectableParameter_.isEmpty()) {
+              selectableParameter_ = other.selectableParameter_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+            } else {
+              ensureSelectableParameterIsMutable();
+              selectableParameter_.addAll(other.selectableParameter_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.selectableParameter_.isEmpty()) {
+            if (selectableParameterBuilder_.isEmpty()) {
+              selectableParameterBuilder_.dispose();
+              selectableParameterBuilder_ = null;
+              selectableParameter_ = other.selectableParameter_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+              selectableParameterBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getSelectableParameterFieldBuilder()
+                      : null;
+            } else {
+              selectableParameterBuilder_.addAllMessages(other.selectableParameter_);
             }
           }
         }
@@ -18278,6 +18395,233 @@ public final class VesselInfo {
         return ullageTrimCorrectionBuilder_;
       }
 
+      private java.util.List<com.cpdss.common.generated.VesselInfo.SelectableParameter>
+          selectableParameter_ = java.util.Collections.emptyList();
+
+      private void ensureSelectableParameterIsMutable() {
+        if (!((bitField0_ & 0x00000040) != 0)) {
+          selectableParameter_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.SelectableParameter>(
+                  selectableParameter_);
+          bitField0_ |= 0x00000040;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.SelectableParameter,
+              com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder,
+              com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder>
+          selectableParameterBuilder_;
+
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.SelectableParameter>
+          getSelectableParameterList() {
+        if (selectableParameterBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(selectableParameter_);
+        } else {
+          return selectableParameterBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public int getSelectableParameterCount() {
+        if (selectableParameterBuilder_ == null) {
+          return selectableParameter_.size();
+        } else {
+          return selectableParameterBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public com.cpdss.common.generated.VesselInfo.SelectableParameter getSelectableParameter(
+          int index) {
+        if (selectableParameterBuilder_ == null) {
+          return selectableParameter_.get(index);
+        } else {
+          return selectableParameterBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder setSelectableParameter(
+          int index, com.cpdss.common.generated.VesselInfo.SelectableParameter value) {
+        if (selectableParameterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSelectableParameterIsMutable();
+          selectableParameter_.set(index, value);
+          onChanged();
+        } else {
+          selectableParameterBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder setSelectableParameter(
+          int index,
+          com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder builderForValue) {
+        if (selectableParameterBuilder_ == null) {
+          ensureSelectableParameterIsMutable();
+          selectableParameter_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          selectableParameterBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder addSelectableParameter(
+          com.cpdss.common.generated.VesselInfo.SelectableParameter value) {
+        if (selectableParameterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSelectableParameterIsMutable();
+          selectableParameter_.add(value);
+          onChanged();
+        } else {
+          selectableParameterBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder addSelectableParameter(
+          int index, com.cpdss.common.generated.VesselInfo.SelectableParameter value) {
+        if (selectableParameterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSelectableParameterIsMutable();
+          selectableParameter_.add(index, value);
+          onChanged();
+        } else {
+          selectableParameterBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder addSelectableParameter(
+          com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder builderForValue) {
+        if (selectableParameterBuilder_ == null) {
+          ensureSelectableParameterIsMutable();
+          selectableParameter_.add(builderForValue.build());
+          onChanged();
+        } else {
+          selectableParameterBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder addSelectableParameter(
+          int index,
+          com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder builderForValue) {
+        if (selectableParameterBuilder_ == null) {
+          ensureSelectableParameterIsMutable();
+          selectableParameter_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          selectableParameterBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder addAllSelectableParameter(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.SelectableParameter>
+              values) {
+        if (selectableParameterBuilder_ == null) {
+          ensureSelectableParameterIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, selectableParameter_);
+          onChanged();
+        } else {
+          selectableParameterBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder clearSelectableParameter() {
+        if (selectableParameterBuilder_ == null) {
+          selectableParameter_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+          onChanged();
+        } else {
+          selectableParameterBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public Builder removeSelectableParameter(int index) {
+        if (selectableParameterBuilder_ == null) {
+          ensureSelectableParameterIsMutable();
+          selectableParameter_.remove(index);
+          onChanged();
+        } else {
+          selectableParameterBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder
+          getSelectableParameterBuilder(int index) {
+        return getSelectableParameterFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder
+          getSelectableParameterOrBuilder(int index) {
+        if (selectableParameterBuilder_ == null) {
+          return selectableParameter_.get(index);
+        } else {
+          return selectableParameterBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder>
+          getSelectableParameterOrBuilderList() {
+        if (selectableParameterBuilder_ != null) {
+          return selectableParameterBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(selectableParameter_);
+        }
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder
+          addSelectableParameterBuilder() {
+        return getSelectableParameterFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.VesselInfo.SelectableParameter.getDefaultInstance());
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder
+          addSelectableParameterBuilder(int index) {
+        return getSelectableParameterFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.VesselInfo.SelectableParameter.getDefaultInstance());
+      }
+      /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder>
+          getSelectableParameterBuilderList() {
+        return getSelectableParameterFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.SelectableParameter,
+              com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder,
+              com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder>
+          getSelectableParameterFieldBuilder() {
+        if (selectableParameterBuilder_ == null) {
+          selectableParameterBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.SelectableParameter,
+                  com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder,
+                  com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder>(
+                  selectableParameter_,
+                  ((bitField0_ & 0x00000040) != 0),
+                  getParentForChildren(),
+                  isClean());
+          selectableParameter_ = null;
+        }
+        return selectableParameterBuilder_;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -18326,6 +18670,1561 @@ public final class VesselInfo {
 
     @java.lang.Override
     public com.cpdss.common.generated.VesselInfo.VesselAlgoReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface SelectableParameterOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SelectableParameter)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string paramterName = 1;</code>
+     *
+     * @return The paramterName.
+     */
+    java.lang.String getParamterName();
+    /**
+     * <code>string paramterName = 1;</code>
+     *
+     * @return The bytes for paramterName.
+     */
+    com.google.protobuf.ByteString getParamterNameBytes();
+
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.ParameterValue> getValuesList();
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.ParameterValue getValues(int index);
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    int getValuesCount();
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder>
+        getValuesOrBuilderList();
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder getValuesOrBuilder(int index);
+  }
+  /** Protobuf type {@code SelectableParameter} */
+  public static final class SelectableParameter extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SelectableParameter)
+      SelectableParameterOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SelectableParameter.newBuilder() to construct.
+    private SelectableParameter(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SelectableParameter() {
+      paramterName_ = "";
+      values_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SelectableParameter();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SelectableParameter(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                paramterName_ = s;
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  values_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.ParameterValue>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                values_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.ParameterValue.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          values_ = java.util.Collections.unmodifiableList(values_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_SelectableParameter_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_SelectableParameter_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.SelectableParameter.class,
+              com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder.class);
+    }
+
+    public static final int PARAMTERNAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object paramterName_;
+    /**
+     * <code>string paramterName = 1;</code>
+     *
+     * @return The paramterName.
+     */
+    public java.lang.String getParamterName() {
+      java.lang.Object ref = paramterName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        paramterName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string paramterName = 1;</code>
+     *
+     * @return The bytes for paramterName.
+     */
+    public com.google.protobuf.ByteString getParamterNameBytes() {
+      java.lang.Object ref = paramterName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        paramterName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int VALUES_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.ParameterValue> values_;
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.ParameterValue> getValuesList() {
+      return values_;
+    }
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder>
+        getValuesOrBuilderList() {
+      return values_;
+    }
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    public int getValuesCount() {
+      return values_.size();
+    }
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.ParameterValue getValues(int index) {
+      return values_.get(index);
+    }
+    /** <code>repeated .ParameterValue values = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder getValuesOrBuilder(
+        int index) {
+      return values_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (!getParamterNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, paramterName_);
+      }
+      for (int i = 0; i < values_.size(); i++) {
+        output.writeMessage(2, values_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getParamterNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, paramterName_);
+      }
+      for (int i = 0; i < values_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, values_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.SelectableParameter)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.SelectableParameter other =
+          (com.cpdss.common.generated.VesselInfo.SelectableParameter) obj;
+
+      if (!getParamterName().equals(other.getParamterName())) return false;
+      if (!getValuesList().equals(other.getValuesList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PARAMTERNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getParamterName().hashCode();
+      if (getValuesCount() > 0) {
+        hash = (37 * hash) + VALUES_FIELD_NUMBER;
+        hash = (53 * hash) + getValuesList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.SelectableParameter prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SelectableParameter} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SelectableParameter)
+        com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_SelectableParameter_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_SelectableParameter_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.SelectableParameter.class,
+                com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.SelectableParameter.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getValuesFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        paramterName_ = "";
+
+        if (valuesBuilder_ == null) {
+          values_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          valuesBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_SelectableParameter_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.SelectableParameter getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.SelectableParameter.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.SelectableParameter build() {
+        com.cpdss.common.generated.VesselInfo.SelectableParameter result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.SelectableParameter buildPartial() {
+        com.cpdss.common.generated.VesselInfo.SelectableParameter result =
+            new com.cpdss.common.generated.VesselInfo.SelectableParameter(this);
+        int from_bitField0_ = bitField0_;
+        result.paramterName_ = paramterName_;
+        if (valuesBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            values_ = java.util.Collections.unmodifiableList(values_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.values_ = values_;
+        } else {
+          result.values_ = valuesBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.SelectableParameter) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.SelectableParameter) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.SelectableParameter other) {
+        if (other == com.cpdss.common.generated.VesselInfo.SelectableParameter.getDefaultInstance())
+          return this;
+        if (!other.getParamterName().isEmpty()) {
+          paramterName_ = other.paramterName_;
+          onChanged();
+        }
+        if (valuesBuilder_ == null) {
+          if (!other.values_.isEmpty()) {
+            if (values_.isEmpty()) {
+              values_ = other.values_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureValuesIsMutable();
+              values_.addAll(other.values_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.values_.isEmpty()) {
+            if (valuesBuilder_.isEmpty()) {
+              valuesBuilder_.dispose();
+              valuesBuilder_ = null;
+              values_ = other.values_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              valuesBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getValuesFieldBuilder()
+                      : null;
+            } else {
+              valuesBuilder_.addAllMessages(other.values_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.SelectableParameter parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.SelectableParameter) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.lang.Object paramterName_ = "";
+      /**
+       * <code>string paramterName = 1;</code>
+       *
+       * @return The paramterName.
+       */
+      public java.lang.String getParamterName() {
+        java.lang.Object ref = paramterName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          paramterName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string paramterName = 1;</code>
+       *
+       * @return The bytes for paramterName.
+       */
+      public com.google.protobuf.ByteString getParamterNameBytes() {
+        java.lang.Object ref = paramterName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          paramterName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string paramterName = 1;</code>
+       *
+       * @param value The paramterName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setParamterName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        paramterName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string paramterName = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearParamterName() {
+
+        paramterName_ = getDefaultInstance().getParamterName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string paramterName = 1;</code>
+       *
+       * @param value The bytes for paramterName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setParamterNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        paramterName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.ParameterValue> values_ =
+          java.util.Collections.emptyList();
+
+      private void ensureValuesIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          values_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.ParameterValue>(
+                  values_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.ParameterValue,
+              com.cpdss.common.generated.VesselInfo.ParameterValue.Builder,
+              com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder>
+          valuesBuilder_;
+
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.ParameterValue> getValuesList() {
+        if (valuesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(values_);
+        } else {
+          return valuesBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public int getValuesCount() {
+        if (valuesBuilder_ == null) {
+          return values_.size();
+        } else {
+          return valuesBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.ParameterValue getValues(int index) {
+        if (valuesBuilder_ == null) {
+          return values_.get(index);
+        } else {
+          return valuesBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder setValues(
+          int index, com.cpdss.common.generated.VesselInfo.ParameterValue value) {
+        if (valuesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValuesIsMutable();
+          values_.set(index, value);
+          onChanged();
+        } else {
+          valuesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder setValues(
+          int index, com.cpdss.common.generated.VesselInfo.ParameterValue.Builder builderForValue) {
+        if (valuesBuilder_ == null) {
+          ensureValuesIsMutable();
+          values_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          valuesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder addValues(com.cpdss.common.generated.VesselInfo.ParameterValue value) {
+        if (valuesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValuesIsMutable();
+          values_.add(value);
+          onChanged();
+        } else {
+          valuesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder addValues(
+          int index, com.cpdss.common.generated.VesselInfo.ParameterValue value) {
+        if (valuesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValuesIsMutable();
+          values_.add(index, value);
+          onChanged();
+        } else {
+          valuesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder addValues(
+          com.cpdss.common.generated.VesselInfo.ParameterValue.Builder builderForValue) {
+        if (valuesBuilder_ == null) {
+          ensureValuesIsMutable();
+          values_.add(builderForValue.build());
+          onChanged();
+        } else {
+          valuesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder addValues(
+          int index, com.cpdss.common.generated.VesselInfo.ParameterValue.Builder builderForValue) {
+        if (valuesBuilder_ == null) {
+          ensureValuesIsMutable();
+          values_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          valuesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder addAllValues(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.ParameterValue>
+              values) {
+        if (valuesBuilder_ == null) {
+          ensureValuesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, values_);
+          onChanged();
+        } else {
+          valuesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder clearValues() {
+        if (valuesBuilder_ == null) {
+          values_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          valuesBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public Builder removeValues(int index) {
+        if (valuesBuilder_ == null) {
+          ensureValuesIsMutable();
+          values_.remove(index);
+          onChanged();
+        } else {
+          valuesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.ParameterValue.Builder getValuesBuilder(
+          int index) {
+        return getValuesFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder getValuesOrBuilder(
+          int index) {
+        if (valuesBuilder_ == null) {
+          return values_.get(index);
+        } else {
+          return valuesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder>
+          getValuesOrBuilderList() {
+        if (valuesBuilder_ != null) {
+          return valuesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(values_);
+        }
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.ParameterValue.Builder addValuesBuilder() {
+        return getValuesFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.ParameterValue.getDefaultInstance());
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.ParameterValue.Builder addValuesBuilder(
+          int index) {
+        return getValuesFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.ParameterValue.getDefaultInstance());
+      }
+      /** <code>repeated .ParameterValue values = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.ParameterValue.Builder>
+          getValuesBuilderList() {
+        return getValuesFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.ParameterValue,
+              com.cpdss.common.generated.VesselInfo.ParameterValue.Builder,
+              com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder>
+          getValuesFieldBuilder() {
+        if (valuesBuilder_ == null) {
+          valuesBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.ParameterValue,
+                  com.cpdss.common.generated.VesselInfo.ParameterValue.Builder,
+                  com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder>(
+                  values_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          values_ = null;
+        }
+        return valuesBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SelectableParameter)
+    }
+
+    // @@protoc_insertion_point(class_scope:SelectableParameter)
+    private static final com.cpdss.common.generated.VesselInfo.SelectableParameter DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.SelectableParameter();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.SelectableParameter getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SelectableParameter> PARSER =
+        new com.google.protobuf.AbstractParser<SelectableParameter>() {
+          @java.lang.Override
+          public SelectableParameter parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SelectableParameter(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SelectableParameter> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SelectableParameter> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.SelectableParameter getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface ParameterValueOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:ParameterValue)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 type = 1;</code>
+     *
+     * @return The type.
+     */
+    long getType();
+
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The value.
+     */
+    java.lang.String getValue();
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The bytes for value.
+     */
+    com.google.protobuf.ByteString getValueBytes();
+  }
+  /** Protobuf type {@code ParameterValue} */
+  public static final class ParameterValue extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:ParameterValue)
+      ParameterValueOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use ParameterValue.newBuilder() to construct.
+    private ParameterValue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private ParameterValue() {
+      value_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new ParameterValue();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private ParameterValue(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                type_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                value_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ParameterValue_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ParameterValue_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.ParameterValue.class,
+              com.cpdss.common.generated.VesselInfo.ParameterValue.Builder.class);
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private long type_;
+    /**
+     * <code>int64 type = 1;</code>
+     *
+     * @return The type.
+     */
+    public long getType() {
+      return type_;
+    }
+
+    public static final int VALUE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object value_;
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The value.
+     */
+    public java.lang.String getValue() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        value_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The bytes for value.
+     */
+    public com.google.protobuf.ByteString getValueBytes() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        value_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (type_ != 0L) {
+        output.writeInt64(1, type_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, value_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (type_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, type_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, value_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.ParameterValue)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.ParameterValue other =
+          (com.cpdss.common.generated.VesselInfo.ParameterValue) obj;
+
+      if (getType() != other.getType()) return false;
+      if (!getValue().equals(other.getValue())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getType());
+      hash = (37 * hash) + VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getValue().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.ParameterValue prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code ParameterValue} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:ParameterValue)
+        com.cpdss.common.generated.VesselInfo.ParameterValueOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ParameterValue_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_ParameterValue_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.ParameterValue.class,
+                com.cpdss.common.generated.VesselInfo.ParameterValue.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.ParameterValue.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        type_ = 0L;
+
+        value_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ParameterValue_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ParameterValue getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.ParameterValue.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ParameterValue build() {
+        com.cpdss.common.generated.VesselInfo.ParameterValue result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ParameterValue buildPartial() {
+        com.cpdss.common.generated.VesselInfo.ParameterValue result =
+            new com.cpdss.common.generated.VesselInfo.ParameterValue(this);
+        result.type_ = type_;
+        result.value_ = value_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.ParameterValue) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.ParameterValue) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.ParameterValue other) {
+        if (other == com.cpdss.common.generated.VesselInfo.ParameterValue.getDefaultInstance())
+          return this;
+        if (other.getType() != 0L) {
+          setType(other.getType());
+        }
+        if (!other.getValue().isEmpty()) {
+          value_ = other.value_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.ParameterValue parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.ParameterValue) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long type_;
+      /**
+       * <code>int64 type = 1;</code>
+       *
+       * @return The type.
+       */
+      public long getType() {
+        return type_;
+      }
+      /**
+       * <code>int64 type = 1;</code>
+       *
+       * @param value The type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setType(long value) {
+
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 type = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearType() {
+
+        type_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object value_ = "";
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return The value.
+       */
+      public java.lang.String getValue() {
+        java.lang.Object ref = value_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          value_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return The bytes for value.
+       */
+      public com.google.protobuf.ByteString getValueBytes() {
+        java.lang.Object ref = value_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          value_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @param value The value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValue(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValue() {
+
+        value_ = getDefaultInstance().getValue();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @param value The bytes for value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValueBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:ParameterValue)
+    }
+
+    // @@protoc_insertion_point(class_scope:ParameterValue)
+    private static final com.cpdss.common.generated.VesselInfo.ParameterValue DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.ParameterValue();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ParameterValue getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ParameterValue> PARSER =
+        new com.google.protobuf.AbstractParser<ParameterValue>() {
+          @java.lang.Override
+          public ParameterValue parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new ParameterValue(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<ParameterValue> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ParameterValue> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.ParameterValue getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
   }
@@ -44739,6 +46638,8766 @@ public final class VesselInfo {
     }
   }
 
+  public interface VesselPumpsResponseOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:VesselPumpsResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> getPumpTypeList();
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.PumpType getPumpType(int index);
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    int getPumpTypeCount();
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+        getPumpTypeOrBuilderList();
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder getPumpTypeOrBuilder(int index);
+
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> getVesselPumpList();
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselPump getVesselPump(int index);
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    int getVesselPumpCount();
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+        getVesselPumpOrBuilderList();
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder getVesselPumpOrBuilder(int index);
+  }
+  /** Protobuf type {@code VesselPumpsResponse} */
+  public static final class VesselPumpsResponse extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:VesselPumpsResponse)
+      VesselPumpsResponseOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use VesselPumpsResponse.newBuilder() to construct.
+    private VesselPumpsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private VesselPumpsResponse() {
+      pumpType_ = java.util.Collections.emptyList();
+      vesselPump_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new VesselPumpsResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private VesselPumpsResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  pumpType_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.PumpType>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                pumpType_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.PumpType.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 26:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  vesselPump_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselPump>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                vesselPump_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.VesselPump.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          pumpType_ = java.util.Collections.unmodifiableList(pumpType_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          vesselPump_ = java.util.Collections.unmodifiableList(vesselPump_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_VesselPumpsResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselPumpsResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.class,
+              com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int PUMPTYPE_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> pumpType_;
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> getPumpTypeList() {
+      return pumpType_;
+    }
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+        getPumpTypeOrBuilderList() {
+      return pumpType_;
+    }
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    public int getPumpTypeCount() {
+      return pumpType_.size();
+    }
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.PumpType getPumpType(int index) {
+      return pumpType_.get(index);
+    }
+    /** <code>repeated .PumpType pumpType = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder getPumpTypeOrBuilder(int index) {
+      return pumpType_.get(index);
+    }
+
+    public static final int VESSELPUMP_FIELD_NUMBER = 3;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> vesselPump_;
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> getVesselPumpList() {
+      return vesselPump_;
+    }
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+        getVesselPumpOrBuilderList() {
+      return vesselPump_;
+    }
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    public int getVesselPumpCount() {
+      return vesselPump_.size();
+    }
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselPump getVesselPump(int index) {
+      return vesselPump_.get(index);
+    }
+    /** <code>repeated .VesselPump vesselPump = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder getVesselPumpOrBuilder(
+        int index) {
+      return vesselPump_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < pumpType_.size(); i++) {
+        output.writeMessage(2, pumpType_.get(i));
+      }
+      for (int i = 0; i < vesselPump_.size(); i++) {
+        output.writeMessage(3, vesselPump_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < pumpType_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, pumpType_.get(i));
+      }
+      for (int i = 0; i < vesselPump_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, vesselPump_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.VesselPumpsResponse)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.VesselPumpsResponse other =
+          (com.cpdss.common.generated.VesselInfo.VesselPumpsResponse) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!getPumpTypeList().equals(other.getPumpTypeList())) return false;
+      if (!getVesselPumpList().equals(other.getVesselPumpList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getPumpTypeCount() > 0) {
+        hash = (37 * hash) + PUMPTYPE_FIELD_NUMBER;
+        hash = (53 * hash) + getPumpTypeList().hashCode();
+      }
+      if (getVesselPumpCount() > 0) {
+        hash = (37 * hash) + VESSELPUMP_FIELD_NUMBER;
+        hash = (53 * hash) + getVesselPumpList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code VesselPumpsResponse} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:VesselPumpsResponse)
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselPumpsResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselPumpsResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.class,
+                com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getPumpTypeFieldBuilder();
+          getVesselPumpFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (pumpTypeBuilder_ == null) {
+          pumpType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          pumpTypeBuilder_.clear();
+        }
+        if (vesselPumpBuilder_ == null) {
+          vesselPump_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          vesselPumpBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselPumpsResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselPumpsResponse getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselPumpsResponse build() {
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselPumpsResponse buildPartial() {
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponse result =
+            new com.cpdss.common.generated.VesselInfo.VesselPumpsResponse(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (pumpTypeBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            pumpType_ = java.util.Collections.unmodifiableList(pumpType_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.pumpType_ = pumpType_;
+        } else {
+          result.pumpType_ = pumpTypeBuilder_.build();
+        }
+        if (vesselPumpBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            vesselPump_ = java.util.Collections.unmodifiableList(vesselPump_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.vesselPump_ = vesselPump_;
+        } else {
+          result.vesselPump_ = vesselPumpBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.VesselPumpsResponse) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.VesselPumpsResponse) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.VesselPumpsResponse other) {
+        if (other == com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (pumpTypeBuilder_ == null) {
+          if (!other.pumpType_.isEmpty()) {
+            if (pumpType_.isEmpty()) {
+              pumpType_ = other.pumpType_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensurePumpTypeIsMutable();
+              pumpType_.addAll(other.pumpType_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.pumpType_.isEmpty()) {
+            if (pumpTypeBuilder_.isEmpty()) {
+              pumpTypeBuilder_.dispose();
+              pumpTypeBuilder_ = null;
+              pumpType_ = other.pumpType_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              pumpTypeBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getPumpTypeFieldBuilder()
+                      : null;
+            } else {
+              pumpTypeBuilder_.addAllMessages(other.pumpType_);
+            }
+          }
+        }
+        if (vesselPumpBuilder_ == null) {
+          if (!other.vesselPump_.isEmpty()) {
+            if (vesselPump_.isEmpty()) {
+              vesselPump_ = other.vesselPump_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureVesselPumpIsMutable();
+              vesselPump_.addAll(other.vesselPump_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vesselPump_.isEmpty()) {
+            if (vesselPumpBuilder_.isEmpty()) {
+              vesselPumpBuilder_.dispose();
+              vesselPumpBuilder_ = null;
+              vesselPump_ = other.vesselPump_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              vesselPumpBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVesselPumpFieldBuilder()
+                      : null;
+            } else {
+              vesselPumpBuilder_.addAllMessages(other.vesselPump_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.VesselPumpsResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> pumpType_ =
+          java.util.Collections.emptyList();
+
+      private void ensurePumpTypeIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          pumpType_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.PumpType>(pumpType_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.PumpType,
+              com.cpdss.common.generated.VesselInfo.PumpType.Builder,
+              com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+          pumpTypeBuilder_;
+
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> getPumpTypeList() {
+        if (pumpTypeBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(pumpType_);
+        } else {
+          return pumpTypeBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public int getPumpTypeCount() {
+        if (pumpTypeBuilder_ == null) {
+          return pumpType_.size();
+        } else {
+          return pumpTypeBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType getPumpType(int index) {
+        if (pumpTypeBuilder_ == null) {
+          return pumpType_.get(index);
+        } else {
+          return pumpTypeBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder setPumpType(int index, com.cpdss.common.generated.VesselInfo.PumpType value) {
+        if (pumpTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePumpTypeIsMutable();
+          pumpType_.set(index, value);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder setPumpType(
+          int index, com.cpdss.common.generated.VesselInfo.PumpType.Builder builderForValue) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          pumpTypeBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder addPumpType(com.cpdss.common.generated.VesselInfo.PumpType value) {
+        if (pumpTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePumpTypeIsMutable();
+          pumpType_.add(value);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder addPumpType(int index, com.cpdss.common.generated.VesselInfo.PumpType value) {
+        if (pumpTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePumpTypeIsMutable();
+          pumpType_.add(index, value);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder addPumpType(
+          com.cpdss.common.generated.VesselInfo.PumpType.Builder builderForValue) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.add(builderForValue.build());
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder addPumpType(
+          int index, com.cpdss.common.generated.VesselInfo.PumpType.Builder builderForValue) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder addAllPumpType(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.PumpType> values) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, pumpType_);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder clearPumpType() {
+        if (pumpTypeBuilder_ == null) {
+          pumpType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public Builder removePumpType(int index) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.remove(index);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType.Builder getPumpTypeBuilder(int index) {
+        return getPumpTypeFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder getPumpTypeOrBuilder(
+          int index) {
+        if (pumpTypeBuilder_ == null) {
+          return pumpType_.get(index);
+        } else {
+          return pumpTypeBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+          getPumpTypeOrBuilderList() {
+        if (pumpTypeBuilder_ != null) {
+          return pumpTypeBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(pumpType_);
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType.Builder addPumpTypeBuilder() {
+        return getPumpTypeFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.PumpType.getDefaultInstance());
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType.Builder addPumpTypeBuilder(int index) {
+        return getPumpTypeFieldBuilder()
+            .addBuilder(index, com.cpdss.common.generated.VesselInfo.PumpType.getDefaultInstance());
+      }
+      /** <code>repeated .PumpType pumpType = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.PumpType.Builder>
+          getPumpTypeBuilderList() {
+        return getPumpTypeFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.PumpType,
+              com.cpdss.common.generated.VesselInfo.PumpType.Builder,
+              com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+          getPumpTypeFieldBuilder() {
+        if (pumpTypeBuilder_ == null) {
+          pumpTypeBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.PumpType,
+                  com.cpdss.common.generated.VesselInfo.PumpType.Builder,
+                  com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>(
+                  pumpType_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          pumpType_ = null;
+        }
+        return pumpTypeBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> vesselPump_ =
+          java.util.Collections.emptyList();
+
+      private void ensureVesselPumpIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          vesselPump_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselPump>(
+                  vesselPump_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselPump,
+              com.cpdss.common.generated.VesselInfo.VesselPump.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+          vesselPumpBuilder_;
+
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> getVesselPumpList() {
+        if (vesselPumpBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vesselPump_);
+        } else {
+          return vesselPumpBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public int getVesselPumpCount() {
+        if (vesselPumpBuilder_ == null) {
+          return vesselPump_.size();
+        } else {
+          return vesselPumpBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump getVesselPump(int index) {
+        if (vesselPumpBuilder_ == null) {
+          return vesselPump_.get(index);
+        } else {
+          return vesselPumpBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder setVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump value) {
+        if (vesselPumpBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselPumpIsMutable();
+          vesselPump_.set(index, value);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder setVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump.Builder builderForValue) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselPumpBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder addVesselPump(com.cpdss.common.generated.VesselInfo.VesselPump value) {
+        if (vesselPumpBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(value);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder addVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump value) {
+        if (vesselPumpBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(index, value);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder addVesselPump(
+          com.cpdss.common.generated.VesselInfo.VesselPump.Builder builderForValue) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder addVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump.Builder builderForValue) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder addAllVesselPump(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.VesselPump> values) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vesselPump_);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder clearVesselPump() {
+        if (vesselPumpBuilder_ == null) {
+          vesselPump_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public Builder removeVesselPump(int index) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.remove(index);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump.Builder getVesselPumpBuilder(
+          int index) {
+        return getVesselPumpFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder getVesselPumpOrBuilder(
+          int index) {
+        if (vesselPumpBuilder_ == null) {
+          return vesselPump_.get(index);
+        } else {
+          return vesselPumpBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+          getVesselPumpOrBuilderList() {
+        if (vesselPumpBuilder_ != null) {
+          return vesselPumpBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vesselPump_);
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump.Builder addVesselPumpBuilder() {
+        return getVesselPumpFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.VesselPump.getDefaultInstance());
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump.Builder addVesselPumpBuilder(
+          int index) {
+        return getVesselPumpFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.VesselPump.getDefaultInstance());
+      }
+      /** <code>repeated .VesselPump vesselPump = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump.Builder>
+          getVesselPumpBuilderList() {
+        return getVesselPumpFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselPump,
+              com.cpdss.common.generated.VesselInfo.VesselPump.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+          getVesselPumpFieldBuilder() {
+        if (vesselPumpBuilder_ == null) {
+          vesselPumpBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.VesselPump,
+                  com.cpdss.common.generated.VesselInfo.VesselPump.Builder,
+                  com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>(
+                  vesselPump_, ((bitField0_ & 0x00000002) != 0), getParentForChildren(), isClean());
+          vesselPump_ = null;
+        }
+        return vesselPumpBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:VesselPumpsResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:VesselPumpsResponse)
+    private static final com.cpdss.common.generated.VesselInfo.VesselPumpsResponse DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.VesselPumpsResponse();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPumpsResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VesselPumpsResponse> PARSER =
+        new com.google.protobuf.AbstractParser<VesselPumpsResponse>() {
+          @java.lang.Override
+          public VesselPumpsResponse parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new VesselPumpsResponse(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<VesselPumpsResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VesselPumpsResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.VesselPumpsResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface PumpTypeOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:PumpType)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString getNameBytes();
+  }
+  /** Protobuf type {@code PumpType} */
+  public static final class PumpType extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:PumpType)
+      PumpTypeOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use PumpType.newBuilder() to construct.
+    private PumpType(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private PumpType() {
+      name_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new PumpType();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private PumpType(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                name_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_PumpType_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_PumpType_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.PumpType.class,
+              com.cpdss.common.generated.VesselInfo.PumpType.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int NAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object name_;
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The name.
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The bytes for name.
+     */
+    public com.google.protobuf.ByteString getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.PumpType)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.PumpType other =
+          (com.cpdss.common.generated.VesselInfo.PumpType) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getName().equals(other.getName())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.PumpType prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code PumpType} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:PumpType)
+        com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_PumpType_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_PumpType_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.PumpType.class,
+                com.cpdss.common.generated.VesselInfo.PumpType.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.PumpType.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        name_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_PumpType_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.PumpType getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.PumpType.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.PumpType build() {
+        com.cpdss.common.generated.VesselInfo.PumpType result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.PumpType buildPartial() {
+        com.cpdss.common.generated.VesselInfo.PumpType result =
+            new com.cpdss.common.generated.VesselInfo.PumpType(this);
+        result.id_ = id_;
+        result.name_ = name_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.PumpType) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.PumpType) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.PumpType other) {
+        if (other == com.cpdss.common.generated.VesselInfo.PumpType.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.PumpType parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.PumpType) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        name_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:PumpType)
+    }
+
+    // @@protoc_insertion_point(class_scope:PumpType)
+    private static final com.cpdss.common.generated.VesselInfo.PumpType DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.PumpType();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.PumpType getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PumpType> PARSER =
+        new com.google.protobuf.AbstractParser<PumpType>() {
+          @java.lang.Override
+          public PumpType parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new PumpType(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<PumpType> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PumpType> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.PumpType getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface VesselPumpOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:VesselPump)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>int64 vesselId = 2;</code>
+     *
+     * @return The vesselId.
+     */
+    long getVesselId();
+
+    /**
+     * <code>int64 pumpTypeId = 3;</code>
+     *
+     * @return The pumpTypeId.
+     */
+    long getPumpTypeId();
+
+    /**
+     * <code>string pumpName = 4;</code>
+     *
+     * @return The pumpName.
+     */
+    java.lang.String getPumpName();
+    /**
+     * <code>string pumpName = 4;</code>
+     *
+     * @return The bytes for pumpName.
+     */
+    com.google.protobuf.ByteString getPumpNameBytes();
+
+    /**
+     * <code>string pumpCode = 5;</code>
+     *
+     * @return The pumpCode.
+     */
+    java.lang.String getPumpCode();
+    /**
+     * <code>string pumpCode = 5;</code>
+     *
+     * @return The bytes for pumpCode.
+     */
+    com.google.protobuf.ByteString getPumpCodeBytes();
+
+    /**
+     * <code>string pumpCapacity = 6;</code>
+     *
+     * @return The pumpCapacity.
+     */
+    java.lang.String getPumpCapacity();
+    /**
+     * <code>string pumpCapacity = 6;</code>
+     *
+     * @return The bytes for pumpCapacity.
+     */
+    com.google.protobuf.ByteString getPumpCapacityBytes();
+  }
+  /** Protobuf type {@code VesselPump} */
+  public static final class VesselPump extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:VesselPump)
+      VesselPumpOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use VesselPump.newBuilder() to construct.
+    private VesselPump(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private VesselPump() {
+      pumpName_ = "";
+      pumpCode_ = "";
+      pumpCapacity_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new VesselPump();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private VesselPump(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                vesselId_ = input.readInt64();
+                break;
+              }
+            case 24:
+              {
+                pumpTypeId_ = input.readInt64();
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                pumpName_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                pumpCode_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                pumpCapacity_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_VesselPump_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_VesselPump_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.VesselPump.class,
+              com.cpdss.common.generated.VesselInfo.VesselPump.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int VESSELID_FIELD_NUMBER = 2;
+    private long vesselId_;
+    /**
+     * <code>int64 vesselId = 2;</code>
+     *
+     * @return The vesselId.
+     */
+    public long getVesselId() {
+      return vesselId_;
+    }
+
+    public static final int PUMPTYPEID_FIELD_NUMBER = 3;
+    private long pumpTypeId_;
+    /**
+     * <code>int64 pumpTypeId = 3;</code>
+     *
+     * @return The pumpTypeId.
+     */
+    public long getPumpTypeId() {
+      return pumpTypeId_;
+    }
+
+    public static final int PUMPNAME_FIELD_NUMBER = 4;
+    private volatile java.lang.Object pumpName_;
+    /**
+     * <code>string pumpName = 4;</code>
+     *
+     * @return The pumpName.
+     */
+    public java.lang.String getPumpName() {
+      java.lang.Object ref = pumpName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        pumpName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string pumpName = 4;</code>
+     *
+     * @return The bytes for pumpName.
+     */
+    public com.google.protobuf.ByteString getPumpNameBytes() {
+      java.lang.Object ref = pumpName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        pumpName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PUMPCODE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object pumpCode_;
+    /**
+     * <code>string pumpCode = 5;</code>
+     *
+     * @return The pumpCode.
+     */
+    public java.lang.String getPumpCode() {
+      java.lang.Object ref = pumpCode_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        pumpCode_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string pumpCode = 5;</code>
+     *
+     * @return The bytes for pumpCode.
+     */
+    public com.google.protobuf.ByteString getPumpCodeBytes() {
+      java.lang.Object ref = pumpCode_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        pumpCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PUMPCAPACITY_FIELD_NUMBER = 6;
+    private volatile java.lang.Object pumpCapacity_;
+    /**
+     * <code>string pumpCapacity = 6;</code>
+     *
+     * @return The pumpCapacity.
+     */
+    public java.lang.String getPumpCapacity() {
+      java.lang.Object ref = pumpCapacity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        pumpCapacity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string pumpCapacity = 6;</code>
+     *
+     * @return The bytes for pumpCapacity.
+     */
+    public com.google.protobuf.ByteString getPumpCapacityBytes() {
+      java.lang.Object ref = pumpCapacity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        pumpCapacity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (vesselId_ != 0L) {
+        output.writeInt64(2, vesselId_);
+      }
+      if (pumpTypeId_ != 0L) {
+        output.writeInt64(3, pumpTypeId_);
+      }
+      if (!getPumpNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, pumpName_);
+      }
+      if (!getPumpCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, pumpCode_);
+      }
+      if (!getPumpCapacityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, pumpCapacity_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (vesselId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, vesselId_);
+      }
+      if (pumpTypeId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, pumpTypeId_);
+      }
+      if (!getPumpNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, pumpName_);
+      }
+      if (!getPumpCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, pumpCode_);
+      }
+      if (!getPumpCapacityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, pumpCapacity_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.VesselPump)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.VesselPump other =
+          (com.cpdss.common.generated.VesselInfo.VesselPump) obj;
+
+      if (getId() != other.getId()) return false;
+      if (getVesselId() != other.getVesselId()) return false;
+      if (getPumpTypeId() != other.getPumpTypeId()) return false;
+      if (!getPumpName().equals(other.getPumpName())) return false;
+      if (!getPumpCode().equals(other.getPumpCode())) return false;
+      if (!getPumpCapacity().equals(other.getPumpCapacity())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + VESSELID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+      hash = (37 * hash) + PUMPTYPEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPumpTypeId());
+      hash = (37 * hash) + PUMPNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getPumpName().hashCode();
+      hash = (37 * hash) + PUMPCODE_FIELD_NUMBER;
+      hash = (53 * hash) + getPumpCode().hashCode();
+      hash = (37 * hash) + PUMPCAPACITY_FIELD_NUMBER;
+      hash = (53 * hash) + getPumpCapacity().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.VesselPump prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code VesselPump} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:VesselPump)
+        com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselPump_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselPump_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.VesselPump.class,
+                com.cpdss.common.generated.VesselInfo.VesselPump.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.VesselPump.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        vesselId_ = 0L;
+
+        pumpTypeId_ = 0L;
+
+        pumpName_ = "";
+
+        pumpCode_ = "";
+
+        pumpCapacity_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselPump_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselPump getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.VesselPump.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselPump build() {
+        com.cpdss.common.generated.VesselInfo.VesselPump result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselPump buildPartial() {
+        com.cpdss.common.generated.VesselInfo.VesselPump result =
+            new com.cpdss.common.generated.VesselInfo.VesselPump(this);
+        result.id_ = id_;
+        result.vesselId_ = vesselId_;
+        result.pumpTypeId_ = pumpTypeId_;
+        result.pumpName_ = pumpName_;
+        result.pumpCode_ = pumpCode_;
+        result.pumpCapacity_ = pumpCapacity_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.VesselPump) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.VesselPump) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.VesselPump other) {
+        if (other == com.cpdss.common.generated.VesselInfo.VesselPump.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (other.getVesselId() != 0L) {
+          setVesselId(other.getVesselId());
+        }
+        if (other.getPumpTypeId() != 0L) {
+          setPumpTypeId(other.getPumpTypeId());
+        }
+        if (!other.getPumpName().isEmpty()) {
+          pumpName_ = other.pumpName_;
+          onChanged();
+        }
+        if (!other.getPumpCode().isEmpty()) {
+          pumpCode_ = other.pumpCode_;
+          onChanged();
+        }
+        if (!other.getPumpCapacity().isEmpty()) {
+          pumpCapacity_ = other.pumpCapacity_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.VesselPump parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.VesselPump) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long vesselId_;
+      /**
+       * <code>int64 vesselId = 2;</code>
+       *
+       * @return The vesselId.
+       */
+      public long getVesselId() {
+        return vesselId_;
+      }
+      /**
+       * <code>int64 vesselId = 2;</code>
+       *
+       * @param value The vesselId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVesselId(long value) {
+
+        vesselId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 vesselId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearVesselId() {
+
+        vesselId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long pumpTypeId_;
+      /**
+       * <code>int64 pumpTypeId = 3;</code>
+       *
+       * @return The pumpTypeId.
+       */
+      public long getPumpTypeId() {
+        return pumpTypeId_;
+      }
+      /**
+       * <code>int64 pumpTypeId = 3;</code>
+       *
+       * @param value The pumpTypeId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPumpTypeId(long value) {
+
+        pumpTypeId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 pumpTypeId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPumpTypeId() {
+
+        pumpTypeId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object pumpName_ = "";
+      /**
+       * <code>string pumpName = 4;</code>
+       *
+       * @return The pumpName.
+       */
+      public java.lang.String getPumpName() {
+        java.lang.Object ref = pumpName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          pumpName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string pumpName = 4;</code>
+       *
+       * @return The bytes for pumpName.
+       */
+      public com.google.protobuf.ByteString getPumpNameBytes() {
+        java.lang.Object ref = pumpName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          pumpName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string pumpName = 4;</code>
+       *
+       * @param value The pumpName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPumpName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        pumpName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string pumpName = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPumpName() {
+
+        pumpName_ = getDefaultInstance().getPumpName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string pumpName = 4;</code>
+       *
+       * @param value The bytes for pumpName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPumpNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        pumpName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object pumpCode_ = "";
+      /**
+       * <code>string pumpCode = 5;</code>
+       *
+       * @return The pumpCode.
+       */
+      public java.lang.String getPumpCode() {
+        java.lang.Object ref = pumpCode_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          pumpCode_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string pumpCode = 5;</code>
+       *
+       * @return The bytes for pumpCode.
+       */
+      public com.google.protobuf.ByteString getPumpCodeBytes() {
+        java.lang.Object ref = pumpCode_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          pumpCode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string pumpCode = 5;</code>
+       *
+       * @param value The pumpCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPumpCode(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        pumpCode_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string pumpCode = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPumpCode() {
+
+        pumpCode_ = getDefaultInstance().getPumpCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string pumpCode = 5;</code>
+       *
+       * @param value The bytes for pumpCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPumpCodeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        pumpCode_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object pumpCapacity_ = "";
+      /**
+       * <code>string pumpCapacity = 6;</code>
+       *
+       * @return The pumpCapacity.
+       */
+      public java.lang.String getPumpCapacity() {
+        java.lang.Object ref = pumpCapacity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          pumpCapacity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string pumpCapacity = 6;</code>
+       *
+       * @return The bytes for pumpCapacity.
+       */
+      public com.google.protobuf.ByteString getPumpCapacityBytes() {
+        java.lang.Object ref = pumpCapacity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          pumpCapacity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string pumpCapacity = 6;</code>
+       *
+       * @param value The pumpCapacity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPumpCapacity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        pumpCapacity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string pumpCapacity = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPumpCapacity() {
+
+        pumpCapacity_ = getDefaultInstance().getPumpCapacity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string pumpCapacity = 6;</code>
+       *
+       * @param value The bytes for pumpCapacity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPumpCapacityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        pumpCapacity_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:VesselPump)
+    }
+
+    // @@protoc_insertion_point(class_scope:VesselPump)
+    private static final com.cpdss.common.generated.VesselInfo.VesselPump DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.VesselPump();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselPump getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VesselPump> PARSER =
+        new com.google.protobuf.AbstractParser<VesselPump>() {
+          @java.lang.Override
+          public VesselPump parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new VesselPump(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<VesselPump> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VesselPump> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.VesselPump getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface VesselRuleRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:VesselRuleRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 vesselId = 1;</code>
+     *
+     * @return The vesselId.
+     */
+    long getVesselId();
+
+    /**
+     * <code>int64 sectionId = 2;</code>
+     *
+     * @return The sectionId.
+     */
+    long getSectionId();
+
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> getRulePlanList();
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.RulePlans getRulePlan(int index);
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    int getRulePlanCount();
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+        getRulePlanOrBuilderList();
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder getRulePlanOrBuilder(int index);
+  }
+  /** Protobuf type {@code VesselRuleRequest} */
+  public static final class VesselRuleRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:VesselRuleRequest)
+      VesselRuleRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use VesselRuleRequest.newBuilder() to construct.
+    private VesselRuleRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private VesselRuleRequest() {
+      rulePlan_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new VesselRuleRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private VesselRuleRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                vesselId_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                sectionId_ = input.readInt64();
+                break;
+              }
+            case 26:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  rulePlan_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.RulePlans>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                rulePlan_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.RulePlans.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          rulePlan_ = java.util.Collections.unmodifiableList(rulePlan_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_VesselRuleRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselRuleRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.VesselRuleRequest.class,
+              com.cpdss.common.generated.VesselInfo.VesselRuleRequest.Builder.class);
+    }
+
+    public static final int VESSELID_FIELD_NUMBER = 1;
+    private long vesselId_;
+    /**
+     * <code>int64 vesselId = 1;</code>
+     *
+     * @return The vesselId.
+     */
+    public long getVesselId() {
+      return vesselId_;
+    }
+
+    public static final int SECTIONID_FIELD_NUMBER = 2;
+    private long sectionId_;
+    /**
+     * <code>int64 sectionId = 2;</code>
+     *
+     * @return The sectionId.
+     */
+    public long getSectionId() {
+      return sectionId_;
+    }
+
+    public static final int RULEPLAN_FIELD_NUMBER = 3;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> rulePlan_;
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> getRulePlanList() {
+      return rulePlan_;
+    }
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+        getRulePlanOrBuilderList() {
+      return rulePlan_;
+    }
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    public int getRulePlanCount() {
+      return rulePlan_.size();
+    }
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.RulePlans getRulePlan(int index) {
+      return rulePlan_.get(index);
+    }
+    /** <code>repeated .RulePlans rulePlan = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder getRulePlanOrBuilder(
+        int index) {
+      return rulePlan_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (vesselId_ != 0L) {
+        output.writeInt64(1, vesselId_);
+      }
+      if (sectionId_ != 0L) {
+        output.writeInt64(2, sectionId_);
+      }
+      for (int i = 0; i < rulePlan_.size(); i++) {
+        output.writeMessage(3, rulePlan_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (vesselId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, vesselId_);
+      }
+      if (sectionId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, sectionId_);
+      }
+      for (int i = 0; i < rulePlan_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, rulePlan_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.VesselRuleRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.VesselRuleRequest other =
+          (com.cpdss.common.generated.VesselInfo.VesselRuleRequest) obj;
+
+      if (getVesselId() != other.getVesselId()) return false;
+      if (getSectionId() != other.getSectionId()) return false;
+      if (!getRulePlanList().equals(other.getRulePlanList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + VESSELID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+      hash = (37 * hash) + SECTIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSectionId());
+      if (getRulePlanCount() > 0) {
+        hash = (37 * hash) + RULEPLAN_FIELD_NUMBER;
+        hash = (53 * hash) + getRulePlanList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.VesselRuleRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code VesselRuleRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:VesselRuleRequest)
+        com.cpdss.common.generated.VesselInfo.VesselRuleRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselRuleRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselRuleRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.VesselRuleRequest.class,
+                com.cpdss.common.generated.VesselInfo.VesselRuleRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.VesselRuleRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getRulePlanFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        vesselId_ = 0L;
+
+        sectionId_ = 0L;
+
+        if (rulePlanBuilder_ == null) {
+          rulePlan_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          rulePlanBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselRuleRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRuleRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.VesselRuleRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRuleRequest build() {
+        com.cpdss.common.generated.VesselInfo.VesselRuleRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRuleRequest buildPartial() {
+        com.cpdss.common.generated.VesselInfo.VesselRuleRequest result =
+            new com.cpdss.common.generated.VesselInfo.VesselRuleRequest(this);
+        int from_bitField0_ = bitField0_;
+        result.vesselId_ = vesselId_;
+        result.sectionId_ = sectionId_;
+        if (rulePlanBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            rulePlan_ = java.util.Collections.unmodifiableList(rulePlan_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.rulePlan_ = rulePlan_;
+        } else {
+          result.rulePlan_ = rulePlanBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.VesselRuleRequest) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.VesselRuleRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.VesselRuleRequest other) {
+        if (other == com.cpdss.common.generated.VesselInfo.VesselRuleRequest.getDefaultInstance())
+          return this;
+        if (other.getVesselId() != 0L) {
+          setVesselId(other.getVesselId());
+        }
+        if (other.getSectionId() != 0L) {
+          setSectionId(other.getSectionId());
+        }
+        if (rulePlanBuilder_ == null) {
+          if (!other.rulePlan_.isEmpty()) {
+            if (rulePlan_.isEmpty()) {
+              rulePlan_ = other.rulePlan_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureRulePlanIsMutable();
+              rulePlan_.addAll(other.rulePlan_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.rulePlan_.isEmpty()) {
+            if (rulePlanBuilder_.isEmpty()) {
+              rulePlanBuilder_.dispose();
+              rulePlanBuilder_ = null;
+              rulePlan_ = other.rulePlan_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              rulePlanBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getRulePlanFieldBuilder()
+                      : null;
+            } else {
+              rulePlanBuilder_.addAllMessages(other.rulePlan_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.VesselRuleRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.VesselRuleRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private long vesselId_;
+      /**
+       * <code>int64 vesselId = 1;</code>
+       *
+       * @return The vesselId.
+       */
+      public long getVesselId() {
+        return vesselId_;
+      }
+      /**
+       * <code>int64 vesselId = 1;</code>
+       *
+       * @param value The vesselId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVesselId(long value) {
+
+        vesselId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 vesselId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearVesselId() {
+
+        vesselId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long sectionId_;
+      /**
+       * <code>int64 sectionId = 2;</code>
+       *
+       * @return The sectionId.
+       */
+      public long getSectionId() {
+        return sectionId_;
+      }
+      /**
+       * <code>int64 sectionId = 2;</code>
+       *
+       * @param value The sectionId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSectionId(long value) {
+
+        sectionId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 sectionId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSectionId() {
+
+        sectionId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> rulePlan_ =
+          java.util.Collections.emptyList();
+
+      private void ensureRulePlanIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          rulePlan_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.RulePlans>(rulePlan_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RulePlans,
+              com.cpdss.common.generated.VesselInfo.RulePlans.Builder,
+              com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+          rulePlanBuilder_;
+
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> getRulePlanList() {
+        if (rulePlanBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(rulePlan_);
+        } else {
+          return rulePlanBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public int getRulePlanCount() {
+        if (rulePlanBuilder_ == null) {
+          return rulePlan_.size();
+        } else {
+          return rulePlanBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans getRulePlan(int index) {
+        if (rulePlanBuilder_ == null) {
+          return rulePlan_.get(index);
+        } else {
+          return rulePlanBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder setRulePlan(int index, com.cpdss.common.generated.VesselInfo.RulePlans value) {
+        if (rulePlanBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulePlanIsMutable();
+          rulePlan_.set(index, value);
+          onChanged();
+        } else {
+          rulePlanBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder setRulePlan(
+          int index, com.cpdss.common.generated.VesselInfo.RulePlans.Builder builderForValue) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          rulePlanBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder addRulePlan(com.cpdss.common.generated.VesselInfo.RulePlans value) {
+        if (rulePlanBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulePlanIsMutable();
+          rulePlan_.add(value);
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder addRulePlan(int index, com.cpdss.common.generated.VesselInfo.RulePlans value) {
+        if (rulePlanBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulePlanIsMutable();
+          rulePlan_.add(index, value);
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder addRulePlan(
+          com.cpdss.common.generated.VesselInfo.RulePlans.Builder builderForValue) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.add(builderForValue.build());
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder addRulePlan(
+          int index, com.cpdss.common.generated.VesselInfo.RulePlans.Builder builderForValue) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder addAllRulePlan(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.RulePlans> values) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, rulePlan_);
+          onChanged();
+        } else {
+          rulePlanBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder clearRulePlan() {
+        if (rulePlanBuilder_ == null) {
+          rulePlan_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          rulePlanBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public Builder removeRulePlan(int index) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.remove(index);
+          onChanged();
+        } else {
+          rulePlanBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans.Builder getRulePlanBuilder(int index) {
+        return getRulePlanFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder getRulePlanOrBuilder(
+          int index) {
+        if (rulePlanBuilder_ == null) {
+          return rulePlan_.get(index);
+        } else {
+          return rulePlanBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+          getRulePlanOrBuilderList() {
+        if (rulePlanBuilder_ != null) {
+          return rulePlanBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(rulePlan_);
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans.Builder addRulePlanBuilder() {
+        return getRulePlanFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.RulePlans.getDefaultInstance());
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans.Builder addRulePlanBuilder(int index) {
+        return getRulePlanFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.RulePlans.getDefaultInstance());
+      }
+      /** <code>repeated .RulePlans rulePlan = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans.Builder>
+          getRulePlanBuilderList() {
+        return getRulePlanFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RulePlans,
+              com.cpdss.common.generated.VesselInfo.RulePlans.Builder,
+              com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+          getRulePlanFieldBuilder() {
+        if (rulePlanBuilder_ == null) {
+          rulePlanBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.RulePlans,
+                  com.cpdss.common.generated.VesselInfo.RulePlans.Builder,
+                  com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>(
+                  rulePlan_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          rulePlan_ = null;
+        }
+        return rulePlanBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:VesselRuleRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:VesselRuleRequest)
+    private static final com.cpdss.common.generated.VesselInfo.VesselRuleRequest DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.VesselRuleRequest();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VesselRuleRequest> PARSER =
+        new com.google.protobuf.AbstractParser<VesselRuleRequest>() {
+          @java.lang.Override
+          public VesselRuleRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new VesselRuleRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<VesselRuleRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VesselRuleRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.VesselRuleRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface VesselRuleReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:VesselRuleReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> getRulePlanList();
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.RulePlans getRulePlan(int index);
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    int getRulePlanCount();
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+        getRulePlanOrBuilderList();
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder getRulePlanOrBuilder(int index);
+  }
+  /** Protobuf type {@code VesselRuleReply} */
+  public static final class VesselRuleReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:VesselRuleReply)
+      VesselRuleReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use VesselRuleReply.newBuilder() to construct.
+    private VesselRuleReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private VesselRuleReply() {
+      rulePlan_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new VesselRuleReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private VesselRuleReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  rulePlan_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.RulePlans>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                rulePlan_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.RulePlans.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          rulePlan_ = java.util.Collections.unmodifiableList(rulePlan_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_VesselRuleReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselRuleReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.VesselRuleReply.class,
+              com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int RULEPLAN_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> rulePlan_;
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> getRulePlanList() {
+      return rulePlan_;
+    }
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+        getRulePlanOrBuilderList() {
+      return rulePlan_;
+    }
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    public int getRulePlanCount() {
+      return rulePlan_.size();
+    }
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.RulePlans getRulePlan(int index) {
+      return rulePlan_.get(index);
+    }
+    /** <code>repeated .RulePlans rulePlan = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder getRulePlanOrBuilder(
+        int index) {
+      return rulePlan_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < rulePlan_.size(); i++) {
+        output.writeMessage(2, rulePlan_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < rulePlan_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, rulePlan_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.VesselRuleReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.VesselRuleReply other =
+          (com.cpdss.common.generated.VesselInfo.VesselRuleReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!getRulePlanList().equals(other.getRulePlanList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getRulePlanCount() > 0) {
+        hash = (37 * hash) + RULEPLAN_FIELD_NUMBER;
+        hash = (53 * hash) + getRulePlanList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.VesselRuleReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code VesselRuleReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:VesselRuleReply)
+        com.cpdss.common.generated.VesselInfo.VesselRuleReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselRuleReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselRuleReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.VesselRuleReply.class,
+                com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.VesselRuleReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getRulePlanFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (rulePlanBuilder_ == null) {
+          rulePlan_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          rulePlanBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselRuleReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRuleReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.VesselRuleReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRuleReply build() {
+        com.cpdss.common.generated.VesselInfo.VesselRuleReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselRuleReply buildPartial() {
+        com.cpdss.common.generated.VesselInfo.VesselRuleReply result =
+            new com.cpdss.common.generated.VesselInfo.VesselRuleReply(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (rulePlanBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            rulePlan_ = java.util.Collections.unmodifiableList(rulePlan_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.rulePlan_ = rulePlan_;
+        } else {
+          result.rulePlan_ = rulePlanBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.VesselRuleReply) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.VesselRuleReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.VesselRuleReply other) {
+        if (other == com.cpdss.common.generated.VesselInfo.VesselRuleReply.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (rulePlanBuilder_ == null) {
+          if (!other.rulePlan_.isEmpty()) {
+            if (rulePlan_.isEmpty()) {
+              rulePlan_ = other.rulePlan_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureRulePlanIsMutable();
+              rulePlan_.addAll(other.rulePlan_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.rulePlan_.isEmpty()) {
+            if (rulePlanBuilder_.isEmpty()) {
+              rulePlanBuilder_.dispose();
+              rulePlanBuilder_ = null;
+              rulePlan_ = other.rulePlan_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              rulePlanBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getRulePlanFieldBuilder()
+                      : null;
+            } else {
+              rulePlanBuilder_.addAllMessages(other.rulePlan_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.VesselRuleReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.VesselRuleReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> rulePlan_ =
+          java.util.Collections.emptyList();
+
+      private void ensureRulePlanIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          rulePlan_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.RulePlans>(rulePlan_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RulePlans,
+              com.cpdss.common.generated.VesselInfo.RulePlans.Builder,
+              com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+          rulePlanBuilder_;
+
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans> getRulePlanList() {
+        if (rulePlanBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(rulePlan_);
+        } else {
+          return rulePlanBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public int getRulePlanCount() {
+        if (rulePlanBuilder_ == null) {
+          return rulePlan_.size();
+        } else {
+          return rulePlanBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans getRulePlan(int index) {
+        if (rulePlanBuilder_ == null) {
+          return rulePlan_.get(index);
+        } else {
+          return rulePlanBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder setRulePlan(int index, com.cpdss.common.generated.VesselInfo.RulePlans value) {
+        if (rulePlanBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulePlanIsMutable();
+          rulePlan_.set(index, value);
+          onChanged();
+        } else {
+          rulePlanBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder setRulePlan(
+          int index, com.cpdss.common.generated.VesselInfo.RulePlans.Builder builderForValue) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          rulePlanBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder addRulePlan(com.cpdss.common.generated.VesselInfo.RulePlans value) {
+        if (rulePlanBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulePlanIsMutable();
+          rulePlan_.add(value);
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder addRulePlan(int index, com.cpdss.common.generated.VesselInfo.RulePlans value) {
+        if (rulePlanBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulePlanIsMutable();
+          rulePlan_.add(index, value);
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder addRulePlan(
+          com.cpdss.common.generated.VesselInfo.RulePlans.Builder builderForValue) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.add(builderForValue.build());
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder addRulePlan(
+          int index, com.cpdss.common.generated.VesselInfo.RulePlans.Builder builderForValue) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          rulePlanBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder addAllRulePlan(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.RulePlans> values) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, rulePlan_);
+          onChanged();
+        } else {
+          rulePlanBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder clearRulePlan() {
+        if (rulePlanBuilder_ == null) {
+          rulePlan_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          rulePlanBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public Builder removeRulePlan(int index) {
+        if (rulePlanBuilder_ == null) {
+          ensureRulePlanIsMutable();
+          rulePlan_.remove(index);
+          onChanged();
+        } else {
+          rulePlanBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans.Builder getRulePlanBuilder(int index) {
+        return getRulePlanFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder getRulePlanOrBuilder(
+          int index) {
+        if (rulePlanBuilder_ == null) {
+          return rulePlan_.get(index);
+        } else {
+          return rulePlanBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+          getRulePlanOrBuilderList() {
+        if (rulePlanBuilder_ != null) {
+          return rulePlanBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(rulePlan_);
+        }
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans.Builder addRulePlanBuilder() {
+        return getRulePlanFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.RulePlans.getDefaultInstance());
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulePlans.Builder addRulePlanBuilder(int index) {
+        return getRulePlanFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.RulePlans.getDefaultInstance());
+      }
+      /** <code>repeated .RulePlans rulePlan = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RulePlans.Builder>
+          getRulePlanBuilderList() {
+        return getRulePlanFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RulePlans,
+              com.cpdss.common.generated.VesselInfo.RulePlans.Builder,
+              com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>
+          getRulePlanFieldBuilder() {
+        if (rulePlanBuilder_ == null) {
+          rulePlanBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.RulePlans,
+                  com.cpdss.common.generated.VesselInfo.RulePlans.Builder,
+                  com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder>(
+                  rulePlan_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          rulePlan_ = null;
+        }
+        return rulePlanBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:VesselRuleReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:VesselRuleReply)
+    private static final com.cpdss.common.generated.VesselInfo.VesselRuleReply DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.VesselRuleReply();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselRuleReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VesselRuleReply> PARSER =
+        new com.google.protobuf.AbstractParser<VesselRuleReply>() {
+          @java.lang.Override
+          public VesselRuleReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new VesselRuleReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<VesselRuleReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VesselRuleReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.VesselRuleReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface RulePlansOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:RulePlans)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string header = 1;</code>
+     *
+     * @return The header.
+     */
+    java.lang.String getHeader();
+    /**
+     * <code>string header = 1;</code>
+     *
+     * @return The bytes for header.
+     */
+    com.google.protobuf.ByteString getHeaderBytes();
+
+    /** <code>repeated .Rules rules = 2;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.Rules> getRulesList();
+    /** <code>repeated .Rules rules = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.Rules getRules(int index);
+    /** <code>repeated .Rules rules = 2;</code> */
+    int getRulesCount();
+    /** <code>repeated .Rules rules = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulesOrBuilder>
+        getRulesOrBuilderList();
+    /** <code>repeated .Rules rules = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.RulesOrBuilder getRulesOrBuilder(int index);
+  }
+  /** Protobuf type {@code RulePlans} */
+  public static final class RulePlans extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:RulePlans)
+      RulePlansOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use RulePlans.newBuilder() to construct.
+    private RulePlans(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private RulePlans() {
+      header_ = "";
+      rules_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new RulePlans();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private RulePlans(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                header_ = s;
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  rules_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.Rules>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                rules_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.Rules.parser(), extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          rules_ = java.util.Collections.unmodifiableList(rules_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_RulePlans_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_RulePlans_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.RulePlans.class,
+              com.cpdss.common.generated.VesselInfo.RulePlans.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private volatile java.lang.Object header_;
+    /**
+     * <code>string header = 1;</code>
+     *
+     * @return The header.
+     */
+    public java.lang.String getHeader() {
+      java.lang.Object ref = header_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        header_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string header = 1;</code>
+     *
+     * @return The bytes for header.
+     */
+    public com.google.protobuf.ByteString getHeaderBytes() {
+      java.lang.Object ref = header_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        header_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RULES_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.Rules> rules_;
+    /** <code>repeated .Rules rules = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.Rules> getRulesList() {
+      return rules_;
+    }
+    /** <code>repeated .Rules rules = 2;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulesOrBuilder>
+        getRulesOrBuilderList() {
+      return rules_;
+    }
+    /** <code>repeated .Rules rules = 2;</code> */
+    public int getRulesCount() {
+      return rules_.size();
+    }
+    /** <code>repeated .Rules rules = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.Rules getRules(int index) {
+      return rules_.get(index);
+    }
+    /** <code>repeated .Rules rules = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.RulesOrBuilder getRulesOrBuilder(int index) {
+      return rules_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (!getHeaderBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, header_);
+      }
+      for (int i = 0; i < rules_.size(); i++) {
+        output.writeMessage(2, rules_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getHeaderBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, header_);
+      }
+      for (int i = 0; i < rules_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, rules_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.RulePlans)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.RulePlans other =
+          (com.cpdss.common.generated.VesselInfo.RulePlans) obj;
+
+      if (!getHeader().equals(other.getHeader())) return false;
+      if (!getRulesList().equals(other.getRulesList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + HEADER_FIELD_NUMBER;
+      hash = (53 * hash) + getHeader().hashCode();
+      if (getRulesCount() > 0) {
+        hash = (37 * hash) + RULES_FIELD_NUMBER;
+        hash = (53 * hash) + getRulesList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.RulePlans prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code RulePlans} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:RulePlans)
+        com.cpdss.common.generated.VesselInfo.RulePlansOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RulePlans_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RulePlans_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.RulePlans.class,
+                com.cpdss.common.generated.VesselInfo.RulePlans.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.RulePlans.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getRulesFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        header_ = "";
+
+        if (rulesBuilder_ == null) {
+          rules_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          rulesBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RulePlans_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RulePlans getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.RulePlans.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RulePlans build() {
+        com.cpdss.common.generated.VesselInfo.RulePlans result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RulePlans buildPartial() {
+        com.cpdss.common.generated.VesselInfo.RulePlans result =
+            new com.cpdss.common.generated.VesselInfo.RulePlans(this);
+        int from_bitField0_ = bitField0_;
+        result.header_ = header_;
+        if (rulesBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            rules_ = java.util.Collections.unmodifiableList(rules_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.rules_ = rules_;
+        } else {
+          result.rules_ = rulesBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.RulePlans) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.RulePlans) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.RulePlans other) {
+        if (other == com.cpdss.common.generated.VesselInfo.RulePlans.getDefaultInstance())
+          return this;
+        if (!other.getHeader().isEmpty()) {
+          header_ = other.header_;
+          onChanged();
+        }
+        if (rulesBuilder_ == null) {
+          if (!other.rules_.isEmpty()) {
+            if (rules_.isEmpty()) {
+              rules_ = other.rules_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureRulesIsMutable();
+              rules_.addAll(other.rules_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.rules_.isEmpty()) {
+            if (rulesBuilder_.isEmpty()) {
+              rulesBuilder_.dispose();
+              rulesBuilder_ = null;
+              rules_ = other.rules_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              rulesBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getRulesFieldBuilder()
+                      : null;
+            } else {
+              rulesBuilder_.addAllMessages(other.rules_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.RulePlans parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.RulePlans) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.lang.Object header_ = "";
+      /**
+       * <code>string header = 1;</code>
+       *
+       * @return The header.
+       */
+      public java.lang.String getHeader() {
+        java.lang.Object ref = header_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          header_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string header = 1;</code>
+       *
+       * @return The bytes for header.
+       */
+      public com.google.protobuf.ByteString getHeaderBytes() {
+        java.lang.Object ref = header_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          header_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string header = 1;</code>
+       *
+       * @param value The header to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHeader(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        header_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string header = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHeader() {
+
+        header_ = getDefaultInstance().getHeader();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string header = 1;</code>
+       *
+       * @param value The bytes for header to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHeaderBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        header_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.Rules> rules_ =
+          java.util.Collections.emptyList();
+
+      private void ensureRulesIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          rules_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.Rules>(rules_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.Rules,
+              com.cpdss.common.generated.VesselInfo.Rules.Builder,
+              com.cpdss.common.generated.VesselInfo.RulesOrBuilder>
+          rulesBuilder_;
+
+      /** <code>repeated .Rules rules = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.Rules> getRulesList() {
+        if (rulesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(rules_);
+        } else {
+          return rulesBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public int getRulesCount() {
+        if (rulesBuilder_ == null) {
+          return rules_.size();
+        } else {
+          return rulesBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.Rules getRules(int index) {
+        if (rulesBuilder_ == null) {
+          return rules_.get(index);
+        } else {
+          return rulesBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder setRules(int index, com.cpdss.common.generated.VesselInfo.Rules value) {
+        if (rulesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulesIsMutable();
+          rules_.set(index, value);
+          onChanged();
+        } else {
+          rulesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder setRules(
+          int index, com.cpdss.common.generated.VesselInfo.Rules.Builder builderForValue) {
+        if (rulesBuilder_ == null) {
+          ensureRulesIsMutable();
+          rules_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          rulesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder addRules(com.cpdss.common.generated.VesselInfo.Rules value) {
+        if (rulesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulesIsMutable();
+          rules_.add(value);
+          onChanged();
+        } else {
+          rulesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder addRules(int index, com.cpdss.common.generated.VesselInfo.Rules value) {
+        if (rulesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRulesIsMutable();
+          rules_.add(index, value);
+          onChanged();
+        } else {
+          rulesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder addRules(com.cpdss.common.generated.VesselInfo.Rules.Builder builderForValue) {
+        if (rulesBuilder_ == null) {
+          ensureRulesIsMutable();
+          rules_.add(builderForValue.build());
+          onChanged();
+        } else {
+          rulesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder addRules(
+          int index, com.cpdss.common.generated.VesselInfo.Rules.Builder builderForValue) {
+        if (rulesBuilder_ == null) {
+          ensureRulesIsMutable();
+          rules_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          rulesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder addAllRules(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.Rules> values) {
+        if (rulesBuilder_ == null) {
+          ensureRulesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, rules_);
+          onChanged();
+        } else {
+          rulesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder clearRules() {
+        if (rulesBuilder_ == null) {
+          rules_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          rulesBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public Builder removeRules(int index) {
+        if (rulesBuilder_ == null) {
+          ensureRulesIsMutable();
+          rules_.remove(index);
+          onChanged();
+        } else {
+          rulesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.Rules.Builder getRulesBuilder(int index) {
+        return getRulesFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulesOrBuilder getRulesOrBuilder(int index) {
+        if (rulesBuilder_ == null) {
+          return rules_.get(index);
+        } else {
+          return rulesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulesOrBuilder>
+          getRulesOrBuilderList() {
+        if (rulesBuilder_ != null) {
+          return rulesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(rules_);
+        }
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.Rules.Builder addRulesBuilder() {
+        return getRulesFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.Rules.getDefaultInstance());
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.Rules.Builder addRulesBuilder(int index) {
+        return getRulesFieldBuilder()
+            .addBuilder(index, com.cpdss.common.generated.VesselInfo.Rules.getDefaultInstance());
+      }
+      /** <code>repeated .Rules rules = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.Rules.Builder>
+          getRulesBuilderList() {
+        return getRulesFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.Rules,
+              com.cpdss.common.generated.VesselInfo.Rules.Builder,
+              com.cpdss.common.generated.VesselInfo.RulesOrBuilder>
+          getRulesFieldBuilder() {
+        if (rulesBuilder_ == null) {
+          rulesBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.Rules,
+                  com.cpdss.common.generated.VesselInfo.Rules.Builder,
+                  com.cpdss.common.generated.VesselInfo.RulesOrBuilder>(
+                  rules_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          rules_ = null;
+        }
+        return rulesBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:RulePlans)
+    }
+
+    // @@protoc_insertion_point(class_scope:RulePlans)
+    private static final com.cpdss.common.generated.VesselInfo.RulePlans DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.RulePlans();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulePlans getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RulePlans> PARSER =
+        new com.google.protobuf.AbstractParser<RulePlans>() {
+          @java.lang.Override
+          public RulePlans parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new RulePlans(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<RulePlans> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RulePlans> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.RulePlans getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface RulesOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:Rules)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string id = 1;</code>
+     *
+     * @return The id.
+     */
+    java.lang.String getId();
+    /**
+     * <code>string id = 1;</code>
+     *
+     * @return The bytes for id.
+     */
+    com.google.protobuf.ByteString getIdBytes();
+
+    /**
+     * <code>bool enable = 2;</code>
+     *
+     * @return The enable.
+     */
+    boolean getEnable();
+
+    /**
+     * <code>bool disable = 3;</code>
+     *
+     * @return The disable.
+     */
+    boolean getDisable();
+
+    /**
+     * <code>bool disableInSettigs = 4;</code>
+     *
+     * @return The disableInSettigs.
+     */
+    boolean getDisableInSettigs();
+
+    /**
+     * <code>string ruleType = 5;</code>
+     *
+     * @return The ruleType.
+     */
+    java.lang.String getRuleType();
+    /**
+     * <code>string ruleType = 5;</code>
+     *
+     * @return The bytes for ruleType.
+     */
+    com.google.protobuf.ByteString getRuleTypeBytes();
+
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.RulesInputs> getInputsList();
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    com.cpdss.common.generated.VesselInfo.RulesInputs getInputs(int index);
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    int getInputsCount();
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder>
+        getInputsOrBuilderList();
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder getInputsOrBuilder(int index);
+
+    /**
+     * <code>string ruleTemplateId = 7;</code>
+     *
+     * @return The ruleTemplateId.
+     */
+    java.lang.String getRuleTemplateId();
+    /**
+     * <code>string ruleTemplateId = 7;</code>
+     *
+     * @return The bytes for ruleTemplateId.
+     */
+    com.google.protobuf.ByteString getRuleTemplateIdBytes();
+  }
+  /** Protobuf type {@code Rules} */
+  public static final class Rules extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:Rules)
+      RulesOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use Rules.newBuilder() to construct.
+    private Rules(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private Rules() {
+      id_ = "";
+      ruleType_ = "";
+      inputs_ = java.util.Collections.emptyList();
+      ruleTemplateId_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new Rules();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private Rules(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                id_ = s;
+                break;
+              }
+            case 16:
+              {
+                enable_ = input.readBool();
+                break;
+              }
+            case 24:
+              {
+                disable_ = input.readBool();
+                break;
+              }
+            case 32:
+              {
+                disableInSettigs_ = input.readBool();
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ruleType_ = s;
+                break;
+              }
+            case 50:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  inputs_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.RulesInputs>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                inputs_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.RulesInputs.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ruleTemplateId_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          inputs_ = java.util.Collections.unmodifiableList(inputs_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_Rules_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_Rules_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.Rules.class,
+              com.cpdss.common.generated.VesselInfo.Rules.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object id_;
+    /**
+     * <code>string id = 1;</code>
+     *
+     * @return The id.
+     */
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        id_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string id = 1;</code>
+     *
+     * @return The bytes for id.
+     */
+    public com.google.protobuf.ByteString getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ENABLE_FIELD_NUMBER = 2;
+    private boolean enable_;
+    /**
+     * <code>bool enable = 2;</code>
+     *
+     * @return The enable.
+     */
+    public boolean getEnable() {
+      return enable_;
+    }
+
+    public static final int DISABLE_FIELD_NUMBER = 3;
+    private boolean disable_;
+    /**
+     * <code>bool disable = 3;</code>
+     *
+     * @return The disable.
+     */
+    public boolean getDisable() {
+      return disable_;
+    }
+
+    public static final int DISABLEINSETTIGS_FIELD_NUMBER = 4;
+    private boolean disableInSettigs_;
+    /**
+     * <code>bool disableInSettigs = 4;</code>
+     *
+     * @return The disableInSettigs.
+     */
+    public boolean getDisableInSettigs() {
+      return disableInSettigs_;
+    }
+
+    public static final int RULETYPE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object ruleType_;
+    /**
+     * <code>string ruleType = 5;</code>
+     *
+     * @return The ruleType.
+     */
+    public java.lang.String getRuleType() {
+      java.lang.Object ref = ruleType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ruleType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ruleType = 5;</code>
+     *
+     * @return The bytes for ruleType.
+     */
+    public com.google.protobuf.ByteString getRuleTypeBytes() {
+      java.lang.Object ref = ruleType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ruleType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int INPUTS_FIELD_NUMBER = 6;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.RulesInputs> inputs_;
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.RulesInputs> getInputsList() {
+      return inputs_;
+    }
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder>
+        getInputsOrBuilderList() {
+      return inputs_;
+    }
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    public int getInputsCount() {
+      return inputs_.size();
+    }
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    public com.cpdss.common.generated.VesselInfo.RulesInputs getInputs(int index) {
+      return inputs_.get(index);
+    }
+    /** <code>repeated .RulesInputs inputs = 6;</code> */
+    public com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder getInputsOrBuilder(
+        int index) {
+      return inputs_.get(index);
+    }
+
+    public static final int RULETEMPLATEID_FIELD_NUMBER = 7;
+    private volatile java.lang.Object ruleTemplateId_;
+    /**
+     * <code>string ruleTemplateId = 7;</code>
+     *
+     * @return The ruleTemplateId.
+     */
+    public java.lang.String getRuleTemplateId() {
+      java.lang.Object ref = ruleTemplateId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ruleTemplateId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ruleTemplateId = 7;</code>
+     *
+     * @return The bytes for ruleTemplateId.
+     */
+    public com.google.protobuf.ByteString getRuleTemplateIdBytes() {
+      java.lang.Object ref = ruleTemplateId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ruleTemplateId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (!getIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
+      }
+      if (enable_ != false) {
+        output.writeBool(2, enable_);
+      }
+      if (disable_ != false) {
+        output.writeBool(3, disable_);
+      }
+      if (disableInSettigs_ != false) {
+        output.writeBool(4, disableInSettigs_);
+      }
+      if (!getRuleTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, ruleType_);
+      }
+      for (int i = 0; i < inputs_.size(); i++) {
+        output.writeMessage(6, inputs_.get(i));
+      }
+      if (!getRuleTemplateIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, ruleTemplateId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
+      }
+      if (enable_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(2, enable_);
+      }
+      if (disable_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(3, disable_);
+      }
+      if (disableInSettigs_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, disableInSettigs_);
+      }
+      if (!getRuleTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, ruleType_);
+      }
+      for (int i = 0; i < inputs_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(6, inputs_.get(i));
+      }
+      if (!getRuleTemplateIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, ruleTemplateId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.Rules)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.Rules other =
+          (com.cpdss.common.generated.VesselInfo.Rules) obj;
+
+      if (!getId().equals(other.getId())) return false;
+      if (getEnable() != other.getEnable()) return false;
+      if (getDisable() != other.getDisable()) return false;
+      if (getDisableInSettigs() != other.getDisableInSettigs()) return false;
+      if (!getRuleType().equals(other.getRuleType())) return false;
+      if (!getInputsList().equals(other.getInputsList())) return false;
+      if (!getRuleTemplateId().equals(other.getRuleTemplateId())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId().hashCode();
+      hash = (37 * hash) + ENABLE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getEnable());
+      hash = (37 * hash) + DISABLE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDisable());
+      hash = (37 * hash) + DISABLEINSETTIGS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDisableInSettigs());
+      hash = (37 * hash) + RULETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getRuleType().hashCode();
+      if (getInputsCount() > 0) {
+        hash = (37 * hash) + INPUTS_FIELD_NUMBER;
+        hash = (53 * hash) + getInputsList().hashCode();
+      }
+      hash = (37 * hash) + RULETEMPLATEID_FIELD_NUMBER;
+      hash = (53 * hash) + getRuleTemplateId().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.Rules prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code Rules} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:Rules)
+        com.cpdss.common.generated.VesselInfo.RulesOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_Rules_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_Rules_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.Rules.class,
+                com.cpdss.common.generated.VesselInfo.Rules.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.Rules.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getInputsFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = "";
+
+        enable_ = false;
+
+        disable_ = false;
+
+        disableInSettigs_ = false;
+
+        ruleType_ = "";
+
+        if (inputsBuilder_ == null) {
+          inputs_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          inputsBuilder_.clear();
+        }
+        ruleTemplateId_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_Rules_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.Rules getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.Rules.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.Rules build() {
+        com.cpdss.common.generated.VesselInfo.Rules result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.Rules buildPartial() {
+        com.cpdss.common.generated.VesselInfo.Rules result =
+            new com.cpdss.common.generated.VesselInfo.Rules(this);
+        int from_bitField0_ = bitField0_;
+        result.id_ = id_;
+        result.enable_ = enable_;
+        result.disable_ = disable_;
+        result.disableInSettigs_ = disableInSettigs_;
+        result.ruleType_ = ruleType_;
+        if (inputsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            inputs_ = java.util.Collections.unmodifiableList(inputs_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.inputs_ = inputs_;
+        } else {
+          result.inputs_ = inputsBuilder_.build();
+        }
+        result.ruleTemplateId_ = ruleTemplateId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.Rules) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.Rules) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.Rules other) {
+        if (other == com.cpdss.common.generated.VesselInfo.Rules.getDefaultInstance()) return this;
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
+          onChanged();
+        }
+        if (other.getEnable() != false) {
+          setEnable(other.getEnable());
+        }
+        if (other.getDisable() != false) {
+          setDisable(other.getDisable());
+        }
+        if (other.getDisableInSettigs() != false) {
+          setDisableInSettigs(other.getDisableInSettigs());
+        }
+        if (!other.getRuleType().isEmpty()) {
+          ruleType_ = other.ruleType_;
+          onChanged();
+        }
+        if (inputsBuilder_ == null) {
+          if (!other.inputs_.isEmpty()) {
+            if (inputs_.isEmpty()) {
+              inputs_ = other.inputs_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureInputsIsMutable();
+              inputs_.addAll(other.inputs_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.inputs_.isEmpty()) {
+            if (inputsBuilder_.isEmpty()) {
+              inputsBuilder_.dispose();
+              inputsBuilder_ = null;
+              inputs_ = other.inputs_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              inputsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getInputsFieldBuilder()
+                      : null;
+            } else {
+              inputsBuilder_.addAllMessages(other.inputs_);
+            }
+          }
+        }
+        if (!other.getRuleTemplateId().isEmpty()) {
+          ruleTemplateId_ = other.ruleTemplateId_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.Rules parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.Rules) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.lang.Object id_ = "";
+      /**
+       * <code>string id = 1;</code>
+       *
+       * @return The id.
+       */
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string id = 1;</code>
+       *
+       * @return The bytes for id.
+       */
+      public com.google.protobuf.ByteString getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string id = 1;</code>
+       *
+       * @param value The bytes for id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+
+      private boolean enable_;
+      /**
+       * <code>bool enable = 2;</code>
+       *
+       * @return The enable.
+       */
+      public boolean getEnable() {
+        return enable_;
+      }
+      /**
+       * <code>bool enable = 2;</code>
+       *
+       * @param value The enable to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEnable(boolean value) {
+
+        enable_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool enable = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEnable() {
+
+        enable_ = false;
+        onChanged();
+        return this;
+      }
+
+      private boolean disable_;
+      /**
+       * <code>bool disable = 3;</code>
+       *
+       * @return The disable.
+       */
+      public boolean getDisable() {
+        return disable_;
+      }
+      /**
+       * <code>bool disable = 3;</code>
+       *
+       * @param value The disable to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisable(boolean value) {
+
+        disable_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool disable = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDisable() {
+
+        disable_ = false;
+        onChanged();
+        return this;
+      }
+
+      private boolean disableInSettigs_;
+      /**
+       * <code>bool disableInSettigs = 4;</code>
+       *
+       * @return The disableInSettigs.
+       */
+      public boolean getDisableInSettigs() {
+        return disableInSettigs_;
+      }
+      /**
+       * <code>bool disableInSettigs = 4;</code>
+       *
+       * @param value The disableInSettigs to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisableInSettigs(boolean value) {
+
+        disableInSettigs_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool disableInSettigs = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDisableInSettigs() {
+
+        disableInSettigs_ = false;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object ruleType_ = "";
+      /**
+       * <code>string ruleType = 5;</code>
+       *
+       * @return The ruleType.
+       */
+      public java.lang.String getRuleType() {
+        java.lang.Object ref = ruleType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ruleType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ruleType = 5;</code>
+       *
+       * @return The bytes for ruleType.
+       */
+      public com.google.protobuf.ByteString getRuleTypeBytes() {
+        java.lang.Object ref = ruleType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ruleType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ruleType = 5;</code>
+       *
+       * @param value The ruleType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRuleType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ruleType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ruleType = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRuleType() {
+
+        ruleType_ = getDefaultInstance().getRuleType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ruleType = 5;</code>
+       *
+       * @param value The bytes for ruleType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRuleTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ruleType_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.RulesInputs> inputs_ =
+          java.util.Collections.emptyList();
+
+      private void ensureInputsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          inputs_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.RulesInputs>(inputs_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RulesInputs,
+              com.cpdss.common.generated.VesselInfo.RulesInputs.Builder,
+              com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder>
+          inputsBuilder_;
+
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RulesInputs> getInputsList() {
+        if (inputsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(inputs_);
+        } else {
+          return inputsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public int getInputsCount() {
+        if (inputsBuilder_ == null) {
+          return inputs_.size();
+        } else {
+          return inputsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulesInputs getInputs(int index) {
+        if (inputsBuilder_ == null) {
+          return inputs_.get(index);
+        } else {
+          return inputsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder setInputs(int index, com.cpdss.common.generated.VesselInfo.RulesInputs value) {
+        if (inputsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureInputsIsMutable();
+          inputs_.set(index, value);
+          onChanged();
+        } else {
+          inputsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder setInputs(
+          int index, com.cpdss.common.generated.VesselInfo.RulesInputs.Builder builderForValue) {
+        if (inputsBuilder_ == null) {
+          ensureInputsIsMutable();
+          inputs_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          inputsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder addInputs(com.cpdss.common.generated.VesselInfo.RulesInputs value) {
+        if (inputsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureInputsIsMutable();
+          inputs_.add(value);
+          onChanged();
+        } else {
+          inputsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder addInputs(int index, com.cpdss.common.generated.VesselInfo.RulesInputs value) {
+        if (inputsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureInputsIsMutable();
+          inputs_.add(index, value);
+          onChanged();
+        } else {
+          inputsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder addInputs(
+          com.cpdss.common.generated.VesselInfo.RulesInputs.Builder builderForValue) {
+        if (inputsBuilder_ == null) {
+          ensureInputsIsMutable();
+          inputs_.add(builderForValue.build());
+          onChanged();
+        } else {
+          inputsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder addInputs(
+          int index, com.cpdss.common.generated.VesselInfo.RulesInputs.Builder builderForValue) {
+        if (inputsBuilder_ == null) {
+          ensureInputsIsMutable();
+          inputs_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          inputsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder addAllInputs(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.RulesInputs> values) {
+        if (inputsBuilder_ == null) {
+          ensureInputsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, inputs_);
+          onChanged();
+        } else {
+          inputsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder clearInputs() {
+        if (inputsBuilder_ == null) {
+          inputs_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          inputsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public Builder removeInputs(int index) {
+        if (inputsBuilder_ == null) {
+          ensureInputsIsMutable();
+          inputs_.remove(index);
+          onChanged();
+        } else {
+          inputsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulesInputs.Builder getInputsBuilder(int index) {
+        return getInputsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder getInputsOrBuilder(
+          int index) {
+        if (inputsBuilder_ == null) {
+          return inputs_.get(index);
+        } else {
+          return inputsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder>
+          getInputsOrBuilderList() {
+        if (inputsBuilder_ != null) {
+          return inputsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(inputs_);
+        }
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulesInputs.Builder addInputsBuilder() {
+        return getInputsFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.RulesInputs.getDefaultInstance());
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.RulesInputs.Builder addInputsBuilder(int index) {
+        return getInputsFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.RulesInputs.getDefaultInstance());
+      }
+      /** <code>repeated .RulesInputs inputs = 6;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RulesInputs.Builder>
+          getInputsBuilderList() {
+        return getInputsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RulesInputs,
+              com.cpdss.common.generated.VesselInfo.RulesInputs.Builder,
+              com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder>
+          getInputsFieldBuilder() {
+        if (inputsBuilder_ == null) {
+          inputsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.RulesInputs,
+                  com.cpdss.common.generated.VesselInfo.RulesInputs.Builder,
+                  com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder>(
+                  inputs_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          inputs_ = null;
+        }
+        return inputsBuilder_;
+      }
+
+      private java.lang.Object ruleTemplateId_ = "";
+      /**
+       * <code>string ruleTemplateId = 7;</code>
+       *
+       * @return The ruleTemplateId.
+       */
+      public java.lang.String getRuleTemplateId() {
+        java.lang.Object ref = ruleTemplateId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ruleTemplateId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ruleTemplateId = 7;</code>
+       *
+       * @return The bytes for ruleTemplateId.
+       */
+      public com.google.protobuf.ByteString getRuleTemplateIdBytes() {
+        java.lang.Object ref = ruleTemplateId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ruleTemplateId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ruleTemplateId = 7;</code>
+       *
+       * @param value The ruleTemplateId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRuleTemplateId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ruleTemplateId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ruleTemplateId = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRuleTemplateId() {
+
+        ruleTemplateId_ = getDefaultInstance().getRuleTemplateId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ruleTemplateId = 7;</code>
+       *
+       * @param value The bytes for ruleTemplateId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRuleTemplateIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ruleTemplateId_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:Rules)
+    }
+
+    // @@protoc_insertion_point(class_scope:Rules)
+    private static final com.cpdss.common.generated.VesselInfo.Rules DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.Rules();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.Rules getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Rules> PARSER =
+        new com.google.protobuf.AbstractParser<Rules>() {
+          @java.lang.Override
+          public Rules parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new Rules(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<Rules> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Rules> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.Rules getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface RulesInputsOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:RulesInputs)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string prefix = 1;</code>
+     *
+     * @return The prefix.
+     */
+    java.lang.String getPrefix();
+    /**
+     * <code>string prefix = 1;</code>
+     *
+     * @return The bytes for prefix.
+     */
+    com.google.protobuf.ByteString getPrefixBytes();
+
+    /**
+     * <code>string defaultValue = 2;</code>
+     *
+     * @return The defaultValue.
+     */
+    java.lang.String getDefaultValue();
+    /**
+     * <code>string defaultValue = 2;</code>
+     *
+     * @return The bytes for defaultValue.
+     */
+    com.google.protobuf.ByteString getDefaultValueBytes();
+
+    /**
+     * <code>string type = 3;</code>
+     *
+     * @return The type.
+     */
+    java.lang.String getType();
+    /**
+     * <code>string type = 3;</code>
+     *
+     * @return The bytes for type.
+     */
+    com.google.protobuf.ByteString getTypeBytes();
+
+    /**
+     * <code>string max = 4;</code>
+     *
+     * @return The max.
+     */
+    java.lang.String getMax();
+    /**
+     * <code>string max = 4;</code>
+     *
+     * @return The bytes for max.
+     */
+    com.google.protobuf.ByteString getMaxBytes();
+
+    /**
+     * <code>string min = 5;</code>
+     *
+     * @return The min.
+     */
+    java.lang.String getMin();
+    /**
+     * <code>string min = 5;</code>
+     *
+     * @return The bytes for min.
+     */
+    com.google.protobuf.ByteString getMinBytes();
+
+    /**
+     * <code>string value = 6;</code>
+     *
+     * @return The value.
+     */
+    java.lang.String getValue();
+    /**
+     * <code>string value = 6;</code>
+     *
+     * @return The bytes for value.
+     */
+    com.google.protobuf.ByteString getValueBytes();
+
+    /**
+     * <code>string suffix = 7;</code>
+     *
+     * @return The suffix.
+     */
+    java.lang.String getSuffix();
+    /**
+     * <code>string suffix = 7;</code>
+     *
+     * @return The bytes for suffix.
+     */
+    com.google.protobuf.ByteString getSuffixBytes();
+
+    /**
+     * <code>string id = 8;</code>
+     *
+     * @return The id.
+     */
+    java.lang.String getId();
+    /**
+     * <code>string id = 8;</code>
+     *
+     * @return The bytes for id.
+     */
+    com.google.protobuf.ByteString getIdBytes();
+  }
+  /** Protobuf type {@code RulesInputs} */
+  public static final class RulesInputs extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:RulesInputs)
+      RulesInputsOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use RulesInputs.newBuilder() to construct.
+    private RulesInputs(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private RulesInputs() {
+      prefix_ = "";
+      defaultValue_ = "";
+      type_ = "";
+      max_ = "";
+      min_ = "";
+      value_ = "";
+      suffix_ = "";
+      id_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new RulesInputs();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private RulesInputs(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                prefix_ = s;
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                defaultValue_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                type_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                max_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                min_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                value_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                suffix_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                id_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_RulesInputs_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_RulesInputs_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.RulesInputs.class,
+              com.cpdss.common.generated.VesselInfo.RulesInputs.Builder.class);
+    }
+
+    public static final int PREFIX_FIELD_NUMBER = 1;
+    private volatile java.lang.Object prefix_;
+    /**
+     * <code>string prefix = 1;</code>
+     *
+     * @return The prefix.
+     */
+    public java.lang.String getPrefix() {
+      java.lang.Object ref = prefix_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        prefix_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string prefix = 1;</code>
+     *
+     * @return The bytes for prefix.
+     */
+    public com.google.protobuf.ByteString getPrefixBytes() {
+      java.lang.Object ref = prefix_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        prefix_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DEFAULTVALUE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object defaultValue_;
+    /**
+     * <code>string defaultValue = 2;</code>
+     *
+     * @return The defaultValue.
+     */
+    public java.lang.String getDefaultValue() {
+      java.lang.Object ref = defaultValue_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        defaultValue_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string defaultValue = 2;</code>
+     *
+     * @return The bytes for defaultValue.
+     */
+    public com.google.protobuf.ByteString getDefaultValueBytes() {
+      java.lang.Object ref = defaultValue_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        defaultValue_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 3;
+    private volatile java.lang.Object type_;
+    /**
+     * <code>string type = 3;</code>
+     *
+     * @return The type.
+     */
+    public java.lang.String getType() {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        type_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string type = 3;</code>
+     *
+     * @return The bytes for type.
+     */
+    public com.google.protobuf.ByteString getTypeBytes() {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        type_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAX_FIELD_NUMBER = 4;
+    private volatile java.lang.Object max_;
+    /**
+     * <code>string max = 4;</code>
+     *
+     * @return The max.
+     */
+    public java.lang.String getMax() {
+      java.lang.Object ref = max_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        max_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string max = 4;</code>
+     *
+     * @return The bytes for max.
+     */
+    public com.google.protobuf.ByteString getMaxBytes() {
+      java.lang.Object ref = max_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        max_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MIN_FIELD_NUMBER = 5;
+    private volatile java.lang.Object min_;
+    /**
+     * <code>string min = 5;</code>
+     *
+     * @return The min.
+     */
+    public java.lang.String getMin() {
+      java.lang.Object ref = min_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        min_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string min = 5;</code>
+     *
+     * @return The bytes for min.
+     */
+    public com.google.protobuf.ByteString getMinBytes() {
+      java.lang.Object ref = min_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        min_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int VALUE_FIELD_NUMBER = 6;
+    private volatile java.lang.Object value_;
+    /**
+     * <code>string value = 6;</code>
+     *
+     * @return The value.
+     */
+    public java.lang.String getValue() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        value_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string value = 6;</code>
+     *
+     * @return The bytes for value.
+     */
+    public com.google.protobuf.ByteString getValueBytes() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        value_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SUFFIX_FIELD_NUMBER = 7;
+    private volatile java.lang.Object suffix_;
+    /**
+     * <code>string suffix = 7;</code>
+     *
+     * @return The suffix.
+     */
+    public java.lang.String getSuffix() {
+      java.lang.Object ref = suffix_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        suffix_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string suffix = 7;</code>
+     *
+     * @return The bytes for suffix.
+     */
+    public com.google.protobuf.ByteString getSuffixBytes() {
+      java.lang.Object ref = suffix_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        suffix_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ID_FIELD_NUMBER = 8;
+    private volatile java.lang.Object id_;
+    /**
+     * <code>string id = 8;</code>
+     *
+     * @return The id.
+     */
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        id_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string id = 8;</code>
+     *
+     * @return The bytes for id.
+     */
+    public com.google.protobuf.ByteString getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (!getPrefixBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, prefix_);
+      }
+      if (!getDefaultValueBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, defaultValue_);
+      }
+      if (!getTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, type_);
+      }
+      if (!getMaxBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, max_);
+      }
+      if (!getMinBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, min_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, value_);
+      }
+      if (!getSuffixBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, suffix_);
+      }
+      if (!getIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, id_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getPrefixBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, prefix_);
+      }
+      if (!getDefaultValueBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, defaultValue_);
+      }
+      if (!getTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, type_);
+      }
+      if (!getMaxBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, max_);
+      }
+      if (!getMinBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, min_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, value_);
+      }
+      if (!getSuffixBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, suffix_);
+      }
+      if (!getIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, id_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.RulesInputs)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.RulesInputs other =
+          (com.cpdss.common.generated.VesselInfo.RulesInputs) obj;
+
+      if (!getPrefix().equals(other.getPrefix())) return false;
+      if (!getDefaultValue().equals(other.getDefaultValue())) return false;
+      if (!getType().equals(other.getType())) return false;
+      if (!getMax().equals(other.getMax())) return false;
+      if (!getMin().equals(other.getMin())) return false;
+      if (!getValue().equals(other.getValue())) return false;
+      if (!getSuffix().equals(other.getSuffix())) return false;
+      if (!getId().equals(other.getId())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PREFIX_FIELD_NUMBER;
+      hash = (53 * hash) + getPrefix().hashCode();
+      hash = (37 * hash) + DEFAULTVALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getDefaultValue().hashCode();
+      hash = (37 * hash) + TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getType().hashCode();
+      hash = (37 * hash) + MAX_FIELD_NUMBER;
+      hash = (53 * hash) + getMax().hashCode();
+      hash = (37 * hash) + MIN_FIELD_NUMBER;
+      hash = (53 * hash) + getMin().hashCode();
+      hash = (37 * hash) + VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getValue().hashCode();
+      hash = (37 * hash) + SUFFIX_FIELD_NUMBER;
+      hash = (53 * hash) + getSuffix().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.RulesInputs prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code RulesInputs} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:RulesInputs)
+        com.cpdss.common.generated.VesselInfo.RulesInputsOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RulesInputs_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RulesInputs_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.RulesInputs.class,
+                com.cpdss.common.generated.VesselInfo.RulesInputs.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.RulesInputs.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        prefix_ = "";
+
+        defaultValue_ = "";
+
+        type_ = "";
+
+        max_ = "";
+
+        min_ = "";
+
+        value_ = "";
+
+        suffix_ = "";
+
+        id_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RulesInputs_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RulesInputs getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.RulesInputs.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RulesInputs build() {
+        com.cpdss.common.generated.VesselInfo.RulesInputs result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RulesInputs buildPartial() {
+        com.cpdss.common.generated.VesselInfo.RulesInputs result =
+            new com.cpdss.common.generated.VesselInfo.RulesInputs(this);
+        result.prefix_ = prefix_;
+        result.defaultValue_ = defaultValue_;
+        result.type_ = type_;
+        result.max_ = max_;
+        result.min_ = min_;
+        result.value_ = value_;
+        result.suffix_ = suffix_;
+        result.id_ = id_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.RulesInputs) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.RulesInputs) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.RulesInputs other) {
+        if (other == com.cpdss.common.generated.VesselInfo.RulesInputs.getDefaultInstance())
+          return this;
+        if (!other.getPrefix().isEmpty()) {
+          prefix_ = other.prefix_;
+          onChanged();
+        }
+        if (!other.getDefaultValue().isEmpty()) {
+          defaultValue_ = other.defaultValue_;
+          onChanged();
+        }
+        if (!other.getType().isEmpty()) {
+          type_ = other.type_;
+          onChanged();
+        }
+        if (!other.getMax().isEmpty()) {
+          max_ = other.max_;
+          onChanged();
+        }
+        if (!other.getMin().isEmpty()) {
+          min_ = other.min_;
+          onChanged();
+        }
+        if (!other.getValue().isEmpty()) {
+          value_ = other.value_;
+          onChanged();
+        }
+        if (!other.getSuffix().isEmpty()) {
+          suffix_ = other.suffix_;
+          onChanged();
+        }
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.RulesInputs parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.RulesInputs) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object prefix_ = "";
+      /**
+       * <code>string prefix = 1;</code>
+       *
+       * @return The prefix.
+       */
+      public java.lang.String getPrefix() {
+        java.lang.Object ref = prefix_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          prefix_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string prefix = 1;</code>
+       *
+       * @return The bytes for prefix.
+       */
+      public com.google.protobuf.ByteString getPrefixBytes() {
+        java.lang.Object ref = prefix_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          prefix_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string prefix = 1;</code>
+       *
+       * @param value The prefix to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPrefix(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        prefix_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string prefix = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPrefix() {
+
+        prefix_ = getDefaultInstance().getPrefix();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string prefix = 1;</code>
+       *
+       * @param value The bytes for prefix to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPrefixBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        prefix_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object defaultValue_ = "";
+      /**
+       * <code>string defaultValue = 2;</code>
+       *
+       * @return The defaultValue.
+       */
+      public java.lang.String getDefaultValue() {
+        java.lang.Object ref = defaultValue_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          defaultValue_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string defaultValue = 2;</code>
+       *
+       * @return The bytes for defaultValue.
+       */
+      public com.google.protobuf.ByteString getDefaultValueBytes() {
+        java.lang.Object ref = defaultValue_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          defaultValue_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string defaultValue = 2;</code>
+       *
+       * @param value The defaultValue to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDefaultValue(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        defaultValue_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string defaultValue = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDefaultValue() {
+
+        defaultValue_ = getDefaultInstance().getDefaultValue();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string defaultValue = 2;</code>
+       *
+       * @param value The bytes for defaultValue to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDefaultValueBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        defaultValue_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object type_ = "";
+      /**
+       * <code>string type = 3;</code>
+       *
+       * @return The type.
+       */
+      public java.lang.String getType() {
+        java.lang.Object ref = type_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          type_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string type = 3;</code>
+       *
+       * @return The bytes for type.
+       */
+      public com.google.protobuf.ByteString getTypeBytes() {
+        java.lang.Object ref = type_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          type_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string type = 3;</code>
+       *
+       * @param value The type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string type = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearType() {
+
+        type_ = getDefaultInstance().getType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string type = 3;</code>
+       *
+       * @param value The bytes for type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        type_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object max_ = "";
+      /**
+       * <code>string max = 4;</code>
+       *
+       * @return The max.
+       */
+      public java.lang.String getMax() {
+        java.lang.Object ref = max_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          max_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string max = 4;</code>
+       *
+       * @return The bytes for max.
+       */
+      public com.google.protobuf.ByteString getMaxBytes() {
+        java.lang.Object ref = max_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          max_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string max = 4;</code>
+       *
+       * @param value The max to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMax(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        max_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string max = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMax() {
+
+        max_ = getDefaultInstance().getMax();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string max = 4;</code>
+       *
+       * @param value The bytes for max to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        max_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object min_ = "";
+      /**
+       * <code>string min = 5;</code>
+       *
+       * @return The min.
+       */
+      public java.lang.String getMin() {
+        java.lang.Object ref = min_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          min_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string min = 5;</code>
+       *
+       * @return The bytes for min.
+       */
+      public com.google.protobuf.ByteString getMinBytes() {
+        java.lang.Object ref = min_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          min_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string min = 5;</code>
+       *
+       * @param value The min to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMin(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        min_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string min = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMin() {
+
+        min_ = getDefaultInstance().getMin();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string min = 5;</code>
+       *
+       * @param value The bytes for min to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMinBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        min_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object value_ = "";
+      /**
+       * <code>string value = 6;</code>
+       *
+       * @return The value.
+       */
+      public java.lang.String getValue() {
+        java.lang.Object ref = value_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          value_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string value = 6;</code>
+       *
+       * @return The bytes for value.
+       */
+      public com.google.protobuf.ByteString getValueBytes() {
+        java.lang.Object ref = value_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          value_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string value = 6;</code>
+       *
+       * @param value The value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValue(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValue() {
+
+        value_ = getDefaultInstance().getValue();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 6;</code>
+       *
+       * @param value The bytes for value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValueBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object suffix_ = "";
+      /**
+       * <code>string suffix = 7;</code>
+       *
+       * @return The suffix.
+       */
+      public java.lang.String getSuffix() {
+        java.lang.Object ref = suffix_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          suffix_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string suffix = 7;</code>
+       *
+       * @return The bytes for suffix.
+       */
+      public com.google.protobuf.ByteString getSuffixBytes() {
+        java.lang.Object ref = suffix_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          suffix_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string suffix = 7;</code>
+       *
+       * @param value The suffix to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSuffix(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        suffix_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string suffix = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSuffix() {
+
+        suffix_ = getDefaultInstance().getSuffix();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string suffix = 7;</code>
+       *
+       * @param value The bytes for suffix to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSuffixBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        suffix_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object id_ = "";
+      /**
+       * <code>string id = 8;</code>
+       *
+       * @return The id.
+       */
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string id = 8;</code>
+       *
+       * @return The bytes for id.
+       */
+      public com.google.protobuf.ByteString getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string id = 8;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string id = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string id = 8;</code>
+       *
+       * @param value The bytes for id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:RulesInputs)
+    }
+
+    // @@protoc_insertion_point(class_scope:RulesInputs)
+    private static final com.cpdss.common.generated.VesselInfo.RulesInputs DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.RulesInputs();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RulesInputs getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RulesInputs> PARSER =
+        new com.google.protobuf.AbstractParser<RulesInputs>() {
+          @java.lang.Override
+          public RulesInputs parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new RulesInputs(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<RulesInputs> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RulesInputs> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.RulesInputs getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VesselRequestWithPaging_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -44775,6 +55434,14 @@ public final class VesselInfo {
       internal_static_VesselAlgoReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_VesselAlgoReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SelectableParameter_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SelectableParameter_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_ParameterValue_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ParameterValue_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_UllageDetails_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -44855,6 +55522,37 @@ public final class VesselInfo {
       internal_static_VesselDWTResponse_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_VesselDWTResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_VesselPumpsResponse_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VesselPumpsResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_PumpType_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_PumpType_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_VesselPump_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VesselPump_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_VesselRuleRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VesselRuleRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_VesselRuleReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VesselRuleReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_RulePlans_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RulePlans_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor internal_static_Rules_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_Rules_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_RulesInputs_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RulesInputs_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -44919,7 +55617,7 @@ public final class VesselInfo {
           + "\003(\0132\r.VesselDetail\022E\n\035vesselLoadableQuan"
           + "tityDetails\030\005 \001(\0132\036.VesselLoadableQuanti"
           + "tyDetails\"%\n\021VesselAlgoRequest\022\020\n\010vessel"
-          + "Id\030\001 \001(\003\"\212\003\n\017VesselAlgoReply\022#\n\014vesselDe"
+          + "Id\030\001 \001(\003\"\275\003\n\017VesselAlgoReply\022#\n\014vesselDe"
           + "tail\030\001 \001(\0132\r.VesselDetail\0223\n\024vesselDraft"
           + "Condition\030\002 \003(\0132\025.VesselDraftCondition\022+"
           + "\n\020vesselTankDetail\030\003 \003(\0132\021.VesselTankDet"
@@ -44929,99 +55627,127 @@ public final class VesselInfo {
           + "onseStatus\030\007 \001(\0132\017.ResponseStatus\022%\n\rull"
           + "ageDetails\030\010 \003(\0132\016.UllageDetails\0223\n\024ulla"
           + "geTrimCorrection\030\t \003(\0132\025.UllageTrimCorre"
-          + "ction\"r\n\rUllageDetails\022\n\n\002id\030\001 \001(\003\022\016\n\006ta"
-          + "nkId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\034\n\024evenK"
-          + "eelCapacityCubm\030\004 \001(\t\022\022\n\nsoundDepth\030\005 \001("
-          + "\t\"\236\001\n\024VesselDraftCondition\022\n\n\002id\030\001 \001(\003\022\030"
-          + "\n\020draftConditionId\030\002 \001(\003\022\r\n\005depth\030\003 \001(\t\022"
-          + "\021\n\tfreeboard\030\004 \001(\t\022\024\n\014draftExtreme\030\005 \001(\t"
-          + "\022\024\n\014displacement\030\006 \001(\t\022\022\n\ndeadWeight\030\007 \001"
-          + "(\t\"\253\001\n\017HydrostaticData\022\n\n\002id\030\001 \001(\003\022\014\n\004tr"
-          + "im\030\002 \001(\t\022\r\n\005draft\030\003 \001(\t\022\024\n\014displacement\030"
-          + "\004 \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007"
-          + " \001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n "
-          + "\001(\t\022\013\n\003tpc\030\013 \001(\t\"J\n\rVesselTankTCG\022\n\n\002id\030"
-          + "\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022"
-          + "\013\n\003tcg\030\004 \001(\t\"\316\002\n\007BMAndSF\022%\n\rbendingMomen"
-          + "t\030\001 \003(\0132\016.BendingMoment\022%\n\rshearingForce"
-          + "\030\002 \003(\0132\016.ShearingForce\022+\n\020calculationShe"
-          + "et\030\003 \003(\0132\021.CalculationSheet\022=\n\031calculati"
-          + "onSheetTankGroup\030\004 \003(\0132\032.CalculationShee"
-          + "tTankGroup\0227\n\026minMaxValuesForBMAndSf\030\005 \003"
-          + "(\0132\027.MinMaxValuesForBMAndSf\022%\n\rstationVa"
-          + "lues\030\006 \003(\0132\016.StationValues\022)\n\017InnerBulkH"
-          + "eadSF\030\007 \003(\0132\020.InnerBulkHeadSF\"\207\001\n\rBendin"
-          + "gMoment\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t"
-          + "\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027"
-          + "\n\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorrectio"
-          + "n\030\006 \001(\t\"\207\001\n\rShearingForce\022\n\n\002id\030\001 \001(\003\022\023\n"
-          + "\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n"
-          + "\tbaseValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005 \001("
-          + "\t\022\026\n\016trimCorrection\030\006 \001(\t\"c\n\020Calculation"
-          + "Sheet\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006"
-          + "tankId\030\003 \001(\003\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg"
-          + "\030\005 \001(\t\"\\\n\031CalculationSheetTankGroup\022\n\n\002i"
-          + "d\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022"
-          + "\023\n\013frameNumber\030\004 \001(\t\"u\n\026MinMaxValuesForB"
-          + "MAndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022"
-          + "\r\n\005minBm\030\003 \001(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005"
-          + " \001(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\rStationValues\022\023\n"
-          + "\013stationFrom\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n"
-          + "\017frameNumberFrom\030\003 \001(\t\022\025\n\rframeNumberTo\030"
-          + "\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017"
-          + "InnerBulkHeadSF\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\t"
-          + "foreAlpha\030\002 \001(\t\022\035\n\025foreCenterCargoTankId"
-          + "\030\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n\017foreWingTankId"
-          + "s\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022\030\n\020foreBallastTa"
-          + "nks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorre"
-          + "ction\030\t \001(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxAl"
-          + "lowence\030\013 \001(\t\022\030\n\020foreMinAllowence\030\014 \001(\t\022"
-          + "\n\n\002id\030\r \001(\003\022\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftCent"
-          + "erCargoTankId\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016af"
-          + "tWingTankIds\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aft"
-          + "BallastTanks\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aft"
-          + "BWCorrection\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aft"
-          + "MaxFlAllowence\030\027 \001(\t\022\031\n\021aftMinFlAllowenc"
-          + "e\030\030 \001(\t\"\200\002\n\024UllageTrimCorrection\022\n\n\002id\030\001"
-          + " \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001("
-          + "\t\022\016\n\006trimM1\030\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006tri"
-          + "mM3\030\006 \001(\t\022\016\n\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001("
-          + "\t\022\r\n\005trim0\030\t \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2"
-          + "\030\013 \001(\t\022\r\n\005trim3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005"
-          + "trim5\030\016 \001(\t\022\r\n\005trim6\030\017 \001(\t\"$\n\021VesselTank"
-          + "Request\022\017\n\007tankIds\030\001 \003(\003\"`\n\017VesselTankOr"
-          + "der\022\020\n\010tankName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n"
-          + "\tshortName\030\003 \001(\t\022\030\n\020tankDisplayOrder\030\004 \001"
-          + "(\005\"h\n\022VesselTankResponse\022)\n\017vesselTankOr"
-          + "der\030\001 \003(\0132\020.VesselTankOrder\022\'\n\016responseS"
-          + "tatus\030\002 \001(\0132\017.ResponseStatus\"#\n\017VesselId"
-          + "Request\022\020\n\010vesselId\030\001 \001(\003\"`\n\020VesselIdRes"
-          + "ponse\022#\n\014vesselDetail\030\001 \001(\0132\r.VesselDeta"
-          + "il\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseSta"
-          + "tus\"8\n\020VesselDWTRequest\022\020\n\010vesselId\030\001 \001("
-          + "\003\022\022\n\ndraftValue\030\002 \001(\t\"t\n\021VesselDWTRespon"
-          + "se\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022"
-          + "\021\n\tdwtResult\030\003 \001(\t\022\'\n\016responseStatus\030\004 \001"
-          + "(\0132\017.ResponseStatus2\302\005\n\021VesselInfoServic"
-          + "e\0228\n\026GetAllVesselsByCompany\022\016.VesselRequ"
-          + "est\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsB"
-          + "yId\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n\016G"
-          + "etVesselTanks\022\016.VesselRequest\032\014.VesselRe"
-          + "ply\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselReq"
-          + "uest\032\014.VesselReply\"\000\022A\n\027GetVesselDetails"
-          + "ForAlgo\022\022.VesselAlgoRequest\032\020.VesselAlgo"
-          + "Reply\"\000\022C\n!GetVesselDetailForSynopticalT"
-          + "able\022\016.VesselRequest\032\014.VesselReply\"\000\022;\n\031"
-          + "GetVesselDetailByVesselId\022\016.VesselReques"
-          + "t\032\014.VesselReply\"\000\022A\n\025GetVesselInfoByPagi"
-          + "ng\022\030.VesselRequestWithPaging\032\014.VesselRep"
-          + "ly\"\000\022C\n\026GetVesselInfoBytankIds\022\022.VesselT"
-          + "ankRequest\032\023.VesselTankResponse\"\000\022C\n\032Get"
-          + "DWTFromVesselByVesselId\022\021.VesselDWTReque"
-          + "st\032\022.VesselDWTResponse\022@\n\027GetVesselInfoB"
-          + "yVesselId\022\020.VesselIdRequest\032\021.VesselIdRe"
-          + "sponse\"\000B\036\n\032com.cpdss.common.generatedP\000"
-          + "b\006proto3"
+          + "ction\0221\n\023selectableParameter\030\n \003(\0132\024.Sel"
+          + "ectableParameter\"L\n\023SelectableParameter\022"
+          + "\024\n\014paramterName\030\001 \001(\t\022\037\n\006values\030\002 \003(\0132\017."
+          + "ParameterValue\"-\n\016ParameterValue\022\014\n\004type"
+          + "\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"r\n\rUllageDetails\022\n"
+          + "\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDept"
+          + "h\030\003 \001(\t\022\034\n\024evenKeelCapacityCubm\030\004 \001(\t\022\022\n"
+          + "\nsoundDepth\030\005 \001(\t\"\236\001\n\024VesselDraftConditi"
+          + "on\022\n\n\002id\030\001 \001(\003\022\030\n\020draftConditionId\030\002 \001(\003"
+          + "\022\r\n\005depth\030\003 \001(\t\022\021\n\tfreeboard\030\004 \001(\t\022\024\n\014dr"
+          + "aftExtreme\030\005 \001(\t\022\024\n\014displacement\030\006 \001(\t\022\022"
+          + "\n\ndeadWeight\030\007 \001(\t\"\253\001\n\017HydrostaticData\022\n"
+          + "\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 \001(\t\022\r\n\005draft\030\003 \001(\t\022"
+          + "\024\n\014displacement\030\004 \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n\003lc"
+          + "f\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003lkm"
+          + "\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030\013 \001(\t\"J\n\rVess"
+          + "elTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n"
+          + "\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001(\t\"\316\002\n\007BMAndSF"
+          + "\022%\n\rbendingMoment\030\001 \003(\0132\016.BendingMoment\022"
+          + "%\n\rshearingForce\030\002 \003(\0132\016.ShearingForce\022+"
+          + "\n\020calculationSheet\030\003 \003(\0132\021.CalculationSh"
+          + "eet\022=\n\031calculationSheetTankGroup\030\004 \003(\0132\032"
+          + ".CalculationSheetTankGroup\0227\n\026minMaxValu"
+          + "esForBMAndSf\030\005 \003(\0132\027.MinMaxValuesForBMAn"
+          + "dSf\022%\n\rstationValues\030\006 \003(\0132\016.StationValu"
+          + "es\022)\n\017InnerBulkHeadSF\030\007 \003(\0132\020.InnerBulkH"
+          + "eadSF\"\207\001\n\rBendingMoment\022\n\n\002id\030\001 \001(\003\022\023\n\013f"
+          + "rameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tb"
+          + "aseValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005 \001(\t\022"
+          + "\026\n\016trimCorrection\030\006 \001(\t\"\207\001\n\rShearingForc"
+          + "e\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tba"
+          + "seDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draf"
+          + "tCorrection\030\005 \001(\t\022\026\n\016trimCorrection\030\006 \001("
+          + "\t\"c\n\020CalculationSheet\022\n\n\002id\030\001 \001(\003\022\021\n\ttan"
+          + "kGroup\030\002 \001(\005\022\016\n\006tankId\030\003 \001(\003\022\023\n\013weightRa"
+          + "tio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n\031CalculationShe"
+          + "etTankGroup\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001"
+          + "(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumber\030\004 \001(\t\"u\n\026"
+          + "MinMaxValuesForBMAndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013fr"
+          + "ameNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001(\t\022\r\n\005maxBm\030"
+          + "\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\r"
+          + "StationValues\022\023\n\013stationFrom\030\001 \001(\t\022\021\n\tst"
+          + "ationTo\030\002 \001(\t\022\027\n\017frameNumberFrom\030\003 \001(\t\022\025"
+          + "\n\rframeNumberTo\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022"
+          + "\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHeadSF\022\023\n\013frame"
+          + "Number\030\001 \001(\t\022\021\n\tforeAlpha\030\002 \001(\t\022\035\n\025foreC"
+          + "enterCargoTankId\030\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027"
+          + "\n\017foreWingTankIds\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022"
+          + "\030\n\020foreBallastTanks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001("
+          + "\t\022\030\n\020foreBWCorrection\030\t \001(\t\022\016\n\006foreC4\030\n "
+          + "\001(\t\022\030\n\020foreMaxAllowence\030\013 \001(\t\022\030\n\020foreMin"
+          + "Allowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022\020\n\010aftAlpha\030"
+          + "\016 \001(\t\022\034\n\024aftCenterCargoTankId\030\017 \001(\003\022\r\n\005a"
+          + "ftC1\030\020 \001(\t\022\026\n\016aftWingTankIds\030\021 \001(\t\022\r\n\005af"
+          + "tC2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023 \001(\t\022\r\n\005af"
+          + "tC3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025 \001(\t\022\r\n\005af"
+          + "tC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence\030\027 \001(\t\022\031\n\021"
+          + "aftMinFlAllowence\030\030 \001(\t\"\200\002\n\024UllageTrimCo"
+          + "rrection\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013"
+          + "ullageDepth\030\003 \001(\t\022\016\n\006trimM1\030\004 \001(\t\022\016\n\006tri"
+          + "mM2\030\005 \001(\t\022\016\n\006trimM3\030\006 \001(\t\022\016\n\006trimM4\030\007 \001("
+          + "\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n\005trim0\030\t \001(\t\022\r\n\005trim"
+          + "1\030\n \001(\t\022\r\n\005trim2\030\013 \001(\t\022\r\n\005trim3\030\014 \001(\t\022\r\n"
+          + "\005trim4\030\r \001(\t\022\r\n\005trim5\030\016 \001(\t\022\r\n\005trim6\030\017 \001"
+          + "(\t\"$\n\021VesselTankRequest\022\017\n\007tankIds\030\001 \003(\003"
+          + "\"`\n\017VesselTankOrder\022\020\n\010tankName\030\001 \001(\t\022\016\n"
+          + "\006tankId\030\002 \001(\003\022\021\n\tshortName\030\003 \001(\t\022\030\n\020tank"
+          + "DisplayOrder\030\004 \001(\005\"h\n\022VesselTankResponse"
+          + "\022)\n\017vesselTankOrder\030\001 \003(\0132\020.VesselTankOr"
+          + "der\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseSt"
+          + "atus\"#\n\017VesselIdRequest\022\020\n\010vesselId\030\001 \001("
+          + "\003\"`\n\020VesselIdResponse\022#\n\014vesselDetail\030\001 "
+          + "\001(\0132\r.VesselDetail\022\'\n\016responseStatus\030\002 \001"
+          + "(\0132\017.ResponseStatus\"8\n\020VesselDWTRequest\022"
+          + "\020\n\010vesselId\030\001 \001(\003\022\022\n\ndraftValue\030\002 \001(\t\"t\n"
+          + "\021VesselDWTResponse\022\020\n\010vesselId\030\001 \001(\003\022\021\n\t"
+          + "companyId\030\002 \001(\003\022\021\n\tdwtResult\030\003 \001(\t\022\'\n\016re"
+          + "sponseStatus\030\004 \001(\0132\017.ResponseStatus\"|\n\023V"
+          + "esselPumpsResponse\022\'\n\016responseStatus\030\001 \001"
+          + "(\0132\017.ResponseStatus\022\033\n\010pumpType\030\002 \003(\0132\t."
+          + "PumpType\022\037\n\nvesselPump\030\003 \003(\0132\013.VesselPum"
+          + "p\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\""
+          + "x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 "
+          + "\001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pumpName\030\004 \001("
+          + "\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCapacity\030\006 \001("
+          + "\t\"V\n\021VesselRuleRequest\022\020\n\010vesselId\030\001 \001(\003"
+          + "\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003(\0132\n."
+          + "RulePlans\"X\n\017VesselRuleReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePla"
+          + "n\030\002 \003(\0132\n.RulePlans\"2\n\tRulePlans\022\016\n\006head"
+          + "er\030\001 \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\226\001\n\005Rule"
+          + "s\022\n\n\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disable"
+          + "\030\003 \001(\010\022\030\n\020disableInSettigs\030\004 \001(\010\022\020\n\010rule"
+          + "Type\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInputs"
+          + "\022\026\n\016ruleTemplateId\030\007 \001(\t\"\206\001\n\013RulesInputs"
+          + "\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030\002 \001(\t\022\014"
+          + "\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030\005 \001(\t\022\r"
+          + "\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002id\030\010 \001("
+          + "\t2\322\006\n\021VesselInfoService\0228\n\026GetAllVessels"
+          + "ByCompany\022\016.VesselRequest\032\014.VesselReply\""
+          + "\000\0226\n\024GetVesselDetailsById\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\0220\n\016GetVesselTanks\022\016.Ve"
+          + "sselRequest\032\014.VesselReply\"\000\0225\n\023GetVessel"
+          + "CargoTanks\022\016.VesselRequest\032\014.VesselReply"
+          + "\"\000\022A\n\027GetVesselDetailsForAlgo\022\022.VesselAl"
+          + "goRequest\032\020.VesselAlgoReply\"\000\022C\n!GetVess"
+          + "elDetailForSynopticalTable\022\016.VesselReque"
+          + "st\032\014.VesselReply\"\000\022;\n\031GetVesselDetailByV"
+          + "esselId\022\016.VesselRequest\032\014.VesselReply\"\000\022"
+          + "A\n\025GetVesselInfoByPaging\022\030.VesselRequest"
+          + "WithPaging\032\014.VesselReply\"\000\022C\n\026GetVesselI"
+          + "nfoBytankIds\022\022.VesselTankRequest\032\023.Vesse"
+          + "lTankResponse\"\000\022C\n\032GetDWTFromVesselByVes"
+          + "selId\022\021.VesselDWTRequest\032\022.VesselDWTResp"
+          + "onse\022@\n\027GetVesselInfoByVesselId\022\020.Vessel"
+          + "IdRequest\032\021.VesselIdResponse\"\000\022D\n\030GetVes"
+          + "selPumpsByVesselId\022\020.VesselIdRequest\032\024.V"
+          + "esselPumpsResponse\"\000\022H\n\036GetRulesByVessel"
+          + "IdAndSectionId\022\022.VesselRuleRequest\032\020.Ves"
+          + "selRuleReply\"\000B\036\n\032com.cpdss.common.gener"
+          + "atedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -45171,15 +55897,30 @@ public final class VesselInfo {
               "ResponseStatus",
               "UllageDetails",
               "UllageTrimCorrection",
+              "SelectableParameter",
             });
-    internal_static_UllageDetails_descriptor = getDescriptor().getMessageTypes().get(9);
+    internal_static_SelectableParameter_descriptor = getDescriptor().getMessageTypes().get(9);
+    internal_static_SelectableParameter_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SelectableParameter_descriptor,
+            new java.lang.String[] {
+              "ParamterName", "Values",
+            });
+    internal_static_ParameterValue_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_ParameterValue_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_ParameterValue_descriptor,
+            new java.lang.String[] {
+              "Type", "Value",
+            });
+    internal_static_UllageDetails_descriptor = getDescriptor().getMessageTypes().get(11);
     internal_static_UllageDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_UllageDetails_descriptor,
             new java.lang.String[] {
               "Id", "TankId", "UllageDepth", "EvenKeelCapacityCubm", "SoundDepth",
             });
-    internal_static_VesselDraftCondition_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_VesselDraftCondition_descriptor = getDescriptor().getMessageTypes().get(12);
     internal_static_VesselDraftCondition_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselDraftCondition_descriptor,
@@ -45192,7 +55933,7 @@ public final class VesselInfo {
               "Displacement",
               "DeadWeight",
             });
-    internal_static_HydrostaticData_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_HydrostaticData_descriptor = getDescriptor().getMessageTypes().get(13);
     internal_static_HydrostaticData_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_HydrostaticData_descriptor,
@@ -45209,14 +55950,14 @@ public final class VesselInfo {
               "Mtc",
               "Tpc",
             });
-    internal_static_VesselTankTCG_descriptor = getDescriptor().getMessageTypes().get(12);
+    internal_static_VesselTankTCG_descriptor = getDescriptor().getMessageTypes().get(14);
     internal_static_VesselTankTCG_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselTankTCG_descriptor,
             new java.lang.String[] {
               "Id", "TankId", "Capacity", "Tcg",
             });
-    internal_static_BMAndSF_descriptor = getDescriptor().getMessageTypes().get(13);
+    internal_static_BMAndSF_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_BMAndSF_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_BMAndSF_descriptor,
@@ -45229,21 +55970,21 @@ public final class VesselInfo {
               "StationValues",
               "InnerBulkHeadSF",
             });
-    internal_static_BendingMoment_descriptor = getDescriptor().getMessageTypes().get(14);
+    internal_static_BendingMoment_descriptor = getDescriptor().getMessageTypes().get(16);
     internal_static_BendingMoment_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_BendingMoment_descriptor,
             new java.lang.String[] {
               "Id", "FrameNumber", "BaseDraft", "BaseValue", "DraftCorrection", "TrimCorrection",
             });
-    internal_static_ShearingForce_descriptor = getDescriptor().getMessageTypes().get(15);
+    internal_static_ShearingForce_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_ShearingForce_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ShearingForce_descriptor,
             new java.lang.String[] {
               "Id", "FrameNumber", "BaseDraft", "BaseValue", "DraftCorrection", "TrimCorrection",
             });
-    internal_static_CalculationSheet_descriptor = getDescriptor().getMessageTypes().get(16);
+    internal_static_CalculationSheet_descriptor = getDescriptor().getMessageTypes().get(18);
     internal_static_CalculationSheet_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CalculationSheet_descriptor,
@@ -45251,28 +55992,28 @@ public final class VesselInfo {
               "Id", "TankGroup", "TankId", "WeightRatio", "Lcg",
             });
     internal_static_CalculationSheetTankGroup_descriptor =
-        getDescriptor().getMessageTypes().get(17);
+        getDescriptor().getMessageTypes().get(19);
     internal_static_CalculationSheetTankGroup_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CalculationSheetTankGroup_descriptor,
             new java.lang.String[] {
               "Id", "TankGroup", "Lcg", "FrameNumber",
             });
-    internal_static_MinMaxValuesForBMAndSf_descriptor = getDescriptor().getMessageTypes().get(18);
+    internal_static_MinMaxValuesForBMAndSf_descriptor = getDescriptor().getMessageTypes().get(20);
     internal_static_MinMaxValuesForBMAndSf_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_MinMaxValuesForBMAndSf_descriptor,
             new java.lang.String[] {
               "Id", "FrameNumber", "MinBm", "MaxBm", "MinSf", "MaxSf",
             });
-    internal_static_StationValues_descriptor = getDescriptor().getMessageTypes().get(19);
+    internal_static_StationValues_descriptor = getDescriptor().getMessageTypes().get(21);
     internal_static_StationValues_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_StationValues_descriptor,
             new java.lang.String[] {
               "StationFrom", "StationTo", "FrameNumberFrom", "FrameNumberTo", "Distance", "Id",
             });
-    internal_static_InnerBulkHeadSF_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_InnerBulkHeadSF_descriptor = getDescriptor().getMessageTypes().get(22);
     internal_static_InnerBulkHeadSF_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_InnerBulkHeadSF_descriptor,
@@ -45302,7 +56043,7 @@ public final class VesselInfo {
               "AftMaxFlAllowence",
               "AftMinFlAllowence",
             });
-    internal_static_UllageTrimCorrection_descriptor = getDescriptor().getMessageTypes().get(21);
+    internal_static_UllageTrimCorrection_descriptor = getDescriptor().getMessageTypes().get(23);
     internal_static_UllageTrimCorrection_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_UllageTrimCorrection_descriptor,
@@ -45323,54 +56064,110 @@ public final class VesselInfo {
               "Trim5",
               "Trim6",
             });
-    internal_static_VesselTankRequest_descriptor = getDescriptor().getMessageTypes().get(22);
+    internal_static_VesselTankRequest_descriptor = getDescriptor().getMessageTypes().get(24);
     internal_static_VesselTankRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselTankRequest_descriptor,
             new java.lang.String[] {
               "TankIds",
             });
-    internal_static_VesselTankOrder_descriptor = getDescriptor().getMessageTypes().get(23);
+    internal_static_VesselTankOrder_descriptor = getDescriptor().getMessageTypes().get(25);
     internal_static_VesselTankOrder_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselTankOrder_descriptor,
             new java.lang.String[] {
               "TankName", "TankId", "ShortName", "TankDisplayOrder",
             });
-    internal_static_VesselTankResponse_descriptor = getDescriptor().getMessageTypes().get(24);
+    internal_static_VesselTankResponse_descriptor = getDescriptor().getMessageTypes().get(26);
     internal_static_VesselTankResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselTankResponse_descriptor,
             new java.lang.String[] {
               "VesselTankOrder", "ResponseStatus",
             });
-    internal_static_VesselIdRequest_descriptor = getDescriptor().getMessageTypes().get(25);
+    internal_static_VesselIdRequest_descriptor = getDescriptor().getMessageTypes().get(27);
     internal_static_VesselIdRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselIdRequest_descriptor,
             new java.lang.String[] {
               "VesselId",
             });
-    internal_static_VesselIdResponse_descriptor = getDescriptor().getMessageTypes().get(26);
+    internal_static_VesselIdResponse_descriptor = getDescriptor().getMessageTypes().get(28);
     internal_static_VesselIdResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselIdResponse_descriptor,
             new java.lang.String[] {
               "VesselDetail", "ResponseStatus",
             });
-    internal_static_VesselDWTRequest_descriptor = getDescriptor().getMessageTypes().get(27);
+    internal_static_VesselDWTRequest_descriptor = getDescriptor().getMessageTypes().get(29);
     internal_static_VesselDWTRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselDWTRequest_descriptor,
             new java.lang.String[] {
               "VesselId", "DraftValue",
             });
-    internal_static_VesselDWTResponse_descriptor = getDescriptor().getMessageTypes().get(28);
+    internal_static_VesselDWTResponse_descriptor = getDescriptor().getMessageTypes().get(30);
     internal_static_VesselDWTResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselDWTResponse_descriptor,
             new java.lang.String[] {
               "VesselId", "CompanyId", "DwtResult", "ResponseStatus",
+            });
+    internal_static_VesselPumpsResponse_descriptor = getDescriptor().getMessageTypes().get(31);
+    internal_static_VesselPumpsResponse_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_VesselPumpsResponse_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "PumpType", "VesselPump",
+            });
+    internal_static_PumpType_descriptor = getDescriptor().getMessageTypes().get(32);
+    internal_static_PumpType_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_PumpType_descriptor,
+            new java.lang.String[] {
+              "Id", "Name",
+            });
+    internal_static_VesselPump_descriptor = getDescriptor().getMessageTypes().get(33);
+    internal_static_VesselPump_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_VesselPump_descriptor,
+            new java.lang.String[] {
+              "Id", "VesselId", "PumpTypeId", "PumpName", "PumpCode", "PumpCapacity",
+            });
+    internal_static_VesselRuleRequest_descriptor = getDescriptor().getMessageTypes().get(34);
+    internal_static_VesselRuleRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_VesselRuleRequest_descriptor,
+            new java.lang.String[] {
+              "VesselId", "SectionId", "RulePlan",
+            });
+    internal_static_VesselRuleReply_descriptor = getDescriptor().getMessageTypes().get(35);
+    internal_static_VesselRuleReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_VesselRuleReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "RulePlan",
+            });
+    internal_static_RulePlans_descriptor = getDescriptor().getMessageTypes().get(36);
+    internal_static_RulePlans_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_RulePlans_descriptor,
+            new java.lang.String[] {
+              "Header", "Rules",
+            });
+    internal_static_Rules_descriptor = getDescriptor().getMessageTypes().get(37);
+    internal_static_Rules_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_Rules_descriptor,
+            new java.lang.String[] {
+              "Id", "Enable", "Disable", "DisableInSettigs", "RuleType", "Inputs", "RuleTemplateId",
+            });
+    internal_static_RulesInputs_descriptor = getDescriptor().getMessageTypes().get(38);
+    internal_static_RulesInputs_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_RulesInputs_descriptor,
+            new java.lang.String[] {
+              "Prefix", "DefaultValue", "Type", "Max", "Min", "Value", "Suffix", "Id",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

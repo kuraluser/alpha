@@ -309,6 +309,57 @@ public final class PortInfoServiceGrpc {
     return getGetPortInfoByPagingMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortIdRequest,
+          com.cpdss.common.generated.PortInfo.BerthInfoResponse>
+      getGetBerthDetailsByPortIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetBerthDetailsByPortId",
+      requestType = com.cpdss.common.generated.PortInfo.PortIdRequest.class,
+      responseType = com.cpdss.common.generated.PortInfo.BerthInfoResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortIdRequest,
+          com.cpdss.common.generated.PortInfo.BerthInfoResponse>
+      getGetBerthDetailsByPortIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.PortIdRequest,
+            com.cpdss.common.generated.PortInfo.BerthInfoResponse>
+        getGetBerthDetailsByPortIdMethod;
+    if ((getGetBerthDetailsByPortIdMethod = PortInfoServiceGrpc.getGetBerthDetailsByPortIdMethod)
+        == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetBerthDetailsByPortIdMethod =
+                PortInfoServiceGrpc.getGetBerthDetailsByPortIdMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetBerthDetailsByPortIdMethod =
+              getGetBerthDetailsByPortIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.PortIdRequest,
+                          com.cpdss.common.generated.PortInfo.BerthInfoResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetBerthDetailsByPortId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortIdRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.BerthInfoResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetBerthDetailsByPortId"))
+                      .build();
+        }
+      }
+    }
+    return getGetBerthDetailsByPortIdMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static PortInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub> factory =
@@ -401,6 +452,14 @@ public final class PortInfoServiceGrpc {
       asyncUnimplementedUnaryCall(getGetPortInfoByPagingMethod(), responseObserver);
     }
 
+    /** */
+    public void getBerthDetailsByPortId(
+        com.cpdss.common.generated.PortInfo.PortIdRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetBerthDetailsByPortIdMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -445,6 +504,13 @@ public final class PortInfoServiceGrpc {
                       com.cpdss.common.generated.PortInfo.PortRequestWithPaging,
                       com.cpdss.common.generated.PortInfo.PortReply>(
                       this, METHODID_GET_PORT_INFO_BY_PAGING)))
+          .addMethod(
+              getGetBerthDetailsByPortIdMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.PortIdRequest,
+                      com.cpdss.common.generated.PortInfo.BerthInfoResponse>(
+                      this, METHODID_GET_BERTH_DETAILS_BY_PORT_ID)))
           .build();
     }
   }
@@ -526,6 +592,17 @@ public final class PortInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getBerthDetailsByPortId(
+        com.cpdss.common.generated.PortInfo.PortIdRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetBerthDetailsByPortIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -579,6 +656,13 @@ public final class PortInfoServiceGrpc {
         com.cpdss.common.generated.PortInfo.PortRequestWithPaging request) {
       return blockingUnaryCall(
           getChannel(), getGetPortInfoByPagingMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.BerthInfoResponse getBerthDetailsByPortId(
+        com.cpdss.common.generated.PortInfo.PortIdRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetBerthDetailsByPortIdMethod(), getCallOptions(), request);
     }
   }
 
@@ -645,6 +729,14 @@ public final class PortInfoServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetPortInfoByPagingMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.BerthInfoResponse>
+        getBerthDetailsByPortId(com.cpdss.common.generated.PortInfo.PortIdRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetBerthDetailsByPortIdMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_PORT_INFO = 0;
@@ -653,6 +745,7 @@ public final class PortInfoServiceGrpc {
   private static final int METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO = 3;
   private static final int METHODID_GET_TIMEZONE = 4;
   private static final int METHODID_GET_PORT_INFO_BY_PAGING = 5;
+  private static final int METHODID_GET_BERTH_DETAILS_BY_PORT_ID = 6;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -706,6 +799,12 @@ public final class PortInfoServiceGrpc {
           serviceImpl.getPortInfoByPaging(
               (com.cpdss.common.generated.PortInfo.PortRequestWithPaging) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_BERTH_DETAILS_BY_PORT_ID:
+          serviceImpl.getBerthDetailsByPortId(
+              (com.cpdss.common.generated.PortInfo.PortIdRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse>)
                   responseObserver);
           break;
         default:
@@ -778,6 +877,7 @@ public final class PortInfoServiceGrpc {
                       .addMethod(getGetPortInfoDetailsForAlgoMethod())
                       .addMethod(getGetTimezoneMethod())
                       .addMethod(getGetPortInfoByPagingMethod())
+                      .addMethod(getGetBerthDetailsByPortIdMethod())
                       .build();
         }
       }

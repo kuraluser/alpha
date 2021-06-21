@@ -1,10 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.utility;
 
+import java.time.format.DateTimeFormatter;
+
 public class LoadableStudiesConstants {
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
+
+  public static final String STATUS_ACTIVE = "ACTIVE";
+  public static final String STATUS_CONFIRMED = "CONFIRMED";
+  public static final String STATUS_CLOSE = "CLOSED";
 
   public static final String OPERATION_TYPE_ARR = "ARR";
   public static final String OPERATION_TYPE_DEP = "DEP";
@@ -33,4 +39,6 @@ public class LoadableStudiesConstants {
 
   public static final Long LS_STATUS_PENDING = 1l;
   public static final Long LS_STATUS_CONFIRMED = 2l;
+
+  public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 }

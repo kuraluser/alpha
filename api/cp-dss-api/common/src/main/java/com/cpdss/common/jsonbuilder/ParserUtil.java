@@ -52,6 +52,7 @@ public class ParserUtil {
       throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
     if (!validateClassRegister(tClass.getName())
+        && tClass.getPackage() != null
         && tClass.getPackage().getName().equalsIgnoreCase(packageName)) {
       classRegister.add(tClass.getName());
     } else if (validateClassRegister(tClass.getName())
@@ -81,12 +82,18 @@ public class ParserUtil {
     }
 
     Field[] classFields = tClass.getDeclaredFields();
-    if (tClass.getPackage().getName().equalsIgnoreCase(packageName)) {
+    if (tClass.getPackage() != null
+        && tClass.getPackage().getName().equalsIgnoreCase(packageName)) {
 
       for (Field field : classFields) {
         Class<?> fieldClassType = field.getType();
         Object val = getDummyValueForClass(fieldClassType, args, field);
-        BeanUtils.setProperty(classObject, field.getName(), val);
+        try {
+          BeanUtils.setProperty(classObject, field.getName(), val);
+        } catch (Exception e) {
+          log.error(
+              "set bean error - Object {}, Field {}, Value {}", classObject, field.getName(), val);
+        }
       }
       Class<?> superclass = tClass.getSuperclass();
       Field[] parentFields = superclass.getDeclaredFields();
@@ -102,17 +109,20 @@ public class ParserUtil {
   private static Object getDummyValueForClass(Class aClass, String[] args, Field field)
       throws IllegalAccessException, InvocationTargetException, InstantiationException {
     if (aClass.getName().equalsIgnoreCase(String.class.getName())) {
-      return "dummy-value";
+      if (field.getName().toLowerCase().contains("time")) {
+        return "12-01-2021 12:12";
+      }
+      return "lorem ipsum dolor";
     } else if (aClass.getName().equalsIgnoreCase(CharSequence.class.getName())) {
-      return "dummy";
+      return "lorem ipsum";
     } else if (aClass.getName().equalsIgnoreCase(Character.class.getName())) {
       return 'c';
     } else if (aClass.getName().equalsIgnoreCase(long.class.getName())) {
-      return 123L;
+      return 2L;
     } else if (aClass.getName().equalsIgnoreCase(Long.class.getName())) {
-      return 123L;
+      return 2L;
     } else if (aClass.getName().equalsIgnoreCase(BigDecimal.class.getName())) {
-      return 123.123;
+      return 3.003;
     } else if (aClass.getName().equalsIgnoreCase(boolean.class.getName())) {
       return true;
     } else if (aClass.getName().equalsIgnoreCase(Boolean.class.getName())) {

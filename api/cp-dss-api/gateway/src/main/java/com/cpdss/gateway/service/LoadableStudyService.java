@@ -9,6 +9,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
@@ -23,6 +25,7 @@ import com.cpdss.common.generated.LoadableStudy.CargoHistoryReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.CargoToppingOffSequenceDetails;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
@@ -51,6 +54,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetailsResults;
+import com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.LodicatorResultDetails;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
@@ -397,11 +401,15 @@ public class LoadableStudyService {
    * @throws GenericServiceException
    */
   public LoadableStudyResponse getLoadableStudies(
-      Long companyId, Long vesselId, Long voyageId, String correlationdId)
+      Long companyId, Long vesselId, Long voyageId, String correlationdId, Long planningType)
       throws GenericServiceException {
     log.info("fetching loadable studies. correlationId: {}", correlationdId);
     LoadableStudyRequest request =
-        LoadableStudyRequest.newBuilder().setVesselId(vesselId).setVoyageId(voyageId).build();
+        LoadableStudyRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setPlanningType(Common.PLANNING_TYPE.forNumber(planningType.intValue()))
+            .setVoyageId(voyageId)
+            .build();
     LoadableStudyReply reply = this.getloadableStudyList(request);
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -3236,6 +3244,8 @@ public class LoadableStudyService {
     for (com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord protoRec :
         synopticalProtoRecord.getCargoList()) {
       SynopticalCargoBallastRecord rec = new SynopticalCargoBallastRecord();
+      rec.setLpCargoDetailId(protoRec.getLpCargoDetailId());
+      rec.setCargoNominationId(protoRec.getCargoNominationId());
       rec.setTankId(protoRec.getTankId());
       rec.setTankName(protoRec.getTankName());
       rec.setActualWeight(
@@ -3636,6 +3646,18 @@ public class LoadableStudyService {
         .ifPresent(qunatityBuilder::setCargoNominationId);
     Optional.ofNullable(lpqcd.getTimeRequiredForLoading())
         .ifPresent(qunatityBuilder::setTimeRequiredForLoading);
+    lpqcd
+        .getToppingSequence()
+        .forEach(
+            sequence -> {
+              CargoToppingOffSequenceDetails.Builder toppingBuilder =
+                  CargoToppingOffSequenceDetails.newBuilder();
+              Optional.ofNullable(lpqcd.getCargoId()).ifPresent(toppingBuilder::setCargoId);
+              Optional.ofNullable(sequence.getSequenceOrder())
+                  .ifPresent(toppingBuilder::setOrderNumber);
+              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
+              qunatityBuilder.addToppingOffSequences(toppingBuilder.build());
+            });
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3673,6 +3695,19 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     Optional.ofNullable(lqccd.getTankShortName()).ifPresent(builder::setTankShortName);
+    lqccd
+        .getToppingSequence()
+        .forEach(
+            sequence -> {
+              CargoToppingOffSequenceDetails.Builder toppingBuilder =
+                  CargoToppingOffSequenceDetails.newBuilder();
+              Optional.ofNullable(lqccd.getToppingOffCargoId())
+                  .ifPresent(toppingBuilder::setCargoId);
+              Optional.ofNullable(sequence.getSequenceOrder())
+                  .ifPresent(toppingBuilder::setOrderNumber);
+              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
+              builder.addToppingOffSequences(toppingBuilder.build());
+            });
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -4666,7 +4701,7 @@ public class LoadableStudyService {
     // return this.buildeUpdateUllageResponse(correlationId);
   }
 
-  private UpdateUllage buildeUpdateUllageResponse(
+  public UpdateUllage buildeUpdateUllageResponse(
       UpdateUllageReply grpcReply, String correlationId) {
     UpdateUllage response = new UpdateUllage();
     response.setCorrectedUllage(
@@ -4837,6 +4872,8 @@ public class LoadableStudyService {
                           Collectors.reducing(
                               (index, accum) ->
                                   new SynopticalCargoBallastRecord(
+                                      index.getLpCargoDetailId(),
+                                      index.getCargoNominationId(),
                                       index.getTankId(),
                                       index.getTankName(),
                                       index.getActualWeight().add(accum.getActualWeight()),
@@ -5527,6 +5564,8 @@ public class LoadableStudyService {
     builder.setVoyageId(request.getVoyageId());
     Optional.ofNullable(request.getActualStartDate()).ifPresent(builder::setActualStartDate);
     Optional.ofNullable(request.getActualEndDate()).ifPresent(builder::setActualEndDate);
+    Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
+    Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
     builder.setStatus(request.getStatus());
     SaveVoyageStatusReply reply = this.saveVoyageStatus(builder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
@@ -5730,5 +5769,19 @@ public class LoadableStudyService {
     error.setImoNumber("123");
     this.envoyWriterGrpcService.getCommunicationServer(error.build());
     return null;
+  }
+
+  public void saveLoadingInfoToSynopticalTable(
+      Long synopticalTableId, String sunriseTime, String sunsetTime) throws Exception {
+    LoadingInfoSynopticalUpdateRequest.Builder builder =
+        LoadingInfoSynopticalUpdateRequest.newBuilder();
+    builder.setSynopticalTableId(synopticalTableId);
+    builder.setTimeOfSunrise(sunriseTime);
+    builder.setTimeOfSunset(sunsetTime);
+    ResponseStatus response =
+        this.loadableStudyServiceBlockingStub.saveLoadingInfoToSynopticData(builder.build());
+    if (response.getStatus().equalsIgnoreCase("FAILED")) {
+      throw new Exception("Failed to update synoptical table " + synopticalTableId);
+    }
   }
 }
