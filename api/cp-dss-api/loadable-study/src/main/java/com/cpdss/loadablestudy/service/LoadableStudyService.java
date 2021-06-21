@@ -10048,6 +10048,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (portDetail.isPresent()) {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
     }
+    Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation().getSeaWaterDensity())
+        .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
     stowagePlanBuilder.setSynopticalId(synopticalEntity.getId());
   }
 
@@ -12317,7 +12319,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               Optional.ofNullable(toppingSequence.getOrderNumber())
                   .ifPresent(sequenceBuilder::setOrderNumber);
               Optional.ofNullable(toppingSequence.getTankXId())
-              .ifPresent(sequenceBuilder::setTankXId);
+                  .ifPresent(sequenceBuilder::setTankXId);
               builder.addCargoToppingOffSequences(sequenceBuilder.build());
             });
   }

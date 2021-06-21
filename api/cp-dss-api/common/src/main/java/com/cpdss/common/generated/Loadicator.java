@@ -1095,6 +1095,19 @@ public final class Loadicator {
         getBallastInfoOrBuilderList();
     /** <code>repeated .BallastInfo ballastInfo = 24;</code> */
     com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder getBallastInfoOrBuilder(int index);
+
+    /**
+     * <code>string seaWaterDensity = 25;</code>
+     *
+     * @return The seaWaterDensity.
+     */
+    java.lang.String getSeaWaterDensity();
+    /**
+     * <code>string seaWaterDensity = 25;</code>
+     *
+     * @return The bytes for seaWaterDensity.
+     */
+    com.google.protobuf.ByteString getSeaWaterDensityBytes();
   }
   /** Protobuf type {@code StowagePlan} */
   public static final class StowagePlan extends com.google.protobuf.GeneratedMessageV3
@@ -1121,6 +1134,7 @@ public final class Loadicator {
       cargoInfo_ = java.util.Collections.emptyList();
       otherTankInfo_ = java.util.Collections.emptyList();
       ballastInfo_ = java.util.Collections.emptyList();
+      seaWaterDensity_ = "";
     }
 
     @java.lang.Override
@@ -1323,6 +1337,13 @@ public final class Loadicator {
                     input.readMessage(
                         com.cpdss.common.generated.Loadicator.BallastInfo.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 202:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                seaWaterDensity_ = s;
                 break;
               }
             default:
@@ -1907,6 +1928,41 @@ public final class Loadicator {
       return ballastInfo_.get(index);
     }
 
+    public static final int SEAWATERDENSITY_FIELD_NUMBER = 25;
+    private volatile java.lang.Object seaWaterDensity_;
+    /**
+     * <code>string seaWaterDensity = 25;</code>
+     *
+     * @return The seaWaterDensity.
+     */
+    public java.lang.String getSeaWaterDensity() {
+      java.lang.Object ref = seaWaterDensity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        seaWaterDensity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string seaWaterDensity = 25;</code>
+     *
+     * @return The bytes for seaWaterDensity.
+     */
+    public com.google.protobuf.ByteString getSeaWaterDensityBytes() {
+      java.lang.Object ref = seaWaterDensity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        seaWaterDensity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1993,6 +2049,9 @@ public final class Loadicator {
       for (int i = 0; i < ballastInfo_.size(); i++) {
         output.writeMessage(24, ballastInfo_.get(i));
       }
+      if (!getSeaWaterDensityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 25, seaWaterDensity_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2075,6 +2134,9 @@ public final class Loadicator {
       for (int i = 0; i < ballastInfo_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(24, ballastInfo_.get(i));
       }
+      if (!getSeaWaterDensityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, seaWaterDensity_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2115,6 +2177,7 @@ public final class Loadicator {
       if (!getCargoInfoList().equals(other.getCargoInfoList())) return false;
       if (!getOtherTankInfoList().equals(other.getOtherTankInfoList())) return false;
       if (!getBallastInfoList().equals(other.getBallastInfoList())) return false;
+      if (!getSeaWaterDensity().equals(other.getSeaWaterDensity())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2182,6 +2245,8 @@ public final class Loadicator {
         hash = (37 * hash) + BALLASTINFO_FIELD_NUMBER;
         hash = (53 * hash) + getBallastInfoList().hashCode();
       }
+      hash = (37 * hash) + SEAWATERDENSITY_FIELD_NUMBER;
+      hash = (53 * hash) + getSeaWaterDensity().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2388,6 +2453,8 @@ public final class Loadicator {
         } else {
           ballastInfoBuilder_.clear();
         }
+        seaWaterDensity_ = "";
+
         return this;
       }
 
@@ -2471,6 +2538,7 @@ public final class Loadicator {
         } else {
           result.ballastInfo_ = ballastInfoBuilder_.build();
         }
+        result.seaWaterDensity_ = seaWaterDensity_;
         onBuilt();
         return result;
       }
@@ -2699,6 +2767,10 @@ public final class Loadicator {
               ballastInfoBuilder_.addAllMessages(other.ballastInfo_);
             }
           }
+        }
+        if (!other.getSeaWaterDensity().isEmpty()) {
+          seaWaterDensity_ = other.seaWaterDensity_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4647,6 +4719,82 @@ public final class Loadicator {
           ballastInfo_ = null;
         }
         return ballastInfoBuilder_;
+      }
+
+      private java.lang.Object seaWaterDensity_ = "";
+      /**
+       * <code>string seaWaterDensity = 25;</code>
+       *
+       * @return The seaWaterDensity.
+       */
+      public java.lang.String getSeaWaterDensity() {
+        java.lang.Object ref = seaWaterDensity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          seaWaterDensity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string seaWaterDensity = 25;</code>
+       *
+       * @return The bytes for seaWaterDensity.
+       */
+      public com.google.protobuf.ByteString getSeaWaterDensityBytes() {
+        java.lang.Object ref = seaWaterDensity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          seaWaterDensity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string seaWaterDensity = 25;</code>
+       *
+       * @param value The seaWaterDensity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSeaWaterDensity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        seaWaterDensity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string seaWaterDensity = 25;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSeaWaterDensity() {
+
+        seaWaterDensity_ = getDefaultInstance().getSeaWaterDensity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string seaWaterDensity = 25;</code>
+       *
+       * @param value The bytes for seaWaterDensity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSeaWaterDensityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        seaWaterDensity_ = value;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -11246,7 +11394,7 @@ public final class Loadicator {
     java.lang.String[] descriptorData = {
       "\n\020loadicator.proto\032\014common.proto\"P\n\021Load"
           + "icatorRequest\022(\n\022stowagePlanDetails\030\001 \003("
-          + "\0132\014.StowagePlan\022\021\n\tisPattern\030\002 \001(\010\"\247\004\n\013S"
+          + "\0132\014.StowagePlan\022\021\n\tisPattern\030\002 \001(\010\"\300\004\n\013S"
           + "towagePlan\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003"
           + "\022\021\n\timoNumber\030\003 \001(\t\022\021\n\tcompanyId\030\004 \001(\003\022\020"
           + "\n\010shipType\030\005 \001(\t\022\022\n\nvesselCode\030\006 \001(\t\022\025\n\r"
@@ -11260,31 +11408,32 @@ public final class Loadicator {
           + "(\003\022\'\n\016stowageDetails\030\025 \003(\0132\017.StowageDeta"
           + "ils\022\035\n\tcargoInfo\030\026 \003(\0132\n.CargoInfo\022%\n\rot"
           + "herTankInfo\030\027 \003(\0132\016.OtherTankInfo\022!\n\013bal"
-          + "lastInfo\030\030 \003(\0132\014.BallastInfo\"\343\001\n\016Stowage"
-          + "Details\022\025\n\rstowagePlanId\030\001 \001(\003\022\017\n\007cargoI"
-          + "d\030\002 \001(\003\022\023\n\013cargoBookId\030\003 \001(\003\022\021\n\tcargoNam"
-          + "e\030\004 \001(\t\022\027\n\017specificGravity\030\005 \001(\t\022\020\n\010quan"
-          + "tity\030\006 \001(\t\022\016\n\006tankId\030\007 \001(\003\022\021\n\tshortName\030"
-          + "\010 \001(\t\022\020\n\010tankName\030\t \001(\t\022\021\n\tstowageId\030\n \001"
-          + "(\003\022\016\n\006portId\030\013 \001(\003\"\335\001\n\tCargoInfo\022\025\n\rstow"
-          + "agePlanId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\021\n\tcarg"
-          + "oName\030\003 \001(\t\022\023\n\013cargoAbbrev\030\004 \001(\t\022\024\n\014stan"
-          + "dardTemp\030\005 \001(\t\022\r\n\005grade\030\006 \001(\t\022\017\n\007density"
-          + "\030\007 \001(\t\022\013\n\003api\030\010 \001(\t\022\014\n\004degf\030\t \001(\t\022\014\n\004deg"
-          + "c\030\n \001(\t\022\021\n\tstowageId\030\013 \001(\003\022\016\n\006portId\030\014 \001"
-          + "(\003\"\251\001\n\rOtherTankInfo\022\025\n\rstowagePlanId\030\001 "
-          + "\001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010tankName\030\003 \001(\t\022\020\n"
-          + "\010quantity\030\004 \001(\t\022\021\n\tshortName\030\005 \001(\t\022\027\n\017lo"
-          + "adableStudyId\030\006 \001(\003\022\021\n\tstowageId\030\007 \001(\003\022\016"
-          + "\n\006portId\030\010 \001(\003\":\n\017LoadicatorReply\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\"\216\001\n\013B"
-          + "allastInfo\022\025\n\rstowagePlanId\030\001 \001(\003\022\016\n\006tan"
-          + "kId\030\002 \001(\003\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quantity\030"
-          + "\004 \001(\t\022\021\n\tshortName\030\005 \001(\t\022\021\n\tstowageId\030\006 "
-          + "\001(\003\022\016\n\006portId\030\007 \001(\0032Q\n\021LoadicatorService"
-          + "\022<\n\022saveLoadicatorInfo\022\022.LoadicatorReque"
-          + "st\032\020.LoadicatorReply\"\000B\036\n\032com.cpdss.comm"
-          + "on.generatedP\000b\006proto3"
+          + "lastInfo\030\030 \003(\0132\014.BallastInfo\022\027\n\017seaWater"
+          + "Density\030\031 \001(\t\"\343\001\n\016StowageDetails\022\025\n\rstow"
+          + "agePlanId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\023\n\013carg"
+          + "oBookId\030\003 \001(\003\022\021\n\tcargoName\030\004 \001(\t\022\027\n\017spec"
+          + "ificGravity\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\016\n\006t"
+          + "ankId\030\007 \001(\003\022\021\n\tshortName\030\010 \001(\t\022\020\n\010tankNa"
+          + "me\030\t \001(\t\022\021\n\tstowageId\030\n \001(\003\022\016\n\006portId\030\013 "
+          + "\001(\003\"\335\001\n\tCargoInfo\022\025\n\rstowagePlanId\030\001 \001(\003"
+          + "\022\017\n\007cargoId\030\002 \001(\003\022\021\n\tcargoName\030\003 \001(\t\022\023\n\013"
+          + "cargoAbbrev\030\004 \001(\t\022\024\n\014standardTemp\030\005 \001(\t\022"
+          + "\r\n\005grade\030\006 \001(\t\022\017\n\007density\030\007 \001(\t\022\013\n\003api\030\010"
+          + " \001(\t\022\014\n\004degf\030\t \001(\t\022\014\n\004degc\030\n \001(\t\022\021\n\tstow"
+          + "ageId\030\013 \001(\003\022\016\n\006portId\030\014 \001(\003\"\251\001\n\rOtherTan"
+          + "kInfo\022\025\n\rstowagePlanId\030\001 \001(\003\022\016\n\006tankId\030\002"
+          + " \001(\003\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quantity\030\004 \001(\t"
+          + "\022\021\n\tshortName\030\005 \001(\t\022\027\n\017loadableStudyId\030\006"
+          + " \001(\003\022\021\n\tstowageId\030\007 \001(\003\022\016\n\006portId\030\010 \001(\003\""
+          + ":\n\017LoadicatorReply\022\'\n\016responseStatus\030\001 \001"
+          + "(\0132\017.ResponseStatus\"\216\001\n\013BallastInfo\022\025\n\rs"
+          + "towagePlanId\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010ta"
+          + "nkName\030\003 \001(\t\022\020\n\010quantity\030\004 \001(\t\022\021\n\tshortN"
+          + "ame\030\005 \001(\t\022\021\n\tstowageId\030\006 \001(\003\022\016\n\006portId\030\007"
+          + " \001(\0032Q\n\021LoadicatorService\022<\n\022saveLoadica"
+          + "torInfo\022\022.LoadicatorRequest\032\020.Loadicator"
+          + "Reply\"\000B\036\n\032com.cpdss.common.generatedP\000b"
+          + "\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -11328,6 +11477,7 @@ public final class Loadicator {
               "CargoInfo",
               "OtherTankInfo",
               "BallastInfo",
+              "SeaWaterDensity",
             });
     internal_static_StowageDetails_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_StowageDetails_fieldAccessorTable =
