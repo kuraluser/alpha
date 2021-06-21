@@ -409,6 +409,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_ENDED = 19L;
+  private static final Long LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID = 20L;
 
   private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
@@ -3254,9 +3255,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             false, request.getLoadableStudyId());
         saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
         loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_STATUS_ALGO_ERROR_ID, loadableStudyOpt.get().getId());
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadableStudyOpt.get().getId());
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_ALGO_ERROR_ID, request.getProcesssId(), true);
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, request.getProcesssId(), true);
       }
 
       builder
