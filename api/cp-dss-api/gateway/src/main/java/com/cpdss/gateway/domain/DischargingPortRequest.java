@@ -11,7 +11,8 @@ public class DischargingPortRequest {
 
   private List<Long> portIds;
 
-  private Long dischargingCargoId;
+  // DSS-3156, change cargo id to cargo nomination id
+  private Long cargoNominationId;
 
   private Boolean isDischargingPortComplete;
 }
