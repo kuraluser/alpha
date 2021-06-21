@@ -18,6 +18,15 @@ message LoadingInformationRequest{
   int64 synopticTableId = 7;
 }
 
+message LoadingInformationSynopticalRequest {
+  int64 synopticalId = 1;
+}
+
+message LoadingInformationSynopticalReply{
+  ResponseStatus responseStatus = 1;
+  repeated BillOfLadding billOfLadding = 2;
+}
+
 // Plane response, can edit
 message LoadingInformation{
   ResponseStatus responseStatus = 1;
@@ -347,3 +356,5 @@ message UpdateUllageLoadingRequest {
 message UpdateUllageLoadingReplay {
   ResponseStatus responseStatus = 1;
 }
+
+

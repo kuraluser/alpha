@@ -1,5 +1,5 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.discharginplan;
+package com.cpdss.dischargestudy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

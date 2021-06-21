@@ -9,9 +9,12 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
+import com.cpdss.loadingplan.service.impl.LoadingInformationDischargeService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -30,6 +33,7 @@ public class LoadingInformationGrpcService
 
   @Autowired LoadingInformationService loadingInformationService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
+  @Autowired LoadingInformationDischargeService loadingInfoService;
 
   /**
    * Loading Information Is the First page in Loading module (UI).
@@ -52,6 +56,31 @@ public class LoadingInformationGrpcService
       this.loadingInformationService.getLoadingInformation(request, builder);
     } catch (GenericServiceException e) {
       e.printStackTrace();
+      builder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadigInformationBySynoptical(
+      LoadingInformationSynopticalRequest request,
+      StreamObserver<LoadingInformationSynopticalReply> responseObserver) {
+    LoadingInformationSynopticalReply.Builder builder =
+        LoadingInformationSynopticalReply.newBuilder();
+    log.info("Inside getLoadigInformationBySynoptical in LP MS");
+    try {
+      this.loadingInfoService.getLoadigInformationBySynoptical(request, builder);
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in getLoadigInformationBySynoptical at  LP MS ", e);
       builder.setResponseStatus(
           Common.ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)

@@ -12310,6 +12310,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .ifPresent(sequenceBuilder::setLoadablePatternId);
               Optional.ofNullable(toppingSequence.getOrderNumber())
                   .ifPresent(sequenceBuilder::setOrderNumber);
+              Optional.ofNullable(toppingSequence.getTankXId())
+              .ifPresent(sequenceBuilder::setTankXId);
               builder.addCargoToppingOffSequences(sequenceBuilder.build());
             });
   }
