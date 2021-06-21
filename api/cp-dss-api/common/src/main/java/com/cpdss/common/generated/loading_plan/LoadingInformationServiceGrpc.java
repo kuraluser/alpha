@@ -131,6 +131,71 @@ public final class LoadingInformationServiceGrpc {
     return getSaveLoadingInformationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalReply>
+      getGetLoadigInformationBySynopticalMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadigInformationBySynoptical",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalReply>
+      getGetLoadigInformationBySynopticalMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalReply>
+        getGetLoadigInformationBySynopticalMethod;
+    if ((getGetLoadigInformationBySynopticalMethod =
+            LoadingInformationServiceGrpc.getGetLoadigInformationBySynopticalMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getGetLoadigInformationBySynopticalMethod =
+                LoadingInformationServiceGrpc.getGetLoadigInformationBySynopticalMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getGetLoadigInformationBySynopticalMethod =
+              getGetLoadigInformationBySynopticalMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformationSynopticalRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformationSynopticalReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadigInformationBySynoptical"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformationSynopticalRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformationSynopticalReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "GetLoadigInformationBySynoptical"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadigInformationBySynopticalMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceStub> factory =
@@ -193,6 +258,18 @@ public final class LoadingInformationServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveLoadingInformationMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadigInformationBySynoptical(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadigInformationBySynopticalMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -211,6 +288,15 @@ public final class LoadingInformationServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
                       com.cpdss.common.generated.Common.ResponseStatus>(
                       this, METHODID_SAVE_LOADING_INFORMATION)))
+          .addMethod(
+              getGetLoadigInformationBySynopticalMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationSynopticalRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationSynopticalReply>(
+                      this, METHODID_GET_LOADIG_INFORMATION_BY_SYNOPTICAL)))
           .build();
     }
   }
@@ -251,6 +337,21 @@ public final class LoadingInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadigInformationBySynoptical(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadigInformationBySynopticalMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -281,6 +382,17 @@ public final class LoadingInformationServiceGrpc {
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadingInformationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .LoadingInformationSynopticalReply
+        getLoadigInformationBySynoptical(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalRequest
+                request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadigInformationBySynopticalMethod(), getCallOptions(), request);
     }
   }
 
@@ -316,10 +428,24 @@ public final class LoadingInformationServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSaveLoadingInformationMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalReply>
+        getLoadigInformationBySynoptical(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalRequest
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadigInformationBySynopticalMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_GET_LOADING_INFORMATION = 0;
   private static final int METHODID_SAVE_LOADING_INFORMATION = 1;
+  private static final int METHODID_GET_LOADIG_INFORMATION_BY_SYNOPTICAL = 2;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -351,6 +477,16 @@ public final class LoadingInformationServiceGrpc {
               (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
                   request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
+          break;
+        case METHODID_GET_LOADIG_INFORMATION_BY_SYNOPTICAL:
+          serviceImpl.getLoadigInformationBySynoptical(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingInformationSynopticalRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationSynopticalReply>)
                   responseObserver);
           break;
         default:
@@ -419,6 +555,7 @@ public final class LoadingInformationServiceGrpc {
                       .setSchemaDescriptor(new LoadingInformationServiceFileDescriptorSupplier())
                       .addMethod(getGetLoadingInformationMethod())
                       .addMethod(getSaveLoadingInformationMethod())
+                      .addMethod(getGetLoadigInformationBySynopticalMethod())
                       .build();
         }
       }
