@@ -224,4 +224,23 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   public ResponseStatus saveLoadingInformation(LoadingInformation loadingInformation) {
     return this.loadingInfoServiceBlockingStub.saveLoadingInformation(loadingInformation);
   }
+
+  @Override
+  public Boolean updateUllageAtLoadingPlan(LoadingPlanModels.UpdateUllageLoadingRequest request)
+      throws GenericServiceException {
+    LoadingPlanModels.UpdateUllageLoadingReplay replay =
+        this.loadingInfoServiceBlockingStub.updateUllage(request);
+    if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {
+      throw new GenericServiceException(
+          "Failed to get Loading Information",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    log.info(
+        "Update ullage at Loading Plan Service Success!, Port Rotation Id {}, Voyage Id {}, Tank Id {}",
+        request.getPortRotationId(),
+        request.getVoyageId(),
+        request.getTankId());
+    return true;
+  }
 }

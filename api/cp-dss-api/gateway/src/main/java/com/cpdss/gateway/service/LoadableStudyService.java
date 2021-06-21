@@ -4701,7 +4701,7 @@ public class LoadableStudyService {
     // return this.buildeUpdateUllageResponse(correlationId);
   }
 
-  private UpdateUllage buildeUpdateUllageResponse(
+  public UpdateUllage buildeUpdateUllageResponse(
       UpdateUllageReply grpcReply, String correlationId) {
     UpdateUllage response = new UpdateUllage();
     response.setCorrectedUllage(

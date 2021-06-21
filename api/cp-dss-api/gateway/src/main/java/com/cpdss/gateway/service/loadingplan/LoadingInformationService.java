@@ -4,6 +4,7 @@ package com.cpdss.gateway.service.loadingplan;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
+import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.loadingplan.*;
 import java.util.List;
 
@@ -49,5 +50,14 @@ public interface LoadingInformationService {
   LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay);
 
   LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
+      throws GenericServiceException;
+
+  UpdateUllage processUpdateUllage(
+      Long vesselId,
+      Long voyageId,
+      Long loadingInfoId,
+      Long portRotationId,
+      UpdateUllage updateUllage,
+      String correlationId)
       throws GenericServiceException;
 }

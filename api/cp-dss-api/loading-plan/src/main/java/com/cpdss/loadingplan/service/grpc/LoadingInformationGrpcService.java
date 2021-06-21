@@ -12,6 +12,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import com.cpdss.loadingplan.service.impl.LoadingInformationDischargeService;
 import io.grpc.stub.StreamObserver;
@@ -31,6 +32,7 @@ public class LoadingInformationGrpcService
     extends LoadingInformationServiceGrpc.LoadingInformationServiceImplBase {
 
   @Autowired LoadingInformationService loadingInformationService;
+  @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
   @Autowired LoadingInformationDischargeService loadingInfoService;
 
   /**
@@ -111,6 +113,24 @@ public class LoadingInformationGrpcService
           .setMessage(e.getMessage())
           .setStatus(FAILED)
           .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void updateUllage(
+      LoadingPlanModels.UpdateUllageLoadingRequest request,
+      StreamObserver<LoadingPlanModels.UpdateUllageLoadingReplay> responseObserver) {
+    LoadingPlanModels.UpdateUllageLoadingReplay.Builder builder =
+        LoadingPlanModels.UpdateUllageLoadingReplay.newBuilder();
+    try {
+      this.toppingOffSequenceService.updateUllageFromLsAlgo(request, builder.build());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

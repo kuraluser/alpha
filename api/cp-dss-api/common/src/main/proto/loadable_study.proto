@@ -204,6 +204,7 @@ message LatestCargoReply{
 message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
 	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	bool updateUllageForLoadingPlan = 3;
 }
 
 message UpdateUllageReply {

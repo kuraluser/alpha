@@ -29,6 +29,6 @@ public interface LoadingInformationRepository
 
   Optional<LoadingInformation> findByIdAndIsActiveTrue(Long id);
 
-  Optional<LoadingInformation> findByVesselXIdAndVoyageIdAndPortRotationXId(
+  Optional<LoadingInformation> findByVesselXIdAndVoyageIdAndPortRotationXIdAndIsActiveTrue(
       Long var1, Long var2, Long var3);
 }

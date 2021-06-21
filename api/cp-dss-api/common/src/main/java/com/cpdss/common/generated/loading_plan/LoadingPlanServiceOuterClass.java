@@ -20,19 +20,20 @@ public final class LoadingPlanServiceOuterClass {
     java.lang.String[] descriptorData = {
       "\n\'loading_plan/loading_plan_service.prot"
           + "o\032\014common.proto\032&loading_plan/loading_pl"
-          + "an_models.proto2\231\002\n\031LoadingInformationSe"
+          + "an_models.proto2\344\002\n\031LoadingInformationSe"
           + "rvice\022J\n\025GetLoadingInformation\022\032.Loading"
           + "InformationRequest\032\023.LoadingInformation\""
           + "\000\022@\n\026SaveLoadingInformation\022\023.LoadingInf"
           + "ormation\032\017.ResponseStatus\"\000\022n\n GetLoadig"
           + "InformationBySynoptical\022$.LoadingInforma"
           + "tionSynopticalRequest\032\".LoadingInformati"
-          + "onSynopticalReply\"\0002\033\n\031LoadingInstructio"
-          + "nService2d\n\022LoadingPlanService\022N\n\032Loadin"
-          + "gPlanSynchronization\022\027.LoadingPlanSyncDe"
-          + "tails\032\025.LoadingPlanSyncReply\"\000B+\n\'com.cp"
-          + "dss.common.generated.loading_planP\000b\006pro"
-          + "to3"
+          + "onSynopticalReply\"\000\022I\n\014UpdateUllage\022\033.Up"
+          + "dateUllageLoadingRequest\032\032.UpdateUllageL"
+          + "oadingReplay\"\0002\033\n\031LoadingInstructionServ"
+          + "ice2d\n\022LoadingPlanService\022N\n\032LoadingPlan"
+          + "Synchronization\022\027.LoadingPlanSyncDetails"
+          + "\032\025.LoadingPlanSyncReply\"\000B+\n\'com.cpdss.c"
+          + "ommon.generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
