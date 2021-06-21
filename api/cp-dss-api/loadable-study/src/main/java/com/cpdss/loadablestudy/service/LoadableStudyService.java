@@ -383,6 +383,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
+  private static final Long LOADABLE_STUDY_STATUS_ALGO_ERROR_ID = 11L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
@@ -3231,6 +3232,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(
             false, request.getLoadableStudyId());
         saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_STATUS_ALGO_ERROR_ID, loadableStudyOpt.get().getId());
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_ALGO_ERROR_ID, request.getProcesssId(), true);
       }
 
       builder
