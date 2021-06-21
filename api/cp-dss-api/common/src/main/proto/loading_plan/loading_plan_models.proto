@@ -326,3 +326,24 @@ message LoadingPlanSyncDetails {
 message LoadingPlanSyncReply {
   ResponseStatus responseStatus = 1;
 }
+
+
+message UpdateUllageLoadingRequest {
+  ResponseStatus responseStatus = 1;
+
+  int64 loadingInfoId = 2;
+  int64 portRotationId = 3;
+  int64 vesselId = 4;
+  int64 voyageId = 5;
+
+  int64 tankId = 6;
+  int64 cargoId = 8;
+  string fillingRatio = 9;
+  string quantity = 10;
+  string correctedUllage = 11;
+  string correctionFactor = 12;
+}
+
+message UpdateUllageLoadingReplay {
+  ResponseStatus responseStatus = 1;
+}

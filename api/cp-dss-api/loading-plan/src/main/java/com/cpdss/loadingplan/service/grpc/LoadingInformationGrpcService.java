@@ -10,6 +10,7 @@ import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class LoadingInformationGrpcService
     extends LoadingInformationServiceGrpc.LoadingInformationServiceImplBase {
 
   @Autowired LoadingInformationService loadingInformationService;
+  @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
 
   /**
    * Loading Information Is the First page in Loading module (UI).
@@ -82,6 +84,24 @@ public class LoadingInformationGrpcService
           .setMessage(e.getMessage())
           .setStatus(FAILED)
           .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void updateUllage(
+      LoadingPlanModels.UpdateUllageLoadingRequest request,
+      StreamObserver<LoadingPlanModels.UpdateUllageLoadingReplay> responseObserver) {
+    LoadingPlanModels.UpdateUllageLoadingReplay.Builder builder =
+        LoadingPlanModels.UpdateUllageLoadingReplay.newBuilder();
+    try {
+      this.toppingOffSequenceService.updateUllageFromLsAlgo(request, builder.build());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

@@ -1,12 +1,18 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.CargoToppingOffSequence;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingToppingOff;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.repository.CargoToppingOffSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
+import com.cpdss.loadingplan.service.LoadingInformationService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +29,7 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
 
   @Autowired CargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
   @Autowired LoadingInformationRepository loadingInformationRepository;
+  @Autowired LoadingInformationService loadingInformationService;
 
   @Override
   public void saveCargoToppingOffSequenceList(
@@ -89,6 +96,48 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
       buildCargoToppingOffSequence(toppingOff, cargoToppingOff);
       cargoToppingOffSequenceRepository.save(cargoToppingOff);
     }
+  }
+
+  @Override
+  public void updateUllageFromLsAlgo(
+      LoadingPlanModels.UpdateUllageLoadingRequest request,
+      LoadingPlanModels.UpdateUllageLoadingReplay replay)
+      throws GenericServiceException {
+    Common.ResponseStatus.Builder builder = Common.ResponseStatus.newBuilder();
+    builder.setMessage("FAILED");
+    Optional<LoadingInformation> lInformation =
+        loadingInformationService.getLoadingInformation(
+            request.getLoadingInfoId(),
+            request.getVesselId(),
+            request.getVoyageId(),
+            0l,
+            request.getPortRotationId());
+
+    if (!lInformation.isPresent()) {
+      throw new GenericServiceException(
+          "Loading information not found",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    Optional<com.cpdss.loadingplan.entity.CargoToppingOffSequence> offSequence =
+        this.cargoToppingOffSequenceRepository
+            .findAllByLoadingInformationAndIsActiveTrue(lInformation.get()).stream()
+            .filter(v -> v.getTankXId().equals(request.getTankId()))
+            .findFirst();
+    if (!offSequence.isPresent()) {
+      throw new GenericServiceException(
+          "Sequence not found for requested tank",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    offSequence.ifPresent(
+        v -> {
+          v.setUllage(new BigDecimal(request.getCorrectedUllage()));
+          v.setQuantity(new BigDecimal(request.getQuantity()));
+          // filling ratio not adding, need to ask jerin is it updating.
+        });
+    cargoToppingOffSequenceRepository.save(offSequence.get());
+    builder.setMessage("SUCCESS").build();
   }
 
   private void buildCargoToppingOffSequence(

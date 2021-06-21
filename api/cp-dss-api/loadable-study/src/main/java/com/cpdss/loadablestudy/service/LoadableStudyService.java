@@ -4697,7 +4697,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       UllageUpdateResponse algoResponse =
           this.callAlgoUllageUpdateApi(
               this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
-      this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
+      if (!request.getUpdateUllageForLoadingPlan()) {
+        this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
+      }
       replyBuilder.setLoadablePlanStowageDetails(
           this.buildUpdateUllageReply(algoResponse, request));
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());

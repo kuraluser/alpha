@@ -12,9 +12,11 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
+import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
+import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.PortInfoService;
 import com.cpdss.gateway.service.VesselInfoService;
@@ -438,6 +440,80 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  /**
+   * Call to algo, process it save at Loading Plan Service 1. Go to LS to call algo 2. Save the
+   * response at Loading plan service 3. Respond to caller with updated value€
+   *
+   * @param updateUllage
+   * @return
+   */
+  @Override
+  public UpdateUllage processUpdateUllage(
+      Long vesselId,
+      Long voyageId,
+      Long loadingInfoId,
+      Long portRotationId,
+      UpdateUllage updateUllage,
+      String correlationId)
+      throws GenericServiceException {
+
+    // get Active voyage
+    VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
+    if (activeVoyage == null) {
+      throw new GenericServiceException(
+          "No active voyage found",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    // Build grpc request to LS
+    LoadableStudy.UpdateUllageRequest.Builder grpcRequestToLS =
+        LoadableStudy.UpdateUllageRequest.newBuilder();
+    grpcRequestToLS.setUpdateUllageForLoadingPlan(true); // to skip save to Temp table in LS
+    this.loadableStudyService.buildUpdateUllageRequest(
+        updateUllage, activeVoyage.getPatternId(), grpcRequestToLS);
+
+    // Call to LS for process
+    LoadableStudy.UpdateUllageReply grpcReplyFromLS =
+        this.loadableStudyService.updateUllage(grpcRequestToLS.build());
+    if (!SUCCESS.equals(grpcReplyFromLS.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed in confirmPlanStatus from grpc service",
+          grpcReplyFromLS.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReplyFromLS.getResponseStatus().getHttpStatusCode())));
+    }
+
+    // Call to LP for save at table
+    LoadingPlanModels.UpdateUllageLoadingRequest.Builder grpcRequestLP =
+        LoadingPlanModels.UpdateUllageLoadingRequest.newBuilder();
+    grpcRequestLP.setLoadingInfoId(loadingInfoId);
+    grpcRequestLP.setVesselId(vesselId);
+    grpcRequestLP.setVoyageId(voyageId);
+    grpcRequestLP.setPortRotationId(portRotationId);
+
+    grpcRequestLP.setTankId(grpcReplyFromLS.getLoadablePlanStowageDetails().getTankId());
+    grpcRequestLP.setCargoId(
+        grpcReplyFromLS.getLoadablePlanStowageDetails().getCargoNominationId());
+    grpcRequestLP.setFillingRatio(
+        grpcReplyFromLS.getLoadablePlanStowageDetails().getFillingRatio());
+    grpcRequestLP.setCorrectedUllage(
+        grpcReplyFromLS.getLoadablePlanStowageDetails().getCorrectedUllage());
+    grpcRequestLP.setCorrectionFactor(
+        grpcReplyFromLS.getLoadablePlanStowageDetails().getCorrectionFactor());
+    Boolean updatedAtLoadingPlan =
+        this.loadingPlanGrpcService.updateUllageAtLoadingPlan(grpcRequestLP.build());
+    if (!updatedAtLoadingPlan) {
+      throw new GenericServiceException(
+          "Update ullage at Loading Plan Failed!",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    // Return updated value
+    return this.loadableStudyService.buildeUpdateUllageResponse(grpcReplyFromLS, correlationId);
   }
 
   /**

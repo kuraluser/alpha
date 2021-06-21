@@ -5,9 +5,11 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class LoadingPlanController {
 
   @Autowired LoadingPlanService loadingPlanService;
+  @Autowired LoadingInformationService loadingInformationService;
 
   /**
    * Get API to collect the port rotation details of active Voyage
@@ -120,5 +123,24 @@ public class LoadingPlanController {
           e.getMessage(),
           e);
     }
+  }
+
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loading-plan/{planId}/update-ullage/{portRotationId}")
+  public UpdateUllage updateUllage(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long planId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody UpdateUllage updateUllageRequest) {
+    try {
+      return loadingInformationService.processUpdateUllage(
+          vesselId, voyageId, planId, portRotationId, updateUllageRequest, "");
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

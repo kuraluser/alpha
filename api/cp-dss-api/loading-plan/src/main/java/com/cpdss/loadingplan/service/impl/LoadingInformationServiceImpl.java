@@ -111,8 +111,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     }
     if (vesselId != 0 && voyageId != 0 && portRotationId != 0) {
       information =
-          this.loadingInformationRepository.findByVesselXIdAndVoyageIdAndPortRotationXId(
-              vesselId, voyageId, portRotationId);
+          this.loadingInformationRepository
+              .findByVesselXIdAndVoyageIdAndPortRotationXIdAndIsActiveTrue(
+                  vesselId, voyageId, portRotationId);
       if (information.isPresent()) {
         log.info(
             "Loading Information found Id {}, for Voyage Id {}, Port Rotation Id {}",

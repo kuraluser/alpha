@@ -38,4 +38,7 @@ public interface LoadingPlanGrpcService {
       Long patternId, String operationType, Long portRotationId, Long portId);
 
   ResponseStatus saveLoadingInformation(LoadingInformation loadingInformation);
+
+  Boolean updateUllageAtLoadingPlan(LoadingPlanModels.UpdateUllageLoadingRequest request)
+      throws GenericServiceException;
 }
