@@ -196,6 +196,58 @@ public final class LoadingInformationServiceGrpc {
     return getGetLoadigInformationBySynopticalMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+      getUpdateUllageMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateUllage",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+              .class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+      getUpdateUllageMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+        getUpdateUllageMethod;
+    if ((getUpdateUllageMethod = LoadingInformationServiceGrpc.getUpdateUllageMethod) == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getUpdateUllageMethod = LoadingInformationServiceGrpc.getUpdateUllageMethod) == null) {
+          LoadingInformationServiceGrpc.getUpdateUllageMethod =
+              getUpdateUllageMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .UpdateUllageLoadingRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .UpdateUllageLoadingReplay>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "UpdateUllage"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UpdateUllageLoadingRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UpdateUllageLoadingReplay.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier("UpdateUllage"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateUllageMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceStub> factory =
@@ -270,6 +322,16 @@ public final class LoadingInformationServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadigInformationBySynopticalMethod(), responseObserver);
     }
 
+    /** */
+    public void updateUllage(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getUpdateUllageMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -297,6 +359,14 @@ public final class LoadingInformationServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInformationSynopticalReply>(
                       this, METHODID_GET_LOADIG_INFORMATION_BY_SYNOPTICAL)))
+          .addMethod(
+              getUpdateUllageMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UpdateUllageLoadingRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UpdateUllageLoadingReplay>(this, METHODID_UPDATE_ULLAGE)))
           .build();
     }
   }
@@ -352,6 +422,19 @@ public final class LoadingInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void updateUllage(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getUpdateUllageMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -393,6 +476,14 @@ public final class LoadingInformationServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadigInformationBySynopticalMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay
+        updateUllage(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+                request) {
+      return blockingUnaryCall(getChannel(), getUpdateUllageMethod(), getCallOptions(), request);
     }
   }
 
@@ -441,11 +532,22 @@ public final class LoadingInformationServiceGrpc {
           getChannel().newCall(getGetLoadigInformationBySynopticalMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+        updateUllage(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getUpdateUllageMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_LOADING_INFORMATION = 0;
   private static final int METHODID_SAVE_LOADING_INFORMATION = 1;
   private static final int METHODID_GET_LOADIG_INFORMATION_BY_SYNOPTICAL = 2;
+  private static final int METHODID_UPDATE_ULLAGE = 3;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -487,6 +589,15 @@ public final class LoadingInformationServiceGrpc {
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInformationSynopticalReply>)
+                  responseObserver);
+          break;
+        case METHODID_UPDATE_ULLAGE:
+          serviceImpl.updateUllage(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UpdateUllageLoadingReplay>)
                   responseObserver);
           break;
         default:
@@ -556,6 +667,7 @@ public final class LoadingInformationServiceGrpc {
                       .addMethod(getGetLoadingInformationMethod())
                       .addMethod(getSaveLoadingInformationMethod())
                       .addMethod(getGetLoadigInformationBySynopticalMethod())
+                      .addMethod(getUpdateUllageMethod())
                       .build();
         }
       }
