@@ -3184,8 +3184,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-          LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
+
       if (request.getLoadablePlanDetailsList().isEmpty()) {
         log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
@@ -3240,6 +3239,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       request.getHasLodicator(), loadablePattern, lpd);
                 });
         if (request.getHasLodicator()) {
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
           this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         } else {
 
@@ -3896,8 +3897,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
-        updateloadablestudystatus(request);
         saveLoadicatorResults(request);
+        updateloadablestudystatus(request);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
