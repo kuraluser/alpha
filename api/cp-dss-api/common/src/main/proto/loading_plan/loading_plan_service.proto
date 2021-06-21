@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated.loading_plan";
+
+import "common.proto";
+// Messages for the Service related to Loading Plan
+import "loading_plan/loading_plan_models.proto";
+
+service LoadingInformationService {
+
+  rpc GetLoadingInformation(LoadingInformationRequest) returns (LoadingInformation) {}
+  
+  rpc SaveLoadingInformation(LoadingInformation) returns (ResponseStatus) {}
+
+  rpc GetLoadigInformationBySynoptical(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
+
+  rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}
+}
+
+service LoadingInstructionService {
+
+}
+
+service LoadingPlanService {
+
+  rpc LoadingPlanSynchronization(LoadingPlanSyncDetails) returns (LoadingPlanSyncReply) {}
+
+}

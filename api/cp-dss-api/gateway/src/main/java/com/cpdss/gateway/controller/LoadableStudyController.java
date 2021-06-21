@@ -202,13 +202,14 @@ public class LoadableStudyController {
   public LoadableStudyResponse getLoadableStudyByVoyage(
       @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @RequestParam(required = false, defaultValue = "1") long planningType,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       log.info("getLoadableStudyByVoyage: {}", getClientIp());
       Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
       return this.loadableStudyService.getLoadableStudies(
-          companyId, vesselId, voyageId, headers.getFirst(CORRELATION_ID_HEADER));
+          companyId, vesselId, voyageId, headers.getFirst(CORRELATION_ID_HEADER), planningType);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -1819,6 +1820,7 @@ public class LoadableStudyController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public VoyageActionResponse updateVoyageStatus(
+      @PathVariable Long vesselId,
       @PathVariable Long voyageId,
       @RequestBody @Valid VoyageActionRequest request,
       @RequestHeader HttpHeaders headers)
@@ -1826,6 +1828,7 @@ public class LoadableStudyController {
     try {
       log.info("save voyage status: {}", getClientIp());
       request.setVoyageId(voyageId);
+      request.setVesselId(vesselId);
       return this.loadableStudyService.saveVoyageStatus(request, CORRELATION_ID_HEADER);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving voyage status", e);
