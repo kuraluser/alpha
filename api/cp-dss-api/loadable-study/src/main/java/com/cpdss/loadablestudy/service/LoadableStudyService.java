@@ -882,7 +882,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         builder.setLastEdited(dateTimeFormatter.format(entity.getLastModifiedDateTime()));
         builder.setId(entity.getId());
         builder.setName(entity.getName());
-        ofNullable(entity.getDischargeCargoId()).ifPresent(builder::setDischargingCargoId);
+        ofNullable(entity.getDischargeCargoNominationId()).ifPresent(builder::setDischargingCargoId);
         builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDateTime()));
         ofNullable(entity.getDuplicatedFrom())
             .ifPresent(
@@ -2164,7 +2164,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
-      loadableStudy.setDischargeCargoId(request.getDischargingCargoId());
+      loadableStudy.setDischargeCargoNominationId(request.getCargoNominationId());
       loadableStudy.setIsDischargePortsComplete(request.getIsDischargingPortsComplete());
       this.loadableStudyRepository.save(loadableStudy);
 
@@ -2396,7 +2396,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               existingCargoNomination.get().getLoadableStudyXId());
       if (loadableStudyOpt.isPresent()) {
         LoadableStudy loadableStudy = loadableStudyOpt.get();
-        loadableStudy.setDischargeCargoId(null);
+        loadableStudy.setDischargeCargoNominationId(null);
         this.loadableStudyRepository.save(loadableStudy);
       }
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
@@ -6614,13 +6614,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       loadableStudy.setLoadOnTop(false);
     }
-    Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId());
+    Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoNominationId());
     if (dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else if (!dischargeCargoId.isPresent()) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else {
-      loadableStudy.setCargoToBeDischargeFirstId(null);
+      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
     }
   }
 
@@ -9395,7 +9395,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
-        entity.setDischargeCargoId(loadableStudyOpt.get().getDischargeCargoId());
+        entity.setDischargeCargoNominationId(loadableStudyOpt.get().getDischargeCargoNominationId());
         entity.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
         entity.setIsCargoNominationComplete(loadableStudyOpt.get().getIsCargoNominationComplete());
         entity.setIsDischargePortsComplete(loadableStudyOpt.get().getIsDischargePortsComplete());

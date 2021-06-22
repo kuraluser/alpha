@@ -91,7 +91,7 @@ public class LoadableStudy extends EntityDoc {
   private Integer caseNo;
 
   @Column(name = "first_cargo_to_be_discharged")
-  private Long dischargeCargoId;
+  private Long dischargeCargoNominationId;
 
   @Column(name = "load_on_top")
   private Boolean loadOnTop;
