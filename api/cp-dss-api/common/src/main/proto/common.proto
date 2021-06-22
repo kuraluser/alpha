@@ -26,3 +26,30 @@ message BillOfLadding{
   string api = 7;
   string temperature = 8;
 }
+
+message RulePlans{
+	string header = 1;
+	repeated Rules rules = 2;
+}
+	
+message Rules{
+	 string id = 1;
+	 bool enable = 2; 
+	 bool disable = 3;
+	 bool disableInSettigs = 4;
+	 string ruleType = 5;
+	 repeated RulesInputs inputs = 6;
+	 string ruleTemplateId = 7;
+	 string vesselRuleXId = 8;
+}
+	
+message RulesInputs{
+	 string prefix = 1;
+	 string defaultValue = 2;
+	 string type = 3;
+	 string max = 4;
+	 string min = 5;
+	 string value = 6;
+	 string suffix = 7;
+	 string id = 8;
+}

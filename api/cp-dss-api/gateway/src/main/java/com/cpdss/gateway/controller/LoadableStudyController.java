@@ -41,6 +41,8 @@ import com.cpdss.gateway.domain.PatternValidateResultRequest;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.RuleRequest;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.SynopticalTableRequest;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
@@ -63,6 +65,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -2076,6 +2079,95 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception in getLoadablePlanReport method", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To save rule against loadable study
+   *
+   * @param vesselId
+   * @param loadableStudyId
+   * @param sectionId
+   * @param loadableRuleRequest
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/loadble-study-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}/loadableStudyId/{loadableStudyId}",
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public RuleResponse saveRulesForLoadableStudy(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long sectionId,
+      @RequestBody RuleRequest loadableRuleRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.getOrSaveRulesForLoadableStudy(
+          vesselId,
+          sectionId,
+          loadableStudyId,
+          loadableRuleRequest,
+          headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving rules against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when saving rules for loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve rule against loadable study
+   *
+   * @param vesselId
+   * @param loadableStudyId
+   * @param sectionId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value =
+          "/loadble-study-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}/loadableStudyId/{loadableStudyId}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public RuleResponse getRulesForLoadableStudy(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long sectionId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.getOrSaveRulesForLoadableStudy(
+          vesselId, sectionId, loadableStudyId, null, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching rules against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching rules for loadable study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

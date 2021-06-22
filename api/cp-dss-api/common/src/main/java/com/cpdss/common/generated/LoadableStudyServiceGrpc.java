@@ -3054,6 +3054,59 @@ public final class LoadableStudyServiceGrpc {
     return getSaveLoadingInfoToSynopticDataMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
+      getGetOrSaveRulesForLoadableStudyMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetOrSaveRulesForLoadableStudy",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
+      getGetOrSaveRulesForLoadableStudyMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
+        getGetOrSaveRulesForLoadableStudyMethod;
+    if ((getGetOrSaveRulesForLoadableStudyMethod =
+            LoadableStudyServiceGrpc.getGetOrSaveRulesForLoadableStudyMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetOrSaveRulesForLoadableStudyMethod =
+                LoadableStudyServiceGrpc.getGetOrSaveRulesForLoadableStudyMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetOrSaveRulesForLoadableStudyMethod =
+              getGetOrSaveRulesForLoadableStudyMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetOrSaveRulesForLoadableStudy"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadableRuleReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetOrSaveRulesForLoadableStudy"))
+                      .build();
+        }
+      }
+    }
+    return getGetOrSaveRulesForLoadableStudyMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3593,6 +3646,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveLoadingInfoToSynopticDataMethod(), responseObserver);
     }
 
+    /** */
+    public void getOrSaveRulesForLoadableStudy(
+        com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetOrSaveRulesForLoadableStudyMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4018,6 +4079,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest,
                       com.cpdss.common.generated.Common.ResponseStatus>(
                       this, METHODID_SAVE_LOADING_INFO_TO_SYNOPTIC_DATA)))
+          .addMethod(
+              getGetOrSaveRulesForLoadableStudyMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>(
+                      this, METHODID_GET_OR_SAVE_RULES_FOR_LOADABLE_STUDY)))
           .build();
     }
   }
@@ -4702,6 +4770,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getOrSaveRulesForLoadableStudy(
+        com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -5143,6 +5222,14 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadingInfoToSynopticDataMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableRuleReply
+        getOrSaveRulesForLoadableStudy(
+            com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions(), request);
     }
   }
 
@@ -5675,6 +5762,16 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getSaveLoadingInfoToSynopticDataMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
+        getOrSaveRulesForLoadableStudy(
+            com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -5737,6 +5834,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL = 57;
   private static final int METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN = 58;
   private static final int METHODID_SAVE_LOADING_INFO_TO_SYNOPTIC_DATA = 59;
+  private static final int METHODID_GET_OR_SAVE_RULES_FOR_LOADABLE_STUDY = 60;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -6165,6 +6263,13 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
                   responseObserver);
           break;
+        case METHODID_GET_OR_SAVE_RULES_FOR_LOADABLE_STUDY:
+          serviceImpl.getOrSaveRulesForLoadableStudy(
+              (com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -6289,6 +6394,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetActiveVoyagesByVesselMethod())
                       .addMethod(getGetSynopticDataForLoadingPlanMethod())
                       .addMethod(getSaveLoadingInfoToSynopticDataMethod())
+                      .addMethod(getGetOrSaveRulesForLoadableStudyMethod())
                       .build();
         }
       }
