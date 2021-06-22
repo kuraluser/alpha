@@ -62,7 +62,7 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   @Modifying
   @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1, LS.sequenceNo = ?2 WHERE id = ?3")
   public void updateLoadableStudyUUIDAndSeqNo(String messageUUID, String sequenceNo, Long id);*/
-  
+
   public Optional<LoadableStudy> findByIdAndIsActiveAndVesselXId(
-	      Long id, Boolean isActive, Long vesselId);
+      Long id, Boolean isActive, Long vesselId);
 }

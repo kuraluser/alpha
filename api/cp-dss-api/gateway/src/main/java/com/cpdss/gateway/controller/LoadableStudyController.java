@@ -2087,7 +2087,7 @@ public class LoadableStudyController {
           e);
     }
   }
-  
+
   /**
    * To save rule against loadable study
    *
@@ -2123,9 +2123,9 @@ public class LoadableStudyController {
           loadableRuleRequest,
           headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
-        log.error("GenericServiceException when saving rules against loadable study", e);
-        throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-    }catch (Exception e) {
+      log.error("GenericServiceException when saving rules against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
       log.error("Exception when saving rules for loadable study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
@@ -2163,9 +2163,9 @@ public class LoadableStudyController {
     try {
       return this.loadableStudyService.getOrSaveRulesForLoadableStudy(
           vesselId, sectionId, loadableStudyId, null, headers.getFirst(CORRELATION_ID_HEADER));
-    }catch (GenericServiceException e) {
-        log.error("GenericServiceException when fetching rules against loadable study", e);
-        throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching rules against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching rules for loadable study", e);
       throw new CommonRestException(

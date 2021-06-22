@@ -14,7 +14,6 @@ import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
 import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
-import com.cpdss.common.generated.VesselInfo.VesselRuleRequest.Builder;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -28,10 +27,7 @@ import com.cpdss.gateway.domain.InnerBulkHeadValues;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
 import com.cpdss.gateway.domain.Parameter;
-import com.cpdss.gateway.domain.RulePlans;
 import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.Rules;
-import com.cpdss.gateway.domain.RulesInputs;
 import com.cpdss.gateway.domain.SelectableParameter;
 import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.StationValues;
@@ -41,13 +37,11 @@ import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselDraftCondition;
 import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.VesselTankTCG;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.utility.Utility;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +53,6 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Service class for vessel related operations
@@ -723,6 +716,4 @@ public class VesselInfoService {
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;
   }
-
-  
 }

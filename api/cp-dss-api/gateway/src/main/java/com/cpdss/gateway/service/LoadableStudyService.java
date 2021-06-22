@@ -5789,31 +5789,32 @@ public class LoadableStudyService {
       throw new Exception("Failed to update synoptical table " + synopticalTableId);
     }
   }
-  
+
   public RuleResponse getOrSaveRulesForLoadableStudy(
-	      Long vesselId,
-	      Long sectionId,
-	      Long loadableStudyId,
-	      RuleRequest loadableRuleRequest,
-	      String correlationId) throws GenericServiceException {
-	    LoadableRuleRequest.Builder loadableRuleRequestBuilder = LoadableRuleRequest.newBuilder();
-	    loadableRuleRequestBuilder.setVesselId(vesselId);
-	    loadableRuleRequestBuilder.setSectionId(sectionId);
-	    loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
-	    Utility.buildRuleListForSave(loadableRuleRequest, null, loadableRuleRequestBuilder, false);
-	    LoadableRuleReply loadableRuleReply =
-	        loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
-	            loadableRuleRequestBuilder.build());
-	    if (!SUCCESS.equals(loadableRuleReply.getResponseStatus().getStatus())) {
-	            throw new GenericServiceException(
-	                    "failed to get Vessel Details ",
-	                    loadableRuleReply.getResponseStatus().getCode(),
-	       HttpStatusCode.valueOf(Integer.valueOf(loadableRuleReply.getResponseStatus().getCode())));
-	    }
-	    RuleResponse ruleResponse = new RuleResponse();
-	    ruleResponse.setPlan(Utility.buildLoadableRulePlan(loadableRuleReply));
-	    ruleResponse.setResponseStatus(
-	        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-	    return ruleResponse;
-	  }
+      Long vesselId,
+      Long sectionId,
+      Long loadableStudyId,
+      RuleRequest loadableRuleRequest,
+      String correlationId)
+      throws GenericServiceException {
+    LoadableRuleRequest.Builder loadableRuleRequestBuilder = LoadableRuleRequest.newBuilder();
+    loadableRuleRequestBuilder.setVesselId(vesselId);
+    loadableRuleRequestBuilder.setSectionId(sectionId);
+    loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
+    Utility.buildRuleListForSave(loadableRuleRequest, null, loadableRuleRequestBuilder, false);
+    LoadableRuleReply loadableRuleReply =
+        loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
+            loadableRuleRequestBuilder.build());
+    if (!SUCCESS.equals(loadableRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Vessel Details ",
+          loadableRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(loadableRuleReply.getResponseStatus().getCode())));
+    }
+    RuleResponse ruleResponse = new RuleResponse();
+    ruleResponse.setPlan(Utility.buildLoadableRulePlan(loadableRuleReply));
+    ruleResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return ruleResponse;
+  }
 }
