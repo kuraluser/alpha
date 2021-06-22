@@ -77,11 +77,20 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       if (var1.hasTrimAllowed()) {
         TrimAllowed trimAllowed = new TrimAllowed();
         Optional.ofNullable(var1.getTrimAllowed().getInitialTrim())
-            .ifPresent(v -> trimAllowed.setInitialTrim(new BigDecimal(v)));
+            .ifPresent(
+                v -> {
+                  if (!v.isEmpty()) trimAllowed.setInitialTrim(new BigDecimal(v));
+                });
         Optional.ofNullable(var1.getTrimAllowed().getMaximumTrim())
-            .ifPresent(v -> trimAllowed.setMaximumTrim(new BigDecimal(v)));
+            .ifPresent(
+                v -> {
+                  if (!v.isEmpty()) trimAllowed.setMaximumTrim(new BigDecimal(v));
+                });
         Optional.ofNullable(var1.getTrimAllowed().getFinalTrim())
-            .ifPresent(v -> trimAllowed.setFinalTrim(new BigDecimal(v)));
+            .ifPresent(
+                v -> {
+                  if (!v.isEmpty()) trimAllowed.setFinalTrim(new BigDecimal(v));
+                });
         var.setTrimAllowed(trimAllowed);
       }
 
