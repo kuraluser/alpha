@@ -47,13 +47,14 @@ public class Utility {
         rList -> {
           Rules rule = new Rules();
           Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
-          Optional.ofNullable(rList.getDisableInSettigs()).ifPresent(rule::setDisableInSettigs);
+          Optional.ofNullable(rList.getDisplayInSettings()).ifPresent(rule::setDisplayInSettings);
           if (isBlankString(rList.getVesselRuleXId())) {
             rule.setVesselRuleXId(rList.getVesselRuleXId());
           }
           if (isBlankString(rList.getId())) {
             rule.setId(rList.getId());
           }
+          Optional.ofNullable(rList.getIsHardRule()).ifPresent(rule::setIsHardRule);
           Optional.ofNullable(rList.getRuleTemplateId()).ifPresent(rule::setRuleTemplateId);
           Optional.ofNullable(rList.getRuleType()).ifPresent(rule::setRuleType);
           Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
@@ -120,8 +121,8 @@ public class Utility {
                                 com.cpdss.common.generated.Common.Rules.newBuilder();
                             Optional.ofNullable(rule.getDisable())
                                 .ifPresent(ruleBuilder::setDisable);
-                            Optional.ofNullable(rule.getDisableInSettigs())
-                                .ifPresent(ruleBuilder::setDisableInSettigs);
+                            Optional.ofNullable(rule.getDisplayInSettings())
+                                .ifPresent(ruleBuilder::setDisplayInSettings);
                             Optional.ofNullable(rule.getEnable()).ifPresent(ruleBuilder::setEnable);
                             Optional.ofNullable(rule.getId()).ifPresent(ruleBuilder::setId);
                             Optional.ofNullable(rule.getRuleTemplateId())
@@ -132,6 +133,8 @@ public class Utility {
                                 .ifPresent(ruleBuilder::setRuleType);
                             Optional.ofNullable(rule.getVesselRuleXId())
                                 .ifPresent(ruleBuilder::setVesselRuleXId);
+                            Optional.ofNullable(rule.getIsHardRule())
+                            .ifPresent(ruleBuilder::setIsHardRule);
                             rule.getInputs()
                                 .forEach(
                                     input -> {

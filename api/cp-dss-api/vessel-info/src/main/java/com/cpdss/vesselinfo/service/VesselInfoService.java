@@ -39,6 +39,7 @@ import com.cpdss.common.generated.VesselInfo.VesselTankTCG;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.vesselinfo.domain.TypeValue;
 import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.domain.VesselInfo;
 import com.cpdss.vesselinfo.domain.VesselRule;
@@ -1536,8 +1537,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                                 ruleVesselMapping = rVesselMapping.get();
                               }
                             }
+                            Optional.ofNullable(rule.getIsHardRule())
+                            .ifPresent(ruleVesselMapping::setIsHardRule);
                             ruleVesselMapping.setIsActive(true);
-                            Optional.ofNullable(rule.getDisableInSettigs())
+                            Optional.ofNullable(rule.getDisplayInSettings())
                                 .ifPresent(ruleVesselMapping::setDisplayInSettings);
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(ruleVesselMapping::setIsEnable);
@@ -1602,7 +1605,6 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       List<VesselRule> vesselRuleList =
           vesselRepository.findVesselRuleByVesselIdAndSectionId(
               request.getVesselId(), request.getSectionId());
-      ;
       //        List<VesselRuleMappingVessel> vesselRuleMappingVessel =
       //            vesselRepository.findVesselInRuleVesselMapping(request.getVesselId(), true,
       // true);
@@ -1655,6 +1657,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
                 Rules.Builder rulesBuilder = Rules.newBuilder();
                 for (int id = 0; id < value.size(); id++) {
+
                   Optional.ofNullable(value.get(id).getTemplateInputDefaultValue())
                       .ifPresent(item -> ruleInput.setDefaultValue(item));
                   Optional.ofNullable(value.get(id).getTemplateInputPrefix())
@@ -1667,6 +1670,14 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       .ifPresent(item -> ruleInput.setType(item));
                   Optional.ofNullable(value.get(id).getTemplateInputSuffix())
                       .ifPresent(item -> ruleInput.setSuffix(item));
+                  if (value.get(id).getTemplateInputTypeValue() != null
+                      && value
+                          .get(id)
+                          .getTemplateInputTypeValue()
+                          .equalsIgnoreCase(TypeValue.BOOLEAN.getType())
+                      && (value.get(id).getTemplateInputDefaultValue() == null || !value.get(id).getTemplateInputDefaultValue().trim().equalsIgnoreCase("true"))) {
+                	  ruleInput.setDefaultValue("false");
+                  }
                   if (isDisplayId) {
                     Optional.ofNullable(value.get(id).getTemplateInputId())
                         .ifPresent(item -> ruleInput.setId(String.valueOf(item)));
@@ -1676,7 +1687,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                     Optional.ofNullable(value.get(id).getTemplateIsEnable())
                         .ifPresent(item -> rulesBuilder.setEnable(item));
                     Optional.ofNullable(value.get(id).getTemplateDisplayInSettings())
-                        .ifPresent(item -> rulesBuilder.setDisableInSettigs(item));
+                        .ifPresent(item -> rulesBuilder.setDisplayInSettings(item));
                     Optional.ofNullable(value.get(id).getTemplateId())
                         .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));
                     if (isDisplayId) {
@@ -1685,6 +1696,11 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                     }
                     Optional.ofNullable(value.get(id).getTemplateRuleType())
                         .ifPresent(item -> rulesBuilder.setRuleType(item));
+                    Optional.ofNullable(value.get(id).getIsHardRule())
+                    .ifPresent(item -> rulesBuilder.setIsHardRule(item));
+                    if(value.get(id).getIsHardRule() == null) {
+                    	rulesBuilder.setIsHardRule(false);
+                    }
                     if (isDisplayVesselRuleXId) {
                       Optional.ofNullable(value.get(id).getId())
                           .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
