@@ -20,4 +20,6 @@ public class Rules {
   private List<RulesInputs> inputs;
 
   private String ruleTemplateId;
+  
+  private String vesselRuleXId;
 }
