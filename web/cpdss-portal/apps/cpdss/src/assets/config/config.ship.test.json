@@ -18,5 +18,7 @@
     "defaultWeightUnit" : "BBLS",
     "maxFillingPercentage": "98",
     "sgNumberFormat": "1.4-4",
+    "restrictMaxNumberOfCargo": true,
+    "maxCargoLimit": 7,
     "ullageUnit": "M"
 }

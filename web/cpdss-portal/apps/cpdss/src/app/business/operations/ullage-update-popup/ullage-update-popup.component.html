@@ -5,16 +5,16 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
-                <label for="">BERTH</label> <span class="pl-20"> North Pier #11/#12</span>
+                <i class="pi pi-upload"></i>
             </div>
             <div class="col-md-4">
-                <label for="">STATUS</label> <span class="pl-20">
+                <label for="">{{'LOADABLE_PLAN_ULLAGE_UPDATE_STATUS_LABEL' | translate}}</label> <span class="pl-20">
                     <p-dropdown  filter="true" optionLabel="voyageNo"
                         resetFilterOnHide="true"></p-dropdown>
                 </span>
             </div>
             <div class="col-md-4">
-                <label for="">SHOW AS</label> <span class="pl-20">
+                <label for="">{{'LOADABLE_PLAN_ULLAGE_UPDATE_SHOW_AS_LABEL'| translate}}</label> <span class="pl-20">
                     <p-dropdown  filter="true" optionLabel="voyageNo"
                         resetFilterOnHide="true"></p-dropdown>
                 </span>
@@ -61,6 +61,20 @@
                             </div>
                            </div> -->
                         <div class="col col-11 landing-page-tank-wrapper m-auto" *ngIf="selectedTab === tankType.CARGO">
+                            <span>{{'LOADABLE_PLANE_CARGO_GRADE' | translate}}</span>
+                            <p-dropdown styleClass="form-control" [options]="loadablePatternCargoDetails" appendTo="body" 
+                            id="cargo_name"  optionLabel="cargoAbbreviation"
+                            focusTrap resetFilterOnHide="true" [filter]="true" (onChange)="changeCargo($event)"></p-dropdown>
+
+                            <span>{{'LOADABLE_PLANE_CARGO_GRADE' | translate}}</span>
+                            <ul class="list-inline text-center tank-order mb-5">
+                                <li class="list-inline-item" *ngFor="let cargoDetail of loadablePatternCargoDetails">
+                                    <span class="badge-custom mr-5" class="badge-custom" [ngClass]="cargoDetail?.isCommingle ? 'commingle' : ''"
+                                    [ngStyle]="!cargoDetail?.isCommingle && {'background': cargoDetail.cargoColor}">
+                                        {{cargoDetail.cargoAbbreviation}} </span> <span class="ml-5 mr-5">></span>
+                                </li>
+                            </ul>
+                            <span>{{'LOADABLE_PLAN_FILLED' | translate}}</span>
                             <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
                             </cpdss-portal-cargo-tank-layout>
                             
@@ -80,11 +94,8 @@
                                 </ng-container>
                 
                             </div>
-                            
-                                    <cpdss-portal-bunkering-layout [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks" [options]="ohqTankOptions"
-                                        >
-                                    </cpdss-portal-bunkering-layout>
-                             
+                            <cpdss-portal-bunkering-layout [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks" [options]="ohqTankOptions">
+                            </cpdss-portal-bunkering-layout>
                         </div>
                     </div>
                 </div>
@@ -92,44 +103,110 @@
         </div>
         <div *ngIf="selectedTab === tankType.CARGO" class="row">
             <div class="col-md-4">
-                <label>B/L FIGURE</label>
+                <label>{{'LOADABLE_PLAN_BL_FIGURE_HEADING'| translate}}</label>
             </div>
         </div>
         <div *ngIf="selectedTab === tankType.CARGO" class="row">
-            <div class="col-md-12">
-                <p-table [value]="blFigure">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th>CARGO NAME</th>
-                            <th>B/L REF NO</th>
-                            <th>BBL@60F</th>
-                            <th>LT</th>
-                            <th>MT</th>
-                            <th>KL@15C</th>
-                            <th>API</th>
-                            <th>TEMP</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-row let-index>
-                        <ng-container *ngFor="let column of row.cargoDetails; let i=index">
+            <form>
+                <ng-container>
+                    <p-table [value]="blFigure.items" [columns]="blFigureColumns" dataKey="cargoName">
+                        <ng-template pTemplate="header" let-columns>
                             <tr>
-                                <td *ngIf="i === 0" [attr.rowspan]="row.cargoDetails.length">{{row.cargoName}}</td>
-                                <td [hidden]="row?.hideRef">{{column.blRefNo}}</td>
-                                <td>{{column.bbl}}</td>
-                                <td>{{column.lt}}</td>
-                                <td>{{column.mt}}</td>
-                                <td>{{column.kl}}</td>
-                                <td>{{column.api}}</td>
-                                <td>{{column.temp}}</td>
+                                <th *ngFor="let col of columns">{{col?.header | translate}}</th>
                             </tr>
-                        </ng-container>    
-                    </ng-template>
-                </p-table>
-            </div>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+                            <ng-container>
+                                <ng-container *ngFor="let column of rowData;let index=index">
+                                    <ng-container>
+                                        <ng-container 
+                                            *ngTemplateOutlet="rowTemplate;context:{rowData: column.cargo, rowIndex: rowIndex, columns: columns , index:index}">
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>  
+                        </ng-container>
+                            <ng-template #rowTemplate let-rowData="rowData"  
+                            let-rowIndex="rowIndex" let-columns="columns" let-index="index" >
+                            <ng-container>
+                            <tr>
+                                <ng-container *ngFor="let col of columns; let subIndex = index">
+                                    <ng-container
+                                    *ngTemplateOutlet="cell;context:{rowData: rowData, column: col, colIndex: subIndex, rowIndex: rowIndex, columns: columns , index:index}">
+                                    </ng-container>
+                                </ng-container>
+                            </tr>
+                            </ng-container>
+                            </ng-template>  
+                            
+                            <ng-template #cell let-rowData="rowData" let-col="column" let-colIndex="colIndex"
+                            let-rowIndex="rowIndex" let-columns="columns" let-index="index">
+
+                                <td (click)="onClick($event, rowData, rowIndex, col)"  [pEditableColumn]="rowData"
+                                [pEditableColumnField]="col.field" [pEditableColumnRowIndex]="rowIndex" *ngIf="isCellVisable(index, col)" [ngSwitch]="col.fieldType"  [attr.rowspan]="calculateRowSpan(index, colIndex , rowIndex)">
+                                
+                                   <ng-container *ngSwitchCase="fieldType.NUMBER">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
+                                        <input type="text" cpdssPortalNumberDecimal [max]="1000" [min]="0" class="form-control"
+                                        id="{{rowIndex+col.field+index}}" [formControl]="getControl(rowIndex,index,col.field)" 
+                                        (blur)="onEditComplete($event,rowData,col.field,rowIndex,index)"
+                                        >
+                                    </ng-container>
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                        <span>{{rowData[col.field].value| number:col?.numberFormat}}</span>
+                                    </ng-container>
+                                        <cpdss-portal-validation-error [errors]="fieldError(rowIndex,index,col.field)"
+                                            [errorMessages]="col?.errorMessages">
+                                        </cpdss-portal-validation-error>
+                                    </ng-container>
+
+                                <ng-container *ngSwitchCase="fieldType.TEXT">
+                                    <ng-container  *ngIf="editMode && rowData[col.field]?.isEditMode">
+                                        <input type="text" class="form-control" 
+                                        id="{{rowIndex+col.field+index}}"  [formControl]="getControl(rowIndex,index,col.field)"
+                                        (blur)="onEditComplete($event,rowData, col.field, rowIndex,index)">
+                                    </ng-container>
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                        <span>{{rowData[col.field].value}}</span>
+                                    </ng-container>
+                                    <cpdss-portal-validation-error [errors]="fieldError(rowIndex,index,col.field)"
+                                    [errorMessages]="col?.errorMessages">
+                                </cpdss-portal-validation-error>
+                                </ng-container>
+
+                                <ng-container *ngSwitchCase="fieldType.ACTION">
+                                    <i class="pi pi-minus-circle" *ngIf="!rowData.isAdd" (click)="deleteCargo(rowIndex,index)"></i>
+                                    <i class="pi pi-plus-circle" *ngIf="index === 0" (click)="newCargo(rowIndex,index)"></i>
+                                </ng-container>
+                                
+
+                                <ng-container *ngSwitchDefault>
+                                    {{rowData[col.field]}}
+                                </ng-container>
+
+                                </td>
+
+                            </ng-template>  
+
+                        </ng-template>
+                        <ng-template pTemplate="footer" let-columns>
+                            <tr>
+                                <td colspan="2">{{'LOADABLE_QUANTITY_TOTAL' | translate}}</td>
+                                <td>{{blFigureTotal?.bbl | quantityDecimalFormat: 'OBSBBLS'}}</td>
+                                <td>{{blFigureTotal?.lt | quantityDecimalFormat: 'LT' }}</td>
+                                <td>{{blFigureTotal?.mt |quantityDecimalFormat: 'MT'}}</td>
+                                <td>{{blFigureTotal?.kl | quantityDecimalFormat: 'KL'}}</td>
+                                <td>{{blFigureTotal?.api | number: '0.2-2'}}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </ng-container>
+            </form>
         </div>
         <div *ngIf="selectedTab === tankType.CARGO" class="row">
             <div class="col-md-4 pt-20">
-                CARGO QUANTITY TABLE
+                {{'LOADABLE_PLAN_CARGO_QUANTITY_TABLE' | translate}}
             </div>
         </div>
         <div *ngIf="selectedTab === tankType.CARGO" class="row">
@@ -137,23 +214,23 @@
                 <p-table [value]="cargoQuantityList">
                     <ng-template pTemplate="header">
                         <tr>
-                            <th rowspan="2">CARGO GRADE NAME</th>
-                            <th rowspan="2">NOMINATION FIG IN BBLS</th>
-                            <th colspan="2">TOLERANCE</th>
-                            <th colspan="2">QUANTITY</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_QUANTITY_TABLE' | translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_QUANTITY_TABLE' | translate}}</th>
+                            <th colspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_TOLERANCE' | translate}}</th>
+                            <th colspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_QUANTITY' | translate}}</th>
                             <th rowspan="2"></th>
-                            <th rowspan="2">BBLS@60F</th>
-                            <th rowspan="2">LT</th>
-                            <th rowspan="2">MT</th>
-                            <th rowspan="2">KL@15C</th>
-                            <th rowspan="2">API</th>
-                            <th rowspan="2">TEMP(F)</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_BBLS@60F'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_LT'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MT'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_KL@15C'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_API'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_TEMP'| translate}}</th>
                         </tr>
                         <tr>
-                            <th rowspan="2">MAX</th>
-                            <th rowspan="2">MIN</th>
-                            <th rowspan="2">MAX</th>
-                            <th rowspan="2">MIN</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MAX'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MIN'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MAX'| translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MIN'| translate}}</th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-row let-index>

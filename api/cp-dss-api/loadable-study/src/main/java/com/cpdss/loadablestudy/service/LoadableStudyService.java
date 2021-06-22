@@ -405,6 +405,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
+  private static final Long LOADABLE_STUDY_STATUS_ALGO_ERROR_ID = 11L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
@@ -415,6 +416,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_ENDED = 19L;
+  private static final Long LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID = 20L;
 
   private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
@@ -887,7 +889,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         builder.setLastEdited(dateTimeFormatter.format(entity.getLastModifiedDateTime()));
         builder.setId(entity.getId());
         builder.setName(entity.getName());
-        ofNullable(entity.getDischargeCargoId()).ifPresent(builder::setDischargingCargoId);
+        ofNullable(entity.getDischargeCargoNominationId())
+            .ifPresent(builder::setDischargingCargoId);
         builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDateTime()));
         ofNullable(entity.getDuplicatedFrom())
             .ifPresent(
@@ -2169,7 +2172,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
-      loadableStudy.setDischargeCargoId(request.getDischargingCargoId());
+      loadableStudy.setDischargeCargoNominationId(request.getCargoNominationId());
       loadableStudy.setIsDischargePortsComplete(request.getIsDischargingPortsComplete());
       this.loadableStudyRepository.save(loadableStudy);
 
@@ -2401,7 +2404,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               existingCargoNomination.get().getLoadableStudyXId());
       if (loadableStudyOpt.isPresent()) {
         LoadableStudy loadableStudy = loadableStudyOpt.get();
-        loadableStudy.setDischargeCargoId(null);
+        loadableStudy.setDischargeCargoNominationId(null);
         this.loadableStudyRepository.save(loadableStudy);
       }
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
@@ -3189,8 +3192,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-          LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
+
       if (request.getLoadablePlanDetailsList().isEmpty()) {
         log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
@@ -3245,6 +3247,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       request.getHasLodicator(), loadablePattern, lpd);
                 });
         if (request.getHasLodicator()) {
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
           this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         } else {
 
@@ -3259,6 +3263,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(
             false, request.getLoadableStudyId());
         saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadableStudyOpt.get().getId());
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, request.getProcesssId(), true);
       }
 
       builder
@@ -3897,8 +3905,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
-        updateloadablestudystatus(request);
         saveLoadicatorResults(request);
+        updateloadablestudystatus(request);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
@@ -6614,13 +6622,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       loadableStudy.setLoadOnTop(false);
     }
-    Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId());
+    Optional<Long> dischargeCargoId =
+        ofNullable(loadableStudyOpt.get().getDischargeCargoNominationId());
     if (dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else if (!dischargeCargoId.isPresent()) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else {
-      loadableStudy.setCargoToBeDischargeFirstId(null);
+      loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
     }
   }
 
@@ -9395,7 +9404,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
-        entity.setDischargeCargoId(loadableStudyOpt.get().getDischargeCargoId());
+        entity.setDischargeCargoNominationId(
+            loadableStudyOpt.get().getDischargeCargoNominationId());
         entity.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
         entity.setIsCargoNominationComplete(loadableStudyOpt.get().getIsCargoNominationComplete());
         entity.setIsDischargePortsComplete(loadableStudyOpt.get().getIsDischargePortsComplete());
@@ -10050,6 +10060,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (portDetail.isPresent()) {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
     }
+    Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation().getSeaWaterDensity())
+        .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
     stowagePlanBuilder.setSynopticalId(synopticalEntity.getId());
   }
 

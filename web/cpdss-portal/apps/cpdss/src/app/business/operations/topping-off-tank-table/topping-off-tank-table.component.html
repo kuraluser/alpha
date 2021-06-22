@@ -1,10 +1,13 @@
 <div class="row">
     <div class="col-md-3">
-        <label>Topping Off Tank</label>
+        <label>{{'TOPPING_OFF_TANK' | translate }}</label>
     </div>
-    <div class="col-md-9">
-        <cpdss-portal-datatable [tableId]="'drparture-details-tbl'" [columns]="cargoTypeColumns"
-            [value]="cargoTypeList">
+    <div class="col-md-9" *ngIf="toppingOffSequenceForm">
+        <ng-container *ngFor="let cargoType of cargoTypeList; let i = index;">
+            <cpdss-portal-datatable [tableId]="'drparture-details-tbl'"  [form]="toppingOffSequenceForm.controls[i]" [columns]="cargoTypeColumns"
+            [value]="cargoType" [editMode]="editMode" [scrollable]="false" [showHeader]="i === 0" [tableRowReOrder]="true"
+            (rowReorder)="onRowReorder($event, i)" (editComplete)="onEditComplete($event)">
         </cpdss-portal-datatable>
+        </ng-container>
     </div>
 </div>

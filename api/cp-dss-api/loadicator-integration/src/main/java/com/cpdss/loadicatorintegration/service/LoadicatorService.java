@@ -320,6 +320,10 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
             ? null
             : stowagePlanInfo.getVesselCode());
     stowagePlan.setProcessId(stowagePlanInfo.getProcessId());
+    stowagePlan.setSeaWater(
+        StringUtils.isEmpty(stowagePlanInfo.getSeaWaterDensity())
+            ? null
+            : new BigDecimal(stowagePlanInfo.getSeaWaterDensity()));
     return stowagePlan;
   }
 

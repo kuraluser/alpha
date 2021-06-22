@@ -1,64 +1,29 @@
 <div class="row">
     <div class="col-md-12">
-        <p-panel [collapseIcon]="'pi pi-fw pi-chevron-up'" [expandIcon]="'pi pi-fw pi-chevron-down'"
-            header="ARRIVAL CONDITION" [toggleable]="true">
-            <cpdss-portal-arrival-condition-panel></cpdss-portal-arrival-condition-panel>
-
-        </p-panel>
+        <cpdss-portal-arrival-condition-panel></cpdss-portal-arrival-condition-panel>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <p-panel [collapseIcon]="'pi pi-fw pi-chevron-up'" [expandIcon]="'pi pi-fw pi-chevron-down'"
-            header="DEPARTURE CONDITION" [toggleable]="true">
-            <cpdss-portal-departure-condition-panel></cpdss-portal-departure-condition-panel>
-
-        </p-panel>
+        <cpdss-portal-departure-condition-panel></cpdss-portal-departure-condition-panel>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-        <p-panel [collapseIcon]="'pi pi-fw pi-chevron-up'" [expandIcon]="'pi pi-fw pi-chevron-down'"
-            header="LOADING RATES" [toggleable]="true">
             <cpdss-portal-loading-rate></cpdss-portal-loading-rate>
-        </p-panel>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <p-panel [collapseIcon]="'pi pi-fw pi-chevron-up'" [expandIcon]="'pi pi-fw pi-chevron-down'"
-            header="BERTH DETAILS" [toggleable]="true">
-
-            <ul class="list-group bg-transparent list-group-flush bg-transparent">
-                <li class="list-group-item bg-transparent">Name<span class="pull-right">North Pier#11/#12</span></li>
-                <li class="list-group-item bg-transparent">Alongside, Hose Connection<span
-                        class="pull-right">16"*3</span></li>
-                <li class="list-group-item bg-transparent pb-20">Initial Loading Rate<span class="pull-right">5,000 MT/h
-                        (40,000 Bbls)</span></li>
-                <li class="list-group-item bg-transparent">Max. Loading rate<span class="pull-right">5,000 MT/h (40,000
-                        Bbls)</span></li>
-                <li class="list-group-item bg-transparent">Depth of berth<span class="pull-right">26.5 to 28.65
-                        CM</span></li>
-                <li class="list-group-item bg-transparent">Tide Details<span class="pull-right"></span></li>
-                <li class="list-group-item bg-transparent">Manifold<span class="pull-right"></span></li>
-
-            </ul>
-        </p-panel>
+        <cpdss-portal-loading-discharging-berth [editMode]="false" [availableBerths]="selectedBerths" [selectedBerths]="selectedBerths"></cpdss-portal-loading-discharging-berth>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <p-panel [collapseIcon]="'pi pi-fw pi-chevron-up'" [expandIcon]="'pi pi-fw pi-chevron-down'"
-            header="ITEMS TO BE AGREED WITH TERMINAL" [toggleable]="true">
-
             <ul class="list-group bg-transparent list-group-flush bg-transparent">
                 <li class="list-group-item bg-transparent">Trim<span class="pull-right">For Berthing Not Exceeding 3.0 M
                         8/5 During Cargo Operation</span></li>
-                <li class="list-group-item bg-transparent">Fire Wire<span class="pull-right">1 to 2 mts above the water
-                        with slack on deck and 6 turns on bit</span></li>
-
             </ul>
-        </p-panel>
     </div>
 </div>

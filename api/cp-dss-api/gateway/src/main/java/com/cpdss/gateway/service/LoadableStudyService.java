@@ -1396,8 +1396,8 @@ public class LoadableStudyService {
     if (null != request.getPortIds() && !request.getPortIds().isEmpty()) {
       portRotationRequestBuilder.addAllDischargingPortIds(request.getPortIds());
     }
-    Optional.ofNullable(request.getDischargingCargoId())
-        .ifPresent(portRotationRequestBuilder::setDischargingCargoId);
+    Optional.ofNullable(request.getCargoNominationId())
+        .ifPresent(portRotationRequestBuilder::setCargoNominationId);
 
     Optional.ofNullable(request.getIsDischargingPortComplete())
         .ifPresent(

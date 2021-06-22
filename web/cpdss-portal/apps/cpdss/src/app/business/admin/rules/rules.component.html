@@ -1,0 +1,63 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h5 class="main-head inline-block">{{'RULES' | translate}}</h5>
+            <span class="ml-20 mr-10">
+                {{'Vessel' | translate }}</span>
+            <p-dropdown  [options]="rulesService.vessels"
+                [(ngModel)]="rulesService.selectedVessel" optionLabel="voyageNo" [filter]="true"
+                placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}" (onChange)="onVoyageSelected()"
+                resetFilterOnHide="true">
+            </p-dropdown>
+        </div>
+        <div class="col text-right">
+            <button class="btn btn-main mr-10" (click)="rulesService.saveChanges()">{{'RULES_SAVE' | translate}}</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-10">
+        
+        </div>
+        <div class="col-2">
+            
+        </div>
+    </div>
+    <div class="col cargo-nomiantion-tab text-center">
+        <a *ngFor="let tab of tabs" class="tab-btn" [ngClass]="{'active': selectedTab === TABS[tab]}"
+            (click)="onTabClick(TABS[tab])">{{ tab | translate}}
+        </a>
+    </div>
+   
+    <div class="content-outer-rule" *ngIf="rulesService.vessels">
+        <div class="sidebar  relative">
+            <div class="sidebar-content">
+                <p>{{'RULES_LIST' | translate}}</p>
+                <ul class="list-unstyled sidebar-menu" >
+                    <li *ngFor="let header of rulesJson[selectedTab.toLowerCase()]">
+                        <a>{{header.header}}</a>
+                    </li>
+                </ul>
+                <!-- TO DO -->
+                <!-- <p-table [columns]="['header']" [value]="rulesJson[selectedTab.toLowerCase()]" dataKey="header"
+                    id="rules-list-table" styleClass="body-header-row-span-table" [scrollable]="true"
+                    scrollHeight="flex">
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex"
+                        let-expanded="expanded">
+                        <tr>
+                            <a (click)="selectedIndex = rowIndex">
+                                {{rowData.header}}
+                            </a>
+                        </tr>
+                    </ng-template>
+                </p-table> -->
+                <!-- TO DO -->
+            </div>
+        </div>
+        <div class="pl-30">
+            <div class="pl-10">
+                <cpdss-portal-rules-table [rules]="rulesJson[selectedTab.toLowerCase()][selectedIndex].rules">
+                </cpdss-portal-rules-table>
+            </div>
+        </div>
+    </div>
+</div>

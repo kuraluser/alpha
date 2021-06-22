@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { IVessel } from '../core/models/vessel-details.model';
 import { VoyageService } from '../core/services/voyage.service';
-import { IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common.model';
+import { ICargoQuantities, IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common.model';
 import { PortRotationService } from '../core/services/port-rotation.service';
 import { VoyageApiService } from './services/voyage-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageStatus } from './models/voyage-status.model';
+import { IBunkerConditions, ICargoConditions, IVoyageStatus } from './models/voyage-status.model';
 import { VoyageStatusTransformationService } from './services/voyage-status-transformation.service';
 
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';

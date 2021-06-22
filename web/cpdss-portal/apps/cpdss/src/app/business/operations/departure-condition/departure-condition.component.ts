@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DepartureConditionTransformationService } from './departure-condition-transformation.service';
 import { ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
-import { IBallastQuantities, ICargoQuantities, IShipBallastTank, IShipBunkerTank, IShipCargoTank } from '../../voyage-status/models/voyage-status.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
 import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 

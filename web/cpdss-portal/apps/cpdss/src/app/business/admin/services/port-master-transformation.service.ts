@@ -21,7 +21,7 @@ export class PortMasterTransformationService {
 
   /**
    * Method to set validation message for columns
-   * @return {*} 
+   * @return {*}
    * @memberof PortMasterTransformationService
    */
   setValidationErrorMessage() {
@@ -40,18 +40,23 @@ export class PortMasterTransformationService {
       },
       highTide: {
         'required': "PORT_MASTER_TIDE_HEIGHT_REQUIRRED",
+        'invalidNumber': "PORT_MASTER_TIDE_HEIGHT_INVALID"
       },
       lowTide: {
         'required': "PORT_MASTER_LOW_TIDE_HEIGHT_REQUIRED",
+        'invalidNumber': "PORT_MASTER_LOW_TIDE_HEIGHT_INVALID"
       },
       permissibleShipsAtDraft: {
         'required': "PORT_MASTER_MAX_PERMISSIBLE_SHIPS",
+        'invalidNumber': "PORT_MASTER_MAX_PERMISSIBLE_SHIPS_INVALID"
       },
       densityOfWater: {
         'required': "PORT_MASTER_DENSITY_OF_WATER_REQUIRED",
+        'invalidNumber': "PORT_MASTER_DENSITY_OF_WATER_INVALID"
       },
       ambientTemperature: {
         'required': "PORT_MASTER_AMBIENT_TEMPERATURE_REQUIRED",
+        'invalidNumber': "PORT_MASTER_AMBIENT_TEMPERATURE_INVALID"
       },
 
     }
@@ -90,7 +95,7 @@ export class PortMasterTransformationService {
       //   field: 'country',                                   //This will be needed later when more fields are added to the api.
       //   header: 'PORT_MASTER_COUNTRY',
       //   filter: true,
-      //   filterPlaceholder: 'PORT_MASTER_SEARCH_COUNTRY',          
+      //   filterPlaceholder: 'PORT_MASTER_SEARCH_COUNTRY',
       //   filterType: DATATABLE_FILTER_TYPE.TEXT,
       //   filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
       //   filterField: 'country',
@@ -158,7 +163,7 @@ export class PortMasterTransformationService {
   /**
    *Method to get berth form details.
    *
-   * @return {*} 
+   * @return {*}
    * @memberof PortMasterTransformationService
    */
   getBerthFormDetails() {
@@ -168,7 +173,7 @@ export class PortMasterTransformationService {
   /**
    *
    * Method to set validation message for add berth page.
-   * @return {*} 
+   * @return {*}
    * @memberof PortMasterTransformationService
    */
 
@@ -181,16 +186,20 @@ export class PortMasterTransformationService {
         'required': 'PORTMASTER_BERTH_DEPTH_REQUIRED'
       },
       maxLoa: {
-        'required': 'PORTMASTER_BERTH_MAXIMUM_LOA_REQUIRED'
+        'required': 'PORTMASTER_BERTH_MAXIMUM_LOA_REQUIRED',
+        'invalidNumber': 'PORTMASTER_BERTH_MAXIMUM_LOA_INVALID'
       },
       maxDwt: {
-        'required': 'PORTMASTER_BERTH_MAXIMUM_DWT_REQUIRED'
+        'required': 'PORTMASTER_BERTH_MAXIMUM_DWT_REQUIRED',
+        'invalidNumber': 'PORTMASTER_BERTH_MAXIMUM_DWT_INVALID'
       },
       maxManifoldHeight: {
-        'required': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_REQUIRED'
+        'required': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_REQUIRED',
+        'invalidNumber': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_INVALID'
       },
       minUkc: {
-        'required': 'PORTMASTER_BERTH_MINIMUM_UKC_REQUIRED'
+        'required': 'PORTMASTER_BERTH_MINIMUM_UKC_REQUIRED',
+        'invalidNumber': 'PORTMASTER_BERTH_MINIMUM_UKC_INVALID'
       }
     }
   }

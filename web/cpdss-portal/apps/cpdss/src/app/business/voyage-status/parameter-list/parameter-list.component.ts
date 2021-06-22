@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IDataTableColumn, DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
-import { IBunkerConditionParameterList, IBunkerConditions, ICargoConditions, ICargoQuantities } from '../models/voyage-status.model';
+import { IBunkerConditionParameterList, IBunkerConditions, ICargoConditions } from '../models/voyage-status.model';
 /**
  * Component class of ParameterListComponent
  */

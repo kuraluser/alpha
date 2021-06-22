@@ -17,7 +17,7 @@ export function CargoDuplicateValidator(field, dependentField): ValidatorFn {
             const found = dataTableArray.filter
                 ((cargoData, tempIndex) => {
                     return (
-                        (index != tempIndex) && (
+                        (index !== tempIndex) && (
                             (cargoData?.cargo1?.cargoId === data?.cargo1?.cargoId && cargoData?.cargo1?.color === data?.cargo1?.color
                                 && cargoData?.cargo2?.cargoId === data?.cargo2?.cargoId && cargoData?.cargo2?.color === data?.cargo2?.color) ||
                             (cargoData?.cargo2?.cargoId === data?.cargo1?.cargoId && cargoData?.cargo2?.color === data?.cargo1?.color && cargoData?.cargo1?.cargoId === data?.cargo2?.cargoId && cargoData?.cargo1?.color === data?.cargo2?.color)))

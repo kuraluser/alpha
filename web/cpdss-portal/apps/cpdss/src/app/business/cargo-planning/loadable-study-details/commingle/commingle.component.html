@@ -130,7 +130,7 @@
                         <cpdss-portal-datatable [tableId]="'commingle'" [scrollable]="false" [listData]="listData"
                             [form]="commingleManualForm" [columns]="columns" [editMode]="editMode"
                             [value]="manualCommingleList" [filterable]="true" (editComplete)="onEditComplete($event)"
-                            (deleteRow)="onDeleteRow($event)">
+                            (deleteRow)="onDeleteRow($event)" (columnClick)="dropDownInit($event)">
                         </cpdss-portal-datatable>
                         <div class="text-danger" *ngIf="isMaxCargo">{{'COMMINGLE_POPUP_CARGO_MAX_LIMIT'  | translate }}</div>
                     </div>

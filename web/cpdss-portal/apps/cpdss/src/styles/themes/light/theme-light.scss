@@ -417,7 +417,12 @@ hr{
 }
 
 .form-control:disabled, .form-control[readonly]{
-  background: $body-bg;
+  background: $text-area-bg;
+  color: $muted;
+}
+
+textarea.form-control:disabled, textarea.form-control[readonly]{
+  background: $text-area-bg;
   color: $text-secondary;
 }
 
@@ -618,7 +623,6 @@ a{
 }
 
 .badge-custom{
-  color: $active-color;
   &.error{
     background:$red;
     color: $active-color;
@@ -1330,6 +1334,27 @@ header{
 }
 .action-btn {
   color: $main-head!important;
+}
+
+.sidebar-menu{
+  li{
+    a{
+    border-bottom: 1px solid $border-color;
+    &:hover{
+      background: $selected-bg;
+    }
+    }
+    &:first-child{
+      a{
+      border-top: 1px solid $border-color;
+    }
+    }
+    &.active{
+      a{
+        background: $selected-bg;
+      }
+    }
+  }
 }
 .icon-chat{
   background: url($images-theme + 'chat-icon.png') no-repeat center center;

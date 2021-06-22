@@ -29,6 +29,16 @@ export class DatePopUpComponent implements OnInit {
   @Input() isStart: boolean;
   @Input() loadablePlanId: number;
   @Input()
+  get plannedStartDate(): Date {
+    return this._plannedStartDate;
+  }
+
+  set plannedStartDate(value: Date) {
+    this._plannedStartDate = value;
+    const today = new Date();
+    this.mindate = this.plannedStartDate > today ? today : this.plannedStartDate;
+  }
+  @Input()
   get defaultDate(): Date {
     return this._defaultDate;
   }
@@ -45,8 +55,10 @@ export class DatePopUpComponent implements OnInit {
   header: string;
   startStopButtonLabel: string;
   today;
+  mindate: Date;
   popupDateFormat: string;
   private _defaultDate: Date;
+  private _plannedStartDate: Date;
 
   constructor(private voyageListApiService: VoyageListApiService,
     private voyageListTransformationService: VoyageListTransformationService,

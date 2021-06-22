@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
 import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
 
 /**
  * Transformation Service for cargo details
@@ -10,65 +14,132 @@ import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_F
 @Injectable()
 export class LoadingDischargingCargoDetailsTransformationService {
 
-  constructor() { }
+  constructor(private quantityPipe: QuantityPipe) { }
 
   /**
-   * Method for formatting departure details column
-   * @returns {IDataTableColumn}
-   * @memberof LoadingDischargingCargoDetailsTransformationService
+* Method for setting cargo to be loaded grid columns
+*
+* @returns {IDataTableColumn[]}
+* @memberof LoadingDischargingCargoDetailsTransformationService
+*/
+getCargotobeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColumn[] {
+  const quantityNumberFormat = AppConfigurationService.settings['quantityNumberFormat' + quantityUnit];
+
+  return [
+    {
+      field: 'grade',
+      header: 'LOADING_CARGO_TO_BE_LOADED_KIND_OF_CARGO'
+    },
+    {
+      field: 'estimatedAPI',
+      header: 'LOADING_CARGO_TO_BE_LOADED_API',
+      numberFormat: '1.2-2'
+    },
+    {
+      field: 'estimatedTemp',
+      header: 'LOADING_CARGO_TO_BE_LOADED_TEMP',
+      numberFormat: '1.2-2'
+    },
+    {
+      field: 'loadingPort',
+      header: 'LOADING_CARGO_TO_BE_LOADED_LOADING_PORT'
+    },
+    {
+      field: 'orderedQuantity',
+      header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
+      numberFormat: quantityNumberFormat
+    },
+    {
+      field: 'minMaxTolerance',
+      header: 'LOADING_CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE'
+    },
+    {
+      field: 'loadableMT',
+      header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
+      numberFormat: quantityNumberFormat
+    },
+    {
+      field: 'differencePercentage',
+      header: 'LOADING_CARGO_TO_BE_LOADED_DIFFERENCE'
+    },
+    {
+      field: 'timeRequiredForLoading',
+      header: 'LOADING_CARGO_TO_BE_LOADED_TIME_REQUIRED'
+    },
+    {
+      field: 'slopQuantity',
+      header: 'LOADING_CARGO_TO_BE_LOADED_SLOP_QTY',
+      numberFormat: quantityNumberFormat
+    }
+  ]
+}
+
+  
+    /**
+ * Method for formatting ballast tanks data
+ *
+ * @param {IShipCargoTank} cargoTank
+ * @param {ICargoQuantities[]} cargoTankQuantities
+ * @returns {IShipCargoTank}
+ * @memberof LoadingInformationTransformationService
+ */
+     formatCargoTanks(cargoTank: IShipCargoTank[][], cargoTankQuantities: ICargoQuantities[], prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): IShipCargoTank[][] {
+
+      for (let groupIndex = 0; groupIndex < cargoTank?.length; groupIndex++) {
+        for (let tankIndex = 0; tankIndex < cargoTank[groupIndex].length; tankIndex++) {
+          for (let index = 0; index < cargoTankQuantities?.length; index++) {
+            if (cargoTankQuantities[index]?.tankId === cargoTank[groupIndex][tankIndex]?.id) {
+              cargoTank[groupIndex][tankIndex].commodity = cargoTankQuantities[index];
+              const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
+              cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
+              const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
+              cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;         
+              cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api,cargoTank[groupIndex][tankIndex].commodity?.temperature);
+              cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
+              if (cargoTank[groupIndex][tankIndex].commodity?.isCommingleCargo) {
+                cargoTank[groupIndex][tankIndex].commodity.colorCode = AppConfigurationService.settings.commingleColor;
+              }
+              break;
+            }
+          }
+        }
+      }
+      return cargoTank;
+    }
+
+       /**
+   * Method to get percentage filled in tank
+   *
+   * @param {ITank} tank
+   * @returns
+   * @memberof LoadingInformationTransformationService
    */
+  getFillingPercentage(tank: ITank) {
+    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(2);
+    if (Number(fillingratio) >= 100) {
+      fillingratio = 100;
+    }
+    if (isNaN(fillingratio)) {
+      fillingratio = 0;
+    }
+    return fillingratio;
+  }
 
-  departureDetailsColumns(){
-    const columns: IDataTableColumn[] = [
-      { 
-        field: 'cargoName',
-        header: 'KIND OF CARGO',
-      },
-      { 
-        field: 'api',
-        header: 'API',
-      },
-      { 
-        field: 'temp',
-        header: 'TEMP',
-      },
-      { 
-        field: 'maxLoadingRate',
-        header: 'MAX LOADING RATE',
-      },
-      { 
-        field: 'nomination',
-        header: 'NOMINATION',
-      },
-      { 
-        field: 'shipLoadable',
-        header: 'SHIP LOADABLE',
-      },
-      { 
-        field: 'tolerance',
-        header: 'TOLERANCE +/-%',
-      },
-      { 
-        field: 'difference',
-        header: 'DIFFERENCE +/-%',
-      },
-      { 
-        field: 'loadTime',
-        header: 'LOAD TIME (HRS)',
-      },
-      { 
-        field: 'slopQty',
-        header: 'SLOP QTY',
-      },
-      { 
-        field: 'cargoSequence',
-        header: 'CARGO SEQUENCE',
-        fieldType: DATATABLE_FIELD_TYPE.SELECT,
-        listName: 'sequence',
-        fieldOptionLabel: 'name',
-      },
+    /**
+*
+* Get Formated Loadable Quantity Data
+* @returns {decimal converted value us number}
+*/
+decimalConvertion(_decimalPipe: any, value: string | number, decimalType: string) {
+  return _decimalPipe.transform(value, decimalType);
+}
 
-    ];
-    return columns;
+  /**
+   * parse number from formatted string
+   * @returns {number}
+  */
+   convertToNumber(value: string) {
+    value = value?.replace(/,/g, '');
+    return Number(value)
   }
 }

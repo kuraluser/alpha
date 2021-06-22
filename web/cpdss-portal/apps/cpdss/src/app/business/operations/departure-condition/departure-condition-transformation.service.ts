@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities } from '../../voyage-status/models/voyage-status.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../../voyage-status/models/voyage-status.model';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
 
 /**
  * Transformation Service for departure condition
@@ -30,49 +30,54 @@ export class DepartureConditionTransformationService {
     const columns: IDataTableColumn[] = [
       { 
         field: 'cargoName',
-        header: 'KIND OF CARGO',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_KIND_OF_CARGO',
+        editable: false
       },
       { 
         field: 'api',
-        header: 'API',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_API',
+        editable: false
       },
       { 
         field: 'temp',
-        header: 'TEMP',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_TEMP',
+        editable: false
       },
       { 
         field: 'maxLoadingRate',
-        header: 'MAX LOADING RATE',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_MAX_LOADING_RATE',
+        editable: false
       },
       { 
         field: 'nomination',
-        header: 'NOMINATION',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_NOMINATION',
+        editable: false
       },
       { 
         field: 'shipLoadable',
-        header: 'SHIP LOADABLE',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_SHIP_LOADABLE',
+        editable: false
       },
       { 
         field: 'tolerance',
-        header: 'TOLERANCE +/-%',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_TOLERANCE',
+        editable: false
       },
       { 
         field: 'difference',
-        header: 'DIFFERENCE +/-%',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_DIFFERENCE',
+        editable: false
       },
       { 
         field: 'loadTime',
-        header: 'LOAD TIME (HRS)',
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_LOAD_TIME',
+        editable: false
       },
       { 
         field: 'slopQty',
-        header: 'SLOP QTY',
-      },
-      { 
-        field: 'cargoSequence',
-        header: 'CARGO SEQUENCE',
-      },
-
+        header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_SLOP_QTY',
+        editable: false
+      }
     ];
     return columns;
   }

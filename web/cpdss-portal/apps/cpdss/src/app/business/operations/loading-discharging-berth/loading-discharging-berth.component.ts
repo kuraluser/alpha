@@ -1,11 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IBerth } from '../models/loading-information.model';
 
-@Component({
-  selector: 'cpdss-portal-loading-discharging-berth',
-  templateUrl: './loading-discharging-berth.component.html',
-  styleUrls: ['./loading-discharging-berth.component.scss']
-})
 /**
  * Component class for loading discharging berth component
  *
@@ -13,36 +9,101 @@ import { FormBuilder, FormGroup } from '@angular/forms';
  * @class LoadingDischargingBerthComponent
  * @implements {OnInit}
  */
+@Component({
+  selector: 'cpdss-portal-loading-discharging-berth',
+  templateUrl: './loading-discharging-berth.component.html',
+  styleUrls: ['./loading-discharging-berth.component.scss']
+})
 export class LoadingDischargingBerthComponent implements OnInit {
+  @Input() editMode = true;
+  @Input() availableBerths: IBerth[];
+  @Input() selectedBerths: IBerth[];
+  @Output() berthChange: EventEmitter<IBerth[]> = new EventEmitter();
+  berthDetailsForm: FormGroup;
+  berthForm: FormGroup;
+  berthFormArray: FormArray;
+  selectedIndex: number;
 
-  formGroup: FormGroup;
-  berthList: any = [];
-  berthDropDownlist: any = [];
+  get berths(): FormArray {
+    return this.berthForm.get("berth") as FormArray
+  }
+
   constructor(
     private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
-    this.formGroup = this.fb.group({
-      berthName: '',
-      depth: '',
-      manifold: '',
-      alongSideHouseConnection: '',
-      seaDraftLimitation: '',
-      airdraftLimitation: '',
-      maxManifoldheight: '',
-      specialRegulation: ''
-
+    this.berthForm = this.fb.group({
+      berth: this.fb.array([])
     });
-    this.berthDropDownlist = [
-      { id: 1, label: 'North Pier #11/#12' },
-      { id: 2, label: 'South Pier #11/#12' },
-      { id: 3, label: 'West Pier #11/#12' },
-      { id: 4, label: 'East Pier #11/#12' }
-    ];
+    this.berthDetailsForm = this.fb.group({
+      id: 0,
+      berthName: '',
+      maxShipDepth: '',
+      hoseConnections: '',
+      seaDraftLimitation: '',
+      airDraftLimitation: '',
+      maxManifoldHeight: '',
+      regulationAndRestriction: '',
+      itemsToBeAgreedWith: '',
+      loadingInfoId: '',
+      maxShpChannel: '',
+      loadingBerthId: '',
+      maxLoa: '',
+      maxDraft: '',
+    });
+    this.berthDetailsForm.disable();
+    this.initFormArray();
   }
 
-  change() {
+  /**
+ * Return the form controlls of the berth details form
+ */
+  get berthDetailsFormComtrol() {
+    return this.berthDetailsForm.controls;
+  }
+
+  /**
+* initialise berth details form
+*/
+  initFormArray() {
+    if (this.selectedBerths.length > 0) {
+      this.selectedBerths.forEach((selectedBerth) => {
+        this.addBerth(selectedBerth);
+      })
+      this.setBerthDetails(this.selectedBerths[0])
+      this.selectedIndex = 0;
+    }
+
+  }
+
+  /**
+  * Metgod for adding new berth form
+  *
+  * @memberof LoadingDischargingBerthComponent
+  */
+  createBerth(berth: IBerth): FormGroup {
+    return this.fb.group({
+      name: [berth, [Validators.required]],
+      edit: berth ? false : true
+    });
+  }
+
+  /**
+  * Change value
+  *
+  * @memberof LoadingDischargingBerthComponent
+  */
+  change(field) {
+    if (this.berthDetailsForm.value[field]) {
+      this.selectedBerths.map((berth) => {
+        if (berth.id === this.berthDetailsForm.value.id) {
+          berth[field] = this.berthDetailsForm.value[field];
+        }
+        return berth;
+      })
+      this.berthChange.emit(this.selectedBerths);
+    }
 
   }
   clearFilter(data) {
@@ -54,15 +115,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
    *
    * @memberof LoadingDischargingBerthComponent
    */
-  addBerth() {
-    let editMode = false;
-    this.berthList.map(item => {
-      if (item.edit) {
-        editMode = true;
-      }
-    });
-    if (editMode) { return };
-    this.berthList.push({ id: this.berthList.length + 1, berth: '', edit: true });
+  addBerth(berth: IBerth) {
+    this.berthFormArray = this.berthForm.get('berth') as FormArray;
+    this.berthFormArray.push(this.createBerth(berth));
   }
 
   /**
@@ -70,9 +125,14 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param {Event}
    * @memberof LoadingDischargingBerthComponent
    */
-  onBerthChange(event) {
-    this.berthList.map(item => { item.edit = false });
-    this.setBerthDetails(this.getBerthInfo(event.value));
+  onBerthChange(event, index) {
+    this.selectedBerths.push(event.value)
+    this.setBerthDetails(event.value);
+    //this.availableBerths = this.availableBerths.filter((berth) => berth.id !== event.value.id);
+    this.berthFormArray.at(index).patchValue({
+      edit: false
+    })
+    this.berthChange.emit(this.selectedBerths);
   }
 
   /**
@@ -80,8 +140,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param berth
    * @memberof LoadingDischargingBerthComponent
    */
-  selectBerth(berth) {
-    this.setBerthDetails(this.getBerthInfo(berth.berth));
+  selectBerth(berth, index) {
+    this.selectedIndex = index;
+    this.setBerthDetails(berth.value.name);
   }
 
   /**
@@ -89,17 +150,24 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param berthInfo
    * @memberof LoadingDischargingBerthComponent
    */
-  setBerthDetails(berthInfo) {
-    this.formGroup = this.fb.group({
+  setBerthDetails(berthInfo: IBerth) {
+    this.berthDetailsForm.enable();
+    this.berthDetailsForm = this.fb.group({
+      id: berthInfo.id,
+      portId: berthInfo.portId,
       berthName: berthInfo.berthName,
-      depth: berthInfo.depth,
-      manifold: berthInfo.manifold,
-      alongSideHouseConnection: berthInfo.alongSideHouseConnection,
+      maxShipDepth: berthInfo.maxShipDepth,
+      hoseConnections: berthInfo.hoseConnections,
       seaDraftLimitation: berthInfo.seaDraftLimitation,
-      airdraftLimitation: berthInfo.airdraftLimitation,
-      maxManifoldheight: berthInfo.maxManifoldheight,
-      specialRegulation: berthInfo.specialRegulation
-
+      airDraftLimitation: berthInfo.airDraftLimitation,
+      maxManifoldHeight: berthInfo.maxManifoldHeight,
+      regulationAndRestriction: berthInfo.regulationAndRestriction,
+      itemsToBeAgreedWith: berthInfo.itemsToBeAgreedWith,
+      loadingInfoId: berthInfo.loadingInfoId,
+      maxShpChannel: berthInfo.maxShpChannel,
+      loadingBerthId: berthInfo.loadingBerthId,
+      maxLoa: berthInfo.maxLoa,
+      maxDraft: berthInfo.maxDraft
     });
   }
 
@@ -108,9 +176,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param berth
    * @memberof LoadingDischargingBerthComponent
    */
-  editBerth(berth) {
-    this.berthList.map(item => { item.edit = false });
-    berth.edit = true;
+  editBerth(index) {
+    this.berthFormArray.at(index).patchValue({
+      edit: true
+    })
   }
 
   /**
@@ -118,64 +187,15 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param berth
    * @memberof LoadingDischargingBerthComponent
    */
-  deleteBerth(berth){
-    const index = this.berthList.findIndex( item=> item.id === berth.id);
-    this.berthList.splice(index,1);
+  deleteBerth(event, index: number) {
+    this.berths.removeAt(index);
+    this.selectedBerths = this.selectedBerths.filter((berth) => berth.id !== event.value.name.id);
+    if (this.selectedBerths.length > 0) {
+      this.setBerthDetails(this.selectedBerths[0])
+    } else {
+      this.berthDetailsForm.reset();
+      this.berthDetailsForm.disable();
+    }
   }
 
-  /**
-   * Dummy data for berth list
-   * @param berth
-   * @memberof LoadingDischargingBerthComponent
-   */
-  getBerthInfo(berth) {
-    const berthData = [
-      {
-        id: 1,
-        berthName: 'North Pier #11/#12',
-        depth: '26.5',
-        manifold: '#1,#2,#3',
-        alongSideHouseConnection: '',
-        seaDraftLimitation: '',
-        airdraftLimitation: '',
-        maxManifoldheight: '',
-        specialRegulation: ''
-      },
-      {
-        id: 2,
-        berthName: 'South Pier #11/#12',
-        depth: '26.5',
-        manifold: '#1,#2,#3',
-        alongSideHouseConnection: '',
-        seaDraftLimitation: '',
-        airdraftLimitation: '',
-        maxManifoldheight: '',
-        specialRegulation: ''
-      },
-      {
-        id: 4,
-        berthName: 'East Pier #11/#12',
-        depth: '26.5',
-        manifold: '#1,#2,#3',
-        alongSideHouseConnection: '',
-        seaDraftLimitation: '',
-        airdraftLimitation: '',
-        maxManifoldheight: '',
-        specialRegulation: ''
-      },
-      {
-        id: 3,
-        berthName: 'West Pier #11/#12',
-        depth: '26.5',
-        manifold: '#1,#2,#3',
-        alongSideHouseConnection: '',
-        seaDraftLimitation: '',
-        airdraftLimitation: '',
-        maxManifoldheight: '',
-        specialRegulation: ''
-      }
-    ];
-    const berthRow = berthData.filter(item => item.id === berth.id);
-    return berthRow.length ? berthRow[0] : {};
-  }
 }

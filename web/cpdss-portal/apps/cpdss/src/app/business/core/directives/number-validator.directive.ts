@@ -11,7 +11,7 @@ import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  */
 export function numberValidator(decimalPlaces: number, digitLength: number = null, isNegativeAccept = true): ValidatorFn {
   return (control: FormControl): ValidationErrors | null => {
-    if (!control || typeof control.value == 'undefined' || control.value == null || control.value == '') {
+    if (!control || typeof control.value === 'undefined' || control.value == null || control.value === '') {
       return;
     }
     const oldValue = control.value.toString();;
@@ -22,7 +22,6 @@ export function numberValidator(decimalPlaces: number, digitLength: number = nul
     if (isNegativeAccept && value[0] === '-') {
       negative = true;
     }
-    value = value.replace('-', '');
     const number: string[] = value.split('.');
     if (number[0] && number[0].length) {
       dotEntered = number[0].length !== value.length
@@ -35,10 +34,15 @@ export function numberValidator(decimalPlaces: number, digitLength: number = nul
     if (decimalPlaces > 0 && number[1] && number[1].length > decimalPlaces)
       number[1] = number[1].slice(0, decimalPlaces);
     if (digitLength && digitLength > 0 && number[0] && number[0].length > digitLength)
-      number[0] = number[0].slice(0, digitLength);
-    value = (negative ? '-' : '') + number[0] + (decimalPlaces && dotEntered ? ('.' + (number[1] ? number[1] : '')) : '');
-    if (oldValue !== value){
+      number[0] = number[0].slice(0, negative ? digitLength + 1 : digitLength);
+
+    value = number[0] + (decimalPlaces && dotEntered ? ('.' + (number[1] ? number[1] : '')) : '');
+    if (oldValue !== value) {
       control.setValue(Number(value), { emitEvent: false });
+    }
+    //Below code is validating whether entered number is valid or not
+    if (!/^\-?\d+(\.\d+)?$/.test(value)) {
+      return { invalidNumber: true };
     }
   }
 }

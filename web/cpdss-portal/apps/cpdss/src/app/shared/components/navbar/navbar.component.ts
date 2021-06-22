@@ -84,9 +84,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
       {
         'menu': 'CARGO_PLANNING',
         'menuIcon': 'cargo-planning',
-        'menuLink': 'cargo-planning',
+        'menuLink': '',
         'routerLinkActive': 'cargo-planning',
-        'subMenu': [],
+         'subMenu': [
+          { 'name': 'LOADABLE_STUDY', 'subMenuLink': 'business/cargo-planning/loadable-study-list', 'permissionMapping': AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], 'isVisible': false },
+          { 'name': 'DISCHARGE_STUDY', 'subMenuLink': 'business/cargo-planning/discharge-study-list', 'permissionMapping': AppConfigurationService.settings.permissionMapping['DischargeStudyListing'], 'isVisible': false },
+        ],
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoPlanningComponent']
       },
@@ -120,21 +123,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminComponent'],
         'subMenu': [
-          { 'name': 'User Role Permission', 'subMenuLink': '/business/admin/user-role-permission', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false },
-          { 'name': 'User', 'subMenuLink': '/business/admin/user-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false },
-          { 'name': 'Port Master', 'subMenuLink': '/business/admin/port-listing','permissionMapping': AppConfigurationService.settings.permissionMapping['PortListingComponent'],'isVisible': false },          
+          { 'name': 'USER_ROLE_PERMISSION', 'subMenuLink': '/business/admin/user-role-permission', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false },
+          { 'name': 'ADMIN_USER_LABEL', 'subMenuLink': '/business/admin/user-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false },
+          { 'name': 'PORT_MASTER', 'subMenuLink': '/business/admin/port-listing','permissionMapping': AppConfigurationService.settings.permissionMapping['PortListingComponent'],'isVisible': false },
+          { 'name': 'ADMIN_RULES', 'subMenuLink': '/business/admin/rules','permissionMapping': AppConfigurationService.settings.permissionMapping['ADMIN_RULE_LISTING'],'isVisible': true },       
         ],
       },
       {
         'menu': 'OPERATIONS',
         'menuIcon': '',
-        'menuLink': '',
+        'menuLink': 'operations',
         'routerLinkActive': 'operations',
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['OperationsComponent'],
-        'subMenu': [
-          { 'name': 'Loading', 'subMenuLink': '/business/operations/loading', 'permissionMapping': AppConfigurationService.settings.permissionMapping['LoadingComponent'], 'isVisible': false }
-        ],
+        'subMenu': [],
       },
       /*
       {
@@ -323,7 +325,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handler for User Icon toggle 
+   * Handler for User Icon toggle
    *
    * @memberof NavbarComponent
    */
@@ -332,7 +334,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handler sub routes in List 
+   * Handler sub routes in List
    *
    * @memberof NavbarComponent
    */
@@ -343,7 +345,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method for getting admin notifications list 
+   * Method for getting admin notifications list
    *
    * @memberof NavbarComponent
    */
@@ -354,7 +356,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handler for notification Icon toggle 
+   * Handler for notification Icon toggle
    *
    * @memberof NavbarComponent
    */
@@ -363,7 +365,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handler for role list redirection 
+   * Handler for role list redirection
    *
    * @memberof NavbarComponent
    */
@@ -373,7 +375,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handler for reject user 
+   * Handler for reject user
    *
    * @memberof NavbarComponent
    */

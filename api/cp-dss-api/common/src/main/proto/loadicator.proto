@@ -42,6 +42,7 @@ message StowagePlan{
 	repeated CargoInfo cargoInfo = 22;
 	repeated OtherTankInfo otherTankInfo = 23;
 	repeated BallastInfo ballastInfo = 24;
+	string seaWaterDensity = 25;
 
 }
 

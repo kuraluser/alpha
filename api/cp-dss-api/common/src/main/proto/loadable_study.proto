@@ -789,7 +789,7 @@ message PortRotationRequest{
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
 	repeated PortRotationDetail portRotationDetails = 6;
-	int64 dischargingCargoId=7;
+	int64 cargoNominationId=7;
     bool isDischargingPortsComplete=8;
 
 }
