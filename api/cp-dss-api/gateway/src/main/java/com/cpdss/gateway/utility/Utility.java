@@ -134,7 +134,7 @@ public class Utility {
                             Optional.ofNullable(rule.getVesselRuleXId())
                                 .ifPresent(ruleBuilder::setVesselRuleXId);
                             Optional.ofNullable(rule.getIsHardRule())
-                            .ifPresent(ruleBuilder::setIsHardRule);
+                                .ifPresent(ruleBuilder::setIsHardRule);
                             rule.getInputs()
                                 .forEach(
                                     input -> {

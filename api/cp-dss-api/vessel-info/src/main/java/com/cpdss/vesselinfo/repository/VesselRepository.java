@@ -5,7 +5,6 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.domain.VesselInfo;
 import com.cpdss.vesselinfo.domain.VesselRule;
-import com.cpdss.vesselinfo.domain.VesselRuleMappingVessel;
 import com.cpdss.vesselinfo.entity.Vessel;
 import java.math.BigDecimal;
 import java.util.List;
@@ -81,12 +80,14 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
   public List<VesselRule> findVesselRuleByVesselIdAndSectionId(
       @Param("vesselId") Long vesselId, @Param("sectionId") Long sectionId);
 
-//  @Query(
-//      "SELECT new com.cpdss.vesselinfo.domain.VesselRuleMappingVessel(vessel.id as vesselId )"
-//          + " FROM Vessel vessel INNER JOIN RuleVesselMapping ruleVesselMapping ON vessel.id = ruleVesselMapping.vessel "
-//          + " WHERE vessel.id = :vesselId AND vessel.isActive = :isVesselActive AND ruleVesselMapping.isActive = :isRuleActive")
-//  public List<VesselRuleMappingVessel> findVesselInRuleVesselMapping(
-//      @Param("vesselId") Long vesselId,
-//      @Param("isVesselActive") boolean isVesselActive,
-//      @Param("isRuleActive") boolean isRuleActive);
+  //  @Query(
+  //      "SELECT new com.cpdss.vesselinfo.domain.VesselRuleMappingVessel(vessel.id as vesselId )"
+  //          + " FROM Vessel vessel INNER JOIN RuleVesselMapping ruleVesselMapping ON vessel.id =
+  // ruleVesselMapping.vessel "
+  //          + " WHERE vessel.id = :vesselId AND vessel.isActive = :isVesselActive AND
+  // ruleVesselMapping.isActive = :isRuleActive")
+  //  public List<VesselRuleMappingVessel> findVesselInRuleVesselMapping(
+  //      @Param("vesselId") Long vesselId,
+  //      @Param("isVesselActive") boolean isVesselActive,
+  //      @Param("isRuleActive") boolean isRuleActive);
 }

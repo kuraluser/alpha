@@ -407,7 +407,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
-  private static final Long LOADABLE_STUDY_STATUS_ALGO_ERROR_ID = 11L;
+  private static final Long LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID = 11L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
@@ -418,7 +418,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_ENDED = 19L;
-  private static final Long LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID = 20L;
 
   private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
@@ -13035,11 +13034,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.newBuilder();
     try {
-      if(!RuleMasterSection.Plan.getId().equals(request.getSectionId())){
-    	  throw new GenericServiceException(
-    	            "Planning can be fetched against loadble study",
-    	            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-    	            HttpStatusCode.BAD_REQUEST);
+      if (!RuleMasterSection.Plan.getId().equals(request.getSectionId())) {
+        throw new GenericServiceException(
+            "Planning can be fetched against loadble study",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
       Optional<LoadableStudy> loadableStudy =
           loadableStudyRepository.findByIdAndIsActiveAndVesselXId(
@@ -13078,7 +13077,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(loadableStudyRules::setIsEnable);
                             Optional.ofNullable(rule.getIsHardRule())
-                            .ifPresent(loadableStudyRules::setIsHardRule);
+                                .ifPresent(loadableStudyRules::setIsHardRule);
                             loadableStudyRules.setVesselXId(request.getVesselId());
                             LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
 
@@ -13221,9 +13220,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         rulesBuilder.setRuleType(RuleType.PREFERABLE.getRuleType());
       }
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsHardRule())
-      .ifPresent(item -> rulesBuilder.setIsHardRule(item));
-      if(lStudyRulesList.get(ruleIndex).getIsHardRule() == null) {
-    	  rulesBuilder.setIsHardRule(false);
+          .ifPresent(item -> rulesBuilder.setIsHardRule(item));
+      if (lStudyRulesList.get(ruleIndex).getIsHardRule() == null) {
+        rulesBuilder.setIsHardRule(false);
       }
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXId())
           .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));

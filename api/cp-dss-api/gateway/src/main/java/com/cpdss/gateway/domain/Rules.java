@@ -22,6 +22,6 @@ public class Rules {
   private String ruleTemplateId;
 
   private String vesselRuleXId;
-  
+
   private Boolean isHardRule;
 }
