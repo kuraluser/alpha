@@ -405,7 +405,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
-  private static final Long LOADABLE_STUDY_STATUS_ALGO_ERROR_ID = 11L;
+  private static final Long LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID = 11L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
 
@@ -416,8 +416,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_ENDED = 19L;
-  private static final Long LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID = 20L;
-
+  
   private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
