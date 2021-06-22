@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableQuantityCargo } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly,  ICargoTankDetailValueObject, ISynopticalRecordArrangeModel , IBallastTankDetailValueObject } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject , ISubTotal } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
-import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { ILoadablePlanSynopticalRecord } from '../models/cargo-planning.model';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -71,7 +71,7 @@ export class LoadablePlanTransformationService {
   public getCommingledCargoTableColumn(): IDataTableColumn[] {
     return [
       { field: 'grade', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_GRADE', rowspan: 2 },
-      { field: 'tankName', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TANK', rowspan: 2 },
+      { field: 'tankShortName', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TANK', rowspan: 2 },
       {
         header: 'LOADABLE_PLAN_COMMINGLED_CARGO_QUANTITY', colspan: 2, fieldColumnClass: "th-border", subColumns: [
           { field: 'quantity', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_MT', rowspan: 2 },
@@ -196,6 +196,7 @@ export class LoadablePlanTransformationService {
     _loadablePlanCommingleCargoDetails.cargoMT = this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo1MT, QUANTITY_UNIT.MT) + '<br>' + this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo2MT, QUANTITY_UNIT.MT);
     _loadablePlanCommingleCargoDetails.cargoLT = this.quantityDecimalFormatPipe.transform(_loadablePlanCommingleCargoDetails.cargo1LT, QUANTITY_UNIT.LT) + '<br>' + this.quantityDecimalFormatPipe.transform( _loadablePlanCommingleCargoDetails.cargo2LT, QUANTITY_UNIT.LT);
     _loadablePlanCommingleCargoDetails.cargoKL = this.quantityDecimalFormatPipe.transform(_loadablePlanCommingleCargoDetails.cargo1KL, QUANTITY_UNIT.KL) + '<br>' + this.quantityDecimalFormatPipe.transform( _loadablePlanCommingleCargoDetails.cargo2KL, QUANTITY_UNIT.KL);
+    _loadablePlanCommingleCargoDetails.tankShortName = loadablePlanCommingleCargoDetails?.tankShortName;
     return _loadablePlanCommingleCargoDetails;
   }
 
@@ -375,7 +376,8 @@ export class LoadablePlanTransformationService {
         errorMessages: {
           'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR',
-          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
+          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT',
+          'invalidNumber': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_INVALID'
         }
       },
       {
@@ -470,13 +472,14 @@ export class LoadablePlanTransformationService {
         errorMessages: {
           'required': 'LOADABLE_PLAN_BALLAST_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR',
-          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
+          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT',
+          'invalidNumber': 'LOADABLE_PLAN_BALLAST_GRID_RDG_ULG_INVALID'
         }
       },
       { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
       { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
-      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
-      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER, numberFormat: AppConfigurationService.settings.quantityNumberFormatMT },
+      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER, numberFormat: AppConfigurationService.settings.quantityNumberFormatKL },
       { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
       { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat }
     ]

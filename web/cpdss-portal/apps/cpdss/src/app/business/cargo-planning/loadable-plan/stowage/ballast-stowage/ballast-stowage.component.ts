@@ -10,7 +10,6 @@ import { LoadablePlanTransformationService } from '../../../services/loadable-pl
 import { LoadablePlanApiService } from '../../../services/loadable-plan-api.service';
 import { IPortsEvent, IBallastTankDetailValueObject , VALIDATION_AND_SAVE_STATUS } from '../../../models/loadable-plan.model';
 import { tankCapacityValidator } from '../../directives/tankCapacityValidator.directive';
-import { numberValidator } from '../../../directives/validator/number-validator.directive';
 import { DATATABLE_EDITMODE } from '../../../../../shared/components/datatable/datatable.model';
 
 /**
@@ -37,8 +36,10 @@ export class BallastStowageComponent implements OnInit {
   private _loadableStudyStatus: boolean;
   private _initBallastTankDetails: IBallastTankDetailValueObject[];
   private _isStowageEditable: boolean;
-  stowageDataEditStatus: boolean;
   validateAndSaveProcessing: boolean;
+
+  @Input() stowageDataEditStatus: boolean;
+  @Input() validationPending: boolean;
 
   @Input() set ballastDetails(ballastStowageDetails: IBallastTankDetailValueObject[]) {
     this.ballastTankDetails = ballastStowageDetails;

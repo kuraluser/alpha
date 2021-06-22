@@ -5,7 +5,7 @@ import { LoadableStudyDetailsTransformationService } from '../../services/loadab
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { IPortAllDropdownData, IPortsValueObject, IPortsEvent } from '../../models/cargo-planning.model';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
-import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { OPERATIONS } from '../../models/cargo-planning.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
@@ -208,7 +208,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     const formatOpt: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat };
     const laycanFormat: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
     const _portsLists = portsLists?.map((item) => {
-      item.seaWaterDensity = item.seaWaterDensity.toFixed(Number(AppConfigurationService.settings.sgNumberFormat.slice(-1)));
+      item.seaWaterDensity = item?.seaWaterDensity?.toFixed(Number(AppConfigurationService.settings.sgNumberFormat.slice(-1)));
       if (item.layCanFrom && item.layCanTo) {
         const layCanFrom = moment(item.layCanFrom, 'DD-MM-YYYY').startOf('d').toDate();
         item.layCanFrom = item.portTimezoneId ? this.convertDateTimeWithZone(layCanFrom, item.portTimezoneId, true) : this.timeZoneTransformationService.formatDateTime(item.layCanFrom, laycanFormat);
@@ -418,7 +418,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (event.field === 'port') {
       this.portsLists[valueIndex]['portcode'].value = event.data.port.value.code;
-      this.portsLists[valueIndex]['portOrder'] = this.portOrder;
+      this.portsLists[valueIndex]['portOrder'] = event.data.portOrder ? event.data.portOrder : this.portOrder;
       this.updateField(event.index, 'portcode', event.data.port.value.code);
       this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
       this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
@@ -428,7 +428,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.updateValidityAndEditMode(event.index, 'maxAirDraft')
       this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
       this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
-      this.updateField(event.index, 'portOrder', this.portOrder);
+      this.updateField(event.index, 'portOrder', event.data.portOrder ? event.data.portOrder : this.portOrder);
       this.portsLists[valueIndex]['eta'].value = null;
       this.portsLists[valueIndex]['etd'].value = null;
       this.updateField(event.index, 'eta', null);
@@ -543,7 +543,7 @@ export class PortsComponent implements OnInit, OnDestroy {
 
   /**
  * Method for Port order validation
- * 
+ *
  * @memberof PortsComponent
  */
   portOrderValidation() {
@@ -616,7 +616,7 @@ export class PortsComponent implements OnInit, OnDestroy {
             const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
             this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
           } else {
-            this.messageService.clear('isPortOrderValid');   
+            this.messageService.clear('isPortOrderValid');
           }
           this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0 && !this.portOrderValidation());
         }
@@ -759,7 +759,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
       return;
     } else {
-      this.messageService.clear('isPortOrderValid');   
+      this.messageService.clear('isPortOrderValid');
     }
     this.ngxSpinnerService.show();
     if (this.portsLists[event.dragIndex]?.id !== 0 && this.portsLists[event.dropIndex]?.id !== 0) {

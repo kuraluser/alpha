@@ -1,135 +1,176 @@
 <div class="row">
     <div class="col-md-6">
-        <h5>Berth Details</h5>
+        <h5>{{'LOADING_DISCHARGING_BERTH_HEADER' | translate}}</h5>
     </div>
-    <div class="col-md-6">
-        <button class="pull-right" (click)="addBerth()">Add</button>
+    <div class="col-md-6" *ngIf="editMode">
+        <a id="add_berth_btn" class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addBerth(null)"></a>
     </div>
 </div>
 <div class="row">
-    <div *ngFor=" let berth of berthList; let i=index" class="col-md-6 pt-10">
-        <div (click)="selectBerth(berth)" class="d-flex flex-row bd-highlight" *ngIf="!berth?.edit">
-            <span>{{(i+1) + '. '}}</span><label>{{berth?.berth?.label}}</label>
-            <span><button (click)="editBerth(berth)">E</button></span><span><button (click)="deleteBerth(berth.berth)">d</button></span>
+    <form [formGroup]="berthForm">
+        <div formArrayName="berth" *ngFor="let berth of berths.controls; let i = index;">
+            <div [formGroupName]="i">
+
+                <ng-container *ngIf="berth.controls.edit.value">
+                    <p-dropdown id="id" styleClass="form-control" [filter]="true" [options]="availableBerths"
+                        optionLabel="berthName" formControlName="name" (onChange)="onBerthChange($event, i)"
+                        placeholder="{{'LOADING_DISCHARGING_BERTH_SELECT_LABEL' | translate}}" [readonly]="false"
+                        resetFilterOnHide="true">
+                    </p-dropdown>
+                </ng-container>
+                <ng-container *ngIf="!berth.controls.edit.value">
+                    <div class="d-flex flex-row bd-highlight" (click)="selectBerth(berth, i)">
+                        <span>{{(i+1) + '. '}}</span><label>{{berth.controls.name.value.berthName}}</label>
+                        <span *ngIf="editMode"><a type="button" id="edit-berth-btn" class="pencil-icon" (click)="editBerth(i)"></a></span>
+                        <span *ngIf="editMode"><a type="button" id="delete-berth-btn" class="delete-icon" (click)="deleteBerth(berth, i)"></a></span>
+                    </div>
+                </ng-container>
+            </div>
         </div>
-        <div *ngIf="berth?.edit" class="d-flex flex-row dropdown-load_discharge_details">
-            <span>{{(i+1) + '. '}}</span>
-            <p-dropdown #dd id="id" styleClass="form-control" [filter]="true" [options]="berthDropDownlist"
-                optionLabel="label" [(ngModel)]="berth.berth" (onChange)="onBerthChange($event)" placeholder="{{'Enter initial loading rate'}}"
-                [readonly]="false" resetFilterOnHide="true">
-            </p-dropdown>
-        </div>
-    </div>
+    </form>
 </div>
 <div class="row pt-10">
     <div class="col-md-12">
-        <form [formGroup]="formGroup" id="fg_load_discharge_details">
+        <form [formGroup]="berthDetailsForm" id="fg_load_discharge_details">
             <div class="container-fluid">
                 <div class="row item-row-wrapper">
                     <div class="col">
 
                         <div class="row">
-                            <label>Selected Berth Details</label>
+                            <label>{{'LOADING_DISCHARGING_BERTH_SELECTED_HEADER' | translate}}</label>
                         </div>
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Name'}}</label>
+                            <label for="berth-name"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_NAME_LABEL' |
+                                translate}}</label>
                             <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="berthName"
-                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
-                                    [readonly]="false">
+                                <input type="text"   *ngIf="editMode;else berthName" [negative]="false" class="form-control"
+                                    id="berth-name" formControlName="berthName"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_NAME_PLACE_HOLDER' | translate}}"
+                                    (change)="change('berthName')">
+                                    <ng-template #berthName><span>{{berthDetailsFormComtrol?.berthName?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div> -->
                         </div>
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Depth (M)'}}</label>
+                            <label for="berth-depth"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_DEPTH_LABEL' |
+                                translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="depth"
-                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
-                                    [readonly]="false">
+                                    id="berth-depth" *ngIf="editMode;else maxShipDepth" formControlName="maxShipDepth"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_DEPTH_PLACE_HOLDER' | translate}}"
+                                    (change)="change('maxShipDepth')" [readonly]="false">
+                                    <ng-template #maxShipDepth><span>{{berthDetailsFormComtrol?.maxShipDepth?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div> -->
                         </div>
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Manifold'}}</label>
+                            <label for="berth-slong-hose"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_ALONG_HOSE_LABEL' |
+                                translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="manifold"
-                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
-                                    [readonly]="false">
+                                    id="berth-slong-hose" *ngIf="editMode;else hoseConnections" formControlName="hoseConnections"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_ALONG_HOSE_PLACE_HOLDER' | translate}}"
+                                    (change)="change('hoseConnections')" [readonly]="false">
+                                    <ng-template #hoseConnections><span>{{berthDetailsFormComtrol?.hoseConnections?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div> -->
                         </div>
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Alongside, House Connection'}}</label>
+                            <label for="berth-sea-draft"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_SEA_DRAFT_LABEL' |
+                                translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="alongSideHouseConnection"
-                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
-                                    [readonly]="false">
+                                    id="berth-sea-draft" *ngIf="editMode;else seaDraftLimitation" formControlName="seaDraftLimitation"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_SEA_DRAFT_PLACE_HOLDER' | translate}}"
+                                    (change)="change('seaDraftLimitation')" [readonly]="false">
+                                    <ng-template #seaDraftLimitation><span>{{berthDetailsFormComtrol?.seaDraftLimitation?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div> -->
                         </div>
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Sea Draft Limitation'}}</label>
+                            <label for="berth-air-draft"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_AIR_DRAFT_LABEL' |
+                                translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="seaDraftLimitation"
-                                    placeholder="{{'Enter initial loading rate'}}" (change)="change()"
-                                    [readonly]="false">
+                                    id="berth-air-draft" *ngIf="editMode;else airDraftLimitation" formControlName="airDraftLimitation"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_AIR_DRAFT_PLACE_HOLDER' | translate}}"
+                                    (change)="change('airDraftLimitation')" [readonly]="false">
+                                    <ng-template #airDraftLimitation><span>{{berthDetailsFormComtrol?.airDraftLimitation?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div> -->
                         </div>
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Air Draft Limitation'}}</label>
+                            <label for="berth-manofold-height"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_MANIFOLD_HEIGHT_LABEL'
+                                | translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="airdraftLimitation"
-                                    placeholder="{{'Enter Air Draft Limitation'}}" (change)="change()"
-                                    [readonly]="false">
+                                    id="berth-manofold-height" *ngIf="editMode;else maxManifoldHeight" formControlName="maxManifoldHeight"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_MANIFOLD_HEIGHT_PLACE_HOLDER' | translate}}"
+                                    (change)="change('maxManifoldHeight')" [readonly]="false">
+                                    <ng-template #maxManifoldHeight><span>{{berthDetailsFormComtrol?.maxManifoldHeight?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div> -->
                         </div>
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Max Manifold Height'}}</label>
+                            <label for="berth-regulation-restriction"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_LABEL'
+                                | translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="maxManifoldheight"
-                                    placeholder="{{'Enter Air Draft Limitation'}}" (change)="change()"
-                                    [readonly]="false">
+                                    id="berth-regulation-restriction" *ngIf="editMode;else regulationAndRestriction" formControlName="regulationAndRestriction"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_PLACE_HOLDER' | translate}}"
+                                    (change)="change('regulationAndRestriction')" [readonly]="false">
+                                    <ng-template #regulationAndRestriction><span>{{berthDetailsFormComtrol?.regulationAndRestriction?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div> -->
                         </div>
+
                         <div class="row form-group">
-                            <label for="initial_loading_rate" class="col no-left-padding">{{'Special Regulation & Restrictoin'}}</label>
+                            <label for="berth-regulation-restriction"
+                                class="col no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_ITEMS_TO_BE_AGREED_WITH_LABEL'
+                                | translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="initial_loading_rate" formControlName="specialRegulation"
-                                    placeholder="{{'Enter Air Draft Limitation'}}" (change)="change()"
-                                    [readonly]="false">
+                                    id="berth-itemsToBeAgreedWith" *ngIf="editMode;else itemsToBeAgreedWith" formControlName="itemsToBeAgreedWith"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_ITEMS_TO_BE_AGREED_WITH_PLACE_HOLDER' | translate}}"
+                                    (change)="change('itemsToBeAgreedWith')" [readonly]="false">
+                                    <ng-template #itemsToBeAgreedWith><span>{{berthDetailsFormComtrol?.itemsToBeAgreedWith?.value}}</span></ng-template>
                             </div>
+                            <!-- TODO add validators for each items -->
                             <!-- <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>

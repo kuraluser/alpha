@@ -1,0 +1,36 @@
+<p-dialog header="{{popUpHeader |translate}}" [(visible)]="display"  [draggable]="false"(onHide)="onClose()" >
+    <form [formGroup]="dischargeStudyForm" *ngIf="dischargeStudyForm">
+        <div class="container-fluid">
+            <div class="row form-group">
+                <div class="col col-form-label">{{'NEW_DISCHARGE_STUDY_POPUP_NAME' | translate}}</div>
+                <div class="col">
+                    <input type="text" class="form-control" type="text" id="txt_enquiryDetails"
+                        formControlName="newDischargeStudyName"/>
+                </div>
+                <cpdss-portal-validation-error [errors]="fieldError('newDischargeStudyName')"
+                    [errorMessages]="errorMessages.newDischargeStudyName">
+                </cpdss-portal-validation-error>
+            </div>
+            <div class="row form-group">
+                <div class="col col-form-label">{{'NEW_DISCHARGE_STUDY_POPUP_ENQUIRY_DETAILS' | translate}}</div>
+                <div class="col">
+                    <textarea class="form-control" type="text" id="txt_enquiryDetails"
+                        formControlName="enquiryDetails"></textarea>
+                </div>
+                <cpdss-portal-validation-error [errors]="fieldError('enquiryDetails')"
+                    [errorMessages]="errorMessages.enquiryDetails">
+                </cpdss-portal-validation-error>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <button type="button" class="btn btn-main" id="new-discharge-study-popup-cancel">
+                    {{'NEW_DISCHARGE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
+                <button type="submit" class="btn btn-main" id="new-discharge-study-popup-save" autofocus>{{saveButtonLbl
+                    | translate}}</button>
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>

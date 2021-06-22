@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h5>{{'LOADING_INFORMATION_MANAGE_SEQUENCE_HEADER' | translate }}</h5>
+            </div>
+            <div class="col-md-6 text-right">
+                <div class="p-field-checkbox">
+                    <p-checkbox binary="true" inputId="add-initial"></p-checkbox>
+                    <label for="add-initial">{{'LOADING_INFORMATION_ADD_INITIAL_DELAY_CHECK_LABEL' | translate
+                        }}</label>
+                </div>
+                <a id="add_cargo_btn"
+                    class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addLoadingSequence()">{{'LOADING_INFORMATION_ADD_BUTTON_LABEL'
+                    | translate }}</a>
+            </div>
+        </div>
+    </div>
+    <div>
+        <cpdss-portal-datatable *ngIf="columns" [tableId]="'loading-sequence'" [form]="loadingSequenceForm" [columns]="columns"
+                        [value]="loadingDelays" [editMode]="editMode" [listData]="listData" (editComplete)="onEditComplete($event)"></cpdss-portal-datatable>
+    </div>
+</div>

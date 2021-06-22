@@ -1,15 +1,15 @@
 <div class="row pt-20">
-    <h4>ARRIVAL CONDITION</h4>
+    <h4>{{'LOADABLE_PLAN_ARRIVAL_CONDITION_HEADING'| translate}}</h4>
 </div>
 <div class="row">
     <div class="col-md-12 text-center">
         <div class="pt-15">
             <div class="col  text-center">
-                <a class="tab-btn tab-btn-default tab-landing" [ngClass]="{'active': selectedTab === tankType.CARGO}" pTooltip="{{'CARGO' | translate}}" tooltipPosition="top"
-                    id="ship_landing_cargo_tab" (click)="onTabClick(tankType.CARGO)"> CARGO
+                <a class="tab-btn tab-btn-default tab-landing" [ngClass]="{'active': selectedTab === tankType.CARGO}" pTooltip="{{'LOADABLE_PLAN_HEADING_CARGO_ARRIVAL_CONDITION' | translate}}" tooltipPosition="top"
+                    id="ship_landing_cargo_tab" (click)="onTabClick(tankType.CARGO)"> {{'LOADABLE_PLAN_HEADING_CARGO_ARRIVAL_CONDITION' | translate}}
                 </a>
-                <a class="tab-btn tab-btn-default tab-landing" [ngClass]="{'active': selectedTab === tankType.BALLAST}" pTooltip="{{'BALLAST' | translate}}" tooltipPosition="top"
-                    id="ship_landing_ballast_tab" (click)="onTabClick(tankType.BALLAST)"> BALLAST
+                <a class="tab-btn tab-btn-default tab-landing" [ngClass]="{'active': selectedTab === tankType.BALLAST}" pTooltip="{{'LOADABLE_PLAN_HEADING_BALLAST_ARRIVAL_CONDITION' | translate}}" tooltipPosition="top"
+                    id="ship_landing_ballast_tab" (click)="onTabClick(tankType.BALLAST)"> {{'LOADABLE_PLAN_HEADING_BALLAST_ARRIVAL_CONDITION' | translate}}
                 </a>
             </div>
         </div>
@@ -31,9 +31,9 @@
         
         </div>
         <div class="row pt-10">
-            <button (click)="display = true" class="btn btn-main">Update Ullage</button>
+            <button (click)="display = true" class="btn btn-main" id="cargo_update">{{'LOADABLE_PLAN_ARRIVAL_CONDITION_CARGO_UPDATE_ULLAGE'| translate}}</button>
         </div>
     </div>
 </div>
 
-<cpdss-portal-ullage-update-popup [display]="display" (closePopup)="closePopUp($event)"></cpdss-portal-ullage-update-popup>
+<cpdss-portal-ullage-update-popup (closePopup)="closePopUp($event)" *ngIf="display"></cpdss-portal-ullage-update-popup>

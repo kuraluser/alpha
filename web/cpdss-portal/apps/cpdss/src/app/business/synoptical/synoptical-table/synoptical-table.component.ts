@@ -6,7 +6,7 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { IValidationErrorMessages } from '../../../shared/components/validation-error/validation-error.model';
-import { numberValidator } from '../../cargo-planning/directives/validator/number-validator.directive';
+import { numberValidator } from '../../core/directives/number-validator.directive';
 import { ISynopticalRecords, SynopticalColumn, SynopticalDynamicColumn, SynopticField } from '../models/synoptical-table.model';
 import { SynopticalApiService } from '../services/synoptical-api.service';
 import { SynopticalService } from '../services/synoptical.service';
@@ -66,6 +66,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'etdMin': 'SYNOPTICAL_ETD_MIN',
     'etaMax': 'SYNOPTICAL_ETA_MAX',
     'etdMax': "SYNOPTICAL_ETD_MAX",
+    'invalidNumber': 'SYNOPTICAL_INVALID'
   };
   expandedRows = [];
   ngUnsubscribe: Subject<void> = new Subject();
@@ -2024,10 +2025,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   getSubTotal(loadableQuantityResult: any) {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     let subTotal = 0;
+    const sgCorrection = (loadableQuantity.estSeaDensity && loadableQuantity.displacmentDraftRestriction) && (Number(loadableQuantity.estSeaDensity) - 1.025) / 1.025 * Number(loadableQuantity.displacmentDraftRestriction);
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
       const data:ISubTotal = {
         dwt: loadableQuantity.dwt,
         sagCorrection:loadableQuantity.saggingDeduction,
+        sgCorrection:sgCorrection.toString(),
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
@@ -2044,7 +2047,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       const data:ISubTotal = {
         dwt: dwt,
         sagCorrection:loadableQuantity.saggingDeduction,
-        sgCorrection:loadableQuantity.sgCorrection,
+        sgCorrection:sgCorrection.toString(),
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,

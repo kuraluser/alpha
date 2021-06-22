@@ -7,7 +7,7 @@
                 <div class="col"> <p class="text-danger" >{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p></div>
             </div>
             <div class="row">
-               
+
                 <div class="col-sm-6">
                     <div class="row form-group">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
@@ -136,6 +136,10 @@
                                 class="text-danger">
                                 {{'DRAFT_RESTRICTION_MIN' | translate}}
                             </span>
+                            <span *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && form.draftRestriction.errors?.invalidNumber"
+                              class="text-danger">
+                              {{'DRAFT_RESTRICTION_INVALID' | translate}}
+                            </span>
                         </div>
                     </div>
 
@@ -155,6 +159,10 @@
                                     class="text-danger">
                                     {{'MAX_AIR_TEMP_MAX' | translate}}
                                 </span>
+                                <span *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.invalidNumber"
+                                  class="text-danger">
+                                  {{'MAX_AIR_TEMP_INVALID' | translate}}
+                                </span>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -173,14 +181,19 @@
                                     class="text-danger">
                                     {{'MAX_WATER_TEMP_MAX' | translate}}
                                 </span>
+                                <span
+                                  *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.invalidNumber"
+                                  class="text-danger">
+                                  {{'MAX_WATER_TEMP_INVALID' | translate}}
+                                </span>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
 
-       
+
     </form>
     <p-footer>
         <div class="row">

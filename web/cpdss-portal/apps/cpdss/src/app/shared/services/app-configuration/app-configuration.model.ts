@@ -23,5 +23,7 @@ export interface IAppConfiguration {
     maxFillingPercentage: string;
     sgNumberFormat: string;
     ullageUnit: string;
+    restrictMaxNumberOfCargo?: boolean;
+    maxCargoLimit?: number;
 }
 

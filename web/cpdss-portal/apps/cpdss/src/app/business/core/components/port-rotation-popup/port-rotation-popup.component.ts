@@ -341,6 +341,7 @@ export class PortRotationPopupComponent implements OnInit {
  * @memberof PortRotationPopupComponent
  */
   async savePort() {
+    if(!this.portsForm.valid) { return; }
     this.ngxSpinnerService.show();
     const portSave: IEditPortRotationModel = { portList: [] };
     const saveportList = this.portRotationPopupTransformationService.getPortAsValue(this.portsDetails?.portList, this.ports);

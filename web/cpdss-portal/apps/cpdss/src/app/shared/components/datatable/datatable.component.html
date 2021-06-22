@@ -17,7 +17,7 @@
                     </ng-container>
                 </colgroup>
             </ng-template>
-            <ng-template pTemplate="header" let-columns>
+            <ng-template pTemplate="header" *ngIf="showHeader" let-columns>
                 <tr>
                     <th *ngIf="progress"></th>
                     <th *ngIf="tableRowReOrder"></th>
@@ -136,7 +136,7 @@
                             (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
                                 (keyup)="onFocus($event, rowData, col, colIndex, rowIndex)"
-                                id="{{'cell'+col.field + '_' + rowIndex}}">
+                                id="{{'cell'+col.field + '_' + rowIndex}}" (keydown)="onFocusKeyDown($event, rowData, col, colIndex, rowIndex)">
 
                                 <ng-container *ngIf="!lazy;else lazyRef">
                                     <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
@@ -245,13 +245,15 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
-                                        <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
-                                            }}</span>
-                                        <span *ngIf="rowData[col.field]?.value?.operationName">{{
-                                            rowData[col.field]?.value?.operationName }}</span>
-                                        <span
-                                            *ngIf="!rowData[col.field]?.value?.name && !rowData[col.field]?.value?.operationName">{{
-                                            rowData[col.field]?.value }}</span>
+                                            <span *ngIf="rowData[col.field]?.value && rowData[col.field]?.value[col.fieldOptionLabel]; else elseBlock">
+                                                {{
+                                                    rowData[col.field]?.value[col.fieldOptionLabel] }}
+                                            </span>
+                                            <ng-template #elseBlock>
+                                                <span>{{
+                                                rowData[col.field]?.value}}</span>
+                                            </ng-template>
+         
                                     </ng-container>
                                 </ng-container>
 

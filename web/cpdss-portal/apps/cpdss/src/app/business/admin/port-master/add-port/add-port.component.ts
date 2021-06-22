@@ -1,9 +1,9 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ITimeZone } from 'apps/cpdss/src/app/shared/models/common.model';
-import { TimeZoneTransformationService } from 'apps/cpdss/src/app/shared/services/time-zone-conversion/time-zone-transformation.service';
+import { ITimeZone } from '../../../../shared/models/common.model';
+import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { PortMasterTransformationService } from '../../services/port-master-transformation.service';
-import { numberValidator } from '../../../cargo-planning/directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { PortMasterApiService } from '../../services/port-master-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
@@ -87,7 +87,7 @@ export class AddPortComponent implements OnInit {
 
   /**
    *Method to get TimeZoneList
-   * @return {*} 
+   * @return {*}
    * @memberof AddPortComponent
    */
 
@@ -98,7 +98,7 @@ export class AddPortComponent implements OnInit {
 
   /**
    *Method to get CountryList
-   * @return {*} 
+   * @return {*}
    * @memberof AddPortComponent
    */
 

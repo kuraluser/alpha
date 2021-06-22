@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { ArrivalConditionPanelComponent } from './arrival-condition-panel.component';
 
 
@@ -12,7 +14,8 @@ import { ArrivalConditionPanelComponent } from './arrival-condition-panel.compon
 @NgModule({
   declarations: [ArrivalConditionPanelComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    TranslateModule
   ],
   exports: [ArrivalConditionPanelComponent]
 })

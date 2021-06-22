@@ -19,6 +19,10 @@ const routes: Routes = [
             {
                 path: 'port-listing',
                 loadChildren: () => import('./port-master/port-master.module').then(m => m.PortMasterModule)
+            },
+            {
+                path: 'rules',
+                loadChildren: () => import('./rules/rules.module').then(m => m.RulesModule)
             }
         ]
     },

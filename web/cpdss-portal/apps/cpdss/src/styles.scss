@@ -1551,9 +1551,13 @@ td.sl div{
     .rear-tank-ullage-and-percentage{
       position: absolute;
       top:50%;
-      left: 40%;;
+      left: 40%;
+      .tank-name{
+        width: auto!important;
+      }
       .tank-filling-percentage{
         position: static;
+        max-width: none;
       }
       .tank-commodity-ullage{
         display: none;
@@ -1803,6 +1807,22 @@ th .p-button.p-button-icon-only.p-button-rounded{
   display: none;
 }
 
+.selected {
+  & > .arrival {
+    padding-right: 0px;
+
+    & .carousel-card {
+      border-radius: 5px 0px 0px 5px;
+    }
+  }
+
+  & > .departure {
+    & .carousel-card {
+      border-radius: 0px 5px 5px 0px;
+    }
+  }
+}
+
 .w-150{
   width: 150px;
 }
@@ -1916,8 +1936,6 @@ height: 15px;
 }
 
 .p-overlaypanel{
-  margin-left: -110px;
-    margin-top: -165px!important;
     &:after, &:before{
       display: none;
     }
@@ -1938,24 +1956,7 @@ height: 15px;
   }
 }
 
-  .p-overlaypanel.tank-tooltip.ballast-tooltip{
-    margin-top: -130px!important;
-    &.empty{
-      margin-top: -68px!important;
-    }
-  }
-  .p-overlaypanel.tank-tooltip.tank-ohq-tooltip{
-    margin-top: -130px!important;
-    &.empty{
-      margin-top: -68px!important;
-    }
-  }
-  .p-overlaypanel.tank-tooltip.tank-ohq-tooltip-rear{
-    margin-top: -115px!important;
-    &.empty{
-      margin-top: -68px!important;
-    }
-  }
+
 
 .tank-btn-rounded{
   height: 10px;
@@ -1974,11 +1975,6 @@ height: 15px;
       margin: auto;
       bottom: 100%;
       display: none;
-  }
-  &:hover{
-    &:after{
-    display: block;
-    }
   }
 }
 
@@ -2326,7 +2322,6 @@ tr:hover{
     position: absolute;
     bottom: 5px;
     right: 5px;
-    left: 2px;
     text-align: right;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2496,12 +2491,15 @@ textarea{
     min-width: 100%!important;
     width: auto!important;
   }
-.p-confirm-dialog.p-dialog{ 
+.p-confirm-dialog.p-dialog{
   border-radius: 2px;
     .p-dialog-footer{
       border-top: 0;
     }
 
+}
+  .check-list-table .p-treetable-toggler {
+    visibility: hidden !important;
 }
 .p-dropdown-panel{
   max-width: 250px;
@@ -2514,6 +2512,15 @@ textarea{
  max-width: none; 
 }
 
+.sidebar-menu{
+  li{
+    a{
+    padding: 10px 5px;
+    display: block;
+    }
+  }
+}
+
 .calculated-column{
   width: 92px;
 }
@@ -2522,4 +2529,8 @@ textarea{
   width: 21px;
   height: 18px;
   vertical-align: bottom;
+}
+
+.column-dropdown, .column-checkbox{
+  width: 140px;
 }

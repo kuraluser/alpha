@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import { ICargo, QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { IBallastStowageDetails, IBallastTank, ICargoTank, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
-import { ILoadableQuantityCargo } from '../../models/cargo-planning.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableQuantityCargo, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service'
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';

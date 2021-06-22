@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
-import { IBallastQuantities, ICargoQuantities, IShipBallastTank, IShipBunkerTank, IShipCargoTank } from '../../voyage-status/models/voyage-status.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
 import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
 

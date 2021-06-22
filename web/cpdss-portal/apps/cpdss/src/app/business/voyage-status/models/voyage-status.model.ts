@@ -1,5 +1,5 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
-import { ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
 
 
 /**
@@ -105,61 +105,7 @@ export interface IBunkerQuantities {
     volume: number;
 }
 
-/**
- * Interface for cargo tanks
- *
- * @export
- * @interface IShipCargoTank
- * @extends {ITank}
- */
-export interface IShipCargoTank extends ITank {
-    id: number;
-    categoryId: number;
-    categoryName: string;
-    name: string;
-    frameNumberFrom: number;
-    frameNumberTo: number;
-    shortName: string;
-    heightFrom?: number;
-    heightTo?: number;
-    fillCapcityCubm?: number;
-    fullCapacityCubm?: string;
-    density: number;
-    group: number;
-    order: number;
-    slopTank: boolean;
-    commodity?: ICargoQuantities;
-    gridColumn?: string;
-    percentageFilled?: string;
-    fillingRatio?: string;
-}
 
-/**
- * Interface for cargo quantites model
- * @export
- * @interface ICargoQuantities
- */
-export interface ICargoQuantities {
-    fillingRatio?: any;
-    tankId: number;
-    tankName: string;
-    actualWeight: number;
-    plannedWeight: number;
-    capacity: number;
-    abbreviation: string;
-    cargoId: number;
-    colorCode: string;
-    correctedUllage: number;
-    difference?: number;
-    isPositive?: boolean;
-    quantity?: number;
-    volume?: number;
-    api?: number;
-    percentageFilled?: string;
-    isCommingle?: boolean;
-    isCommingleCargo?: boolean;
-    temperature?:any;
-}
 
 /**
  * Interface for ballast Tank details
@@ -222,3 +168,4 @@ export interface IDraftCondition {
     calculatedDraftMidActual: number;
     calculatedTrimActual: number;
 }
+

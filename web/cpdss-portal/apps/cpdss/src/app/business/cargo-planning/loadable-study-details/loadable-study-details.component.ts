@@ -23,7 +23,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import * as moment from 'moment';
-import { environment } from 'apps/cpdss/src/environments/environment';
+import { environment } from '../../../../environments/environment';
 
 
 /**
@@ -93,6 +93,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   baseUnit = this.loadableStudyDetailsApiService.baseUnit;
   isPatternGenerated = false;
   isGenerateClicked = false;
+  showGenerateBtn = false;
   isPatternOpenOrNoplan = false;
   showLoadableQuantityButton = false;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
@@ -106,6 +107,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   loadablePatternHistoryPermission: IPermission;
   errorPopup: boolean;
   errorMessage: IAlgoError[];
+  isRuleModalVisible:boolean = false;
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -243,6 +245,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.isDischargePortAvailable();
       if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION) {
         this.getAlgoErrorMessage(false);
+      } else if(this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED){
+        this.isGenerateClicked = true;
       }
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
       this.loadableStudyDetailsTransformationService.setPortValidity(this.selectedLoadableStudy.isPortsComplete)
@@ -253,6 +257,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.selectedLoadableStudy = null;
       this.loadableStudies = [];
     }
+    this.showGenerateBtn = true;
     this.ngxSpinnerService.hide();
   }
 
@@ -289,7 +294,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       const portRotationId = portsData.portList ? (portsData?.lastModifiedPortId ? portsData?.lastModifiedPortId : 0) : 0;
       const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
       if (loadableQuantityResult.responseStatus.status === "200") {
-        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+        this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : loadableQuantityResult.loadableQuantity.totalQuantity;
         if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
           this.messageService.clear();
           this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
@@ -305,7 +310,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    *
    * @memberof LoadableStudyDetailsComponent
    */
-  addCargoNomination() {
+  async addCargoNomination() {
+    if(AppConfigurationService.settings.restrictMaxNumberOfCargo && this.loadableStudyDetailsApiService.cargoNominations.length >= AppConfigurationService.settings.maxCargoLimit){
+      const translationKeys = await this.translateService.get(['MAXIMUM_CARGO_WARNING', 'MAXIMUM_CARGO_LIMIT_REACHED']).toPromise();
+      this.messageService.add({ severity: 'warn', summary: translationKeys['MAXIMUM_CARGO_WARNING'], detail: translationKeys['MAXIMUM_CARGO_LIMIT_REACHED'] });
+      return;
+    }
+
     console.log('addCargoNomination' + Date.now()); // TODO: Need to remove after testing.
     this.loadableStudyDetailsTransformationService.addCargoNomination();
   }
@@ -332,8 +343,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.obqValidity$.subscribe((res) => {
       this.obqComplete = res;
     });
-    this.loadableStudyDetailsTransformationService.loadableStudyUpdate$.subscribe(value=>{
-      if(value){
+    this.loadableStudyDetailsTransformationService.loadableStudyUpdate$.subscribe(value => {
+      if (value) {
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       }
     });
@@ -360,7 +371,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       })
     ).subscribe((loadableQuantityResult: any) => {
       if (loadableQuantityResult?.responseStatus?.status === "200") {
-        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+        this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : loadableQuantityResult.loadableQuantity.totalQuantity;
       }
     });
     this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
@@ -385,9 +396,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   private swMessageHandler = async event => {
-    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
+    let isValidStatus = false;
+    if([LOADABLE_STUDY_STATUS.PLAN_PENDING ,LOADABLE_STUDY_STATUS.PLAN_CONFIRMED ,LOADABLE_STUDY_STATUS.PLAN_GENERATED ,LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING ,LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED ,
+      LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION , LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(event.data.statusId)) {
+        isValidStatus = true;
+      }
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210' && isValidStatus) {
       this.globalErrorHandler.sessionOutMessage();
-    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
+    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200') && isValidStatus) {
       SecurityService.refreshToken(event?.data?.refreshedToken)
     }
     if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
@@ -425,7 +441,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
     }
-    this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
+    if(isValidStatus) {
+      this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
+    }
   }
 
   /**
@@ -496,6 +514,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         }
         else if ([6, 1].includes(statusId)) {
           loadableStudy.isActionsEnabled = true;
+          if (this.loadableStudyId === loadableStudyId) {
+            this.selectedLoadableStudy = JSON.parse(JSON.stringify(loadableStudy));
+          }
         }
       } else if (!loadableStudyId && !statusId) {
         loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED].includes(loadableStudy?.statusId) ? false : true;
@@ -625,6 +646,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     }
     else {
       this.selectedTab = selectedTab;
+    }
+    if (this.selectedTab !== 'PORTS') {
+      this.portUpdate(false);
     }
 
   }
@@ -809,6 +833,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async updateDischargeData(sucessKeys: string[]) {
     this.ngxSpinnerService.show();
     this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
+    this.selectedLoadableStudy.dischargingCargoId = this.selectedDischargeCargo?.id;
     const dischargingPortIds: IDischargingPortIds = {
       portIds: this.selectedLoadableStudy.dischargingPortIds,
       dischargingCargoId: this.selectedDischargeCargo?.id ?? null,
@@ -842,13 +867,15 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   /**
   * Calculation for subtotal
   */
-  getSubTotal(loadableQuantityResult: any) {
+  getSubTotal(loadableQuantityResult: any): any {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     let subTotal = 0;
+    const sgCorrection = (loadableQuantity.estSeaDensity && loadableQuantity.displacmentDraftRestriction) && (Number(loadableQuantity.estSeaDensity) - 1.025) / 1.025 * Number(loadableQuantity.displacmentDraftRestriction);
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
       const data: ISubTotal = {
         dwt: loadableQuantity.dwt,
         sagCorrection: loadableQuantity.saggingDeduction,
+        sgCorrection: sgCorrection.toString(),
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
@@ -858,14 +885,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
       }
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
-      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+      return this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
       const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
       const data: ISubTotal = {
         dwt: dwt,
         sagCorrection: loadableQuantity.saggingDeduction,
-        sgCorrection: loadableQuantity.sgCorrection,
+        sgCorrection: sgCorrection.toString(),
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
@@ -875,7 +902,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
       }
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
-      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+      return this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
   }
 
@@ -883,28 +910,24 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   /**
    * Calculation for Loadable quantity
   */
-  getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
+  getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any): any {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
+    let loadableQuantityNew;
     if (loadableQuantityResult.caseNo === 1) {
       const total = Number(subTotal) + Number(loadableQuantity.foConInSZ);
       if (total < 0) {
-        this.loadableQuantityNew = '0';
+        loadableQuantityNew = '0';
+      } else {
+        loadableQuantityNew = total?.toString();
       }
-      else {
-        this.loadableQuantityNew = total?.toString();
-      }
-
-    }
-    else {
+    } else {
       if (subTotal < 0) {
-        this.loadableQuantityNew = '0';
+        loadableQuantityNew = '0';
+      } else {
+        loadableQuantityNew = subTotal?.toString();
       }
-      else {
-        this.loadableQuantityNew = subTotal?.toString();
-      }
-
     }
-
+    return loadableQuantityNew;
   }
 
   /**
@@ -912,8 +935,42 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 *
 * @memberof LoadableStudyDetailsComponent
 */
-  onGenerateLoadablePattern() {
-    this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
+  async onGenerateLoadablePattern() {
+    this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_WARNING', 'LOADABLE_QUANTITY_WARNING_MISMATCH']).toPromise();
+    const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
+    const portRotationId = (portsData.portList && portsData?.lastModifiedPortId) ?? portsData?.lastModifiedPortId;
+    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
+    if (loadableQuantityResult.responseStatus.status === "200") {
+      this.ngxSpinnerService.hide();
+      let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
+      let databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
+      if (calculatedTotQty === databaseTotQty) {
+        this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
+      } else {
+        this.messageService.clear();
+        this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_QUANTITY_WARNING'], detail: translationKeys['LOADABLE_QUANTITY_WARNING_MISMATCH'] });
+      }
+    } else {
+      this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+   * function to slice the stringified decimal value
+   * @param {string} value
+   * @param {number} limit
+   * @return {*}  {string}
+   * @memberof LoadableStudyDetailsComponent
+   */
+  sliceToTwoDecimalPoint(value: string, limit: number): string {
+    if (value && value.includes('.')) {
+      const wholepart = value.split('.')[0];
+      const decimalPart = value.split('.')[1].slice(0, limit);
+      return [wholepart, decimalPart].join('.');
+    } else {
+      return value;
+    }
   }
 
   /**
@@ -936,6 +993,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     }
 
     try {
+      this.selectedLoadableStudy.isActionsEnabled = false;
       const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
       if (res.responseStatus.status === '200') {
         this.isGenerateClicked = true;
@@ -944,16 +1002,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         data.processId = res.processId;
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
-          this.selectedLoadableStudy.isActionsEnabled = false;
           this.selectedLoadableStudy = { ...this.selectedLoadableStudy };
         } else {
           this.isGenerateClicked = false;
         }
       } else {
+        this.selectedLoadableStudy.isActionsEnabled = true;
         this.isGenerateClicked = false;
       }
     }
     catch (errorResponse) {
+      this.selectedLoadableStudy.isActionsEnabled = true;
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR'], life: 10000 });
@@ -1060,5 +1119,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
 
     }
+  }
+
+
+/**
+ * Method to close rules pop up.
+ *
+ * @memberof LoadableStudyDetailsComponent
+ */
+closeModal(event)
+  {
+  this.isRuleModalVisible = event;
   }
 }
