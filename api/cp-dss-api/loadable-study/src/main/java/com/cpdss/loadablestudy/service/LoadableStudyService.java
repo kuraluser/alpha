@@ -13156,9 +13156,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           loadableStudyRulesList.stream()
                               .filter(lRuleList -> ruleId.contains(lRuleList.getVesselRuleXId()))
                               .collect(Collectors.toList());
-                      RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
-                      Rules.Builder rulesBuilder = Rules.newBuilder();
+
                       for (int ruleIndex = 0; ruleIndex < lStudyRulesList.size(); ruleIndex++) {
+                        Rules.Builder rulesBuilder = Rules.newBuilder();
                         Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsEnable())
                             .ifPresent(item -> rulesBuilder.setEnable(item));
                         Optional.ofNullable(lStudyRulesList.get(ruleIndex).getDisplayInSettings())
@@ -13169,7 +13169,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         // Optional.ofNullable(lStudyRulesList.get(ruleIndex).getRuleTypeXId()).ifPresent(item -> rulesBuilder.setRuleType(item));
                         Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXId())
                             .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
-                        rulePlanBuider.addRules(rulesBuilder.build());
+                        RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
                         for (int inputIndex = 0;
                             inputIndex
                                 < lStudyRulesList
@@ -13177,57 +13177,59 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                     .getLoadableStudyRuleInputs()
                                     .size();
                             inputIndex++) {
+                          RulesInputs.Builder finalRuleInput = ruleInput;
                           Optional.ofNullable(
                                   lStudyRulesList
                                       .get(ruleIndex)
                                       .getLoadableStudyRuleInputs()
                                       .get(inputIndex)
                                       .getDefaultValue())
-                              .ifPresent(item -> ruleInput.setDefaultValue(item));
+                              .ifPresent(item -> finalRuleInput.setDefaultValue(item));
                           Optional.ofNullable(
                                   lStudyRulesList
                                       .get(ruleIndex)
                                       .getLoadableStudyRuleInputs()
                                       .get(inputIndex)
                                       .getPrefix())
-                              .ifPresent(item -> ruleInput.setPrefix(item));
+                              .ifPresent(item -> finalRuleInput.setPrefix(item));
                           Optional.ofNullable(
                                   lStudyRulesList
                                       .get(ruleIndex)
                                       .getLoadableStudyRuleInputs()
                                       .get(inputIndex)
                                       .getMinValue())
-                              .ifPresent(item -> ruleInput.setMin(item));
+                              .ifPresent(item -> finalRuleInput.setMin(item));
                           Optional.ofNullable(
                                   lStudyRulesList
                                       .get(ruleIndex)
                                       .getLoadableStudyRuleInputs()
                                       .get(inputIndex)
                                       .getMaxValue())
-                              .ifPresent(item -> ruleInput.setMax(item));
+                              .ifPresent(item -> finalRuleInput.setMax(item));
                           Optional.ofNullable(
                                   lStudyRulesList
                                       .get(ruleIndex)
                                       .getLoadableStudyRuleInputs()
                                       .get(inputIndex)
                                       .getTypeValue())
-                              .ifPresent(item -> ruleInput.setType(item));
+                              .ifPresent(item -> finalRuleInput.setType(item));
                           Optional.ofNullable(
                                   lStudyRulesList
                                       .get(ruleIndex)
                                       .getLoadableStudyRuleInputs()
                                       .get(inputIndex)
                                       .getSuffix())
-                              .ifPresent(item -> ruleInput.setSuffix(item));
+                              .ifPresent(item -> finalRuleInput.setSuffix(item));
                           Optional.ofNullable(
                                   lStudyRulesList
                                       .get(ruleIndex)
                                       .getLoadableStudyRuleInputs()
                                       .get(inputIndex)
                                       .getId())
-                              .ifPresent(item -> ruleInput.setId(String.valueOf(item)));
-                          rulesBuilder.addInputs(ruleInput.build());
+                              .ifPresent(item -> finalRuleInput.setId(String.valueOf(item)));
+                          rulesBuilder.addInputs(finalRuleInput.build());
                         }
+                        rulePlanBuider.addRules(rulesBuilder.build());
                       }
                       builder.addRulePlan(rulePlanBuider);
                     });
