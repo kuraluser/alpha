@@ -182,6 +182,8 @@ service LoadableStudyService {
 	rpc GetSynopticDataForLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanCommonResponse) {}
 
 	rpc SaveLoadingInfoToSynopticData(LoadingInfoSynopticalUpdateRequest) returns (ResponseStatus) {}
+	
+	rpc GetLoadablePatternDetailsJson(LoadablePlanDetailsRequest) returns (LoadablePatternPortWiseDetailsJson) {}
 }
 
 message LatestCargoRequest{
@@ -1360,3 +1362,8 @@ message LoadingInfoSynopticalUpdateRequest {
 }
 
 // <------ end loading plan, by john -------->
+
+message LoadablePatternPortWiseDetailsJson {
+	string loadablePatternDetails = 1;
+	ResponseStatus responseStatus = 2;
+}

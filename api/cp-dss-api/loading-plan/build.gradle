@@ -1,6 +1,6 @@
 appConfig {
   appName = 'loading-plan'
-  grpcServer = 'y'
+  grpc = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
