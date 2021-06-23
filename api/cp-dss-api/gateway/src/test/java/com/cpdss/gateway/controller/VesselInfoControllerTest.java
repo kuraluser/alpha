@@ -137,6 +137,7 @@ public class VesselInfoControllerTest {
     // rule.setId("1");
     rule.setRuleTemplateId("701");
     rule.setRuleType("Absolute");
+    rule.setIsHardRule(false);
     com.cpdss.gateway.domain.RulesInputs input = new com.cpdss.gateway.domain.RulesInputs();
     input.setPrefix("Condensate cargo can only be put in a tank for");
     input.setType("Number");
