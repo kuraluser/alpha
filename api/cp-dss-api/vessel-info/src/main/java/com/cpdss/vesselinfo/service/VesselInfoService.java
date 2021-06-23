@@ -62,26 +62,7 @@ import com.cpdss.vesselinfo.entity.VesselDraftCondition;
 import com.cpdss.vesselinfo.entity.VesselFlowRate;
 import com.cpdss.vesselinfo.entity.VesselTank;
 import com.cpdss.vesselinfo.entity.VesselTankTcg;
-import com.cpdss.vesselinfo.repository.BendingMomentRepository;
-import com.cpdss.vesselinfo.repository.CalculationSheetRepository;
-import com.cpdss.vesselinfo.repository.CalculationSheetTankgroupRepository;
-import com.cpdss.vesselinfo.repository.HydrostaticTableRepository;
-import com.cpdss.vesselinfo.repository.InnerBulkHeadValuesRepository;
-import com.cpdss.vesselinfo.repository.MinMaxValuesForBmsfRepository;
-import com.cpdss.vesselinfo.repository.RuleTemplateRepository;
-import com.cpdss.vesselinfo.repository.RuleTypeRepository;
-import com.cpdss.vesselinfo.repository.RuleVesselMappingInputRespository;
-import com.cpdss.vesselinfo.repository.RuleVesselMappingRepository;
-import com.cpdss.vesselinfo.repository.ShearingForceRepository;
-import com.cpdss.vesselinfo.repository.StationValuesRepository;
-import com.cpdss.vesselinfo.repository.TankCategoryRepository;
-import com.cpdss.vesselinfo.repository.UllageTableDataRepository;
-import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
-import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
-import com.cpdss.vesselinfo.repository.VesselFlowRateRepository;
-import com.cpdss.vesselinfo.repository.VesselRepository;
-import com.cpdss.vesselinfo.repository.VesselTankRepository;
-import com.cpdss.vesselinfo.repository.VesselTankTcgRepository;
+import com.cpdss.vesselinfo.repository.*;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -134,6 +115,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired RuleTemplateRepository ruleTemplateRepository;
   @Autowired RuleVesselMappingRepository ruleVesselMappingRepository;
   @Autowired RuleVesselMappingInputRespository ruleVesselMappingInputRespository;
+  @Autowired VesselValveSequenceRepository vesselValveSequenceRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -1685,5 +1667,29 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               });
           builder.addRulePlan(rulePlanBuider.build());
         });
+  }
+
+  @Override
+  public void getVesselValveSequence(
+      VesselRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+          responseObserver) {
+    com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply.Builder builder =
+        com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply.newBuilder();
+    try {
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      builder.addAllEntity(
+          vesselPumpService.buildVesselValveSeqMessage(vesselValveSequenceRepository.findAll()));
+    } catch (Exception e) {
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

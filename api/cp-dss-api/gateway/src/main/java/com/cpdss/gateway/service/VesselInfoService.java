@@ -51,6 +51,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.cpdss.gateway.service.vesselinfo.VesselValveService;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,10 +219,25 @@ public class VesselInfoService {
     vesselDetailsResponse.setUllageTrimCorrections(
         this.buildUllageTrimCorrections(vesselAlgoReply));
     vesselDetailsResponse.setSelectableParameter(this.buildSelectableParameters(vesselAlgoReply));
+
+    vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData());
+
     return vesselDetailsResponse;
   }
 
-  private List<SelectableParameter> buildSelectableParameters(VesselAlgoReply vesselAlgoReply) {
+  @Autowired
+  VesselValveService vesselValveService;
+
+    private Object getVesselValveSequenceData() {
+        VesselInfo.VesselRequest.Builder builder = VesselInfo.VesselRequest.newBuilder();
+        VesselInfo.VesselValveSequenceReply reply = this.vesselInfoGrpcService.getVesselValveSequence(builder.build());
+        if (reply.getResponseStatus().getStatus().equals(SUCCESS)){
+            this.vesselValveService.buildVesselValveResponse(reply.getEntityList());
+        }
+        return null;
+    }
+
+    private List<SelectableParameter> buildSelectableParameters(VesselAlgoReply vesselAlgoReply) {
     List<SelectableParameter> selectableParameters = new ArrayList<>();
     for (com.cpdss.common.generated.VesselInfo.SelectableParameter dbValue :
         vesselAlgoReply.getSelectableParameterList()) {

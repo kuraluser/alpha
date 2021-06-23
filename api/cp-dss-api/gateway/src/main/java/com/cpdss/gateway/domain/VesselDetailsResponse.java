@@ -28,4 +28,6 @@ public class VesselDetailsResponse {
   private List<UllageTrimCorrection> ullageTrimCorrections;
 
   private List<SelectableParameter> selectableParameter;
+
+  private Object vesselValveSequence;
 }

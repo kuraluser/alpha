@@ -40,6 +40,8 @@ service VesselInfoService {
 	rpc GetVesselPumpsByVesselId(VesselIdRequest) returns (VesselPumpsResponse) {}
 	
 	rpc GetRulesByVesselIdAndSectionId(VesselRuleRequest) returns (VesselRuleReply) {}
+
+	rpc GetVesselValveSequence(VesselRequest) returns (VesselValveSequenceReply) {}
 }
 
 message VesselRequestWithPaging{
@@ -406,4 +408,35 @@ message VesselReply {
 	  string value = 6;
 	  string suffix = 7;
 	  string id = 8;
+	}
+
+	message VesselValveSequenceReply{
+		ResponseStatus responseStatus = 1;
+		repeated VesselValveSequence entity = 2;
+	}
+
+	message VesselValveSequence{
+		 int64 id = 1;
+		 bool isCommonValve = 2;
+		 int32 pipelineId = 3;
+		 string pipelineColor = 4;
+		 string pipelineName = 5;
+		 string pipelineType = 6;
+		 string sequenceNumber = 7; // BigDecimal
+		 int32 sequenceOperationId = 8;
+		 string sequenceOperationName = 9;
+		 int32 sequenceTypeId = 10;
+		 string sequenceTypeName = 11;
+		 int32 sequenceVesselMappingId = 12;
+		 string tankShortName = 13;
+		 string valveCategory = 14;
+		 int32 valveCategoryId = 15;
+		 string valveNumber = 16;
+		 int32 valveSide = 17;
+		 int32 valveTypeId = 18;
+		 string valveTypeName = 19;
+		 string vesselName = 20;
+		 int32 vesselTankXid = 21;
+		 int32 vesselValveMappingId = 22;
+		 int64 vesselXid = 23;
 	}
