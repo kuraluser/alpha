@@ -45,6 +45,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails;
@@ -13304,29 +13305,38 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     builder.addRulePlan(rulePlanBuider);
   }
-}
 
-@Override
-public void getLoadablePatternDetailsJson(LoadablePlanDetailsRequest request,
-		StreamObserver<LoadablePatternPortWiseDetailsJson> responseObserver) {
-	LoadablePatternPortWiseDetailsJson.Builder builder = LoadablePatternPortWiseDetailsJson.newBuilder();
+  @Override
+  public void getLoadablePatternDetailsJson(
+      LoadablePlanDetailsRequest request,
+      StreamObserver<LoadablePatternPortWiseDetailsJson> responseObserver) {
+    LoadablePatternPortWiseDetailsJson.Builder builder =
+        LoadablePatternPortWiseDetailsJson.newBuilder();
     try {
-      Optional<LoadablePattern> loadablePatternOpt = this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
       if (loadablePatternOpt.isPresent()) {
-    	  LoadabalePatternValidateRequest loadabalePatternValidateRequest = new LoadabalePatternValidateRequest();
-          buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
-          ObjectMapper mapper = new ObjectMapper();
-          builder.setLoadablePatternDetails(mapper.writeValueAsString(loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
-          builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+            new LoadabalePatternValidateRequest();
+        buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
+        ObjectMapper mapper = new ObjectMapper();
+        builder.setLoadablePatternDetails(
+            mapper.writeValueAsString(
+                loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       } else throw new Exception("Cannot find loadable pattern");
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Failed to Get Pattern Details ", request.getLoadablePatternId());
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED)
-    		  .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
-    		  .setMessage(e.getMessage()).build());
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .setMessage(e.getMessage())
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
 }

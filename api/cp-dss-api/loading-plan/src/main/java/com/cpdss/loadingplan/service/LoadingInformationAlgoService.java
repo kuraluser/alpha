@@ -9,7 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
-import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -22,8 +22,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 public class LoadingInformationAlgoService {
 
 	@GrpcClient("loadingInformationService")
-	private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
-	      loadingInfoServiceBlockingStub;
+	private LoadingInformationServiceBlockingStub loadingInfoServiceBlockingStub;
 	
 	@GrpcClient("loadableStudyService")
 	  private LoadableStudyServiceBlockingStub loadableStudyService;
