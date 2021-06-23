@@ -1416,6 +1416,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     loadableStudy, existingPortId);
                 synopticalTableRepository.deleteSynopticalPorts(
                     loadableStudy.getId(), existingPortId);
+                onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+                    loadableStudy, existingPortId);
               }
             });
       }
