@@ -187,12 +187,16 @@ public class LoadingInformationBuilderService {
         durationBuilder =
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder();
     StageOffsets.Builder offsetBuilder = StageOffsets.newBuilder();
-    Optional.ofNullable(request.getStageDuration().getId()).ifPresent(durationBuilder::setId);
-    Optional.ofNullable(request.getStageDuration().getDuration())
-        .ifPresent(durationBuilder::setDuration);
-    Optional.ofNullable(request.getStageOffset().getId()).ifPresent(offsetBuilder::setId);
-    Optional.ofNullable(request.getStageOffset().getStageOffsetVal())
-        .ifPresent(offsetBuilder::setStageOffsetVal);
+    if (Optional.ofNullable(request.getStageDuration()).isPresent()) {
+    	Optional.ofNullable(request.getStageDuration().getId()).ifPresent(durationBuilder::setId);
+        Optional.ofNullable(request.getStageDuration().getDuration())
+            .ifPresent(durationBuilder::setDuration);
+    }
+    if (Optional.ofNullable(request.getStageOffset()).isPresent()) {
+    	Optional.ofNullable(request.getStageOffset().getId()).ifPresent(offsetBuilder::setId);
+        Optional.ofNullable(request.getStageOffset().getStageOffsetVal())
+            .ifPresent(offsetBuilder::setStageOffsetVal);
+    }
     Optional.ofNullable(request.getTrackGradeSwitch()).ifPresent(builder::setTrackGradeSwitch);
     Optional.ofNullable(request.getTrackStartEndStage()).ifPresent(builder::setTrackStartEndStage);
     builder.setDuration(durationBuilder.build());
