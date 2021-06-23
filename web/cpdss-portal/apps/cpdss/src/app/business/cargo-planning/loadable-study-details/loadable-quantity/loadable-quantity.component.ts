@@ -5,7 +5,7 @@ import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
-import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { Dropdown } from 'primeng/dropdown';
-import { TimeZoneTransformationService } from 'apps/cpdss/src/app/shared/services/time-zone-conversion/time-zone-transformation.service';
+import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  *  popup for loadable quantity

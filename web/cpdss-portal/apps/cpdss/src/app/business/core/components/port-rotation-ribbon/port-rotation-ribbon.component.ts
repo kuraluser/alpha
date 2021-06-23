@@ -1,5 +1,5 @@
 import { AppConfigurationService } from './../../../../shared/services/app-configuration/app-configuration.service';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IVessel } from '../../models/vessel-details.model';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -12,7 +12,7 @@ import { Subscription, fromEvent, Observable } from 'rxjs';
 import { OnDestroy } from '@angular/core';
 import { portEtaEtdValidator } from '../../directives/port-eta-etd-validator.directive';
 import { portTimeValidator } from '../../directives/port-time-validator.directive';
-import { IDateTimeFormatOptions, ITimeZone } from './../../../../shared/models/common.model';
+import { IDateTimeFormatOptions, IOperations, ITimeZone } from './../../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import * as moment from 'moment';
 
@@ -45,7 +45,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
   @Input() isDeletable = false;
 
-  @Output() portDetails = new EventEmitter<IVoyagePortDetails>();
+  @Input() groupSelection = false;
+
+  @Input() showOperationType = false;
+
+  @Output() portSelection = new EventEmitter<IVoyagePortDetails>();
 
   voyageId: number;
   loadableStudyId: number;
@@ -63,6 +67,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   numVisible: number;
   portCarousel: IEditPortRotation[] = [];
   timeZoneList: ITimeZone[];
+  operations: IOperations[];
+  selectedPort: IEditPortRotation;
 
   // private fields
   private _voyageDetails: Voyage;
@@ -74,7 +80,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     private editPortRotationApiService: PortRotationService,
     private timeZoneTransformationService: TimeZoneTransformationService,
     private translateService: TranslateService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private elementRef: ElementRef) { }
 
   /**
    * Component lifecycle ngOnit
@@ -87,6 +94,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.carouselDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)
     this.resizeSubscription$ = this.resizeObservable$.subscribe((evt) => {
       this.setCarouselNumVisble(evt.target['innerWidth']);
+      this.setPortSelection(this.selectedPort);
     })
     this.portOrderSubscription$ = this.editPortRotationApiService.portOrderChange.subscribe((data) => {
       if (data) {
@@ -134,7 +142,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     } else if (innerWidth < 1600 && innerWidth > 1400) {
       this.numVisible = 6;
     } else if (innerWidth < 1400 && innerWidth > 1200) {
-      this.numVisible = 5;
+      this.numVisible = 4;
     } else if (innerWidth < 1200 && innerWidth > 1024) {
       this.numVisible = 4;
     } else {
@@ -150,16 +158,18 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param port
    */
   onClickPort(port: IEditPortRotation) {
+    this.selectedPort = port;
     const portDetails: IVoyagePortDetails = {
       "portOrder": port.portOrder,
       "operationType": port.type === 'Arrival' ? "ARR" : "DEP",
       "portId": port.portId,
-      "portRotationId": port.id
+      "portRotationId": port.id,
+      "operationId": port?.operationId
     }
     const index = this.portList.indexOf(port);
     this.resetPreviousPort(index);
     if (!port.isFutureDate) {
-      this.portDetails.emit(portDetails);
+      this.portSelection.emit(portDetails);
     }
     this.portList.map(ports => {
       ports.isFutureDate = false;
@@ -173,6 +183,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     } else {
       port.isFutureDate = true;
     }
+    this.setPortSelection(port);
   }
 
   /**
@@ -286,11 +297,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY', 'PORT_ROTATION_RIBBON_INVALID', 'PORT_ROTATION_RIBBON_INVALID_DATA', 'PORT_ROTATION_UPDATE_ERROR', 'PORT_ROTATION_UPDATE_STATUS_ERROR']).toPromise();
     if (form.valid) {
       if (port.type === 'Arrival') {
-        const newEtaActual = this.timeZoneTransformationService.formatDateTime(form.controls['date'].value) + ' ' + this.timeZoneTransformationService.formatDateTime(form.controls['time'].value, {customFormat: 'HH:mm'});
+        const newEtaActual = this.timeZoneTransformationService.formatDateTime(form.controls['date'].value) + ' ' + this.timeZoneTransformationService.formatDateTime(form.controls['time'].value, { customFormat: 'HH:mm' });
         port.etaActual = this.convertToPortBasedTimeZone(newEtaActual, port?.portTimezoneId, 'portToUTC');
       }
       else {
-        const newEtdActual = this.timeZoneTransformationService.formatDateTime(form.controls['date'].value) + ' ' + this.timeZoneTransformationService.formatDateTime(form.controls['time'].value, {customFormat: 'HH:mm'});
+        const newEtdActual = this.timeZoneTransformationService.formatDateTime(form.controls['date'].value) + ' ' + this.timeZoneTransformationService.formatDateTime(form.controls['time'].value, { customFormat: 'HH:mm' });
         port.etdActual = this.convertToPortBasedTimeZone(newEtdActual, port?.portTimezoneId, 'portToUTC');
         port.distanceBetweenPorts = form.controls['distance'].value;
       }
@@ -392,8 +403,10 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       ...result.find((item) => (item.id === itm.portId) && item),
       ...itm
     }));
+    this.operations = portsFormData?.operations;
     this.portList = [];
     for (let i = 0; i < portData.length; i++) {
+      const operation = this.getOperationLabel(portData[i]?.operationId);
 
       const portArrival = { ...portData[i] };
       portArrival.isFutureDate = false;
@@ -403,6 +416,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       portArrival.currentPort = false;
       portArrival.isSelected = false;
       portArrival.isFocused = false;
+      portArrival.operation = operation;
 
       const portDeparture = { ...portData[i] };
       portDeparture.isFutureDate = false;
@@ -413,6 +427,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       portDeparture.currentPort = false;
       portArrival.isSelected = false;
       portArrival.isFocused = false;
+      portDeparture.operation = operation;
 
       this.portList.push(portArrival);
       this.portList.push(portDeparture);
@@ -425,8 +440,51 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.setCarouselNumVisble(window.innerWidth);
     setTimeout(() => {
       this.portCarousel = [...this.transformCarouselData(this.portList)];
-    }, 50)
-    this.ngxSpinnerService.hide();
+      this.setPortSelection(this.portCarousel[0]);
+    }, 50);
+    if (result && portsFormData) {
+      this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+   * Get operation type label
+   *
+   * @param {number} operationId
+   * @return {*}
+   * @memberof PortRotationRibbonComponent
+   */
+  getOperationLabel(operationId: number) {
+    let operation = '';
+    switch (operationId) {
+      case 1:
+        operation = 'L';
+        break;
+
+      case 2:
+        operation = 'D';
+        break;
+
+      case 3:
+        operation = 'B';
+        break;
+
+      case 4:
+        operation = 'T';
+        break;
+
+      case 5:
+        operation = 'STSL';
+        break;
+
+      case 6:
+        operation = 'STSD';
+        break;
+
+      default:
+        break;
+    }
+    return operation;
   }
 
   /**
@@ -437,11 +495,13 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "portOrder": this.portList[0].portOrder,
       "operationType": this.portList[0].type === 'Arrival' ? "ARR" : "DEP",
       "portId": this.portList[0].portId,
-      "portRotationId": this.portList[0].id
+      "portRotationId": this.portList[0].id,
+      "operationId": this.portList[0].operationId
     }
     this.portList[0].isFocused = true;
     this.portList[0].isSelected = true;
-    this.portDetails.emit(portDetails);
+    this.selectedPort = this.portList[0];
+    this.portSelection.emit(portDetails);
   }
 
   /**
@@ -607,7 +667,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       };
       if (convertType === 'utcToPort') {
         return this.timeZoneTransformationService.convertToZoneBasedTime(dateTime, false, selectedTimeZone.offsetValue);
-      } else if (convertType === 'portToUTC'){
+      } else if (convertType === 'portToUTC') {
         return this.timeZoneTransformationService.revertZoneTimetoUTC(dateTime, selectedTimeZone.offsetValue);
       } else {
         return this.timeZoneTransformationService.formatDateTime(dateTime, formatOptions);
@@ -641,6 +701,35 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
   getTimezoneData(timezoneId: number): ITimeZone {
     return this.timeZoneList.find(tz => (tz.id === timezoneId));
+  }
+
+  /**
+   * Set port selection on port card click
+   *
+   * @param {IEditPortRotation} port
+   * @memberof PortRotationRibbonComponent
+   */
+  setPortSelection(port: IEditPortRotation) {
+    if (this.groupSelection) {
+      const cards = this.elementRef.nativeElement.getElementsByClassName('p-carousel-item selected');
+      for (let i = 0; i < cards.length; i = i++) {
+        cards[i].classList.remove('selected');;
+      }
+
+      const selectedPortsIndexes = [];
+      this.portCarousel = this.portCarousel.map((_port, index) => {
+        if (_port?.id === port?.id) {
+          _port.isSelected = true;
+          selectedPortsIndexes.push(index);
+        }
+        return _port;
+      });
+
+      selectedPortsIndexes.forEach(index => {
+        const _cards = this.elementRef.nativeElement.getElementsByClassName('p-carousel-item');
+        _cards[index].classList.add('selected');
+      });
+    }
   }
 
 }

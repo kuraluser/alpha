@@ -12,10 +12,10 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.RulePlans;
+import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.Rules;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
-import com.cpdss.gateway.domain.VesselRuleRequest;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.VesselInfoServiceTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -114,7 +114,7 @@ public class VesselInfoControllerTest {
   @ParameterizedTest
   void testSaveRulesForVessel(String url) throws Exception {
     when(this.vesselInfoService.getRulesByVesselIdAndSectionId(
-            anyLong(), anyLong(), any(VesselRuleRequest.class), anyString()))
+            anyLong(), anyLong(), any(RuleRequest.class), anyString()))
         .thenReturn(new RuleResponse());
     this.mockMvc
         .perform(
@@ -125,18 +125,19 @@ public class VesselInfoControllerTest {
   }
 
   private String createRuleRequest() throws JsonProcessingException {
-    VesselRuleRequest request = new VesselRuleRequest();
+    RuleRequest request = new RuleRequest();
     List<RulePlans> rulePlanList = new ArrayList<RulePlans>();
     List<Rules> rules = new ArrayList<Rules>();
     List<com.cpdss.gateway.domain.RulesInputs> ruleInputList =
         new ArrayList<com.cpdss.gateway.domain.RulesInputs>();
     RulePlans rulePlan = new RulePlans();
     Rules rule = new Rules();
-    rule.setDisableInSettigs(true);
+    rule.setDisplayInSettings(true);
     rule.setEnable(true);
     // rule.setId("1");
     rule.setRuleTemplateId("701");
     rule.setRuleType("Absolute");
+    rule.setIsHardRule(false);
     com.cpdss.gateway.domain.RulesInputs input = new com.cpdss.gateway.domain.RulesInputs();
     input.setPrefix("Condensate cargo can only be put in a tank for");
     input.setType("Number");

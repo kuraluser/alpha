@@ -1,111 +1,120 @@
 
-<form [formGroup]="formGroup" id="fg_load_discharge_details">
+<form [formGroup]="loadingRatesFormGroup" id="fg_load_discharge_details">
+    <h4>{{'LOADING_RATE_HEADING' | translate}}</h4>
     <div class="container-fluid">
         <div class="row item-row-wrapper">
             <div class="col">
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Max loading rate'}}</label>
+                        class="col no-left-padding">{{'Max loading rate' | translate}}</label>
                     <div class="col">
-                        <input type="text" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter Max loading rate'}}"
+                        <input type="number" class="form-control" *ngIf="editMode;else maxLoadingRef"
+                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'LOADING_RATE_MAX_LOADING_PLACEHOLDER' | translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #maxLoadingRef><span>{{maxLoadingrate?.value}}</span></ng-template>
                     </div>
-                     <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>  -->
+                     <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('maxLoadingrate')"
+                            [errorMessages]="errorMesages?.maxLoadingrate"></cpdss-portal-validation-error>
+                    </div> 
                 </div>
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Reduced loading rate'}}</label>
+                        class="col no-left-padding">{{'LOADING_RATE_REDUCED_LOADING_RATE' | translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter reduced loading rate'}}"
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else reducedLoadingRef"
+                        id="initial_loading_rate" formControlName="reducedLoadingRate"  placeholder="{{'LOADING_RATE_REDUCED_LOADING_RATE_PLACEHOLDER' | translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #reducedLoadingRef><span>{{reducedLoadingRate?.value}}</span></ng-template>
                     </div>
-                     <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div> -->
+                     <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('reducedLoadingRate')"
+                            [errorMessages]="errorMesages?.reducedLoadingRate"></cpdss-portal-validation-error>
+                    </div>
                 </div>
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Min Loading rate'}}</label>
+                        class="col no-left-padding">{{'LOADING_RATE_MIN_LOADING_RATE' | translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter Min loading rate'}}"
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else initialLoadingRate"
+                        id="initial_loading_rate" formControlName="initialLoadingRate"  placeholder="{{'LOADING_RATE_MIN_LOADING_RATE_PLACEHOLDER' | translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #initialLoadingRate><span>{{initialLoadingRate?.value}}</span></ng-template>
                     </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>  -->
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('initialLoadingRate')"
+                            [errorMessages]="errorMesages?.initialLoadingRate"></cpdss-portal-validation-error>
+                    </div> 
                 </div>
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Min Deballast rate'}}</label>
+                        class="col no-left-padding">{{'LOADING_RATE_MIN_DEBALLAST_RATE' | translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter Min Deballast rate'}}"
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else minDeballstRef"
+                        id="initial_loading_rate" formControlName="minDeBallastingRate"  placeholder="{{'LOADING_RATE_MIN_DEBALLAST_RATE_PLACEHOLDER'| translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #minDeballstRef><span>{{minDeBallastingRate?.value}}</span></ng-template>
                     </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>  -->
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('minDeBallastingRate')"
+                            [errorMessages]="errorMesages.minDeBallastingRate"></cpdss-portal-validation-error>
+                    </div> 
                 </div>
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Max Deballast rate'}}</label>
+                        class="col no-left-padding">{{'LOADING_RATE_MAX_DEBALLAST_RATE'| translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter Max Deballast rate'}}"
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else maxDeballstRef"
+                        id="initial_loading_rate" formControlName="maxDeBallastingRate"  placeholder="{{'LOADING_RATE_MAX_DEBALLAST_RATE_PLACEHOLDER'| translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #maxDeballstRef><span>{{maxDeBallastingRate?.value}}</span></ng-template>
                     </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>  -->
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('maxDeBallastingRate')"
+                            [errorMessages]="errorMesages.maxDeBallastingRate"></cpdss-portal-validation-error>
+                    </div> 
                 </div>  
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Notice time for Rate reduction'}}</label>
+                        class="col no-left-padding">{{'LOADING_RATE_NOTICE_TIME_FOR_RATE_REDUCTION'| translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter Notice time for Rate reduction'}}"
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else rateRecuctionRef"
+                        id="initial_loading_rate" formControlName="noticeTimeRateReduction"  placeholder="{{'LOADING_RATE_NOTICE_TIME_FOR_RATE_REDUCTION_PLACEHOLDER'| translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #rateRecuctionRef><span>{{noticeTimeRateReduction?.value}}</span></ng-template>
                     </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>  -->
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('noticeTimeRateReduction')"
+                            [errorMessages]="errorMesages.noticeTimeRateReduction"></cpdss-portal-validation-error>
+                    </div> 
                 </div>   
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Notice time for stopping loading'}}</label>
+                        class="col no-left-padding">{{'LOADING_RATE_NOTICE_TIME_FOR_STOPPING_LOADING'| translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter Notice time for stopping loading'}}"
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else stopingLoadingRef"
+                        id="initial_loading_rate" formControlName="noticeTimeStopLoading"  placeholder="{{'LOADING_RATE_NOTICE_TIME_FOR_STOPPING_LOADING_PLACEHOLDER'| translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #stopingLoadingRef><span>{{noticeTimeStopLoading?.value}}</span></ng-template>
                     </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>  -->
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('noticeTimeStopLoading')"
+                            [errorMessages]="errorMesages.noticeTimeStopLoading"></cpdss-portal-validation-error>
+                    </div> 
                 </div>   
                 <div class="row form-group">
                     <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Line content Remaining'}}</label>
+                        class="col no-left-padding">{{'LOADING_RATE_LINE_CONTENT_REMAINING'| translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="maxLoadingrate"  placeholder="{{'Enter Line content Remaining'}}"
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else contentRemainingRef"
+                        id="initial_loading_rate" formControlName="lineContentRemaining"  placeholder="{{'LOADING_RATE_LINE_CONTENT_REMAINING_PLACEHOLDER'| translate}}"
                         (change)="change()" [readonly]="false">
+                        <ng-template #contentRemainingRef><span>{{lineContentRemaining?.value}}</span></ng-template>
                     </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div>  -->
+                    <div class="col error-column">
+                        <cpdss-portal-validation-error [errors]="fieldError('lineContentRemaining')"
+                            [errorMessages]="errorMesages.lineContentRemaining"></cpdss-portal-validation-error>
+                    </div> 
                 </div>        
                 
             </div>

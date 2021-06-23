@@ -1,78 +1,96 @@
-
-<form [formGroup]="formGroup" id="fg_load_discharge_details" (ngSubmit)="onSubmit()">
+<form [formGroup]="loadingDetailsForm" id="fg_load_discharge_details" (ngSubmit)="onSubmit()">
     <div class="container-fluid">
         <div class="row item-row-wrapper">
             <div class="col">
-                
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Sunrise/Sunset'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-                        /
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
 
-                    </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div> -->
-                </div>
                 <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Start Time'}}</label>
+                    <label for="timeOfSunrise" class="col no-left-padding">{{'LOADING_DETAILS_SUNRISE_SUNSET' |
+                        translate}}</label>
                     <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
+                        <p-calendar class="form-control" formControlName="timeOfSunrise" [timeOnly]="true"
+                            inputId="timeOfSunrise" placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}"
+                            showTime="true" hourFormat="12" (onClose)="onTimeChange('timeOfSunrise')" ></p-calendar>
+                        <cpdss-portal-validation-error [errors]="fieldError('timeOfSunrise')"
+                            [errorMessages]="errorMessages.timeOfSunrise">
+                        </cpdss-portal-validation-error>
                     </div>
-                    <!-- <div class="col error-column">
-                        <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                    </div> -->
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Time Allowed(Initial/Max/Final)'}}</label>
-                    <div class="col">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
+                    <div class="col-1">
                         /
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
+                    </div>
+                    <div class="col">
+                        <p-calendar class="form-control" formControlName="timeOfSunset" [timeOnly]="true"
+                            inputId="timeOfSunset" placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}"
+                            showTime="true" hourFormat="12" (onClose)="onTimeChange('timeOfSunset')"></p-calendar>
+                        <cpdss-portal-validation-error [errors]="fieldError('timeOfSunset')"
+                            [errorMessages]="errorMessages.timeOfSunset">
+                        </cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="startTime" class="col no-left-padding">{{'LOADING_DETAILS_START_TIME_LABEL' |
+                        translate}}</label>
+                    <div class="col">
+                        <p-calendar class="form-control" formControlName="startTime" [timeOnly]="true"
+                            inputId="startTime"
+                            placeholder="{{'LOADING_DETAILS_START_TIME_CALENDER_LABEL' | translate}}" showTime="true"
+                            hourFormat="12" (onClose)="onTimeChange('startTime')"></p-calendar>
+                    </div>
+                    <cpdss-portal-validation-error [errors]="fieldError('startTime')"
+                        [errorMessages]="errorMessages.startTime">
+                    </cpdss-portal-validation-error>
+                </div>
+                <div class="row form-group">
+                    <label for="trim" class="col no-left-padding">{{'LOADING_DETAILS_TRIM_ALLOWED_LABEL' |
+                        translate}}</label>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false"  class="form-control" id="trim"
+                            formControlName="initialTrim" placeholder="{{'LOADING_DETAILS_TRIM_INITIAL' | translate}}"
+                            (change)="trimValueChange('initialTrim')" [readonly]="false">
+                        <cpdss-portal-validation-error [errors]="fieldError('initialTrim')"
+                            [errorMessages]="errorMessages.initialTrim">
+                        </cpdss-portal-validation-error>
+                    </div>
+                    <div class="col-1">
                         /
+                    </div>
+                    <div class="col">
                         <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                        id="initial_loading_rate" formControlName="loadingRatio"  placeholder="{{'Enter initial loading rate'}}"
-                        (change)="change()" [readonly]="false">
-
+                            id="trim-max" formControlName="maximumTrim"
+                            placeholder="{{'LOADING_DETAILS_TRIM_MAXIMUM' | translate}}" (change)="trimValueChange('maximumTrim')"
+                            [readonly]="false">
+                        <cpdss-portal-validation-error [errors]="fieldError('maximumTrim')"
+                            [errorMessages]="errorMessages.maximumTrim">
+                        </cpdss-portal-validation-error>
+                    </div>
+                    <div class="col-1">
+                        /
+                    </div>
+                    <div class="col">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                            id="trim-final" formControlName="finalTrim"
+                            placeholder="{{'LOADING_DETAILS_TRIM_FINAL' | translate}}" (change)="trimValueChange('finalTrim')"
+                            [readonly]="false">
+                        <cpdss-portal-validation-error [errors]="fieldError('finalTrim')"
+                            [errorMessages]="errorMessages.finalTrim">
+                        </cpdss-portal-validation-error>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="tide-details" class="col no-left-padding">{{'LOADING_DETAILS_TIDE_DETAIL_LABEL' |
+                        translate}}</label>
+                    <div class="col">
+                        <button class="btn btn-main">{{'LOADING_DETAILS_BROWSE_BUTTON_LABEL' | translate}}</button>
+                        <a type="button" class="pencil-icon"></a>
+                        <a type="button" class="pencil-icon"></a>
+                        <a type="button" class="pencil-icon"></a>
                     </div>
                     <!-- <div class="col error-column">
                         <cpdss-portal-validation-error [errors]="fieldError('portName')"
                             [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                     </div> -->
-                </div>
-                <div class="row form-group">
-                    <label for="initial_loading_rate"
-                        class="col no-left-padding">{{'Tide Details (HW/LW)'}}</label>
-                    <div class="col">
-                        <button>{{'Browse'}}</button>
-                        <button>{{'d'}}</button>
-                        <button>{{'v'}}</button>
-                        <button>{{'e'}}</button>
-                    </div>
-                    <div class="col error-column">
-                        <!-- <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                            [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error> -->
-                    </div>
                 </div>
             </div>
-            
+
 
         </div>
     </div>

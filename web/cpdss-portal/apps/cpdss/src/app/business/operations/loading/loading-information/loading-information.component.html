@@ -1,24 +1,36 @@
-<div class="row">
+<div class="row" *ngIf="loadingInformationData">
     <div class="col-4">
         <div class="row">
             <div class="col">
-                <h5>Loading Details</h5>
-                <cpdss-portal-loading-discharging-details></cpdss-portal-loading-discharging-details>
+                <h5>{{'LOADING_INFORMATION_LOADING_DETAILS_HEADER' | translate }}</h5>
+                <cpdss-portal-loading-discharging-details [loadingDetails]="loadingInformationData?.loadingDetails"
+                    (updateLoadingDetails)="onUpdateLoadingDetails($event)">
+                </cpdss-portal-loading-discharging-details>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <h5>Loading Rates</h5>
-                <cpdss-portal-loading-rate></cpdss-portal-loading-rate>
+                <h5>{{'LOADING_INFORMATION_LOADING_RATES_HEADER' | translate}}</h5>
+                <cpdss-portal-loading-rate [editMode]="loadingRateEditMode"
+                    [loadingRates]="loadingInformationData.loadingRates"></cpdss-portal-loading-rate>
             </div>
         </div>
         <div class="row">
-                <cpdss-portal-loading-discharging-berth></cpdss-portal-loading-discharging-berth>
+            <div class="col">
+                <cpdss-portal-loading-discharging-berth
+                    [availableBerths]="loadingInformationData?.berthDetails.availableBerths"
+                    [selectedBerths]="loadingInformationData?.berthDetails.selectedBerths"
+                    (berthChange)="onBerthChange($event)">
+                </cpdss-portal-loading-discharging-berth>
+            </div>
         </div>
         <div class="row">
             <div class="col">
                 <h5>Cargo Machinery in use</h5>
-                <cpdss-portal-loading-discharging-cargo-machinery></cpdss-portal-loading-discharging-cargo-machinery>
+                <cpdss-portal-loading-discharging-cargo-machinery
+                    [machineryInUses]="loadingInformationData?.machineryInUses"
+                    (updatemachineryInUses)="onUpdatemachineryInUses($event)">
+                </cpdss-portal-loading-discharging-cargo-machinery>
             </div>
         </div>
     </div>
@@ -26,23 +38,27 @@
         <div class="row">
             <div class="col">
                 <h5>Cargo Details</h5>
-                <cpdss-portal-loading-discharging-cargo-details></cpdss-portal-loading-discharging-cargo-details>
+                <cpdss-portal-loading-discharging-cargo-details [cargos]="cargos"
+                    [cargoVesselTankDetails]="cargoVesselTankDetails">
+                </cpdss-portal-loading-discharging-cargo-details>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-8">
-                        <h5>NO. OF STAGES</h5>
+                        <h5>{{'LOADING_INFORMATION_NO_OF_STAGES_HEADER' | translate}}</h5>
                         <div class="row form-group">
-                            <label for="initial_loading_rate"
-                                class="col no-left-padding">{{'Min Amount of stages'}}</label>
+                            <label for="min_amount_stages"
+                                class="col no-left-padding">{{'LOADING_INFORMATION_MIN_AMOUNT_STAGES' |
+                                translate}}</label>
                             <div class="col">
-                                <input type="text" class="form-control"
-                                id="initial_loading_rate"   placeholder="{{'Enter initial loading rate'}}"
-                                [readonly]="false">
+                                <p-dropdown id="min_amount_stages" styleClass="form-control"
+                                    placeholder="{{'LOADING_INFORMATION_MIN_AMOUNT_STAGES' | translate}}"
+                                    [options]="stageOffsetList" optionLabel="stageOffsetVal"
+                                    (onChange)="onStageOffsetValChange($event)"></p-dropdown>
                             </div>
-                             <!-- <div class="col error-column">
+                            <!-- <div class="col error-column">
                                 <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                     [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                             </div>  -->
@@ -52,75 +68,52 @@
                 <div class="row">
                     <div class="col-md-8">
                         <div class="row form-group">
-                            <label for="initial_loading_rate"
-                                class="col no-left-padding">{{'Duration of Each stages'}}</label>
+                            <label for="duration_stages"
+                                class="col no-left-padding">{{'LOADING_INFORMATION_DURATION_STAGES' |
+                                translate}}</label>
                             <div class="col">
-                                <input type="text" class="form-control"
-                                id="initial_loading_rate"   placeholder="{{'Enter initial loading rate'}}"
-                                [readonly]="false">
+                                <p-dropdown id="duration_stages" styleClass="form-control"
+                                    placeholder="{{'LOADING_INFORMATION_DURATION_STAGES' | translate}}"
+                                    [options]="stageDurationList" optionLabel="duration"
+                                    (onChange)="onStageDurationValChange($event)"></p-dropdown>
                             </div>
-                             <!-- <div class="col error-column">
+                            <!-- <div class="col error-column">
                                 <cpdss-portal-validation-error [errors]="fieldError('portName')"
                                     [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                             </div>  -->
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-
                 <div class="row">
-                    <div class="col-md-6">
-                        <h5>ADD DELAY</h5>
+                    <div class="p-field-checkbox">
+                        <p-checkbox binary="true" inputId="add-initial" [(ngModel)]="trackStartEndStage" (onChange)="onTrackStageChange()"></p-checkbox>
+                        <label for="add-initial">{{'LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL' | translate
+                            }}</label>
                     </div>
-                    <div class="col-md-6 text-right">
-                        <button >Add Cargo</button>
-                        <button >Add delay</button>
+                    <div class="p-field-checkbox">
+                        <p-checkbox binary="true" inputId="add-initial" [(ngModel)]="trackGradeSwitch"></p-checkbox>
+                        <label for="add-initial">{{'LOADING_INFORMATION_TRACK_GRADE_SWITCHING_LABEL' | translate
+                            }}</label>
                     </div>
                 </div>
             </div>
-            <p-table [columns]="delayColumns" [value]="delayData" >
-                <ng-template pTemplate="header" let-columns>
-                    <tr>
-                        <th *ngFor="let col of columns">
-                            {{col.header |  translate}}
-                        </th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
-                    <tr>    
-                        <td>{{rowIndex+1}}</td>
-                        <td><p-dropdown #dd id="loading_ratio" styleClass="form-control" [filter]="true"
-                            [options]="[]" [(ngModel)]="rowData.delayReason" optionLabel="name"
-                            placeholder="{{''}}"
-                            [readonly]="false" resetFilterOnHide="true">
-                            </p-dropdown>
-                        </td>
-                        <td>{{rowData?.stageDelay}}</td>
-                        <td>{{rowData?.duration}}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-            
+        </div>
+        <div class="row">
+            <cpdss-portal-loading-discharging-manage-sequence [cargos]="cargos"
+                [loadableQuantityCargo]="loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
+                [loadingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
+                (updateLoadingDelays)="onUpdateLoadingDelays($event)">
+            </cpdss-portal-loading-discharging-manage-sequence>
         </div>
         <div class="row pt-10">
-                <h5>SELECTED CARGO TYPE TOPPING OFF SEQUENCE</h5>
+            <h5>{{'LOADING_INFORMATION_TOPPING_OFF_SEQUENCE_HEADER' | translate }}</h5>
         </div>
         <div class="row">
             <div class="col-md-12 pt-5">
-                <div class="row border-bottom border-secondary">
-                    <div class="col-md-3">
-                        <label>Topping Off Rate</label>
-                    </div>
-                    <div class="col-md-9 pb-5">
-                        <input type="text" placeholder="Initial">
-                        <input type="text" placeholder="Final">
-                    </div>
-                </div>
                 <div class="row">
-                    <cpdss-portal-topping-off-tank-table></cpdss-portal-topping-off-tank-table>
+                    <cpdss-portal-topping-off-tank-table [cargos]="cargos"
+                        [toppingOffSequence]="loadingInformationData?.toppingOffSequence" (updateToppingOff)="onUpdateToppingOff($event)">
+                    </cpdss-portal-topping-off-tank-table>
                 </div>
             </div>
         </div>

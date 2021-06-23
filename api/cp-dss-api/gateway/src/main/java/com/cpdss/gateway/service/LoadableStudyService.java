@@ -44,6 +44,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableRuleReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest;
@@ -147,6 +149,8 @@ import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
+import com.cpdss.gateway.domain.RuleRequest;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.StabilityConditions;
 import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
@@ -166,6 +170,7 @@ import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
+import com.cpdss.gateway.utility.Utility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
@@ -5783,5 +5788,33 @@ public class LoadableStudyService {
     if (response.getStatus().equalsIgnoreCase("FAILED")) {
       throw new Exception("Failed to update synoptical table " + synopticalTableId);
     }
+  }
+
+  public RuleResponse getOrSaveRulesForLoadableStudy(
+      Long vesselId,
+      Long sectionId,
+      Long loadableStudyId,
+      RuleRequest loadableRuleRequest,
+      String correlationId)
+      throws GenericServiceException {
+    LoadableRuleRequest.Builder loadableRuleRequestBuilder = LoadableRuleRequest.newBuilder();
+    loadableRuleRequestBuilder.setVesselId(vesselId);
+    loadableRuleRequestBuilder.setSectionId(sectionId);
+    loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
+    Utility.buildRuleListForSave(loadableRuleRequest, null, loadableRuleRequestBuilder, false);
+    LoadableRuleReply loadableRuleReply =
+        loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
+            loadableRuleRequestBuilder.build());
+    if (!SUCCESS.equals(loadableRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Vessel Details ",
+          loadableRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(loadableRuleReply.getResponseStatus().getCode())));
+    }
+    RuleResponse ruleResponse = new RuleResponse();
+    ruleResponse.setPlan(Utility.buildLoadableRulePlan(loadableRuleReply));
+    ruleResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return ruleResponse;
   }
 }

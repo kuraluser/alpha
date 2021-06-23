@@ -3,7 +3,8 @@ import { IDataTableColumn , DATATABLE_FIELD_TYPE  } from '../../../shared/compon
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ICargoConditions, ICargoQuantities } from '../models/voyage-status.model';
+import { ICargoQuantities } from '../../core/models/common.model';
+import { ICargoConditions } from '../models/voyage-status.model';
 import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
 /**
  * Component class of CargoDetailsComponent

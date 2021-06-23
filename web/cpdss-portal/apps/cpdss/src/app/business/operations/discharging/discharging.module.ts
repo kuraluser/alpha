@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DischargingComponent } from './discharging.component';
+import { DischargingRoutingModule } from './discharging-routing.module';
 import { InstructionSidePanelModule } from '../instruction-side-panel/instruction-side-panel.module';
 import { InstructionCheckListModule } from '../instruction-check-list/instruction-check-list.module';
 
@@ -15,6 +16,7 @@ import { InstructionCheckListModule } from '../instruction-check-list/instructio
   declarations: [DischargingComponent],
   imports: [
     CommonModule,
+    DischargingRoutingModule,
     InstructionSidePanelModule,
     InstructionCheckListModule
   ]

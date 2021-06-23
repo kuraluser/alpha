@@ -1,41 +1,45 @@
+.card-border {
+  margin-top: 8px;
+}
+.carousel-card {
+  border-radius: 5px;
+  text-transform: uppercase;
+}
 
-.card-border{
-    margin-top: 8px;
+.carousel-card-footer {
+  height: 25px;
 }
-.carousel-card{
-    border-radius: 5px;
-    text-transform: uppercase;
+
+.distance-port {
+  padding-right: 20px;
+  background-position: center right;
+  padding-left: 18px;
+  position: relative;
+  height: 16px;
+  &:after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
+  .ship-location {
+    position: absolute;
+    height: 7px;
+    width: 30px;
+    left: 15px;
+    right: 0;
+    top: -7px;
+  }
 }
-.distance-port{
-    padding-right: 20px;
-    background-position: center right;
-    padding-left: 18px;
-    position: relative;
-    height: 16px;
-    &:after{
-        content: "";
-        position: absolute;
-        width:12px;
-        height: 0;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-    }
-    .ship-location{
-        position: absolute;
-        height: 7px;
-        width: 30px;
-        left: 15px;
-        right: 0;
-        top: -7px;
-    }
+.carousel-card-label {
+  width: 50px;
+  padding-left: 20px;
+  margin-bottom: 1px;
 }
-.carousel-card-label{
-    width: 50px;
-    padding-left: 20px;
-    margin-bottom: 1px;
-}
-.carousel-wrapper{
-    height: 144px;
+.carousel-wrapper {
+  height: 144px;
 }

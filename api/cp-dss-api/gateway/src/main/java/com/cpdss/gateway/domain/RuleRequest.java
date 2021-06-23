@@ -9,7 +9,7 @@ import lombok.Data;
 /** @Author vinothkumar m */
 @Data
 @JsonInclude(Include.NON_EMPTY)
-public class VesselRuleRequest {
+public class RuleRequest {
 
   private List<RulePlans> plan;
 }

@@ -7,7 +7,7 @@ import { IVessel } from '../../../core/models/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { Router } from '@angular/router';
-import { numberValidator } from '../../../cargo-planning/directives/validator/number-validator.directive'
+import { numberValidator } from '../../../core/directives/number-validator.directive'
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';

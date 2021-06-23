@@ -37,5 +37,8 @@
     "SynopticalTableETA/ETD": "SYNOPTICAL_TABLE_EDA/ETD",
     "SynopticalTableTimeOfSunrise": "SYNOPTICAL_TABLE_TIME_OFSUNRISE",
     "SynopticalTableTimeOfSunset": "SYNOPTICAL_TABLE_TIME_OFSUNSET",
-    "NewLoadableStudy":"CARGOPLANNING_NEW_LOADABLE_STUDY"
+    "NewLoadableStudy":"CARGOPLANNING_NEW_LOADABLE_STUDY",
+    "DischargeStudyListing":"DISCHARGE_STUDY_LISTING",
+    "LoadableStudyListing":"LOADABLE_STUDY_LISTING",
+    "AdminRuleComponent":"ADMIN_RULE_LISTING"
 }

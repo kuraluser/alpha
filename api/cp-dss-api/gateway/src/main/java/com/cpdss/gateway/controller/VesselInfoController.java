@@ -5,10 +5,10 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.VesselRuleRequest;
 import com.cpdss.gateway.service.VesselInfoService;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -105,7 +105,7 @@ public class VesselInfoController {
           @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long sectionId,
-      @RequestBody VesselRuleRequest vesselRuleRequest,
+      @RequestBody RuleRequest vesselRuleRequest,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -137,8 +137,7 @@ public class VesselInfoController {
    */
   @GetMapping(
       value = "/vessel-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}",
-      produces = MediaType.APPLICATION_JSON_VALUE,
-      consumes = MediaType.APPLICATION_JSON_VALUE)
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public RuleResponse getAllRulesForVessel(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable

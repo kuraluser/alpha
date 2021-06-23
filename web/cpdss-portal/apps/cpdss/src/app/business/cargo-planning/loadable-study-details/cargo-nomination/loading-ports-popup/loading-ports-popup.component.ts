@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../../../shared/components/datatable/datatable.model';
-import { numberValidator } from '../../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../../core/directives/number-validator.directive';
 import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { IPort, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../../core/models/common.model';

@@ -43,9 +43,11 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   permissionStart: IPermission;
   permissionStop: IPermission;
   defaultDate: Date;
+  plannedStartDate: Date;
   isStart: boolean;
   display: boolean;
   newVoyagePermissionContext: IPermissionContext;
+  currentDate: Date;
 
   filterDateError = null;
   errorMessages: any;
@@ -66,6 +68,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
+    this.currentDate = new Date();
     this.errorMessages = this.voyageListTransformationService.setValidationErrorMessage();
     this.ngxSpinnerService.show();
     this.getPagePermission();
@@ -236,6 +239,7 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       dateValue = event?.data?.actualEndDate ? event?.data?.actualEndDate : event?.data?.plannedEndDate;
     }
     this.defaultDate = dateValue !== undefined ? moment(dateValue).toDate() : new Date();
+    this.plannedStartDate =  moment(event?.data?.plannedStartDate).toDate();
     this.selectedVoyageId = event?.data?.id;
     this.selectedLoadablePlanId = event?.data?.confirmedLoadableStudyId;
     this.showDatePopup = true;

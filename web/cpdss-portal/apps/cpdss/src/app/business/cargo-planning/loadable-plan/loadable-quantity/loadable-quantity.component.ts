@@ -6,7 +6,7 @@ import { LoadablePlanTransformationService } from '../../services/loadable-plan-
 
 import { ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
-import { ILoadableQuantityCargo } from '../../models/cargo-planning.model';
+import { ILoadableQuantityCargo } from '../../../core/models/common.model';
 
 /**
  * Component class of loadable quantity component in loadable plan

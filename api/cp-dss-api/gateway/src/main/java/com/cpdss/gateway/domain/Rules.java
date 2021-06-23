@@ -13,11 +13,15 @@ public class Rules {
 
   private Boolean disable;
 
-  private Boolean disableInSettigs;
+  private Boolean displayInSettings;
 
   private String ruleType;
 
   private List<RulesInputs> inputs;
 
   private String ruleTemplateId;
+
+  private String vesselRuleXId;
+
+  private Boolean isHardRule;
 }
