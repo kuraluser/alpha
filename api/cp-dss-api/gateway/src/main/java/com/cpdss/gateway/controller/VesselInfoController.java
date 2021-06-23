@@ -12,6 +12,7 @@ import com.cpdss.gateway.domain.VesselRuleRequest;
 import com.cpdss.gateway.service.VesselInfoService;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.websocket.server.PathParam;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -64,11 +65,12 @@ public class VesselInfoController {
   @GetMapping(value = "/vessel-details/{vesselId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public VesselDetailsResponse getVesselsDetails(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @RequestHeader HttpHeaders headers)
+      @RequestHeader HttpHeaders headers,
+      @PathParam("enableValveSeq") boolean enableValveSeq)
       throws CommonRestException {
     try {
       return this.vesselInfoService.getVesselsDetails(
-          vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId, headers.getFirst(CORRELATION_ID_HEADER), enableValveSeq);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching vessels", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

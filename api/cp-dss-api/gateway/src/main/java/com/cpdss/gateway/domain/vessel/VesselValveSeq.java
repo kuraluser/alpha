@@ -1,6 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.vessel;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class VesselValveSeq {
   private String valveCategory;
   private String valveTypeName;
@@ -9,8 +16,6 @@ public class VesselValveSeq {
   private String tankShortName;
   private String pipelineColor;
   private String pipelineName;
-
-  public VesselValveSeq() {}
 
   public VesselValveSeq getInstance(VesselValveSequence v) {
     VesselValveSeq vq = new VesselValveSeq();

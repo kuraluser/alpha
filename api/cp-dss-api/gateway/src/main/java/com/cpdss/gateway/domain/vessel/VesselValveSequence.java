@@ -3,11 +3,9 @@ package com.cpdss.gateway.domain.vessel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 
 @Data
 @NoArgsConstructor

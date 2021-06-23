@@ -4,7 +4,6 @@ package com.cpdss.gateway.service.vesselinfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.gateway.domain.vessel.VesselValveSeq;
 import com.cpdss.gateway.domain.vessel.VesselValveSequence;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,7 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class VesselValveService {
 
-  public Object buildVesselValveResponse(List<VesselInfo.VesselValveSequence>  grpcReplyList) {
+  public Map<String, Map<String, Map<String, VesselValveSeq>>> buildVesselValveResponse(
+      List<VesselInfo.VesselValveSequence> grpcReplyList) {
     List<VesselValveSequence> list = this.buildVesselValveSequenceDomain(grpcReplyList);
     Map<String, List<VesselValveSequence>> map1 =
         list.stream().collect(Collectors.groupingBy(VesselValveSequence::getSequenceTypeName));
@@ -33,20 +33,39 @@ public class VesselValveService {
           map4.put("Sequence_" + x, new VesselValveSeq().getInstance(v));
           x++;
         }
-        map3.put(seqEntityList.getKey(), map4);
+        map3.put(toCamelCase(seqEntityList.getKey()), map4);
       }
       map11.put(var2.getKey(), map3);
     }
     return map11;
   }
 
-  public List<VesselValveSequence> buildVesselValveSequenceDomain(List<VesselInfo.VesselValveSequence>  list){
+  public static String toCamelCase(final String init) {
+    if (init == null) return null;
+
+    final StringBuilder ret = new StringBuilder(init.length());
+
+    for (final String word : init.split(" ")) {
+      if (!word.isEmpty()) {
+        ret.append(Character.toUpperCase(word.charAt(0)));
+        ret.append(word.substring(1).toLowerCase());
+      }
+      if (!(ret.length() == init.length())) ret.append(" ");
+    }
+
+    return ret.toString();
+  }
+
+  public List<VesselValveSequence> buildVesselValveSequenceDomain(
+      List<VesselInfo.VesselValveSequence> list) {
     List<VesselValveSequence> sequenceList = new ArrayList<>();
-    for (VesselInfo.VesselValveSequence vvs: list){
+    for (VesselInfo.VesselValveSequence vvs : list) {
       VesselValveSequence sequence = new VesselValveSequence();
-      Optional.ofNullable(vvs.getSequenceNumber()).ifPresent(v -> {
-        if (!v.isEmpty()) sequence.setSequenceNumber(new BigDecimal(v));
-      });
+      Optional.ofNullable(vvs.getSequenceNumber())
+          .ifPresent(
+              v -> {
+                if (!v.isEmpty()) sequence.setSequenceNumber(new BigDecimal(v));
+              });
       BeanUtils.copyProperties(vvs, sequence);
       sequenceList.add(sequence);
     }
