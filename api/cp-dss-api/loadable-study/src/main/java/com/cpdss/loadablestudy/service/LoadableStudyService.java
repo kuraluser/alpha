@@ -2187,6 +2187,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       for (LoadableStudyPortRotation portRotation : dischargingPorts) {
         if (!request.getDischargingPortIdsList().contains(portRotation.getPortXId())) {
           portRotation.setActive(false);
+          onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+              loadableStudy, portRotation.getPortXId());
           List<SynopticalTable> synopticalEntities = portRotation.getSynopticalTable();
           if (null != synopticalEntities && !synopticalEntities.isEmpty()) {
             synopticalEntities.forEach(entity -> entity.setIsActive(false));
@@ -5579,6 +5581,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (loadableStudyOpt.isPresent()) {
         this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
         this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
+        this.validateLoadableStudyWithCommingle(loadableStudyOpt.get());
         ModelMapper modelMapper = new ModelMapper();
         com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
             new com.cpdss.loadablestudy.domain.LoadableStudy();
@@ -5679,6 +5682,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /** @param loadableStudy void */
+  private void validateLoadableStudyWithCommingle(LoadableStudy loadableStudy)
+      throws GenericServiceException {
+    List<CargoNomination> cargoNominations =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudy.getId(), true);
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
+        commingleCargoRepository.findByLoadableStudyXIdAndPurposeXidAndIsActive(
+            loadableStudy.getId(), 2L, true);
+    if (!cargoNominations.isEmpty() && !commingleCargos.isEmpty()) {
+      BigDecimal cargoSum =
+          cargoNominations.stream().map(CargoNomination::getQuantity).reduce(BigDecimal::add).get();
+      BigDecimal commingleCargoSum =
+          commingleCargos.stream()
+              .map(com.cpdss.loadablestudy.entity.CommingleCargo::getQuantity)
+              .reduce(BigDecimal::add)
+              .get();
+      if (commingleCargoSum.compareTo(cargoSum) == 1) {
+        log.info("commingle quanity is gerater for LS - {}", loadableStudy.getId());
+        throw new GenericServiceException(
+            "Commingle quanity is gerater for LS - {}" + loadableStudy.getId(),
+            CommonErrorCodes.E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
     }
   }
 
