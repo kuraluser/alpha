@@ -3348,11 +3348,11 @@ public final class Common {
     boolean getDisable();
 
     /**
-     * <code>bool disableInSettigs = 4;</code>
+     * <code>bool displayInSettings = 4;</code>
      *
-     * @return The disableInSettigs.
+     * @return The displayInSettings.
      */
-    boolean getDisableInSettigs();
+    boolean getDisplayInSettings();
 
     /**
      * <code>string ruleType = 5;</code>
@@ -3404,6 +3404,13 @@ public final class Common {
      * @return The bytes for vesselRuleXId.
      */
     com.google.protobuf.ByteString getVesselRuleXIdBytes();
+
+    /**
+     * <code>bool isHardRule = 9;</code>
+     *
+     * @return The isHardRule.
+     */
+    boolean getIsHardRule();
   }
   /** Protobuf type {@code Rules} */
   public static final class Rules extends com.google.protobuf.GeneratedMessageV3
@@ -3473,7 +3480,7 @@ public final class Common {
               }
             case 32:
               {
-                disableInSettigs_ = input.readBool();
+                displayInSettings_ = input.readBool();
                 break;
               }
             case 42:
@@ -3507,6 +3514,11 @@ public final class Common {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 vesselRuleXId_ = s;
+                break;
+              }
+            case 72:
+              {
+                isHardRule_ = input.readBool();
                 break;
               }
             default:
@@ -3601,15 +3613,15 @@ public final class Common {
       return disable_;
     }
 
-    public static final int DISABLEINSETTIGS_FIELD_NUMBER = 4;
-    private boolean disableInSettigs_;
+    public static final int DISPLAYINSETTINGS_FIELD_NUMBER = 4;
+    private boolean displayInSettings_;
     /**
-     * <code>bool disableInSettigs = 4;</code>
+     * <code>bool displayInSettings = 4;</code>
      *
-     * @return The disableInSettigs.
+     * @return The displayInSettings.
      */
-    public boolean getDisableInSettigs() {
-      return disableInSettigs_;
+    public boolean getDisplayInSettings() {
+      return displayInSettings_;
     }
 
     public static final int RULETYPE_FIELD_NUMBER = 5;
@@ -3741,6 +3753,17 @@ public final class Common {
       }
     }
 
+    public static final int ISHARDRULE_FIELD_NUMBER = 9;
+    private boolean isHardRule_;
+    /**
+     * <code>bool isHardRule = 9;</code>
+     *
+     * @return The isHardRule.
+     */
+    public boolean getIsHardRule() {
+      return isHardRule_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -3764,8 +3787,8 @@ public final class Common {
       if (disable_ != false) {
         output.writeBool(3, disable_);
       }
-      if (disableInSettigs_ != false) {
-        output.writeBool(4, disableInSettigs_);
+      if (displayInSettings_ != false) {
+        output.writeBool(4, displayInSettings_);
       }
       if (!getRuleTypeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, ruleType_);
@@ -3778,6 +3801,9 @@ public final class Common {
       }
       if (!getVesselRuleXIdBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, vesselRuleXId_);
+      }
+      if (isHardRule_ != false) {
+        output.writeBool(9, isHardRule_);
       }
       unknownFields.writeTo(output);
     }
@@ -3797,8 +3823,8 @@ public final class Common {
       if (disable_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(3, disable_);
       }
-      if (disableInSettigs_ != false) {
-        size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, disableInSettigs_);
+      if (displayInSettings_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, displayInSettings_);
       }
       if (!getRuleTypeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, ruleType_);
@@ -3811,6 +3837,9 @@ public final class Common {
       }
       if (!getVesselRuleXIdBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, vesselRuleXId_);
+      }
+      if (isHardRule_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, isHardRule_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -3830,11 +3859,12 @@ public final class Common {
       if (!getId().equals(other.getId())) return false;
       if (getEnable() != other.getEnable()) return false;
       if (getDisable() != other.getDisable()) return false;
-      if (getDisableInSettigs() != other.getDisableInSettigs()) return false;
+      if (getDisplayInSettings() != other.getDisplayInSettings()) return false;
       if (!getRuleType().equals(other.getRuleType())) return false;
       if (!getInputsList().equals(other.getInputsList())) return false;
       if (!getRuleTemplateId().equals(other.getRuleTemplateId())) return false;
       if (!getVesselRuleXId().equals(other.getVesselRuleXId())) return false;
+      if (getIsHardRule() != other.getIsHardRule()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3852,8 +3882,8 @@ public final class Common {
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getEnable());
       hash = (37 * hash) + DISABLE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDisable());
-      hash = (37 * hash) + DISABLEINSETTIGS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDisableInSettigs());
+      hash = (37 * hash) + DISPLAYINSETTINGS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDisplayInSettings());
       hash = (37 * hash) + RULETYPE_FIELD_NUMBER;
       hash = (53 * hash) + getRuleType().hashCode();
       if (getInputsCount() > 0) {
@@ -3864,6 +3894,8 @@ public final class Common {
       hash = (53 * hash) + getRuleTemplateId().hashCode();
       hash = (37 * hash) + VESSELRULEXID_FIELD_NUMBER;
       hash = (53 * hash) + getVesselRuleXId().hashCode();
+      hash = (37 * hash) + ISHARDRULE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsHardRule());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4009,7 +4041,7 @@ public final class Common {
 
         disable_ = false;
 
-        disableInSettigs_ = false;
+        displayInSettings_ = false;
 
         ruleType_ = "";
 
@@ -4022,6 +4054,8 @@ public final class Common {
         ruleTemplateId_ = "";
 
         vesselRuleXId_ = "";
+
+        isHardRule_ = false;
 
         return this;
       }
@@ -4053,7 +4087,7 @@ public final class Common {
         result.id_ = id_;
         result.enable_ = enable_;
         result.disable_ = disable_;
-        result.disableInSettigs_ = disableInSettigs_;
+        result.displayInSettings_ = displayInSettings_;
         result.ruleType_ = ruleType_;
         if (inputsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
@@ -4066,6 +4100,7 @@ public final class Common {
         }
         result.ruleTemplateId_ = ruleTemplateId_;
         result.vesselRuleXId_ = vesselRuleXId_;
+        result.isHardRule_ = isHardRule_;
         onBuilt();
         return result;
       }
@@ -4127,8 +4162,8 @@ public final class Common {
         if (other.getDisable() != false) {
           setDisable(other.getDisable());
         }
-        if (other.getDisableInSettigs() != false) {
-          setDisableInSettigs(other.getDisableInSettigs());
+        if (other.getDisplayInSettings() != false) {
+          setDisplayInSettings(other.getDisplayInSettings());
         }
         if (!other.getRuleType().isEmpty()) {
           ruleType_ = other.ruleType_;
@@ -4168,6 +4203,9 @@ public final class Common {
         if (!other.getVesselRuleXId().isEmpty()) {
           vesselRuleXId_ = other.vesselRuleXId_;
           onChanged();
+        }
+        if (other.getIsHardRule() != false) {
+          setIsHardRule(other.getIsHardRule());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4342,35 +4380,35 @@ public final class Common {
         return this;
       }
 
-      private boolean disableInSettigs_;
+      private boolean displayInSettings_;
       /**
-       * <code>bool disableInSettigs = 4;</code>
+       * <code>bool displayInSettings = 4;</code>
        *
-       * @return The disableInSettigs.
+       * @return The displayInSettings.
        */
-      public boolean getDisableInSettigs() {
-        return disableInSettigs_;
+      public boolean getDisplayInSettings() {
+        return displayInSettings_;
       }
       /**
-       * <code>bool disableInSettigs = 4;</code>
+       * <code>bool displayInSettings = 4;</code>
        *
-       * @param value The disableInSettigs to set.
+       * @param value The displayInSettings to set.
        * @return This builder for chaining.
        */
-      public Builder setDisableInSettigs(boolean value) {
+      public Builder setDisplayInSettings(boolean value) {
 
-        disableInSettigs_ = value;
+        displayInSettings_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>bool disableInSettigs = 4;</code>
+       * <code>bool displayInSettings = 4;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearDisableInSettigs() {
+      public Builder clearDisplayInSettings() {
 
-        disableInSettigs_ = false;
+        displayInSettings_ = false;
         onChanged();
         return this;
       }
@@ -4805,6 +4843,39 @@ public final class Common {
         checkByteStringIsUtf8(value);
 
         vesselRuleXId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private boolean isHardRule_;
+      /**
+       * <code>bool isHardRule = 9;</code>
+       *
+       * @return The isHardRule.
+       */
+      public boolean getIsHardRule() {
+        return isHardRule_;
+      }
+      /**
+       * <code>bool isHardRule = 9;</code>
+       *
+       * @param value The isHardRule to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsHardRule(boolean value) {
+
+        isHardRule_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isHardRule = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsHardRule() {
+
+        isHardRule_ = false;
         onChanged();
         return this;
       }
@@ -6506,18 +6577,18 @@ public final class Common {
           + "\030\003 \001(\003\022\024\n\014quantityBbls\030\004 \001(\t\022\022\n\nquantity"
           + "Mt\030\005 \001(\t\022\022\n\nquantityKl\030\006 \001(\t\022\013\n\003api\030\007 \001("
           + "\t\022\023\n\013temperature\030\010 \001(\t\"2\n\tRulePlans\022\016\n\006h"
-          + "eader\030\001 \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\255\001\n\005R"
+          + "eader\030\001 \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\302\001\n\005R"
           + "ules\022\n\n\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disa"
-          + "ble\030\003 \001(\010\022\030\n\020disableInSettigs\030\004 \001(\010\022\020\n\010r"
-          + "uleType\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInp"
-          + "uts\022\026\n\016ruleTemplateId\030\007 \001(\t\022\025\n\rvesselRul"
-          + "eXId\030\010 \001(\t\"\206\001\n\013RulesInputs\022\016\n\006prefix\030\001 \001"
-          + "(\t\022\024\n\014defaultValue\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\013"
-          + "\n\003max\030\004 \001(\t\022\013\n\003min\030\005 \001(\t\022\r\n\005value\030\006 \001(\t\022"
-          + "\016\n\006suffix\030\007 \001(\t\022\n\n\002id\030\010 \001(\t*E\n\rPLANNING_"
-          + "TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADABLE_STUDY\020\001\022\023\n"
-          + "\017DISCHARGE_STUDY\020\002B\036\n\032com.cpdss.common.g"
-          + "eneratedP\000b\006proto3"
+          + "ble\030\003 \001(\010\022\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010"
+          + "ruleType\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesIn"
+          + "puts\022\026\n\016ruleTemplateId\030\007 \001(\t\022\025\n\rvesselRu"
+          + "leXId\030\010 \001(\t\022\022\n\nisHardRule\030\t \001(\010\"\206\001\n\013Rule"
+          + "sInputs\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030"
+          + "\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030"
+          + "\005 \001(\t\022\r\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002"
+          + "id\030\010 \001(\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022"
+          + "\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B"
+          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -6558,11 +6629,12 @@ public final class Common {
               "Id",
               "Enable",
               "Disable",
-              "DisableInSettigs",
+              "DisplayInSettings",
               "RuleType",
               "Inputs",
               "RuleTemplateId",
               "VesselRuleXId",
+              "IsHardRule",
             });
     internal_static_RulesInputs_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_RulesInputs_fieldAccessorTable =

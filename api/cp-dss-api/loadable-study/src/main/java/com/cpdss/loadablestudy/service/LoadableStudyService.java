@@ -158,6 +158,8 @@ import com.cpdss.loadablestudy.domain.OperationsTable;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.PortOperationTable;
 import com.cpdss.loadablestudy.domain.PortOperationsTableTitles;
+import com.cpdss.loadablestudy.domain.RuleMasterSection;
+import com.cpdss.loadablestudy.domain.RuleType;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.domain.SheetCoordinates;
 import com.cpdss.loadablestudy.domain.StowagePlanTableTitles;
@@ -416,7 +418,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_ENDED = 17L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_ENDED = 19L;
-  
+
   private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
@@ -13034,6 +13036,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.newBuilder();
     try {
+      if (!RuleMasterSection.Plan.getId().equals(request.getSectionId())) {
+        throw new GenericServiceException(
+            "Planning can be fetched against loadble study",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
       Optional<LoadableStudy> loadableStudy =
           loadableStudyRepository.findByIdAndIsActiveAndVesselXId(
               request.getLoadableStudyId(), true, request.getVesselId());
@@ -13066,17 +13074,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             }
                             loadableStudyRules.setLoadableStudy(loadableStudy.get());
                             loadableStudyRules.setIsActive(true);
-                            Optional.ofNullable(rule.getDisableInSettigs())
+                            Optional.ofNullable(rule.getDisplayInSettings())
                                 .ifPresent(loadableStudyRules::setDisplayInSettings);
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(loadableStudyRules::setIsEnable);
+                            Optional.ofNullable(rule.getIsHardRule())
+                                .ifPresent(loadableStudyRules::setIsHardRule);
                             loadableStudyRules.setVesselXId(request.getVesselId());
                             LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
-                            //
-                            // Optional.ofNullable(rule.getRuleType())
-                            //
-                            // .ifPresent(ruleTypeXId ->
-                            // finalLoadableStudyRules.setRuleTypeXId(Long.parseLong(ruleTypeXId)));
+
+                            if (rule.getRuleType() != null
+                                && rule.getRuleType()
+                                    .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
+                              loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
+                            }
+                            if (rule.getRuleType() != null
+                                && rule.getRuleType()
+                                    .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
+                              loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
+                            }
                             Optional.ofNullable(rule.getVesselRuleXId())
                                 .ifPresent(
                                     vesselRuleXId ->
@@ -13117,133 +13133,56 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           });
                 });
         loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
-      } else {
-        VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
-        vesselRuleBuilder.setSectionId(request.getSectionId());
-        vesselRuleBuilder.setVesselId(request.getVesselId());
-        vesselRuleBuilder.setIsNoDefaultRule(true);
-        VesselRuleReply vesselRuleReply =
-            this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
-        if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
-          throw new GenericServiceException(
-              "failed to get loadable study rule Details ",
-              vesselRuleReply.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(
-                  Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
-        } else {
-          List<Long> ruleListId =
-              vesselRuleReply.getRulePlanList().stream()
-                  .flatMap(rulesList -> rulesList.getRulesList().stream())
-                  .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
-                  .collect(Collectors.toList());
-          List<LoadableStudyRules> loadableStudyRulesList =
-              loadableStudyRuleRepository
-                  .findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdIn(
-                      loadableStudy.get(), request.getVesselId(), true, ruleListId);
-          if (loadableStudyRulesList.size() > 0) {
-            log.info("Fetch  loadable study rules");
-            vesselRuleReply
-                .getRulePlanList()
-                .forEach(
-                    rulePlans -> {
-                      RulePlans.Builder rulePlanBuider = RulePlans.newBuilder();
-                      Optional.ofNullable(rulePlans.getHeader())
-                          .ifPresent(item -> rulePlanBuider.setHeader(item));
-                      List<Long> ruleId =
-                          rulePlans.getRulesList().stream()
-                              .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
-                              .collect(Collectors.toList());
-                      List<LoadableStudyRules> lStudyRulesList =
-                          loadableStudyRulesList.stream()
-                              .filter(lRuleList -> ruleId.contains(lRuleList.getVesselRuleXId()))
-                              .collect(Collectors.toList());
+      }
 
-                      for (int ruleIndex = 0; ruleIndex < lStudyRulesList.size(); ruleIndex++) {
-                        Rules.Builder rulesBuilder = Rules.newBuilder();
-                        Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsEnable())
-                            .ifPresent(item -> rulesBuilder.setEnable(item));
-                        Optional.ofNullable(lStudyRulesList.get(ruleIndex).getDisplayInSettings())
-                            .ifPresent(item -> rulesBuilder.setDisableInSettigs(item));
-                        Optional.ofNullable(lStudyRulesList.get(ruleIndex).getId())
-                            .ifPresent(item -> rulesBuilder.setId(String.valueOf(item)));
-                        //
-                        // Optional.ofNullable(lStudyRulesList.get(ruleIndex).getRuleTypeXId()).ifPresent(item -> rulesBuilder.setRuleType(item));
-                        Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXId())
-                            .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
-                        RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
-                        for (int inputIndex = 0;
-                            inputIndex
-                                < lStudyRulesList
-                                    .get(ruleIndex)
-                                    .getLoadableStudyRuleInputs()
-                                    .size();
-                            inputIndex++) {
-                          RulesInputs.Builder finalRuleInput = ruleInput;
-                          Optional.ofNullable(
-                                  lStudyRulesList
-                                      .get(ruleIndex)
-                                      .getLoadableStudyRuleInputs()
-                                      .get(inputIndex)
-                                      .getDefaultValue())
-                              .ifPresent(item -> finalRuleInput.setDefaultValue(item));
-                          Optional.ofNullable(
-                                  lStudyRulesList
-                                      .get(ruleIndex)
-                                      .getLoadableStudyRuleInputs()
-                                      .get(inputIndex)
-                                      .getPrefix())
-                              .ifPresent(item -> finalRuleInput.setPrefix(item));
-                          Optional.ofNullable(
-                                  lStudyRulesList
-                                      .get(ruleIndex)
-                                      .getLoadableStudyRuleInputs()
-                                      .get(inputIndex)
-                                      .getMinValue())
-                              .ifPresent(item -> finalRuleInput.setMin(item));
-                          Optional.ofNullable(
-                                  lStudyRulesList
-                                      .get(ruleIndex)
-                                      .getLoadableStudyRuleInputs()
-                                      .get(inputIndex)
-                                      .getMaxValue())
-                              .ifPresent(item -> finalRuleInput.setMax(item));
-                          Optional.ofNullable(
-                                  lStudyRulesList
-                                      .get(ruleIndex)
-                                      .getLoadableStudyRuleInputs()
-                                      .get(inputIndex)
-                                      .getTypeValue())
-                              .ifPresent(item -> finalRuleInput.setType(item));
-                          Optional.ofNullable(
-                                  lStudyRulesList
-                                      .get(ruleIndex)
-                                      .getLoadableStudyRuleInputs()
-                                      .get(inputIndex)
-                                      .getSuffix())
-                              .ifPresent(item -> finalRuleInput.setSuffix(item));
-                          Optional.ofNullable(
-                                  lStudyRulesList
-                                      .get(ruleIndex)
-                                      .getLoadableStudyRuleInputs()
-                                      .get(inputIndex)
-                                      .getId())
-                              .ifPresent(item -> finalRuleInput.setId(String.valueOf(item)));
-                          rulesBuilder.addInputs(finalRuleInput.build());
-                        }
-                        rulePlanBuider.addRules(rulesBuilder.build());
-                      }
-                      builder.addRulePlan(rulePlanBuider);
-                    });
-          } else {
-            System.out.println(ruleListId);
-            log.info("Fetch default loadable study rules : ");
-            vesselRuleReply
-                .getRulePlanList()
-                .forEach(
-                    rulePlans -> {
-                      builder.addRulePlan(rulePlans);
-                    });
-          }
+      VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+      vesselRuleBuilder.setSectionId(request.getSectionId());
+      vesselRuleBuilder.setVesselId(request.getVesselId());
+      vesselRuleBuilder.setIsNoDefaultRule(true);
+      VesselRuleReply vesselRuleReply =
+          this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+      if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "failed to get loadable study rule Details ",
+            vesselRuleReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+      } else {
+        List<Long> ruleListId =
+            vesselRuleReply.getRulePlanList().stream()
+                .flatMap(rulesList -> rulesList.getRulesList().stream())
+                .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
+                .collect(Collectors.toList());
+        List<LoadableStudyRules> loadableStudyRulesList =
+            loadableStudyRuleRepository
+                .findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdIn(
+                    loadableStudy.get(), request.getVesselId(), true, ruleListId);
+        if (loadableStudyRulesList.size() > 0) {
+          log.info("Fetch  loadable study rules");
+          vesselRuleReply
+              .getRulePlanList()
+              .forEach(
+                  rulePlans -> {
+                    RulePlans.Builder rulePlanBuider = RulePlans.newBuilder();
+                    Optional.ofNullable(rulePlans.getHeader())
+                        .ifPresent(item -> rulePlanBuider.setHeader(item));
+                    List<Long> ruleId =
+                        rulePlans.getRulesList().stream()
+                            .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
+                            .collect(Collectors.toList());
+                    List<LoadableStudyRules> lStudyRulesList =
+                        loadableStudyRulesList.stream()
+                            .filter(lRuleList -> ruleId.contains(lRuleList.getVesselRuleXId()))
+                            .collect(Collectors.toList());
+                    buildResponseForRules(lStudyRulesList, ruleId, rulePlanBuider, builder);
+                  });
+        } else {
+          log.info("Fetch default loadable study rules : ");
+          vesselRuleReply
+              .getRulePlanList()
+              .forEach(
+                  rulePlans -> {
+                    builder.addRulePlan(rulePlans);
+                  });
         }
       }
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -13259,5 +13198,110 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private void buildResponseForRules(
+      List<LoadableStudyRules> lStudyRulesList,
+      List<Long> ruleId,
+      com.cpdss.common.generated.Common.RulePlans.Builder rulePlanBuider,
+      com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder builder) {
+    for (int ruleIndex = 0; ruleIndex < lStudyRulesList.size(); ruleIndex++) {
+      Rules.Builder rulesBuilder = Rules.newBuilder();
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsEnable())
+          .ifPresent(item -> rulesBuilder.setEnable(item));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getDisplayInSettings())
+          .ifPresent(item -> rulesBuilder.setDisplayInSettings(item));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getId())
+          .ifPresent(item -> rulesBuilder.setId(String.valueOf(item)));
+      if (lStudyRulesList.get(ruleIndex).getRuleTypeXId() != null
+          && lStudyRulesList.get(ruleIndex).getRuleTypeXId().equals(RuleType.ABSOLUTE.getId())) {
+        rulesBuilder.setRuleType(RuleType.ABSOLUTE.getRuleType());
+      }
+      if (lStudyRulesList.get(ruleIndex).getRuleTypeXId() != null
+          && lStudyRulesList.get(ruleIndex).getRuleTypeXId().equals(RuleType.PREFERABLE.getId())) {
+        rulesBuilder.setRuleType(RuleType.PREFERABLE.getRuleType());
+      }
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsHardRule())
+          .ifPresent(item -> rulesBuilder.setIsHardRule(item));
+      if (lStudyRulesList.get(ruleIndex).getIsHardRule() == null) {
+        rulesBuilder.setIsHardRule(false);
+      }
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXId())
+          .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
+      RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
+      for (int inputIndex = 0;
+          inputIndex < lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().size();
+          inputIndex++) {
+        RulesInputs.Builder finalRuleInput = ruleInput;
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getDefaultValue())
+            .ifPresent(item -> finalRuleInput.setDefaultValue(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getPrefix())
+            .ifPresent(item -> finalRuleInput.setPrefix(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getMinValue())
+            .ifPresent(item -> finalRuleInput.setMin(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getMaxValue())
+            .ifPresent(item -> finalRuleInput.setMax(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue())
+            .ifPresent(item -> finalRuleInput.setType(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getSuffix())
+            .ifPresent(item -> finalRuleInput.setSuffix(item));
+        Optional.ofNullable(
+                lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().get(inputIndex).getId())
+            .ifPresent(item -> finalRuleInput.setId(String.valueOf(item)));
+        if (lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue()
+                != null
+            && lStudyRulesList
+                .get(ruleIndex)
+                .getLoadableStudyRuleInputs()
+                .get(inputIndex)
+                .getTypeValue()
+                .equalsIgnoreCase(com.cpdss.loadablestudy.domain.TypeValue.BOOLEAN.getType())
+            && lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getDefaultValue()
+                == null) {
+          finalRuleInput.setDefaultValue("false");
+        }
+        rulesBuilder.addInputs(finalRuleInput.build());
+      }
+      rulePlanBuider.addRules(rulesBuilder.build());
+    }
+    builder.addRulePlan(rulePlanBuider);
   }
 }

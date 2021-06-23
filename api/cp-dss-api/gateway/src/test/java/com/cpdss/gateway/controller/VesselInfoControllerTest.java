@@ -132,11 +132,12 @@ public class VesselInfoControllerTest {
         new ArrayList<com.cpdss.gateway.domain.RulesInputs>();
     RulePlans rulePlan = new RulePlans();
     Rules rule = new Rules();
-    rule.setDisableInSettigs(true);
+    rule.setDisplayInSettings(true);
     rule.setEnable(true);
     // rule.setId("1");
     rule.setRuleTemplateId("701");
     rule.setRuleType("Absolute");
+    rule.setIsHardRule(false);
     com.cpdss.gateway.domain.RulesInputs input = new com.cpdss.gateway.domain.RulesInputs();
     input.setPrefix("Condensate cargo can only be put in a tank for");
     input.setType("Number");
