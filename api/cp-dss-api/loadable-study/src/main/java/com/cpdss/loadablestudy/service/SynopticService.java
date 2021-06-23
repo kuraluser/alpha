@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * Master Service For Synoptic Related Operations
@@ -171,10 +172,14 @@ public class SynopticService {
         this.synopticalTableRepository.findByIdAndIsActive(request.getSynopticalTableId(), true);
     if (synopticalOpt.isPresent()) {
       SynopticalTable table = synopticalOpt.get();
-      table.setTimeOfSunrise(
-          LocalTime.from(DateTimeFormatter.ofPattern("HH:mm").parse(request.getTimeOfSunrise())));
-      table.setTimeOfSunSet(
-          LocalTime.from(DateTimeFormatter.ofPattern("HH:mm").parse(request.getTimeOfSunset())));
+      if (!StringUtils.isEmpty(request.getTimeOfSunrise())) {
+        table.setTimeOfSunrise(
+            LocalTime.from(DateTimeFormatter.ofPattern("HH:mm").parse(request.getTimeOfSunrise())));
+      }
+      if (!StringUtils.isEmpty(request.getTimeOfSunset())) {
+        table.setTimeOfSunSet(
+            LocalTime.from(DateTimeFormatter.ofPattern("HH:mm").parse(request.getTimeOfSunset())));
+      }
       this.synopticalTableRepository.save(table);
     } else
       throw new Exception("Cannot find synoptical table with id " + request.getSynopticalTableId());
