@@ -49673,6 +49673,13 @@ public final class VesselInfo {
         getRulePlanOrBuilderList();
     /** <code>repeated .RulePlans rulePlan = 3;</code> */
     com.cpdss.common.generated.Common.RulePlansOrBuilder getRulePlanOrBuilder(int index);
+
+    /**
+     * <code>bool isNoDefaultRule = 4;</code>
+     *
+     * @return The isNoDefaultRule.
+     */
+    boolean getIsNoDefaultRule();
   }
   /** Protobuf type {@code VesselRuleRequest} */
   public static final class VesselRuleRequest extends com.google.protobuf.GeneratedMessageV3
@@ -49739,6 +49746,11 @@ public final class VesselInfo {
                 rulePlan_.add(
                     input.readMessage(
                         com.cpdss.common.generated.Common.RulePlans.parser(), extensionRegistry));
+                break;
+              }
+            case 32:
+              {
+                isNoDefaultRule_ = input.readBool();
                 break;
               }
             default:
@@ -49823,6 +49835,17 @@ public final class VesselInfo {
       return rulePlan_.get(index);
     }
 
+    public static final int ISNODEFAULTRULE_FIELD_NUMBER = 4;
+    private boolean isNoDefaultRule_;
+    /**
+     * <code>bool isNoDefaultRule = 4;</code>
+     *
+     * @return The isNoDefaultRule.
+     */
+    public boolean getIsNoDefaultRule() {
+      return isNoDefaultRule_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -49846,6 +49869,9 @@ public final class VesselInfo {
       for (int i = 0; i < rulePlan_.size(); i++) {
         output.writeMessage(3, rulePlan_.get(i));
       }
+      if (isNoDefaultRule_ != false) {
+        output.writeBool(4, isNoDefaultRule_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -49863,6 +49889,9 @@ public final class VesselInfo {
       }
       for (int i = 0; i < rulePlan_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, rulePlan_.get(i));
+      }
+      if (isNoDefaultRule_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, isNoDefaultRule_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -49883,6 +49912,7 @@ public final class VesselInfo {
       if (getVesselId() != other.getVesselId()) return false;
       if (getSectionId() != other.getSectionId()) return false;
       if (!getRulePlanList().equals(other.getRulePlanList())) return false;
+      if (getIsNoDefaultRule() != other.getIsNoDefaultRule()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -49902,6 +49932,8 @@ public final class VesselInfo {
         hash = (37 * hash) + RULEPLAN_FIELD_NUMBER;
         hash = (53 * hash) + getRulePlanList().hashCode();
       }
+      hash = (37 * hash) + ISNODEFAULTRULE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsNoDefaultRule());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -50053,6 +50085,8 @@ public final class VesselInfo {
         } else {
           rulePlanBuilder_.clear();
         }
+        isNoDefaultRule_ = false;
+
         return this;
       }
 
@@ -50091,6 +50125,7 @@ public final class VesselInfo {
         } else {
           result.rulePlan_ = rulePlanBuilder_.build();
         }
+        result.isNoDefaultRule_ = isNoDefaultRule_;
         onBuilt();
         return result;
       }
@@ -50175,6 +50210,9 @@ public final class VesselInfo {
               rulePlanBuilder_.addAllMessages(other.rulePlan_);
             }
           }
+        }
+        if (other.getIsNoDefaultRule() != false) {
+          setIsNoDefaultRule(other.getIsNoDefaultRule());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -50479,6 +50517,39 @@ public final class VesselInfo {
           rulePlan_ = null;
         }
         return rulePlanBuilder_;
+      }
+
+      private boolean isNoDefaultRule_;
+      /**
+       * <code>bool isNoDefaultRule = 4;</code>
+       *
+       * @return The isNoDefaultRule.
+       */
+      public boolean getIsNoDefaultRule() {
+        return isNoDefaultRule_;
+      }
+      /**
+       * <code>bool isNoDefaultRule = 4;</code>
+       *
+       * @param value The isNoDefaultRule to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsNoDefaultRule(boolean value) {
+
+        isNoDefaultRule_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isNoDefaultRule = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsNoDefaultRule() {
+
+        isNoDefaultRule_ = false;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -55743,52 +55814,52 @@ public final class VesselInfo {
           + "x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 "
           + "\001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pumpName\030\004 \001("
           + "\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCapacity\030\006 \001("
-          + "\t\"V\n\021VesselRuleRequest\022\020\n\010vesselId\030\001 \001(\003"
+          + "\t\"o\n\021VesselRuleRequest\022\020\n\010vesselId\030\001 \001(\003"
           + "\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003(\0132\n."
-          + "RulePlans\"X\n\017VesselRuleReply\022\'\n\016response"
-          + "Status\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePla"
-          + "n\030\002 \003(\0132\n.RulePlans\"i\n\030VesselValveSequen"
-          + "ceReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
-          + "seStatus\022$\n\006entity\030\002 \003(\0132\024.VesselValveSe"
-          + "quence\"\255\004\n\023VesselValveSequence\022\n\n\002id\030\001 \001"
-          + "(\003\022\025\n\risCommonValve\030\002 \001(\010\022\022\n\npipelineId\030"
-          + "\003 \001(\005\022\025\n\rpipelineColor\030\004 \001(\t\022\024\n\014pipeline"
-          + "Name\030\005 \001(\t\022\024\n\014pipelineType\030\006 \001(\t\022\026\n\016sequ"
-          + "enceNumber\030\007 \001(\t\022\033\n\023sequenceOperationId\030"
-          + "\010 \001(\005\022\035\n\025sequenceOperationName\030\t \001(\t\022\026\n\016"
-          + "sequenceTypeId\030\n \001(\005\022\030\n\020sequenceTypeName"
-          + "\030\013 \001(\t\022\037\n\027sequenceVesselMappingId\030\014 \001(\005\022"
-          + "\025\n\rtankShortName\030\r \001(\t\022\025\n\rvalveCategory\030"
-          + "\016 \001(\t\022\027\n\017valveCategoryId\030\017 \001(\005\022\023\n\013valveN"
-          + "umber\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveT"
-          + "ypeId\030\022 \001(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nve"
-          + "sselName\030\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\034\n"
-          + "\024vesselValveMappingId\030\026 \001(\005\022\021\n\tvesselXid"
-          + "\030\027 \001(\0032\231\007\n\021VesselInfoService\0228\n\026GetAllVe"
-          + "sselsByCompany\022\016.VesselRequest\032\014.VesselR"
-          + "eply\"\000\0226\n\024GetVesselDetailsById\022\016.VesselR"
-          + "equest\032\014.VesselReply\"\000\0220\n\016GetVesselTanks"
-          + "\022\016.VesselRequest\032\014.VesselReply\"\000\0225\n\023GetV"
-          + "esselCargoTanks\022\016.VesselRequest\032\014.Vessel"
-          + "Reply\"\000\022A\n\027GetVesselDetailsForAlgo\022\022.Ves"
-          + "selAlgoRequest\032\020.VesselAlgoReply\"\000\022C\n!Ge"
-          + "tVesselDetailForSynopticalTable\022\016.Vessel"
-          + "Request\032\014.VesselReply\"\000\022;\n\031GetVesselDeta"
-          + "ilByVesselId\022\016.VesselRequest\032\014.VesselRep"
-          + "ly\"\000\022A\n\025GetVesselInfoByPaging\022\030.VesselRe"
-          + "questWithPaging\032\014.VesselReply\"\000\022C\n\026GetVe"
-          + "sselInfoBytankIds\022\022.VesselTankRequest\032\023."
-          + "VesselTankResponse\"\000\022C\n\032GetDWTFromVessel"
-          + "ByVesselId\022\021.VesselDWTRequest\032\022.VesselDW"
-          + "TResponse\022@\n\027GetVesselInfoByVesselId\022\020.V"
-          + "esselIdRequest\032\021.VesselIdResponse\"\000\022D\n\030G"
-          + "etVesselPumpsByVesselId\022\020.VesselIdReques"
-          + "t\032\024.VesselPumpsResponse\"\000\022H\n\036GetRulesByV"
-          + "esselIdAndSectionId\022\022.VesselRuleRequest\032"
-          + "\020.VesselRuleReply\"\000\022E\n\026GetVesselValveSeq"
-          + "uence\022\016.VesselRequest\032\031.VesselValveSeque"
-          + "nceReply\"\000B\036\n\032com.cpdss.common.generated"
-          + "P\000b\006proto3"
+          + "RulePlans\022\027\n\017isNoDefaultRule\030\004 \001(\010\"X\n\017Ve"
+          + "sselRuleReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
+          + "ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RuleP"
+          + "lans\"i\n\030VesselValveSequenceReply\022\'\n\016resp"
+          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022$\n\006ent"
+          + "ity\030\002 \003(\0132\024.VesselValveSequence\"\255\004\n\023Vess"
+          + "elValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonV"
+          + "alve\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipeli"
+          + "neColor\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014p"
+          + "ipelineType\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001("
+          + "\t\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025sequen"
+          + "ceOperationName\030\t \001(\t\022\026\n\016sequenceTypeId\030"
+          + "\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027seque"
+          + "nceVesselMappingId\030\014 \001(\005\022\025\n\rtankShortNam"
+          + "e\030\r \001(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017valveC"
+          + "ategoryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\t"
+          + "valveSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\r"
+          + "valveTypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022"
+          + "\025\n\rvesselTankXid\030\025 \001(\005\022\034\n\024vesselValveMap"
+          + "pingId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\0032\231\007\n\021Vess"
+          + "elInfoService\0228\n\026GetAllVesselsByCompany\022"
+          + "\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024GetVe"
+          + "sselDetailsById\022\016.VesselRequest\032\014.Vessel"
+          + "Reply\"\000\0220\n\016GetVesselTanks\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\0225\n\023GetVesselCargoTanks"
+          + "\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\027GetV"
+          + "esselDetailsForAlgo\022\022.VesselAlgoRequest\032"
+          + "\020.VesselAlgoReply\"\000\022C\n!GetVesselDetailFo"
+          + "rSynopticalTable\022\016.VesselRequest\032\014.Vesse"
+          + "lReply\"\000\022;\n\031GetVesselDetailByVesselId\022\016."
+          + "VesselRequest\032\014.VesselReply\"\000\022A\n\025GetVess"
+          + "elInfoByPaging\022\030.VesselRequestWithPaging"
+          + "\032\014.VesselReply\"\000\022C\n\026GetVesselInfoBytankI"
+          + "ds\022\022.VesselTankRequest\032\023.VesselTankRespo"
+          + "nse\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Ve"
+          + "sselDWTRequest\032\022.VesselDWTResponse\022@\n\027Ge"
+          + "tVesselInfoByVesselId\022\020.VesselIdRequest\032"
+          + "\021.VesselIdResponse\"\000\022D\n\030GetVesselPumpsBy"
+          + "VesselId\022\020.VesselIdRequest\032\024.VesselPumps"
+          + "Response\"\000\022H\n\036GetRulesByVesselIdAndSecti"
+          + "onId\022\022.VesselRuleRequest\032\020.VesselRuleRep"
+          + "ly\"\000\022E\n\026GetVesselValveSequence\022\016.VesselR"
+          + "equest\032\031.VesselValveSequenceReply\"\000B\036\n\032c"
+          + "om.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -56180,7 +56251,7 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselRuleRequest_descriptor,
             new java.lang.String[] {
-              "VesselId", "SectionId", "RulePlan",
+              "VesselId", "SectionId", "RulePlan", "IsNoDefaultRule",
             });
     internal_static_VesselRuleReply_descriptor = getDescriptor().getMessageTypes().get(35);
     internal_static_VesselRuleReply_fieldAccessorTable =
