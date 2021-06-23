@@ -7,7 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
-import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails } from '../../core/models/common.model';
+import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails, ILoadableQuantityCargo } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError, IloadableQuantityCargoDetails, ILoadablePlanCommentsDetails, VALIDATION_AND_SAVE_STATUS, IAlgoResponse } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
@@ -19,7 +19,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
+import { ILoadablePlanSynopticalRecord } from '../models/cargo-planning.model';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { saveAs } from 'file-saver';
@@ -109,7 +109,6 @@ export class LoadablePlanComponent implements OnInit {
   public loadableQuantity: number;
   loadableQuantityCargo: IloadableQuantityCargoDetails[];
   portRotationId: number;
-  validateAndSaveProcessing: boolean;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -158,10 +157,6 @@ export class LoadablePlanComponent implements OnInit {
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
 
-    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
-      this.validateAndSaveProcessing = value.validateAndSaveProcessing;
-    });
-
   }
 
   /**
@@ -181,44 +176,51 @@ export class LoadablePlanComponent implements OnInit {
  * @memberof LoadablePlanComponent
  */
   private swMessageHandler = async event => {
-    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
-      this.globalErrorHandler.sessionOutMessage();
-    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
-      SecurityService.refreshToken(event?.data?.refreshedToken)
+    let isValidStatus = false;
+    if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED , VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED ,  VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS].includes(event.data.statusId)) {
+      isValidStatus = true;
     }
-    if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
-      const urlsplit = this.router.url?.split('/');
-      let  loadablePatternId;
-      if(urlsplit?.length) {
-        loadablePatternId = urlsplit[urlsplit.length - 1];
+    if(isValidStatus) {
+      if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
+        this.globalErrorHandler.sessionOutMessage();
+      } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
+        SecurityService.refreshToken(event?.data?.refreshedToken)
       }
-      if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
-        this.processingMessage();
-        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
-        this.validationPending = false;
-        this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
-      } 
-    } else if (event.data.type === 'loadable-pattern-validation-failed') {
-      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
-        navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
-        this.validationFailed();
-        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED;
-        this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
-        this.validationPending = false;
-        this.getAlgoErrorMessage(true);
-      }
+      if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
+        const urlsplit = this.router.url?.split('/');
+        let  loadablePatternId;
+        if(urlsplit?.length) {
+          loadablePatternId = urlsplit[urlsplit.length - 1];
+        }
+        if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
+          this.processingMessage();
+          this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
+          this.validationPending = false;
+          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+        } 
+      } else if (event.data.type === 'loadable-pattern-validation-failed') {
+        if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+          navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
+          this.validationFailed();
+          this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED;
+          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+          this.validationPending = false;
+          this.getAlgoErrorMessage(true);
+        }
+  
+      } else if (event.data.type === 'loadable-pattern-validation-success') {
+        if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
+          navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
+          this.validationCompleted();
+          this.getLoadablePlanDetails();
+          this.validationPending = false;
+          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+          this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS;
 
-    } else if (event.data.type === 'loadable-pattern-validation-success') {
-      if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
-        navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
-        this.validationCompleted();
-        this.getLoadablePlanDetails();
-        this.validationPending = false;
-        this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
-        this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS;
+        }
       }
+      this.setProcessingLoadableStudyActions();
     }
-    this.setProcessingLoadableStudyActions();
   }
 
   /**

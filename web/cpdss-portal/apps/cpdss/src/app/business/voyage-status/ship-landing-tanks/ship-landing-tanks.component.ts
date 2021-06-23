@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
 import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
-import { IBallastQuantities, ICargoQuantities, IShipBallastTank, IShipBunkerTank, IShipCargoTank } from '../models/voyage-status.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../models/voyage-status.model';
 import { IVoyageStatus } from '../models/voyage-status.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';

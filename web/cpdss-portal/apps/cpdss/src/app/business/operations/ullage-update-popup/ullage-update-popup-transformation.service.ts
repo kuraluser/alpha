@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities } from '../../voyage-status/models/voyage-status.model';
-import { ITank } from '../../core/models/common.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../../voyage-status/models/voyage-status.model';
+import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
+import { ICargoDetail , ICargoDetailValueObject } from '../models/ullage-update-popup.model';
+import { ValueObject } from '../../../shared/models/common.model';
 
 /**
  * Transformation Service for ullage update popup
@@ -130,25 +132,24 @@ export class UllageUpdatePopupTransformationService {
     const columns: IDataTableColumn[] = [
       {
         field: 'tankName',
-        header: 'TANK NAME',        
-      },
-      {
-        field: 'temp',
-        header: 'TEMP.(C)',
-        filter: false,
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
-
+        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_TANK_NAME',        
       },
       {
         field: 'correctedUllage',
-        header: 'ULLAGE',
+        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_RDG_ULLAGE',
         filter: false,
-        filterType: DATATABLE_FILTER_TYPE.TEXT
+        filterType: DATATABLE_FILTER_TYPE.NUMBER
       },
-
+      {
+        field: 'temp',
+        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_TEMP',
+        filter: false,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        editable: true
+      },
       {
         field: 'volume',
-        header: 'QTY',
+        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_QTY',
         filter: false,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
       }
@@ -166,7 +167,7 @@ export class UllageUpdatePopupTransformationService {
     const columns: IDataTableColumn[] = [
       {
         field: 'tankName',
-        header: 'TANK NAME',
+        header: 'LOADABLE_PLAN_BALLAST_TANK_NAME',
         filter: false,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
@@ -177,7 +178,7 @@ export class UllageUpdatePopupTransformationService {
       },
       {
         field: 'correctedUllage',
-        header: 'ULLAGE',
+        header: 'LOADABLE_PLAN_BALLAST_ULLAGE',
         filter: false,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
@@ -189,7 +190,7 @@ export class UllageUpdatePopupTransformationService {
 
       {
         field: 'volume',
-        header: 'QTY',
+        header: 'LOADABLE_PLAN_BALLAST_QTY',
         filter: false,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
@@ -212,7 +213,7 @@ export class UllageUpdatePopupTransformationService {
     const columns: IDataTableColumn[] = [
       {
         field: 'shortName',
-        header: 'TANK NAME',
+        header: 'LOADABLE_PLAN_BUNKER_TANK_NAME',
         filter: false,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
@@ -223,7 +224,7 @@ export class UllageUpdatePopupTransformationService {
       },
       {
         field: 'correctedUllage',
-        header: 'ULLAGE',
+        header: 'LOADABLE_PLAN_BUNKER_ULLAGE',
         filter: false,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
@@ -235,7 +236,7 @@ export class UllageUpdatePopupTransformationService {
 
       {
         field: 'volume',
-        header: 'QTY',
+        header: 'LOADABLE_PLAN_BUNKER_QTY',
         filter: false,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
@@ -248,4 +249,119 @@ export class UllageUpdatePopupTransformationService {
     ];
     return columns;
   }
+
+  /**
+   * get B/L Figure columns
+   * @returns {IDataTableColumn}
+   * @memberof UllageUpdatePopupTransformationService
+   */
+   getBLFigureColumns():IDataTableColumn[] {
+    return [
+      {
+        field: 'cargoName',
+        header: 'LOADABLE_PLAN_BL_FIGURE_CARGO_NAME',
+        editable: false
+      },
+      {
+        field: 'blRefNo',
+        header: 'LOADABLE_PLAN_BL_REF_NO',
+        editable: true,
+        fieldPlaceholder: "LOADABLE_PLAN_BL_REF_NO_PLACEHOLDER",
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        errorMessages: {
+          required: 'LOADABLE_PLAN_BL_REF_NO_REQUIRED'
+        }
+      },
+      {
+        field: 'bbl',
+        header: 'LOADABLE_PLAN_BL_BBL@60F',
+        editable: true,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: "LOADABLE_PLAN_BL_BBL@60F_PLACEHOLDER",
+        errorMessages: {
+          required: 'LOADABLE_PLAN_BL_BBL@60F_REQUIRED'
+        }
+      },
+      {
+        field: 'lt',
+        header: 'LOADABLE_PLAN_BL_LT',
+        editable: true,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: "LOADABLE_PLAN_BL_LT_PLACEHOLDER",
+        errorMessages: {
+          required: 'LOADABLE_PLAN_BL_LT_REQUIRED'
+        }
+      },
+      {
+        field: 'mt',
+        header: 'LOADABLE_PLAN_BL_MT',
+        editable: true,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: "LOADABLE_PLAN_BL_MT_REQUIRED",
+        errorMessages: {
+          required: 'LOADABLE_PLAN_BL_MT_REQUIRED'
+        }
+      },
+      {
+        field: 'kl',
+        header: 'LOADABLE_PLAN_BL_KL',
+        editable: true,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: "LOADABLE_PLAN_BL_KL_PLACEHOLDER",
+        errorMessages: {
+          required: 'LOADABLE_PLAN_BL_KL_REQUIRED'
+        }
+      },
+      {
+        field: 'api',
+        header: 'LOADABLE_PLAN_BL_API',
+        editable: true,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: "LOADABLE_PLAN_BL_API_PLACEHOLDER",
+        errorMessages: {
+          required: 'LOADABLE_PLAN_BL_API_REQUIRED'
+        }
+      },
+      {
+        field: 'temp',
+        header: 'LOADABLE_PLAN_BL_TEMP',
+        editable: true,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: "LOADABLE_PLAN_BL_TEMP_PLACEHOLDER",
+        errorMessages: {
+          required: 'LOADABLE_PLAN_BL_TEMP_REQUIRED'
+        }
+      },
+      {
+        field: 'actions',
+        header: '',
+        fieldType: DATATABLE_FIELD_TYPE.ACTION
+      }
+    ]
+  }
+
+    /**
+  * Method to convert loadable plan tank details to value object
+  *
+  * @param {ICargoDetail} cargoTankDetail
+  * @param {boolean} [isEditMode=true]
+  * @param {boolean} [isAdd=true]
+  * @returns {ICargoDetailValueObject}
+  * @memberof UllageUpdatePopupTransformationService
+  */
+  getFormatedCargoDetails(cargoTankDetail: ICargoDetail , isEditMode = true , isAdd = true) {
+      const _cargoDetail = <ICargoDetailValueObject>{};
+      _cargoDetail.blRefNo = new ValueObject<string>(cargoTankDetail.blRefNo , true , isEditMode);
+      _cargoDetail.bbl = new ValueObject<number>(cargoTankDetail.bbl , true , isEditMode);
+      _cargoDetail.lt = new ValueObject<number>(cargoTankDetail.lt , true , isEditMode);
+      _cargoDetail.mt = new ValueObject<number>(cargoTankDetail.mt , true , isEditMode);
+      _cargoDetail.kl = new ValueObject<number>(cargoTankDetail.kl , true , isEditMode);
+      _cargoDetail.api = new ValueObject<number>(cargoTankDetail.api , true , isEditMode);
+      _cargoDetail.temp = new ValueObject<number>(cargoTankDetail.temp , true , isEditMode);
+      _cargoDetail.cargoName = cargoTankDetail.cargoName;
+      _cargoDetail.isAdd = isAdd;
+      return _cargoDetail;
+    }
 }
+
+

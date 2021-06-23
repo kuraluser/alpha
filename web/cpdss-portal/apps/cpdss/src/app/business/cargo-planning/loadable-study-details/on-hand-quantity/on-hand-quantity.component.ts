@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { IPortOHQTankDetailEvent, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank, IPortOHQTankDetail } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
-import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
@@ -376,9 +376,9 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     } else {
       for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
         if (this.selectedPortOHQTankDetails[valueIndex].hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
-          const formControl = this.field(event.index, key);
-          formControl.updateValueAndValidity();
-          this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = formControl.invalid;
+          const _formControl = this.field(event.index, key);
+          _formControl.updateValueAndValidity();
+          this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = _formControl.invalid;
         }
       }
       fromGroup.markAllAsTouched();
@@ -389,18 +389,18 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       if (row.invalid && row.touched) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
-          const formControl = this.field(index, key);
-          formControl.updateValueAndValidity();
+          const _formControl = this.field(index, key);
+          _formControl.updateValueAndValidity();
         });
         if (row.valid) {
           event.data.processing = true;
-          const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
+          const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[index]);
           const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
           if (res) {
-            for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
-              if (this.selectedPortOHQTankDetails[valueIndex].hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
-                const formControl = this.field(index, key);
-                this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = formControl.invalid;
+            for (const key in this.selectedPortOHQTankDetails[index]) {
+              if (this.selectedPortOHQTankDetails[index].hasOwnProperty(key) && this.selectedPortOHQTankDetails[index][key]?.hasOwnProperty('_isEditMode')) {
+                const _formControl = this.field(index, key);
+                this.selectedPortOHQTankDetails[index][key].isEditMode = _formControl.invalid;
               }
             }
             this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
@@ -409,8 +409,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       } else if (row.invalid) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
-          const formControl = this.field(index, key);
-          formControl.updateValueAndValidity();
+          const _formControl = this.field(index, key);
+          _formControl.updateValueAndValidity();
         });
       }
     });

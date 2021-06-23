@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { ICargo, ICargoNomination } from '../../models/cargo-planning.model';
 import { ICargoGroup, ICommingleCargo, ICommingleManual, ICommingleManualEvent, ICommingleResponseModel, ICommingleValueObject, IPercentage, IPurpose, IVesselCargoTank } from '../../models/commingle.model';
 import { CommingleApiService } from '../../services/commingle-api.service';
@@ -170,7 +170,8 @@ export class CommingleComponent implements OnInit {
       this.disableAddNewBtn = (this.cargoNominationsCargo.length <= 2 && this.manualCommingleList && this.manualCommingleList?.length >= 1) ? true : false;
       if (this.manualCommingleList && this.manualCommingleList?.length) {
         this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]),
-          this.commingleForm.controls['preferredTanks'].updateValueAndValidity()
+        this.commingleForm.controls['preferredTanks'].updateValueAndValidity()
+        this.resetSlNo();
       }
     }
     this.ngxSpinnerService.hide();
@@ -280,19 +281,34 @@ export class CommingleComponent implements OnInit {
   get form() { return this.commingleForm.controls; }
 
   /**
+   * Event handler for cargo dropdown init.
+   * @param event
+   */
+  dropDownInit(event){
+    if(event.field === 'cargo1'){
+      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event?.data?.cargo2?.value?.id);
+    }
+    if(event.field === 'cargo2'){
+      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event?.data?.cargo1?.value?.id);
+    }
+  }
+
+  /**
    * Event handler for edit complete event
    * @param event
    */
   async onEditComplete(event: ICommingleManualEvent) {
+    this.resetSlNo();
+    this.cargoFieldsUpdateValue();
     const form = this.row(event.index);
     if (event.field === 'cargo1') {
-      this.listData.cargoNominationsCargo2 = this.listData.cargoNominationsCargo2.filter(cargos => cargos.id !== event.data.cargo1.value.id);
+      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.data.cargo1.value.id);
       this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color;
       // this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
     if (event.field === 'cargo2') {
-      this.listData.cargoNominationsCargo1 = this.listData.cargoNominationsCargo1.filter(cargos => cargos.id !== event.data.cargo2.value.id);
+      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.data.cargo2.value.id);
       this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color;
       // this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
       form.controls.quantity.updateValueAndValidity();
@@ -309,7 +325,7 @@ export class CommingleComponent implements OnInit {
       form.controls.cargo1IdPct.updateValueAndValidity();
       form.controls.cargo2IdPct.updateValueAndValidity();
     }
-  
+
     if (event.field == 'cargo1' || event.field === 'cargo2') {
       (<FormArray>this.commingleManualForm.get('dataTable')).controls.forEach((row: FormGroup) => {
         row.controls.cargo1.updateValueAndValidity();
@@ -380,7 +396,7 @@ export class CommingleComponent implements OnInit {
       if (loadingPortsTotal < commingle.quantity.value) {
         commingle.quantity.isEditMode = true;
       }
-      return this.initCommingleManualFormGroup(commingle)
+      return this.initCommingleManualFormGroup(commingle);
     });
 
     this.commingleManualForm = this.fb.group({
@@ -435,6 +451,14 @@ export class CommingleComponent implements OnInit {
     });
   }
 
+  cargoFieldsUpdateValue()
+  {
+  (<FormArray>this.commingleManualForm.get('dataTable')).controls.forEach((row: FormGroup) => {
+    row.controls?.cargo1?.updateValueAndValidity();
+    row.controls?.cargo2?.updateValueAndValidity();
+  });
+} 
+
   /**
    * Delete row
    *
@@ -459,6 +483,8 @@ export class CommingleComponent implements OnInit {
           this.manualCommingleList.splice(event.index, 1);
           this.manualCommingleList = [...this.manualCommingleList];
           (<FormArray>this.commingleManualForm.get('dataTable')).removeAt(event.index);
+          this.resetSlNo();
+          this.cargoFieldsUpdateValue();        
           if (!this.manualCommingleList?.length) {
             this.commingleForm.controls['preferredTanks'].setValidators([]);
             this.commingleForm.controls['preferredTanks'].updateValueAndValidity();

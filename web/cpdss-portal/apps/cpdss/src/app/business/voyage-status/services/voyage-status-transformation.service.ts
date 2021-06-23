@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities } from '../models/voyage-status.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../models/voyage-status.model';
 import { IDataTableColumn , DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 
 /**

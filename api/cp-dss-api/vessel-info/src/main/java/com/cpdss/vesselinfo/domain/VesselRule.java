@@ -22,4 +22,5 @@ public class VesselRule {
   private String templateInputMaxValue;
   private String templateInputMinValue;
   private String templateInputTypeValue;
+  private Boolean isHardRule;
 }

@@ -7,7 +7,7 @@ import { LoadableStudyDetailsTransformationService } from '../../services/loadab
 import { cargoNominationColorValidator } from '../../directives/validator/cargo-nomination-color.directive'
 import { cargoNominationLoadingPortValidator } from '../../directives/validator/cargo-nomination-loading-port.directive'
 import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
-import { numberValidator } from '../../directives/validator/number-validator.directive'
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -341,6 +341,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   async updateCargoNominationsDetails(valueIndex: number, event: ICargoNominationEvent) {
+    const fromGroup = this.row(event.index);
+
     if (event.field === 'cargo') {
       this.cargoNominations[valueIndex]['abbreviation'].value = event.data.cargo.value.abbreviation;
       this.cargoNominations[valueIndex]['api'].value = event.data.cargo.value.api;
@@ -368,7 +370,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.cargoNominations[valueIndex]['temperature'].value = result.temperature;
     }
     if (!event.data?.isAdd) {
-      if (this.cargoNominationForm.valid) {
+      if (fromGroup.valid) {
         this.ngxSpinnerService.show();
         event.data.processing = true;
         this.updateCommingleButton(true);
@@ -386,7 +388,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         }
         this.ngxSpinnerService.hide();
       } else {
-        const fromGroup = this.row(event.index);
         const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
         invalidFormControls.forEach((key) => {
           this.cargoNominations[valueIndex][key].isEditMode = true;
@@ -408,7 +409,31 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   updateFormValidity() {
     const formArray = (<FormArray>this.cargoNominationForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, index) => {
-      if (row.invalid && row.touched) {
+      const _row = this.cargoNominations[index];
+      if (row.invalid && row.touched && !_row.isAdd) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
+        invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
+        });
+        if (row.valid) {
+          this.ngxSpinnerService.show();
+          _row.processing = true;
+          this.updateCommingleButton(true);
+          this.updateRowByUnit(_row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
+          const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(_row), this.vesselId, this.voyageId, this.loadableStudyId, true);
+          this.updateRowByUnit(_row, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
+          if (res) {
+            for (const key in this.cargoNominations[index]) {
+              if (this.cargoNominations[index].hasOwnProperty(key) && this.cargoNominations[index][key].hasOwnProperty('_isEditMode')) {
+                this.cargoNominations[index][key].isEditMode = false;
+              }
+            }
+            this.cargoNominations = [...this.cargoNominations];
+          }
+          this.ngxSpinnerService.hide();
+        }
+      } else if (row.invalid) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
           const formControl = this.field(index, key);

@@ -183,6 +183,8 @@ service LoadableStudyService {
 
 	rpc SaveLoadingInfoToSynopticData(LoadingInfoSynopticalUpdateRequest) returns (ResponseStatus) {}
 	
+	rpc GetOrSaveRulesForLoadableStudy(LoadableRuleRequest) returns (LoadableRuleReply) {}
+	
 	rpc GetLoadablePatternDetailsJson(LoadablePlanDetailsRequest) returns (LoadablePatternPortWiseDetailsJson) {}
 }
 
@@ -789,7 +791,7 @@ message PortRotationRequest{
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
 	repeated PortRotationDetail portRotationDetails = 6;
-	int64 dischargingCargoId=7;
+	int64 cargoNominationId=7;
     bool isDischargingPortsComplete=8;
 
 }
@@ -1361,6 +1363,18 @@ message LoadingInfoSynopticalUpdateRequest {
 	string timeOfSunset = 3;
 }
 
+message LoadableRuleRequest{
+	int64 vesselId = 1;
+	int64 sectionId = 2;
+	repeated RulePlans rulePlan = 3;
+	int64 loadableStudyId = 4;
+	bool isNoDefaultRule = 5;
+}
+	
+message LoadableRuleReply{
+	ResponseStatus responseStatus = 1;
+	repeated RulePlans rulePlan = 2;
+}
 // <------ end loading plan, by john -------->
 
 message LoadablePatternPortWiseDetailsJson {

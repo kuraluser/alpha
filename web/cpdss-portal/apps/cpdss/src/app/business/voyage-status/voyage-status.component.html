@@ -17,7 +17,7 @@
 
                 <!--
                     Edit port rotation is disabled by commenting the html below as per the suggestion in following mail
-                    https://outlook.office.com/mail/inbox/id/AAQkADQxYWUyMmFhLTEyMDItNDk3Ni1iNGRjLTAzOGIxZjhmN2E2ZAAQAHoNdqrr2kh7gtCGtsHRF28%3D
+                    https://outlook.office.com/mail/inbox/id/AAQkADQxYWUyMmFhLTEyMDItNDk3Ni1iNGRjLTAzOGIxZjhmN2E2ZAAQAJwYEa6k3kDOkxyNpQzebG0%3D
                 -->
                 <!-- <a class="btn btn-link icon-btn pencil-icon"
                     (click)="showEditPortRotation()" id="show-edit-port-rotation-popup" *cpdssPortalPermission="editPortRotationPermissionContext">{{'EDIT_PORT_ROTATION' |
@@ -37,7 +37,7 @@
         <div class="row">
             <div class="col">
                 <cpdss-portal-port-rotation-ribbon [vesselDetails]="vesselInfo" *ngIf="vesselInfo && selectedVoyage"
-                    [voyageDetails]="selectedVoyage" (portDetails)="getPortDetails($event)">
+                    [voyageDetails]="selectedVoyage" (portSelection)="getPortDetails($event)">
                 </cpdss-portal-port-rotation-ribbon>
             </div>
 

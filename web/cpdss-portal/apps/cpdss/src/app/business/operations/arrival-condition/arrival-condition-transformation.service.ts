@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities } from '../../voyage-status/models/voyage-status.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../../voyage-status/models/voyage-status.model';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 /**
  * Transformation Service for arrival condition

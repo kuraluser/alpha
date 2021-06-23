@@ -12,11 +12,11 @@
             <tr>
                 <td *ngIf="i === 0" [attr.rowspan]="row.columns.length">{{row.machine}}</td>
                 <td>
-                    <input type="checkbox" [(ngModel)]="column.selected">
+                    <input type="checkbox" [(ngModel)]="column.isUsing" (change)="onUse(column)">
                 </td>
-                <td>{{column?.name}}</td>
+                <td>{{column?.pumpName}}</td>
                 <td>
-                    <input type="text" [(ngModel)]="column.capacity">
+                    <input type="text" [(ngModel)]="column.capacity" [disabled]="!column.isUsing" (change)="onChange(column)">
                 </td>
             </tr>
         </ng-container>    

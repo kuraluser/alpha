@@ -32,4 +32,7 @@ public class RuleTemplate extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "is_hard_rule")
+  private Boolean isHardRule;
 }

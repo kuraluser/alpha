@@ -45,8 +45,10 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
         }
       }
 
-      buildLoadingDelay(delay, loadingDelay);
-      loadingDelayRepository.save(loadingDelay);
+      if (delay.getReasonForDelayId() != 0) {
+        buildLoadingDelay(delay, loadingDelay);
+        loadingDelayRepository.save(loadingDelay);
+      }
     }
   }
 

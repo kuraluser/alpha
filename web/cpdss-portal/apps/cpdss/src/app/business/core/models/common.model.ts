@@ -428,6 +428,7 @@ export interface IEditPortRotation{
     isFocused?: boolean;
     portDate?: string;
     portTime?: string;
+    operation?: string;
 }
 
 /**
@@ -438,6 +439,7 @@ export interface IEditPortRotation{
     operationType: string;
     portId?: number;
     portRotationId?: number;
+    operationId?: number;
 }
 
 /**
@@ -486,3 +488,95 @@ export class NewVoyageResponseModel implements IResponse {
     errorHeading: string,
     errorDetails: string[]
  }
+
+
+ /**
+ * Interface for cargo tanks
+ *
+ * @export
+ * @interface IShipCargoTank
+ * @extends {ITank}
+ */
+export interface IShipCargoTank extends ITank {
+    id: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    frameNumberFrom: number;
+    frameNumberTo: number;
+    shortName: string;
+    heightFrom?: number;
+    heightTo?: number;
+    fillCapcityCubm?: number;
+    fullCapacityCubm?: string;
+    density: number;
+    group: number;
+    order: number;
+    slopTank: boolean;
+    commodity?: ICargoQuantities;
+    gridColumn?: string;
+    percentageFilled?: string;
+    fillingRatio?: string;
+}
+
+/**
+ * Interface for cargo quantites model
+ * @export
+ * @interface ICargoQuantities
+ */
+export interface ICargoQuantities {
+    fillingRatio?: any;
+    tankId: number;
+    tankName: string;
+    actualWeight: number;
+    plannedWeight: number;
+    capacity: number;
+    abbreviation: string;
+    cargoId: number;
+    colorCode: string;
+    correctedUllage: number;
+    difference?: number;
+    isPositive?: boolean;
+    quantity?: number;
+    volume?: number;
+    api?: number;
+    percentageFilled?: string;
+    isCommingle?: boolean;
+    isCommingleCargo?: boolean;
+    temperature?:any;
+}
+
+/**
+ * Interface for loadable quality
+ *
+ * @export
+ * @interface ILoadableQuantityCargo
+ */
+ export interface ILoadableQuantityCargo {
+    id: number,
+    grade: string,
+    estimatedAPI: string,
+    estimatedTemp: string,
+    orderBblsdbs: string,
+    orderBbls60f: string,
+    orderedQuantity: string,
+    minTolerence: string,
+    maxTolerence: string,
+    loadableBblsdbs: string,
+    loadableBbls60f: string,
+    loadableLT: string,
+    loadableMT: string,
+    loadableKL: string,
+    differencePercentage: string,
+    differencePercentageValue?: number;
+    differenceColor: string
+    cargoId?: number;
+    apiTemp?: string;
+    minMaxTolerance?: string;
+    slopQuantity?: number;
+    timeRequiredForLoading?: string;
+    loadingPorts?: string[];
+    loadingPort?: string;
+    cargoAbbreviation?: string;
+    cargoNominationId? : number;
+}

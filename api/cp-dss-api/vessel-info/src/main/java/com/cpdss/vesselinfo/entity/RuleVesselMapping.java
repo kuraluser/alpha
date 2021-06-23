@@ -41,6 +41,9 @@ public class RuleVesselMapping extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
+  @Column(name = "is_hard_rule")
+  private Boolean isHardRule;
+
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "ruleVesselMapping", cascade = CascadeType.ALL)
   private List<RuleVesselMappingInput> ruleVesselMappingInput;
 }

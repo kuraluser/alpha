@@ -1,0 +1,44 @@
+<div class="container-fluid">
+    <div class="row pb-20">
+        <div class="col vessel-info-wrapper">
+            <cpdss-portal-vessel-info *ngIf="vesselDetails" [vesselDetails]="vesselDetails"></cpdss-portal-vessel-info>
+        </div>
+        <div class="col">
+            <h5 class="main-head inline-block">{{vesselDetails?.name}} -
+                {{ 'DISCHARGE_STUDY_LIST' | translate }}</h5>
+            <span class="ml-20 mr-10">
+                {{ 'DISCHARGE_STUDY_LIST_VOYAGE_NO' | translate }}</span>
+            <p-dropdown #dd styleClass="dropdown-w-180" [options]="voyages" [(ngModel)]="selectedVoyage"
+                optionLabel="voyageNo" [filter]="true"
+                placeholder="{{ 'DISCHARGE_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
+                (onChange)="showDischargeStudyList()" resetFilterOnHide="true">
+                <ng-template pTemplate="selectedItem">
+                    <div *ngIf="selectedVoyage">
+                        <div>{{selectedVoyage.voyageNo}}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-voyage pTemplate="item">
+                    <div>
+                        <div>{{voyage.value.voyageNo }}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+            <span class="pl-15 text-danger" *ngIf="!isVoyageIdSelected"> {{'NO_VOYAGE_NO_SELECTED' | translate }}
+            </span>
+            <div class="text-right pr-15">
+                <button class="btn btn-main" (click)="callNewDischargeStudyPopup()"
+                    id="btn_callNewDischargeStudyPopup" >{{'DISCHARGE_STUDY_LIST_CREATE_NEW_DISCHARGE_STUDY' | translate}}</button>
+            </div>
+    
+        </div>
+        <div class="row">
+            <div class="col discharge-study-table-wrapper">
+                <cpdss-portal-datatable *ngIf="dischargeStudyList" [columns]="columns" [value]="dischargeStudyList" (columnClick)="onRowSelect($event)"
+                    [filterable]="true" >
+                </cpdss-portal-datatable>
+            </div>
+        </div>
+    </div>
+</div>
+<cpdss-portal-new-discharge-study-pop-up [display]="display" [isEdit]="edit" [selectedDischargeStudy]="selectedDischargeStudy" (displayPopup)="display=false" ></cpdss-portal-new-discharge-study-pop-up>
+

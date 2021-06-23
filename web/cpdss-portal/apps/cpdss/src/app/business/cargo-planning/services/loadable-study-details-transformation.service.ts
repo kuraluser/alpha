@@ -274,7 +274,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'max': 'CARGO_NOMINATION_MAX_TOLERANCE_MAX_ERROR',
-          'min': 'CARGO_NOMINATION_MAX_TOLERANCE_MIN_ERROR'
+          'min': 'CARGO_NOMINATION_MAX_TOLERANCE_MIN_ERROR',
+          'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },
       {
@@ -292,7 +293,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'max': 'CARGO_NOMINATION_MIN_TOLERANCE_MAX_ERROR',
-          'min': 'CARGO_NOMINATION_MIN_TOLERANCE_MIN_ERROR'
+          'min': 'CARGO_NOMINATION_MIN_TOLERANCE_MIN_ERROR',
+          'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },
       {
@@ -311,7 +313,8 @@ export class LoadableStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
-          'min': 'CARGO_NOMINATION_API_MIN_ERROR'
+          'min': 'CARGO_NOMINATION_API_MIN_ERROR',
+          'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },
       {
@@ -329,7 +332,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldHeaderClass: 'column-temp',
         numberFormat: '1.2-2',
         errorMessages: {
-          'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
+          'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
+          'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },
       {
@@ -385,7 +389,7 @@ export class LoadableStudyDetailsTransformationService {
   }
 
   /**
-   * Method for emitting observable for add cargonomination 
+   * Method for emitting observable for add cargonomination
    *
    * @memberof LoadableStudyDetailsTransformationService
    */
@@ -443,7 +447,7 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'min': 'CARGO_NOMINATION_LOADING_PORT_MIN_ERROR',
-          'pattern': 'CARGO_NOMINATION_LOADING_PORT_PATTERN_ERROR'
+          'invalidNumber': 'CARGO_NOMINATION_LOADING_PORT_INVALID_ERROR'
         },
         numberType: 'quantity'
       }
@@ -785,7 +789,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'ENTER_WATER_DENSITY',
         errorMessages: {
           'required': 'PORT_WATER_DENSITY_REQUIRED_ERROR',
-          'min': 'PORT_WATER_DENSITY_MIN_ERROR'
+          'min': 'PORT_WATER_DENSITY_MIN_ERROR',
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
         }
       },
       {
@@ -819,7 +824,8 @@ export class LoadableStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_DRAFT_REQUIRED_ERROR',
-          'min': 'PORT_MAX_DRAFT_MIN_ERROR'
+          'min': 'PORT_MAX_DRAFT_MIN_ERROR',
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
         }
       },
       {
@@ -835,7 +841,8 @@ export class LoadableStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR',
-          'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR'
+          'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR',
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
         }
       },
 
@@ -1040,7 +1047,8 @@ export class LoadableStudyDetailsTransformationService {
           'required': 'OHQ_VALUE_REQUIRED',
           'min': 'OHQ_MIN_VALUE',
           'groupTotal': 'OHQ_GROUP_TOTAL',
-          'pattern': 'OHQ_PATTERN_ERROR'
+          'pattern': 'OHQ_PATTERN_ERROR',
+          'invalidNumber': 'OHQ_VALUE_INVALID',
         }
       },
       {
@@ -1059,7 +1067,8 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'OHQ_MIN_VALUE',
           'groupTotal': 'OHQ_GROUP_TOTAL',
           'pattern': 'OHQ_PATTERN_ERROR',
-          'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
+          'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+          'invalidNumber': 'OHQ_VALUE_INVALID'
         }
       },
       {
@@ -1079,6 +1088,7 @@ export class LoadableStudyDetailsTransformationService {
           'groupTotal': 'OHQ_GROUP_TOTAL',
           'pattern': 'OHQ_PATTERN_ERROR',
           'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+          'invalidNumber': 'OHQ_VALUE_INVALID',
         }
       }
     ]
@@ -1302,7 +1312,8 @@ export class LoadableStudyDetailsTransformationService {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
           'max': 'COMMINGLE_QUANTITY_MAX_LIMIT',
           'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE',
-          'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT'
+          'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT',
+          'invalidNumber': 'COMMINGLE_QUANTIY_INVALID_ERROR'
         },
         numberType: 'quantity'
       }
@@ -1324,7 +1335,7 @@ export class LoadableStudyDetailsTransformationService {
   }
   /**
    * Method for converting commingle  data as value
-   * @param commingle 
+   * @param commingle
    */
   getCommingleAsValue(commingle: ICommingleValueObject): ICargoGroup {
     const _cargoList = <ICargoGroup>{};
@@ -1349,10 +1360,10 @@ export class LoadableStudyDetailsTransformationService {
   }
   /**
    * Method to convert commingle data to value object model
-   * @param commingleManual 
-   * @param isNewValue 
-   * @param isEditable 
-   * @param listData 
+   * @param commingleManual
+   * @param isNewValue
+   * @param isEditable
+   * @param listData
    */
   getCommingleValueObject(commingleManual: ICargoGroup, isNewValue = true, isEditable = true, listData: ICommingleManual): ICommingleValueObject {
     const _commingleManual = <ICommingleValueObject>{};
@@ -1431,7 +1442,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'OBQ_VALUE_REQUIRED',
           'min': 'OBQ_MIN_VALUE',
-          'groupTotal': 'OBQ_GROUP_TOTAL'
+          'groupTotal': 'OBQ_GROUP_TOTAL',
+          'invalidNumber': 'OBQ_VALUE_INVALID'
         }
 
       },
@@ -1449,7 +1461,8 @@ export class LoadableStudyDetailsTransformationService {
           'required': 'OBQ_VALUE_REQUIRED',
           'min': 'OBQ_MIN_VALUE',
           'groupTotal': 'OBQ_GROUP_TOTAL',
-          'max': "OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
+          'max': "OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+          'invalidNumber': 'OBQ_VALUE_INVALID'
         },
         numberType: 'quantity'
       }
@@ -1549,74 +1562,93 @@ export class LoadableStudyDetailsTransformationService {
       },
       estSeaDensity: {
         'required': 'LOADABLE_QUANTITY_SEA_WATER_DENSITTY_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_SEA_WATER_DENSITTY_INVALID'
       },
       sgCorrection: {
-        'required': 'LOADABLE_QUANTITY_SG_CORRECTION_REQUIRED'
+        'required': 'LOADABLE_QUANTITY_SG_CORRECTION_REQUIRED',
+        'invalidNumber': 'LOADABLE_QUANTITY_SG_CORRECTION_INVALID'
       },
       estimateSag: {
         'required': 'LOADABLE_QUANTITY_ESTIMATE_SAG_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_ESTIMATE_SAG_INVALID'
       },
       safCorrection: {
-        'required': 'LOADABLE_QUANTITY_SAF_CORRECTION_REQUIRED'
+        'required': 'LOADABLE_QUANTITY_SAF_CORRECTION_REQUIRED',
+        'invalidNumber': 'LOADABLE_QUANTITY_SAF_CORRECTION_INVALID'
       },
       foOnboard: {
         'required': 'LOADABLE_QUANTITY_FO_ONBOARD_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_FO_ONBOARD_INVALID'
       },
       doOnboard: {
         'required': 'LOADABLE_QUANTITY_DO_ONBOARD_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_DO_ONBOARD_INVALID',
       },
       freshWaterOnboard: {
         'required': 'LOADABLE_QUANTITY_FRESH_WATER_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_FRESH_WATER_INVALID'
       },
       boilerWaterOnboard: {
         'required': 'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_REQUIRED',
-        'pattern': 'LOADABLE_QUANTITY_ERROR'
+        'pattern': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_INVALID',
       },
       ballast: {
         'required': 'LOADABLE_QUANTITY_BALLAST_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidValid': 'LOADABLE_QUANTITY_BALLAST_INVALID',
       },
       others: {
         'required': 'LOADABLE_QUANTITY_OTHERS_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_OTHERS_INVALID',
       },
       distanceInSummerzone: {
         'required': 'LOADABLE_QUANTITY_DISATANCE_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_DISATANCE_INVALID',
       },
       speedInSz: {
         'required': 'LOADABLE_QUANTITY_SPEED_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_SPEED_INVALID',
       },
       runningHours: {
         'required': 'LOADABLE_QUANTITY_RUNNING_HOURS_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_RUNNING_HOURS_INVALID'
       },
       runningDays: {
         'required': 'LOADABLE_QUANTITY_RUNNING_DAYS_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_RUNNING_DAYS_INVALID',
       },
       foConday: {
         'required': 'LOADABLE_QUANTITY_FO_CONS_PER_DAY_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_FO_CONS_PER_DAY_INVALID',
       },
       foConsInSz: {
         'required': 'LOADABLE_QUANTITY_FO_CONS_IN_SZ_REQUIRED',
-        'min': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR',
+        'invalidNumber': 'LOADABLE_QUANTITY_FO_CONS_IN_SZ_INVALID',
       },
       subTotal: {
         'required': 'LOADABLE_QUANTITY_SUB_TOTAL_REQUIRED',
+        'invalidNumber': 'LOADABLE_QUANTITY_SUB_TOTAL_INVALID',
       },
       totalQuantity: {
-        'required': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED"'
+        'required': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED"',
+        'invalidNumber': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_INVALID'
       },
       arrivalMaxDraft: {
-        'required': 'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED'
+        'required': 'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED',
+        'invalidNumber': 'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_INVALID'
       }
     }
   }

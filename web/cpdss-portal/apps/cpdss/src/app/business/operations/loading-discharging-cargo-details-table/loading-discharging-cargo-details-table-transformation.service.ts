@@ -19,10 +19,10 @@ export class LoadingDischargingCargoDetailsTableTransformationService {
   */
  getColumnFields() {
   const columns = [
-    { field: 'abbreviation', header: 'VOYAGE_STATUS_CARGO_CONDITION_GRADES' },
-    { field: 'plannedWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_PLANNED' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER},
-    { field: 'actualWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_Actual' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER },
-    { field: 'difference', header: 'VOYAGE_STATUS_CARGO_CONDITION_DIFFERENCE' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER}
+    { field: 'abbreviation', header: 'LOADABLE_PLAN_CONDITION_GRADES' },
+    { field: 'plannedWeight', header: 'LOADABLE_PLAN_CONDITION_PLANNED' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER},
+    { field: 'actualWeight', header: 'LOADABLE_PLAN_CONDITION_Actual' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER },
+    { field: 'difference', header: 'LOADABLE_PLAN_CARGO_CONDITION_DIFFERENCE' , fieldType:  DATATABLE_FIELD_TYPE.NUMBER}
   ];
 
   return columns;

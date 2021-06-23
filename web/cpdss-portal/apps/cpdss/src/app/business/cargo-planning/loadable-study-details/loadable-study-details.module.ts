@@ -38,6 +38,9 @@ import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-
 
 import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { CargoPlanningRulesComponent } from './cargo-planning-rules/cargo-planning-rules.component';
+import { CargoPlanningRulesTableComponent } from './cargo-planning-rules/cargo-planning-rules-table/cargo-planning-rules-table.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -46,7 +49,7 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
  * @class LoadableStudyDetailsModule
  */
 @NgModule({
-  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent, CommingleComponent, OnBoardQuantityComponent],
+  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent, CommingleComponent, OnBoardQuantityComponent, CargoPlanningRulesComponent, CargoPlanningRulesTableComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -72,7 +75,9 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
     TableModule,
     TooltipModule,
     QuantityDecimalFormatPipeModule,
-    ErrorLogPopupModule
+    ErrorLogPopupModule,
+    InputSwitchModule
+
   ],
   providers: [
     LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe, QuantityDecimalFormatPipe

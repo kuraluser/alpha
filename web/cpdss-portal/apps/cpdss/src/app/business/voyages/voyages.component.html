@@ -8,7 +8,7 @@
         <div class="col calender-control-multi-date pt-5">
             <p-calendar [(ngModel)]="filterDates" selectionMode="range" [showButtonBar]="true" [readonlyInput]="true"
                 inputId="range" dateFormat="dd-M-yy" (onSelect)="onDateRangeSelect($event)"
-                (onClearClick)="resetDateFilter($event)"
+                (onClearClick)="resetDateFilter($event)" [maxDate]="currentDate"
                 placeholder="{{ 'VOYAGE_LIST_DATE_RANGE_PLACEHOLDER'| translate }}" id="voyage_date_range_filter"
                 #dateRangeFilter></p-calendar>
             <div class="ml-5">
@@ -42,7 +42,7 @@
 </div>
 <cpdss-portal-date-pop-up [voyageId]="selectedVoyageId" [loadablePlanId]="selectedLoadablePlanId" [vesselId]="vesselId" [isStart]="isStart"
     [display]="showDatePopup" (displayPopup)="setPopupVisibility($event)" *ngIf="showDatePopup"
-    [defaultDate]="defaultDate">
+    [defaultDate]="defaultDate" [plannedStartDate]="plannedStartDate">
 </cpdss-portal-date-pop-up>
 <cpdss-portal-new-voyage-popup [vesselDetails]="vesselDetails" *ngIf="display && vesselDetails"
     (displayPopUp)="displayPopUpTab($event)">

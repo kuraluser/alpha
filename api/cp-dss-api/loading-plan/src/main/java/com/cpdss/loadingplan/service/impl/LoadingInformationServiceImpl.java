@@ -229,7 +229,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
       LoadingInformation loadingInformation)
       throws Exception {
-    if (Optional.ofNullable(request.getLoadingStage().getDuration().getId()).isPresent()) {
+    if (Optional.ofNullable(request.getLoadingStage().getDuration().getId()).isPresent()
+        && request.getLoadingStage().getDuration().getId() != 0) {
       Optional<StageDuration> stageDurationOpt =
           stageDurationRepository.findByIdAndIsActiveTrue(
               request.getLoadingStage().getDuration().getId());
@@ -240,7 +241,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       }
     }
 
-    if (Optional.ofNullable(request.getLoadingStage().getOffset().getId()).isPresent()) {
+    if (Optional.ofNullable(request.getLoadingStage().getOffset().getId()).isPresent()
+        && request.getLoadingStage().getOffset().getId() != 0) {
       Optional<StageOffset> stageOffsetOpt =
           stageOffsetRepository.findByIdAndIsActiveTrue(
               request.getLoadingStage().getOffset().getId());

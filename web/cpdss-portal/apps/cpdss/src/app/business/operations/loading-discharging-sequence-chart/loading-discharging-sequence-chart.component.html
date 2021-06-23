@@ -2,24 +2,36 @@
   (touchstart)="synchronizeTooltips($event)">
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
-      *ngIf="sequenceGanttChart && sequenceChartSeries" [options]="sequenceGanttChart"
-      [callbackFunction]="sequenceGanttChartCallback" style="width: 100%; display: flex; padding: 10px">
+      *ngIf="cargoSequenceGanttChart && cargoSequenceChartSeries" [options]="cargoSequenceGanttChart"
+      [callbackFunction]="cargoSequenceGanttChartCallback" style="width: 100%; display: flex; padding: 0px">
     </highcharts-chart>
   </div>
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
-      *ngIf="rateGanttChart && rateChartSeries" [options]="rateGanttChart"
-      style="width: 100%; display: flex; padding: 10px">
+      *ngIf="cargoPumpSequenceGanttChart && cargoPumpSequenceChartSeries" [options]="cargoPumpSequenceGanttChart"
+      style="width: 100%; display: flex; padding: 0px">
+    </highcharts-chart>
+  </div>
+  <div class="col-12">
+    <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
+      *ngIf="ballastSequenceGanttChart && ballastSequenceChartSeries" [options]="ballastSequenceGanttChart"
+      style="width: 100%; display: flex; padding: 0px">
+    </highcharts-chart>
+  </div>
+  <div class="col-12">
+    <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
+      *ngIf="ballastPumpSequenceGanttChart && ballastPumpSequenceChartSeries" [options]="ballastPumpSequenceGanttChart"
+      style="width: 100%; display: flex; padding: 0px">
     </highcharts-chart>
   </div>
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" *ngIf="flowRateAreaChart && flowRateChartSeries"
-      [options]="flowRateAreaChart" style="width: 100%; display: flex; padding: 10px">
+      [options]="flowRateAreaChart" style="width: 100%; display: flex; padding: 0px">
     </highcharts-chart>
   </div>
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" *ngIf="stabilityGanttChart && stabilityChartSeries"
-      [options]="stabilityGanttChart" style="width: 100%; display: flex; padding: 10px">
+      [options]="stabilityGanttChart" style="width: 100%; display: flex; padding: 0px">
     </highcharts-chart>
   </div>
 </div>

@@ -50,7 +50,7 @@
     </div>
   </div>
   <div class="row" *ngIf="currentTab === OPERATION_TAB.INFORMATION">
-    <cpdss-portal-loading-information></cpdss-portal-loading-information>
+    <cpdss-portal-loading-information [vesselId]="vesselId" [voyageId]="voyageId" [portRotationId]="portRotationId"></cpdss-portal-loading-information>
     <!-- <div class="col-4">
         <div class="row">
             <div class="col">

@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Voyage, VOYAGE_STATUS } from '../core/models/common.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
+import { IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common.model';
 import { IVessel } from '../core/models/vessel-details.model';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { VoyageService } from '../core/services/voyage.service';
@@ -10,14 +14,29 @@ import { VoyageService } from '../core/services/voyage.service';
   styleUrls: ['./operations.component.scss']
 })
 export class OperationsComponent implements OnInit {
-  vesselInfo: IVessel;
+  vessel: IVessel;
   voyages: Voyage[];
-  selectedVoyage: Voyage;
-  displayNewVoyagePopup: boolean;
-  displayEditPortRotationPopup: boolean;
+
+  get selectedVoyage(): Voyage {
+    return this._selectedVoyage;
+  }
+
+  set selectedVoyage(voyage: Voyage) {
+    this._selectedVoyage = voyage;
+    localStorage.setItem("voyageId", voyage?.id.toString())
+    localStorage.removeItem("loadableStudyId")
+    localStorage.removeItem("loadablePatternId")
+  }
+
+  private _selectedVoyage: Voyage;
 
   constructor(private vesselsApiService: VesselsApiService,
-    private voyageService: VoyageService) { }
+    private voyageService: VoyageService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private messageService: MessageService,
+    private translateService: TranslateService,
+    private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
     this.getVesselInfo();
@@ -29,11 +48,13 @@ export class OperationsComponent implements OnInit {
    * @memberof OperationsComponent
    */
    async getVesselInfo() {
+     this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <IVessel>{};
-    if (this.vesselInfo?.id) {
-      localStorage.setItem("vesselId",this.vesselInfo?.id.toString())
-      this.getVoyageInfo(this.vesselInfo?.id);
+    this.vessel = res[0] ?? <IVessel>{};
+    if (this.vessel?.id) {
+      localStorage.setItem("vesselId",this.vessel?.id.toString())
+      await this.getVoyageInfo(this.vessel?.id);
+      this.ngxSpinnerService.hide();
     }
   }
 
@@ -46,6 +67,7 @@ export class OperationsComponent implements OnInit {
   async getVoyageInfo(vesselId: number) {
     const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
     this.voyages = this.getSelectedVoyages(voyages);
+    this.selectedVoyage = this.voyages[0];
   }
 
   /**
@@ -84,41 +106,20 @@ export class OperationsComponent implements OnInit {
   }
 
   /**
-   * Open new voyage popu
+   * Handler for port selection
    *
+   * @param {IVoyagePortDetails} port
    * @memberof OperationsComponent
    */
-   showNewVoyageDialog() {
-    this.displayNewVoyagePopup = true;
-  }
-
-  /**
-   * Toggle display value from new voyage popup
-   *
-   * @param {boolean} display
-   * @memberof OperationsComponent
-   */
-  displayPopUpTab(display: boolean) {
-    this.displayNewVoyagePopup = display;
-  }
-
-  /**
-   * Show edit port rotation popup
-   *
-   * @memberof OperationsComponent
-   */
-  showEditPortRotation() {
-    this.displayEditPortRotationPopup = true;
-  }
-
-  /**
-   * Toggled display value from edit port rotation
-   *
-   * @param {boolean} display
-   * @memberof OperationsComponent
-   */
-  displayEditPortRotationPopUpTab(display: boolean) {
-    this.displayEditPortRotationPopup = display;
+  onPortSelection(port: IVoyagePortDetails) {
+    if(port?.operationId === 1) {
+      this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute});
+    } else if (port?.operationId === 2) {
+      this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id], { relativeTo: this.activatedRoute });
+    } else {
+      const translationKeys = this.translateService.instant(['OPERATION_PLAN_NOT_AVAILABLE_INFO_SUMMARY', 'OPERATION_PLAN_NOT_AVAILABLE_INFO_DETAILS']);
+      this.messageService.add({ severity: 'info', summary: translationKeys['OPERATION_PLAN_NOT_AVAILABLE_INFO_SUMMARY'], detail: translationKeys['OPERATION_PLAN_NOT_AVAILABLE_INFO_DETAILS'] });
+    }
   }
 
 }

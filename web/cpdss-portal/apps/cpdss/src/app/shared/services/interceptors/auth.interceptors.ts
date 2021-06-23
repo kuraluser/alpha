@@ -52,8 +52,13 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
       });
     }
-    const token: string = SecurityService.getAuthToken();
-    if(token) {
+
+    // Check if token is there in local storage. If not the token is not yet set or user is logged out.
+    if (SecurityService.getAuthToken()) {
+      /**In shore env we are always reading from keyclaok instance to reflect the new token soon after token is refereshed.
+       * In ship env it will always read from local storage
+       */
+      const token: string = keycloakInstance?.token ?? SecurityService.getAuthToken();
       // Add token to request header
       request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });
     }

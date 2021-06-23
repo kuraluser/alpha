@@ -9,8 +9,6 @@ import { UnitDropdownModule } from '../../shared/components/unit-dropdown/unit-d
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbon/port-rotation-ribbon.module';
-import { NewVoyagePopupModule } from '../core/components/new-voyage-popup/new-voyage-popup.module';
-import { EditPortRotationPopupModule } from '../core/components/edit-port-rotation-popup/edit-port-rotation-popup.module';
 
 
 @NgModule({
@@ -24,9 +22,7 @@ import { EditPortRotationPopupModule } from '../core/components/edit-port-rotati
     OperationsRoutingModule,
     VesselInfoModule,
     UnitDropdownModule,
-    PortRotationRibbonModule,
-    NewVoyagePopupModule,
-    EditPortRotationPopupModule
+    PortRotationRibbonModule
   ],
   providers: [VesselsApiService]
 })

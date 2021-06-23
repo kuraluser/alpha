@@ -13,13 +13,14 @@
     </div>
     <div class="col-md-4">
         <cpdss-portal-loading-discharging-cargo-details-table [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"></cpdss-portal-loading-discharging-cargo-details-table>
-        <!-- <button (click)="display = true" class="btn btn-main">Update Ullage</button> -->
+       
     </div>
 </div>
 <div class="row pt-20">
     <div class="col-md-12">
-        <cpdss-portal-datatable [tableId]="'drparture-details-tbl'"
-        [columns]="departureDetailsColumns" [listData]="listData" [value]="departureDetailsList">
-      </cpdss-portal-datatable>
+        {{'CARGO_TO_BE_LOADED' | translate}}
+        <cpdss-portal-datatable *ngIf="cargoTobeLoadedColumns" [tableId]="'drparture-details-tbl'" [columns]="cargoTobeLoadedColumns"
+        [value]="cargoTobeLoaded" [scrollable]="false">
+    </cpdss-portal-datatable>
     </div>
 </div>
