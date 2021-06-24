@@ -1717,4 +1717,5 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           builder.addRulePlan(rulePlanBuider.build());
         });
   }
+  
 }
