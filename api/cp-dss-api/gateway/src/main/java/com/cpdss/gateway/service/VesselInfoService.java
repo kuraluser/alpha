@@ -39,14 +39,13 @@ import com.cpdss.gateway.domain.VesselDraftCondition;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.VesselTankTCG;
+import com.cpdss.gateway.domain.vessel.VesselValveSeq;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.service.vesselinfo.VesselValveService;
 import com.cpdss.gateway.utility.Utility;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -67,6 +66,7 @@ public class VesselInfoService {
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @Autowired private UsersRepository usersRepository;
+  @Autowired VesselValveService vesselValveService;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -173,8 +173,8 @@ public class VesselInfoService {
    * @param first
    * @return VesselDetailsResponse
    */
-  public VesselDetailsResponse getVesselsDetails(Long vesselId, String correlationId)
-      throws GenericServiceException {
+  public VesselDetailsResponse getVesselsDetails(
+      Long vesselId, String correlationId, boolean enableValveSeq) throws GenericServiceException {
     VesselDetailsResponse vesselDetailsResponse = new VesselDetailsResponse();
     VesselAlgoRequest vesselAlgoRequest =
         VesselAlgoRequest.newBuilder().setVesselId(vesselId).build();
@@ -213,7 +213,23 @@ public class VesselInfoService {
     vesselDetailsResponse.setUllageTrimCorrections(
         this.buildUllageTrimCorrections(vesselAlgoReply));
     vesselDetailsResponse.setSelectableParameter(this.buildSelectableParameters(vesselAlgoReply));
+    if (enableValveSeq)
+      vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData());
     return vesselDetailsResponse;
+  }
+
+  private Map<String, Map<String, Map<String, VesselValveSeq>>> getVesselValveSequenceData() {
+    VesselInfo.VesselRequest.Builder builder = VesselInfo.VesselRequest.newBuilder();
+    VesselInfo.VesselValveSequenceReply reply =
+        this.vesselInfoGrpcService.getVesselValveSequence(builder.build());
+    if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      Map<String, Map<String, Map<String, VesselValveSeq>>> response =
+          this.vesselValveService.buildVesselValveResponse(reply.getEntityList());
+      log.info("Vessel Valve Sequence data size {}", response);
+      return response;
+    }
+    log.info("Vessel Valve Sequence data not found");
+    return null;
   }
 
   private List<SelectableParameter> buildSelectableParameters(VesselAlgoReply vesselAlgoReply) {

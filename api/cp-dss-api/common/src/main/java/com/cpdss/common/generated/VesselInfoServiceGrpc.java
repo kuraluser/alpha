@@ -684,6 +684,57 @@ public final class VesselInfoServiceGrpc {
     return getGetRulesByVesselIdAndSectionIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.VesselRequest,
+          com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+      getGetVesselValveSequenceMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetVesselValveSequence",
+      requestType = com.cpdss.common.generated.VesselInfo.VesselRequest.class,
+      responseType = com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.VesselRequest,
+          com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+      getGetVesselValveSequenceMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.VesselInfo.VesselRequest,
+            com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+        getGetVesselValveSequenceMethod;
+    if ((getGetVesselValveSequenceMethod = VesselInfoServiceGrpc.getGetVesselValveSequenceMethod)
+        == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getGetVesselValveSequenceMethod =
+                VesselInfoServiceGrpc.getGetVesselValveSequenceMethod)
+            == null) {
+          VesselInfoServiceGrpc.getGetVesselValveSequenceMethod =
+              getGetVesselValveSequenceMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.VesselInfo.VesselRequest,
+                          com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetVesselValveSequence"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.VesselRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("GetVesselValveSequence"))
+                      .build();
+        }
+      }
+    }
+    return getGetVesselValveSequenceMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static VesselInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<VesselInfoServiceStub> factory =
@@ -832,6 +883,14 @@ public final class VesselInfoServiceGrpc {
       asyncUnimplementedUnaryCall(getGetRulesByVesselIdAndSectionIdMethod(), responseObserver);
     }
 
+    /** */
+    public void getVesselValveSequence(
+        com.cpdss.common.generated.VesselInfo.VesselRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetVesselValveSequenceMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -926,6 +985,13 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselRuleRequest,
                       com.cpdss.common.generated.VesselInfo.VesselRuleReply>(
                       this, METHODID_GET_RULES_BY_VESSEL_ID_AND_SECTION_ID)))
+          .addMethod(
+              getGetVesselValveSequenceMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.VesselInfo.VesselRequest,
+                      com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>(
+                      this, METHODID_GET_VESSEL_VALVE_SEQUENCE)))
           .build();
     }
   }
@@ -1085,6 +1151,17 @@ public final class VesselInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getVesselValveSequence(
+        com.cpdss.common.generated.VesselInfo.VesselRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetVesselValveSequenceMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1189,6 +1266,13 @@ public final class VesselInfoServiceGrpc {
         com.cpdss.common.generated.VesselInfo.VesselRuleRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetRulesByVesselIdAndSectionIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply getVesselValveSequence(
+        com.cpdss.common.generated.VesselInfo.VesselRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetVesselValveSequenceMethod(), getCallOptions(), request);
     }
   }
 
@@ -1313,6 +1397,14 @@ public final class VesselInfoServiceGrpc {
           getChannel().newCall(getGetRulesByVesselIdAndSectionIdMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+        getVesselValveSequence(com.cpdss.common.generated.VesselInfo.VesselRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetVesselValveSequenceMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_ALL_VESSELS_BY_COMPANY = 0;
@@ -1328,6 +1420,7 @@ public final class VesselInfoServiceGrpc {
   private static final int METHODID_GET_VESSEL_INFO_BY_VESSEL_ID = 10;
   private static final int METHODID_GET_VESSEL_PUMPS_BY_VESSEL_ID = 11;
   private static final int METHODID_GET_RULES_BY_VESSEL_ID_AND_SECTION_ID = 12;
+  private static final int METHODID_GET_VESSEL_VALVE_SEQUENCE = 13;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1426,6 +1519,13 @@ public final class VesselInfoServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselRuleReply>)
                   responseObserver);
           break;
+        case METHODID_GET_VESSEL_VALVE_SEQUENCE:
+          serviceImpl.getVesselValveSequence(
+              (com.cpdss.common.generated.VesselInfo.VesselRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1503,6 +1603,7 @@ public final class VesselInfoServiceGrpc {
                       .addMethod(getGetVesselInfoByVesselIdMethod())
                       .addMethod(getGetVesselPumpsByVesselIdMethod())
                       .addMethod(getGetRulesByVesselIdAndSectionIdMethod())
+                      .addMethod(getGetVesselValveSequenceMethod())
                       .build();
         }
       }
