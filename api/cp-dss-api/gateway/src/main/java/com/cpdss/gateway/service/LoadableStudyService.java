@@ -2578,6 +2578,23 @@ public class LoadableStudyService {
                     Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
       }
 
+      if (reply
+          .getResponseStatus()
+          .getCode()
+          .equals(CommonErrorCodes.E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY)) {
+        log.info("Generate Pattern Failed on Commingle Quantity Validation");
+        throw new GenericServiceException(
+            "Generate pattern failed, Commingle Quantity is less than total Cargo Quantity",
+            reply.getResponseStatus().getCode(),
+            reply
+                    .getResponseStatus()
+                    .getCode()
+                    .equals(CommonErrorCodes.E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY)
+                ? HttpStatusCode.BAD_REQUEST
+                : HttpStatusCode.valueOf(
+                    Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+      }
+
       throw new GenericServiceException(
           "failed to call algo",
           reply.getResponseStatus().getCode(),

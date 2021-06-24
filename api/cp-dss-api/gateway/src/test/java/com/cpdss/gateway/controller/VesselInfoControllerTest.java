@@ -68,7 +68,7 @@ public class VesselInfoControllerTest {
       strings = {GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL, GET_VESSEL_DETAILS_SHIP_API_URL})
   @ParameterizedTest
   void testGetVesselsDetails(String url) throws Exception {
-    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString()))
+    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false))
         .thenReturn(new VesselDetailsResponse());
     this.mockMvc
         .perform(
@@ -102,7 +102,7 @@ public class VesselInfoControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString())).thenThrow(ex);
+    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false)).thenThrow(ex);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL, TEST_VESSEL_ID)

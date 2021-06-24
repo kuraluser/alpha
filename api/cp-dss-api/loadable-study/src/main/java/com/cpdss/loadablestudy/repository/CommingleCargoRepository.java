@@ -14,6 +14,9 @@ public interface CommingleCargoRepository extends CommonCrudRepository<Commingle
   public List<CommingleCargo> findByLoadableStudyXIdAndIsActive(
       Long loadableStudyXId, Boolean isActive);
 
+  public List<CommingleCargo> findByLoadableStudyXIdAndPurposeXidAndIsActive(
+      Long loadableStudyXId, Long purposeXid, Boolean isActive);
+
   public Optional<CommingleCargo> findByIdAndIsActive(Long id, Boolean isActive);
 
   @Transactional

@@ -7,10 +7,12 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.vesselinfo.entity.PumpType;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselPumps;
+import com.cpdss.vesselinfo.entity.VesselValveSequence;
 import com.cpdss.vesselinfo.repository.PumpTypeRepository;
 import com.cpdss.vesselinfo.repository.VesselPumpRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
-import java.util.List;
+import com.cpdss.vesselinfo.repository.VesselValveSequenceRepository;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,8 @@ public class VesselPumpService {
   @Autowired VesselPumpRepository vesselPumpRepository;
 
   @Autowired PumpTypeRepository pumpTypeRepository;
+
+  @Autowired VesselValveSequenceRepository vesselValveSequenceRepository;
 
   public VesselInfo.VesselPumpsResponse getVesselPumpsAndTypes(
       VesselInfo.VesselPumpsResponse.Builder builder, Long vesselId)
@@ -74,5 +78,48 @@ public class VesselPumpService {
       builder2.setPumpCapacity(vp.getCapacity().toString());
       builder.addVesselPump(builder2);
     }
+  }
+
+  public List<VesselInfo.VesselValveSequence> buildVesselValveSeqMessage(
+      List<VesselValveSequence> list) {
+    List<VesselInfo.VesselValveSequence> sequenceList = new ArrayList<>();
+    for (VesselValveSequence vvs : list) {
+      VesselInfo.VesselValveSequence.Builder builder = VesselInfo.VesselValveSequence.newBuilder();
+      try {
+        Optional.ofNullable(vvs.getId()).ifPresent(builder::setId);
+        Optional.ofNullable(vvs.getIsCommonValve()).ifPresent(builder::setIsCommonValve);
+        Optional.ofNullable(vvs.getPipelineId()).ifPresent(builder::setPipelineId);
+        Optional.ofNullable(vvs.getPipelineColor()).ifPresent(builder::setPipelineColor);
+        Optional.ofNullable(vvs.getPipelineName()).ifPresent(builder::setPipelineName);
+        Optional.ofNullable(vvs.getPipelineType()).ifPresent(builder::setPipelineType);
+        Optional.ofNullable(vvs.getSequenceNumber())
+            .ifPresent(v -> builder.setSequenceNumber(v.toString()));
+        Optional.ofNullable(vvs.getSequenceOperationId())
+            .ifPresent(builder::setSequenceOperationId);
+        Optional.ofNullable(vvs.getSequenceOperationName())
+            .ifPresent(builder::setSequenceOperationName);
+        Optional.ofNullable(vvs.getSequenceTypeId()).ifPresent(builder::setSequenceTypeId);
+        Optional.ofNullable(vvs.getSequenceTypeName()).ifPresent(builder::setSequenceTypeName);
+        Optional.ofNullable(vvs.getSequenceVesselMappingId())
+            .ifPresent(builder::setSequenceVesselMappingId);
+        Optional.ofNullable(vvs.getTankShortName()).ifPresent(builder::setTankShortName);
+        Optional.ofNullable(vvs.getValveCategory()).ifPresent(builder::setValveCategory);
+        Optional.ofNullable(vvs.getValveCategoryId()).ifPresent(builder::setValveCategoryId);
+        Optional.ofNullable(vvs.getValveNumber()).ifPresent(builder::setValveNumber);
+        Optional.ofNullable(vvs.getValveSide()).ifPresent(builder::setValveSide);
+        Optional.ofNullable(vvs.getValveTypeId()).ifPresent(builder::setValveTypeId);
+        Optional.ofNullable(vvs.getValveTypeName()).ifPresent(builder::setValveTypeName);
+        Optional.ofNullable(vvs.getVesselName()).ifPresent(builder::setVesselName);
+        Optional.ofNullable(vvs.getVesselTankXid()).ifPresent(builder::setVesselTankXid);
+        Optional.ofNullable(vvs.getVesselValveMappingId())
+            .ifPresent(builder::setVesselValveMappingId);
+        Optional.ofNullable(vvs.getVesselXid()).ifPresent(builder::setVesselXid);
+      } catch (Exception e) {
+        log.error("Failed to build message for vessel valve sequence");
+        e.printStackTrace();
+      }
+      sequenceList.add(builder.build());
+    }
+    return sequenceList;
   }
 }
