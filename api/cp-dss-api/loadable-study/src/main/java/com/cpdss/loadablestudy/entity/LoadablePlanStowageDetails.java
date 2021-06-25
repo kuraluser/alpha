@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -78,4 +79,7 @@ public class LoadablePlanStowageDetails extends EntityDoc {
   @JoinColumn(name = "loadable_pattern_xid")
   @ManyToOne
   private LoadablePattern loadablePattern;
+
+  @Column(name = "cargo_nomination_temperature")
+  private BigDecimal cargoNominationTemperature;
 }

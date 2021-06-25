@@ -3654,6 +3654,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? new BigDecimal(lpsd.getCorrectedUllage())
             : null);
     loadablePatternCargoDetails.setCargoNominationId(lpsd.getCargoNominationId());
+    loadablePatternCargoDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
@@ -3709,6 +3710,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
+          loadablePlanStowageDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
@@ -3818,6 +3820,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
+              loadablePlanQuantity.setCargoNominationTemperature(new BigDecimal(lqcd.getCargoNominationTemperature()));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
               lqcd.getToppingOffSequencesList()
@@ -4358,7 +4361,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
           ofNullable(lpq.getEstimatedApi())
               .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
-          Optional.ofNullable(lpq.getEstimatedTemperature())
+          Optional.ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   temp -> loadablePatternCargoDetailsBuilder.setTemperature(String.valueOf(temp)));
 
@@ -8937,7 +8940,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getRdgUllage()).ifPresent(builder::setRdgUllage);
           Optional.ofNullable(lpsd.getTankname()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
-          Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
+          Optional.ofNullable(lpsd.getCargoNominationTemperature())
+          .ifPresent(temp -> builder.setTemperature(valueOf(temp)));
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
           Optional.ofNullable(lpsd.getCorrectedUllage())
@@ -9006,7 +9010,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       builder.setDifferencePercentage(String.valueOf(diffPercentage)));
           ofNullable(lpq.getEstimatedApi())
               .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
-          ofNullable(lpq.getEstimatedTemperature())
+          ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   estimatedTemperature ->
                       builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));

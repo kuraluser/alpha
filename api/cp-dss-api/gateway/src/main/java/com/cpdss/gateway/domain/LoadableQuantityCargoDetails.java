@@ -61,4 +61,5 @@ public class LoadableQuantityCargoDetails {
   private List<String> loadingPorts;
 
   private List<CargoToppingOffSequence> toppingSequence;
+  private String cargoNominationTemperature;
 }

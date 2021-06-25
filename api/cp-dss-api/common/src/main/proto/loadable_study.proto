@@ -475,6 +475,7 @@ message LoadablePlanStowageDetails {
   string fillingRatioOrginal = 24;
   string rdgUllageOrginal = 25;
   string weightOrginal = 26; // MT
+  string cargoNominationTemperature = 27;
  }
 
 
@@ -543,6 +544,7 @@ message LoadableQuantityCargoDetails {
 	 repeated LoadingPortDetail loadingPorts = 24;
 	 string timeRequiredForLoading = 25;
 	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 26;
+	 string cargoNominationTemperature = 27;
 }
 
 message CargoToppingOffSequenceDetails {

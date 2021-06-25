@@ -48,7 +48,7 @@ public class LoadablePlanService {
               .ifPresent(diffPercentage -> builder.setDifferencePercentage(diffPercentage));
           Optional.ofNullable(lpq.getEstimatedApi())
               .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
-          Optional.ofNullable(lpq.getEstimatedTemperature())
+          Optional.ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   estimatedTemperature ->
                       builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
