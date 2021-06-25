@@ -3637,6 +3637,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpsd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
     Optional.ofNullable(lpsd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
     Optional.ofNullable(lpsd.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
+    Optional.ofNullable(lpsd.getCargoNominationTemperature())
+        .ifPresent(builder::setCargoNominationTemperature);
     detailsBuilder.addLoadablePlanStowageDetails(builder.build());
   }
 
@@ -3680,6 +3682,9 @@ public class LoadableStudyService {
               Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
               qunatityBuilder.addToppingOffSequences(toppingBuilder.build());
             });
+
+    Optional.ofNullable(lpqcd.getCargoNominationTemperature())
+        .ifPresent(qunatityBuilder::setCargoNominationTemperature);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
