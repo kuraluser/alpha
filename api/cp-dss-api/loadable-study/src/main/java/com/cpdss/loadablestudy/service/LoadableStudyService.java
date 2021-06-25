@@ -13373,4 +13373,78 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void getLoadablePatternByVoyageAndStatus(
+      LoadableStudyRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.newBuilder();
+    try {
+      Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+
+      Optional<LoadableStudy> loadableStudy =
+          loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+              voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+      if (loadableStudy.isPresent()) {
+        log.info("Confirmed Ls - ls id {}", loadableStudy.get().getId());
+        Optional<LoadablePattern> pattern =
+            loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+                loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+        if (pattern.isPresent()) {
+          com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePattern =
+              com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+          loadablePattern.setLoadablePatternId(pattern.get().getId());
+          builder.setPattern(loadablePattern.build());
+        }
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getCargoNominationByCargoNominationId(
+      CargoNominationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.newBuilder();
+    try {
+      CargoNomination cargoNomination =
+          this.cargoNominationRepository.getOne(request.getCargoNominationId());
+      if (cargoNomination != null) {
+        com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder cargoNom =
+            com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.newBuilder();
+        cargoNom.setId(cargoNomination.getId());
+        cargoNom.setAbbreviation(cargoNomination.getAbbreviation());
+        cargoNom.setColor(cargoNomination.getColor());
+        CargoRequest.Builder cargoReq = CargoRequest.newBuilder();
+        cargoReq.setCargoId(cargoNomination.getCargoXId());
+        com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
+            this.getCargoInfoById(cargoReq.build());
+        cargoNom.setCargoName(cargoDetailReply.getCargoDetail().getCrudeType());
+        cargoNom.setCargoId(cargoNomination.getCargoXId());
+        builder.setCargoNominationdetail(cargoNom);
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public com.cpdss.common.generated.CargoInfo.CargoDetailReply getCargoInfoById(
+      CargoRequest build) {
+    return cargoInfoGrpcService.getCargoInfoById(build);
+  }
 }

@@ -1068,11 +1068,11 @@ public final class Common {
     long getPortId();
 
     /**
-     * <code>int64 cargoId = 3;</code>
+     * <code>int64 cargoNominationId = 3;</code>
      *
-     * @return The cargoId.
+     * @return The cargoNominationId.
      */
-    long getCargoId();
+    long getCargoNominationId();
 
     /**
      * <code>string quantityBbls = 4;</code>
@@ -1138,6 +1138,65 @@ public final class Common {
      * @return The bytes for temperature.
      */
     com.google.protobuf.ByteString getTemperatureBytes();
+
+    /**
+     * <code>string cargoColor = 9;</code>
+     *
+     * @return The cargoColor.
+     */
+    java.lang.String getCargoColor();
+    /**
+     * <code>string cargoColor = 9;</code>
+     *
+     * @return The bytes for cargoColor.
+     */
+    com.google.protobuf.ByteString getCargoColorBytes();
+
+    /**
+     * <code>string cargoName = 10;</code>
+     *
+     * @return The cargoName.
+     */
+    java.lang.String getCargoName();
+    /**
+     * <code>string cargoName = 10;</code>
+     *
+     * @return The bytes for cargoName.
+     */
+    com.google.protobuf.ByteString getCargoNameBytes();
+
+    /**
+     * <code>string cargoAbbrevation = 11;</code>
+     *
+     * @return The cargoAbbrevation.
+     */
+    java.lang.String getCargoAbbrevation();
+    /**
+     * <code>string cargoAbbrevation = 11;</code>
+     *
+     * @return The bytes for cargoAbbrevation.
+     */
+    com.google.protobuf.ByteString getCargoAbbrevationBytes();
+
+    /**
+     * <code>string loadingPort = 12;</code>
+     *
+     * @return The loadingPort.
+     */
+    java.lang.String getLoadingPort();
+    /**
+     * <code>string loadingPort = 12;</code>
+     *
+     * @return The bytes for loadingPort.
+     */
+    com.google.protobuf.ByteString getLoadingPortBytes();
+
+    /**
+     * <code>int64 cargoId = 13;</code>
+     *
+     * @return The cargoId.
+     */
+    long getCargoId();
   }
   /** Protobuf type {@code BillOfLadding} */
   public static final class BillOfLadding extends com.google.protobuf.GeneratedMessageV3
@@ -1156,6 +1215,10 @@ public final class Common {
       quantityKl_ = "";
       api_ = "";
       temperature_ = "";
+      cargoColor_ = "";
+      cargoName_ = "";
+      cargoAbbrevation_ = "";
+      loadingPort_ = "";
     }
 
     @java.lang.Override
@@ -1199,7 +1262,7 @@ public final class Common {
               }
             case 24:
               {
-                cargoId_ = input.readInt64();
+                cargoNominationId_ = input.readInt64();
                 break;
               }
             case 34:
@@ -1235,6 +1298,39 @@ public final class Common {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 temperature_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargoColor_ = s;
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargoName_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargoAbbrevation_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                loadingPort_ = s;
+                break;
+              }
+            case 104:
+              {
+                cargoId_ = input.readInt64();
                 break;
               }
             default:
@@ -1291,15 +1387,15 @@ public final class Common {
       return portId_;
     }
 
-    public static final int CARGOID_FIELD_NUMBER = 3;
-    private long cargoId_;
+    public static final int CARGONOMINATIONID_FIELD_NUMBER = 3;
+    private long cargoNominationId_;
     /**
-     * <code>int64 cargoId = 3;</code>
+     * <code>int64 cargoNominationId = 3;</code>
      *
-     * @return The cargoId.
+     * @return The cargoNominationId.
      */
-    public long getCargoId() {
-      return cargoId_;
+    public long getCargoNominationId() {
+      return cargoNominationId_;
     }
 
     public static final int QUANTITYBBLS_FIELD_NUMBER = 4;
@@ -1477,6 +1573,157 @@ public final class Common {
       }
     }
 
+    public static final int CARGOCOLOR_FIELD_NUMBER = 9;
+    private volatile java.lang.Object cargoColor_;
+    /**
+     * <code>string cargoColor = 9;</code>
+     *
+     * @return The cargoColor.
+     */
+    public java.lang.String getCargoColor() {
+      java.lang.Object ref = cargoColor_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargoColor_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargoColor = 9;</code>
+     *
+     * @return The bytes for cargoColor.
+     */
+    public com.google.protobuf.ByteString getCargoColorBytes() {
+      java.lang.Object ref = cargoColor_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargoColor_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGONAME_FIELD_NUMBER = 10;
+    private volatile java.lang.Object cargoName_;
+    /**
+     * <code>string cargoName = 10;</code>
+     *
+     * @return The cargoName.
+     */
+    public java.lang.String getCargoName() {
+      java.lang.Object ref = cargoName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargoName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargoName = 10;</code>
+     *
+     * @return The bytes for cargoName.
+     */
+    public com.google.protobuf.ByteString getCargoNameBytes() {
+      java.lang.Object ref = cargoName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargoName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGOABBREVATION_FIELD_NUMBER = 11;
+    private volatile java.lang.Object cargoAbbrevation_;
+    /**
+     * <code>string cargoAbbrevation = 11;</code>
+     *
+     * @return The cargoAbbrevation.
+     */
+    public java.lang.String getCargoAbbrevation() {
+      java.lang.Object ref = cargoAbbrevation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargoAbbrevation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargoAbbrevation = 11;</code>
+     *
+     * @return The bytes for cargoAbbrevation.
+     */
+    public com.google.protobuf.ByteString getCargoAbbrevationBytes() {
+      java.lang.Object ref = cargoAbbrevation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargoAbbrevation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LOADINGPORT_FIELD_NUMBER = 12;
+    private volatile java.lang.Object loadingPort_;
+    /**
+     * <code>string loadingPort = 12;</code>
+     *
+     * @return The loadingPort.
+     */
+    public java.lang.String getLoadingPort() {
+      java.lang.Object ref = loadingPort_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        loadingPort_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string loadingPort = 12;</code>
+     *
+     * @return The bytes for loadingPort.
+     */
+    public com.google.protobuf.ByteString getLoadingPortBytes() {
+      java.lang.Object ref = loadingPort_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        loadingPort_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGOID_FIELD_NUMBER = 13;
+    private long cargoId_;
+    /**
+     * <code>int64 cargoId = 13;</code>
+     *
+     * @return The cargoId.
+     */
+    public long getCargoId() {
+      return cargoId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1497,8 +1744,8 @@ public final class Common {
       if (portId_ != 0L) {
         output.writeInt64(2, portId_);
       }
-      if (cargoId_ != 0L) {
-        output.writeInt64(3, cargoId_);
+      if (cargoNominationId_ != 0L) {
+        output.writeInt64(3, cargoNominationId_);
       }
       if (!getQuantityBblsBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, quantityBbls_);
@@ -1515,6 +1762,21 @@ public final class Common {
       if (!getTemperatureBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, temperature_);
       }
+      if (!getCargoColorBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, cargoColor_);
+      }
+      if (!getCargoNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, cargoName_);
+      }
+      if (!getCargoAbbrevationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, cargoAbbrevation_);
+      }
+      if (!getLoadingPortBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, loadingPort_);
+      }
+      if (cargoId_ != 0L) {
+        output.writeInt64(13, cargoId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1530,8 +1792,8 @@ public final class Common {
       if (portId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, portId_);
       }
-      if (cargoId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, cargoId_);
+      if (cargoNominationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, cargoNominationId_);
       }
       if (!getQuantityBblsBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, quantityBbls_);
@@ -1547,6 +1809,21 @@ public final class Common {
       }
       if (!getTemperatureBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, temperature_);
+      }
+      if (!getCargoColorBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, cargoColor_);
+      }
+      if (!getCargoNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, cargoName_);
+      }
+      if (!getCargoAbbrevationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, cargoAbbrevation_);
+      }
+      if (!getLoadingPortBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, loadingPort_);
+      }
+      if (cargoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(13, cargoId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1566,12 +1843,17 @@ public final class Common {
 
       if (getId() != other.getId()) return false;
       if (getPortId() != other.getPortId()) return false;
-      if (getCargoId() != other.getCargoId()) return false;
+      if (getCargoNominationId() != other.getCargoNominationId()) return false;
       if (!getQuantityBbls().equals(other.getQuantityBbls())) return false;
       if (!getQuantityMt().equals(other.getQuantityMt())) return false;
       if (!getQuantityKl().equals(other.getQuantityKl())) return false;
       if (!getApi().equals(other.getApi())) return false;
       if (!getTemperature().equals(other.getTemperature())) return false;
+      if (!getCargoColor().equals(other.getCargoColor())) return false;
+      if (!getCargoName().equals(other.getCargoName())) return false;
+      if (!getCargoAbbrevation().equals(other.getCargoAbbrevation())) return false;
+      if (!getLoadingPort().equals(other.getLoadingPort())) return false;
+      if (getCargoId() != other.getCargoId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1587,8 +1869,8 @@ public final class Common {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
       hash = (37 * hash) + PORTID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
-      hash = (37 * hash) + CARGOID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
+      hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
       hash = (37 * hash) + QUANTITYBBLS_FIELD_NUMBER;
       hash = (53 * hash) + getQuantityBbls().hashCode();
       hash = (37 * hash) + QUANTITYMT_FIELD_NUMBER;
@@ -1599,6 +1881,16 @@ public final class Common {
       hash = (53 * hash) + getApi().hashCode();
       hash = (37 * hash) + TEMPERATURE_FIELD_NUMBER;
       hash = (53 * hash) + getTemperature().hashCode();
+      hash = (37 * hash) + CARGOCOLOR_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoColor().hashCode();
+      hash = (37 * hash) + CARGONAME_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoName().hashCode();
+      hash = (37 * hash) + CARGOABBREVATION_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoAbbrevation().hashCode();
+      hash = (37 * hash) + LOADINGPORT_FIELD_NUMBER;
+      hash = (53 * hash) + getLoadingPort().hashCode();
+      hash = (37 * hash) + CARGOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1740,7 +2032,7 @@ public final class Common {
 
         portId_ = 0L;
 
-        cargoId_ = 0L;
+        cargoNominationId_ = 0L;
 
         quantityBbls_ = "";
 
@@ -1751,6 +2043,16 @@ public final class Common {
         api_ = "";
 
         temperature_ = "";
+
+        cargoColor_ = "";
+
+        cargoName_ = "";
+
+        cargoAbbrevation_ = "";
+
+        loadingPort_ = "";
+
+        cargoId_ = 0L;
 
         return this;
       }
@@ -1780,12 +2082,17 @@ public final class Common {
             new com.cpdss.common.generated.Common.BillOfLadding(this);
         result.id_ = id_;
         result.portId_ = portId_;
-        result.cargoId_ = cargoId_;
+        result.cargoNominationId_ = cargoNominationId_;
         result.quantityBbls_ = quantityBbls_;
         result.quantityMt_ = quantityMt_;
         result.quantityKl_ = quantityKl_;
         result.api_ = api_;
         result.temperature_ = temperature_;
+        result.cargoColor_ = cargoColor_;
+        result.cargoName_ = cargoName_;
+        result.cargoAbbrevation_ = cargoAbbrevation_;
+        result.loadingPort_ = loadingPort_;
+        result.cargoId_ = cargoId_;
         onBuilt();
         return result;
       }
@@ -1844,8 +2151,8 @@ public final class Common {
         if (other.getPortId() != 0L) {
           setPortId(other.getPortId());
         }
-        if (other.getCargoId() != 0L) {
-          setCargoId(other.getCargoId());
+        if (other.getCargoNominationId() != 0L) {
+          setCargoNominationId(other.getCargoNominationId());
         }
         if (!other.getQuantityBbls().isEmpty()) {
           quantityBbls_ = other.quantityBbls_;
@@ -1866,6 +2173,25 @@ public final class Common {
         if (!other.getTemperature().isEmpty()) {
           temperature_ = other.temperature_;
           onChanged();
+        }
+        if (!other.getCargoColor().isEmpty()) {
+          cargoColor_ = other.cargoColor_;
+          onChanged();
+        }
+        if (!other.getCargoName().isEmpty()) {
+          cargoName_ = other.cargoName_;
+          onChanged();
+        }
+        if (!other.getCargoAbbrevation().isEmpty()) {
+          cargoAbbrevation_ = other.cargoAbbrevation_;
+          onChanged();
+        }
+        if (!other.getLoadingPort().isEmpty()) {
+          loadingPort_ = other.loadingPort_;
+          onChanged();
+        }
+        if (other.getCargoId() != 0L) {
+          setCargoId(other.getCargoId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1963,35 +2289,35 @@ public final class Common {
         return this;
       }
 
-      private long cargoId_;
+      private long cargoNominationId_;
       /**
-       * <code>int64 cargoId = 3;</code>
+       * <code>int64 cargoNominationId = 3;</code>
        *
-       * @return The cargoId.
+       * @return The cargoNominationId.
        */
-      public long getCargoId() {
-        return cargoId_;
+      public long getCargoNominationId() {
+        return cargoNominationId_;
       }
       /**
-       * <code>int64 cargoId = 3;</code>
+       * <code>int64 cargoNominationId = 3;</code>
        *
-       * @param value The cargoId to set.
+       * @param value The cargoNominationId to set.
        * @return This builder for chaining.
        */
-      public Builder setCargoId(long value) {
+      public Builder setCargoNominationId(long value) {
 
-        cargoId_ = value;
+        cargoNominationId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 cargoId = 3;</code>
+       * <code>int64 cargoNominationId = 3;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearCargoId() {
+      public Builder clearCargoNominationId() {
 
-        cargoId_ = 0L;
+        cargoNominationId_ = 0L;
         onChanged();
         return this;
       }
@@ -2372,6 +2698,343 @@ public final class Common {
         checkByteStringIsUtf8(value);
 
         temperature_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargoColor_ = "";
+      /**
+       * <code>string cargoColor = 9;</code>
+       *
+       * @return The cargoColor.
+       */
+      public java.lang.String getCargoColor() {
+        java.lang.Object ref = cargoColor_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargoColor_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargoColor = 9;</code>
+       *
+       * @return The bytes for cargoColor.
+       */
+      public com.google.protobuf.ByteString getCargoColorBytes() {
+        java.lang.Object ref = cargoColor_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargoColor_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargoColor = 9;</code>
+       *
+       * @param value The cargoColor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoColor(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargoColor_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoColor = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoColor() {
+
+        cargoColor_ = getDefaultInstance().getCargoColor();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoColor = 9;</code>
+       *
+       * @param value The bytes for cargoColor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoColorBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargoColor_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargoName_ = "";
+      /**
+       * <code>string cargoName = 10;</code>
+       *
+       * @return The cargoName.
+       */
+      public java.lang.String getCargoName() {
+        java.lang.Object ref = cargoName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargoName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargoName = 10;</code>
+       *
+       * @return The bytes for cargoName.
+       */
+      public com.google.protobuf.ByteString getCargoNameBytes() {
+        java.lang.Object ref = cargoName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargoName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargoName = 10;</code>
+       *
+       * @param value The cargoName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargoName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoName = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoName() {
+
+        cargoName_ = getDefaultInstance().getCargoName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoName = 10;</code>
+       *
+       * @param value The bytes for cargoName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargoName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargoAbbrevation_ = "";
+      /**
+       * <code>string cargoAbbrevation = 11;</code>
+       *
+       * @return The cargoAbbrevation.
+       */
+      public java.lang.String getCargoAbbrevation() {
+        java.lang.Object ref = cargoAbbrevation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargoAbbrevation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargoAbbrevation = 11;</code>
+       *
+       * @return The bytes for cargoAbbrevation.
+       */
+      public com.google.protobuf.ByteString getCargoAbbrevationBytes() {
+        java.lang.Object ref = cargoAbbrevation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargoAbbrevation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargoAbbrevation = 11;</code>
+       *
+       * @param value The cargoAbbrevation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoAbbrevation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargoAbbrevation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoAbbrevation = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoAbbrevation() {
+
+        cargoAbbrevation_ = getDefaultInstance().getCargoAbbrevation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoAbbrevation = 11;</code>
+       *
+       * @param value The bytes for cargoAbbrevation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoAbbrevationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargoAbbrevation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object loadingPort_ = "";
+      /**
+       * <code>string loadingPort = 12;</code>
+       *
+       * @return The loadingPort.
+       */
+      public java.lang.String getLoadingPort() {
+        java.lang.Object ref = loadingPort_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          loadingPort_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string loadingPort = 12;</code>
+       *
+       * @return The bytes for loadingPort.
+       */
+      public com.google.protobuf.ByteString getLoadingPortBytes() {
+        java.lang.Object ref = loadingPort_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          loadingPort_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string loadingPort = 12;</code>
+       *
+       * @param value The loadingPort to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingPort(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        loadingPort_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadingPort = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingPort() {
+
+        loadingPort_ = getDefaultInstance().getLoadingPort();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadingPort = 12;</code>
+       *
+       * @param value The bytes for loadingPort to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingPortBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        loadingPort_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long cargoId_;
+      /**
+       * <code>int64 cargoId = 13;</code>
+       *
+       * @return The cargoId.
+       */
+      public long getCargoId() {
+        return cargoId_;
+      }
+      /**
+       * <code>int64 cargoId = 13;</code>
+       *
+       * @param value The cargoId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoId(long value) {
+
+        cargoId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 cargoId = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoId() {
+
+        cargoId_ = 0L;
         onChanged();
         return this;
       }
@@ -6572,23 +7235,26 @@ public final class Common {
     java.lang.String[] descriptorData = {
       "\n\014common.proto\"W\n\016ResponseStatus\022\016\n\006stat"
           + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022"
-          + "\026\n\016httpStatusCode\030\004 \001(\005\"\234\001\n\rBillOfLaddin"
-          + "g\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007cargoId"
-          + "\030\003 \001(\003\022\024\n\014quantityBbls\030\004 \001(\t\022\022\n\nquantity"
-          + "Mt\030\005 \001(\t\022\022\n\nquantityKl\030\006 \001(\t\022\013\n\003api\030\007 \001("
-          + "\t\022\023\n\013temperature\030\010 \001(\t\"2\n\tRulePlans\022\016\n\006h"
-          + "eader\030\001 \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\302\001\n\005R"
-          + "ules\022\n\n\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disa"
-          + "ble\030\003 \001(\010\022\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010"
-          + "ruleType\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesIn"
-          + "puts\022\026\n\016ruleTemplateId\030\007 \001(\t\022\025\n\rvesselRu"
-          + "leXId\030\010 \001(\t\022\022\n\nisHardRule\030\t \001(\010\"\206\001\n\013Rule"
-          + "sInputs\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030"
-          + "\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030"
-          + "\005 \001(\t\022\r\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002"
-          + "id\030\010 \001(\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022"
-          + "\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B"
-          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
+          + "\026\n\016httpStatusCode\030\004 \001(\005\"\215\002\n\rBillOfLaddin"
+          + "g\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021cargoNo"
+          + "minationId\030\003 \001(\003\022\024\n\014quantityBbls\030\004 \001(\t\022\022"
+          + "\n\nquantityMt\030\005 \001(\t\022\022\n\nquantityKl\030\006 \001(\t\022\013"
+          + "\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001(\t\022\022\n\ncarg"
+          + "oColor\030\t \001(\t\022\021\n\tcargoName\030\n \001(\t\022\030\n\020cargo"
+          + "Abbrevation\030\013 \001(\t\022\023\n\013loadingPort\030\014 \001(\t\022\017"
+          + "\n\007cargoId\030\r \001(\003\"2\n\tRulePlans\022\016\n\006header\030\001"
+          + " \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\302\001\n\005Rules\022\n\n"
+          + "\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disable\030\003 \001"
+          + "(\010\022\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010ruleTyp"
+          + "e\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInputs\022\026\n"
+          + "\016ruleTemplateId\030\007 \001(\t\022\025\n\rvesselRuleXId\030\010"
+          + " \001(\t\022\022\n\nisHardRule\030\t \001(\010\"\206\001\n\013RulesInputs"
+          + "\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030\002 \001(\t\022\014"
+          + "\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030\005 \001(\t\022\r"
+          + "\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002id\030\010 \001("
+          + "\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADA"
+          + "BLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B\036\n\032com."
+          + "cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -6607,12 +7273,17 @@ public final class Common {
             new java.lang.String[] {
               "Id",
               "PortId",
-              "CargoId",
+              "CargoNominationId",
               "QuantityBbls",
               "QuantityMt",
               "QuantityKl",
               "Api",
               "Temperature",
+              "CargoColor",
+              "CargoName",
+              "CargoAbbrevation",
+              "LoadingPort",
+              "CargoId",
             });
     internal_static_RulePlans_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_RulePlans_fieldAccessorTable =
