@@ -184,6 +184,8 @@ service LoadableStudyService {
 	rpc SaveLoadingInfoToSynopticData(LoadingInfoSynopticalUpdateRequest) returns (ResponseStatus) {}
 	
 	rpc GetOrSaveRulesForLoadableStudy(LoadableRuleRequest) returns (LoadableRuleReply) {}
+	
+	rpc GetLoadablePatternDetailsJson(LoadablePlanDetailsRequest) returns (LoadablePatternPortWiseDetailsJson) {}
 }
 
 message LatestCargoRequest{
@@ -1376,3 +1378,9 @@ message LoadableRuleReply{
 	repeated RulePlans rulePlan = 2;
 }
 // <------ end loading plan, by john -------->
+
+message LoadablePatternPortWiseDetailsJson {
+	string loadablePatternDetails = 1;
+	ResponseStatus responseStatus = 2;
+	int64 loadableStudyId = 3;
+}

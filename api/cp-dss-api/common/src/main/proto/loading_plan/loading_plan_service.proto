@@ -16,6 +16,8 @@ service LoadingInformationService {
   rpc GetLoadigInformationBySynoptical(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
 
   rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}
+  
+  rpc GenerateLoadingPlan(LoadingInfoAlgoRequest) returns (ResponseStatus) {}
 }
 
 service LoadingInstructionService {
