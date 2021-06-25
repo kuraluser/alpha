@@ -28,7 +28,7 @@ public class LoadingInformationAlgoService {
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
-  
+
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
 
@@ -43,7 +43,9 @@ public class LoadingInformationAlgoService {
     LoadingInformationAlgoRequest algoRequest =
         loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
     saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
-    LoadingInformationAlgoResponse response = restTemplate.postForObject(planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+    LoadingInformationAlgoResponse response =
+        restTemplate.postForObject(
+            planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
   }
 
   /**

@@ -11,6 +11,7 @@ import com.cpdss.loadingplan.service.LoadingBerthService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,20 @@ public class LoadingBerthServiceImpl implements LoadingBerthService {
   @Autowired LoadingInformationRepository loadingInformationRepository;
 
   @Override
-  public void saveLoadingBerthList(List<LoadingBerths> loadingBerthsList) throws Exception {
+  public void saveLoadingBerthList(
+      List<LoadingBerths> loadingBerthsList, LoadingInformation loadingInformation)
+      throws Exception {
+    List<LoadingBerthDetail> existingBerths =
+        loadingBerthDetailRepository.findByLoadingInformationIdAndIsActive(
+            loadingInformation.getId(), true);
+    List<Long> requestedBerths =
+        loadingBerthsList.stream().map(berth -> berth.getId()).collect(Collectors.toList());
+    existingBerths.stream()
+        .filter(berth -> !requestedBerths.contains(berth.getId()))
+        .forEach(
+            berth -> {
+              loadingBerthDetailRepository.deleteById(berth.getId());
+            });
     for (LoadingPlanModels.LoadingBerths berth : loadingBerthsList) {
       log.info(
           "Saving berth {} for LoadingInformation {}",
