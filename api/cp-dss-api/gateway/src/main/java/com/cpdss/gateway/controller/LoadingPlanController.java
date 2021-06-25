@@ -6,6 +6,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.UpdateUllage;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
@@ -35,7 +36,7 @@ public class LoadingPlanController {
    * @param id Long: Always 0.
    * @return
    */
-  @GetMapping("/vessels/{vesselId}/loading-plan/{id}")
+  @GetMapping("/vessels/{vesselId}/loading-info/{id}")
   public Object getPortRotationDetails(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
@@ -70,13 +71,12 @@ public class LoadingPlanController {
    * @param portRotationId Long
    * @return LoadingInformation
    */
-  @GetMapping(
-      "/vessels/{vesselId}/voyages/{voyageId}/loading-plan/{planId}/loading-information/{portRotationId}")
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/{portRotationId}")
   public LoadingInformation getLoadingInformation(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long planId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long portRotationId)
       throws CommonRestException {
@@ -84,7 +84,7 @@ public class LoadingPlanController {
       log.info("Get Loading Info, api for vessel {}, Port Rotation {}", vesselId, portRotationId);
       LoadingInformation var1 =
           this.loadingPlanService.getLoadingInformationByPortRotation(
-              vesselId, planId, portRotationId);
+              vesselId, infoId, portRotationId);
       return var1;
     } catch (GenericServiceException e) {
       e.printStackTrace();
@@ -102,13 +102,22 @@ public class LoadingPlanController {
     }
   }
 
-  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-plan/{planId}/loading-information")
+  /**
+   * Save Loading Information API
+   *
+   * @param request
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info")
   public LoadingInformationResponse saveLoadingInformation(
       @RequestBody @Valid LoadingInformationRequest request,
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long planId)
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId)
       throws CommonRestException {
     try {
       log.info("Save Loading Info, api for vessel {}", vesselId);
@@ -119,28 +128,60 @@ public class LoadingPlanController {
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
-          HttpStatusCode.SERVICE_UNAVAILABLE,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }
   }
 
   @PostMapping(
-      "/vessels/{vesselId}/voyages/{voyageId}/loading-plan/{planId}/update-ullage/{portRotationId}")
+      "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/update-ullage/{portRotationId}")
   public UpdateUllage updateUllage(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long planId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long portRotationId,
       @RequestBody UpdateUllage updateUllageRequest) {
     try {
       return loadingInformationService.processUpdateUllage(
-          vesselId, voyageId, planId, portRotationId, updateUllageRequest, "");
+          vesselId, voyageId, infoId, portRotationId, updateUllageRequest, "");
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  /**
+   * Generate Loading Plan API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/generate-loading-plan")
+  public LoadingInfoAlgoResponse generateLoadingPlan(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      log.info("Generate Loading Plan, api for vessel {}", vesselId);
+      return loadingInformationService.generateLoadingPlan(infoId);
+    } catch (GenericServiceException e) {
+      log.error("Exception in Generate Loading Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
   }
 }

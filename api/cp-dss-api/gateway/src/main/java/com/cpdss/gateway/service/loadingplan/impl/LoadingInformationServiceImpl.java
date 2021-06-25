@@ -550,4 +550,30 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     response.setResponseStatus(successResponse);
     return response;
   }
+
+  @Override
+  public LoadingInfoAlgoResponse generateLoadingPlan(Long infoId) throws GenericServiceException {
+    try {
+      log.info("Calling generateLoadingPlan in loading-plan microservice via GRPC");
+      LoadingInfoAlgoResponse algoResponse = new LoadingInfoAlgoResponse();
+      ResponseStatus response = this.loadingPlanGrpcService.generateLoadingPlan(infoId);
+      if (response.getStatus().equalsIgnoreCase(SUCCESS)) {
+        CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+        algoResponse.setResponseStatus(successResponse);
+        return algoResponse;
+      } else {
+        log.error("Failed to save LoadingInformation {}", infoId);
+        throw new GenericServiceException(
+            "Failed to save Loading Information",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      log.error("Failed to save LoadingInformation {}", infoId);
+      throw new GenericServiceException(
+          "Failed to generate Loading Plan",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
 }

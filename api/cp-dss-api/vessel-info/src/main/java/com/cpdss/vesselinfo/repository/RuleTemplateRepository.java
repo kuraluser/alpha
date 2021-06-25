@@ -10,6 +10,6 @@ public interface RuleTemplateRepository extends CommonCrudRepository<RuleTemplat
 
   List<RuleTemplate> findByIsActive(boolean isActive);
 
-  @Query("FROM RuleTemplate RT WHERE RT.id in (4, 61, 62, 62, 71) AND RT.isActive = true")
+  @Query("FROM RuleTemplate RT WHERE RT.id in (4, 61, 62, 64, 71, 76) AND RT.isActive = true")
   List<RuleTemplate> findLoadingInfoRules();
 }

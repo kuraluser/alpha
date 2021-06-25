@@ -41,4 +41,6 @@ public interface LoadingPlanGrpcService {
 
   Boolean updateUllageAtLoadingPlan(LoadingPlanModels.UpdateUllageLoadingRequest request)
       throws GenericServiceException;
+
+  ResponseStatus generateLoadingPlan(Long loadingInfoId);
 }
