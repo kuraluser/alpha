@@ -4,10 +4,8 @@ package com.cpdss.loadingplan.service.algo;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common.ResponseStatus.Builder;
 import com.cpdss.common.generated.Common.RulesInputs;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
@@ -23,14 +21,15 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingToppingOff;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.domain.algo.BerthDetails;
 import com.cpdss.loadingplan.domain.algo.CargoMachineryInUse;
 import com.cpdss.loadingplan.domain.algo.LoadablePlanPortWiseDetails;
@@ -56,14 +55,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
-@Transactional
 public class LoadingInformationAlgoRequestBuilderService {
 
   @GrpcClient("loadingInformationService")
@@ -77,50 +76,49 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   @Autowired LoadingInformationRepository loadingInformationRepository;
 
-  public LoadingInformationAlgoRequest createAlgoRequest(
-      LoadingInformationRequest request, Builder builder) throws GenericServiceException {
+  /**
+   * Creates the ALGO request
+   *
+   * @param request
+   * @return
+   * @throws GenericServiceException
+   */
+  public LoadingInformationAlgoRequest createAlgoRequest(LoadingInfoAlgoRequest request)
+      throws GenericServiceException {
     LoadingInformationAlgoRequest algoRequest = new LoadingInformationAlgoRequest();
     Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInfoOpt =
-        this.loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingPlanId());
+        this.loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInfoId());
     if (loadingInfoOpt.isPresent()) {
-      try {
-        LoadingInformation loadingInformation =
-            getLoadingInformation(
-                loadingInfoOpt.get().getVesselXId(),
-                loadingInfoOpt.get().getVoyageId(),
-                request.getLoadingPlanId(),
-                loadingInfoOpt.get().getLoadablePatternXId(),
-                loadingInfoOpt.get().getPortRotationXId());
-        buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
-        buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
-        buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
-        JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
-        jsonBuilder.setReferenceId(request.getLoadingPlanId());
-        jsonBuilder.setJsonTypeId(9L);
-        ObjectMapper mapper = new ObjectMapper();
-        jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
-        this.loadableStudyService.saveJson(jsonBuilder.build());
-        builder.setStatus("SUCCESS");
-      } catch (GenericServiceException e) {
-        builder.setStatus("FAILED").setMessage(e.getMessage());
-        e.printStackTrace();
-      } catch (JsonProcessingException e) {
-        builder.setStatus("FAILED").setMessage(e.getMessage());
-        e.printStackTrace();
-      }
+      algoRequest.setPortId(loadingInfoOpt.get().getPortXId());
+      LoadingInformation loadingInformation =
+          getLoadingInformation(
+              loadingInfoOpt.get().getVesselXId(),
+              loadingInfoOpt.get().getVoyageId(),
+              request.getLoadingInfoId(),
+              loadingInfoOpt.get().getLoadablePatternXId(),
+              loadingInfoOpt.get().getPortRotationXId());
+      buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
+      buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
+      buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
+    } else {
+      throw new GenericServiceException(
+          "Could not find loading information " + request.getLoadingInfoId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
     return algoRequest;
   }
 
   private void buildLoadingRules(LoadingInformationAlgoRequest algoRequest, Long vesselXId)
       throws NumberFormatException, GenericServiceException {
+    log.info("Populating loading rules");
     LoadingInfoRulesRequest.Builder requestBuilder = LoadingInfoRulesRequest.newBuilder();
     requestBuilder.setVesselId(vesselXId);
     LoadingInfoRulesReply reply =
         this.vesselInfoService.getLoadingInfoRules(requestBuilder.build());
-    if (!"SUCCESS".equals(reply.getResponseStatus().getStatus())) {
+    if (!LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "Error calling getOnBoardQuantites grpc service",
+          "Error occured while fetching loading rules from vessel-info MS",
           reply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
@@ -151,6 +149,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       LoadingInformation loadingInformation,
       com.cpdss.loadingplan.entity.LoadingInformation entity)
       throws NumberFormatException, GenericServiceException {
+    log.info("Populating Loading Information");
     com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo =
         new com.cpdss.loadingplan.domain.algo.LoadingInformation();
     buildLoadingBerths(loadingInfo, loadingInformation.getLoadingBerthsList());
@@ -168,7 +167,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private void buildToppingOffSequence(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       List<LoadingToppingOff> toppingOffSequenceList) {
-
+    log.info("Populating Topping off sequence");
     List<ToppingOffSequence> toppingOffSequences = new ArrayList<ToppingOffSequence>();
     toppingOffSequenceList.forEach(
         toppingOff -> {
@@ -208,6 +207,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       com.cpdss.loadingplan.entity.LoadingInformation entity)
       throws NumberFormatException, GenericServiceException {
+    log.info("Populating cargo vessel tank details");
     LoadableStudy.LoadingPlanCommonResponse response =
         this.loadableStudyService.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
@@ -217,9 +217,9 @@ public class LoadingInformationAlgoRequestBuilderService {
                 .setPortId(entity.getPortXId())
                 .build());
 
-    if (!"SUCCESS".equals(response.getResponseStatus().getStatus())) {
+    if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "Error calling getOnBoardQuantites grpc service",
+          "Failed to fetch cargoVesselTankDetails from Loadable-Study MS",
           response.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(response.getResponseStatus().getCode())));
     }
@@ -279,6 +279,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private void buildLoadingStage(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       LoadingStages loadingStage) {
+    log.info("Populating loading stage details");
     com.cpdss.loadingplan.domain.algo.LoadingStages loadingStages =
         new com.cpdss.loadingplan.domain.algo.LoadingStages();
     List<StageOffset> stageOffsetList = new ArrayList<StageOffset>();
@@ -314,6 +315,7 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   private void buildLoadingRate(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo, LoadingRates loadingRate) {
+    log.info("Populating Loading rates");
     com.cpdss.loadingplan.domain.algo.LoadingRates loadingRates =
         new com.cpdss.loadingplan.domain.algo.LoadingRates();
     loadingRates.setId(loadingRate.getId());
@@ -343,6 +345,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private void buildLoadingMachines(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       List<LoadingMachinesInUse> loadingMachinesList) {
+    log.info("Populating loading machineries in use");
     CargoMachineryInUse cargoMachineryInUse = new CargoMachineryInUse();
 
     List<PumpType> pumpTypes = new ArrayList<PumpType>();
@@ -377,6 +380,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private void buildLoadingDetail(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       LoadingDetails loadingDetail) {
+    log.info("Populating Loading detail");
     com.cpdss.loadingplan.domain.algo.LoadingDetails loadingDetails =
         new com.cpdss.loadingplan.domain.algo.LoadingDetails();
     loadingDetails.setStartTime(loadingDetail.getStartTime());
@@ -404,6 +408,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private void buildLoadingDelays(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       LoadingDelay loadingDelays) {
+    log.info("Populating loading delays");
     LoadingSequences loadingSequences = new LoadingSequences();
     List<ReasonForDelay> reasonsForDelay = new ArrayList<ReasonForDelay>();
     loadingDelays
@@ -445,6 +450,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private void buildLoadingBerths(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       List<LoadingBerths> loadingBerthsList) {
+    log.info("Populating loading berths");
     List<BerthDetails> berthDetails = new ArrayList<BerthDetails>();
     loadingBerthsList.forEach(
         berth -> {
@@ -468,6 +474,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private LoadingInformation getLoadingInformation(
       Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
       throws GenericServiceException {
+    log.info("Calling getLoadingInformation in loadableStudy MS");
     LoadingPlanModels.LoadingInformationRequest.Builder builder =
         LoadingPlanModels.LoadingInformationRequest.newBuilder();
     builder.setVesselId(vesselId);
@@ -478,9 +485,9 @@ public class LoadingInformationAlgoRequestBuilderService {
     LoadingPlanModels.LoadingInformation reply =
         loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
     System.out.println();
-    if (!reply.getResponseStatus().getStatus().equals("SUCCESS")) {
+    if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
       throw new GenericServiceException(
-          "Failed to get Loading Information",
+          "Failed to fetch Loading Information",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -492,13 +499,14 @@ public class LoadingInformationAlgoRequestBuilderService {
       LoadingInformationAlgoRequest algoRequest,
       com.cpdss.loadingplan.entity.LoadingInformation loadingInformation)
       throws GenericServiceException {
+    log.info("Populating loadablePatternPortWiseDetails");
     LoadablePlanDetailsRequest.Builder requestBuilder = LoadablePlanDetailsRequest.newBuilder();
     requestBuilder.setLoadablePatternId(loadingInformation.getLoadablePatternXId());
     LoadablePatternPortWiseDetailsJson response =
         this.loadableStudyService.getLoadablePatternDetailsJson(requestBuilder.build());
-    if (!response.getResponseStatus().getStatus().equals("SUCCESS")) {
+    if (!response.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
       throw new GenericServiceException(
-          "Failed to get Portwise details",
+          "Failed to get Portwise details from Loadable-Study MS",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -512,7 +520,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       throw new GenericServiceException(
-          "Failed to get Portwise details",
+          "Failed to deserialize port wise details",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -526,6 +534,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       com.cpdss.loadingplan.entity.LoadingInformation loadingInformation,
       long loadableStudyId)
       throws NumberFormatException, GenericServiceException {
+    log.info("Populating onBoardQuantities");
     OnBoardQuantityRequest request =
         OnBoardQuantityRequest.newBuilder()
             .setVoyageId(loadingInformation.getVoyageId())
@@ -534,9 +543,9 @@ public class LoadingInformationAlgoRequestBuilderService {
             .setPortId(loadingInformation.getPortXId())
             .build();
     OnBoardQuantityReply grpcReply = loadableStudyService.getOnBoardQuantity(request);
-    if (!"SUCCESS".equals(grpcReply.getResponseStatus().getStatus())) {
+    if (!LoadingPlanConstants.SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "Error calling getOnBoardQuantites grpc service",
+          "Failed to fetch on board quantities from Loadable-Study MS",
           grpcReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
@@ -589,6 +598,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       com.cpdss.loadingplan.entity.LoadingInformation loadingInformation,
       long loadableStudyId)
       throws NumberFormatException, GenericServiceException {
+    log.info("Populating onHandQuantities");
     OnHandQuantityRequest request =
         OnHandQuantityRequest.newBuilder()
             .setCompanyId(1L)
@@ -597,9 +607,9 @@ public class LoadingInformationAlgoRequestBuilderService {
             .setPortRotationId(loadingInformation.getPortRotationXId())
             .build();
     OnHandQuantityReply grpcReply = loadableStudyService.getOnHandQuantity(request);
-    if (!"SUCCESS".equals(grpcReply.getResponseStatus().getStatus())) {
+    if (!LoadingPlanConstants.SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "Failed to fetch on hand quantities",
+          "Failed to fetch on hand quantities from Loadable-Study MS",
           grpcReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }

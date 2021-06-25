@@ -7,8 +7,9 @@ import lombok.Data;
 @Data
 public class LoadingInformationAlgoRequest {
 
-  private LoadingInformation loadingInformation;
+  private Long portId;
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
+  private LoadingInformation loadingInformation;
   private List<OnHandQuantity> onHandQuantity;
   private List<OnBoardQuantity> onBoardQuantity;
   private List<LoadingRule> loadingRules;

@@ -20,7 +20,7 @@ public final class LoadingPlanServiceOuterClass {
     java.lang.String[] descriptorData = {
       "\n\'loading_plan/loading_plan_service.prot"
           + "o\032\014common.proto\032&loading_plan/loading_pl"
-          + "an_models.proto2\252\003\n\031LoadingInformationSe"
+          + "an_models.proto2\247\003\n\031LoadingInformationSe"
           + "rvice\022J\n\025GetLoadingInformation\022\032.Loading"
           + "InformationRequest\032\023.LoadingInformation\""
           + "\000\022@\n\026SaveLoadingInformation\022\023.LoadingInf"
@@ -29,13 +29,13 @@ public final class LoadingPlanServiceOuterClass {
           + "tionSynopticalRequest\032\".LoadingInformati"
           + "onSynopticalReply\"\000\022I\n\014UpdateUllage\022\033.Up"
           + "dateUllageLoadingRequest\032\032.UpdateUllageL"
-          + "oadingReplay\"\000\022D\n\023GenerateLoadingPlan\022\032."
-          + "LoadingInformationRequest\032\017.ResponseStat"
-          + "us\"\0002\033\n\031LoadingInstructionService2d\n\022Loa"
-          + "dingPlanService\022N\n\032LoadingPlanSynchroniz"
-          + "ation\022\027.LoadingPlanSyncDetails\032\025.Loading"
-          + "PlanSyncReply\"\000B+\n\'com.cpdss.common.gene"
-          + "rated.loading_planP\000b\006proto3"
+          + "oadingReplay\"\000\022A\n\023GenerateLoadingPlan\022\027."
+          + "LoadingInfoAlgoRequest\032\017.ResponseStatus\""
+          + "\0002\033\n\031LoadingInstructionService2d\n\022Loadin"
+          + "gPlanService\022N\n\032LoadingPlanSynchronizati"
+          + "on\022\027.LoadingPlanSyncDetails\032\025.LoadingPla"
+          + "nSyncReply\"\000B+\n\'com.cpdss.common.generat"
+          + "ed.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

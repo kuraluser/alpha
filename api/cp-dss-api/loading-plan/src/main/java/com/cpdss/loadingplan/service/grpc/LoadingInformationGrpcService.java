@@ -8,8 +8,8 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -142,19 +142,25 @@ public class LoadingInformationGrpcService
 
   @Override
   public void generateLoadingPlan(
-      LoadingInformationRequest request, StreamObserver<ResponseStatus> responseObserver) {
+      LoadingInfoAlgoRequest request, StreamObserver<ResponseStatus> responseObserver) {
     log.info("Inside generateLoadingPlan in LP MS");
     ResponseStatus.Builder builder = ResponseStatus.newBuilder();
     try {
-      this.loadingInfoAlgoService.createAlgoRequest(request, builder);
+      this.loadingInfoAlgoService.generateLoadingPlan(request);
+      builder.setStatus(SUCCESS);
     } catch (GenericServiceException e) {
-      log.info("GenericServiceException in getLoadigInformationBySynoptical at  LP MS ", e);
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
       builder
           .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
           .setMessage(e.getMessage())
           .setStatus(FAILED);
     } catch (Exception e) {
       e.printStackTrace();
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      builder
+          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+          .setMessage(e.getMessage())
+          .setStatus(FAILED);
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

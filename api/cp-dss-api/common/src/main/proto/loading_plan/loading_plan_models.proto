@@ -357,4 +357,8 @@ message UpdateUllageLoadingReplay {
   ResponseStatus responseStatus = 1;
 }
 
+message LoadingInfoAlgoRequest {
+  int64 loadingInfoId = 1;
+}
+
 

@@ -26,7 +26,6 @@ import lombok.Data;
 public class LoadingInformation {
 
   private Long loadingInfoId;
-  private Long synopticTableId;
   private LoadingDetails loadingDetails;
   private LoadingRates loadingRates;
   private List<BerthDetails> berthDetails;
