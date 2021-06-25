@@ -1380,4 +1380,5 @@ message LoadableRuleReply{
 message LoadablePatternPortWiseDetailsJson {
 	string loadablePatternDetails = 1;
 	ResponseStatus responseStatus = 2;
+	int64 loadableStudyId = 3;
 }

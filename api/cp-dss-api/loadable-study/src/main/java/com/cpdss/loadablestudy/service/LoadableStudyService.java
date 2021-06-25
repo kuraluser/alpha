@@ -13352,6 +13352,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         builder.setLoadablePatternDetails(
             mapper.writeValueAsString(
                 loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+        builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
         builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       } else throw new Exception("Cannot find loadable pattern");
     } catch (Exception e) {

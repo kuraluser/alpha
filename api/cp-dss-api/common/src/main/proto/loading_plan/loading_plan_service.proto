@@ -17,7 +17,7 @@ service LoadingInformationService {
 
   rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}
   
-  rpc GenerateLoadingPlan(LoadingInformationRequest) return (ResponseStatus) {}
+  rpc GenerateLoadingPlan(LoadingInformationRequest) returns (ResponseStatus) {}
 }
 
 service LoadingInstructionService {

@@ -10,4 +10,5 @@ appConfig {
 
 dependencies {
     implementation project(':common')
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
 }
