@@ -1,5 +1,4 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.domain.algo;
 
-public class LoadingInformationAlgoResponse {
-
-}
+public class LoadingInformationAlgoResponse {}
