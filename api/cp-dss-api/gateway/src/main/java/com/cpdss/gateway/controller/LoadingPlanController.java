@@ -71,7 +71,7 @@ public class LoadingPlanController {
    * @param portRotationId Long
    * @return LoadingInformation
    */
-  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/{portRotationId}")
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/port-rotation/{portRotationId}")
   public LoadingInformation getLoadingInformation(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
