@@ -378,6 +378,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     List<LoadingDelays> loadingDelays = new ArrayList<>();
     for (LoadingPlanModels.LoadingDelays var2 : loadingDelay.getDelaysList()) {
       LoadingDelays val1 = new LoadingDelays();
+      Optional.ofNullable(var2.getDuration())
+          .ifPresent(
+              v -> {
+                if (!v.isEmpty()) val1.setDuration(new BigDecimal(v));
+              });
       BeanUtils.copyProperties(var2, val1);
       loadingDelays.add(val1);
     }
