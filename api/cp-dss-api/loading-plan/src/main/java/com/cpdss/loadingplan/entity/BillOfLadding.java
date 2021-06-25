@@ -29,8 +29,8 @@ public class BillOfLadding extends EntityDoc {
   @JoinColumn(name = "loading_xid", referencedColumnName = "id")
   private LoadingInformation loadingInformation;
 
-  @Column(name = "cargo_xid")
-  private Long cargoId;
+  @Column(name = "cargo_nomination_xid")
+  private Long cargoNominationId;
 
   @Column(name = "port_xid")
   private Long portId;

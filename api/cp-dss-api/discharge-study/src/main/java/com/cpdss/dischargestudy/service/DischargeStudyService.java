@@ -23,6 +23,6 @@ public class DischargeStudyService {
   public LoadingInformationSynopticalReply getDischargeStudyByVoyage(
       LoadingInformationSynopticalRequest request) throws GenericServiceException {
 
-    return loadingInfoServiceBlockingStub.getLoadigInformationBySynoptical(request);
+    return loadingInfoServiceBlockingStub.getLoadigInformationByVoyage(request);
   }
 }
