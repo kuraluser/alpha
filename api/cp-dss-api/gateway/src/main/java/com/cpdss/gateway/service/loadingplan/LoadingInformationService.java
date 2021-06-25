@@ -60,4 +60,6 @@ public interface LoadingInformationService {
       UpdateUllage updateUllage,
       String correlationId)
       throws GenericServiceException;
+
+  LoadingInfoAlgoResponse generateLoadingPlan(Long infoId) throws GenericServiceException;
 }

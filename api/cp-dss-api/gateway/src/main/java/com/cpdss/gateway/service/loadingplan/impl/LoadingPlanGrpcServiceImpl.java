@@ -6,6 +6,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -242,5 +243,12 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
         request.getVoyageId(),
         request.getTankId());
     return true;
+  }
+
+  @Override
+  public ResponseStatus generateLoadingPlan(Long loadingInfoId) {
+    LoadingInfoAlgoRequest.Builder builder = LoadingInfoAlgoRequest.newBuilder();
+    builder.setLoadingInfoId(loadingInfoId);
+    return this.loadingInfoServiceBlockingStub.generateLoadingPlan(builder.build());
   }
 }

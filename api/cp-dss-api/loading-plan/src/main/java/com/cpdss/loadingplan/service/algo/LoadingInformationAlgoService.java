@@ -9,21 +9,28 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
+import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
 public class LoadingInformationAlgoService {
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
+  @Autowired RestTemplate restTemplate;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
+  
+  @Value(value = "${algo.planGenerationUrl}")
+  private String planGenerationUrl;
 
   /**
    * Generates Loading plan
@@ -36,6 +43,7 @@ public class LoadingInformationAlgoService {
     LoadingInformationAlgoRequest algoRequest =
         loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
     saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
+    LoadingInformationAlgoResponse response = restTemplate.postForObject(planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
   }
 
   /**

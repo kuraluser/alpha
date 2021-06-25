@@ -130,15 +130,17 @@ public class LoadingInformationAlgoRequestBuilderService {
             rule -> {
               LoadingRule loadingRule = new LoadingRule();
               loadingRule.setRuleId(Long.parseLong(rule.getId()));
-              RulesInputs input = rule.getInputs(0);
-              loadingRule.setRuleTitle(
-                  input.getPrefix()
-                      + (StringUtils.isEmpty(input.getSuffix()) ? "" : " <X>" + input.getSuffix()));
-              loadingRule.setValue(
-                  StringUtils.isEmpty(input.getDefaultValue())
-                      ? null
-                      : Integer.parseInt(input.getDefaultValue()));
-              loadingRules.add(loadingRule);
+              if (rule.getInputsCount() > 0) {
+            	  RulesInputs input = rule.getInputs(0);
+                  loadingRule.setRuleTitle(
+                      input.getPrefix()
+                          + (StringUtils.isEmpty(input.getSuffix()) ? "" : " <X>" + input.getSuffix()));
+                  loadingRule.setValue(
+                      StringUtils.isEmpty(input.getDefaultValue())
+                          ? null
+                          : Integer.parseInt(input.getDefaultValue()));
+                  loadingRules.add(loadingRule);
+              }
             });
 
     algoRequest.setLoadingRules(loadingRules);
