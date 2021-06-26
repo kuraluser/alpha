@@ -13,7 +13,7 @@ service LoadingInformationService {
   
   rpc SaveLoadingInformation(LoadingInformation) returns (ResponseStatus) {}
 
-  rpc GetLoadigInformationBySynoptical(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
+  rpc GetLoadigInformationByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
 
   rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}
   

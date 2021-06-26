@@ -74,14 +74,14 @@ public class LoadingInformationGrpcService
   }
 
   @Override
-  public void getLoadigInformationBySynoptical(
+  public void getLoadigInformationByVoyage(
       LoadingInformationSynopticalRequest request,
       StreamObserver<LoadingInformationSynopticalReply> responseObserver) {
     LoadingInformationSynopticalReply.Builder builder =
         LoadingInformationSynopticalReply.newBuilder();
     log.info("Inside getLoadigInformationBySynoptical in LP MS");
     try {
-      this.loadingInfoService.getLoadigInformationBySynoptical(request, builder);
+      this.loadingInfoService.getLoadigInformationByVoyage(request, builder);
     } catch (GenericServiceException e) {
       log.info("GenericServiceException in getLoadigInformationBySynoptical at  LP MS ", e);
       builder.setResponseStatus(
