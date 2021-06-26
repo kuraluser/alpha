@@ -1,11 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.domain.algo;
 
-import com.cpdss.common.rest.CommonErrorCodes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -21,14 +19,12 @@ public class OnHandQuantity {
 
   private Long portId;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private Long fuelTypeId;
 
   private String fuelTypeName;
 
   private String fuelTypeShortName;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private Long tankId;
 
   private String tankName;
@@ -37,21 +33,18 @@ public class OnHandQuantity {
 
   private BigDecimal arrivalVolume;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal arrivalQuantity;
 
   private BigDecimal actualArrivalQuantity;
 
   private BigDecimal departureVolume;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal departureQuantity;
 
   private BigDecimal actualDepartureQuantity;
 
   private String colorCode;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal density;
 
   private Long portRotationId;
