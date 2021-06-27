@@ -6,9 +6,13 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyRules;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
+
 public interface LoadableStudyRuleRepository
     extends CommonCrudRepository<LoadableStudyRules, Long> {
 
   List<LoadableStudyRules> findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdIn(
       LoadableStudy loadableStudy, Long vesselId, boolean isActive, List<Long> vesselRuleXId);
+  
+  List<LoadableStudyRules> findByLoadableStudyAndVesselXIdAndIsActive(LoadableStudy loadbleStudyId, Long vesselId, Boolean isActive);
 }
