@@ -21,4 +21,12 @@ public interface LoadingBerthDetailsRepository
   @Modifying
   @Query("UPDATE LoadingBerthDetail SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInformationId);
+
+  public List<LoadingBerthDetail> findByLoadingInformationIdAndIsActive(
+      Long loadingInformationId, Boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingBerthDetail SET isActive = false WHERE id = ?1")
+  public void deleteById(Long id);
 }

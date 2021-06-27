@@ -1014,6 +1014,13 @@ public final class LoadingPlanModels {
      * @return The synopticalId.
      */
     long getSynopticalId();
+
+    /**
+     * <code>int64 loadablePatternId = 2;</code>
+     *
+     * @return The loadablePatternId.
+     */
+    long getLoadablePatternId();
   }
   /** Protobuf type {@code LoadingInformationSynopticalRequest} */
   public static final class LoadingInformationSynopticalRequest
@@ -1064,6 +1071,11 @@ public final class LoadingPlanModels {
                 synopticalId_ = input.readInt64();
                 break;
               }
+            case 16:
+              {
+                loadablePatternId_ = input.readInt64();
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -1111,6 +1123,17 @@ public final class LoadingPlanModels {
       return synopticalId_;
     }
 
+    public static final int LOADABLEPATTERNID_FIELD_NUMBER = 2;
+    private long loadablePatternId_;
+    /**
+     * <code>int64 loadablePatternId = 2;</code>
+     *
+     * @return The loadablePatternId.
+     */
+    public long getLoadablePatternId() {
+      return loadablePatternId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1128,6 +1151,9 @@ public final class LoadingPlanModels {
       if (synopticalId_ != 0L) {
         output.writeInt64(1, synopticalId_);
       }
+      if (loadablePatternId_ != 0L) {
+        output.writeInt64(2, loadablePatternId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1139,6 +1165,9 @@ public final class LoadingPlanModels {
       size = 0;
       if (synopticalId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, synopticalId_);
+      }
+      if (loadablePatternId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, loadablePatternId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1163,6 +1192,7 @@ public final class LoadingPlanModels {
                   obj;
 
       if (getSynopticalId() != other.getSynopticalId()) return false;
+      if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1176,6 +1206,8 @@ public final class LoadingPlanModels {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + SYNOPTICALID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSynopticalId());
+      hash = (37 * hash) + LOADABLEPATTERNID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1342,6 +1374,8 @@ public final class LoadingPlanModels {
         super.clear();
         synopticalId_ = 0L;
 
+        loadablePatternId_ = 0L;
+
         return this;
       }
 
@@ -1382,6 +1416,7 @@ public final class LoadingPlanModels {
                 new com.cpdss.common.generated.loading_plan.LoadingPlanModels
                     .LoadingInformationSynopticalRequest(this);
         result.synopticalId_ = synopticalId_;
+        result.loadablePatternId_ = loadablePatternId_;
         onBuilt();
         return result;
       }
@@ -1447,6 +1482,9 @@ public final class LoadingPlanModels {
         if (other.getSynopticalId() != 0L) {
           setSynopticalId(other.getSynopticalId());
         }
+        if (other.getLoadablePatternId() != 0L) {
+          setLoadablePatternId(other.getLoadablePatternId());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -1510,6 +1548,39 @@ public final class LoadingPlanModels {
       public Builder clearSynopticalId() {
 
         synopticalId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long loadablePatternId_;
+      /**
+       * <code>int64 loadablePatternId = 2;</code>
+       *
+       * @return The loadablePatternId.
+       */
+      public long getLoadablePatternId() {
+        return loadablePatternId_;
+      }
+      /**
+       * <code>int64 loadablePatternId = 2;</code>
+       *
+       * @param value The loadablePatternId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternId(long value) {
+
+        loadablePatternId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadablePatternId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadablePatternId() {
+
+        loadablePatternId_ = 0L;
         onChanged();
         return this;
       }
@@ -49029,6 +49100,542 @@ public final class LoadingPlanModels {
     }
   }
 
+  public interface LoadingInfoAlgoRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:LoadingInfoAlgoRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadingInfoId = 1;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    long getLoadingInfoId();
+  }
+  /** Protobuf type {@code LoadingInfoAlgoRequest} */
+  public static final class LoadingInfoAlgoRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:LoadingInfoAlgoRequest)
+      LoadingInfoAlgoRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use LoadingInfoAlgoRequest.newBuilder() to construct.
+    private LoadingInfoAlgoRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private LoadingInfoAlgoRequest() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new LoadingInfoAlgoRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private LoadingInfoAlgoRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadingInfoId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_LoadingInfoAlgoRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_LoadingInfoAlgoRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+                  .class,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+                  .Builder.class);
+    }
+
+    public static final int LOADINGINFOID_FIELD_NUMBER = 1;
+    private long loadingInfoId_;
+    /**
+     * <code>int64 loadingInfoId = 1;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    public long getLoadingInfoId() {
+      return loadingInfoId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadingInfoId_ != 0L) {
+        output.writeInt64(1, loadingInfoId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadingInfoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadingInfoId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest other =
+          (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest) obj;
+
+      if (getLoadingInfoId() != other.getLoadingInfoId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADINGINFOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadingInfoId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+            prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code LoadingInfoAlgoRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:LoadingInfoAlgoRequest)
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingInfoAlgoRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingInfoAlgoRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+                    .class,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+                    .Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadingInfoId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingInfoAlgoRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+          build() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+          buildPartial() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest result =
+            new com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest(
+                this);
+        result.loadingInfoId_ = loadingInfoId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest) {
+          return mergeFrom(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest other) {
+        if (other
+            == com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+                .getDefaultInstance()) return this;
+        if (other.getLoadingInfoId() != 0L) {
+          setLoadingInfoId(other.getLoadingInfoId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadingInfoId_;
+      /**
+       * <code>int64 loadingInfoId = 1;</code>
+       *
+       * @return The loadingInfoId.
+       */
+      public long getLoadingInfoId() {
+        return loadingInfoId_;
+      }
+      /**
+       * <code>int64 loadingInfoId = 1;</code>
+       *
+       * @param value The loadingInfoId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingInfoId(long value) {
+
+        loadingInfoId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadingInfoId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingInfoId() {
+
+        loadingInfoId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:LoadingInfoAlgoRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadingInfoAlgoRequest)
+    private static final com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .LoadingInfoAlgoRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest();
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadingInfoAlgoRequest> PARSER =
+        new com.google.protobuf.AbstractParser<LoadingInfoAlgoRequest>() {
+          @java.lang.Override
+          public LoadingInfoAlgoRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new LoadingInfoAlgoRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<LoadingInfoAlgoRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadingInfoAlgoRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadingInformationRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -49141,6 +49748,10 @@ public final class LoadingPlanModels {
       internal_static_UpdateUllageLoadingReplay_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_UpdateUllageLoadingReplay_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_LoadingInfoAlgoRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadingInfoAlgoRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -49156,169 +49767,171 @@ public final class LoadingPlanModels {
           + "\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001("
           + "\003\022\025\n\rloadingPlanId\030\004 \001(\003\022\030\n\020loadingPatte"
           + "rnId\030\005 \001(\003\022\026\n\016portRotationId\030\006 \001(\003\022\027\n\017sy"
-          + "nopticTableId\030\007 \001(\003\";\n#LoadingInformatio"
+          + "nopticTableId\030\007 \001(\003\"V\n#LoadingInformatio"
           + "nSynopticalRequest\022\024\n\014synopticalId\030\001 \001(\003"
-          + "\"s\n!LoadingInformationSynopticalReply\022\'\n"
-          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022%"
-          + "\n\rbillOfLadding\030\002 \003(\0132\016.BillOfLadding\"\303\003"
-          + "\n\022LoadingInformation\022\'\n\016responseStatus\030\001"
-          + " \001(\0132\017.ResponseStatus\0225\n\022loadingInformat"
-          + "ion\030\002 \001(\0132\031.LoadingInformationDetail\022&\n\r"
-          + "loadingDetail\030\003 \001(\0132\017.LoadingDetails\022\"\n\013"
-          + "loadingRate\030\004 \001(\0132\r.LoadingRates\022%\n\rload"
-          + "ingBerths\030\005 \003(\0132\016.LoadingBerths\022.\n\017loadi"
-          + "ngMachines\030\007 \003(\0132\025.LoadingMachinesInUse\022"
-          + "$\n\014loadingStage\030\t \001(\0132\016.LoadingStages\022$\n"
-          + "\rloadingDelays\030\n \001(\0132\r.LoadingDelay\022.\n\022t"
-          + "oppingOffSequence\030\013 \003(\0132\022.LoadingTopping"
-          + "Off\022\025\n\rloadingInfoId\030\014 \001(\003\022\027\n\017synopticTa"
-          + "bleId\030\r \001(\003\"\221\001\n\016LoadingDetails\022\n\n\002id\030\001 \001"
-          + "(\003\022\025\n\rtimeOfSunrise\030\002 \001(\t\022\024\n\014timeOfSunse"
-          + "t\030\003 \001(\t\022\021\n\tstartTime\030\004 \001(\t\022!\n\013trimAllowe"
-          + "d\030\005 \001(\0132\014.TrimAllowed\022\020\n\010voyageId\030\006 \001(\003\""
-          + "J\n\013TrimAllowed\022\023\n\013initialTrim\030\001 \001(\t\022\023\n\013m"
-          + "aximumTrim\030\002 \001(\t\022\021\n\tfinalTrim\030\003 \001(\t\"\232\002\n\014"
-          + "LoadingRates\022\n\n\002id\030\001 \001(\003\022\032\n\022initialLoadi"
-          + "ngRate\030\002 \001(\t\022\026\n\016maxLoadingRate\030\003 \001(\t\022\032\n\022"
-          + "reducedLoadingRate\030\004 \001(\t\022\033\n\023minDeBallast"
-          + "ingRate\030\005 \001(\t\022\033\n\023maxDeBallastingRate\030\006 \001"
-          + "(\t\022\037\n\027noticeTimeRateReduction\030\007 \001(\t\022\035\n\025n"
-          + "oticeTimeStopLoading\030\010 \001(\t\022\034\n\024lineConten"
-          + "tRemaining\030\t \001(\t\022\026\n\016minLoadingRate\030\n \001(\t"
-          + "\"\201\002\n\rLoadingBerths\022\n\n\002id\030\001 \001(\003\022\025\n\rloadin"
-          + "gInfoId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\r\n\005depth\030"
-          + "\004 \001(\t\022\032\n\022seaDraftLimitation\030\005 \001(\t\022\032\n\022air"
-          + "DraftLimitation\030\006 \001(\t\022\031\n\021maxManifoldHeig"
-          + "ht\030\007 \001(\t\022$\n\034specialRegulationRestriction"
-          + "\030\010 \001(\t\022\033\n\023itemsToBeAgreedWith\030\t \001(\t\022\027\n\017h"
-          + "oseConnections\030\n \001(\t\"\213\002\n\rLoadingStages\022\n"
-          + "\n\002id\030\001 \001(\003\022\023\n\013stageOffset\030\002 \001(\005\022\025\n\rstage"
-          + "Duration\030\003 \001(\005\022\032\n\022trackStartEndStage\030\004 \001"
-          + "(\010\022\030\n\020trackGradeSwitch\030\005 \001(\010\022#\n\014stageOff"
-          + "sets\030\006 \003(\0132\r.StageOffsets\022&\n\016stageDurati"
-          + "ons\030\007 \003(\0132\016.StageDuration\022\035\n\006offset\030\010 \001("
-          + "\0132\r.StageOffsets\022 \n\010duration\030\t \001(\0132\016.Sta"
-          + "geDuration\"2\n\014StageOffsets\022\n\n\002id\030\001 \001(\003\022\026"
-          + "\n\016stageOffsetVal\030\002 \001(\003\"-\n\rStageDuration\022"
-          + "\n\n\002id\030\001 \001(\003\022\020\n\010duration\030\002 \001(\003\"l\n\024Loading"
-          + "MachinesInUse\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfo"
-          + "Id\030\002 \001(\003\022\016\n\006pumpId\030\003 \001(\003\022\020\n\010capacity\030\004 \001"
-          + "(\t\022\017\n\007isUsing\030\005 \001(\010\"s\n\014LoadingDelay\022\036\n\007r"
-          + "easons\030\001 \003(\0132\r.DelayReasons\022\036\n\006delays\030\002 "
-          + "\003(\0132\016.LoadingDelays\022#\n\006cargos\030\003 \003(\0132\023.Lo"
-          + "adingDelayCargos\"*\n\014DelayReasons\022\n\n\002id\030\001"
-          + " \001(\003\022\016\n\006reason\030\002 \001(\t\"\201\001\n\rLoadingDelays\022\n"
-          + "\n\002id\030\001 \001(\003\022\025\n\rloadingInfoId\030\002 \001(\003\022\030\n\020rea"
-          + "sonForDelayId\030\003 \001(\003\022\020\n\010duration\030\004 \001(\t\022\017\n"
-          + "\007cargoId\030\005 \001(\003\022\020\n\010quantity\030\006 \001(\t\"u\n\022Load"
-          + "ingDelayCargos\022\017\n\007cargoId\030\001 \001(\003\022\022\n\ncolou"
-          + "rCode\030\002 \001(\t\022\021\n\tcargoName\030\003 \001(\t\022\025\n\rcargoS"
-          + "horName\030\004 \001(\t\022\020\n\010quantity\030\005 \001(\t\"\366\001\n\021Load"
-          + "ingToppingOff\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfo"
-          + "Id\030\002 \001(\003\022\023\n\013orderNumber\030\003 \001(\005\022\016\n\006tankId\030"
-          + "\004 \001(\003\022\021\n\tcargoName\030\005 \001(\t\022\031\n\021cargoAbbrevi"
-          + "ation\030\006 \001(\t\022\022\n\ncolourCode\030\007 \001(\t\022\016\n\006ullag"
-          + "e\030\010 \001(\t\022\020\n\010quantity\030\t \001(\t\022\024\n\014fillingRati"
-          + "o\030\n \001(\t\022\016\n\006remark\030\013 \001(\t\022\017\n\007cargoId\030\014 \001(\003"
-          + "\"\234\001\n\030LoadingInformationDetail\022\031\n\021loadabl"
-          + "ePatternId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021syno"
-          + "pticalTableId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020\n"
-          + "\010voyageId\030\005 \001(\003\022\026\n\016portRotationId\030\006 \001(\003\""
-          + "\314\002\n\031LoadablePlanBallastDetail\022\n\n\002id\030\001 \001("
-          + "\003\022\021\n\tcolorCode\030\002 \001(\t\022\026\n\016correctedLevel\030\003"
-          + " \001(\t\022\030\n\020correctionFactor\030\004 \001(\t\022\022\n\ncubicM"
-          + "eter\030\005 \001(\t\022\017\n\007inertia\030\006 \001(\t\022\020\n\010isActive\030"
-          + "\007 \001(\010\022\013\n\003lcg\030\010 \001(\t\022\031\n\021loadablePatternId\030"
-          + "\t \001(\003\022\021\n\tmetricTon\030\n \001(\t\022\022\n\npercentage\030\013"
-          + " \001(\t\022\020\n\010rdgLevel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t\022\016\n\006ta"
-          + "nkId\030\016 \001(\003\022\020\n\010tankName\030\017 \001(\t\022\013\n\003tcg\030\020 \001("
-          + "\t\022\013\n\003vcg\030\021 \001(\t\"\330\005\n\033LoadablePlanCommingle"
-          + "Detail\022\n\n\002id\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n\022cargo"
-          + "1Abbreviation\030\003 \001(\t\022\025\n\rcargo1Bbls60f\030\004 \001"
-          + "(\t\022\025\n\rcargo1BblsDbs\030\005 \001(\t\022\020\n\010cargo1Kl\030\006 "
-          + "\001(\t\022\020\n\010cargo1Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030\010 \001(\t\022"
-          + "\030\n\020cargo1Percentage\030\t \001(\t\022\032\n\022cargo2Abbre"
-          + "viation\030\n \001(\t\022\025\n\rcargo2Bbls60f\030\013 \001(\t\022\025\n\r"
-          + "cargo2BblsDbs\030\014 \001(\t\022\020\n\010cargo2Kl\030\r \001(\t\022\020\n"
-          + "\010cargo2Lt\030\016 \001(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022\030\n\020car"
-          + "go2Percentage\030\020 \001(\t\022\027\n\017correctedUllage\030\021"
-          + " \001(\t\022\030\n\020correctionFactor\030\022 \001(\t\022\024\n\014fillin"
-          + "gRatio\030\023 \001(\t\022\r\n\005grade\030\024 \001(\t\022\020\n\010isActive\030"
-          + "\025 \001(\010\022\031\n\021loadablePatternId\030\026 \001(\003\022\026\n\016load"
-          + "ablePlanId\030\027 \001(\003\022\024\n\014loadingOrder\030\030 \001(\005\022\025"
-          + "\n\rorderQuantity\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022"
-          + "\020\n\010quantity\030\033 \001(\t\022\021\n\trdgUllage\030\034 \001(\t\022\024\n\014"
-          + "slopQuantity\030\035 \001(\t\022\016\n\006tankId\030\036 \001(\003\022\020\n\010ta"
-          + "nkName\030\037 \001(\t\022\023\n\013temperature\030  \001(\t\022\036\n\026tim"
-          + "eRequiredForLoading\030! \001(\t\"\221\005\n\024LoadablePl"
-          + "anQuantity\022\031\n\021cargoAbbreviation\030\001 \001(\t\022\022\n"
-          + "\ncargoColor\030\002 \001(\t\022\031\n\021cargoNominationId\030\003"
-          + " \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\027\n\017differenceColor"
-          + "\030\005 \001(\t\022\034\n\024differencePercentage\030\006 \001(\t\022\024\n\014"
-          + "estimatedApi\030\007 \001(\t\022\034\n\024estimatedTemperatu"
-          + "re\030\010 \001(\t\022\r\n\005grade\030\t \001(\t\022\n\n\002id\030\n \001(\003\022\020\n\010i"
-          + "sActive\030\013 \001(\010\022\027\n\017loadableBbls60f\030\014 \001(\t\022\027"
-          + "\n\017loadableBblsDbs\030\r \001(\t\022\022\n\nloadableKl\030\016 "
-          + "\001(\t\022\022\n\nloadableLt\030\017 \001(\t\022\022\n\nloadableMt\030\020 "
-          + "\001(\t\022\031\n\021loadablePatternId\030\021 \001(\003\022\026\n\016loadab"
-          + "lePlanId\030\022 \001(\003\022\030\n\020loadableQuantity\030\023 \001(\t"
-          + "\022\024\n\014loadingOrder\030\024 \001(\005\022\024\n\014maxTolerence\030\025"
-          + " \001(\t\022\024\n\014minTolerence\030\026 \001(\t\022\024\n\014orderBbls6"
-          + "0f\030\027 \001(\t\022\024\n\014orderBblsDbs\030\030 \001(\t\022\025\n\rorderQ"
-          + "uantity\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\024\n\014slopQ"
-          + "uantity\030\033 \001(\t\022\036\n\026timeRequiredForLoading\030"
-          + "\034 \001(\t\"\250\003\n\031LoadablePlanStowageDetail\022\024\n\014a"
-          + "bbreviation\030\001 \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021cargoN"
-          + "ominationId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\021\n\tco"
-          + "lorCode\030\005 \001(\t\022\027\n\017correctedUllage\030\006 \001(\t\022\030"
-          + "\n\020correctionFactor\030\007 \001(\t\022\031\n\021fillingPerce"
-          + "ntage\030\010 \001(\t\022\n\n\002id\030\t \001(\003\022\020\n\010isActive\030\n \001("
-          + "\010\022\031\n\021loadablePatternId\030\013 \001(\003\022\027\n\017observed"
-          + "Barrels\030\014 \001(\t\022\033\n\023observedBarrelsAt60\030\r \001"
-          + "(\t\022\022\n\nobservedM3\030\016 \001(\t\022\021\n\trdgUllage\030\017 \001("
-          + "\t\022\016\n\006tankId\030\020 \001(\003\022\020\n\010tankname\030\021 \001(\t\022\023\n\013t"
-          + "emperature\030\022 \001(\t\022\016\n\006weight\030\023 \001(\t\"\355\005\n\020Loa"
-          + "dableQuantity\022\017\n\007ballast\030\001 \001(\t\022\032\n\022boiler"
-          + "WaterOnBoard\030\002 \001(\t\022\020\n\010constant\030\003 \001(\t\022\022\n\n"
-          + "deadWeight\030\004 \001(\t\022&\n\036displacementAtDraftR"
-          + "estriction\030\005 \001(\t\022\034\n\024distanceFromLastPort"
-          + "\030\006 \001(\t\022\030\n\020draftRestriction\030\007 \001(\t\022\032\n\022esti"
-          + "matedDOOnBoard\030\010 \001(\t\022\032\n\022estimatedFOOnBoa"
-          + "rd\030\t \001(\t\022\032\n\022estimatedFWOnBoard\030\n \001(\t\022\030\n\020"
-          + "estimatedSagging\030\013 \001(\t\022\033\n\023estimatedSeaDe"
-          + "nsity\030\014 \001(\t\022\031\n\021foConsumptionInSZ\030\r \001(\t\022\033"
-          + "\n\023foConsumptionPerDay\030\016 \001(\t\022\n\n\002id\030\017 \001(\003\022"
-          + "\020\n\010isActive\030\020 \001(\010\022\023\n\013lightWeight\030\021 \001(\t\022#"
-          + "\n\033loadableStudyPortRotationId\030\022 \001(\003\022\027\n\017l"
-          + "oadableStudyId\030\023 \001(\003\022\022\n\notherIfAny\030\024 \001(\t"
-          + "\022\016\n\006portId\030\025 \001(\t\022\023\n\013runningDays\030\026 \001(\t\022\024\n"
-          + "\014runningHours\030\027 \001(\t\022\030\n\020saggingDeduction\030"
-          + "\030 \001(\t\022\024\n\014sgCorrection\030\031 \001(\t\022\020\n\010subTotal\030"
-          + "\032 \001(\t\022\032\n\022totalFoConsumption\030\033 \001(\t\022\025\n\rtot"
-          + "alQuantity\030\034 \001(\t\022\022\n\ntpcatDraft\030\035 \001(\t\022\032\n\022"
-          + "vesselAverageSpeed\030\036 \001(\t\"\325\001\n\027CargoToppin"
-          + "gOffSequence\022\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fillin"
-          + "gRatio\030\002 \001(\t\022\020\n\010isActive\030\003 \001(\010\022\023\n\013orderN"
-          + "umber\030\004 \001(\005\022\017\n\007remarks\030\005 \001(\t\022\017\n\007tankXId\030"
-          + "\006 \001(\003\022\016\n\006ullage\030\007 \001(\t\022\016\n\006volume\030\010 \001(\t\022\016\n"
-          + "\006weight\030\t \001(\t\022\031\n\021loadablePatternId\030\n \001(\003"
-          + "\"\316\001\n\026LoadingPlanSyncDetails\022;\n\030loadingIn"
-          + "formationDetail\030\001 \001(\0132\031.LoadingInformati"
-          + "onDetail\022;\n\030loadablePlanDetailsReply\030\002 \001"
-          + "(\0132\031.LoadablePlanDetailsReply\022:\n\030cargoTo"
-          + "ppingOffSequences\030\003 \003(\0132\030.CargoToppingOf"
-          + "fSequence\"?\n\024LoadingPlanSyncReply\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\"\224\002\n\032U"
-          + "pdateUllageLoadingRequest\022\'\n\016responseSta"
-          + "tus\030\001 \001(\0132\017.ResponseStatus\022\025\n\rloadingInf"
-          + "oId\030\002 \001(\003\022\026\n\016portRotationId\030\003 \001(\003\022\020\n\010ves"
-          + "selId\030\004 \001(\003\022\020\n\010voyageId\030\005 \001(\003\022\016\n\006tankId\030"
-          + "\006 \001(\003\022\017\n\007cargoId\030\010 \001(\003\022\024\n\014fillingRatio\030\t"
-          + " \001(\t\022\020\n\010quantity\030\n \001(\t\022\027\n\017correctedUllag"
-          + "e\030\013 \001(\t\022\030\n\020correctionFactor\030\014 \001(\t\"D\n\031Upd"
-          + "ateUllageLoadingReplay\022\'\n\016responseStatus"
-          + "\030\001 \001(\0132\017.ResponseStatusB+\n\'com.cpdss.com"
-          + "mon.generated.loading_planP\000b\006proto3"
+          + "\022\031\n\021loadablePatternId\030\002 \001(\003\"s\n!LoadingIn"
+          + "formationSynopticalReply\022\'\n\016responseStat"
+          + "us\030\001 \001(\0132\017.ResponseStatus\022%\n\rbillOfLaddi"
+          + "ng\030\002 \003(\0132\016.BillOfLadding\"\303\003\n\022LoadingInfo"
+          + "rmation\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
+          + "seStatus\0225\n\022loadingInformation\030\002 \001(\0132\031.L"
+          + "oadingInformationDetail\022&\n\rloadingDetail"
+          + "\030\003 \001(\0132\017.LoadingDetails\022\"\n\013loadingRate\030\004"
+          + " \001(\0132\r.LoadingRates\022%\n\rloadingBerths\030\005 \003"
+          + "(\0132\016.LoadingBerths\022.\n\017loadingMachines\030\007 "
+          + "\003(\0132\025.LoadingMachinesInUse\022$\n\014loadingSta"
+          + "ge\030\t \001(\0132\016.LoadingStages\022$\n\rloadingDelay"
+          + "s\030\n \001(\0132\r.LoadingDelay\022.\n\022toppingOffSequ"
+          + "ence\030\013 \003(\0132\022.LoadingToppingOff\022\025\n\rloadin"
+          + "gInfoId\030\014 \001(\003\022\027\n\017synopticTableId\030\r \001(\003\"\221"
+          + "\001\n\016LoadingDetails\022\n\n\002id\030\001 \001(\003\022\025\n\rtimeOfS"
+          + "unrise\030\002 \001(\t\022\024\n\014timeOfSunset\030\003 \001(\t\022\021\n\tst"
+          + "artTime\030\004 \001(\t\022!\n\013trimAllowed\030\005 \001(\0132\014.Tri"
+          + "mAllowed\022\020\n\010voyageId\030\006 \001(\003\"J\n\013TrimAllowe"
+          + "d\022\023\n\013initialTrim\030\001 \001(\t\022\023\n\013maximumTrim\030\002 "
+          + "\001(\t\022\021\n\tfinalTrim\030\003 \001(\t\"\232\002\n\014LoadingRates\022"
+          + "\n\n\002id\030\001 \001(\003\022\032\n\022initialLoadingRate\030\002 \001(\t\022"
+          + "\026\n\016maxLoadingRate\030\003 \001(\t\022\032\n\022reducedLoadin"
+          + "gRate\030\004 \001(\t\022\033\n\023minDeBallastingRate\030\005 \001(\t"
+          + "\022\033\n\023maxDeBallastingRate\030\006 \001(\t\022\037\n\027noticeT"
+          + "imeRateReduction\030\007 \001(\t\022\035\n\025noticeTimeStop"
+          + "Loading\030\010 \001(\t\022\034\n\024lineContentRemaining\030\t "
+          + "\001(\t\022\026\n\016minLoadingRate\030\n \001(\t\"\201\002\n\rLoadingB"
+          + "erths\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfoId\030\002 \001(\003"
+          + "\022\017\n\007berthId\030\003 \001(\003\022\r\n\005depth\030\004 \001(\t\022\032\n\022seaD"
+          + "raftLimitation\030\005 \001(\t\022\032\n\022airDraftLimitati"
+          + "on\030\006 \001(\t\022\031\n\021maxManifoldHeight\030\007 \001(\t\022$\n\034s"
+          + "pecialRegulationRestriction\030\010 \001(\t\022\033\n\023ite"
+          + "msToBeAgreedWith\030\t \001(\t\022\027\n\017hoseConnection"
+          + "s\030\n \001(\t\"\213\002\n\rLoadingStages\022\n\n\002id\030\001 \001(\003\022\023\n"
+          + "\013stageOffset\030\002 \001(\005\022\025\n\rstageDuration\030\003 \001("
+          + "\005\022\032\n\022trackStartEndStage\030\004 \001(\010\022\030\n\020trackGr"
+          + "adeSwitch\030\005 \001(\010\022#\n\014stageOffsets\030\006 \003(\0132\r."
+          + "StageOffsets\022&\n\016stageDurations\030\007 \003(\0132\016.S"
+          + "tageDuration\022\035\n\006offset\030\010 \001(\0132\r.StageOffs"
+          + "ets\022 \n\010duration\030\t \001(\0132\016.StageDuration\"2\n"
+          + "\014StageOffsets\022\n\n\002id\030\001 \001(\003\022\026\n\016stageOffset"
+          + "Val\030\002 \001(\003\"-\n\rStageDuration\022\n\n\002id\030\001 \001(\003\022\020"
+          + "\n\010duration\030\002 \001(\003\"l\n\024LoadingMachinesInUse"
+          + "\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfoId\030\002 \001(\003\022\016\n\006p"
+          + "umpId\030\003 \001(\003\022\020\n\010capacity\030\004 \001(\t\022\017\n\007isUsing"
+          + "\030\005 \001(\010\"s\n\014LoadingDelay\022\036\n\007reasons\030\001 \003(\0132"
+          + "\r.DelayReasons\022\036\n\006delays\030\002 \003(\0132\016.Loading"
+          + "Delays\022#\n\006cargos\030\003 \003(\0132\023.LoadingDelayCar"
+          + "gos\"*\n\014DelayReasons\022\n\n\002id\030\001 \001(\003\022\016\n\006reaso"
+          + "n\030\002 \001(\t\"\201\001\n\rLoadingDelays\022\n\n\002id\030\001 \001(\003\022\025\n"
+          + "\rloadingInfoId\030\002 \001(\003\022\030\n\020reasonForDelayId"
+          + "\030\003 \001(\003\022\020\n\010duration\030\004 \001(\t\022\017\n\007cargoId\030\005 \001("
+          + "\003\022\020\n\010quantity\030\006 \001(\t\"u\n\022LoadingDelayCargo"
+          + "s\022\017\n\007cargoId\030\001 \001(\003\022\022\n\ncolourCode\030\002 \001(\t\022\021"
+          + "\n\tcargoName\030\003 \001(\t\022\025\n\rcargoShorName\030\004 \001(\t"
+          + "\022\020\n\010quantity\030\005 \001(\t\"\366\001\n\021LoadingToppingOff"
+          + "\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfoId\030\002 \001(\003\022\023\n\013o"
+          + "rderNumber\030\003 \001(\005\022\016\n\006tankId\030\004 \001(\003\022\021\n\tcarg"
+          + "oName\030\005 \001(\t\022\031\n\021cargoAbbreviation\030\006 \001(\t\022\022"
+          + "\n\ncolourCode\030\007 \001(\t\022\016\n\006ullage\030\010 \001(\t\022\020\n\010qu"
+          + "antity\030\t \001(\t\022\024\n\014fillingRatio\030\n \001(\t\022\016\n\006re"
+          + "mark\030\013 \001(\t\022\017\n\007cargoId\030\014 \001(\003\"\234\001\n\030LoadingI"
+          + "nformationDetail\022\031\n\021loadablePatternId\030\001 "
+          + "\001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021synopticalTableId"
+          + "\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020\n\010voyageId\030\005 \001"
+          + "(\003\022\026\n\016portRotationId\030\006 \001(\003\"\314\002\n\031LoadableP"
+          + "lanBallastDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcolorCod"
+          + "e\030\002 \001(\t\022\026\n\016correctedLevel\030\003 \001(\t\022\030\n\020corre"
+          + "ctionFactor\030\004 \001(\t\022\022\n\ncubicMeter\030\005 \001(\t\022\017\n"
+          + "\007inertia\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\022\013\n\003lcg\030"
+          + "\010 \001(\t\022\031\n\021loadablePatternId\030\t \001(\003\022\021\n\tmetr"
+          + "icTon\030\n \001(\t\022\022\n\npercentage\030\013 \001(\t\022\020\n\010rdgLe"
+          + "vel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t\022\016\n\006tankId\030\016 \001(\003\022\020\n"
+          + "\010tankName\030\017 \001(\t\022\013\n\003tcg\030\020 \001(\t\022\013\n\003vcg\030\021 \001("
+          + "\t\"\330\005\n\033LoadablePlanCommingleDetail\022\n\n\002id\030"
+          + "\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n\022cargo1Abbreviation"
+          + "\030\003 \001(\t\022\025\n\rcargo1Bbls60f\030\004 \001(\t\022\025\n\rcargo1B"
+          + "blsDbs\030\005 \001(\t\022\020\n\010cargo1Kl\030\006 \001(\t\022\020\n\010cargo1"
+          + "Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030\010 \001(\t\022\030\n\020cargo1Perc"
+          + "entage\030\t \001(\t\022\032\n\022cargo2Abbreviation\030\n \001(\t"
+          + "\022\025\n\rcargo2Bbls60f\030\013 \001(\t\022\025\n\rcargo2BblsDbs"
+          + "\030\014 \001(\t\022\020\n\010cargo2Kl\030\r \001(\t\022\020\n\010cargo2Lt\030\016 \001"
+          + "(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022\030\n\020cargo2Percentage"
+          + "\030\020 \001(\t\022\027\n\017correctedUllage\030\021 \001(\t\022\030\n\020corre"
+          + "ctionFactor\030\022 \001(\t\022\024\n\014fillingRatio\030\023 \001(\t\022"
+          + "\r\n\005grade\030\024 \001(\t\022\020\n\010isActive\030\025 \001(\010\022\031\n\021load"
+          + "ablePatternId\030\026 \001(\003\022\026\n\016loadablePlanId\030\027 "
+          + "\001(\003\022\024\n\014loadingOrder\030\030 \001(\005\022\025\n\rorderQuanti"
+          + "ty\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\020\n\010quantity\030\033"
+          + " \001(\t\022\021\n\trdgUllage\030\034 \001(\t\022\024\n\014slopQuantity\030"
+          + "\035 \001(\t\022\016\n\006tankId\030\036 \001(\003\022\020\n\010tankName\030\037 \001(\t\022"
+          + "\023\n\013temperature\030  \001(\t\022\036\n\026timeRequiredForL"
+          + "oading\030! \001(\t\"\221\005\n\024LoadablePlanQuantity\022\031\n"
+          + "\021cargoAbbreviation\030\001 \001(\t\022\022\n\ncargoColor\030\002"
+          + " \001(\t\022\031\n\021cargoNominationId\030\003 \001(\003\022\017\n\007cargo"
+          + "Id\030\004 \001(\003\022\027\n\017differenceColor\030\005 \001(\t\022\034\n\024dif"
+          + "ferencePercentage\030\006 \001(\t\022\024\n\014estimatedApi\030"
+          + "\007 \001(\t\022\034\n\024estimatedTemperature\030\010 \001(\t\022\r\n\005g"
+          + "rade\030\t \001(\t\022\n\n\002id\030\n \001(\003\022\020\n\010isActive\030\013 \001(\010"
+          + "\022\027\n\017loadableBbls60f\030\014 \001(\t\022\027\n\017loadableBbl"
+          + "sDbs\030\r \001(\t\022\022\n\nloadableKl\030\016 \001(\t\022\022\n\nloadab"
+          + "leLt\030\017 \001(\t\022\022\n\nloadableMt\030\020 \001(\t\022\031\n\021loadab"
+          + "lePatternId\030\021 \001(\003\022\026\n\016loadablePlanId\030\022 \001("
+          + "\003\022\030\n\020loadableQuantity\030\023 \001(\t\022\024\n\014loadingOr"
+          + "der\030\024 \001(\005\022\024\n\014maxTolerence\030\025 \001(\t\022\024\n\014minTo"
+          + "lerence\030\026 \001(\t\022\024\n\014orderBbls60f\030\027 \001(\t\022\024\n\014o"
+          + "rderBblsDbs\030\030 \001(\t\022\025\n\rorderQuantity\030\031 \001(\t"
+          + "\022\020\n\010priority\030\032 \001(\005\022\024\n\014slopQuantity\030\033 \001(\t"
+          + "\022\036\n\026timeRequiredForLoading\030\034 \001(\t\"\250\003\n\031Loa"
+          + "dablePlanStowageDetail\022\024\n\014abbreviation\030\001"
+          + " \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021cargoNominationId\030\003"
+          + " \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\021\n\tcolorCode\030\005 \001(\t"
+          + "\022\027\n\017correctedUllage\030\006 \001(\t\022\030\n\020correctionF"
+          + "actor\030\007 \001(\t\022\031\n\021fillingPercentage\030\010 \001(\t\022\n"
+          + "\n\002id\030\t \001(\003\022\020\n\010isActive\030\n \001(\010\022\031\n\021loadable"
+          + "PatternId\030\013 \001(\003\022\027\n\017observedBarrels\030\014 \001(\t"
+          + "\022\033\n\023observedBarrelsAt60\030\r \001(\t\022\022\n\nobserve"
+          + "dM3\030\016 \001(\t\022\021\n\trdgUllage\030\017 \001(\t\022\016\n\006tankId\030\020"
+          + " \001(\003\022\020\n\010tankname\030\021 \001(\t\022\023\n\013temperature\030\022 "
+          + "\001(\t\022\016\n\006weight\030\023 \001(\t\"\355\005\n\020LoadableQuantity"
+          + "\022\017\n\007ballast\030\001 \001(\t\022\032\n\022boilerWaterOnBoard\030"
+          + "\002 \001(\t\022\020\n\010constant\030\003 \001(\t\022\022\n\ndeadWeight\030\004 "
+          + "\001(\t\022&\n\036displacementAtDraftRestriction\030\005 "
+          + "\001(\t\022\034\n\024distanceFromLastPort\030\006 \001(\t\022\030\n\020dra"
+          + "ftRestriction\030\007 \001(\t\022\032\n\022estimatedDOOnBoar"
+          + "d\030\010 \001(\t\022\032\n\022estimatedFOOnBoard\030\t \001(\t\022\032\n\022e"
+          + "stimatedFWOnBoard\030\n \001(\t\022\030\n\020estimatedSagg"
+          + "ing\030\013 \001(\t\022\033\n\023estimatedSeaDensity\030\014 \001(\t\022\031"
+          + "\n\021foConsumptionInSZ\030\r \001(\t\022\033\n\023foConsumpti"
+          + "onPerDay\030\016 \001(\t\022\n\n\002id\030\017 \001(\003\022\020\n\010isActive\030\020"
+          + " \001(\010\022\023\n\013lightWeight\030\021 \001(\t\022#\n\033loadableStu"
+          + "dyPortRotationId\030\022 \001(\003\022\027\n\017loadableStudyI"
+          + "d\030\023 \001(\003\022\022\n\notherIfAny\030\024 \001(\t\022\016\n\006portId\030\025 "
+          + "\001(\t\022\023\n\013runningDays\030\026 \001(\t\022\024\n\014runningHours"
+          + "\030\027 \001(\t\022\030\n\020saggingDeduction\030\030 \001(\t\022\024\n\014sgCo"
+          + "rrection\030\031 \001(\t\022\020\n\010subTotal\030\032 \001(\t\022\032\n\022tota"
+          + "lFoConsumption\030\033 \001(\t\022\025\n\rtotalQuantity\030\034 "
+          + "\001(\t\022\022\n\ntpcatDraft\030\035 \001(\t\022\032\n\022vesselAverage"
+          + "Speed\030\036 \001(\t\"\325\001\n\027CargoToppingOffSequence\022"
+          + "\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fillingRatio\030\002 \001(\t\022"
+          + "\020\n\010isActive\030\003 \001(\010\022\023\n\013orderNumber\030\004 \001(\005\022\017"
+          + "\n\007remarks\030\005 \001(\t\022\017\n\007tankXId\030\006 \001(\003\022\016\n\006ulla"
+          + "ge\030\007 \001(\t\022\016\n\006volume\030\010 \001(\t\022\016\n\006weight\030\t \001(\t"
+          + "\022\031\n\021loadablePatternId\030\n \001(\003\"\316\001\n\026LoadingP"
+          + "lanSyncDetails\022;\n\030loadingInformationDeta"
+          + "il\030\001 \001(\0132\031.LoadingInformationDetail\022;\n\030l"
+          + "oadablePlanDetailsReply\030\002 \001(\0132\031.Loadable"
+          + "PlanDetailsReply\022:\n\030cargoToppingOffSeque"
+          + "nces\030\003 \003(\0132\030.CargoToppingOffSequence\"?\n\024"
+          + "LoadingPlanSyncReply\022\'\n\016responseStatus\030\001"
+          + " \001(\0132\017.ResponseStatus\"\224\002\n\032UpdateUllageLo"
+          + "adingRequest\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
+          + "esponseStatus\022\025\n\rloadingInfoId\030\002 \001(\003\022\026\n\016"
+          + "portRotationId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020"
+          + "\n\010voyageId\030\005 \001(\003\022\016\n\006tankId\030\006 \001(\003\022\017\n\007carg"
+          + "oId\030\010 \001(\003\022\024\n\014fillingRatio\030\t \001(\t\022\020\n\010quant"
+          + "ity\030\n \001(\t\022\027\n\017correctedUllage\030\013 \001(\t\022\030\n\020co"
+          + "rrectionFactor\030\014 \001(\t\"D\n\031UpdateUllageLoad"
+          + "ingReplay\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\"/\n\026LoadingInfoAlgoRequest\022\025\n\r"
+          + "loadingInfoId\030\001 \001(\003B+\n\'com.cpdss.common."
+          + "generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -49346,7 +49959,7 @@ public final class LoadingPlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingInformationSynopticalRequest_descriptor,
             new java.lang.String[] {
-              "SynopticalId",
+              "SynopticalId", "LoadablePatternId",
             });
     internal_static_LoadingInformationSynopticalReply_descriptor =
         getDescriptor().getMessageTypes().get(2);
@@ -49728,6 +50341,13 @@ public final class LoadingPlanModels {
             internal_static_UpdateUllageLoadingReplay_descriptor,
             new java.lang.String[] {
               "ResponseStatus",
+            });
+    internal_static_LoadingInfoAlgoRequest_descriptor = getDescriptor().getMessageTypes().get(28);
+    internal_static_LoadingInfoAlgoRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_LoadingInfoAlgoRequest_descriptor,
+            new java.lang.String[] {
+              "LoadingInfoId",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.LoadableStudy.getDescriptor();

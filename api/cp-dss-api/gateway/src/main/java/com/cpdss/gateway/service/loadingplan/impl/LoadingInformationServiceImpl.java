@@ -378,6 +378,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     List<LoadingDelays> loadingDelays = new ArrayList<>();
     for (LoadingPlanModels.LoadingDelays var2 : loadingDelay.getDelaysList()) {
       LoadingDelays val1 = new LoadingDelays();
+      Optional.ofNullable(var2.getDuration())
+          .ifPresent(
+              v -> {
+                if (!v.isEmpty()) val1.setDuration(new BigDecimal(v));
+              });
       BeanUtils.copyProperties(var2, val1);
       loadingDelays.add(val1);
     }
@@ -544,5 +549,31 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
     response.setResponseStatus(successResponse);
     return response;
+  }
+
+  @Override
+  public LoadingInfoAlgoResponse generateLoadingPlan(Long infoId) throws GenericServiceException {
+    try {
+      log.info("Calling generateLoadingPlan in loading-plan microservice via GRPC");
+      LoadingInfoAlgoResponse algoResponse = new LoadingInfoAlgoResponse();
+      ResponseStatus response = this.loadingPlanGrpcService.generateLoadingPlan(infoId);
+      if (response.getStatus().equalsIgnoreCase(SUCCESS)) {
+        CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+        algoResponse.setResponseStatus(successResponse);
+        return algoResponse;
+      } else {
+        log.error("Failed to save LoadingInformation {}", infoId);
+        throw new GenericServiceException(
+            "Failed to save Loading Information",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      log.error("Failed to save LoadingInformation {}", infoId);
+      throw new GenericServiceException(
+          "Failed to generate Loading Plan",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 }

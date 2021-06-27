@@ -45,6 +45,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails;
@@ -3814,6 +3815,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? new BigDecimal(lpsd.getCorrectedUllage())
             : null);
     loadablePatternCargoDetails.setCargoNominationId(lpsd.getCargoNominationId());
+    loadablePatternCargoDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
@@ -3869,6 +3871,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
+          loadablePlanStowageDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
@@ -3978,6 +3981,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
+              loadablePlanQuantity.setCargoNominationTemperature(new BigDecimal(lqcd.getCargoNominationTemperature()));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
               lqcd.getToppingOffSequencesList()
@@ -4518,7 +4522,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
           ofNullable(lpq.getEstimatedApi())
               .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
-          Optional.ofNullable(lpq.getEstimatedTemperature())
+          Optional.ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   temp -> loadablePatternCargoDetailsBuilder.setTemperature(String.valueOf(temp)));
 
@@ -9097,7 +9101,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getRdgUllage()).ifPresent(builder::setRdgUllage);
           Optional.ofNullable(lpsd.getTankname()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
-          Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
+          Optional.ofNullable(lpsd.getCargoNominationTemperature())
+          .ifPresent(temp -> builder.setTemperature(valueOf(temp)));
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
           Optional.ofNullable(lpsd.getCorrectedUllage())
@@ -9166,7 +9171,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       builder.setDifferencePercentage(String.valueOf(diffPercentage)));
           ofNullable(lpq.getEstimatedApi())
               .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
-          ofNullable(lpq.getEstimatedTemperature())
+          ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   estimatedTemperature ->
                       builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
@@ -13493,5 +13498,114 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       rulePlanBuider.addRules(rulesBuilder.build());
     }
     builder.addRulePlan(rulePlanBuider);
+  }
+
+  @Override
+  public void getLoadablePatternDetailsJson(
+      LoadablePlanDetailsRequest request,
+      StreamObserver<LoadablePatternPortWiseDetailsJson> responseObserver) {
+    LoadablePatternPortWiseDetailsJson.Builder builder =
+        LoadablePatternPortWiseDetailsJson.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+            new LoadabalePatternValidateRequest();
+        buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
+        ObjectMapper mapper = new ObjectMapper();
+        builder.setLoadablePatternDetails(
+            mapper.writeValueAsString(
+                loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+        builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
+        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else throw new Exception("Cannot find loadable pattern");
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to Get Pattern Details ", request.getLoadablePatternId());
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .setMessage(e.getMessage())
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadablePatternByVoyageAndStatus(
+      LoadableStudyRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.newBuilder();
+    try {
+      Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+
+      Optional<LoadableStudy> loadableStudy =
+          loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+              voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+      if (loadableStudy.isPresent()) {
+        log.info("Confirmed Ls - ls id {}", loadableStudy.get().getId());
+        Optional<LoadablePattern> pattern =
+            loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+                loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+        if (pattern.isPresent()) {
+          com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePattern =
+              com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+          loadablePattern.setLoadablePatternId(pattern.get().getId());
+          builder.setPattern(loadablePattern.build());
+        }
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getCargoNominationByCargoNominationId(
+      CargoNominationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.newBuilder();
+    try {
+      CargoNomination cargoNomination =
+          this.cargoNominationRepository.getOne(request.getCargoNominationId());
+      if (cargoNomination != null) {
+        com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder cargoNom =
+            com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.newBuilder();
+        cargoNom.setId(cargoNomination.getId());
+        cargoNom.setAbbreviation(cargoNomination.getAbbreviation());
+        cargoNom.setColor(cargoNomination.getColor());
+        CargoRequest.Builder cargoReq = CargoRequest.newBuilder();
+        cargoReq.setCargoId(cargoNomination.getCargoXId());
+        com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
+            this.getCargoInfoById(cargoReq.build());
+        cargoNom.setCargoName(cargoDetailReply.getCargoDetail().getCrudeType());
+        cargoNom.setCargoId(cargoNomination.getCargoXId());
+        builder.setCargoNominationdetail(cargoNom);
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public com.cpdss.common.generated.CargoInfo.CargoDetailReply getCargoInfoById(
+      CargoRequest build) {
+    return cargoInfoGrpcService.getCargoInfoById(build);
   }
 }

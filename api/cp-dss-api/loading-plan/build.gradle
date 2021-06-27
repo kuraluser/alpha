@@ -1,6 +1,6 @@
 appConfig {
   appName = 'loading-plan'
-  grpcServer = 'y'
+  grpc = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
@@ -10,4 +10,6 @@ appConfig {
 
 dependencies {
     implementation project(':common')
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+    compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
 }

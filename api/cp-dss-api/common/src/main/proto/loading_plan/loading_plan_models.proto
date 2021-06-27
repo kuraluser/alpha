@@ -20,6 +20,7 @@ message LoadingInformationRequest{
 
 message LoadingInformationSynopticalRequest {
   int64 synopticalId = 1;
+  int64 loadablePatternId = 2;
 }
 
 message LoadingInformationSynopticalReply{
@@ -355,6 +356,10 @@ message UpdateUllageLoadingRequest {
 
 message UpdateUllageLoadingReplay {
   ResponseStatus responseStatus = 1;
+}
+
+message LoadingInfoAlgoRequest {
+  int64 loadingInfoId = 1;
 }
 
 

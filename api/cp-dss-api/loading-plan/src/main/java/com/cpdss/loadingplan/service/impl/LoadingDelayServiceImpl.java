@@ -10,7 +10,9 @@ import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.ReasonForDelayRepository;
 import com.cpdss.loadingplan.service.LoadingDelayService;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,23 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
 
   @Override
-  public void saveLoadingDelayList(LoadingDelay loadingDelays) throws Exception {
+  public void saveLoadingDelayList(
+      LoadingDelay loadingDelays, LoadingInformation loadingInformation) throws Exception {
+    if (loadingDelays.getDelaysCount() > 0) {
+      List<com.cpdss.loadingplan.entity.LoadingDelay> existingDelays =
+          loadingDelayRepository.findByLoadingInformationIdAndIsActive(
+              loadingInformation.getId(), true);
+      List<Long> requestedDelays =
+          loadingDelays.getDelaysList().stream()
+              .map(delay -> delay.getId())
+              .collect(Collectors.toList());
+      existingDelays.stream()
+          .filter(existingDelay -> !requestedDelays.contains(existingDelay.getId()))
+          .forEach(
+              existingDelay -> {
+                loadingDelayRepository.deleteById(existingDelay.getId());
+              });
+    }
     for (LoadingDelays delay : loadingDelays.getDelaysList()) {
       log.info(
           "Saving delay {} for LoadingInformation {}", delay.getId(), delay.getLoadingInfoId());

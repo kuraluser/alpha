@@ -15,6 +15,8 @@ import com.cpdss.common.generated.VesselInfo.CalculationSheetTankGroup;
 import com.cpdss.common.generated.VesselInfo.HydrostaticData;
 import com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
+import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
 import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.SelectableParameter;
@@ -50,6 +52,7 @@ import com.cpdss.vesselinfo.entity.HydrostaticTable;
 import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
 import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
 import com.cpdss.vesselinfo.entity.RuleTemplate;
+import com.cpdss.vesselinfo.entity.RuleTemplateInput;
 import com.cpdss.vesselinfo.entity.RuleType;
 import com.cpdss.vesselinfo.entity.RuleVesselMapping;
 import com.cpdss.vesselinfo.entity.RuleVesselMappingInput;
@@ -116,6 +119,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired RuleVesselMappingRepository ruleVesselMappingRepository;
   @Autowired RuleVesselMappingInputRespository ruleVesselMappingInputRespository;
   @Autowired VesselValveSequenceRepository vesselValveSequenceRepository;
+  @Autowired RuleTemplateInputRepository ruleTemplateInputRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -1711,6 +1715,69 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       builder.addAllEntity(
           vesselPumpService.buildVesselValveSeqMessage(vesselValveSequenceRepository.findAll()));
+    } catch (Exception e) {
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadingInfoRules(
+      LoadingInfoRulesRequest request, StreamObserver<LoadingInfoRulesReply> responseObserver) {
+    LoadingInfoRulesReply.Builder builder = LoadingInfoRulesReply.newBuilder();
+    try {
+      List<RuleVesselMapping> vesselRules =
+          this.ruleVesselMappingRepository.findLoadingInfoRulesByVesselId(request.getVesselId());
+      if (!vesselRules.isEmpty()) {
+        vesselRules.forEach(
+            vesselRule -> {
+              Rules.Builder ruleBuilder = Rules.newBuilder();
+              Optional.ofNullable(vesselRule.getId())
+                  .ifPresent(id -> ruleBuilder.setId(String.valueOf(id)));
+              List<RuleVesselMappingInput> inputs =
+                  this.ruleVesselMappingInputRespository.findByRuleVesselMappingAndIsActive(
+                      vesselRule, true);
+              inputs.forEach(
+                  input -> {
+                    RulesInputs.Builder inputBuilder = RulesInputs.newBuilder();
+                    Optional.ofNullable(input.getPrefix()).ifPresent(inputBuilder::setPrefix);
+                    Optional.ofNullable(input.getSuffix()).ifPresent(inputBuilder::setSuffix);
+                    Optional.ofNullable(input.getDefaultValue())
+                        .ifPresent(inputBuilder::setDefaultValue);
+                    ruleBuilder.addInputs(inputBuilder.build());
+                  });
+              builder.addRules(ruleBuilder.build());
+            });
+      } else {
+        List<RuleTemplate> templateRules = this.ruleTemplateRepository.findLoadingInfoRules();
+        templateRules.forEach(
+            templateRule -> {
+              Rules.Builder ruleBuilder = Rules.newBuilder();
+              Optional.ofNullable(templateRule.getId())
+                  .ifPresent(id -> ruleBuilder.setId(String.valueOf(id)));
+              List<RuleTemplateInput> inputs =
+                  this.ruleTemplateInputRepository.findByRuleTemplateAndIsActive(
+                      templateRule, true);
+              inputs.forEach(
+                  input -> {
+                    RulesInputs.Builder inputBuilder = RulesInputs.newBuilder();
+                    Optional.ofNullable(input.getPrefix()).ifPresent(inputBuilder::setPrefix);
+                    Optional.ofNullable(input.getSuffix()).ifPresent(inputBuilder::setSuffix);
+                    Optional.ofNullable(input.getDefaultValue())
+                        .ifPresent(inputBuilder::setDefaultValue);
+                    ruleBuilder.addInputs(inputBuilder.build());
+                  });
+              builder.addRules(ruleBuilder.build());
+            });
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
       builder.setResponseStatus(
           ResponseStatus.newBuilder()

@@ -182,10 +182,24 @@ service LoadableStudyService {
 	rpc GetSynopticDataForLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanCommonResponse) {}
 
 	rpc SaveLoadingInfoToSynopticData(LoadingInfoSynopticalUpdateRequest) returns (ResponseStatus) {}
-	
+
 	rpc GetOrSaveRulesForLoadableStudy(LoadableRuleRequest) returns (LoadableRuleReply) {}
+
+	rpc GetLoadablePatternDetailsJson(LoadablePlanDetailsRequest) returns (LoadablePatternPortWiseDetailsJson) {}
+
+	rpc getLoadablePatternByVoyageAndStatus(LoadableStudyRequest) returns (LoadablePatternConfirmedReply) {}
+
+	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
+}
+message CargoNominationDetailReply{
+	CargoNominationDetail cargoNominationdetail = 1;
+	ResponseStatus responseStatus = 2;
 }
 
+message  LoadablePatternConfirmedReply{
+	LoadablePattern pattern= 1;
+	ResponseStatus responseStatus = 2;
+}
 message LatestCargoRequest{
 	int64 vesselId = 1;
 	int64 portId = 2;
@@ -473,6 +487,7 @@ message LoadablePlanStowageDetails {
   string fillingRatioOrginal = 24;
   string rdgUllageOrginal = 25;
   string weightOrginal = 26; // MT
+  string cargoNominationTemperature = 27;
  }
 
 
@@ -541,6 +556,7 @@ message LoadableQuantityCargoDetails {
 	 repeated LoadingPortDetail loadingPorts = 24;
 	 string timeRequiredForLoading = 25;
 	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 26;
+	 string cargoNominationTemperature = 27;
 }
 
 message CargoToppingOffSequenceDetails {
@@ -763,6 +779,7 @@ message CargoNominationDetail {
 	string tempEst = 12;
 	int64 segregationId = 13;
 	bool isCargoNominationComplete=14;
+	string cargoName = 16;
 
 }
 
@@ -1368,9 +1385,15 @@ message LoadableRuleRequest{
 	int64 loadableStudyId = 4;
 	bool isNoDefaultRule = 5;
 }
-	
+
 message LoadableRuleReply{
 	ResponseStatus responseStatus = 1;
 	repeated RulePlans rulePlan = 2;
 }
 // <------ end loading plan, by john -------->
+
+message LoadablePatternPortWiseDetailsJson {
+	string loadablePatternDetails = 1;
+	ResponseStatus responseStatus = 2;
+	int64 loadableStudyId = 3;
+}

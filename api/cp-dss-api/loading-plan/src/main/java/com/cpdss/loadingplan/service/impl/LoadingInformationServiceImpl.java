@@ -215,8 +215,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingInformation loadingInformation = loadingInformationOpt.get();
       buildLoadingInformation(request, loadingInformation);
       loadingInformationRepository.save(loadingInformation);
-      loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList());
-      loadingDelayService.saveLoadingDelayList(request.getLoadingDelays());
+      loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList(), loadingInformation);
+      loadingDelayService.saveLoadingDelayList(request.getLoadingDelays(), loadingInformation);
       loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList());
       toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
     } else {

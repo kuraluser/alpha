@@ -8,12 +8,14 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
+import com.cpdss.loadingplan.service.algo.LoadingInformationAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingInformationDischargeService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ public class LoadingInformationGrpcService
   @Autowired LoadingInformationService loadingInformationService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
   @Autowired LoadingInformationDischargeService loadingInfoService;
+  @Autowired LoadingInformationAlgoService loadingInfoAlgoService;
 
   /**
    * Loading Information Is the First page in Loading module (UI).
@@ -71,14 +74,14 @@ public class LoadingInformationGrpcService
   }
 
   @Override
-  public void getLoadigInformationBySynoptical(
+  public void getLoadigInformationByVoyage(
       LoadingInformationSynopticalRequest request,
       StreamObserver<LoadingInformationSynopticalReply> responseObserver) {
     LoadingInformationSynopticalReply.Builder builder =
         LoadingInformationSynopticalReply.newBuilder();
     log.info("Inside getLoadigInformationBySynoptical in LP MS");
     try {
-      this.loadingInfoService.getLoadigInformationBySynoptical(request, builder);
+      this.loadingInfoService.getLoadigInformationByVoyage(request, builder);
     } catch (GenericServiceException e) {
       log.info("GenericServiceException in getLoadigInformationBySynoptical at  LP MS ", e);
       builder.setResponseStatus(
@@ -131,6 +134,33 @@ public class LoadingInformationGrpcService
       e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void generateLoadingPlan(
+      LoadingInfoAlgoRequest request, StreamObserver<ResponseStatus> responseObserver) {
+    log.info("Inside generateLoadingPlan in LP MS");
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      this.loadingInfoAlgoService.generateLoadingPlan(request);
+      builder.setStatus(SUCCESS);
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      builder
+          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+          .setMessage(e.getMessage())
+          .setStatus(FAILED);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      builder
+          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+          .setMessage(e.getMessage())
+          .setStatus(FAILED);
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
