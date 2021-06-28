@@ -71,36 +71,39 @@ public class LoadingInformationDischargeService {
             entry -> {
               com.cpdss.common.generated.Common.BillOfLadding.Builder bolBuilder =
                   com.cpdss.common.generated.Common.BillOfLadding.newBuilder();
-              List<Common.BillOfLadding> BillOfLaddingList = entry.getValue();
-              Common.BillOfLadding billOfLadding = BillOfLaddingList.get(0);
+              List<Common.BillOfLadding> billOfLaddings1 = entry.getValue();
+              Common.BillOfLadding billOfLadding = billOfLaddings1.get(0);
               bolBuilder.setCargoAbbrevation(billOfLadding.getCargoAbbrevation());
               bolBuilder.setCargoColor(billOfLadding.getCargoColor());
               bolBuilder.setCargoName(billOfLadding.getCargoName());
               bolBuilder.setCargoId(billOfLadding.getCargoId());
-              bolBuilder.setLoadingPort(billOfLadding.getLoadingPort());
+              bolBuilder.addAllLoadingPort(
+                  billOfLaddings1.stream()
+                      .map(Common.BillOfLadding::getPortId)
+                      .collect(Collectors.toList()));
               Double qtyBbls =
-                  BillOfLaddingList.stream()
+                  billOfLaddings1.stream()
                       .mapToDouble(o -> Double.parseDouble(o.getQuantityBbls()))
                       .sum();
               bolBuilder.setQuantityBbls(String.valueOf(qtyBbls));
               Double qtyKl =
-                  BillOfLaddingList.stream()
+                  billOfLaddings1.stream()
                       .mapToDouble(o -> Double.parseDouble(o.getQuantityKl()))
                       .sum();
               bolBuilder.setQuantityKl(String.valueOf(qtyKl));
               Double qtyMT =
-                  BillOfLaddingList.stream()
+                  billOfLaddings1.stream()
                       .mapToDouble(o -> Double.parseDouble(o.getQuantityMt()))
                       .sum();
               bolBuilder.setQuantityMt(String.valueOf(qtyMT));
               Double api =
-                  BillOfLaddingList.stream()
+                  billOfLaddings1.stream()
                       .mapToDouble(o -> Double.parseDouble(o.getApi()))
                       .average()
                       .getAsDouble();
               bolBuilder.setApi(String.valueOf(api));
               Double temperature =
-                  BillOfLaddingList.stream()
+                  billOfLaddings1.stream()
                       .mapToDouble(o -> Double.parseDouble(o.getTemperature()))
                       .average()
                       .getAsDouble();
@@ -137,37 +140,13 @@ public class LoadingInformationDischargeService {
           ofNullable(billOfLadding.getCargoNominationId())
               .ifPresent(cargoId -> bolBuilder.setCargoNominationId(cargoId));
           ofNullable(billOfLadding.getPortId()).ifPresent(portId -> bolBuilder.setPortId(portId));
-          if (bolBuilder.getPortId() != 0L) {
-            LoadableStudy.LoadingPortDetail.Builder loadingPortDetail =
-                this.fetchPortNameFromPortService(bolBuilder.getPortId());
-            if (loadingPortDetail != null) {
-              bolBuilder.setLoadingPort(loadingPortDetail.getName());
-            }
-          }
+
           buildCargoDetails(bolBuilder.getCargoNominationId(), bolBuilder);
 
           ofNullable(billOfLadding.getId()).ifPresent(id -> bolBuilder.setId(id));
 
           builder.addBillOfLadding(bolBuilder);
         });
-  }
-
-  public LoadableStudy.LoadingPortDetail.Builder fetchPortNameFromPortService(Long portId) {
-    PortInfo.GetPortInfoByPortIdsRequest.Builder builder =
-        PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
-    builder.addAllId(Arrays.asList(portId));
-    PortInfo.PortReply grpcReplay = portInfoGrpcService.getPortInfoByPortIds(builder.build());
-    if (grpcReplay.getResponseStatus().getStatus().equals(SUCCESS)) {
-      Optional<PortInfo.PortDetail> portInfo = grpcReplay.getPortsList().stream().findFirst();
-      if (portInfo.isPresent()) {
-        LoadableStudy.LoadingPortDetail.Builder portsBuilder =
-            LoadableStudy.LoadingPortDetail.newBuilder();
-        log.info("Port Info Service, port id {} and name {}", portId, portInfo.get().getName());
-        portsBuilder.setName(portInfo.get().getName()).setPortId(portInfo.get().getId()).build();
-        return portsBuilder;
-      }
-    }
-    return null;
   }
 
   public void buildCargoDetails(Long cargoNominationId, Common.BillOfLadding.Builder bolBuilder) {

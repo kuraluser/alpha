@@ -28,7 +28,7 @@ message BillOfLadding{
   string cargoColor = 9;
   string cargoName = 10;
   string cargoAbbrevation = 11;
-  string loadingPort = 12;
+	repeated int64 loadingPort = 12;
   int64 cargoId = 13;
 
 }

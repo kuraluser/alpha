@@ -3270,6 +3270,59 @@ public final class LoadableStudyServiceGrpc {
     return getGetCargoNominationByCargoNominationIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+      getGetLoadableCommingleByPatternIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getLoadableCommingleByPatternId",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+      getGetLoadableCommingleByPatternIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+        getGetLoadableCommingleByPatternIdMethod;
+    if ((getGetLoadableCommingleByPatternIdMethod =
+            LoadableStudyServiceGrpc.getGetLoadableCommingleByPatternIdMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadableCommingleByPatternIdMethod =
+                LoadableStudyServiceGrpc.getGetLoadableCommingleByPatternIdMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadableCommingleByPatternIdMethod =
+              getGetLoadableCommingleByPatternIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getLoadableCommingleByPatternId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getLoadableCommingleByPatternId"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadableCommingleByPatternIdMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3845,6 +3898,15 @@ public final class LoadableStudyServiceGrpc {
           getGetCargoNominationByCargoNominationIdMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadableCommingleByPatternId(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadableCommingleByPatternIdMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4298,6 +4360,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
                       com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>(
                       this, METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID)))
+          .addMethod(
+              getGetLoadableCommingleByPatternIdMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>(
+                      this, METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID)))
           .build();
     }
   }
@@ -5029,6 +5098,18 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadableCommingleByPatternId(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -5505,6 +5586,14 @@ public final class LoadableStudyServiceGrpc {
           getGetCargoNominationByCargoNominationIdMethod(),
           getCallOptions(),
           request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply
+        getLoadableCommingleByPatternId(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadableCommingleByPatternIdMethod(), getCallOptions(), request);
     }
   }
 
@@ -6077,6 +6166,16 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetCargoNominationByCargoNominationIdMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+        getLoadableCommingleByPatternId(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6143,6 +6242,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS_JSON = 61;
   private static final int METHODID_GET_LOADABLE_PATTERN_BY_VOYAGE_AND_STATUS = 62;
   private static final int METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID = 63;
+  private static final int METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID = 64;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -6599,6 +6699,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID:
+          serviceImpl.getLoadableCommingleByPatternId(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -6727,6 +6834,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadablePatternDetailsJsonMethod())
                       .addMethod(getGetLoadablePatternByVoyageAndStatusMethod())
                       .addMethod(getGetCargoNominationByCargoNominationIdMethod())
+                      .addMethod(getGetLoadableCommingleByPatternIdMethod())
                       .build();
         }
       }
