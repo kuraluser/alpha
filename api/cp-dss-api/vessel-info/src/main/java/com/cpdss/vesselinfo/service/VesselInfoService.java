@@ -84,6 +84,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -1488,7 +1489,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 
   /** To retrieve vessel rule based on vessel id OR To save rule for vessel */
   @Override
-  @Transactional
+  @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
   public void getRulesByVesselIdAndSectionId(
       VesselRuleRequest request, StreamObserver<VesselRuleReply> responseObserver) {
     com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder =
@@ -1523,13 +1524,17 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                                 ruleVesselMapping = rVesselMapping.get();
                               }
                             }
-                            Optional.ofNullable(rule.getIsHardRule())
-                                .ifPresent(ruleVesselMapping::setIsHardRule);
                             ruleVesselMapping.setIsActive(true);
                             Optional.ofNullable(rule.getDisplayInSettings())
                                 .ifPresent(ruleVesselMapping::setDisplayInSettings);
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(ruleVesselMapping::setIsEnable);
+                            Optional.ofNullable(rule.getIsHardRule())
+                            .ifPresent(ruleVesselMapping::setIsHardRule);
+                            //Hard rule cannot be disable
+                            if(rule.getIsHardRule()) {
+                            	ruleVesselMapping.setIsEnable(true);
+                            }
                             ruleVesselMapping.setVessel(vessel);
                             if (!CollectionUtils.isEmpty(ruleTypeList)
                                 && rule.getRuleType() != null
@@ -1612,6 +1617,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Exception in save or get vessel rule", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()

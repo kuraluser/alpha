@@ -13241,6 +13241,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
   public void getOrSaveRulesForLoadableStudy(
       com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver) {
@@ -13249,7 +13250,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       if (!RuleMasterSection.Plan.getId().equals(request.getSectionId())) {
         throw new GenericServiceException(
-            "Planning can be fetched against loadble study",
+            "Planning can be only fetched against loadble study not loading or discharging",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
@@ -13398,6 +13399,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Exception in save or get loadable study rule", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
