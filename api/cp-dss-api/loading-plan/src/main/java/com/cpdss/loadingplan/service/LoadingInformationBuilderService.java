@@ -83,6 +83,7 @@ public class LoadingInformationBuilderService {
           .ifPresent(v -> builder.setSpecialRegulationRestriction(v.toString()));
       Optional.ofNullable(var1.getItemToBeAgreedWith())
           .ifPresent(v -> builder.setItemsToBeAgreedWith(v));
+      Optional.ofNullable(var1.getHoseConnections()).ifPresent(v -> builder.setHoseConnections(v));
       berths.add(builder.build());
     }
     return berths;

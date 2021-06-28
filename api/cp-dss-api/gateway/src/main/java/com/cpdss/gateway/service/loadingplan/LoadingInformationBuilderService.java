@@ -30,7 +30,8 @@ public class LoadingInformationBuilderService {
         buildLoadingDetails(request.getLoadingDetails(), request.getLoadingInfoId()));
     builder.setLoadingRate(
         buildLoadingRates(request.getLoadingRates(), request.getLoadingInfoId()));
-    builder.addAllLoadingBerths(buildLoadingBerths(request.getLoadingBerths()));
+    builder.addAllLoadingBerths(
+        buildLoadingBerths(request.getLoadingBerths(), request.getLoadingInfoId()));
     LoadingDelay.Builder loadingDelayBuilder = LoadingDelay.newBuilder();
     loadingDelayBuilder.addAllDelays(buildLoadingDelays(request.getLoadingDelays()));
     builder.setLoadingDelays(loadingDelayBuilder.build());
@@ -87,7 +88,8 @@ public class LoadingInformationBuilderService {
     return builder.build();
   }
 
-  public List<LoadingBerths> buildLoadingBerths(List<BerthDetails> berthDetailsList) {
+  public List<LoadingBerths> buildLoadingBerths(
+      List<BerthDetails> berthDetailsList, Long loadingInfoId) {
     List<LoadingBerths> berthList = new ArrayList<LoadingBerths>();
     berthDetailsList.forEach(
         berth -> {
@@ -98,7 +100,7 @@ public class LoadingInformationBuilderService {
               .ifPresent(hoseConnection -> builder.setHoseConnections(hoseConnection));
           Optional.ofNullable(berth.getBerthId()).ifPresent(builder::setBerthId);
           Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setId);
-          Optional.ofNullable(berth.getLoadingInfoId()).ifPresent(builder::setLoadingInfoId);
+          Optional.ofNullable(loadingInfoId).ifPresent(builder::setLoadingInfoId);
           // missing depth, itemsToBeAgreedWith added to domain
           Optional.ofNullable(berth.getMaxManifoldHeight())
               .ifPresent(
