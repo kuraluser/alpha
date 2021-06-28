@@ -96,8 +96,8 @@ public class LoadingInformationBuilderService {
               .ifPresent(airDraft -> builder.setAirDraftLimitation(String.valueOf(airDraft)));
           Optional.ofNullable(berth.getHoseConnections())
               .ifPresent(hoseConnection -> builder.setHoseConnections(hoseConnection));
-          Optional.ofNullable(berth.getId()).ifPresent(builder::setId);
-          Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setBerthId);
+          Optional.ofNullable(berth.getId()).ifPresent(builder::setBerthId);
+          Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setId);
           Optional.ofNullable(berth.getLoadingInfoId()).ifPresent(builder::setLoadingInfoId);
           // missing depth, itemsToBeAgreedWith added to domain
           Optional.ofNullable(berth.getMaxManifoldHeight())
