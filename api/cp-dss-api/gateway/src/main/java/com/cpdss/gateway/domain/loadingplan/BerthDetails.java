@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class BerthDetails {
 
-  private Long id; // Primary key for Berth Info Master table
+  private Long berthId; // Primary key for Berth Info Master table
   private Long portId;
   private Long loadingInfoId;
   private BigDecimal maxShpChannel;
