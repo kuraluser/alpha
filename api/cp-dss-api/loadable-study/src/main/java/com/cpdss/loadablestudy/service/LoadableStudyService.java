@@ -2664,6 +2664,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       entity.setActive(false);
       this.loadableStudyRepository.save(entity);
+      List<LoadableStudyRules> listOfLSRules =
+          loadableStudyRuleRepository.findByLoadableStudyAndIsActive(entity, true);
+      if (listOfLSRules != null && listOfLSRules.size() > 0) {
+        List<Long> rulesInputId =
+            listOfLSRules.stream()
+                .flatMap(lsRules -> lsRules.getLoadableStudyRuleInputs().stream())
+                .map(LoadableStudyRuleInput::getId)
+                .collect(Collectors.toList());
+        loadableStudyRuleInputRepository.updateLoadbleStudyRulesInputStatus(rulesInputId);
+        List<Long> rulesId =
+            listOfLSRules.stream().map(LoadableStudyRules::getId).collect(Collectors.toList());
+        loadableStudyRuleRepository.updateLoadbleStudyRulesStatus(rulesId);
+      }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);
@@ -3815,7 +3828,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? new BigDecimal(lpsd.getCorrectedUllage())
             : null);
     loadablePatternCargoDetails.setCargoNominationId(lpsd.getCargoNominationId());
-    loadablePatternCargoDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
+    loadablePatternCargoDetails.setCargoNominationTemperature(
+        new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
@@ -3871,7 +3885,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
-          loadablePlanStowageDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
+          loadablePlanStowageDetails.setCargoNominationTemperature(
+              new BigDecimal(lpsd.getCargoNominationTemperature()));
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
@@ -3981,7 +3996,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
-              loadablePlanQuantity.setCargoNominationTemperature(new BigDecimal(lqcd.getCargoNominationTemperature()));
+              loadablePlanQuantity.setCargoNominationTemperature(
+                  new BigDecimal(lqcd.getCargoNominationTemperature()));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
               lqcd.getToppingOffSequencesList()
@@ -9102,7 +9118,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getTankname()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
           Optional.ofNullable(lpsd.getCargoNominationTemperature())
-          .ifPresent(temp -> builder.setTemperature(valueOf(temp)));
+              .ifPresent(temp -> builder.setTemperature(valueOf(temp)));
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
           Optional.ofNullable(lpsd.getCorrectedUllage())
