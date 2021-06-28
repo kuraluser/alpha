@@ -8,11 +8,13 @@ import com.cpdss.common.generated.Common.RulesInputs;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingSynopticResponse;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
@@ -153,14 +155,14 @@ public class LoadingInformationAlgoRequestBuilderService {
       LoadingInformation loadingInformation,
       com.cpdss.loadingplan.entity.LoadingInformation entity)
       throws NumberFormatException, GenericServiceException {
-    log.info("Populating Loading Information");
+    log.info("Populating Loading Information {}", entity.getId());
     com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo =
         new com.cpdss.loadingplan.domain.algo.LoadingInformation();
     buildLoadingBerths(loadingInfo, loadingInformation.getLoadingBerthsList());
     buildLoadingDelays(loadingInfo, loadingInformation.getLoadingDelays());
-    buildLoadingDetail(loadingInfo, loadingInformation.getLoadingDetail());
+    buildLoadingDetail(loadingInfo, loadingInformation.getLoadingDetail(), entity);
     loadingInfo.setLoadingInfoId(loadingInformation.getLoadingInfoId());
-    buildLoadingMachines(loadingInfo, loadingInformation.getLoadingMachinesList());
+    buildLoadingMachines(loadingInfo, loadingInformation.getLoadingMachinesList(), entity);
     buildLoadingRate(loadingInfo, loadingInformation.getLoadingRate());
     buildLoadingStage(loadingInfo, loadingInformation.getLoadingStage());
     buildCargoVesselTankDetails(loadingInfo, entity);
@@ -211,7 +213,10 @@ public class LoadingInformationAlgoRequestBuilderService {
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       com.cpdss.loadingplan.entity.LoadingInformation entity)
       throws NumberFormatException, GenericServiceException {
-    log.info("Populating cargo vessel tank details");
+    log.info(
+        "Populating cargo vessel tank details of Port Rotation {} and Loadable Pattern {}",
+        entity.getPortRotationXId(),
+        entity.getLoadablePatternXId());
     LoadableStudy.LoadingPlanCommonResponse response =
         this.loadableStudyService.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
@@ -220,6 +225,24 @@ public class LoadingInformationAlgoRequestBuilderService {
                 .setPortRotationId(entity.getPortRotationXId())
                 .setPortId(entity.getPortXId())
                 .build());
+
+    if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch cargoVesselTankDetails from Loadable-Study MS",
+          response.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(response.getResponseStatus().getCode())));
+    }
+
+    if (response.getLoadableQuantityCargoDetailsList().isEmpty()) {
+      response =
+          this.loadableStudyService.getSynopticDataForLoadingPlan(
+              LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                  .setPatternId(entity.getLoadablePatternXId())
+                  .setOperationType("DEP")
+                  .setPortRotationId(entity.getPortRotationXId())
+                  .setPortId(entity.getPortXId())
+                  .build());
+    }
 
     if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -348,16 +371,54 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   private void buildLoadingMachines(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
-      List<LoadingMachinesInUse> loadingMachinesList) {
+      List<LoadingMachinesInUse> loadingMachinesList,
+      com.cpdss.loadingplan.entity.LoadingInformation loadingInformation)
+      throws NumberFormatException, GenericServiceException {
     log.info("Populating loading machineries in use");
     CargoMachineryInUse cargoMachineryInUse = new CargoMachineryInUse();
 
+    VesselInfo.VesselPumpsResponse grpcReply =
+        this.vesselInfoService.getVesselPumpsByVesselId(
+            VesselInfo.VesselIdRequest.newBuilder()
+                .setVesselId(loadingInformation.getVesselXId())
+                .build());
+
+    if (!LoadingPlanConstants.SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch vessel pump details from Loadable-Study MS",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+
     List<PumpType> pumpTypes = new ArrayList<PumpType>();
-    // Need to call other MS
+    grpcReply
+        .getPumpTypeList()
+        .forEach(
+            pump -> {
+              PumpType pumpType = new PumpType();
+              Optional.ofNullable(pump.getId()).ifPresent(pumpType::setId);
+              Optional.ofNullable(pump.getName()).ifPresent(pumpType::setName);
+              pumpTypes.add(pumpType);
+            });
     cargoMachineryInUse.setPumpTypes(pumpTypes);
 
     List<VesselPump> vesselPumps = new ArrayList<VesselPump>();
-    // Need to call other MS
+    grpcReply
+        .getVesselPumpList()
+        .forEach(
+            vp -> {
+              VesselPump vesselPump = new VesselPump();
+              Optional.ofNullable(vp.getId()).ifPresent(vesselPump::setId);
+              vesselPump.setPumpCapacity(
+                  StringUtils.isEmpty(vp.getPumpCapacity())
+                      ? null
+                      : new BigDecimal(vp.getPumpCapacity()));
+              Optional.ofNullable(vp.getPumpCode()).ifPresent(vesselPump::setPumpCode);
+              Optional.ofNullable(vp.getPumpName()).ifPresent(vesselPump::setPumpName);
+              Optional.ofNullable(vp.getPumpTypeId()).ifPresent(vesselPump::setPumpTypeId);
+              Optional.ofNullable(vp.getVesselId()).ifPresent(vesselPump::setVesselId);
+              vesselPumps.add(vesselPump);
+            });
     cargoMachineryInUse.setVesselPumps(vesselPumps);
 
     List<com.cpdss.loadingplan.domain.algo.LoadingMachinesInUse> machineList =
@@ -383,7 +444,9 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   private void buildLoadingDetail(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
-      LoadingDetails loadingDetail) {
+      LoadingDetails loadingDetail,
+      com.cpdss.loadingplan.entity.LoadingInformation loadingInformation)
+      throws GenericServiceException {
     log.info("Populating Loading detail");
     com.cpdss.loadingplan.domain.algo.LoadingDetails loadingDetails =
         new com.cpdss.loadingplan.domain.algo.LoadingDetails();
@@ -406,6 +469,37 @@ public class LoadingInformationAlgoRequestBuilderService {
               : new BigDecimal(loadingDetail.getTrimAllowed().getMaximumTrim()));
     }
     loadingDetails.setTrimAllowed(trimAllowed);
+
+    LoadableStudy.LoadingPlanCommonResponse response =
+        this.loadableStudyService.getSynopticDataForLoadingPlan(
+            LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                .setIdType("PORT_ROTATION")
+                .setId(loadingInformation.getPortRotationXId())
+                .setPatternId(loadingInformation.getLoadablePatternXId())
+                .build());
+
+    if (!response.getResponseStatus().getStatus().equals("SUCCESS")) {
+      log.error("Failed to get Synoptic data from LS ", response.getResponseStatus().getMessage());
+      throw new GenericServiceException(
+          "Failed to get Synoptic Data for Port",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    if (response.getSynopticDataList().isEmpty()) {
+      log.info(
+          "No data found for Port Rotation {} in Synoptic table",
+          loadingInformation.getPortRotationXId());
+    } else {
+      LoadingSynopticResponse synopticalResponse =
+          response.getSynopticDataList().stream()
+              .filter(v -> v.getOperationType().equalsIgnoreCase("ARR"))
+              .findFirst()
+              .get();
+      Optional.ofNullable(synopticalResponse.getTimeOfSunrise())
+          .ifPresent(loadingDetails::setTimeOfSunrise);
+      Optional.ofNullable(synopticalResponse.getTimeOfSunset())
+          .ifPresent(loadingDetails::setTimeOfSunset);
+    }
     loadingInfo.setLoadingDetails(loadingDetails);
   }
 
@@ -468,7 +562,16 @@ public class LoadingInformationAlgoRequestBuilderService {
           berthDetail.setItemsToBeAgreedWith(berth.getItemsToBeAgreedWith());
           berthDetail.setLoadingBerthId(berth.getId());
           berthDetail.setLoadingInfoId(berth.getLoadingInfoId());
-          // missing some fields need to call other MS
+          berthDetail.setMaxManifoldHeight(
+              StringUtils.isEmpty(berth.getMaxManifoldHeight())
+                  ? null
+                  : new BigDecimal(berth.getMaxManifoldHeight()));
+          berthDetail.setSeaDraftLimitation(
+              StringUtils.isEmpty(berth.getSeaDraftLimitation())
+                  ? null
+                  : new BigDecimal(berth.getSeaDraftLimitation()));
+          berthDetail.setRegulationAndRestriction(berth.getSpecialRegulationRestriction());
+
           berthDetails.add(berthDetail);
         });
 
@@ -478,7 +581,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   private LoadingInformation getLoadingInformation(
       Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
       throws GenericServiceException {
-    log.info("Calling getLoadingInformation in loadableStudy MS");
+    log.info("Calling getLoadingInformation in Loading-Plan MS");
     LoadingPlanModels.LoadingInformationRequest.Builder builder =
         LoadingPlanModels.LoadingInformationRequest.newBuilder();
     builder.setVesselId(vesselId);
@@ -488,7 +591,6 @@ public class LoadingInformationAlgoRequestBuilderService {
     if (portRotationId != null) builder.setPortRotationId(portRotationId);
     LoadingPlanModels.LoadingInformation reply =
         loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
-    System.out.println();
     if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
       throw new GenericServiceException(
           "Failed to fetch Loading Information",
@@ -503,7 +605,9 @@ public class LoadingInformationAlgoRequestBuilderService {
       LoadingInformationAlgoRequest algoRequest,
       com.cpdss.loadingplan.entity.LoadingInformation loadingInformation)
       throws GenericServiceException {
-    log.info("Populating loadablePatternPortWiseDetails");
+    log.info(
+        "Populating loadablePatternPortWiseDetails of Loadable Pattern {}",
+        loadingInformation.getLoadablePatternXId());
     LoadablePlanDetailsRequest.Builder requestBuilder = LoadablePlanDetailsRequest.newBuilder();
     requestBuilder.setLoadablePatternId(loadingInformation.getLoadablePatternXId());
     LoadablePatternPortWiseDetailsJson response =
@@ -538,7 +642,10 @@ public class LoadingInformationAlgoRequestBuilderService {
       com.cpdss.loadingplan.entity.LoadingInformation loadingInformation,
       long loadableStudyId)
       throws NumberFormatException, GenericServiceException {
-    log.info("Populating onBoardQuantities");
+    log.info(
+        "Populating onBoardQuantities of Port {} in Loadable Study {}",
+        loadingInformation.getPortXId(),
+        loadableStudyId);
     OnBoardQuantityRequest request =
         OnBoardQuantityRequest.newBuilder()
             .setVoyageId(loadingInformation.getVoyageId())
@@ -602,7 +709,10 @@ public class LoadingInformationAlgoRequestBuilderService {
       com.cpdss.loadingplan.entity.LoadingInformation loadingInformation,
       long loadableStudyId)
       throws NumberFormatException, GenericServiceException {
-    log.info("Populating onHandQuantities");
+    log.info(
+        "Populating onHandQuantities of Port Rotation {} in Loadable Study {}",
+        loadingInformation.getPortRotationXId(),
+        loadableStudyId);
     OnHandQuantityRequest request =
         OnHandQuantityRequest.newBuilder()
             .setCompanyId(1L)
