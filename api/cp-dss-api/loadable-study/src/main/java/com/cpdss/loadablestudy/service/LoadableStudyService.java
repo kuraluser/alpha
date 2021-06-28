@@ -1026,10 +1026,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableStudyDetail request, StreamObserver<LoadableStudyReply> responseObserver) {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
     LoadableStudy entity = null;
+    VesselRuleReply vesselRuleReply = null;
     try {
 
       this.checkIfVoyageClosed(request.getVoyageId());
-
+      List<LoadableStudyRules> listOfExistingLSRules = null;
       if (request.getId() != 0) {
         Optional<LoadableStudy> loadableStudy =
             this.loadableStudyRepository.findByIdAndIsActive(request.getId(), true);
@@ -1060,7 +1061,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         // entity.setIsObqComplete(request.getIsObqComplete());
         // entity.setIsDischargePortsComplete(request.getIsDischargingPortComplete());
       } else {
-
         entity = new LoadableStudy();
         if (request.getDuplicatedFromId() == 0) {
           this.checkIfVoyageActive(request.getVoyageId());
@@ -1069,6 +1069,45 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           entity.setIsOhqComplete(false);
           entity.setIsObqComplete(true);
           entity.setIsDischargePortsComplete(false);
+        } else {
+          log.info("Duplicate Loadble Study Creating" + request.getDuplicatedFromId());
+          Optional<LoadableStudy> loadableStudy =
+              this.loadableStudyRepository.findByIdAndIsActive(request.getDuplicatedFromId(), true);
+          if (!loadableStudy.isPresent()) {
+            throw new GenericServiceException(
+                "Loadable study with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+          listOfExistingLSRules =
+              loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
+                  loadableStudy.get(), request.getVesselId(), true);
+          if (listOfExistingLSRules.size() == 0) {
+            VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+            vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
+            vesselRuleBuilder.setVesselId(request.getVesselId());
+            vesselRuleBuilder.setIsNoDefaultRule(true);
+            vesselRuleReply =
+                this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
+                    vesselRuleBuilder.build());
+            if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+              throw new GenericServiceException(
+                  "failed to get loadable study rule Details against vessel ",
+                  vesselRuleReply.getResponseStatus().getCode(),
+                  HttpStatusCode.valueOf(
+                      Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+            } else {
+              if (vesselRuleReply.getRulePlanList() == null
+                  || vesselRuleReply.getRulePlanList().size() == 0) {
+                throw new GenericServiceException(
+                    " Rules does not mapped against particular vessel ",
+                    CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                    HttpStatusCode.BAD_REQUEST);
+              }
+              log.info("Rules has mapped against particular vessel");
+            }
+          }
+          log.info("Existing loadble study rule exist");
         }
       }
 
@@ -1144,6 +1183,128 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
       entity = this.loadableStudyRepository.save(entity);
       this.checkDuplicatedFromAndCloneEntity(request, entity);
+      final LoadableStudy currentLoableStudy = entity;
+      // save rules against saved loadable study(If duplicated LS)
+      if (request.getDuplicatedFromId() != 0) {
+        if (listOfExistingLSRules != null && listOfExistingLSRules.size() > 0) {
+          log.info("Existing loadble rules has value 2");
+          List<LoadableStudyRules> listOfLSRules = new ArrayList<LoadableStudyRules>();
+          listOfExistingLSRules.stream()
+              .forEach(
+                  lsRules -> {
+                    LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
+                    loadableStudyRules.setLoadableStudy(currentLoableStudy);
+                    Optional.ofNullable(lsRules.getVesselRuleXId())
+                        .ifPresent(item -> loadableStudyRules.setVesselRuleXId(item));
+                    Optional.ofNullable(request.getVesselId())
+                        .ifPresent(item -> loadableStudyRules.setVesselXId(item));
+                    Optional.ofNullable(lsRules.getRuleTypeXId())
+                        .ifPresent(item -> loadableStudyRules.setRuleTypeXId(item));
+                    Optional.ofNullable(lsRules.getDisplayInSettings())
+                        .ifPresent(loadableStudyRules::setDisplayInSettings);
+                    Optional.ofNullable(lsRules.getIsEnable())
+                        .ifPresent(loadableStudyRules::setIsEnable);
+                    Optional.ofNullable(lsRules.getIsHardRule())
+                        .ifPresent(loadableStudyRules::setIsHardRule);
+                    Optional.ofNullable(lsRules.getIsActive())
+                        .ifPresent(loadableStudyRules::setIsActive);
+                    List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
+                    lsRules.getLoadableStudyRuleInputs().stream()
+                        .forEach(
+                            lsRulesInput -> {
+                              LoadableStudyRuleInput loadableStudyRuleInput =
+                                  new LoadableStudyRuleInput();
+                              loadableStudyRuleInput.setLoadableStudyRuleXId(loadableStudyRules);
+                              Optional.ofNullable(lsRulesInput.getPrefix())
+                                  .ifPresent(loadableStudyRuleInput::setPrefix);
+                              Optional.ofNullable(lsRulesInput.getDefaultValue())
+                                  .ifPresent(loadableStudyRuleInput::setDefaultValue);
+                              Optional.ofNullable(lsRulesInput.getTypeValue())
+                                  .ifPresent(loadableStudyRuleInput::setTypeValue);
+                              Optional.ofNullable(lsRulesInput.getMaxValue())
+                                  .ifPresent(loadableStudyRuleInput::setMaxValue);
+                              Optional.ofNullable(lsRulesInput.getMinValue())
+                                  .ifPresent(loadableStudyRuleInput::setMinValue);
+                              Optional.ofNullable(lsRulesInput.getSuffix())
+                                  .ifPresent(loadableStudyRuleInput::setSuffix);
+                              Optional.ofNullable(lsRulesInput.getIsActive())
+                                  .ifPresent(loadableStudyRuleInput::setIsActive);
+                              lisOfLsRulesInput.add(loadableStudyRuleInput);
+                            });
+                    loadableStudyRules.setLoadableStudyRuleInputs(lisOfLsRulesInput);
+                    listOfLSRules.add(loadableStudyRules);
+                  });
+          loadableStudyRuleRepository.saveAll(listOfLSRules);
+        }
+        if (vesselRuleReply != null && vesselRuleReply.getRulePlanList().size() > 0) {
+          log.info("Rules has mapped against particular vessel");
+          List<LoadableStudyRules> listOfLSRules = new ArrayList<LoadableStudyRules>();
+          vesselRuleReply.getRulePlanList().stream()
+              .forEach(
+                  ruleList -> {
+                    ruleList
+                        .getRulesList()
+                        .forEach(
+                            vesselRule -> {
+                              LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
+                              loadableStudyRules.setLoadableStudy(currentLoableStudy);
+                              Optional.ofNullable(vesselRule.getVesselRuleXId())
+                                  .ifPresent(
+                                      item ->
+                                          loadableStudyRules.setVesselRuleXId(
+                                              Long.parseLong(item)));
+                              Optional.ofNullable(request.getVesselId())
+                                  .ifPresent(item -> loadableStudyRules.setVesselXId(item));
+
+                              if (vesselRule.getRuleType() != null
+                                  && vesselRule
+                                      .getRuleType()
+                                      .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
+                                loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
+                              }
+                              if (vesselRule.getRuleType() != null
+                                  && vesselRule
+                                      .getRuleType()
+                                      .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
+                                loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
+                              }
+                              Optional.ofNullable(vesselRule.getDisplayInSettings())
+                                  .ifPresent(loadableStudyRules::setDisplayInSettings);
+                              Optional.ofNullable(vesselRule.getEnable())
+                                  .ifPresent(loadableStudyRules::setIsEnable);
+                              Optional.ofNullable(vesselRule.getIsHardRule())
+                                  .ifPresent(loadableStudyRules::setIsHardRule);
+                              loadableStudyRules.setIsActive(true);
+                              List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
+                              vesselRule.getInputsList().stream()
+                                  .forEach(
+                                      vesselRuleInput -> {
+                                        LoadableStudyRuleInput loadableStudyRuleInput =
+                                            new LoadableStudyRuleInput();
+                                        loadableStudyRuleInput.setLoadableStudyRuleXId(
+                                            loadableStudyRules);
+                                        Optional.ofNullable(vesselRuleInput.getPrefix())
+                                            .ifPresent(loadableStudyRuleInput::setPrefix);
+                                        Optional.ofNullable(vesselRuleInput.getDefaultValue())
+                                            .ifPresent(loadableStudyRuleInput::setDefaultValue);
+                                        Optional.ofNullable(vesselRuleInput.getType())
+                                            .ifPresent(loadableStudyRuleInput::setTypeValue);
+                                        Optional.ofNullable(vesselRuleInput.getMax())
+                                            .ifPresent(loadableStudyRuleInput::setMaxValue);
+                                        Optional.ofNullable(vesselRuleInput.getMin())
+                                            .ifPresent(loadableStudyRuleInput::setMinValue);
+                                        Optional.ofNullable(vesselRuleInput.getSuffix())
+                                            .ifPresent(loadableStudyRuleInput::setSuffix);
+                                        loadableStudyRuleInput.setIsActive(true);
+                                        lisOfLsRulesInput.add(loadableStudyRuleInput);
+                                      });
+                              loadableStudyRules.setLoadableStudyRuleInputs(lisOfLsRulesInput);
+                              listOfLSRules.add(loadableStudyRules);
+                            });
+                  });
+          loadableStudyRuleRepository.saveAll(listOfLSRules);
+        }
+      }
       replyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
           .setId(entity.getId());
@@ -2503,6 +2664,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       entity.setActive(false);
       this.loadableStudyRepository.save(entity);
+      List<LoadableStudyRules> listOfLSRules =
+          loadableStudyRuleRepository.findByLoadableStudyAndIsActive(entity, true);
+      if (listOfLSRules != null && listOfLSRules.size() > 0) {
+        List<Long> rulesInputId =
+            listOfLSRules.stream()
+                .flatMap(lsRules -> lsRules.getLoadableStudyRuleInputs().stream())
+                .map(LoadableStudyRuleInput::getId)
+                .collect(Collectors.toList());
+        loadableStudyRuleInputRepository.updateLoadbleStudyRulesInputStatus(rulesInputId);
+        List<Long> rulesId =
+            listOfLSRules.stream().map(LoadableStudyRules::getId).collect(Collectors.toList());
+        loadableStudyRuleRepository.updateLoadbleStudyRulesStatus(rulesId);
+      }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);
@@ -3654,7 +3828,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? new BigDecimal(lpsd.getCorrectedUllage())
             : null);
     loadablePatternCargoDetails.setCargoNominationId(lpsd.getCargoNominationId());
-    loadablePatternCargoDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
+    loadablePatternCargoDetails.setCargoNominationTemperature(
+        new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
@@ -3710,7 +3885,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
-          loadablePlanStowageDetails.setCargoNominationTemperature(new BigDecimal(lpsd.getCargoNominationTemperature()));
+          loadablePlanStowageDetails.setCargoNominationTemperature(
+              new BigDecimal(lpsd.getCargoNominationTemperature()));
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
@@ -3820,7 +3996,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
-              loadablePlanQuantity.setCargoNominationTemperature(new BigDecimal(lqcd.getCargoNominationTemperature()));
+              loadablePlanQuantity.setCargoNominationTemperature(
+                  new BigDecimal(lqcd.getCargoNominationTemperature()));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
               lqcd.getToppingOffSequencesList()
@@ -8941,7 +9118,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getTankname()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
           Optional.ofNullable(lpsd.getCargoNominationTemperature())
-          .ifPresent(temp -> builder.setTemperature(valueOf(temp)));
+              .ifPresent(temp -> builder.setTemperature(valueOf(temp)));
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
           Optional.ofNullable(lpsd.getCorrectedUllage())
