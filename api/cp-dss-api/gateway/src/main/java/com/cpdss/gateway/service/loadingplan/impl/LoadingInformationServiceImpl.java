@@ -172,7 +172,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       try {
         for (PortInfo.BerthDetail bd : response.getBerthsList()) {
           BerthDetails dto = new BerthDetails();
-          Optional.ofNullable(bd.getId()).ifPresent(dto::setId);
+          Optional.ofNullable(bd.getId()).ifPresent(dto::setBerthId);
           Optional.ofNullable(bd.getPortId()).ifPresent(dto::setPortId);
           // Optional.ofNullable(bd.getId()).ifPresent(dto::setLoadingInfoId);
           dto.setMaxShpChannel(
@@ -180,7 +180,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                   ? BigDecimal.ZERO
                   : new BigDecimal(bd.getMaxShipChannel()));
           Optional.ofNullable(bd.getBerthName()).ifPresent(dto::setBerthName);
-          Optional.ofNullable(bd.getId()).ifPresent(dto::setLoadingBerthId);
+          // Optional.ofNullable(bd.getId()).ifPresent(dto::setLoadingBerthId);
 
           dto.setMaxShipDepth(
               bd.getMaxShipDepth().isEmpty()
@@ -223,16 +223,23 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       BerthDetails var2 = new BerthDetails();
       var2.setLoadingBerthId(lb.getId());
       var2.setLoadingInfoId(lb.getLoadingInfoId());
-      var2.setId(lb.getBerthId());
+      var2.setBerthId(lb.getBerthId());
       var2.setMaxShipDepth(
           lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
       var2.setSeaDraftLimitation(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+          lb.getSeaDraftLimitation().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(lb.getSeaDraftLimitation()));
       var2.setAirDraftLimitation(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+          lb.getAirDraftLimitation().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(lb.getAirDraftLimitation()));
       var2.setMaxManifoldHeight(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+          lb.getMaxManifoldHeight().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(lb.getMaxManifoldHeight()));
       var2.setRegulationAndRestriction(lb.getDepth());
+      var2.setHoseConnections(lb.getHoseConnections());
       list.add(var2);
     }
     log.info("Loading Plan Berth data added Size {}", var1.size());

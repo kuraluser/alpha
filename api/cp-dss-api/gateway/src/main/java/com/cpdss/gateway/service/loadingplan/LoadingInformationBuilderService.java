@@ -30,7 +30,8 @@ public class LoadingInformationBuilderService {
         buildLoadingDetails(request.getLoadingDetails(), request.getLoadingInfoId()));
     builder.setLoadingRate(
         buildLoadingRates(request.getLoadingRates(), request.getLoadingInfoId()));
-    builder.addAllLoadingBerths(buildLoadingBerths(request.getLoadingBerths()));
+    builder.addAllLoadingBerths(
+        buildLoadingBerths(request.getLoadingBerths(), request.getLoadingInfoId()));
     LoadingDelay.Builder loadingDelayBuilder = LoadingDelay.newBuilder();
     loadingDelayBuilder.addAllDelays(buildLoadingDelays(request.getLoadingDelays()));
     builder.setLoadingDelays(loadingDelayBuilder.build());
@@ -48,12 +49,14 @@ public class LoadingInformationBuilderService {
     Optional.ofNullable(loadingDetails.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
     Optional.ofNullable(loadingDetails.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
     TrimAllowed.Builder trimBuilder = TrimAllowed.newBuilder();
-    Optional.ofNullable(loadingDetails.getTrimAllowed().getFinalTrim())
-        .ifPresent(finalTrim -> trimBuilder.setFinalTrim(String.valueOf(finalTrim)));
-    Optional.ofNullable(loadingDetails.getTrimAllowed().getInitialTrim())
-        .ifPresent(initialTrim -> trimBuilder.setInitialTrim(String.valueOf(initialTrim)));
-    Optional.ofNullable(loadingDetails.getTrimAllowed().getMaximumTrim())
-        .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
+    if (!Optional.ofNullable(loadingDetails.getTrimAllowed()).isEmpty()) {
+      Optional.ofNullable(loadingDetails.getTrimAllowed().getFinalTrim())
+          .ifPresent(finalTrim -> trimBuilder.setFinalTrim(String.valueOf(finalTrim)));
+      Optional.ofNullable(loadingDetails.getTrimAllowed().getInitialTrim())
+          .ifPresent(initialTrim -> trimBuilder.setInitialTrim(String.valueOf(initialTrim)));
+      Optional.ofNullable(loadingDetails.getTrimAllowed().getMaximumTrim())
+          .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
+    }
     builder.setTrimAllowed(trimBuilder.build());
     return builder.build();
   }
@@ -85,7 +88,8 @@ public class LoadingInformationBuilderService {
     return builder.build();
   }
 
-  public List<LoadingBerths> buildLoadingBerths(List<BerthDetails> berthDetailsList) {
+  public List<LoadingBerths> buildLoadingBerths(
+      List<BerthDetails> berthDetailsList, Long loadingInfoId) {
     List<LoadingBerths> berthList = new ArrayList<LoadingBerths>();
     berthDetailsList.forEach(
         berth -> {
@@ -94,9 +98,9 @@ public class LoadingInformationBuilderService {
               .ifPresent(airDraft -> builder.setAirDraftLimitation(String.valueOf(airDraft)));
           Optional.ofNullable(berth.getHoseConnections())
               .ifPresent(hoseConnection -> builder.setHoseConnections(hoseConnection));
-          Optional.ofNullable(berth.getId()).ifPresent(builder::setId);
-          Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setBerthId);
-          Optional.ofNullable(berth.getLoadingInfoId()).ifPresent(builder::setLoadingInfoId);
+          Optional.ofNullable(berth.getBerthId()).ifPresent(builder::setBerthId);
+          Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setId);
+          Optional.ofNullable(loadingInfoId).ifPresent(builder::setLoadingInfoId);
           // missing depth, itemsToBeAgreedWith added to domain
           Optional.ofNullable(berth.getMaxManifoldHeight())
               .ifPresent(
