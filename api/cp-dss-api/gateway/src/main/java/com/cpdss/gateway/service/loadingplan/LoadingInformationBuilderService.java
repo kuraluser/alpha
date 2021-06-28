@@ -48,12 +48,14 @@ public class LoadingInformationBuilderService {
     Optional.ofNullable(loadingDetails.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
     Optional.ofNullable(loadingDetails.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
     TrimAllowed.Builder trimBuilder = TrimAllowed.newBuilder();
-    Optional.ofNullable(loadingDetails.getTrimAllowed().getFinalTrim())
-        .ifPresent(finalTrim -> trimBuilder.setFinalTrim(String.valueOf(finalTrim)));
-    Optional.ofNullable(loadingDetails.getTrimAllowed().getInitialTrim())
-        .ifPresent(initialTrim -> trimBuilder.setInitialTrim(String.valueOf(initialTrim)));
-    Optional.ofNullable(loadingDetails.getTrimAllowed().getMaximumTrim())
-        .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
+    if (!Optional.ofNullable(loadingDetails.getTrimAllowed()).isEmpty()) {
+      Optional.ofNullable(loadingDetails.getTrimAllowed().getFinalTrim())
+          .ifPresent(finalTrim -> trimBuilder.setFinalTrim(String.valueOf(finalTrim)));
+      Optional.ofNullable(loadingDetails.getTrimAllowed().getInitialTrim())
+          .ifPresent(initialTrim -> trimBuilder.setInitialTrim(String.valueOf(initialTrim)));
+      Optional.ofNullable(loadingDetails.getTrimAllowed().getMaximumTrim())
+          .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
+    }
     builder.setTrimAllowed(trimBuilder.build());
     return builder.build();
   }
