@@ -1,4 +1,4 @@
-*/* Licensed at AlphaOri Technologies */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
 import static java.lang.String.valueOf;
@@ -2855,7 +2855,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  /** Get on hand quantity */
   @Override
   public void getOnHandQuantity(
       OnHandQuantityRequest request, StreamObserver<OnHandQuantityReply> responseObserver) {
@@ -2884,103 +2883,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<OnHandQuantity> onHandQuantities =
           this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
               loadableStudyOpt.get(), portRotation, true);
-      Optional<LoadableStudy> confirmedLoadableStudyOpt =
-          this.loadableStudyRepository
-              .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
-                  previousVoyage,
-                  CONFIRMED_STATUS_ID,
-                  true,
-                  Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
-
-      List<OnHandQuantity> onHandQuantityList = null;
-      if (confirmedLoadableStudyOpt.isPresent()) {
-
-        LoadableStudyPortRotation lastDischargingPortPortRotation =
-            this.loadableStudyPortRotationRepository
-                .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
-                    confirmedLoadableStudyOpt.get(),
-                    this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
-                    true);
-
-        onHandQuantityList =
-            this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                confirmedLoadableStudyOpt.get(), lastDischargingPortPortRotation, true);
-
-        if (onHandQuantities.isEmpty() && !onHandQuantityList.isEmpty()) {
-
-          Long portOrder = portRotation.getPortOrder();
-          List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
-
-          List<LoadableStudyPortRotation> portRotationList =
-              this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                  loadableStudyOpt.get().getId(), true);
-          if (null != portRotationList && !portRotationList.isEmpty()) {
-            int index =
-                IntStream.range(0, portRotationList.size())
-                    .filter(i -> portRotationList.get(i).getId().equals(portRotation.getId()))
-                    .findFirst()
-                    .orElse(-1);
-            if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
-              boolean ohqComplete = true;
-              List<Long> fuelTypes = new ArrayList<Long>();
-              for (OnHandQuantity onHandQuantity : onHandQuantityList) {
-                if (ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
-                  fuelTypes.add(onHandQuantity.getFuelTypeXId());
-                  BigDecimal total = new BigDecimal(0);
-                  for (OnHandQuantity ohq : onHandQuantityList) {
-                    if (ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
-                      total = total.add(ohq.getDepartureQuantity());
-                    }
-                  }
-                  if (total.compareTo(new BigDecimal(0)) <= 0) {
-                    ohqComplete = false;
-                  }
-                }
-                entityManager.detach(onHandQuantity);
-                onHandQuantity.setId(null);
-                onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
-                onHandQuantity.setActualArrivalQuantity(null);
-                onHandQuantity.setActualDepartureQuantity(null);
-                onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
-                onHandQuantity.setPortXId(portRotation.getPortXId());
-                onHandQuantity.setPortRotation(portRotation);
-                onHandQuantity.setDensity(onHandQuantity.getDensity());
-                OnHandQuantities.add(onHandQuantity);
-              }
-              portRotation.setIsPortRotationOhqComplete(ohqComplete);
-            } else {
-
-              LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
-              portRotation.setIsPortRotationOhqComplete(
-                  previousPortPortRotation.getIsPortRotationOhqComplete());
-              this.loadableStudyPortRotationRepository.save(portRotation);
-              onHandQuantityList =
-                  this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                      loadableStudyOpt.get(), previousPortPortRotation, true);
-              onHandQuantityList.forEach(
-                  onHandQuantity -> {
-                    entityManager.detach(onHandQuantity);
-                    onHandQuantity.setId(null);
-                    onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
-                    onHandQuantity.setActualArrivalQuantity(null);
-                    onHandQuantity.setActualDepartureQuantity(null);
-                    onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
-                    onHandQuantity.setPortXId(portRotation.getPortXId());
-                    onHandQuantity.setPortRotation(portRotation);
-                    onHandQuantity.setDensity(onHandQuantity.getDensity());
-                    OnHandQuantities.add(onHandQuantity);
-                  });
-            }
-            this.onHandQuantityRepository.saveAll(OnHandQuantities);
-            onHandQuantities =
-                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                    loadableStudyOpt.get(), portRotation, true);
-          }
-        }
-      }
-VesselReply vesselReply = this.getOhqTanks(request);
+      VesselReply vesselReply = this.getOhqTanks(request);
       if (onHandQuantities.isEmpty()) {
-        this.populateOnHandQuantityData(loadableStudyOpt, portRotation)
+        this.populateOnHandQuantityData(loadableStudyOpt, portRotation);
+      }
       onHandQuantities =
           this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
               loadableStudyOpt.get(), portRotation, true);
@@ -11204,11 +11110,13 @@ VesselReply vesselReply = this.getOhqTanks(request);
                 convertToBbls(
                     Float.parseFloat(stowageDetails.getWeight()),
                     Float.parseFloat(stowageDetails.getApi()),
-                    stowageDetails.getTemperature().isEmpty() ? 0 :Float.parseFloat(stowageDetails.getTemperature()),
+                    stowageDetails.getTemperature().isEmpty()
+                        ? 0
+                        : Float.parseFloat(stowageDetails.getTemperature()),
                     ConversionUnit.MT);
             float klValue = convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C);
             float fillingPercentage = Float.parseFloat(stowageDetails.getFillingRatioOrginal());
-            // TODO Remove check if not necessary 
+            // TODO Remove check if not necessary
             String colorCode =
                 stowageDetails.getColorCode().isEmpty()
                     ? WHITE_COLOR_CODE
@@ -11598,7 +11506,9 @@ VesselReply vesselReply = this.getOhqTanks(request);
           convertToBbls(
               shipsFigureMtTotal,
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
-              loadableQuantityCargoDetails.getEstimatedTemp().isEmpty() ? 0 : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
+              loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
+                  ? 0
+                  : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
               ConversionUnit.MT);
       float cargoNominationValue =
           cargoNominationDetails
@@ -11653,7 +11563,10 @@ VesselReply vesselReply = this.getOhqTanks(request);
               .cargoCode(loadableQuantityCargoDetails.getCargoAbbreviation())
               .loadingPort(portReply.getName())
               .api(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()))
-              .temp(loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()? 0 : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
+              .temp(
+                  loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
+                      ? 0
+                      : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
               .cargoNomination(cargoNominationValue)
               .tolerance(
                   String.format(
@@ -12031,10 +11944,12 @@ VesselReply vesselReply = this.getOhqTanks(request);
                   String.format(
                       "%s / %s",
                       null != loadableStudyPortRotation.getLayCanFrom()
-                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(loadableStudyPortRotation.getLayCanFrom())
+                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT)
+                              .format(loadableStudyPortRotation.getLayCanFrom())
                           : "",
                       null != loadableStudyPortRotation.getLayCanTo()
-                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(loadableStudyPortRotation.getLayCanTo())
+                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT)
+                              .format(loadableStudyPortRotation.getLayCanTo())
                           : ""))
               .arrFwdDraft(
                   arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
@@ -12443,7 +12358,7 @@ VesselReply vesselReply = this.getOhqTanks(request);
         setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
       case PORT_OPERATIONS_VALUES:
-    	setBorderStyle(cellStyle, CellBorder.CLOSED);
+        setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
     }
     //    Set font color based on background color
