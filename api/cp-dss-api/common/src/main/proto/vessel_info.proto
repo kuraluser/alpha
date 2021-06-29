@@ -421,7 +421,7 @@ message VesselReply {
 
 	message VesselValveEducationProcess {
 		int64 id = 1;
-		string educatorName = 2;
+		string eductorName = 2;
 		int32 sequenceNumber = 3;
 		string stepName = 4;
 		string valveNumber =5;

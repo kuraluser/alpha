@@ -55880,17 +55880,17 @@ public final class VesselInfo {
     long getId();
 
     /**
-     * <code>string educatorName = 2;</code>
+     * <code>string eductorName = 2;</code>
      *
-     * @return The educatorName.
+     * @return The eductorName.
      */
-    java.lang.String getEducatorName();
+    java.lang.String getEductorName();
     /**
-     * <code>string educatorName = 2;</code>
+     * <code>string eductorName = 2;</code>
      *
-     * @return The bytes for educatorName.
+     * @return The bytes for eductorName.
      */
-    com.google.protobuf.ByteString getEducatorNameBytes();
+    com.google.protobuf.ByteString getEductorNameBytes();
 
     /**
      * <code>int32 sequenceNumber = 3;</code>
@@ -55952,7 +55952,7 @@ public final class VesselInfo {
     }
 
     private VesselValveEducationProcess() {
-      educatorName_ = "";
+      eductorName_ = "";
       stepName_ = "";
       valveNumber_ = "";
     }
@@ -55995,7 +55995,7 @@ public final class VesselInfo {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                educatorName_ = s;
+                eductorName_ = s;
                 break;
               }
             case 24:
@@ -56072,35 +56072,35 @@ public final class VesselInfo {
       return id_;
     }
 
-    public static final int EDUCATORNAME_FIELD_NUMBER = 2;
-    private volatile java.lang.Object educatorName_;
+    public static final int EDUCTORNAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object eductorName_;
     /**
-     * <code>string educatorName = 2;</code>
+     * <code>string eductorName = 2;</code>
      *
-     * @return The educatorName.
+     * @return The eductorName.
      */
-    public java.lang.String getEducatorName() {
-      java.lang.Object ref = educatorName_;
+    public java.lang.String getEductorName() {
+      java.lang.Object ref = eductorName_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        educatorName_ = s;
+        eductorName_ = s;
         return s;
       }
     }
     /**
-     * <code>string educatorName = 2;</code>
+     * <code>string eductorName = 2;</code>
      *
-     * @return The bytes for educatorName.
+     * @return The bytes for eductorName.
      */
-    public com.google.protobuf.ByteString getEducatorNameBytes() {
-      java.lang.Object ref = educatorName_;
+    public com.google.protobuf.ByteString getEductorNameBytes() {
+      java.lang.Object ref = eductorName_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        educatorName_ = b;
+        eductorName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -56227,8 +56227,8 @@ public final class VesselInfo {
       if (id_ != 0L) {
         output.writeInt64(1, id_);
       }
-      if (!getEducatorNameBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, educatorName_);
+      if (!getEductorNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, eductorName_);
       }
       if (sequenceNumber_ != 0) {
         output.writeInt32(3, sequenceNumber_);
@@ -56257,8 +56257,8 @@ public final class VesselInfo {
       if (id_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
       }
-      if (!getEducatorNameBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, educatorName_);
+      if (!getEductorNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, eductorName_);
       }
       if (sequenceNumber_ != 0) {
         size += com.google.protobuf.CodedOutputStream.computeInt32Size(3, sequenceNumber_);
@@ -56292,7 +56292,7 @@ public final class VesselInfo {
           (com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess) obj;
 
       if (getId() != other.getId()) return false;
-      if (!getEducatorName().equals(other.getEducatorName())) return false;
+      if (!getEductorName().equals(other.getEductorName())) return false;
       if (getSequenceNumber() != other.getSequenceNumber()) return false;
       if (!getStepName().equals(other.getStepName())) return false;
       if (!getValveNumber().equals(other.getValveNumber())) return false;
@@ -56311,8 +56311,8 @@ public final class VesselInfo {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + ID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
-      hash = (37 * hash) + EDUCATORNAME_FIELD_NUMBER;
-      hash = (53 * hash) + getEducatorName().hashCode();
+      hash = (37 * hash) + EDUCTORNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getEductorName().hashCode();
       hash = (37 * hash) + SEQUENCENUMBER_FIELD_NUMBER;
       hash = (53 * hash) + getSequenceNumber();
       hash = (37 * hash) + STEPNAME_FIELD_NUMBER;
@@ -56467,7 +56467,7 @@ public final class VesselInfo {
         super.clear();
         id_ = 0L;
 
-        educatorName_ = "";
+        eductorName_ = "";
 
         sequenceNumber_ = 0;
 
@@ -56509,7 +56509,7 @@ public final class VesselInfo {
         com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess result =
             new com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess(this);
         result.id_ = id_;
-        result.educatorName_ = educatorName_;
+        result.eductorName_ = eductorName_;
         result.sequenceNumber_ = sequenceNumber_;
         result.stepName_ = stepName_;
         result.valveNumber_ = valveNumber_;
@@ -56573,8 +56573,8 @@ public final class VesselInfo {
         if (other.getId() != 0L) {
           setId(other.getId());
         }
-        if (!other.getEducatorName().isEmpty()) {
-          educatorName_ = other.educatorName_;
+        if (!other.getEductorName().isEmpty()) {
+          eductorName_ = other.eductorName_;
           onChanged();
         }
         if (other.getSequenceNumber() != 0) {
@@ -56658,78 +56658,78 @@ public final class VesselInfo {
         return this;
       }
 
-      private java.lang.Object educatorName_ = "";
+      private java.lang.Object eductorName_ = "";
       /**
-       * <code>string educatorName = 2;</code>
+       * <code>string eductorName = 2;</code>
        *
-       * @return The educatorName.
+       * @return The eductorName.
        */
-      public java.lang.String getEducatorName() {
-        java.lang.Object ref = educatorName_;
+      public java.lang.String getEductorName() {
+        java.lang.Object ref = eductorName_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          educatorName_ = s;
+          eductorName_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string educatorName = 2;</code>
+       * <code>string eductorName = 2;</code>
        *
-       * @return The bytes for educatorName.
+       * @return The bytes for eductorName.
        */
-      public com.google.protobuf.ByteString getEducatorNameBytes() {
-        java.lang.Object ref = educatorName_;
+      public com.google.protobuf.ByteString getEductorNameBytes() {
+        java.lang.Object ref = eductorName_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          educatorName_ = b;
+          eductorName_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string educatorName = 2;</code>
+       * <code>string eductorName = 2;</code>
        *
-       * @param value The educatorName to set.
+       * @param value The eductorName to set.
        * @return This builder for chaining.
        */
-      public Builder setEducatorName(java.lang.String value) {
+      public Builder setEductorName(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        educatorName_ = value;
+        eductorName_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string educatorName = 2;</code>
+       * <code>string eductorName = 2;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearEducatorName() {
+      public Builder clearEductorName() {
 
-        educatorName_ = getDefaultInstance().getEducatorName();
+        eductorName_ = getDefaultInstance().getEductorName();
         onChanged();
         return this;
       }
       /**
-       * <code>string educatorName = 2;</code>
+       * <code>string eductorName = 2;</code>
        *
-       * @param value The bytes for educatorName to set.
+       * @param value The bytes for eductorName to set.
        * @return This builder for chaining.
        */
-      public Builder setEducatorNameBytes(com.google.protobuf.ByteString value) {
+      public Builder setEductorNameBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        educatorName_ = value;
+        eductorName_ = value;
         onChanged();
         return this;
       }
@@ -58850,41 +58850,41 @@ public final class VesselInfo {
           + "e\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rvalveTyp"
           + "eName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesse"
           + "lTankXid\030\025 \001(\005\022\034\n\024vesselValveMappingId\030\026"
-          + " \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\262\001\n\033VesselValveE"
-          + "ducationProcess\022\n\n\002id\030\001 \001(\003\022\024\n\014educatorN"
-          + "ame\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010ste"
-          + "pName\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\teduc"
-          + "torId\030\006 \001(\005\022\037\n\027eductionProcessMasterId\030\007"
-          + " \001(\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010vesse"
-          + "lId\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005ru"
-          + "les\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001("
-          + "\0132\017.ResponseStatus2\344\007\n\021VesselInfoService"
-          + "\0228\n\026GetAllVesselsByCompany\022\016.VesselReque"
-          + "st\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsBy"
-          + "Id\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n\016Ge"
-          + "tVesselTanks\022\016.VesselRequest\032\014.VesselRep"
-          + "ly\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselRequ"
-          + "est\032\014.VesselReply\"\000\022A\n\027GetVesselDetailsF"
-          + "orAlgo\022\022.VesselAlgoRequest\032\020.VesselAlgoR"
-          + "eply\"\000\022C\n!GetVesselDetailForSynopticalTa"
-          + "ble\022\016.VesselRequest\032\014.VesselReply\"\000\022;\n\031G"
-          + "etVesselDetailByVesselId\022\016.VesselRequest"
-          + "\032\014.VesselReply\"\000\022A\n\025GetVesselInfoByPagin"
-          + "g\022\030.VesselRequestWithPaging\032\014.VesselRepl"
-          + "y\"\000\022C\n\026GetVesselInfoBytankIds\022\022.VesselTa"
-          + "nkRequest\032\023.VesselTankResponse\"\000\022C\n\032GetD"
-          + "WTFromVesselByVesselId\022\021.VesselDWTReques"
-          + "t\032\022.VesselDWTResponse\022@\n\027GetVesselInfoBy"
-          + "VesselId\022\020.VesselIdRequest\032\021.VesselIdRes"
-          + "ponse\"\000\022D\n\030GetVesselPumpsByVesselId\022\020.Ve"
-          + "sselIdRequest\032\024.VesselPumpsResponse\"\000\022H\n"
-          + "\036GetRulesByVesselIdAndSectionId\022\022.Vessel"
-          + "RuleRequest\032\020.VesselRuleReply\"\000\022E\n\026GetVe"
-          + "sselValveSequence\022\016.VesselRequest\032\031.Vess"
-          + "elValveSequenceReply\"\000\022I\n\023GetLoadingInfo"
-          + "Rules\022\030.LoadingInfoRulesRequest\032\026.Loadin"
-          + "gInfoRulesReply\"\000B\036\n\032com.cpdss.common.ge"
-          + "neratedP\000b\006proto3"
+          + " \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselValveE"
+          + "ducationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorNa"
+          + "me\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010step"
+          + "Name\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\teduct"
+          + "orId\030\006 \001(\005\022\037\n\027eductionProcessMasterId\030\007 "
+          + "\001(\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010vessel"
+          + "Id\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005rul"
+          + "es\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001(\013"
+          + "2\017.ResponseStatus2\344\007\n\021VesselInfoService\022"
+          + "8\n\026GetAllVesselsByCompany\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsByI"
+          + "d\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n\016Get"
+          + "VesselTanks\022\016.VesselRequest\032\014.VesselRepl"
+          + "y\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselReque"
+          + "st\032\014.VesselReply\"\000\022A\n\027GetVesselDetailsFo"
+          + "rAlgo\022\022.VesselAlgoRequest\032\020.VesselAlgoRe"
+          + "ply\"\000\022C\n!GetVesselDetailForSynopticalTab"
+          + "le\022\016.VesselRequest\032\014.VesselReply\"\000\022;\n\031Ge"
+          + "tVesselDetailByVesselId\022\016.VesselRequest\032"
+          + "\014.VesselReply\"\000\022A\n\025GetVesselInfoByPaging"
+          + "\022\030.VesselRequestWithPaging\032\014.VesselReply"
+          + "\"\000\022C\n\026GetVesselInfoBytankIds\022\022.VesselTan"
+          + "kRequest\032\023.VesselTankResponse\"\000\022C\n\032GetDW"
+          + "TFromVesselByVesselId\022\021.VesselDWTRequest"
+          + "\032\022.VesselDWTResponse\022@\n\027GetVesselInfoByV"
+          + "esselId\022\020.VesselIdRequest\032\021.VesselIdResp"
+          + "onse\"\000\022D\n\030GetVesselPumpsByVesselId\022\020.Ves"
+          + "selIdRequest\032\024.VesselPumpsResponse\"\000\022H\n\036"
+          + "GetRulesByVesselIdAndSectionId\022\022.VesselR"
+          + "uleRequest\032\020.VesselRuleReply\"\000\022E\n\026GetVes"
+          + "selValveSequence\022\016.VesselRequest\032\031.Vesse"
+          + "lValveSequenceReply\"\000\022I\n\023GetLoadingInfoR"
+          + "ules\022\030.LoadingInfoRulesRequest\032\026.Loading"
+          + "InfoRulesReply\"\000B\036\n\032com.cpdss.common.gen"
+          + "eratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -59328,7 +59328,7 @@ public final class VesselInfo {
             internal_static_VesselValveEducationProcess_descriptor,
             new java.lang.String[] {
               "Id",
-              "EducatorName",
+              "EductorName",
               "SequenceNumber",
               "StepName",
               "ValveNumber",

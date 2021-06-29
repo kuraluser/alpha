@@ -131,7 +131,7 @@ public class VesselPumpService {
         Optional.ofNullable(vvEp.getEductionProcessMasterId())
             .ifPresent(builder::setEductionProcessMasterId);
         Optional.ofNullable(vvEp.getEductorId()).ifPresent(builder::setEductorId);
-        Optional.ofNullable(vvEp.getEductorName()).ifPresent(builder::setEducatorName);
+        Optional.ofNullable(vvEp.getEductorName()).ifPresent(builder::setEductorName);
         Optional.ofNullable(vvEp.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
         Optional.ofNullable(vvEp.getStepName()).ifPresent(builder::setStepName);
         Optional.ofNullable(vvEp.getValveNumber()).ifPresent(builder::setValveNumber);
