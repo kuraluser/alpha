@@ -40,11 +40,10 @@ public interface VesselTankRepository extends CommonCrudRepository<VesselTank, L
           + " from VesselTank VT"
           + " WHERE VT.id IN (?1)")
   public List<VesselTankDetails> findTankDetailsByTankIds(List<Long> tankIds);
-  
-  
+
   @Query(
-	      "SELECT new com.cpdss.vesselinfo.domain.CargoTankMaster(id,shortName)"
-	          + " from VesselTank VT"
-	          + " WHERE VT.tankCategory.id = 1 AND VT.vessel.id = ?1 AND isActive = ?2")
-	  public List<CargoTankMaster> findCargoTankMaster(Long vesselId, boolean isActive);
+      "SELECT new com.cpdss.vesselinfo.domain.CargoTankMaster(id,shortName)"
+          + " from VesselTank VT"
+          + " WHERE VT.tankCategory.id = 1 AND VT.vessel.id = ?1 AND isActive = ?2")
+  public List<CargoTankMaster> findCargoTankMaster(Long vesselId, boolean isActive);
 }

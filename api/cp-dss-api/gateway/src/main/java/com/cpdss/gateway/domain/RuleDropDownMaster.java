@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 public class RuleDropDownMaster {
-	
-	private Long id;
-	private String value;
 
+  private Long id;
+  private String value;
 }

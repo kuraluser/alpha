@@ -20,4 +20,7 @@ public class ToppingOffSequence {
   private BigDecimal ullage;
   private BigDecimal quantity;
   private BigDecimal fillingRatio;
+  private BigDecimal api;
+  private BigDecimal temperature;
+  private Integer displayOrder;
 }

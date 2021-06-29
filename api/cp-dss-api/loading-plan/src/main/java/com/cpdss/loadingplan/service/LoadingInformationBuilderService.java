@@ -192,6 +192,10 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var1.getFillingRatio())
           .ifPresent(value -> builder.setFillingRatio(value.toString()));
       Optional.ofNullable(var1.getRemarks()).ifPresent(builder::setRemark);
+      Optional.ofNullable(var1.getApi()).ifPresent(v -> builder.setApi(v.toString()));
+      Optional.ofNullable(var1.getTemperature())
+          .ifPresent(v -> builder.setTemperature(v.toString()));
+      Optional.ofNullable(var1.getDisplayOrder()).ifPresent(builder::setDisplayOrder);
       // cargo name, short name, colour need to add
       toppingOffs.add(builder.build());
     }

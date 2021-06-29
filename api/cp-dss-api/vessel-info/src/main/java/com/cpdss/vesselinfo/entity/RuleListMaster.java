@@ -25,7 +25,7 @@ public class RuleListMaster extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
-  
+
   @Column(name = "rule_order")
   private Long ruleOrder;
 }
