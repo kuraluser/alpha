@@ -355,6 +355,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             var1.getFillingRatio().isEmpty()
                 ? BigDecimal.ZERO
                 : new BigDecimal(var1.getFillingRatio()));
+        var2.setApi(var1.getApi().isEmpty() ? BigDecimal.ZERO : new BigDecimal(var1.getApi()));
+        var2.setTemperature(
+            var1.getApi().isEmpty() ? BigDecimal.ZERO : new BigDecimal(var1.getTemperature()));
+        Optional.ofNullable(var1.getDisplayOrder()).ifPresent(var2::setDisplayOrder);
         list2.add(var2);
         log.info("Loading Plan Topping off list Id {}", var1.getId());
       }
@@ -483,11 +487,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     // get Active voyage
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     if (activeVoyage == null) {
+      log.error("Update Ullage, No active voyage found");
       throw new GenericServiceException(
           "No active voyage found",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    log.info("Update Ullage, Active voyage found: Id {}", activeVoyage.getId());
 
     // Build grpc request to LS
     LoadableStudy.UpdateUllageRequest.Builder grpcRequestToLS =
@@ -499,13 +505,17 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     // Call to LS for process
     LoadableStudy.UpdateUllageReply grpcReplyFromLS =
         this.loadableStudyService.updateUllage(grpcRequestToLS.build());
+
     if (!SUCCESS.equals(grpcReplyFromLS.getResponseStatus().getStatus())) {
+      log.error("Update Ullage, Failed to call Algo");
       throw new GenericServiceException(
           "Failed in confirmPlanStatus from grpc service",
           grpcReplyFromLS.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(
               Integer.valueOf(grpcReplyFromLS.getResponseStatus().getHttpStatusCode())));
     }
+
+    log.info("Update Ullage, Success from LS, Algo api");
 
     // Call to LP for save at table
     LoadingPlanModels.UpdateUllageLoadingRequest.Builder grpcRequestLP =
@@ -514,8 +524,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     grpcRequestLP.setVesselId(vesselId);
     grpcRequestLP.setVoyageId(voyageId);
     grpcRequestLP.setPortRotationId(portRotationId);
+    grpcRequestLP.setCargoToppingOffId(
+        updateUllage.getId()); // Primary key for Table cargo_topping_off_sequence
 
-    grpcRequestLP.setTankId(grpcReplyFromLS.getLoadablePlanStowageDetails().getTankId());
+    grpcRequestLP.setTankId(updateUllage.getTankId());
     grpcRequestLP.setCargoId(
         grpcReplyFromLS.getLoadablePlanStowageDetails().getCargoNominationId());
     grpcRequestLP.setFillingRatio(
@@ -524,15 +536,17 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         grpcReplyFromLS.getLoadablePlanStowageDetails().getCorrectedUllage());
     grpcRequestLP.setCorrectionFactor(
         grpcReplyFromLS.getLoadablePlanStowageDetails().getCorrectionFactor());
+    grpcRequestLP.setQuantity(grpcReplyFromLS.getLoadablePlanStowageDetails().getWeight());
     Boolean updatedAtLoadingPlan =
         this.loadingPlanGrpcService.updateUllageAtLoadingPlan(grpcRequestLP.build());
     if (!updatedAtLoadingPlan) {
+      log.error("Update Ullage, Failed to update Loading information");
       throw new GenericServiceException(
           "Update ullage at Loading Plan Failed!",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-
+    log.info("Update Ullage, Success save at Loading Info DB");
     // Return updated value
     return this.loadableStudyService.buildeUpdateUllageResponse(grpcReplyFromLS, correlationId);
   }

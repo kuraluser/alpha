@@ -19,6 +19,6 @@ public interface CargoToppingOffSequenceService {
 
   void updateUllageFromLsAlgo(
       LoadingPlanModels.UpdateUllageLoadingRequest request,
-      LoadingPlanModels.UpdateUllageLoadingReplay replay)
+      LoadingPlanModels.UpdateUllageLoadingReplay.Builder replayBuilder)
       throws GenericServiceException;
 }

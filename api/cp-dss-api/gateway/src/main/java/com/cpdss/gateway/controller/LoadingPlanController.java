@@ -66,7 +66,7 @@ public class LoadingPlanController {
    * <p>Some data collect from Loadable study service and others in Loading plan DB
    *
    * @param vesselId Long
-   * @param planId Long
+   * @param infoId Long
    * @param voyageId Long
    * @param portRotationId Long
    * @return LoadingInformation
@@ -144,14 +144,21 @@ public class LoadingPlanController {
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long portRotationId,
-      @RequestBody UpdateUllage updateUllageRequest) {
+      @RequestBody UpdateUllage updateUllageRequest)
+      throws CommonRestException {
     try {
       return loadingInformationService.processUpdateUllage(
           vesselId, voyageId, infoId, portRotationId, updateUllageRequest, "");
     } catch (GenericServiceException e) {
+      log.error("Failed to update ullage for loading info!");
       e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
-    return null;
   }
 
   /**

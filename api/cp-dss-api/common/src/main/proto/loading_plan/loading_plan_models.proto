@@ -160,6 +160,9 @@ message LoadingToppingOff{
   string fillingRatio = 10;
   string remark = 11;
   int64 cargoId = 12;
+  string api = 13;
+  string temperature = 14;
+  int32  displayOrder = 15;
 }
 
 
@@ -356,6 +359,8 @@ message UpdateUllageLoadingRequest {
   string quantity = 10;
   string correctedUllage = 11;
   string correctionFactor = 12;
+
+  int64 cargoToppingOffId = 13; // Primary key for Table cargo_topping_off_sequence
 }
 
 message UpdateUllageLoadingReplay {

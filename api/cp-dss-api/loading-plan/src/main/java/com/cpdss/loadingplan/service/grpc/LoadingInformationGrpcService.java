@@ -129,11 +129,23 @@ public class LoadingInformationGrpcService
     LoadingPlanModels.UpdateUllageLoadingReplay.Builder builder =
         LoadingPlanModels.UpdateUllageLoadingReplay.newBuilder();
     try {
-      this.toppingOffSequenceService.updateUllageFromLsAlgo(request, builder.build());
+      this.toppingOffSequenceService.updateUllageFromLsAlgo(request, builder);
     } catch (GenericServiceException e) {
       e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
     } catch (Exception e) {
       e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

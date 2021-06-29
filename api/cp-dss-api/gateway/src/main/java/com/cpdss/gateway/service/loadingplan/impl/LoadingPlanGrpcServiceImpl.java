@@ -232,8 +232,11 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     LoadingPlanModels.UpdateUllageLoadingReplay replay =
         this.loadingInfoServiceBlockingStub.updateUllage(request);
     if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {
+      log.error(
+          "Update Ullage, Failed to update at Loading Information: {}",
+          replay.getResponseStatus().getMessage());
       throw new GenericServiceException(
-          "Failed to get Loading Information",
+          "Failed to update ullage in Loading Information DB",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
