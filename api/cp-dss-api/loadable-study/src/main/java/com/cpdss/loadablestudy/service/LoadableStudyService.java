@@ -1631,28 +1631,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             loadableStudy, true);
 
-    for (int rep = 0; rep < loadableStudyPortRotations.size(); rep++) {
-      for (int index = 0; index < loadableStudyPortRotations.size(); index++) {
-        try {
-          if ((loadableStudyPortRotations.get(index).getOperation().getId() == 2L
-                  && loadableStudyPortRotations.get(index + 1).getOperation().getId() == 1L)
-              && (loadableStudyPortRotations.get(index).getPortOrder()
-                  < loadableStudyPortRotations.get(index + 1).getPortOrder())) {
-            Long tempOrder = loadableStudyPortRotations.get(index).getPortOrder();
-            loadableStudyPortRotations
-                .get(index)
-                .setPortOrder(loadableStudyPortRotations.get(index + 1).getPortOrder());
-            loadableStudyPortRotations.get(index + 1).setPortOrder(tempOrder);
-            loadableStudyPortRotations =
-                loadableStudyPortRotations.stream()
-                    .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
-                    .collect(Collectors.toList());
+    for (LoadableStudyPortRotation portRotation : loadableStudyPortRotations) {
+      if (portRotation.getOperation().getId() == 1L) {
+        Integer loc = loadableStudyPortRotations.indexOf(portRotation);
+        for (int index = 0; index <= loc; index++) {
+          LoadableStudyPortRotation portAbove = loadableStudyPortRotations.get(index);
+          if (portAbove.getOperation().getId().equals(2L)) {
+            loadableStudyPortRotations.remove(portRotation);
+            loadableStudyPortRotations.add(index, portRotation);
           }
-        } catch (IndexOutOfBoundsException e) {
-          break;
         }
       }
     }
+
+    Optional<LoadableStudyPortRotation> lastPortRotationOpt =
+        loadableStudyPortRotations.stream()
+            .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+            .findFirst();
+
+    if (lastPortRotationOpt.isPresent()
+        && !lastPortRotationOpt.get().getOperation().getId().equals(2L)) {
+      Optional<LoadableStudyPortRotation> lastDischargePortOpt =
+          loadableStudyPortRotations.stream()
+              .filter(portRotation -> portRotation.getOperation().getId().equals(2L))
+              .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+              .findFirst();
+      if (lastDischargePortOpt.isPresent()) {
+        Integer index = loadableStudyPortRotations.indexOf(lastPortRotationOpt.get());
+        loadableStudyPortRotations.remove(lastDischargePortOpt.get());
+        loadableStudyPortRotations.add(index, lastDischargePortOpt.get());
+      }
+    }
+
+    AtomicLong newPortOrder = new AtomicLong(0);
+    loadableStudyPortRotations.forEach(
+        portRotation -> {
+          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+        });
+
     this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
@@ -11047,12 +11063,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 convertToBbls(
                     Float.parseFloat(stowageDetails.getWeight()),
                     Float.parseFloat(stowageDetails.getApi()),
-                    Float.parseFloat(stowageDetails.getTemperature()),
+                    stowageDetails.getTemperature().isEmpty() ? 0 :Float.parseFloat(stowageDetails.getTemperature()),
                     ConversionUnit.MT);
             float klValue = convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C);
-            float fillingPercentage =
-                klValue / Float.parseFloat(vesselTankDetail.getFullCapacityCubm()) * 100;
-            // TODO Remove check if not necessary
+            float fillingPercentage = Float.parseFloat(stowageDetails.getFillingRatioOrginal());
+            // TODO Remove check if not necessary 
             String colorCode =
                 stowageDetails.getColorCode().isEmpty()
                     ? WHITE_COLOR_CODE
@@ -11442,7 +11457,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           convertToBbls(
               shipsFigureMtTotal,
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
-              Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
+              loadableQuantityCargoDetails.getEstimatedTemp().isEmpty() ? 0 : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
               ConversionUnit.MT);
       float cargoNominationValue =
           cargoNominationDetails
@@ -11497,7 +11512,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .cargoCode(loadableQuantityCargoDetails.getCargoAbbreviation())
               .loadingPort(portReply.getName())
               .api(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()))
-              .temp(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
+              .temp(loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()? 0 : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
               .cargoNomination(cargoNominationValue)
               .tolerance(
                   String.format(
@@ -11875,10 +11890,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   String.format(
                       "%s / %s",
                       null != loadableStudyPortRotation.getLayCanFrom()
-                          ? loadableStudyPortRotation.getLayCanFrom()
+                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(loadableStudyPortRotation.getLayCanFrom())
                           : "",
                       null != loadableStudyPortRotation.getLayCanTo()
-                          ? loadableStudyPortRotation.getLayCanTo()
+                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(loadableStudyPortRotation.getLayCanTo())
                           : ""))
               .arrFwdDraft(
                   arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
@@ -12287,6 +12302,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
       case PORT_OPERATIONS_VALUES:
+    	setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
     }
     //    Set font color based on background color
