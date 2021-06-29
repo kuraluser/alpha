@@ -51,4 +51,11 @@ public class CargoToppingOffSequence extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  private BigDecimal api;
+
+  private BigDecimal temperature;
+
+  @Column(name = "display_order")
+  private Integer displayOrder;
 }

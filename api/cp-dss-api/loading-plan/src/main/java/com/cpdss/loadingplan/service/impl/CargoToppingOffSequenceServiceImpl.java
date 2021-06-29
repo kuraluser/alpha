@@ -101,7 +101,7 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
   @Override
   public void updateUllageFromLsAlgo(
       LoadingPlanModels.UpdateUllageLoadingRequest request,
-      LoadingPlanModels.UpdateUllageLoadingReplay replay)
+      LoadingPlanModels.UpdateUllageLoadingReplay.Builder replayBuilder)
       throws GenericServiceException {
     Common.ResponseStatus.Builder builder = Common.ResponseStatus.newBuilder();
     builder.setMessage("FAILED");
@@ -114,6 +114,7 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
             request.getPortRotationId());
 
     if (!lInformation.isPresent()) {
+      log.error("Update Ullage Loading Info found : {}", lInformation);
       throw new GenericServiceException(
           "Loading information not found",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -122,22 +123,41 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
     Optional<com.cpdss.loadingplan.entity.CargoToppingOffSequence> offSequence =
         this.cargoToppingOffSequenceRepository
             .findAllByLoadingInformationAndIsActiveTrue(lInformation.get()).stream()
-            .filter(v -> v.getTankXId().equals(request.getTankId()))
+            .filter(
+                v ->
+                    v.getTankXId().equals(request.getTankId())
+                        && request.getCargoToppingOffId() == v.getId())
             .findFirst();
     if (!offSequence.isPresent()) {
+      log.error("Update Ullage No Data found for Cargo Topping Off");
       throw new GenericServiceException(
           "Sequence not found for requested tank",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    offSequence.ifPresent(
-        v -> {
-          v.setUllage(new BigDecimal(request.getCorrectedUllage()));
-          v.setQuantity(new BigDecimal(request.getQuantity()));
-          // filling ratio not adding, need to ask jerin is it updating.
-        });
-    cargoToppingOffSequenceRepository.save(offSequence.get());
-    builder.setMessage("SUCCESS").build();
+    try {
+      offSequence.ifPresent(
+          v -> {
+            if (!request.getCorrectedUllage().isEmpty())
+              v.setUllage(new BigDecimal(request.getCorrectedUllage()));
+
+            if (!request.getQuantity().isEmpty())
+              v.setQuantity(new BigDecimal(request.getQuantity()));
+
+            if (!request.getFillingRatio().isEmpty())
+              v.setFillingRatio(new BigDecimal(request.getFillingRatio()));
+          });
+      cargoToppingOffSequenceRepository.save(offSequence.get());
+      log.info(
+          "Update Ullage for Cargo Topping Off Id {}, Tank {}",
+          request.getCargoToppingOffId(),
+          request.getTankId());
+      builder.setStatus("SUCCESS").build();
+    } catch (Exception e) {
+      log.error("Failed to update cargo topping off");
+      e.printStackTrace();
+    }
+    replayBuilder.setResponseStatus(builder).build();
   }
 
   private void buildCargoToppingOffSequence(
