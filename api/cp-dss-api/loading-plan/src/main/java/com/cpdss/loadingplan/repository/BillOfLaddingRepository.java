@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadding, Long> {
 
   @Query(
-      "FROM BillOfLadding BL INNER JOIN LoadingInformation LI ON BL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND LI.isActive = ?2 AND BL.isActive = ?2")
+      "FROM BillOfLadding BL INNER JOIN LoadingInformation LI ON BL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND BL.isActive = ?2")
   public List<BillOfLadding> findByLoadablePatternXIdAndIsActive(Long patternId, Boolean isActive);
 }

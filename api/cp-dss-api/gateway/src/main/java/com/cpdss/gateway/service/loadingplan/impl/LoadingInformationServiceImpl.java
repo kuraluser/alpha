@@ -227,12 +227,19 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       var2.setMaxShipDepth(
           lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
       var2.setSeaDraftLimitation(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getSeaDraftLimitation()));
+          lb.getSeaDraftLimitation().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(lb.getSeaDraftLimitation()));
       var2.setAirDraftLimitation(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getAirDraftLimitation()));
+          lb.getAirDraftLimitation().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(lb.getAirDraftLimitation()));
       var2.setMaxManifoldHeight(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getMaxManifoldHeight()));
+          lb.getMaxManifoldHeight().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(lb.getMaxManifoldHeight()));
       var2.setRegulationAndRestriction(lb.getDepth());
+      var2.setHoseConnections(lb.getHoseConnections());
       list.add(var2);
     }
     log.info("Loading Plan Berth data added Size {}", var1.size());

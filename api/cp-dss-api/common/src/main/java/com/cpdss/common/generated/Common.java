@@ -1179,17 +1179,24 @@ public final class Common {
     com.google.protobuf.ByteString getCargoAbbrevationBytes();
 
     /**
-     * <code>string loadingPort = 12;</code>
+     * <code>repeated int64 loadingPort = 12;</code>
      *
-     * @return The loadingPort.
+     * @return A list containing the loadingPort.
      */
-    java.lang.String getLoadingPort();
+    java.util.List<java.lang.Long> getLoadingPortList();
     /**
-     * <code>string loadingPort = 12;</code>
+     * <code>repeated int64 loadingPort = 12;</code>
      *
-     * @return The bytes for loadingPort.
+     * @return The count of loadingPort.
      */
-    com.google.protobuf.ByteString getLoadingPortBytes();
+    int getLoadingPortCount();
+    /**
+     * <code>repeated int64 loadingPort = 12;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The loadingPort at the given index.
+     */
+    long getLoadingPort(int index);
 
     /**
      * <code>int64 cargoId = 13;</code>
@@ -1218,7 +1225,7 @@ public final class Common {
       cargoColor_ = "";
       cargoName_ = "";
       cargoAbbrevation_ = "";
-      loadingPort_ = "";
+      loadingPort_ = emptyLongList();
     }
 
     @java.lang.Override
@@ -1240,6 +1247,7 @@ public final class Common {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -1321,11 +1329,27 @@ public final class Common {
                 cargoAbbrevation_ = s;
                 break;
               }
+            case 96:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  loadingPort_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                loadingPort_.addLong(input.readInt64());
+                break;
+              }
             case 98:
               {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                loadingPort_ = s;
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
+                  loadingPort_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  loadingPort_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
                 break;
               }
             case 104:
@@ -1347,6 +1371,9 @@ public final class Common {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          loadingPort_.makeImmutable(); // C
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -1679,39 +1706,34 @@ public final class Common {
     }
 
     public static final int LOADINGPORT_FIELD_NUMBER = 12;
-    private volatile java.lang.Object loadingPort_;
+    private com.google.protobuf.Internal.LongList loadingPort_;
     /**
-     * <code>string loadingPort = 12;</code>
+     * <code>repeated int64 loadingPort = 12;</code>
      *
-     * @return The loadingPort.
+     * @return A list containing the loadingPort.
      */
-    public java.lang.String getLoadingPort() {
-      java.lang.Object ref = loadingPort_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        loadingPort_ = s;
-        return s;
-      }
+    public java.util.List<java.lang.Long> getLoadingPortList() {
+      return loadingPort_;
     }
     /**
-     * <code>string loadingPort = 12;</code>
+     * <code>repeated int64 loadingPort = 12;</code>
      *
-     * @return The bytes for loadingPort.
+     * @return The count of loadingPort.
      */
-    public com.google.protobuf.ByteString getLoadingPortBytes() {
-      java.lang.Object ref = loadingPort_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        loadingPort_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public int getLoadingPortCount() {
+      return loadingPort_.size();
     }
+    /**
+     * <code>repeated int64 loadingPort = 12;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The loadingPort at the given index.
+     */
+    public long getLoadingPort(int index) {
+      return loadingPort_.getLong(index);
+    }
+
+    private int loadingPortMemoizedSerializedSize = -1;
 
     public static final int CARGOID_FIELD_NUMBER = 13;
     private long cargoId_;
@@ -1738,6 +1760,7 @@ public final class Common {
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      getSerializedSize();
       if (id_ != 0L) {
         output.writeInt64(1, id_);
       }
@@ -1771,8 +1794,12 @@ public final class Common {
       if (!getCargoAbbrevationBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, cargoAbbrevation_);
       }
-      if (!getLoadingPortBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, loadingPort_);
+      if (getLoadingPortList().size() > 0) {
+        output.writeUInt32NoTag(98);
+        output.writeUInt32NoTag(loadingPortMemoizedSerializedSize);
+      }
+      for (int i = 0; i < loadingPort_.size(); i++) {
+        output.writeInt64NoTag(loadingPort_.getLong(i));
       }
       if (cargoId_ != 0L) {
         output.writeInt64(13, cargoId_);
@@ -1819,8 +1846,18 @@ public final class Common {
       if (!getCargoAbbrevationBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, cargoAbbrevation_);
       }
-      if (!getLoadingPortBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, loadingPort_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < loadingPort_.size(); i++) {
+          dataSize +=
+              com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(loadingPort_.getLong(i));
+        }
+        size += dataSize;
+        if (!getLoadingPortList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        loadingPortMemoizedSerializedSize = dataSize;
       }
       if (cargoId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(13, cargoId_);
@@ -1852,7 +1889,7 @@ public final class Common {
       if (!getCargoColor().equals(other.getCargoColor())) return false;
       if (!getCargoName().equals(other.getCargoName())) return false;
       if (!getCargoAbbrevation().equals(other.getCargoAbbrevation())) return false;
-      if (!getLoadingPort().equals(other.getLoadingPort())) return false;
+      if (!getLoadingPortList().equals(other.getLoadingPortList())) return false;
       if (getCargoId() != other.getCargoId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
@@ -1887,8 +1924,10 @@ public final class Common {
       hash = (53 * hash) + getCargoName().hashCode();
       hash = (37 * hash) + CARGOABBREVATION_FIELD_NUMBER;
       hash = (53 * hash) + getCargoAbbrevation().hashCode();
-      hash = (37 * hash) + LOADINGPORT_FIELD_NUMBER;
-      hash = (53 * hash) + getLoadingPort().hashCode();
+      if (getLoadingPortCount() > 0) {
+        hash = (37 * hash) + LOADINGPORT_FIELD_NUMBER;
+        hash = (53 * hash) + getLoadingPortList().hashCode();
+      }
       hash = (37 * hash) + CARGOID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
       hash = (29 * hash) + unknownFields.hashCode();
@@ -2050,8 +2089,8 @@ public final class Common {
 
         cargoAbbrevation_ = "";
 
-        loadingPort_ = "";
-
+        loadingPort_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
         cargoId_ = 0L;
 
         return this;
@@ -2080,6 +2119,7 @@ public final class Common {
       public com.cpdss.common.generated.Common.BillOfLadding buildPartial() {
         com.cpdss.common.generated.Common.BillOfLadding result =
             new com.cpdss.common.generated.Common.BillOfLadding(this);
+        int from_bitField0_ = bitField0_;
         result.id_ = id_;
         result.portId_ = portId_;
         result.cargoNominationId_ = cargoNominationId_;
@@ -2091,6 +2131,10 @@ public final class Common {
         result.cargoColor_ = cargoColor_;
         result.cargoName_ = cargoName_;
         result.cargoAbbrevation_ = cargoAbbrevation_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          loadingPort_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
         result.loadingPort_ = loadingPort_;
         result.cargoId_ = cargoId_;
         onBuilt();
@@ -2186,8 +2230,14 @@ public final class Common {
           cargoAbbrevation_ = other.cargoAbbrevation_;
           onChanged();
         }
-        if (!other.getLoadingPort().isEmpty()) {
-          loadingPort_ = other.loadingPort_;
+        if (!other.loadingPort_.isEmpty()) {
+          if (loadingPort_.isEmpty()) {
+            loadingPort_ = other.loadingPort_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureLoadingPortIsMutable();
+            loadingPort_.addAll(other.loadingPort_);
+          }
           onChanged();
         }
         if (other.getCargoId() != 0L) {
@@ -2222,6 +2272,8 @@ public final class Common {
         }
         return this;
       }
+
+      private int bitField0_;
 
       private long id_;
       /**
@@ -2930,78 +2982,86 @@ public final class Common {
         return this;
       }
 
-      private java.lang.Object loadingPort_ = "";
-      /**
-       * <code>string loadingPort = 12;</code>
-       *
-       * @return The loadingPort.
-       */
-      public java.lang.String getLoadingPort() {
-        java.lang.Object ref = loadingPort_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          loadingPort_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
+      private com.google.protobuf.Internal.LongList loadingPort_ = emptyLongList();
+
+      private void ensureLoadingPortIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          loadingPort_ = mutableCopy(loadingPort_);
+          bitField0_ |= 0x00000001;
         }
       }
       /**
-       * <code>string loadingPort = 12;</code>
+       * <code>repeated int64 loadingPort = 12;</code>
        *
-       * @return The bytes for loadingPort.
+       * @return A list containing the loadingPort.
        */
-      public com.google.protobuf.ByteString getLoadingPortBytes() {
-        java.lang.Object ref = loadingPort_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          loadingPort_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
+      public java.util.List<java.lang.Long> getLoadingPortList() {
+        return ((bitField0_ & 0x00000001) != 0)
+            ? java.util.Collections.unmodifiableList(loadingPort_)
+            : loadingPort_;
       }
       /**
-       * <code>string loadingPort = 12;</code>
+       * <code>repeated int64 loadingPort = 12;</code>
        *
+       * @return The count of loadingPort.
+       */
+      public int getLoadingPortCount() {
+        return loadingPort_.size();
+      }
+      /**
+       * <code>repeated int64 loadingPort = 12;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The loadingPort at the given index.
+       */
+      public long getLoadingPort(int index) {
+        return loadingPort_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 loadingPort = 12;</code>
+       *
+       * @param index The index to set the value at.
        * @param value The loadingPort to set.
        * @return This builder for chaining.
        */
-      public Builder setLoadingPort(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        loadingPort_ = value;
+      public Builder setLoadingPort(int index, long value) {
+        ensureLoadingPortIsMutable();
+        loadingPort_.setLong(index, value);
         onChanged();
         return this;
       }
       /**
-       * <code>string loadingPort = 12;</code>
+       * <code>repeated int64 loadingPort = 12;</code>
+       *
+       * @param value The loadingPort to add.
+       * @return This builder for chaining.
+       */
+      public Builder addLoadingPort(long value) {
+        ensureLoadingPortIsMutable();
+        loadingPort_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 loadingPort = 12;</code>
+       *
+       * @param values The loadingPort to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllLoadingPort(java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureLoadingPortIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, loadingPort_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 loadingPort = 12;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearLoadingPort() {
-
-        loadingPort_ = getDefaultInstance().getLoadingPort();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string loadingPort = 12;</code>
-       *
-       * @param value The bytes for loadingPort to set.
-       * @return This builder for chaining.
-       */
-      public Builder setLoadingPortBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        loadingPort_ = value;
+        loadingPort_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -7241,7 +7301,7 @@ public final class Common {
           + "\n\nquantityMt\030\005 \001(\t\022\022\n\nquantityKl\030\006 \001(\t\022\013"
           + "\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001(\t\022\022\n\ncarg"
           + "oColor\030\t \001(\t\022\021\n\tcargoName\030\n \001(\t\022\030\n\020cargo"
-          + "Abbrevation\030\013 \001(\t\022\023\n\013loadingPort\030\014 \001(\t\022\017"
+          + "Abbrevation\030\013 \001(\t\022\023\n\013loadingPort\030\014 \003(\003\022\017"
           + "\n\007cargoId\030\r \001(\003\"2\n\tRulePlans\022\016\n\006header\030\001"
           + " \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\302\001\n\005Rules\022\n\n"
           + "\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disable\030\003 \001"

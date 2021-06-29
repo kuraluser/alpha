@@ -190,6 +190,7 @@ service LoadableStudyService {
 	rpc getLoadablePatternByVoyageAndStatus(LoadableStudyRequest) returns (LoadablePatternConfirmedReply) {}
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
+	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
 }
 message CargoNominationDetailReply{
 	CargoNominationDetail cargoNominationdetail = 1;
@@ -198,7 +199,8 @@ message CargoNominationDetailReply{
 
 message  LoadablePatternConfirmedReply{
 	LoadablePattern pattern= 1;
-	ResponseStatus responseStatus = 2;
+	int64 loadableStudyId= 2;
+	ResponseStatus responseStatus = 3;
 }
 message LatestCargoRequest{
 	int64 vesselId = 1;
@@ -400,7 +402,10 @@ message LoadablePlanPortWiseDetails {
 message LoadablePlanDetailsRequest {
 	int64 loadablePatternId = 1;
 }
-
+message LoadableCommingleDetailsReply{
+	ResponseStatus responseStatus = 1;
+	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
+}
 message LoadablePlanDetailsReply {
 	ResponseStatus responseStatus = 1;
 	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;

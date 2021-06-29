@@ -11,11 +11,14 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.BillOfLadding;
-import com.cpdss.gateway.domain.DischargeStudyResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
+import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
+import com.cpdss.gateway.domain.PortRotationResponse;
 import java.util.ArrayList;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +34,19 @@ public class DischargeStudyService {
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
 
+  @Autowired LoadableStudyService loadableStudyService;
+
   private static final String SUCCESS = "SUCCESS";
 
   /**
    * @param vesselId
    * @param voyageId
    * @param dischargeStudyId
-   * @param synopticalId
    * @param correlationId
    * @return LoadableStudyResponse
    */
   public DischargeStudyResponse getDischargeStudyByVoyage(
-      Long vesselId, Long voyageId, Long dischargeStudyId, Long synopticalId, String correlationId)
+      Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
       throws GenericServiceException {
     log.info(
         "Inside getDischargeStudyByVoyage gateway service with correlationId : " + correlationId);
@@ -66,7 +70,30 @@ public class DischargeStudyService {
             grpcReply.getResponseStatus().getCode(),
             HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
       }
+      LoadableStudy.LoadablePlanDetailsRequest.Builder loadablePlanRequest =
+          LoadableStudy.LoadablePlanDetailsRequest.newBuilder();
+      loadablePlanRequest.setLoadablePatternId(patternReply.getPattern().getLoadablePatternId());
+      LoadableStudy.LoadableCommingleDetailsReply loadableCommingleDetailsReply =
+          loadableStudyServiceBlockingStub.getLoadableCommingleByPatternId(
+              loadablePlanRequest.build());
+
       DischargeStudyResponse dischargeStudyResponse = new DischargeStudyResponse();
+      if (!SUCCESS.equals(loadableCommingleDetailsReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Failed to fetch getDischargeStudyByVoyage",
+            grpcReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+      }
+      dischargeStudyResponse.setLoadableQuantityCommingleCargoDetails(
+          new ArrayList<LoadableQuantityCommingleCargoDetails>());
+      loadableCommingleDetailsReply
+          .getLoadableQuantityCommingleCargoDetailsList()
+          .forEach(
+              lqcd -> {
+                LoadableQuantityCommingleCargoDetails details =
+                    loadableStudyService.getLoadableQuantityCommingleCargoDetails(lqcd);
+                dischargeStudyResponse.getLoadableQuantityCommingleCargoDetails().add(details);
+              });
       dischargeStudyResponse.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
       return buildDischargeStudyResponse(grpcReply, dischargeStudyResponse);
@@ -99,5 +126,25 @@ public class DischargeStudyService {
   public LoadingInformationSynopticalReply getDischargeStudyByVoyage(
       LoadingInformationSynopticalRequest request) {
     return this.dischargeStudyGrpcService.getDischargeStudyByVoyage(request);
+  }
+
+  public PortRotationResponse getDischargeStudyPortDataByVoyage(
+      Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
+      throws GenericServiceException {
+    PortRotationResponse response = new PortRotationResponse();
+    LoadableStudy.LoadableStudyRequest.Builder loadableStudyRequest =
+        LoadableStudy.LoadableStudyRequest.newBuilder();
+    loadableStudyRequest.setVoyageId(voyageId);
+    LoadableStudy.LoadablePatternConfirmedReply patternReply =
+        loadableStudyServiceBlockingStub.getLoadablePatternByVoyageAndStatus(
+            loadableStudyRequest.build());
+    if (patternReply != null
+        && patternReply.getResponseStatus() != null
+        && SUCCESS.equalsIgnoreCase(patternReply.getResponseStatus().getStatus())) {
+      response =
+          loadableStudyService.getLoadableStudyPortRotationList(
+              vesselId, voyageId, patternReply.getLoadableStudyId(), correlationId);
+    }
+    return response;
   }
 }

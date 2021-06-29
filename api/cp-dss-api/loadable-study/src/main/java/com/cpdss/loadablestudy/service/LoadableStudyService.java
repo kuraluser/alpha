@@ -2855,8 +2855,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
-      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
-
       LoadableStudyPortRotation portRotation =
           this.loadableStudyPortRotationRepository.findByIdAndIsActive(
               request.getPortRotationId(), true);
@@ -2867,110 +2865,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
-      Voyage previousVoyage =
-          this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  loadableStudyOpt.get().getVoyage().getVoyageStartDate(),
-                  loadableStudyOpt.get().getVoyage().getVesselXId(),
-                  true,
-                  voyageStatus);
-
-      VesselReply vesselReply = this.getOhqTanks(request);
       List<OnHandQuantity> onHandQuantities =
-          this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-              loadableStudyOpt.get(), portRotation, true);
-      Optional<LoadableStudy> confirmedLoadableStudyOpt =
-          this.loadableStudyRepository
-              .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
-                  previousVoyage,
-                  CONFIRMED_STATUS_ID,
-                  true,
-                  Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
-
-      List<OnHandQuantity> onHandQuantityList = null;
-      if (confirmedLoadableStudyOpt.isPresent()) {
-
-        LoadableStudyPortRotation lastDischargingPortPortRotation =
-            this.loadableStudyPortRotationRepository
-                .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
-                    confirmedLoadableStudyOpt.get(),
-                    this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
-                    true);
-
-        onHandQuantityList =
-            this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                confirmedLoadableStudyOpt.get(), lastDischargingPortPortRotation, true);
-
-        if (onHandQuantities.isEmpty() && !onHandQuantityList.isEmpty()) {
-
-          Long portOrder = portRotation.getPortOrder();
-          List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
-
-          List<LoadableStudyPortRotation> portRotationList =
-              this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                  loadableStudyOpt.get().getId(), true);
-          if (null != portRotationList && !portRotationList.isEmpty()) {
-            int index =
-                IntStream.range(0, portRotationList.size())
-                    .filter(i -> portRotationList.get(i).getId().equals(portRotation.getId()))
-                    .findFirst()
-                    .orElse(-1);
-            if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
-              boolean ohqComplete = true;
-              List<Long> fuelTypes = new ArrayList<Long>();
-              for (OnHandQuantity onHandQuantity : onHandQuantityList) {
-                if (ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
-                  fuelTypes.add(onHandQuantity.getFuelTypeXId());
-                  BigDecimal total = new BigDecimal(0);
-                  for (OnHandQuantity ohq : onHandQuantityList) {
-                    if (ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
-                      total = total.add(ohq.getDepartureQuantity());
-                    }
-                  }
-                  if (total.compareTo(new BigDecimal(0)) <= 0) {
-                    ohqComplete = false;
-                  }
-                }
-                entityManager.detach(onHandQuantity);
-                onHandQuantity.setId(null);
-                onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
-                onHandQuantity.setActualArrivalQuantity(null);
-                onHandQuantity.setActualDepartureQuantity(null);
-                onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
-                onHandQuantity.setPortXId(portRotation.getPortXId());
-                onHandQuantity.setPortRotation(portRotation);
-                OnHandQuantities.add(onHandQuantity);
-              }
-              portRotation.setIsPortRotationOhqComplete(ohqComplete);
-            } else {
-
-              LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
-              portRotation.setIsPortRotationOhqComplete(
-                  previousPortPortRotation.getIsPortRotationOhqComplete());
-              this.loadableStudyPortRotationRepository.save(portRotation);
-              onHandQuantityList =
-                  this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                      loadableStudyOpt.get(), previousPortPortRotation, true);
-              onHandQuantityList.forEach(
-                  onHandQuantity -> {
-                    entityManager.detach(onHandQuantity);
-                    onHandQuantity.setId(null);
-                    onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
-                    onHandQuantity.setActualArrivalQuantity(null);
-                    onHandQuantity.setActualDepartureQuantity(null);
-                    onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
-                    onHandQuantity.setPortXId(portRotation.getPortXId());
-                    onHandQuantity.setPortRotation(portRotation);
-                    OnHandQuantities.add(onHandQuantity);
-                  });
-            }
-            this.onHandQuantityRepository.saveAll(OnHandQuantities);
-            onHandQuantities =
-                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                    loadableStudyOpt.get(), portRotation, true);
-          }
-        }
+    		  this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+    				  loadableStudyOpt.get(), portRotation, true);
+      VesselReply vesselReply = this.getOhqTanks(request);
+      if(onHandQuantities.isEmpty()) {	  
+    	  this.populateOnHandQuantityData(loadableStudyOpt, portRotation);
       }
+      onHandQuantities =
+    		  this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+    				  loadableStudyOpt.get(), portRotation, true);
 
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
         if (!tankDetail.getShowInOhqObq()
@@ -3015,9 +2919,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(qty.getPortRotation())
               .ifPresent(item -> detailBuilder.setPortId(item.getPortXId()));
         } else {
-          if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
+          if (onHandQuantities != null && !onHandQuantities.isEmpty()) {
             Optional<OnHandQuantity> ohqQtyOpt =
-                onHandQuantityList.stream()
+            		onHandQuantities.stream()
                     .filter(
                         entity ->
                             entity.getFuelTypeXId().equals(tankDetail.getTankCategoryId())
@@ -3063,6 +2967,108 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+  
+  private void populateOnHandQuantityData(Optional<LoadableStudy> loadableStudyOpt, LoadableStudyPortRotation portRotation ) {
+	  VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+      Voyage previousVoyage =
+	          this.voyageRepository
+	              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+	                  loadableStudyOpt.get().getVoyage().getVoyageStartDate(),
+	                  loadableStudyOpt.get().getVoyage().getVesselXId(),
+	                  true,
+	                  voyageStatus);
+	
+	      Optional<LoadableStudy> confirmedLoadableStudyOpt =
+	          this.loadableStudyRepository
+	              .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+	                  previousVoyage,
+	                  CONFIRMED_STATUS_ID,
+	                  true,
+	                  Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+	
+	      List<OnHandQuantity> onHandQuantityList = null;
+	      if (confirmedLoadableStudyOpt.isPresent()) {
+	
+	        LoadableStudyPortRotation lastDischargingPortPortRotation =
+	            this.loadableStudyPortRotationRepository
+	                .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
+	                    confirmedLoadableStudyOpt.get(),
+	                    this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
+	                    true);
+	
+	        onHandQuantityList =
+	            this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+	                confirmedLoadableStudyOpt.get(), lastDischargingPortPortRotation, true);
+	
+	        if ( !onHandQuantityList.isEmpty()) {
+	
+	          Long portOrder = portRotation.getPortOrder();
+	          List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
+	
+	          List<LoadableStudyPortRotation> portRotationList =
+	              this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+	                  loadableStudyOpt.get().getId(), true);
+	          if (null != portRotationList && !portRotationList.isEmpty()) {
+	            int index =
+	                IntStream.range(0, portRotationList.size())
+	                    .filter(i -> portRotationList.get(i).getId().equals(portRotation.getId()))
+	                    .findFirst()
+	                    .orElse(-1);
+	            if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
+	              boolean ohqComplete = true;
+	              List<Long> fuelTypes = new ArrayList<Long>();
+	              for (OnHandQuantity onHandQuantity : onHandQuantityList) {
+	                if (ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
+	                  fuelTypes.add(onHandQuantity.getFuelTypeXId());
+	                  BigDecimal total = new BigDecimal(0);
+	                  for (OnHandQuantity ohq : onHandQuantityList) {
+	                    if (ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
+	                      total = total.add(ohq.getDepartureQuantity());
+	                    }
+	                  }
+	                  if (total.compareTo(new BigDecimal(0)) <= 0) {
+	                    ohqComplete = false;
+	                  }
+	                }
+	                entityManager.detach(onHandQuantity);
+	                onHandQuantity.setId(null);
+	                onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
+	                onHandQuantity.setActualArrivalQuantity(null);
+	                onHandQuantity.setActualDepartureQuantity(null);
+	                onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
+	                onHandQuantity.setPortXId(portRotation.getPortXId());
+	                onHandQuantity.setPortRotation(portRotation);
+	                OnHandQuantities.add(onHandQuantity);
+	              }
+	              portRotation.setIsPortRotationOhqComplete(ohqComplete);
+	            } else {
+	
+	              LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
+	              portRotation.setIsPortRotationOhqComplete(
+	                  previousPortPortRotation.getIsPortRotationOhqComplete());
+	              this.loadableStudyPortRotationRepository.save(portRotation);
+	              onHandQuantityList =
+	                  this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+	                      loadableStudyOpt.get(), previousPortPortRotation, true);
+	              onHandQuantityList.forEach(
+	                  onHandQuantity -> {
+	                    entityManager.detach(onHandQuantity);
+	                    onHandQuantity.setId(null);
+	                    onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
+	                    onHandQuantity.setActualArrivalQuantity(null);
+	                    onHandQuantity.setActualDepartureQuantity(null);
+	                    onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
+	                    onHandQuantity.setPortXId(portRotation.getPortXId());
+	                    onHandQuantity.setPortRotation(portRotation);
+	                    OnHandQuantities.add(onHandQuantity);
+	                  });
+	            }
+	            this.onHandQuantityRepository.saveAll(OnHandQuantities);
+	          }
+	        }
+	      }
+
   }
 
   /**
@@ -7923,6 +7929,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<OnBoardQuantity> obqEntities =
           this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
               loadableStudy, firstPortId, true);
+      // populating ohq data if its empty
+	  portRotations.forEach(portRotation -> {
+		  List<OnHandQuantity> ohqPortEntities =
+		          this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(loadableStudy, portRotation, true);
+		 if(ohqPortEntities.isEmpty()) {
+			 this.populateOnHandQuantityData(Optional.of(loadableStudy), portRotation);
+		 }
+	  });
       // fething entire ohq entities based on loadable study
       List<OnHandQuantity> ohqEntities =
           this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
@@ -9016,29 +9030,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       VesselInfo.VesselTankResponse vesselReplyCommingle) {
     loadablePlanCommingleDetails.forEach(
         lpcd -> {
-          LoadableQuantityCommingleCargoDetails.Builder builder =
-              LoadableQuantityCommingleCargoDetails.newBuilder();
-          ofNullable(lpcd.getId()).ifPresent(builder::setId);
-          ofNullable(lpcd.getApi()).ifPresent(builder::setApi);
-          ofNullable(lpcd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
-          ofNullable(lpcd.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
-          ofNullable(lpcd.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
-          ofNullable(lpcd.getCargo1Kl()).ifPresent(builder::setCargo1KL);
-          ofNullable(lpcd.getCargo1Lt()).ifPresent(builder::setCargo1LT);
-          ofNullable(lpcd.getCargo1Mt()).ifPresent(builder::setCargo1MT);
-          ofNullable(lpcd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
-          ofNullable(lpcd.getCargo2Abbreviation()).ifPresent(builder::setCargo2Abbreviation);
-          ofNullable(lpcd.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
-          ofNullable(lpcd.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
-          ofNullable(lpcd.getCargo2Kl()).ifPresent(builder::setCargo2KL);
-          ofNullable(lpcd.getCargo2Lt()).ifPresent(builder::setCargo2LT);
-          ofNullable(lpcd.getCargo2Mt()).ifPresent(builder::setCargo2MT);
-          ofNullable(lpcd.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
-          ofNullable(lpcd.getGrade()).ifPresent(builder::setGrade);
-          ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
-          ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
-          ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
-          ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+          LoadableQuantityCommingleCargoDetails.Builder builder = getCommingleCargoBuilder(lpcd);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
@@ -9073,6 +9065,34 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           addTankShortName(vesselReplyCommingle, lpcd.getTankId(), stowageBuilder);
           replyBuilder.addLoadablePlanStowageDetails(stowageBuilder);
         });
+  }
+
+  private LoadableQuantityCommingleCargoDetails.Builder getCommingleCargoBuilder(
+      LoadablePlanCommingleDetails lpcd) {
+    LoadableQuantityCommingleCargoDetails.Builder builder =
+        LoadableQuantityCommingleCargoDetails.newBuilder();
+    ofNullable(lpcd.getId()).ifPresent(builder::setId);
+    ofNullable(lpcd.getApi()).ifPresent(builder::setApi);
+    ofNullable(lpcd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
+    ofNullable(lpcd.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
+    ofNullable(lpcd.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
+    ofNullable(lpcd.getCargo1Kl()).ifPresent(builder::setCargo1KL);
+    ofNullable(lpcd.getCargo1Lt()).ifPresent(builder::setCargo1LT);
+    ofNullable(lpcd.getCargo1Mt()).ifPresent(builder::setCargo1MT);
+    ofNullable(lpcd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
+    ofNullable(lpcd.getCargo2Abbreviation()).ifPresent(builder::setCargo2Abbreviation);
+    ofNullable(lpcd.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
+    ofNullable(lpcd.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
+    ofNullable(lpcd.getCargo2Kl()).ifPresent(builder::setCargo2KL);
+    ofNullable(lpcd.getCargo2Lt()).ifPresent(builder::setCargo2LT);
+    ofNullable(lpcd.getCargo2Mt()).ifPresent(builder::setCargo2MT);
+    ofNullable(lpcd.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
+    ofNullable(lpcd.getGrade()).ifPresent(builder::setGrade);
+    ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
+    ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
+    ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
+    ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+    return builder;
   }
 
   private void addTankShortName(
@@ -13565,6 +13585,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
               voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
       if (loadableStudy.isPresent()) {
+        builder.setLoadableStudyId(loadableStudy.get().getId());
         log.info("Confirmed Ls - ls id {}", loadableStudy.get().getId());
         Optional<LoadablePattern> pattern =
             loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
@@ -13623,5 +13644,41 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public com.cpdss.common.generated.CargoInfo.CargoDetailReply getCargoInfoById(
       CargoRequest build) {
     return cargoInfoGrpcService.getCargoInfoById(build);
+  }
+
+  @Override
+  public void getLoadableCommingleByPatternId(
+      LoadablePlanDetailsRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+          responseObserver) {
+
+    com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply.newBuilder();
+    try {
+
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+            loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+                loadablePatternOpt.get(), true);
+        LoadableQuantityCommingleCargoDetails.Builder loadableCommingle =
+            LoadableQuantityCommingleCargoDetails.newBuilder();
+        loadablePlanCommingleDetails.forEach(
+            lpcd -> {
+              LoadableQuantityCommingleCargoDetails.Builder loadableQtyCommCargo =
+                  getCommingleCargoBuilder(lpcd);
+              builder.addLoadableQuantityCommingleCargoDetails(loadableQtyCommCargo);
+            });
+        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else throw new Exception("Cannot find loadable pattern");
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }
