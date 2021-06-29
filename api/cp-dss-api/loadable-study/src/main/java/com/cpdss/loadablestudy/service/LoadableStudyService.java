@@ -1631,28 +1631,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             loadableStudy, true);
 
-    for (int rep = 0; rep < loadableStudyPortRotations.size(); rep++) {
-      for (int index = 0; index < loadableStudyPortRotations.size(); index++) {
-        try {
-          if ((loadableStudyPortRotations.get(index).getOperation().getId() == 2L
-                  && loadableStudyPortRotations.get(index + 1).getOperation().getId() == 1L)
-              && (loadableStudyPortRotations.get(index).getPortOrder()
-                  < loadableStudyPortRotations.get(index + 1).getPortOrder())) {
-            Long tempOrder = loadableStudyPortRotations.get(index).getPortOrder();
-            loadableStudyPortRotations
-                .get(index)
-                .setPortOrder(loadableStudyPortRotations.get(index + 1).getPortOrder());
-            loadableStudyPortRotations.get(index + 1).setPortOrder(tempOrder);
-            loadableStudyPortRotations =
-                loadableStudyPortRotations.stream()
-                    .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
-                    .collect(Collectors.toList());
+    for (LoadableStudyPortRotation portRotation : loadableStudyPortRotations) {
+      if (portRotation.getOperation().getId() == 1L) {
+        Integer loc = loadableStudyPortRotations.indexOf(portRotation);
+        for (int index = 0; index <= loc; index++) {
+          LoadableStudyPortRotation portAbove = loadableStudyPortRotations.get(index);
+          if (portAbove.getOperation().getId().equals(2L)) {
+            loadableStudyPortRotations.remove(portRotation);
+            loadableStudyPortRotations.add(index, portRotation);
           }
-        } catch (IndexOutOfBoundsException e) {
-          break;
         }
       }
     }
+
+    Optional<LoadableStudyPortRotation> lastPortRotationOpt =
+        loadableStudyPortRotations.stream()
+            .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+            .findFirst();
+
+    if (lastPortRotationOpt.isPresent()
+        && !lastPortRotationOpt.get().getOperation().getId().equals(2L)) {
+      Optional<LoadableStudyPortRotation> lastDischargePortOpt =
+          loadableStudyPortRotations.stream()
+              .filter(portRotation -> portRotation.getOperation().getId().equals(2L))
+              .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+              .findFirst();
+      if (lastDischargePortOpt.isPresent()) {
+        Integer index = loadableStudyPortRotations.indexOf(lastPortRotationOpt.get());
+        loadableStudyPortRotations.remove(lastDischargePortOpt.get());
+        loadableStudyPortRotations.add(index, lastDischargePortOpt.get());
+      }
+    }
+
+    AtomicLong newPortOrder = new AtomicLong(0);
+    loadableStudyPortRotations.forEach(
+        portRotation -> {
+          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+        });
+
     this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
