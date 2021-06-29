@@ -51576,18 +51576,35 @@ public final class VesselInfo {
     /** <code>.ResponseStatus responseStatus = 1;</code> */
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
 
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
-    java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence> getEntityList();
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
-    com.cpdss.common.generated.VesselInfo.VesselValveSequence getEntity(int index);
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
-    int getEntityCount();
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence>
+        getVvSequenceEntitiesList();
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselValveSequence getVvSequenceEntities(int index);
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+    int getVvSequenceEntitiesCount();
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
     java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder>
-        getEntityOrBuilderList();
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
-    com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder getEntityOrBuilder(
+        getVvSequenceEntitiesOrBuilderList();
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder
+        getVvSequenceEntitiesOrBuilder(int index);
+
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>
+        getVvEducationEntitiesList();
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess getVvEducationEntities(
         int index);
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    int getVvEducationEntitiesCount();
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    java.util.List<
+            ? extends com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder>
+        getVvEducationEntitiesOrBuilderList();
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder
+        getVvEducationEntitiesOrBuilder(int index);
   }
   /** Protobuf type {@code VesselValveSequenceReply} */
   public static final class VesselValveSequenceReply extends com.google.protobuf.GeneratedMessageV3
@@ -51601,7 +51618,8 @@ public final class VesselInfo {
     }
 
     private VesselValveSequenceReply() {
-      entity_ = java.util.Collections.emptyList();
+      vvSequenceEntities_ = java.util.Collections.emptyList();
+      vvEducationEntities_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -51654,14 +51672,28 @@ public final class VesselInfo {
             case 18:
               {
                 if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                  entity_ =
+                  vvSequenceEntities_ =
                       new java.util.ArrayList<
                           com.cpdss.common.generated.VesselInfo.VesselValveSequence>();
                   mutable_bitField0_ |= 0x00000001;
                 }
-                entity_.add(
+                vvSequenceEntities_.add(
                     input.readMessage(
                         com.cpdss.common.generated.VesselInfo.VesselValveSequence.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 26:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  vvEducationEntities_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                vvEducationEntities_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.parser(),
                         extensionRegistry));
                 break;
               }
@@ -51680,7 +51712,10 @@ public final class VesselInfo {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          entity_ = java.util.Collections.unmodifiableList(entity_);
+          vvSequenceEntities_ = java.util.Collections.unmodifiableList(vvSequenceEntities_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          vvEducationEntities_ = java.util.Collections.unmodifiableList(vvEducationEntities_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -51727,31 +51762,62 @@ public final class VesselInfo {
       return getResponseStatus();
     }
 
-    public static final int ENTITY_FIELD_NUMBER = 2;
-    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence> entity_;
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
+    public static final int VVSEQUENCEENTITIES_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence>
+        vvSequenceEntities_;
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
     public java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence>
-        getEntityList() {
-      return entity_;
+        getVvSequenceEntitiesList() {
+      return vvSequenceEntities_;
     }
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
     public java.util.List<
             ? extends com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder>
-        getEntityOrBuilderList() {
-      return entity_;
+        getVvSequenceEntitiesOrBuilderList() {
+      return vvSequenceEntities_;
     }
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
-    public int getEntityCount() {
-      return entity_.size();
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+    public int getVvSequenceEntitiesCount() {
+      return vvSequenceEntities_.size();
     }
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
-    public com.cpdss.common.generated.VesselInfo.VesselValveSequence getEntity(int index) {
-      return entity_.get(index);
-    }
-    /** <code>repeated .VesselValveSequence entity = 2;</code> */
-    public com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder getEntityOrBuilder(
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselValveSequence getVvSequenceEntities(
         int index) {
-      return entity_.get(index);
+      return vvSequenceEntities_.get(index);
+    }
+    /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder
+        getVvSequenceEntitiesOrBuilder(int index) {
+      return vvSequenceEntities_.get(index);
+    }
+
+    public static final int VVEDUCATIONENTITIES_FIELD_NUMBER = 3;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>
+        vvEducationEntities_;
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>
+        getVvEducationEntitiesList() {
+      return vvEducationEntities_;
+    }
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder>
+        getVvEducationEntitiesOrBuilderList() {
+      return vvEducationEntities_;
+    }
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    public int getVvEducationEntitiesCount() {
+      return vvEducationEntities_.size();
+    }
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess getVvEducationEntities(
+        int index) {
+      return vvEducationEntities_.get(index);
+    }
+    /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder
+        getVvEducationEntitiesOrBuilder(int index) {
+      return vvEducationEntities_.get(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -51771,8 +51837,11 @@ public final class VesselInfo {
       if (responseStatus_ != null) {
         output.writeMessage(1, getResponseStatus());
       }
-      for (int i = 0; i < entity_.size(); i++) {
-        output.writeMessage(2, entity_.get(i));
+      for (int i = 0; i < vvSequenceEntities_.size(); i++) {
+        output.writeMessage(2, vvSequenceEntities_.get(i));
+      }
+      for (int i = 0; i < vvEducationEntities_.size(); i++) {
+        output.writeMessage(3, vvEducationEntities_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -51786,8 +51855,14 @@ public final class VesselInfo {
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
       }
-      for (int i = 0; i < entity_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, entity_.get(i));
+      for (int i = 0; i < vvSequenceEntities_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(2, vvSequenceEntities_.get(i));
+      }
+      for (int i = 0; i < vvEducationEntities_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                3, vvEducationEntities_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -51809,7 +51884,8 @@ public final class VesselInfo {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
-      if (!getEntityList().equals(other.getEntityList())) return false;
+      if (!getVvSequenceEntitiesList().equals(other.getVvSequenceEntitiesList())) return false;
+      if (!getVvEducationEntitiesList().equals(other.getVvEducationEntitiesList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -51825,9 +51901,13 @@ public final class VesselInfo {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
-      if (getEntityCount() > 0) {
-        hash = (37 * hash) + ENTITY_FIELD_NUMBER;
-        hash = (53 * hash) + getEntityList().hashCode();
+      if (getVvSequenceEntitiesCount() > 0) {
+        hash = (37 * hash) + VVSEQUENCEENTITIES_FIELD_NUMBER;
+        hash = (53 * hash) + getVvSequenceEntitiesList().hashCode();
+      }
+      if (getVvEducationEntitiesCount() > 0) {
+        hash = (37 * hash) + VVEDUCATIONENTITIES_FIELD_NUMBER;
+        hash = (53 * hash) + getVvEducationEntitiesList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -51964,7 +52044,8 @@ public final class VesselInfo {
 
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
-          getEntityFieldBuilder();
+          getVvSequenceEntitiesFieldBuilder();
+          getVvEducationEntitiesFieldBuilder();
         }
       }
 
@@ -51977,11 +52058,17 @@ public final class VesselInfo {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
         }
-        if (entityBuilder_ == null) {
-          entity_ = java.util.Collections.emptyList();
+        if (vvSequenceEntitiesBuilder_ == null) {
+          vvSequenceEntities_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          entityBuilder_.clear();
+          vvSequenceEntitiesBuilder_.clear();
+        }
+        if (vvEducationEntitiesBuilder_ == null) {
+          vvEducationEntities_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          vvEducationEntitiesBuilder_.clear();
         }
         return this;
       }
@@ -52017,14 +52104,23 @@ public final class VesselInfo {
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
-        if (entityBuilder_ == null) {
+        if (vvSequenceEntitiesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
-            entity_ = java.util.Collections.unmodifiableList(entity_);
+            vvSequenceEntities_ = java.util.Collections.unmodifiableList(vvSequenceEntities_);
             bitField0_ = (bitField0_ & ~0x00000001);
           }
-          result.entity_ = entity_;
+          result.vvSequenceEntities_ = vvSequenceEntities_;
         } else {
-          result.entity_ = entityBuilder_.build();
+          result.vvSequenceEntities_ = vvSequenceEntitiesBuilder_.build();
+        }
+        if (vvEducationEntitiesBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            vvEducationEntities_ = java.util.Collections.unmodifiableList(vvEducationEntities_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.vvEducationEntities_ = vvEducationEntities_;
+        } else {
+          result.vvEducationEntities_ = vvEducationEntitiesBuilder_.build();
         }
         onBuilt();
         return result;
@@ -52083,30 +52179,57 @@ public final class VesselInfo {
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
         }
-        if (entityBuilder_ == null) {
-          if (!other.entity_.isEmpty()) {
-            if (entity_.isEmpty()) {
-              entity_ = other.entity_;
+        if (vvSequenceEntitiesBuilder_ == null) {
+          if (!other.vvSequenceEntities_.isEmpty()) {
+            if (vvSequenceEntities_.isEmpty()) {
+              vvSequenceEntities_ = other.vvSequenceEntities_;
               bitField0_ = (bitField0_ & ~0x00000001);
             } else {
-              ensureEntityIsMutable();
-              entity_.addAll(other.entity_);
+              ensureVvSequenceEntitiesIsMutable();
+              vvSequenceEntities_.addAll(other.vvSequenceEntities_);
             }
             onChanged();
           }
         } else {
-          if (!other.entity_.isEmpty()) {
-            if (entityBuilder_.isEmpty()) {
-              entityBuilder_.dispose();
-              entityBuilder_ = null;
-              entity_ = other.entity_;
+          if (!other.vvSequenceEntities_.isEmpty()) {
+            if (vvSequenceEntitiesBuilder_.isEmpty()) {
+              vvSequenceEntitiesBuilder_.dispose();
+              vvSequenceEntitiesBuilder_ = null;
+              vvSequenceEntities_ = other.vvSequenceEntities_;
               bitField0_ = (bitField0_ & ~0x00000001);
-              entityBuilder_ =
+              vvSequenceEntitiesBuilder_ =
                   com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
-                      ? getEntityFieldBuilder()
+                      ? getVvSequenceEntitiesFieldBuilder()
                       : null;
             } else {
-              entityBuilder_.addAllMessages(other.entity_);
+              vvSequenceEntitiesBuilder_.addAllMessages(other.vvSequenceEntities_);
+            }
+          }
+        }
+        if (vvEducationEntitiesBuilder_ == null) {
+          if (!other.vvEducationEntities_.isEmpty()) {
+            if (vvEducationEntities_.isEmpty()) {
+              vvEducationEntities_ = other.vvEducationEntities_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureVvEducationEntitiesIsMutable();
+              vvEducationEntities_.addAll(other.vvEducationEntities_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vvEducationEntities_.isEmpty()) {
+            if (vvEducationEntitiesBuilder_.isEmpty()) {
+              vvEducationEntitiesBuilder_.dispose();
+              vvEducationEntitiesBuilder_ = null;
+              vvEducationEntities_ = other.vvEducationEntities_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              vvEducationEntitiesBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVvEducationEntitiesFieldBuilder()
+                      : null;
+            } else {
+              vvEducationEntitiesBuilder_.addAllMessages(other.vvEducationEntities_);
             }
           }
         }
@@ -52262,14 +52385,14 @@ public final class VesselInfo {
         return responseStatusBuilder_;
       }
 
-      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence> entity_ =
-          java.util.Collections.emptyList();
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence>
+          vvSequenceEntities_ = java.util.Collections.emptyList();
 
-      private void ensureEntityIsMutable() {
+      private void ensureVvSequenceEntitiesIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          entity_ =
+          vvSequenceEntities_ =
               new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselValveSequence>(
-                  entity_);
+                  vvSequenceEntities_);
           bitField0_ |= 0x00000001;
         }
       }
@@ -52278,209 +52401,450 @@ public final class VesselInfo {
               com.cpdss.common.generated.VesselInfo.VesselValveSequence,
               com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder,
               com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder>
-          entityBuilder_;
+          vvSequenceEntitiesBuilder_;
 
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
       public java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence>
-          getEntityList() {
-        if (entityBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(entity_);
+          getVvSequenceEntitiesList() {
+        if (vvSequenceEntitiesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vvSequenceEntities_);
         } else {
-          return entityBuilder_.getMessageList();
+          return vvSequenceEntitiesBuilder_.getMessageList();
         }
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public int getEntityCount() {
-        if (entityBuilder_ == null) {
-          return entity_.size();
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public int getVvSequenceEntitiesCount() {
+        if (vvSequenceEntitiesBuilder_ == null) {
+          return vvSequenceEntities_.size();
         } else {
-          return entityBuilder_.getCount();
+          return vvSequenceEntitiesBuilder_.getCount();
         }
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public com.cpdss.common.generated.VesselInfo.VesselValveSequence getEntity(int index) {
-        if (entityBuilder_ == null) {
-          return entity_.get(index);
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveSequence getVvSequenceEntities(
+          int index) {
+        if (vvSequenceEntitiesBuilder_ == null) {
+          return vvSequenceEntities_.get(index);
         } else {
-          return entityBuilder_.getMessage(index);
+          return vvSequenceEntitiesBuilder_.getMessage(index);
         }
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder setEntity(
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder setVvSequenceEntities(
           int index, com.cpdss.common.generated.VesselInfo.VesselValveSequence value) {
-        if (entityBuilder_ == null) {
+        if (vvSequenceEntitiesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureEntityIsMutable();
-          entity_.set(index, value);
+          ensureVvSequenceEntitiesIsMutable();
+          vvSequenceEntities_.set(index, value);
           onChanged();
         } else {
-          entityBuilder_.setMessage(index, value);
+          vvSequenceEntitiesBuilder_.setMessage(index, value);
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder setEntity(
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder setVvSequenceEntities(
           int index,
           com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder builderForValue) {
-        if (entityBuilder_ == null) {
-          ensureEntityIsMutable();
-          entity_.set(index, builderForValue.build());
+        if (vvSequenceEntitiesBuilder_ == null) {
+          ensureVvSequenceEntitiesIsMutable();
+          vvSequenceEntities_.set(index, builderForValue.build());
           onChanged();
         } else {
-          entityBuilder_.setMessage(index, builderForValue.build());
+          vvSequenceEntitiesBuilder_.setMessage(index, builderForValue.build());
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder addEntity(com.cpdss.common.generated.VesselInfo.VesselValveSequence value) {
-        if (entityBuilder_ == null) {
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder addVvSequenceEntities(
+          com.cpdss.common.generated.VesselInfo.VesselValveSequence value) {
+        if (vvSequenceEntitiesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureEntityIsMutable();
-          entity_.add(value);
+          ensureVvSequenceEntitiesIsMutable();
+          vvSequenceEntities_.add(value);
           onChanged();
         } else {
-          entityBuilder_.addMessage(value);
+          vvSequenceEntitiesBuilder_.addMessage(value);
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder addEntity(
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder addVvSequenceEntities(
           int index, com.cpdss.common.generated.VesselInfo.VesselValveSequence value) {
-        if (entityBuilder_ == null) {
+        if (vvSequenceEntitiesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureEntityIsMutable();
-          entity_.add(index, value);
+          ensureVvSequenceEntitiesIsMutable();
+          vvSequenceEntities_.add(index, value);
           onChanged();
         } else {
-          entityBuilder_.addMessage(index, value);
+          vvSequenceEntitiesBuilder_.addMessage(index, value);
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder addEntity(
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder addVvSequenceEntities(
           com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder builderForValue) {
-        if (entityBuilder_ == null) {
-          ensureEntityIsMutable();
-          entity_.add(builderForValue.build());
+        if (vvSequenceEntitiesBuilder_ == null) {
+          ensureVvSequenceEntitiesIsMutable();
+          vvSequenceEntities_.add(builderForValue.build());
           onChanged();
         } else {
-          entityBuilder_.addMessage(builderForValue.build());
+          vvSequenceEntitiesBuilder_.addMessage(builderForValue.build());
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder addEntity(
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder addVvSequenceEntities(
           int index,
           com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder builderForValue) {
-        if (entityBuilder_ == null) {
-          ensureEntityIsMutable();
-          entity_.add(index, builderForValue.build());
+        if (vvSequenceEntitiesBuilder_ == null) {
+          ensureVvSequenceEntitiesIsMutable();
+          vvSequenceEntities_.add(index, builderForValue.build());
           onChanged();
         } else {
-          entityBuilder_.addMessage(index, builderForValue.build());
+          vvSequenceEntitiesBuilder_.addMessage(index, builderForValue.build());
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder addAllEntity(
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder addAllVvSequenceEntities(
           java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.VesselValveSequence>
               values) {
-        if (entityBuilder_ == null) {
-          ensureEntityIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, entity_);
+        if (vvSequenceEntitiesBuilder_ == null) {
+          ensureVvSequenceEntitiesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vvSequenceEntities_);
           onChanged();
         } else {
-          entityBuilder_.addAllMessages(values);
+          vvSequenceEntitiesBuilder_.addAllMessages(values);
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder clearEntity() {
-        if (entityBuilder_ == null) {
-          entity_ = java.util.Collections.emptyList();
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder clearVvSequenceEntities() {
+        if (vvSequenceEntitiesBuilder_ == null) {
+          vvSequenceEntities_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
-          entityBuilder_.clear();
+          vvSequenceEntitiesBuilder_.clear();
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public Builder removeEntity(int index) {
-        if (entityBuilder_ == null) {
-          ensureEntityIsMutable();
-          entity_.remove(index);
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public Builder removeVvSequenceEntities(int index) {
+        if (vvSequenceEntitiesBuilder_ == null) {
+          ensureVvSequenceEntitiesIsMutable();
+          vvSequenceEntities_.remove(index);
           onChanged();
         } else {
-          entityBuilder_.remove(index);
+          vvSequenceEntitiesBuilder_.remove(index);
         }
         return this;
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder getEntityBuilder(
-          int index) {
-        return getEntityFieldBuilder().getBuilder(index);
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder
+          getVvSequenceEntitiesBuilder(int index) {
+        return getVvSequenceEntitiesFieldBuilder().getBuilder(index);
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder getEntityOrBuilder(
-          int index) {
-        if (entityBuilder_ == null) {
-          return entity_.get(index);
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder
+          getVvSequenceEntitiesOrBuilder(int index) {
+        if (vvSequenceEntitiesBuilder_ == null) {
+          return vvSequenceEntities_.get(index);
         } else {
-          return entityBuilder_.getMessageOrBuilder(index);
+          return vvSequenceEntitiesBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
       public java.util.List<
               ? extends com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder>
-          getEntityOrBuilderList() {
-        if (entityBuilder_ != null) {
-          return entityBuilder_.getMessageOrBuilderList();
+          getVvSequenceEntitiesOrBuilderList() {
+        if (vvSequenceEntitiesBuilder_ != null) {
+          return vvSequenceEntitiesBuilder_.getMessageOrBuilderList();
         } else {
-          return java.util.Collections.unmodifiableList(entity_);
+          return java.util.Collections.unmodifiableList(vvSequenceEntities_);
         }
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder addEntityBuilder() {
-        return getEntityFieldBuilder()
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder
+          addVvSequenceEntitiesBuilder() {
+        return getVvSequenceEntitiesFieldBuilder()
             .addBuilder(
                 com.cpdss.common.generated.VesselInfo.VesselValveSequence.getDefaultInstance());
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
-      public com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder addEntityBuilder(
-          int index) {
-        return getEntityFieldBuilder()
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder
+          addVvSequenceEntitiesBuilder(int index) {
+        return getVvSequenceEntitiesFieldBuilder()
             .addBuilder(
                 index,
                 com.cpdss.common.generated.VesselInfo.VesselValveSequence.getDefaultInstance());
       }
-      /** <code>repeated .VesselValveSequence entity = 2;</code> */
+      /** <code>repeated .VesselValveSequence vvSequenceEntities = 2;</code> */
       public java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder>
-          getEntityBuilderList() {
-        return getEntityFieldBuilder().getBuilderList();
+          getVvSequenceEntitiesBuilderList() {
+        return getVvSequenceEntitiesFieldBuilder().getBuilderList();
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.VesselInfo.VesselValveSequence,
               com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder,
               com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder>
-          getEntityFieldBuilder() {
-        if (entityBuilder_ == null) {
-          entityBuilder_ =
+          getVvSequenceEntitiesFieldBuilder() {
+        if (vvSequenceEntitiesBuilder_ == null) {
+          vvSequenceEntitiesBuilder_ =
               new com.google.protobuf.RepeatedFieldBuilderV3<
                   com.cpdss.common.generated.VesselInfo.VesselValveSequence,
                   com.cpdss.common.generated.VesselInfo.VesselValveSequence.Builder,
                   com.cpdss.common.generated.VesselInfo.VesselValveSequenceOrBuilder>(
-                  entity_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
-          entity_ = null;
+                  vvSequenceEntities_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          vvSequenceEntities_ = null;
         }
-        return entityBuilder_;
+        return vvSequenceEntitiesBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>
+          vvEducationEntities_ = java.util.Collections.emptyList();
+
+      private void ensureVvEducationEntitiesIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          vvEducationEntities_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>(
+                  vvEducationEntities_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess,
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder>
+          vvEducationEntitiesBuilder_;
+
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>
+          getVvEducationEntitiesList() {
+        if (vvEducationEntitiesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vvEducationEntities_);
+        } else {
+          return vvEducationEntitiesBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public int getVvEducationEntitiesCount() {
+        if (vvEducationEntitiesBuilder_ == null) {
+          return vvEducationEntities_.size();
+        } else {
+          return vvEducationEntitiesBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+          getVvEducationEntities(int index) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          return vvEducationEntities_.get(index);
+        } else {
+          return vvEducationEntitiesBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder setVvEducationEntities(
+          int index, com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess value) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVvEducationEntitiesIsMutable();
+          vvEducationEntities_.set(index, value);
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder setVvEducationEntities(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder
+              builderForValue) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          ensureVvEducationEntitiesIsMutable();
+          vvEducationEntities_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder addVvEducationEntities(
+          com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess value) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVvEducationEntitiesIsMutable();
+          vvEducationEntities_.add(value);
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder addVvEducationEntities(
+          int index, com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess value) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVvEducationEntitiesIsMutable();
+          vvEducationEntities_.add(index, value);
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder addVvEducationEntities(
+          com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder
+              builderForValue) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          ensureVvEducationEntitiesIsMutable();
+          vvEducationEntities_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder addVvEducationEntities(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder
+              builderForValue) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          ensureVvEducationEntitiesIsMutable();
+          vvEducationEntities_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder addAllVvEducationEntities(
+          java.lang.Iterable<
+                  ? extends com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess>
+              values) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          ensureVvEducationEntitiesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vvEducationEntities_);
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder clearVvEducationEntities() {
+        if (vvEducationEntitiesBuilder_ == null) {
+          vvEducationEntities_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public Builder removeVvEducationEntities(int index) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          ensureVvEducationEntitiesIsMutable();
+          vvEducationEntities_.remove(index);
+          onChanged();
+        } else {
+          vvEducationEntitiesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder
+          getVvEducationEntitiesBuilder(int index) {
+        return getVvEducationEntitiesFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder
+          getVvEducationEntitiesOrBuilder(int index) {
+        if (vvEducationEntitiesBuilder_ == null) {
+          return vvEducationEntities_.get(index);
+        } else {
+          return vvEducationEntitiesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder>
+          getVvEducationEntitiesOrBuilderList() {
+        if (vvEducationEntitiesBuilder_ != null) {
+          return vvEducationEntitiesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vvEducationEntities_);
+        }
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder
+          addVvEducationEntitiesBuilder() {
+        return getVvEducationEntitiesFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder
+          addVvEducationEntitiesBuilder(int index) {
+        return getVvEducationEntitiesFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .VesselValveEducationProcess vvEducationEntities = 3;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder>
+          getVvEducationEntitiesBuilderList() {
+        return getVvEducationEntitiesFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess,
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder>
+          getVvEducationEntitiesFieldBuilder() {
+        if (vvEducationEntitiesBuilder_ == null) {
+          vvEducationEntitiesBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess,
+                  com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder,
+                  com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder>(
+                  vvEducationEntities_,
+                  ((bitField0_ & 0x00000002) != 0),
+                  getParentForChildren(),
+                  isClean());
+          vvEducationEntities_ = null;
+        }
+        return vvEducationEntitiesBuilder_;
       }
 
       @java.lang.Override
@@ -55503,6 +55867,1179 @@ public final class VesselInfo {
     }
   }
 
+  public interface VesselValveEducationProcessOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:VesselValveEducationProcess)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string eductorName = 2;</code>
+     *
+     * @return The eductorName.
+     */
+    java.lang.String getEductorName();
+    /**
+     * <code>string eductorName = 2;</code>
+     *
+     * @return The bytes for eductorName.
+     */
+    com.google.protobuf.ByteString getEductorNameBytes();
+
+    /**
+     * <code>int32 sequenceNumber = 3;</code>
+     *
+     * @return The sequenceNumber.
+     */
+    int getSequenceNumber();
+
+    /**
+     * <code>string stepName = 4;</code>
+     *
+     * @return The stepName.
+     */
+    java.lang.String getStepName();
+    /**
+     * <code>string stepName = 4;</code>
+     *
+     * @return The bytes for stepName.
+     */
+    com.google.protobuf.ByteString getStepNameBytes();
+
+    /**
+     * <code>string valveNumber = 5;</code>
+     *
+     * @return The valveNumber.
+     */
+    java.lang.String getValveNumber();
+    /**
+     * <code>string valveNumber = 5;</code>
+     *
+     * @return The bytes for valveNumber.
+     */
+    com.google.protobuf.ByteString getValveNumberBytes();
+
+    /**
+     * <code>int32 eductorId = 6;</code>
+     *
+     * @return The eductorId.
+     */
+    int getEductorId();
+
+    /**
+     * <code>int32 eductionProcessMasterId = 7;</code>
+     *
+     * @return The eductionProcessMasterId.
+     */
+    int getEductionProcessMasterId();
+  }
+  /** Protobuf type {@code VesselValveEducationProcess} */
+  public static final class VesselValveEducationProcess
+      extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:VesselValveEducationProcess)
+      VesselValveEducationProcessOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use VesselValveEducationProcess.newBuilder() to construct.
+    private VesselValveEducationProcess(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private VesselValveEducationProcess() {
+      eductorName_ = "";
+      stepName_ = "";
+      valveNumber_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new VesselValveEducationProcess();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private VesselValveEducationProcess(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                eductorName_ = s;
+                break;
+              }
+            case 24:
+              {
+                sequenceNumber_ = input.readInt32();
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                stepName_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                valveNumber_ = s;
+                break;
+              }
+            case 48:
+              {
+                eductorId_ = input.readInt32();
+                break;
+              }
+            case 56:
+              {
+                eductionProcessMasterId_ = input.readInt32();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselValveEducationProcess_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselValveEducationProcess_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.class,
+              com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int EDUCTORNAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object eductorName_;
+    /**
+     * <code>string eductorName = 2;</code>
+     *
+     * @return The eductorName.
+     */
+    public java.lang.String getEductorName() {
+      java.lang.Object ref = eductorName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        eductorName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string eductorName = 2;</code>
+     *
+     * @return The bytes for eductorName.
+     */
+    public com.google.protobuf.ByteString getEductorNameBytes() {
+      java.lang.Object ref = eductorName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        eductorName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SEQUENCENUMBER_FIELD_NUMBER = 3;
+    private int sequenceNumber_;
+    /**
+     * <code>int32 sequenceNumber = 3;</code>
+     *
+     * @return The sequenceNumber.
+     */
+    public int getSequenceNumber() {
+      return sequenceNumber_;
+    }
+
+    public static final int STEPNAME_FIELD_NUMBER = 4;
+    private volatile java.lang.Object stepName_;
+    /**
+     * <code>string stepName = 4;</code>
+     *
+     * @return The stepName.
+     */
+    public java.lang.String getStepName() {
+      java.lang.Object ref = stepName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        stepName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string stepName = 4;</code>
+     *
+     * @return The bytes for stepName.
+     */
+    public com.google.protobuf.ByteString getStepNameBytes() {
+      java.lang.Object ref = stepName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        stepName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int VALVENUMBER_FIELD_NUMBER = 5;
+    private volatile java.lang.Object valveNumber_;
+    /**
+     * <code>string valveNumber = 5;</code>
+     *
+     * @return The valveNumber.
+     */
+    public java.lang.String getValveNumber() {
+      java.lang.Object ref = valveNumber_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        valveNumber_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string valveNumber = 5;</code>
+     *
+     * @return The bytes for valveNumber.
+     */
+    public com.google.protobuf.ByteString getValveNumberBytes() {
+      java.lang.Object ref = valveNumber_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        valveNumber_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EDUCTORID_FIELD_NUMBER = 6;
+    private int eductorId_;
+    /**
+     * <code>int32 eductorId = 6;</code>
+     *
+     * @return The eductorId.
+     */
+    public int getEductorId() {
+      return eductorId_;
+    }
+
+    public static final int EDUCTIONPROCESSMASTERID_FIELD_NUMBER = 7;
+    private int eductionProcessMasterId_;
+    /**
+     * <code>int32 eductionProcessMasterId = 7;</code>
+     *
+     * @return The eductionProcessMasterId.
+     */
+    public int getEductionProcessMasterId() {
+      return eductionProcessMasterId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getEductorNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, eductorName_);
+      }
+      if (sequenceNumber_ != 0) {
+        output.writeInt32(3, sequenceNumber_);
+      }
+      if (!getStepNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, stepName_);
+      }
+      if (!getValveNumberBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, valveNumber_);
+      }
+      if (eductorId_ != 0) {
+        output.writeInt32(6, eductorId_);
+      }
+      if (eductionProcessMasterId_ != 0) {
+        output.writeInt32(7, eductionProcessMasterId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getEductorNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, eductorName_);
+      }
+      if (sequenceNumber_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(3, sequenceNumber_);
+      }
+      if (!getStepNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, stepName_);
+      }
+      if (!getValveNumberBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, valveNumber_);
+      }
+      if (eductorId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(6, eductorId_);
+      }
+      if (eductionProcessMasterId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(7, eductionProcessMasterId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess other =
+          (com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getEductorName().equals(other.getEductorName())) return false;
+      if (getSequenceNumber() != other.getSequenceNumber()) return false;
+      if (!getStepName().equals(other.getStepName())) return false;
+      if (!getValveNumber().equals(other.getValveNumber())) return false;
+      if (getEductorId() != other.getEductorId()) return false;
+      if (getEductionProcessMasterId() != other.getEductionProcessMasterId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + EDUCTORNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getEductorName().hashCode();
+      hash = (37 * hash) + SEQUENCENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getSequenceNumber();
+      hash = (37 * hash) + STEPNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getStepName().hashCode();
+      hash = (37 * hash) + VALVENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getValveNumber().hashCode();
+      hash = (37 * hash) + EDUCTORID_FIELD_NUMBER;
+      hash = (53 * hash) + getEductorId();
+      hash = (37 * hash) + EDUCTIONPROCESSMASTERID_FIELD_NUMBER;
+      hash = (53 * hash) + getEductionProcessMasterId();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code VesselValveEducationProcess} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:VesselValveEducationProcess)
+        com.cpdss.common.generated.VesselInfo.VesselValveEducationProcessOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselValveEducationProcess_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselValveEducationProcess_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.class,
+                com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        eductorName_ = "";
+
+        sequenceNumber_ = 0;
+
+        stepName_ = "";
+
+        valveNumber_ = "";
+
+        eductorId_ = 0;
+
+        eductionProcessMasterId_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselValveEducationProcess_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess build() {
+        com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess buildPartial() {
+        com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess result =
+            new com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess(this);
+        result.id_ = id_;
+        result.eductorName_ = eductorName_;
+        result.sequenceNumber_ = sequenceNumber_;
+        result.stepName_ = stepName_;
+        result.valveNumber_ = valveNumber_;
+        result.eductorId_ = eductorId_;
+        result.eductionProcessMasterId_ = eductionProcessMasterId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess) {
+          return mergeFrom(
+              (com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess other) {
+        if (other
+            == com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+                .getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getEductorName().isEmpty()) {
+          eductorName_ = other.eductorName_;
+          onChanged();
+        }
+        if (other.getSequenceNumber() != 0) {
+          setSequenceNumber(other.getSequenceNumber());
+        }
+        if (!other.getStepName().isEmpty()) {
+          stepName_ = other.stepName_;
+          onChanged();
+        }
+        if (!other.getValveNumber().isEmpty()) {
+          valveNumber_ = other.valveNumber_;
+          onChanged();
+        }
+        if (other.getEductorId() != 0) {
+          setEductorId(other.getEductorId());
+        }
+        if (other.getEductionProcessMasterId() != 0) {
+          setEductionProcessMasterId(other.getEductionProcessMasterId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object eductorName_ = "";
+      /**
+       * <code>string eductorName = 2;</code>
+       *
+       * @return The eductorName.
+       */
+      public java.lang.String getEductorName() {
+        java.lang.Object ref = eductorName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          eductorName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string eductorName = 2;</code>
+       *
+       * @return The bytes for eductorName.
+       */
+      public com.google.protobuf.ByteString getEductorNameBytes() {
+        java.lang.Object ref = eductorName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          eductorName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string eductorName = 2;</code>
+       *
+       * @param value The eductorName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEductorName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        eductorName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eductorName = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEductorName() {
+
+        eductorName_ = getDefaultInstance().getEductorName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eductorName = 2;</code>
+       *
+       * @param value The bytes for eductorName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEductorNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        eductorName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int sequenceNumber_;
+      /**
+       * <code>int32 sequenceNumber = 3;</code>
+       *
+       * @return The sequenceNumber.
+       */
+      public int getSequenceNumber() {
+        return sequenceNumber_;
+      }
+      /**
+       * <code>int32 sequenceNumber = 3;</code>
+       *
+       * @param value The sequenceNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSequenceNumber(int value) {
+
+        sequenceNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 sequenceNumber = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSequenceNumber() {
+
+        sequenceNumber_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object stepName_ = "";
+      /**
+       * <code>string stepName = 4;</code>
+       *
+       * @return The stepName.
+       */
+      public java.lang.String getStepName() {
+        java.lang.Object ref = stepName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          stepName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string stepName = 4;</code>
+       *
+       * @return The bytes for stepName.
+       */
+      public com.google.protobuf.ByteString getStepNameBytes() {
+        java.lang.Object ref = stepName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          stepName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string stepName = 4;</code>
+       *
+       * @param value The stepName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStepName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        stepName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string stepName = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStepName() {
+
+        stepName_ = getDefaultInstance().getStepName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string stepName = 4;</code>
+       *
+       * @param value The bytes for stepName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStepNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        stepName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object valveNumber_ = "";
+      /**
+       * <code>string valveNumber = 5;</code>
+       *
+       * @return The valveNumber.
+       */
+      public java.lang.String getValveNumber() {
+        java.lang.Object ref = valveNumber_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          valveNumber_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string valveNumber = 5;</code>
+       *
+       * @return The bytes for valveNumber.
+       */
+      public com.google.protobuf.ByteString getValveNumberBytes() {
+        java.lang.Object ref = valveNumber_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          valveNumber_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string valveNumber = 5;</code>
+       *
+       * @param value The valveNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValveNumber(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        valveNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string valveNumber = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValveNumber() {
+
+        valveNumber_ = getDefaultInstance().getValveNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string valveNumber = 5;</code>
+       *
+       * @param value The bytes for valveNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValveNumberBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        valveNumber_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int eductorId_;
+      /**
+       * <code>int32 eductorId = 6;</code>
+       *
+       * @return The eductorId.
+       */
+      public int getEductorId() {
+        return eductorId_;
+      }
+      /**
+       * <code>int32 eductorId = 6;</code>
+       *
+       * @param value The eductorId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEductorId(int value) {
+
+        eductorId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 eductorId = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEductorId() {
+
+        eductorId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int eductionProcessMasterId_;
+      /**
+       * <code>int32 eductionProcessMasterId = 7;</code>
+       *
+       * @return The eductionProcessMasterId.
+       */
+      public int getEductionProcessMasterId() {
+        return eductionProcessMasterId_;
+      }
+      /**
+       * <code>int32 eductionProcessMasterId = 7;</code>
+       *
+       * @param value The eductionProcessMasterId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEductionProcessMasterId(int value) {
+
+        eductionProcessMasterId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 eductionProcessMasterId = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEductionProcessMasterId() {
+
+        eductionProcessMasterId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:VesselValveEducationProcess)
+    }
+
+    // @@protoc_insertion_point(class_scope:VesselValveEducationProcess)
+    private static final com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VesselValveEducationProcess> PARSER =
+        new com.google.protobuf.AbstractParser<VesselValveEducationProcess>() {
+          @java.lang.Override
+          public VesselValveEducationProcess parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new VesselValveEducationProcess(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<VesselValveEducationProcess> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VesselValveEducationProcess> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.VesselValveEducationProcess
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface LoadingInfoRulesRequestOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:LoadingInfoRulesRequest)
@@ -57120,6 +58657,10 @@ public final class VesselInfo {
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_VesselValveSequence_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_VesselValveEducationProcess_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VesselValveEducationProcess_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadingInfoRulesRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadingInfoRulesRequest_fieldAccessorTable;
@@ -57291,53 +58832,59 @@ public final class VesselInfo {
           + "RulePlans\022\027\n\017isNoDefaultRule\030\004 \001(\010\"X\n\017Ve"
           + "sselRuleReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
           + "ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RuleP"
-          + "lans\"i\n\030VesselValveSequenceReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022$\n\006ent"
-          + "ity\030\002 \003(\0132\024.VesselValveSequence\"\255\004\n\023Vess"
-          + "elValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonV"
-          + "alve\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipeli"
-          + "neColor\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014p"
-          + "ipelineType\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001("
-          + "\t\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025sequen"
-          + "ceOperationName\030\t \001(\t\022\026\n\016sequenceTypeId\030"
-          + "\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027seque"
-          + "nceVesselMappingId\030\014 \001(\005\022\025\n\rtankShortNam"
-          + "e\030\r \001(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017valveC"
-          + "ategoryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\t"
-          + "valveSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\r"
-          + "valveTypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022"
-          + "\025\n\rvesselTankXid\030\025 \001(\005\022\034\n\024vesselValveMap"
-          + "pingId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"+\n\027Loadi"
-          + "ngInfoRulesRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025"
-          + "LoadingInfoRulesReply\022\025\n\005rules\030\001 \003(\0132\006.R"
-          + "ules\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseS"
-          + "tatus2\344\007\n\021VesselInfoService\0228\n\026GetAllVes"
-          + "selsByCompany\022\016.VesselRequest\032\014.VesselRe"
-          + "ply\"\000\0226\n\024GetVesselDetailsById\022\016.VesselRe"
-          + "quest\032\014.VesselReply\"\000\0220\n\016GetVesselTanks\022"
-          + "\016.VesselRequest\032\014.VesselReply\"\000\0225\n\023GetVe"
-          + "sselCargoTanks\022\016.VesselRequest\032\014.VesselR"
-          + "eply\"\000\022A\n\027GetVesselDetailsForAlgo\022\022.Vess"
-          + "elAlgoRequest\032\020.VesselAlgoReply\"\000\022C\n!Get"
-          + "VesselDetailForSynopticalTable\022\016.VesselR"
-          + "equest\032\014.VesselReply\"\000\022;\n\031GetVesselDetai"
-          + "lByVesselId\022\016.VesselRequest\032\014.VesselRepl"
-          + "y\"\000\022A\n\025GetVesselInfoByPaging\022\030.VesselReq"
-          + "uestWithPaging\032\014.VesselReply\"\000\022C\n\026GetVes"
-          + "selInfoBytankIds\022\022.VesselTankRequest\032\023.V"
-          + "esselTankResponse\"\000\022C\n\032GetDWTFromVesselB"
-          + "yVesselId\022\021.VesselDWTRequest\032\022.VesselDWT"
-          + "Response\022@\n\027GetVesselInfoByVesselId\022\020.Ve"
-          + "sselIdRequest\032\021.VesselIdResponse\"\000\022D\n\030Ge"
-          + "tVesselPumpsByVesselId\022\020.VesselIdRequest"
-          + "\032\024.VesselPumpsResponse\"\000\022H\n\036GetRulesByVe"
-          + "sselIdAndSectionId\022\022.VesselRuleRequest\032\020"
-          + ".VesselRuleReply\"\000\022E\n\026GetVesselValveSequ"
-          + "ence\022\016.VesselRequest\032\031.VesselValveSequen"
-          + "ceReply\"\000\022I\n\023GetLoadingInfoRules\022\030.Loadi"
-          + "ngInfoRulesRequest\032\026.LoadingInfoRulesRep"
-          + "ly\"\000B\036\n\032com.cpdss.common.generatedP\000b\006pr"
-          + "oto3"
+          + "lans\"\260\001\n\030VesselValveSequenceReply\022\'\n\016res"
+          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\0220\n\022vv"
+          + "SequenceEntities\030\002 \003(\0132\024.VesselValveSequ"
+          + "ence\0229\n\023vvEducationEntities\030\003 \003(\0132\034.Vess"
+          + "elValveEducationProcess\"\255\004\n\023VesselValveS"
+          + "equence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001"
+          + "(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineColor\030"
+          + "\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipelineT"
+          + "ype\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t\022\033\n\023seq"
+          + "uenceOperationId\030\010 \001(\005\022\035\n\025sequenceOperat"
+          + "ionName\030\t \001(\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n"
+          + "\020sequenceTypeName\030\013 \001(\t\022\037\n\027sequenceVesse"
+          + "lMappingId\030\014 \001(\005\022\025\n\rtankShortName\030\r \001(\t\022"
+          + "\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017valveCategoryI"
+          + "d\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tvalveSid"
+          + "e\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rvalveTyp"
+          + "eName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesse"
+          + "lTankXid\030\025 \001(\005\022\034\n\024vesselValveMappingId\030\026"
+          + " \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselValveE"
+          + "ducationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorNa"
+          + "me\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010step"
+          + "Name\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\teduct"
+          + "orId\030\006 \001(\005\022\037\n\027eductionProcessMasterId\030\007 "
+          + "\001(\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010vessel"
+          + "Id\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005rul"
+          + "es\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001(\013"
+          + "2\017.ResponseStatus2\344\007\n\021VesselInfoService\022"
+          + "8\n\026GetAllVesselsByCompany\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsByI"
+          + "d\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n\016Get"
+          + "VesselTanks\022\016.VesselRequest\032\014.VesselRepl"
+          + "y\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselReque"
+          + "st\032\014.VesselReply\"\000\022A\n\027GetVesselDetailsFo"
+          + "rAlgo\022\022.VesselAlgoRequest\032\020.VesselAlgoRe"
+          + "ply\"\000\022C\n!GetVesselDetailForSynopticalTab"
+          + "le\022\016.VesselRequest\032\014.VesselReply\"\000\022;\n\031Ge"
+          + "tVesselDetailByVesselId\022\016.VesselRequest\032"
+          + "\014.VesselReply\"\000\022A\n\025GetVesselInfoByPaging"
+          + "\022\030.VesselRequestWithPaging\032\014.VesselReply"
+          + "\"\000\022C\n\026GetVesselInfoBytankIds\022\022.VesselTan"
+          + "kRequest\032\023.VesselTankResponse\"\000\022C\n\032GetDW"
+          + "TFromVesselByVesselId\022\021.VesselDWTRequest"
+          + "\032\022.VesselDWTResponse\022@\n\027GetVesselInfoByV"
+          + "esselId\022\020.VesselIdRequest\032\021.VesselIdResp"
+          + "onse\"\000\022D\n\030GetVesselPumpsByVesselId\022\020.Ves"
+          + "selIdRequest\032\024.VesselPumpsResponse\"\000\022H\n\036"
+          + "GetRulesByVesselIdAndSectionId\022\022.VesselR"
+          + "uleRequest\032\020.VesselRuleReply\"\000\022E\n\026GetVes"
+          + "selValveSequence\022\016.VesselRequest\032\031.Vesse"
+          + "lValveSequenceReply\"\000\022I\n\023GetLoadingInfoR"
+          + "ules\022\030.LoadingInfoRulesRequest\032\026.Loading"
+          + "InfoRulesReply\"\000B\036\n\032com.cpdss.common.gen"
+          + "eratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -57743,7 +59290,7 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselValveSequenceReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "Entity",
+              "ResponseStatus", "VvSequenceEntities", "VvEducationEntities",
             });
     internal_static_VesselValveSequence_descriptor = getDescriptor().getMessageTypes().get(37);
     internal_static_VesselValveSequence_fieldAccessorTable =
@@ -57774,14 +59321,28 @@ public final class VesselInfo {
               "VesselValveMappingId",
               "VesselXid",
             });
-    internal_static_LoadingInfoRulesRequest_descriptor = getDescriptor().getMessageTypes().get(38);
+    internal_static_VesselValveEducationProcess_descriptor =
+        getDescriptor().getMessageTypes().get(38);
+    internal_static_VesselValveEducationProcess_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_VesselValveEducationProcess_descriptor,
+            new java.lang.String[] {
+              "Id",
+              "EductorName",
+              "SequenceNumber",
+              "StepName",
+              "ValveNumber",
+              "EductorId",
+              "EductionProcessMasterId",
+            });
+    internal_static_LoadingInfoRulesRequest_descriptor = getDescriptor().getMessageTypes().get(39);
     internal_static_LoadingInfoRulesRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingInfoRulesRequest_descriptor,
             new java.lang.String[] {
               "VesselId",
             });
-    internal_static_LoadingInfoRulesReply_descriptor = getDescriptor().getMessageTypes().get(39);
+    internal_static_LoadingInfoRulesReply_descriptor = getDescriptor().getMessageTypes().get(40);
     internal_static_LoadingInfoRulesReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingInfoRulesReply_descriptor,

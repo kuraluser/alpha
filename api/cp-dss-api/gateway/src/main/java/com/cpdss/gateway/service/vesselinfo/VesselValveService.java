@@ -2,6 +2,8 @@
 package com.cpdss.gateway.service.vesselinfo;
 
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.gateway.domain.vessel.VesselValveEdu;
+import com.cpdss.gateway.domain.vessel.VesselValveEducationProcess;
 import com.cpdss.gateway.domain.vessel.VesselValveSeq;
 import com.cpdss.gateway.domain.vessel.VesselValveSequence;
 import java.math.BigDecimal;
@@ -27,7 +29,20 @@ public class VesselValveService {
               .collect(Collectors.groupingBy(VesselValveSequence::getSequenceOperationName));
       Map<String, Map<String, VesselValveSeq>> map3 = new HashMap<>();
       for (Map.Entry<String, List<VesselValveSequence>> seqEntityList : map2.entrySet()) {
-        Map<String, VesselValveSeq> map4 = new HashMap<>();
+        Map<String, VesselValveSeq> map4 =
+            new TreeMap<>(
+                new Comparator<String>() {
+                  @Override
+                  public int compare(String o1, String o2) {
+                    return extractInt(o1) - extractInt(o2);
+                  }
+
+                  int extractInt(String s) {
+                    String num = s.replaceAll("\\D", "");
+                    // return 0 if no digits found
+                    return num.isEmpty() ? 0 : Integer.parseInt(num);
+                  }
+                });
         int x = 1;
         for (VesselValveSequence v : seqEntityList.getValue()) {
           map4.put("Sequence_" + x, new VesselValveSeq().getInstance(v));
@@ -70,5 +85,39 @@ public class VesselValveService {
       sequenceList.add(sequence);
     }
     return sequenceList;
+  }
+
+  public Map<String, Map<String, List<VesselValveEdu>>> buildVesselValveEductorResponse(
+      List<VesselInfo.VesselValveEducationProcess> grpcSource) {
+    List<VesselValveEducationProcess> sourceList = buildVesselValveEductorDomain(grpcSource);
+    Map<String, List<VesselValveEducationProcess>> map1 =
+        sourceList.stream()
+            .collect(Collectors.groupingBy(VesselValveEducationProcess::getStepName));
+    Map<String, Map<String, List<VesselValveEdu>>> map11 = new HashMap<>();
+    for (Map.Entry<String, List<VesselValveEducationProcess>> mp : map1.entrySet()) {
+      Map<String, List<VesselValveEdu>> map12 =
+          mp.getValue().stream()
+              .collect(
+                  Collectors.groupingBy(
+                      VesselValveEducationProcess::getEductorName,
+                      Collectors.mapping(
+                          v -> {
+                            return new VesselValveEdu(v.getSequenceNumber(), v.getValveNumber());
+                          },
+                          Collectors.toList())));
+      map11.put(mp.getKey(), map12);
+    }
+    return map11;
+  }
+
+  public List<VesselValveEducationProcess> buildVesselValveEductorDomain(
+      List<VesselInfo.VesselValveEducationProcess> sourceList) {
+    List<VesselValveEducationProcess> list = new ArrayList<>();
+    for (VesselInfo.VesselValveEducationProcess vve : sourceList) {
+      VesselValveEducationProcess eduction = new VesselValveEducationProcess();
+      BeanUtils.copyProperties(vve, eduction);
+      list.add(eduction);
+    }
+    return list;
   }
 }

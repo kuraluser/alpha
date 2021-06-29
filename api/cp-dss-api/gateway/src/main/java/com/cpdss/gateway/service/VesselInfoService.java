@@ -39,7 +39,6 @@ import com.cpdss.gateway.domain.VesselDraftCondition;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.VesselTankTCG;
-import com.cpdss.gateway.domain.vessel.VesselValveSeq;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
@@ -218,13 +217,20 @@ public class VesselInfoService {
     return vesselDetailsResponse;
   }
 
-  private Map<String, Map<String, Map<String, VesselValveSeq>>> getVesselValveSequenceData() {
+  private Map<Object, Object> getVesselValveSequenceData() {
     VesselInfo.VesselRequest.Builder builder = VesselInfo.VesselRequest.newBuilder();
     VesselInfo.VesselValveSequenceReply reply =
         this.vesselInfoGrpcService.getVesselValveSequence(builder.build());
     if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
-      Map<String, Map<String, Map<String, VesselValveSeq>>> response =
-          this.vesselValveService.buildVesselValveResponse(reply.getEntityList());
+      Map<Object, Object> response = new HashMap<>();
+      // Vessel Valve Sequence
+      response.putAll(
+          this.vesselValveService.buildVesselValveResponse(reply.getVvSequenceEntitiesList()));
+      // Vessel Eductor Process
+      response.put(
+          "EductionProcess",
+          this.vesselValveService.buildVesselValveEductorResponse(
+              reply.getVvEducationEntitiesList()));
       log.info("Vessel Valve Sequence data size {}", response);
       return response;
     }

@@ -1704,6 +1704,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         });
   }
 
+  @Autowired VesselValveEducationProcessRepository educationProcessRepository;
+
   @Override
   public void getVesselValveSequence(
       VesselRequest request,
@@ -1713,8 +1715,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply.newBuilder();
     try {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      builder.addAllEntity(
+      builder.addAllVvSequenceEntities(
           vesselPumpService.buildVesselValveSeqMessage(vesselValveSequenceRepository.findAll()));
+      builder.addAllVvEducationEntities(
+          vesselPumpService.buildVesselValveEducator(educationProcessRepository.findAll()));
     } catch (Exception e) {
       builder.setResponseStatus(
           ResponseStatus.newBuilder()

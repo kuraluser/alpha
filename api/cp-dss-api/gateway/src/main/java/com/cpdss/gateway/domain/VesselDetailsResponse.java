@@ -2,10 +2,8 @@
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
-import com.cpdss.gateway.domain.vessel.VesselValveSeq;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
-import java.util.Map;
 import lombok.Data;
 
 /** @Author jerin.g @Author arun.j */
@@ -33,5 +31,5 @@ public class VesselDetailsResponse {
   private List<SelectableParameter> selectableParameter;
 
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private Map<String, Map<String, Map<String, VesselValveSeq>>> vesselValveSequence;
+  private Object vesselValveSequence;
 }
