@@ -11063,12 +11063,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 convertToBbls(
                     Float.parseFloat(stowageDetails.getWeight()),
                     Float.parseFloat(stowageDetails.getApi()),
-                    Float.parseFloat(stowageDetails.getTemperature()),
+                    stowageDetails.getTemperature().isEmpty() ? 0 :Float.parseFloat(stowageDetails.getTemperature()),
                     ConversionUnit.MT);
             float klValue = convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C);
-            float fillingPercentage =
-                klValue / Float.parseFloat(vesselTankDetail.getFullCapacityCubm()) * 100;
-            // TODO Remove check if not necessary
+            float fillingPercentage = Float.parseFloat(stowageDetails.getFillingRatioOrginal());
+            // TODO Remove check if not necessary 
             String colorCode =
                 stowageDetails.getColorCode().isEmpty()
                     ? WHITE_COLOR_CODE
@@ -11458,7 +11457,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           convertToBbls(
               shipsFigureMtTotal,
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
-              Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
+              loadableQuantityCargoDetails.getEstimatedTemp().isEmpty() ? 0 : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
               ConversionUnit.MT);
       float cargoNominationValue =
           cargoNominationDetails
@@ -11513,7 +11512,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .cargoCode(loadableQuantityCargoDetails.getCargoAbbreviation())
               .loadingPort(portReply.getName())
               .api(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()))
-              .temp(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
+              .temp(loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()? 0 : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
               .cargoNomination(cargoNominationValue)
               .tolerance(
                   String.format(
@@ -11891,10 +11890,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   String.format(
                       "%s / %s",
                       null != loadableStudyPortRotation.getLayCanFrom()
-                          ? loadableStudyPortRotation.getLayCanFrom()
+                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(loadableStudyPortRotation.getLayCanFrom())
                           : "",
                       null != loadableStudyPortRotation.getLayCanTo()
-                          ? loadableStudyPortRotation.getLayCanTo()
+                          ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(loadableStudyPortRotation.getLayCanTo())
                           : ""))
               .arrFwdDraft(
                   arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
@@ -12303,6 +12302,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
       case PORT_OPERATIONS_VALUES:
+    	setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
     }
     //    Set font color based on background color
