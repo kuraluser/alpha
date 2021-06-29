@@ -3506,6 +3506,8 @@ VesselReply vesselReply = this.getOhqTanks(request);
                 lpd -> {
                   LoadablePattern loadablePattern =
                       saveloadablePattern(lpd, loadableStudyOpt.get());
+
+                  saveConstrains(lpd, loadablePattern);
                   Optional<LoadablePlanPortWiseDetails> lppwdOptional =
                       lpd.getLoadablePlanPortWiseDetailsList().stream()
                           .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
@@ -3633,6 +3635,24 @@ VesselReply vesselReply = this.getOhqTanks(request);
       this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
     }
   }*/
+
+  /**
+   * @param lpd
+   * @param loadablePattern void
+   */
+  private void saveConstrains(LoadablePlanDetails lpd, LoadablePattern loadablePattern) {
+    if (!lpd.getConstraintsList().isEmpty()) {
+      lpd.getConstraintsList()
+          .forEach(
+              constrains -> {
+                LoadablePlanConstraints constraints = new LoadablePlanConstraints();
+                constraints.setConstraintsData(constrains);
+                constraints.setIsActive(true);
+                constraints.setLoadablePattern(loadablePattern);
+                loadablePlanConstraintsRespository.save(constraints);
+              });
+    }
+  }
 
   private void saveStabilityParameterForNonLodicator(
       boolean hasLodicator, LoadablePattern loadablePattern, LoadablePlanDetails lpd) {
@@ -10954,6 +10974,7 @@ VesselReply vesselReply = this.getOhqTanks(request);
             voyageRepository
                 .findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
                     true, request.getVesselId());
+        entityList = entityList.stream().distinct().collect(Collectors.toList());
       }
       for (Voyage entity : entityList) {
         VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
