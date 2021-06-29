@@ -3535,10 +3535,11 @@ VesselReply vesselReply = this.getOhqTanks(request);
                         loadablePattern);
                   }
 
+                  AtomicInteger displayOrder = new AtomicInteger(0);
                   saveLoadableQuantityCommingleCargoPortwiseDetails(
-                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
                   saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
-                  saveLoadablePlanStowageDetails(loadablePattern, lpd);
+                  saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePattern, lpd);
@@ -3733,7 +3734,8 @@ VesselReply vesselReply = this.getOhqTanks(request);
    */
   private void saveLoadableQuantityCommingleCargoPortwiseDetails(
       List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList,
-      LoadablePattern loadablePattern) {
+      LoadablePattern loadablePattern,
+      AtomicInteger displayOrder) {
 
     loadablePlanPortWiseDetailsList.forEach(
         it -> {
@@ -3742,14 +3744,16 @@ VesselReply vesselReply = this.getOhqTanks(request);
               it.getPortRotationId(),
               SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
               it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
-              loadablePattern);
+              loadablePattern,
+              displayOrder);
 
           saveLodableQtyCommingleCargoPortData(
               it.getPortId(),
               it.getPortRotationId(),
               SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
               it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
-              loadablePattern);
+              loadablePattern,
+              displayOrder);
         });
   }
 
@@ -3758,7 +3762,8 @@ VesselReply vesselReply = this.getOhqTanks(request);
       long portRotationXid,
       String operationType,
       List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
-      LoadablePattern loadablePattern) {
+      LoadablePattern loadablePattern,
+      AtomicInteger displayOrder) {
 
     if (Optional.ofNullable(loadableQuantityCommingleCargoDetailsList).isPresent()) {
 
@@ -3799,6 +3804,23 @@ VesselReply vesselReply = this.getOhqTanks(request);
 
             loadablePlanCommingleDetailsPortwiseRepository.save(
                 loadablePlanComminglePortwiseDetails);
+
+            if (operationType.equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
+              it.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(toppingSequence.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setDisplayOrder(displayOrder.incrementAndGet());
+                        lpctos.setPortRotationXId(portRotationXid);
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
+                      });
+            }
           });
     }
   }
@@ -3898,9 +3920,10 @@ VesselReply vesselReply = this.getOhqTanks(request);
   /**
    * @param loadablePattern
    * @param lpd void
+   * @param displayOrder
    */
   private void saveLoadablePlanStowageDetails(
-      LoadablePattern loadablePattern, LoadablePlanDetails lpd) {
+      LoadablePattern loadablePattern, LoadablePlanDetails lpd, AtomicInteger displayOrder) {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
@@ -3927,6 +3950,33 @@ VesselReply vesselReply = this.getOhqTanks(request);
                             lppwd.getPortId(),
                             lppwd.getPortRotationId(),
                             loadablePattern);
+                      });
+              saveCargoToppingOffList(lppwd, loadablePattern, displayOrder);
+            });
+  }
+
+  private void saveCargoToppingOffList(
+      LoadablePlanPortWiseDetails lppwd,
+      LoadablePattern loadablePattern,
+      AtomicInteger displayOrder) {
+    lppwd
+        .getDepartureCondition()
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            lqcd -> {
+              lqcd.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(toppingSequence.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setDisplayOrder(displayOrder.incrementAndGet());
+                        lpctos.setPortRotationXId(lppwd.getPortRotationId());
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
                       });
             });
   }
@@ -4086,20 +4136,6 @@ VesselReply vesselReply = this.getOhqTanks(request);
       loadablePlanCommingleDetails.setTankShortName(
           loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
-      loadableQuantityCommingleCargoDetailsList
-          .get(i)
-          .getToppingOffSequencesList()
-          .forEach(
-              toppingSequence -> {
-                LoadablePatternCargoToppingOffSequence lpctos =
-                    new LoadablePatternCargoToppingOffSequence();
-                lpctos.setCargoXId(toppingSequence.getCargoId());
-                lpctos.setTankXId(toppingSequence.getTankId());
-                lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                lpctos.setLoadablePattern(loadablePattern);
-                lpctos.setIsActive(true);
-                toppingOffSequenceRepository.save(lpctos);
-              });
     }
   }
 
@@ -4135,18 +4171,6 @@ VesselReply vesselReply = this.getOhqTanks(request);
                   new BigDecimal(lqcd.getCargoNominationTemperature()));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
-              lqcd.getToppingOffSequencesList()
-                  .forEach(
-                      toppingSequence -> {
-                        LoadablePatternCargoToppingOffSequence lpctos =
-                            new LoadablePatternCargoToppingOffSequence();
-                        lpctos.setCargoXId(lqcd.getCargoId());
-                        lpctos.setTankXId(toppingSequence.getTankId());
-                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                        lpctos.setLoadablePattern(loadablePattern);
-                        lpctos.setIsActive(true);
-                        toppingOffSequenceRepository.save(lpctos);
-                      });
             });
   }
 
@@ -5785,9 +5809,12 @@ VesselReply vesselReply = this.getOhqTanks(request);
                             .getLoadablePlanBallastDetailsList(),
                         loadablePatternOpt.get());
                   }
+                  AtomicInteger displayOrder = new AtomicInteger(0);
                   saveLoadableQuantityCommingleCargoPortwiseDetails(
-                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePatternOpt.get());
-                  saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
+                      lpd.getLoadablePlanPortWiseDetailsList(),
+                      loadablePatternOpt.get(),
+                      displayOrder);
+                  saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd, displayOrder);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePatternOpt.get(), lpd);
@@ -12679,11 +12706,16 @@ VesselReply vesselReply = this.getOhqTanks(request);
       LoadableStudyPortRotation portRotation,
       Long voyageId) {
     buildLoadingInformationDetails(builder, loadablePattern, portRotation, voyageId);
-    buildCargoToppingOffSequence(builder, loadablePattern);
+    buildCargoToppingOffSequence(builder, loadablePattern, portRotation);
   }
 
   private void buildCargoToppingOffSequence(
-      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder, LoadablePattern loadablePattern) {
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation) {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
+        this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            loadablePattern.getId(), true);
     this.toppingOffSequenceRepository.findByLoadablePatternAndIsActive(loadablePattern, true)
         .stream()
         .forEach(
@@ -12698,6 +12730,32 @@ VesselReply vesselReply = this.getOhqTanks(request);
                   .ifPresent(sequenceBuilder::setOrderNumber);
               Optional.ofNullable(toppingSequence.getTankXId())
                   .ifPresent(sequenceBuilder::setTankXId);
+              Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailOpt =
+                  loadablePatternCargoDetails.stream()
+                      .filter(
+                          details ->
+                              details.getPortRotationId().equals(portRotation.getId())
+                                  && details.getTankId().equals(sequenceBuilder.getTankXId()))
+                      .findAny();
+              if (cargoDetailOpt.isPresent()) {
+                Optional.ofNullable(cargoDetailOpt.get().getApi())
+                    .ifPresent(api -> sequenceBuilder.setApi(String.valueOf(api)));
+                Optional.ofNullable(cargoDetailOpt.get().getTemperature())
+                    .ifPresent(
+                        temperature -> sequenceBuilder.setTemperature(String.valueOf(temperature)));
+                Optional.ofNullable(cargoDetailOpt.get().getCorrectedUllage())
+                    .ifPresent(ullage -> sequenceBuilder.setUllage(String.valueOf(ullage)));
+                Optional.ofNullable(cargoDetailOpt.get().getPlannedQuantity())
+                    .ifPresent(weight -> sequenceBuilder.setWeight(String.valueOf(weight)));
+                Optional.ofNullable(cargoDetailOpt.get().getFillingRatio())
+                    .ifPresent(
+                        fillingRatio ->
+                            sequenceBuilder.setFillingRatio(String.valueOf(fillingRatio)));
+              }
+              Optional.ofNullable(toppingSequence.getDisplayOrder())
+                  .ifPresent(sequenceBuilder::setDisplayOrder);
+              Optional.ofNullable(toppingSequence.getPortRotationXId())
+                  .ifPresent(sequenceBuilder::setPortRotationId);
               builder.addCargoToppingOffSequences(sequenceBuilder.build());
             });
   }

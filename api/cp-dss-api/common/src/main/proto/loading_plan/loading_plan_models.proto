@@ -325,6 +325,10 @@ message CargoToppingOffSequence {
   string volume = 8;
   string weight = 9;
   int64 loadablePatternId = 10;
+  string api = 11;
+  string temperature = 12;
+  int32 displayOrder = 13;
+  int64 portRotationId = 14;
 }
 
 message LoadingPlanSyncDetails {
