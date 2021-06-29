@@ -36,6 +36,9 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
       List<CargoToppingOffSequence> cargoToppingOffSequencesList,
       LoadingInformation loadingInformation) {
     cargoToppingOffSequencesList.stream()
+        .filter(
+            cargoToppingOff ->
+                cargoToppingOff.getPortRotationId() == loadingInformation.getPortRotationXId())
         .forEach(
             cargoToppingOff -> {
               com.cpdss.loadingplan.entity.CargoToppingOffSequence cargoToppingOffSequence =
@@ -58,13 +61,31 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
                       : new BigDecimal(cargoToppingOff.getUllage()));
               // volume, weight remove and quantity added
               /* cargoToppingOffSequence.setVolume(
-                  StringUtils.isEmpty(cargoToppingOff.getVolume())
-                      ? null
-                      : new BigDecimal(cargoToppingOff.getVolume()));
-              cargoToppingOffSequence.setWeight(
+              StringUtils.isEmpty(cargoToppingOff.getVolume())
+                  ? null
+                  : new BigDecimal(cargoToppingOff.getVolume())); */
+              cargoToppingOffSequence.setQuantity(
                   StringUtils.isEmpty(cargoToppingOff.getWeight())
                       ? null
-                      : new BigDecimal(cargoToppingOff.getWeight()));*/
+                      : new BigDecimal(cargoToppingOff.getWeight()));
+              cargoToppingOffSequence.setFillingRatio(
+                  StringUtils.isEmpty(cargoToppingOff.getFillingRatio())
+                      ? null
+                      : new BigDecimal(cargoToppingOff.getFillingRatio()));
+              cargoToppingOffSequence.setApi(
+                  StringUtils.isEmpty(cargoToppingOff.getApi())
+                      ? null
+                      : new BigDecimal(cargoToppingOff.getApi()));
+              cargoToppingOffSequence.setTemperature(
+                  StringUtils.isEmpty(cargoToppingOff.getTemperature())
+                      ? null
+                      : new BigDecimal(cargoToppingOff.getTemperature()));
+              cargoToppingOffSequence.setUllage(
+                  StringUtils.isEmpty(cargoToppingOff.getUllage())
+                      ? null
+                      : new BigDecimal(cargoToppingOff.getUllage()));
+              Optional.ofNullable(cargoToppingOff.getDisplayOrder())
+                  .ifPresent(cargoToppingOffSequence::setDisplayOrder);
               cargoToppingOffSequence.setLoadingInformation(loadingInformation);
               cargoToppingOffSequence.setIsActive(true);
               cargoToppingOffSequenceRepository.save(cargoToppingOffSequence);

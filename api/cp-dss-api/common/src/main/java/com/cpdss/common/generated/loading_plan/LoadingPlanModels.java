@@ -21589,39 +21589,6 @@ public final class LoadingPlanModels {
      * @return The cargoId.
      */
     long getCargoId();
-
-    /**
-     * <code>string api = 13;</code>
-     *
-     * @return The api.
-     */
-    java.lang.String getApi();
-    /**
-     * <code>string api = 13;</code>
-     *
-     * @return The bytes for api.
-     */
-    com.google.protobuf.ByteString getApiBytes();
-
-    /**
-     * <code>string temperature = 14;</code>
-     *
-     * @return The temperature.
-     */
-    java.lang.String getTemperature();
-    /**
-     * <code>string temperature = 14;</code>
-     *
-     * @return The bytes for temperature.
-     */
-    com.google.protobuf.ByteString getTemperatureBytes();
-
-    /**
-     * <code>int32 displayOrder = 15;</code>
-     *
-     * @return The displayOrder.
-     */
-    int getDisplayOrder();
   }
   /** Protobuf type {@code LoadingToppingOff} */
   public static final class LoadingToppingOff extends com.google.protobuf.GeneratedMessageV3
@@ -21642,8 +21609,6 @@ public final class LoadingPlanModels {
       quantity_ = "";
       fillingRatio_ = "";
       remark_ = "";
-      api_ = "";
-      temperature_ = "";
     }
 
     @java.lang.Override
@@ -21747,25 +21712,6 @@ public final class LoadingPlanModels {
             case 96:
               {
                 cargoId_ = input.readInt64();
-                break;
-              }
-            case 106:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                api_ = s;
-                break;
-              }
-            case 114:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                temperature_ = s;
-                break;
-              }
-            case 120:
-              {
-                displayOrder_ = input.readInt32();
                 break;
               }
             default:
@@ -22109,87 +22055,6 @@ public final class LoadingPlanModels {
       return cargoId_;
     }
 
-    public static final int API_FIELD_NUMBER = 13;
-    private volatile java.lang.Object api_;
-    /**
-     * <code>string api = 13;</code>
-     *
-     * @return The api.
-     */
-    public java.lang.String getApi() {
-      java.lang.Object ref = api_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        api_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string api = 13;</code>
-     *
-     * @return The bytes for api.
-     */
-    public com.google.protobuf.ByteString getApiBytes() {
-      java.lang.Object ref = api_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        api_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int TEMPERATURE_FIELD_NUMBER = 14;
-    private volatile java.lang.Object temperature_;
-    /**
-     * <code>string temperature = 14;</code>
-     *
-     * @return The temperature.
-     */
-    public java.lang.String getTemperature() {
-      java.lang.Object ref = temperature_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        temperature_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string temperature = 14;</code>
-     *
-     * @return The bytes for temperature.
-     */
-    public com.google.protobuf.ByteString getTemperatureBytes() {
-      java.lang.Object ref = temperature_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        temperature_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int DISPLAYORDER_FIELD_NUMBER = 15;
-    private int displayOrder_;
-    /**
-     * <code>int32 displayOrder = 15;</code>
-     *
-     * @return The displayOrder.
-     */
-    public int getDisplayOrder() {
-      return displayOrder_;
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -22240,15 +22105,6 @@ public final class LoadingPlanModels {
       if (cargoId_ != 0L) {
         output.writeInt64(12, cargoId_);
       }
-      if (!getApiBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, api_);
-      }
-      if (!getTemperatureBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, temperature_);
-      }
-      if (displayOrder_ != 0) {
-        output.writeInt32(15, displayOrder_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -22294,15 +22150,6 @@ public final class LoadingPlanModels {
       if (cargoId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, cargoId_);
       }
-      if (!getApiBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, api_);
-      }
-      if (!getTemperatureBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, temperature_);
-      }
-      if (displayOrder_ != 0) {
-        size += com.google.protobuf.CodedOutputStream.computeInt32Size(15, displayOrder_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -22332,9 +22179,6 @@ public final class LoadingPlanModels {
       if (!getFillingRatio().equals(other.getFillingRatio())) return false;
       if (!getRemark().equals(other.getRemark())) return false;
       if (getCargoId() != other.getCargoId()) return false;
-      if (!getApi().equals(other.getApi())) return false;
-      if (!getTemperature().equals(other.getTemperature())) return false;
-      if (getDisplayOrder() != other.getDisplayOrder()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -22370,12 +22214,6 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getRemark().hashCode();
       hash = (37 * hash) + CARGOID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
-      hash = (37 * hash) + API_FIELD_NUMBER;
-      hash = (53 * hash) + getApi().hashCode();
-      hash = (37 * hash) + TEMPERATURE_FIELD_NUMBER;
-      hash = (53 * hash) + getTemperature().hashCode();
-      hash = (37 * hash) + DISPLAYORDER_FIELD_NUMBER;
-      hash = (53 * hash) + getDisplayOrder();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -22548,12 +22386,6 @@ public final class LoadingPlanModels {
 
         cargoId_ = 0L;
 
-        api_ = "";
-
-        temperature_ = "";
-
-        displayOrder_ = 0;
-
         return this;
       }
 
@@ -22597,9 +22429,6 @@ public final class LoadingPlanModels {
         result.fillingRatio_ = fillingRatio_;
         result.remark_ = remark_;
         result.cargoId_ = cargoId_;
-        result.api_ = api_;
-        result.temperature_ = temperature_;
-        result.displayOrder_ = displayOrder_;
         onBuilt();
         return result;
       }
@@ -22699,17 +22528,6 @@ public final class LoadingPlanModels {
         }
         if (other.getCargoId() != 0L) {
           setCargoId(other.getCargoId());
-        }
-        if (!other.getApi().isEmpty()) {
-          api_ = other.api_;
-          onChanged();
-        }
-        if (!other.getTemperature().isEmpty()) {
-          temperature_ = other.temperature_;
-          onChanged();
-        }
-        if (other.getDisplayOrder() != 0) {
-          setDisplayOrder(other.getDisplayOrder());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -23454,191 +23272,6 @@ public final class LoadingPlanModels {
       public Builder clearCargoId() {
 
         cargoId_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object api_ = "";
-      /**
-       * <code>string api = 13;</code>
-       *
-       * @return The api.
-       */
-      public java.lang.String getApi() {
-        java.lang.Object ref = api_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          api_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string api = 13;</code>
-       *
-       * @return The bytes for api.
-       */
-      public com.google.protobuf.ByteString getApiBytes() {
-        java.lang.Object ref = api_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          api_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string api = 13;</code>
-       *
-       * @param value The api to set.
-       * @return This builder for chaining.
-       */
-      public Builder setApi(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        api_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string api = 13;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearApi() {
-
-        api_ = getDefaultInstance().getApi();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string api = 13;</code>
-       *
-       * @param value The bytes for api to set.
-       * @return This builder for chaining.
-       */
-      public Builder setApiBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        api_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object temperature_ = "";
-      /**
-       * <code>string temperature = 14;</code>
-       *
-       * @return The temperature.
-       */
-      public java.lang.String getTemperature() {
-        java.lang.Object ref = temperature_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          temperature_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string temperature = 14;</code>
-       *
-       * @return The bytes for temperature.
-       */
-      public com.google.protobuf.ByteString getTemperatureBytes() {
-        java.lang.Object ref = temperature_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          temperature_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string temperature = 14;</code>
-       *
-       * @param value The temperature to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTemperature(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        temperature_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string temperature = 14;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearTemperature() {
-
-        temperature_ = getDefaultInstance().getTemperature();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string temperature = 14;</code>
-       *
-       * @param value The bytes for temperature to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTemperatureBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        temperature_ = value;
-        onChanged();
-        return this;
-      }
-
-      private int displayOrder_;
-      /**
-       * <code>int32 displayOrder = 15;</code>
-       *
-       * @return The displayOrder.
-       */
-      public int getDisplayOrder() {
-        return displayOrder_;
-      }
-      /**
-       * <code>int32 displayOrder = 15;</code>
-       *
-       * @param value The displayOrder to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDisplayOrder(int value) {
-
-        displayOrder_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 displayOrder = 15;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearDisplayOrder() {
-
-        displayOrder_ = 0;
         onChanged();
         return this;
       }
@@ -43637,6 +43270,46 @@ public final class LoadingPlanModels {
      * @return The loadablePatternId.
      */
     long getLoadablePatternId();
+
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The api.
+     */
+    java.lang.String getApi();
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The bytes for api.
+     */
+    com.google.protobuf.ByteString getApiBytes();
+
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The temperature.
+     */
+    java.lang.String getTemperature();
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The bytes for temperature.
+     */
+    com.google.protobuf.ByteString getTemperatureBytes();
+
+    /**
+     * <code>int32 displayOrder = 13;</code>
+     *
+     * @return The displayOrder.
+     */
+    int getDisplayOrder();
+
+    /**
+     * <code>int64 portRotationId = 14;</code>
+     *
+     * @return The portRotationId.
+     */
+    long getPortRotationId();
   }
   /** Protobuf type {@code CargoToppingOffSequence} */
   public static final class CargoToppingOffSequence extends com.google.protobuf.GeneratedMessageV3
@@ -43655,6 +43328,8 @@ public final class LoadingPlanModels {
       ullage_ = "";
       volume_ = "";
       weight_ = "";
+      api_ = "";
+      temperature_ = "";
     }
 
     @java.lang.Override
@@ -43744,6 +43419,30 @@ public final class LoadingPlanModels {
             case 80:
               {
                 loadablePatternId_ = input.readInt64();
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                api_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                temperature_ = s;
+                break;
+              }
+            case 104:
+              {
+                displayOrder_ = input.readInt32();
+                break;
+              }
+            case 112:
+              {
+                portRotationId_ = input.readInt64();
                 break;
               }
             default:
@@ -44012,6 +43711,98 @@ public final class LoadingPlanModels {
       return loadablePatternId_;
     }
 
+    public static final int API_FIELD_NUMBER = 11;
+    private volatile java.lang.Object api_;
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The api.
+     */
+    public java.lang.String getApi() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        api_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The bytes for api.
+     */
+    public com.google.protobuf.ByteString getApiBytes() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        api_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TEMPERATURE_FIELD_NUMBER = 12;
+    private volatile java.lang.Object temperature_;
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The temperature.
+     */
+    public java.lang.String getTemperature() {
+      java.lang.Object ref = temperature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        temperature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The bytes for temperature.
+     */
+    public com.google.protobuf.ByteString getTemperatureBytes() {
+      java.lang.Object ref = temperature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        temperature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DISPLAYORDER_FIELD_NUMBER = 13;
+    private int displayOrder_;
+    /**
+     * <code>int32 displayOrder = 13;</code>
+     *
+     * @return The displayOrder.
+     */
+    public int getDisplayOrder() {
+      return displayOrder_;
+    }
+
+    public static final int PORTROTATIONID_FIELD_NUMBER = 14;
+    private long portRotationId_;
+    /**
+     * <code>int64 portRotationId = 14;</code>
+     *
+     * @return The portRotationId.
+     */
+    public long getPortRotationId() {
+      return portRotationId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -44056,6 +43847,18 @@ public final class LoadingPlanModels {
       if (loadablePatternId_ != 0L) {
         output.writeInt64(10, loadablePatternId_);
       }
+      if (!getApiBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, api_);
+      }
+      if (!getTemperatureBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, temperature_);
+      }
+      if (displayOrder_ != 0) {
+        output.writeInt32(13, displayOrder_);
+      }
+      if (portRotationId_ != 0L) {
+        output.writeInt64(14, portRotationId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -44095,6 +43898,18 @@ public final class LoadingPlanModels {
       if (loadablePatternId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, loadablePatternId_);
       }
+      if (!getApiBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, api_);
+      }
+      if (!getTemperatureBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, temperature_);
+      }
+      if (displayOrder_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(13, displayOrder_);
+      }
+      if (portRotationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(14, portRotationId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -44123,6 +43938,10 @@ public final class LoadingPlanModels {
       if (!getVolume().equals(other.getVolume())) return false;
       if (!getWeight().equals(other.getWeight())) return false;
       if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
+      if (!getApi().equals(other.getApi())) return false;
+      if (!getTemperature().equals(other.getTemperature())) return false;
+      if (getDisplayOrder() != other.getDisplayOrder()) return false;
+      if (getPortRotationId() != other.getPortRotationId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -44154,6 +43973,14 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getWeight().hashCode();
       hash = (37 * hash) + LOADABLEPATTERNID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternId());
+      hash = (37 * hash) + API_FIELD_NUMBER;
+      hash = (53 * hash) + getApi().hashCode();
+      hash = (37 * hash) + TEMPERATURE_FIELD_NUMBER;
+      hash = (53 * hash) + getTemperature().hashCode();
+      hash = (37 * hash) + DISPLAYORDER_FIELD_NUMBER;
+      hash = (53 * hash) + getDisplayOrder();
+      hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -44324,6 +44151,14 @@ public final class LoadingPlanModels {
 
         loadablePatternId_ = 0L;
 
+        api_ = "";
+
+        temperature_ = "";
+
+        displayOrder_ = 0;
+
+        portRotationId_ = 0L;
+
         return this;
       }
 
@@ -44367,6 +44202,10 @@ public final class LoadingPlanModels {
         result.volume_ = volume_;
         result.weight_ = weight_;
         result.loadablePatternId_ = loadablePatternId_;
+        result.api_ = api_;
+        result.temperature_ = temperature_;
+        result.displayOrder_ = displayOrder_;
+        result.portRotationId_ = portRotationId_;
         onBuilt();
         return result;
       }
@@ -44459,6 +44298,20 @@ public final class LoadingPlanModels {
         }
         if (other.getLoadablePatternId() != 0L) {
           setLoadablePatternId(other.getLoadablePatternId());
+        }
+        if (!other.getApi().isEmpty()) {
+          api_ = other.api_;
+          onChanged();
+        }
+        if (!other.getTemperature().isEmpty()) {
+          temperature_ = other.temperature_;
+          onChanged();
+        }
+        if (other.getDisplayOrder() != 0) {
+          setDisplayOrder(other.getDisplayOrder());
+        }
+        if (other.getPortRotationId() != 0L) {
+          setPortRotationId(other.getPortRotationId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -45033,6 +44886,224 @@ public final class LoadingPlanModels {
       public Builder clearLoadablePatternId() {
 
         loadablePatternId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object api_ = "";
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @return The api.
+       */
+      public java.lang.String getApi() {
+        java.lang.Object ref = api_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          api_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @return The bytes for api.
+       */
+      public com.google.protobuf.ByteString getApiBytes() {
+        java.lang.Object ref = api_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          api_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @param value The api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApi(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearApi() {
+
+        api_ = getDefaultInstance().getApi();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @param value The bytes for api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApiBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object temperature_ = "";
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @return The temperature.
+       */
+      public java.lang.String getTemperature() {
+        java.lang.Object ref = temperature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          temperature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @return The bytes for temperature.
+       */
+      public com.google.protobuf.ByteString getTemperatureBytes() {
+        java.lang.Object ref = temperature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          temperature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @param value The temperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTemperature(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        temperature_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTemperature() {
+
+        temperature_ = getDefaultInstance().getTemperature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @param value The bytes for temperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTemperatureBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        temperature_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int displayOrder_;
+      /**
+       * <code>int32 displayOrder = 13;</code>
+       *
+       * @return The displayOrder.
+       */
+      public int getDisplayOrder() {
+        return displayOrder_;
+      }
+      /**
+       * <code>int32 displayOrder = 13;</code>
+       *
+       * @param value The displayOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplayOrder(int value) {
+
+        displayOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 displayOrder = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDisplayOrder() {
+
+        displayOrder_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long portRotationId_;
+      /**
+       * <code>int64 portRotationId = 14;</code>
+       *
+       * @return The portRotationId.
+       */
+      public long getPortRotationId() {
+        return portRotationId_;
+      }
+      /**
+       * <code>int64 portRotationId = 14;</code>
+       *
+       * @param value The portRotationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortRotationId(long value) {
+
+        portRotationId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portRotationId = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortRotationId() {
+
+        portRotationId_ = 0L;
         onChanged();
         return this;
       }
@@ -47189,19 +47260,6 @@ public final class LoadingPlanModels {
      * @return The bytes for correctionFactor.
      */
     com.google.protobuf.ByteString getCorrectionFactorBytes();
-
-    /**
-     *
-     *
-     * <pre>
-     * Primary key for Table cargo_topping_off_sequence
-     * </pre>
-     *
-     * <code>int64 cargoToppingOffId = 13;</code>
-     *
-     * @return The cargoToppingOffId.
-     */
-    long getCargoToppingOffId();
   }
   /** Protobuf type {@code UpdateUllageLoadingRequest} */
   public static final class UpdateUllageLoadingRequest
@@ -47324,11 +47382,6 @@ public final class LoadingPlanModels {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 correctionFactor_ = s;
-                break;
-              }
-            case 104:
-              {
-                cargoToppingOffId_ = input.readInt64();
                 break;
               }
             default:
@@ -47598,23 +47651,6 @@ public final class LoadingPlanModels {
       }
     }
 
-    public static final int CARGOTOPPINGOFFID_FIELD_NUMBER = 13;
-    private long cargoToppingOffId_;
-    /**
-     *
-     *
-     * <pre>
-     * Primary key for Table cargo_topping_off_sequence
-     * </pre>
-     *
-     * <code>int64 cargoToppingOffId = 13;</code>
-     *
-     * @return The cargoToppingOffId.
-     */
-    public long getCargoToppingOffId() {
-      return cargoToppingOffId_;
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -47662,9 +47698,6 @@ public final class LoadingPlanModels {
       if (!getCorrectionFactorBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 12, correctionFactor_);
       }
-      if (cargoToppingOffId_ != 0L) {
-        output.writeInt64(13, cargoToppingOffId_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -47707,9 +47740,6 @@ public final class LoadingPlanModels {
       if (!getCorrectionFactorBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, correctionFactor_);
       }
-      if (cargoToppingOffId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(13, cargoToppingOffId_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -47743,7 +47773,6 @@ public final class LoadingPlanModels {
       if (!getQuantity().equals(other.getQuantity())) return false;
       if (!getCorrectedUllage().equals(other.getCorrectedUllage())) return false;
       if (!getCorrectionFactor().equals(other.getCorrectionFactor())) return false;
-      if (getCargoToppingOffId() != other.getCargoToppingOffId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -47779,8 +47808,6 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getCorrectedUllage().hashCode();
       hash = (37 * hash) + CORRECTIONFACTOR_FIELD_NUMBER;
       hash = (53 * hash) + getCorrectionFactor().hashCode();
-      hash = (37 * hash) + CARGOTOPPINGOFFID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoToppingOffId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -47970,8 +47997,6 @@ public final class LoadingPlanModels {
 
         correctionFactor_ = "";
 
-        cargoToppingOffId_ = 0L;
-
         return this;
       }
 
@@ -48021,7 +48046,6 @@ public final class LoadingPlanModels {
         result.quantity_ = quantity_;
         result.correctedUllage_ = correctedUllage_;
         result.correctionFactor_ = correctionFactor_;
-        result.cargoToppingOffId_ = cargoToppingOffId_;
         onBuilt();
         return result;
       }
@@ -48117,9 +48141,6 @@ public final class LoadingPlanModels {
         if (!other.getCorrectionFactor().isEmpty()) {
           correctionFactor_ = other.correctionFactor_;
           onChanged();
-        }
-        if (other.getCargoToppingOffId() != 0L) {
-          setCargoToppingOffId(other.getCargoToppingOffId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -48770,57 +48791,6 @@ public final class LoadingPlanModels {
         checkByteStringIsUtf8(value);
 
         correctionFactor_ = value;
-        onChanged();
-        return this;
-      }
-
-      private long cargoToppingOffId_;
-      /**
-       *
-       *
-       * <pre>
-       * Primary key for Table cargo_topping_off_sequence
-       * </pre>
-       *
-       * <code>int64 cargoToppingOffId = 13;</code>
-       *
-       * @return The cargoToppingOffId.
-       */
-      public long getCargoToppingOffId() {
-        return cargoToppingOffId_;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * Primary key for Table cargo_topping_off_sequence
-       * </pre>
-       *
-       * <code>int64 cargoToppingOffId = 13;</code>
-       *
-       * @param value The cargoToppingOffId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setCargoToppingOffId(long value) {
-
-        cargoToppingOffId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * Primary key for Table cargo_topping_off_sequence
-       * </pre>
-       *
-       * <code>int64 cargoToppingOffId = 13;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearCargoToppingOffId() {
-
-        cargoToppingOffId_ = 0L;
         onChanged();
         return this;
       }
@@ -50293,115 +50263,115 @@ public final class LoadingPlanModels {
           + "\003\022\020\n\010quantity\030\006 \001(\t\"u\n\022LoadingDelayCargo"
           + "s\022\017\n\007cargoId\030\001 \001(\003\022\022\n\ncolourCode\030\002 \001(\t\022\021"
           + "\n\tcargoName\030\003 \001(\t\022\025\n\rcargoShorName\030\004 \001(\t"
-          + "\022\020\n\010quantity\030\005 \001(\t\"\256\002\n\021LoadingToppingOff"
+          + "\022\020\n\010quantity\030\005 \001(\t\"\366\001\n\021LoadingToppingOff"
           + "\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfoId\030\002 \001(\003\022\023\n\013o"
           + "rderNumber\030\003 \001(\005\022\016\n\006tankId\030\004 \001(\003\022\021\n\tcarg"
           + "oName\030\005 \001(\t\022\031\n\021cargoAbbreviation\030\006 \001(\t\022\022"
           + "\n\ncolourCode\030\007 \001(\t\022\016\n\006ullage\030\010 \001(\t\022\020\n\010qu"
           + "antity\030\t \001(\t\022\024\n\014fillingRatio\030\n \001(\t\022\016\n\006re"
-          + "mark\030\013 \001(\t\022\017\n\007cargoId\030\014 \001(\003\022\013\n\003api\030\r \001(\t"
-          + "\022\023\n\013temperature\030\016 \001(\t\022\024\n\014displayOrder\030\017 "
-          + "\001(\005\"\234\001\n\030LoadingInformationDetail\022\031\n\021load"
-          + "ablePatternId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021s"
-          + "ynopticalTableId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003"
-          + "\022\020\n\010voyageId\030\005 \001(\003\022\026\n\016portRotationId\030\006 \001"
-          + "(\003\"\314\002\n\031LoadablePlanBallastDetail\022\n\n\002id\030\001"
-          + " \001(\003\022\021\n\tcolorCode\030\002 \001(\t\022\026\n\016correctedLeve"
-          + "l\030\003 \001(\t\022\030\n\020correctionFactor\030\004 \001(\t\022\022\n\ncub"
-          + "icMeter\030\005 \001(\t\022\017\n\007inertia\030\006 \001(\t\022\020\n\010isActi"
-          + "ve\030\007 \001(\010\022\013\n\003lcg\030\010 \001(\t\022\031\n\021loadablePattern"
-          + "Id\030\t \001(\003\022\021\n\tmetricTon\030\n \001(\t\022\022\n\npercentag"
-          + "e\030\013 \001(\t\022\020\n\010rdgLevel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t\022\016\n"
-          + "\006tankId\030\016 \001(\003\022\020\n\010tankName\030\017 \001(\t\022\013\n\003tcg\030\020"
-          + " \001(\t\022\013\n\003vcg\030\021 \001(\t\"\330\005\n\033LoadablePlanCommin"
-          + "gleDetail\022\n\n\002id\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n\022ca"
-          + "rgo1Abbreviation\030\003 \001(\t\022\025\n\rcargo1Bbls60f\030"
-          + "\004 \001(\t\022\025\n\rcargo1BblsDbs\030\005 \001(\t\022\020\n\010cargo1Kl"
-          + "\030\006 \001(\t\022\020\n\010cargo1Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030\010 \001"
-          + "(\t\022\030\n\020cargo1Percentage\030\t \001(\t\022\032\n\022cargo2Ab"
-          + "breviation\030\n \001(\t\022\025\n\rcargo2Bbls60f\030\013 \001(\t\022"
-          + "\025\n\rcargo2BblsDbs\030\014 \001(\t\022\020\n\010cargo2Kl\030\r \001(\t"
-          + "\022\020\n\010cargo2Lt\030\016 \001(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022\030\n\020"
-          + "cargo2Percentage\030\020 \001(\t\022\027\n\017correctedUllag"
-          + "e\030\021 \001(\t\022\030\n\020correctionFactor\030\022 \001(\t\022\024\n\014fil"
-          + "lingRatio\030\023 \001(\t\022\r\n\005grade\030\024 \001(\t\022\020\n\010isActi"
-          + "ve\030\025 \001(\010\022\031\n\021loadablePatternId\030\026 \001(\003\022\026\n\016l"
-          + "oadablePlanId\030\027 \001(\003\022\024\n\014loadingOrder\030\030 \001("
-          + "\005\022\025\n\rorderQuantity\030\031 \001(\t\022\020\n\010priority\030\032 \001"
-          + "(\005\022\020\n\010quantity\030\033 \001(\t\022\021\n\trdgUllage\030\034 \001(\t\022"
-          + "\024\n\014slopQuantity\030\035 \001(\t\022\016\n\006tankId\030\036 \001(\003\022\020\n"
-          + "\010tankName\030\037 \001(\t\022\023\n\013temperature\030  \001(\t\022\036\n\026"
-          + "timeRequiredForLoading\030! \001(\t\"\221\005\n\024Loadabl"
-          + "ePlanQuantity\022\031\n\021cargoAbbreviation\030\001 \001(\t"
-          + "\022\022\n\ncargoColor\030\002 \001(\t\022\031\n\021cargoNominationI"
-          + "d\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\027\n\017differenceCo"
-          + "lor\030\005 \001(\t\022\034\n\024differencePercentage\030\006 \001(\t\022"
-          + "\024\n\014estimatedApi\030\007 \001(\t\022\034\n\024estimatedTemper"
-          + "ature\030\010 \001(\t\022\r\n\005grade\030\t \001(\t\022\n\n\002id\030\n \001(\003\022\020"
-          + "\n\010isActive\030\013 \001(\010\022\027\n\017loadableBbls60f\030\014 \001("
-          + "\t\022\027\n\017loadableBblsDbs\030\r \001(\t\022\022\n\nloadableKl"
-          + "\030\016 \001(\t\022\022\n\nloadableLt\030\017 \001(\t\022\022\n\nloadableMt"
-          + "\030\020 \001(\t\022\031\n\021loadablePatternId\030\021 \001(\003\022\026\n\016loa"
-          + "dablePlanId\030\022 \001(\003\022\030\n\020loadableQuantity\030\023 "
-          + "\001(\t\022\024\n\014loadingOrder\030\024 \001(\005\022\024\n\014maxTolerenc"
-          + "e\030\025 \001(\t\022\024\n\014minTolerence\030\026 \001(\t\022\024\n\014orderBb"
-          + "ls60f\030\027 \001(\t\022\024\n\014orderBblsDbs\030\030 \001(\t\022\025\n\rord"
-          + "erQuantity\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\024\n\014sl"
-          + "opQuantity\030\033 \001(\t\022\036\n\026timeRequiredForLoadi"
-          + "ng\030\034 \001(\t\"\250\003\n\031LoadablePlanStowageDetail\022\024"
-          + "\n\014abbreviation\030\001 \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021car"
-          + "goNominationId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\021\n"
-          + "\tcolorCode\030\005 \001(\t\022\027\n\017correctedUllage\030\006 \001("
-          + "\t\022\030\n\020correctionFactor\030\007 \001(\t\022\031\n\021fillingPe"
-          + "rcentage\030\010 \001(\t\022\n\n\002id\030\t \001(\003\022\020\n\010isActive\030\n"
-          + " \001(\010\022\031\n\021loadablePatternId\030\013 \001(\003\022\027\n\017obser"
-          + "vedBarrels\030\014 \001(\t\022\033\n\023observedBarrelsAt60\030"
-          + "\r \001(\t\022\022\n\nobservedM3\030\016 \001(\t\022\021\n\trdgUllage\030\017"
-          + " \001(\t\022\016\n\006tankId\030\020 \001(\003\022\020\n\010tankname\030\021 \001(\t\022\023"
-          + "\n\013temperature\030\022 \001(\t\022\016\n\006weight\030\023 \001(\t\"\355\005\n\020"
-          + "LoadableQuantity\022\017\n\007ballast\030\001 \001(\t\022\032\n\022boi"
-          + "lerWaterOnBoard\030\002 \001(\t\022\020\n\010constant\030\003 \001(\t\022"
-          + "\022\n\ndeadWeight\030\004 \001(\t\022&\n\036displacementAtDra"
-          + "ftRestriction\030\005 \001(\t\022\034\n\024distanceFromLastP"
-          + "ort\030\006 \001(\t\022\030\n\020draftRestriction\030\007 \001(\t\022\032\n\022e"
-          + "stimatedDOOnBoard\030\010 \001(\t\022\032\n\022estimatedFOOn"
-          + "Board\030\t \001(\t\022\032\n\022estimatedFWOnBoard\030\n \001(\t\022"
-          + "\030\n\020estimatedSagging\030\013 \001(\t\022\033\n\023estimatedSe"
-          + "aDensity\030\014 \001(\t\022\031\n\021foConsumptionInSZ\030\r \001("
-          + "\t\022\033\n\023foConsumptionPerDay\030\016 \001(\t\022\n\n\002id\030\017 \001"
-          + "(\003\022\020\n\010isActive\030\020 \001(\010\022\023\n\013lightWeight\030\021 \001("
-          + "\t\022#\n\033loadableStudyPortRotationId\030\022 \001(\003\022\027"
-          + "\n\017loadableStudyId\030\023 \001(\003\022\022\n\notherIfAny\030\024 "
-          + "\001(\t\022\016\n\006portId\030\025 \001(\t\022\023\n\013runningDays\030\026 \001(\t"
-          + "\022\024\n\014runningHours\030\027 \001(\t\022\030\n\020saggingDeducti"
-          + "on\030\030 \001(\t\022\024\n\014sgCorrection\030\031 \001(\t\022\020\n\010subTot"
-          + "al\030\032 \001(\t\022\032\n\022totalFoConsumption\030\033 \001(\t\022\025\n\r"
-          + "totalQuantity\030\034 \001(\t\022\022\n\ntpcatDraft\030\035 \001(\t\022"
-          + "\032\n\022vesselAverageSpeed\030\036 \001(\t\"\325\001\n\027CargoTop"
-          + "pingOffSequence\022\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fil"
-          + "lingRatio\030\002 \001(\t\022\020\n\010isActive\030\003 \001(\010\022\023\n\013ord"
-          + "erNumber\030\004 \001(\005\022\017\n\007remarks\030\005 \001(\t\022\017\n\007tankX"
-          + "Id\030\006 \001(\003\022\016\n\006ullage\030\007 \001(\t\022\016\n\006volume\030\010 \001(\t"
-          + "\022\016\n\006weight\030\t \001(\t\022\031\n\021loadablePatternId\030\n "
-          + "\001(\003\"\316\001\n\026LoadingPlanSyncDetails\022;\n\030loadin"
-          + "gInformationDetail\030\001 \001(\0132\031.LoadingInform"
-          + "ationDetail\022;\n\030loadablePlanDetailsReply\030"
-          + "\002 \001(\0132\031.LoadablePlanDetailsReply\022:\n\030carg"
-          + "oToppingOffSequences\030\003 \003(\0132\030.CargoToppin"
-          + "gOffSequence\"?\n\024LoadingPlanSyncReply\022\'\n\016"
-          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\"\257\002"
-          + "\n\032UpdateUllageLoadingRequest\022\'\n\016response"
-          + "Status\030\001 \001(\0132\017.ResponseStatus\022\025\n\rloading"
-          + "InfoId\030\002 \001(\003\022\026\n\016portRotationId\030\003 \001(\003\022\020\n\010"
-          + "vesselId\030\004 \001(\003\022\020\n\010voyageId\030\005 \001(\003\022\016\n\006tank"
-          + "Id\030\006 \001(\003\022\017\n\007cargoId\030\010 \001(\003\022\024\n\014fillingRati"
-          + "o\030\t \001(\t\022\020\n\010quantity\030\n \001(\t\022\027\n\017correctedUl"
-          + "lage\030\013 \001(\t\022\030\n\020correctionFactor\030\014 \001(\t\022\031\n\021"
-          + "cargoToppingOffId\030\r \001(\003\"D\n\031UpdateUllageL"
-          + "oadingReplay\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
-          + "esponseStatus\"/\n\026LoadingInfoAlgoRequest\022"
-          + "\025\n\rloadingInfoId\030\001 \001(\003B+\n\'com.cpdss.comm"
-          + "on.generated.loading_planP\000b\006proto3"
+          + "mark\030\013 \001(\t\022\017\n\007cargoId\030\014 \001(\003\"\234\001\n\030LoadingI"
+          + "nformationDetail\022\031\n\021loadablePatternId\030\001 "
+          + "\001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021synopticalTableId"
+          + "\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020\n\010voyageId\030\005 \001"
+          + "(\003\022\026\n\016portRotationId\030\006 \001(\003\"\314\002\n\031LoadableP"
+          + "lanBallastDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcolorCod"
+          + "e\030\002 \001(\t\022\026\n\016correctedLevel\030\003 \001(\t\022\030\n\020corre"
+          + "ctionFactor\030\004 \001(\t\022\022\n\ncubicMeter\030\005 \001(\t\022\017\n"
+          + "\007inertia\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\022\013\n\003lcg\030"
+          + "\010 \001(\t\022\031\n\021loadablePatternId\030\t \001(\003\022\021\n\tmetr"
+          + "icTon\030\n \001(\t\022\022\n\npercentage\030\013 \001(\t\022\020\n\010rdgLe"
+          + "vel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t\022\016\n\006tankId\030\016 \001(\003\022\020\n"
+          + "\010tankName\030\017 \001(\t\022\013\n\003tcg\030\020 \001(\t\022\013\n\003vcg\030\021 \001("
+          + "\t\"\330\005\n\033LoadablePlanCommingleDetail\022\n\n\002id\030"
+          + "\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n\022cargo1Abbreviation"
+          + "\030\003 \001(\t\022\025\n\rcargo1Bbls60f\030\004 \001(\t\022\025\n\rcargo1B"
+          + "blsDbs\030\005 \001(\t\022\020\n\010cargo1Kl\030\006 \001(\t\022\020\n\010cargo1"
+          + "Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030\010 \001(\t\022\030\n\020cargo1Perc"
+          + "entage\030\t \001(\t\022\032\n\022cargo2Abbreviation\030\n \001(\t"
+          + "\022\025\n\rcargo2Bbls60f\030\013 \001(\t\022\025\n\rcargo2BblsDbs"
+          + "\030\014 \001(\t\022\020\n\010cargo2Kl\030\r \001(\t\022\020\n\010cargo2Lt\030\016 \001"
+          + "(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022\030\n\020cargo2Percentage"
+          + "\030\020 \001(\t\022\027\n\017correctedUllage\030\021 \001(\t\022\030\n\020corre"
+          + "ctionFactor\030\022 \001(\t\022\024\n\014fillingRatio\030\023 \001(\t\022"
+          + "\r\n\005grade\030\024 \001(\t\022\020\n\010isActive\030\025 \001(\010\022\031\n\021load"
+          + "ablePatternId\030\026 \001(\003\022\026\n\016loadablePlanId\030\027 "
+          + "\001(\003\022\024\n\014loadingOrder\030\030 \001(\005\022\025\n\rorderQuanti"
+          + "ty\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\020\n\010quantity\030\033"
+          + " \001(\t\022\021\n\trdgUllage\030\034 \001(\t\022\024\n\014slopQuantity\030"
+          + "\035 \001(\t\022\016\n\006tankId\030\036 \001(\003\022\020\n\010tankName\030\037 \001(\t\022"
+          + "\023\n\013temperature\030  \001(\t\022\036\n\026timeRequiredForL"
+          + "oading\030! \001(\t\"\221\005\n\024LoadablePlanQuantity\022\031\n"
+          + "\021cargoAbbreviation\030\001 \001(\t\022\022\n\ncargoColor\030\002"
+          + " \001(\t\022\031\n\021cargoNominationId\030\003 \001(\003\022\017\n\007cargo"
+          + "Id\030\004 \001(\003\022\027\n\017differenceColor\030\005 \001(\t\022\034\n\024dif"
+          + "ferencePercentage\030\006 \001(\t\022\024\n\014estimatedApi\030"
+          + "\007 \001(\t\022\034\n\024estimatedTemperature\030\010 \001(\t\022\r\n\005g"
+          + "rade\030\t \001(\t\022\n\n\002id\030\n \001(\003\022\020\n\010isActive\030\013 \001(\010"
+          + "\022\027\n\017loadableBbls60f\030\014 \001(\t\022\027\n\017loadableBbl"
+          + "sDbs\030\r \001(\t\022\022\n\nloadableKl\030\016 \001(\t\022\022\n\nloadab"
+          + "leLt\030\017 \001(\t\022\022\n\nloadableMt\030\020 \001(\t\022\031\n\021loadab"
+          + "lePatternId\030\021 \001(\003\022\026\n\016loadablePlanId\030\022 \001("
+          + "\003\022\030\n\020loadableQuantity\030\023 \001(\t\022\024\n\014loadingOr"
+          + "der\030\024 \001(\005\022\024\n\014maxTolerence\030\025 \001(\t\022\024\n\014minTo"
+          + "lerence\030\026 \001(\t\022\024\n\014orderBbls60f\030\027 \001(\t\022\024\n\014o"
+          + "rderBblsDbs\030\030 \001(\t\022\025\n\rorderQuantity\030\031 \001(\t"
+          + "\022\020\n\010priority\030\032 \001(\005\022\024\n\014slopQuantity\030\033 \001(\t"
+          + "\022\036\n\026timeRequiredForLoading\030\034 \001(\t\"\250\003\n\031Loa"
+          + "dablePlanStowageDetail\022\024\n\014abbreviation\030\001"
+          + " \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021cargoNominationId\030\003"
+          + " \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\021\n\tcolorCode\030\005 \001(\t"
+          + "\022\027\n\017correctedUllage\030\006 \001(\t\022\030\n\020correctionF"
+          + "actor\030\007 \001(\t\022\031\n\021fillingPercentage\030\010 \001(\t\022\n"
+          + "\n\002id\030\t \001(\003\022\020\n\010isActive\030\n \001(\010\022\031\n\021loadable"
+          + "PatternId\030\013 \001(\003\022\027\n\017observedBarrels\030\014 \001(\t"
+          + "\022\033\n\023observedBarrelsAt60\030\r \001(\t\022\022\n\nobserve"
+          + "dM3\030\016 \001(\t\022\021\n\trdgUllage\030\017 \001(\t\022\016\n\006tankId\030\020"
+          + " \001(\003\022\020\n\010tankname\030\021 \001(\t\022\023\n\013temperature\030\022 "
+          + "\001(\t\022\016\n\006weight\030\023 \001(\t\"\355\005\n\020LoadableQuantity"
+          + "\022\017\n\007ballast\030\001 \001(\t\022\032\n\022boilerWaterOnBoard\030"
+          + "\002 \001(\t\022\020\n\010constant\030\003 \001(\t\022\022\n\ndeadWeight\030\004 "
+          + "\001(\t\022&\n\036displacementAtDraftRestriction\030\005 "
+          + "\001(\t\022\034\n\024distanceFromLastPort\030\006 \001(\t\022\030\n\020dra"
+          + "ftRestriction\030\007 \001(\t\022\032\n\022estimatedDOOnBoar"
+          + "d\030\010 \001(\t\022\032\n\022estimatedFOOnBoard\030\t \001(\t\022\032\n\022e"
+          + "stimatedFWOnBoard\030\n \001(\t\022\030\n\020estimatedSagg"
+          + "ing\030\013 \001(\t\022\033\n\023estimatedSeaDensity\030\014 \001(\t\022\031"
+          + "\n\021foConsumptionInSZ\030\r \001(\t\022\033\n\023foConsumpti"
+          + "onPerDay\030\016 \001(\t\022\n\n\002id\030\017 \001(\003\022\020\n\010isActive\030\020"
+          + " \001(\010\022\023\n\013lightWeight\030\021 \001(\t\022#\n\033loadableStu"
+          + "dyPortRotationId\030\022 \001(\003\022\027\n\017loadableStudyI"
+          + "d\030\023 \001(\003\022\022\n\notherIfAny\030\024 \001(\t\022\016\n\006portId\030\025 "
+          + "\001(\t\022\023\n\013runningDays\030\026 \001(\t\022\024\n\014runningHours"
+          + "\030\027 \001(\t\022\030\n\020saggingDeduction\030\030 \001(\t\022\024\n\014sgCo"
+          + "rrection\030\031 \001(\t\022\020\n\010subTotal\030\032 \001(\t\022\032\n\022tota"
+          + "lFoConsumption\030\033 \001(\t\022\025\n\rtotalQuantity\030\034 "
+          + "\001(\t\022\022\n\ntpcatDraft\030\035 \001(\t\022\032\n\022vesselAverage"
+          + "Speed\030\036 \001(\t\"\245\002\n\027CargoToppingOffSequence\022"
+          + "\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fillingRatio\030\002 \001(\t\022"
+          + "\020\n\010isActive\030\003 \001(\010\022\023\n\013orderNumber\030\004 \001(\005\022\017"
+          + "\n\007remarks\030\005 \001(\t\022\017\n\007tankXId\030\006 \001(\003\022\016\n\006ulla"
+          + "ge\030\007 \001(\t\022\016\n\006volume\030\010 \001(\t\022\016\n\006weight\030\t \001(\t"
+          + "\022\031\n\021loadablePatternId\030\n \001(\003\022\013\n\003api\030\013 \001(\t"
+          + "\022\023\n\013temperature\030\014 \001(\t\022\024\n\014displayOrder\030\r "
+          + "\001(\005\022\026\n\016portRotationId\030\016 \001(\003\"\316\001\n\026LoadingP"
+          + "lanSyncDetails\022;\n\030loadingInformationDeta"
+          + "il\030\001 \001(\0132\031.LoadingInformationDetail\022;\n\030l"
+          + "oadablePlanDetailsReply\030\002 \001(\0132\031.Loadable"
+          + "PlanDetailsReply\022:\n\030cargoToppingOffSeque"
+          + "nces\030\003 \003(\0132\030.CargoToppingOffSequence\"?\n\024"
+          + "LoadingPlanSyncReply\022\'\n\016responseStatus\030\001"
+          + " \001(\0132\017.ResponseStatus\"\224\002\n\032UpdateUllageLo"
+          + "adingRequest\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
+          + "esponseStatus\022\025\n\rloadingInfoId\030\002 \001(\003\022\026\n\016"
+          + "portRotationId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020"
+          + "\n\010voyageId\030\005 \001(\003\022\016\n\006tankId\030\006 \001(\003\022\017\n\007carg"
+          + "oId\030\010 \001(\003\022\024\n\014fillingRatio\030\t \001(\t\022\020\n\010quant"
+          + "ity\030\n \001(\t\022\027\n\017correctedUllage\030\013 \001(\t\022\030\n\020co"
+          + "rrectionFactor\030\014 \001(\t\"D\n\031UpdateUllageLoad"
+          + "ingReplay\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\"/\n\026LoadingInfoAlgoRequest\022\025\n\r"
+          + "loadingInfoId\030\001 \001(\003B+\n\'com.cpdss.common."
+          + "generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -50583,9 +50553,6 @@ public final class LoadingPlanModels {
               "FillingRatio",
               "Remark",
               "CargoId",
-              "Api",
-              "Temperature",
-              "DisplayOrder",
             });
     internal_static_LoadingInformationDetail_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_LoadingInformationDetail_fieldAccessorTable =
@@ -50774,6 +50741,10 @@ public final class LoadingPlanModels {
               "Volume",
               "Weight",
               "LoadablePatternId",
+              "Api",
+              "Temperature",
+              "DisplayOrder",
+              "PortRotationId",
             });
     internal_static_LoadingPlanSyncDetails_descriptor = getDescriptor().getMessageTypes().get(24);
     internal_static_LoadingPlanSyncDetails_fieldAccessorTable =
@@ -50806,7 +50777,6 @@ public final class LoadingPlanModels {
               "Quantity",
               "CorrectedUllage",
               "CorrectionFactor",
-              "CargoToppingOffId",
             });
     internal_static_UpdateUllageLoadingReplay_descriptor =
         getDescriptor().getMessageTypes().get(27);

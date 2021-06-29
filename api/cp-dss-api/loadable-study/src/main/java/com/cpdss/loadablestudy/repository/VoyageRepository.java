@@ -58,7 +58,7 @@ public interface VoyageRepository
               + "select * from list1 union all select * from list2;",
       nativeQuery = true)
   public List<Voyage> findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
-      boolean isActive, Long vesselXId);
+      @Param("isActive") boolean isActive, @Param("vesselXId") Long vesselXId);
 
   @Query("select V from Voyage V WHERE V.voyageStatus.id =?1 AND V.isActive=?2")
   public List<Voyage> findByVoyageStatusAndIsActive(Long voyageId, boolean b);
