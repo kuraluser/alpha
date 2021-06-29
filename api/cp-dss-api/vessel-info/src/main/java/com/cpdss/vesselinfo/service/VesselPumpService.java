@@ -4,10 +4,7 @@ package com.cpdss.vesselinfo.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.vesselinfo.entity.PumpType;
-import com.cpdss.vesselinfo.entity.Vessel;
-import com.cpdss.vesselinfo.entity.VesselPumps;
-import com.cpdss.vesselinfo.entity.VesselValveSequence;
+import com.cpdss.vesselinfo.entity.*;
 import com.cpdss.vesselinfo.repository.PumpTypeRepository;
 import com.cpdss.vesselinfo.repository.VesselPumpRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
@@ -121,5 +118,29 @@ public class VesselPumpService {
       sequenceList.add(builder.build());
     }
     return sequenceList;
+  }
+
+  public List<VesselInfo.VesselValveEducationProcess> buildVesselValveEducator(
+      List<VesselValveEducationProcess> data) {
+    List<VesselInfo.VesselValveEducationProcess> list = new ArrayList<>();
+    for (VesselValveEducationProcess vvEp : data) {
+      try {
+        VesselInfo.VesselValveEducationProcess.Builder builder =
+            VesselInfo.VesselValveEducationProcess.newBuilder();
+        Optional.ofNullable(vvEp.getId()).ifPresent(builder::setId);
+        Optional.ofNullable(vvEp.getEductionProcessMasterId())
+            .ifPresent(builder::setEductionProcessMasterId);
+        Optional.ofNullable(vvEp.getEductorId()).ifPresent(builder::setEductorId);
+        Optional.ofNullable(vvEp.getEductorName()).ifPresent(builder::setEducatorName);
+        Optional.ofNullable(vvEp.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
+        Optional.ofNullable(vvEp.getStepName()).ifPresent(builder::setStepName);
+        Optional.ofNullable(vvEp.getValveNumber()).ifPresent(builder::setValveNumber);
+        list.add(builder.build());
+      } catch (Exception e) {
+        log.error("Failed to build message for vessel valve educator");
+        e.printStackTrace();
+      }
+    }
+    return list;
   }
 }

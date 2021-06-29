@@ -224,7 +224,7 @@ public class VesselInfoService {
         this.vesselInfoGrpcService.getVesselValveSequence(builder.build());
     if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
       Map<String, Map<String, Map<String, VesselValveSeq>>> response =
-          this.vesselValveService.buildVesselValveResponse(reply.getEntityList());
+          this.vesselValveService.buildVesselValveResponse(reply.getVvSequenceEntitiesList());
       log.info("Vessel Valve Sequence data size {}", response);
       return response;
     }

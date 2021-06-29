@@ -389,7 +389,8 @@ message VesselReply {
 
 	message VesselValveSequenceReply{
 		ResponseStatus responseStatus = 1;
-		repeated VesselValveSequence entity = 2;
+		repeated VesselValveSequence vvSequenceEntities = 2;
+		repeated VesselValveEducationProcess vvEducationEntities = 3;
 	}
 
 	message VesselValveSequence{
@@ -416,6 +417,16 @@ message VesselReply {
 		 int32 vesselTankXid = 21;
 		 int32 vesselValveMappingId = 22;
 		 int64 vesselXid = 23;
+	}
+
+	message VesselValveEducationProcess {
+		int64 id = 1;
+		string educatorName = 2;
+		int32 sequenceNumber = 3;
+		string stepName = 4;
+		string valveNumber =5;
+		int32 eductorId = 6;
+		int32 eductionProcessMasterId = 7;
 	}
 	
 	message LoadingInfoRulesRequest {
