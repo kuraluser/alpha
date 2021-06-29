@@ -1122,7 +1122,7 @@ public class LoadableStudyService {
    * @param request
    * @return
    */
-  private PortRotationDetail createPortRotationDetail(PortRotation request, HttpHeaders headers) {
+  public PortRotationDetail createPortRotationDetail(PortRotation request, HttpHeaders headers) {
     PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
     builder.setId(request.getId());
     builder.setLoadableStudyId(request.getLoadableStudyId());

@@ -5,12 +5,9 @@ import static com.cpdss.loadingplan.common.LoadingPlanConstants.SUCCESS;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
-import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
-import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.BillOfLadding;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
 import java.util.*;
@@ -46,70 +43,64 @@ public class LoadingInformationDischargeService {
           com.cpdss.common.generated.loading_plan.LoadingPlanModels
                   .LoadingInformationSynopticalReply.Builder
               builder)
-          throws GenericServiceException {
+          throws Exception {
     List<BillOfLadding> billOfLaddings =
         billOfLaddingRepository.findByLoadablePatternXIdAndIsActive(
             request.getLoadablePatternId(), true);
-    if (billOfLaddings.isEmpty()) {
-      log.info(
-          "getDischargeStudyByVoyage in getDischargeStudyByVoyage in LoadingInformationDischargeService");
-      throw new GenericServiceException(
-          "BillOfLadding does not exist",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-
-    buildBillOfLading(billOfLaddings, builder);
-    List<Common.BillOfLadding> billOfLaddingList = builder.getBillOfLaddingList();
-    Map<String, List<Common.BillOfLadding>> billOfLaddingByCargo =
-        billOfLaddingList.stream()
-            .collect(Collectors.groupingBy(Common.BillOfLadding::getCargoColor));
-    builder.clearBillOfLadding();
-    billOfLaddingByCargo
-        .entrySet()
-        .forEach(
-            entry -> {
-              com.cpdss.common.generated.Common.BillOfLadding.Builder bolBuilder =
-                  com.cpdss.common.generated.Common.BillOfLadding.newBuilder();
-              List<Common.BillOfLadding> billOfLaddings1 = entry.getValue();
-              Common.BillOfLadding billOfLadding = billOfLaddings1.get(0);
-              bolBuilder.setCargoAbbrevation(billOfLadding.getCargoAbbrevation());
-              bolBuilder.setCargoColor(billOfLadding.getCargoColor());
-              bolBuilder.setCargoName(billOfLadding.getCargoName());
-              bolBuilder.setCargoId(billOfLadding.getCargoId());
-              bolBuilder.addAllLoadingPort(
-                  billOfLaddings1.stream()
-                      .map(Common.BillOfLadding::getPortId)
-                      .collect(Collectors.toList()));
-              Double qtyBbls =
-                  billOfLaddings1.stream()
-                      .mapToDouble(o -> Double.parseDouble(o.getQuantityBbls()))
-                      .sum();
-              bolBuilder.setQuantityBbls(String.valueOf(qtyBbls));
-              Double qtyKl =
-                  billOfLaddings1.stream()
-                      .mapToDouble(o -> Double.parseDouble(o.getQuantityKl()))
-                      .sum();
-              bolBuilder.setQuantityKl(String.valueOf(qtyKl));
-              Double qtyMT =
-                  billOfLaddings1.stream()
-                      .mapToDouble(o -> Double.parseDouble(o.getQuantityMt()))
-                      .sum();
-              bolBuilder.setQuantityMt(String.valueOf(qtyMT));
-              Double api =
-                  billOfLaddings1.stream()
-                      .mapToDouble(o -> Double.parseDouble(o.getApi()))
-                      .average()
-                      .getAsDouble();
-              bolBuilder.setApi(String.valueOf(api));
-              Double temperature =
-                  billOfLaddings1.stream()
-                      .mapToDouble(o -> Double.parseDouble(o.getTemperature()))
-                      .average()
-                      .getAsDouble();
-              bolBuilder.setTemperature(String.valueOf(temperature));
-              builder.addBillOfLadding(bolBuilder);
-            });
+    if (!billOfLaddings.isEmpty()) {
+      buildBillOfLading(billOfLaddings, builder);
+      List<Common.BillOfLadding> billOfLaddingList = builder.getBillOfLaddingList();
+      Map<String, List<Common.BillOfLadding>> billOfLaddingByCargo =
+          billOfLaddingList.stream()
+              .collect(Collectors.groupingBy(Common.BillOfLadding::getCargoColor));
+      builder.clearBillOfLadding();
+      billOfLaddingByCargo
+          .entrySet()
+          .forEach(
+              entry -> {
+                com.cpdss.common.generated.Common.BillOfLadding.Builder bolBuilder =
+                    com.cpdss.common.generated.Common.BillOfLadding.newBuilder();
+                List<Common.BillOfLadding> billOfLaddings1 = entry.getValue();
+                Common.BillOfLadding billOfLadding = billOfLaddings1.get(0);
+                bolBuilder.setCargoAbbrevation(billOfLadding.getCargoAbbrevation());
+                bolBuilder.setCargoColor(billOfLadding.getCargoColor());
+                bolBuilder.setCargoName(billOfLadding.getCargoName());
+                bolBuilder.setCargoId(billOfLadding.getCargoId());
+                bolBuilder.addAllLoadingPort(
+                    billOfLaddings1.stream()
+                        .map(Common.BillOfLadding::getPortId)
+                        .collect(Collectors.toList()));
+                Double qtyBbls =
+                    billOfLaddings1.stream()
+                        .mapToDouble(o -> Double.parseDouble(o.getQuantityBbls()))
+                        .sum();
+                bolBuilder.setQuantityBbls(String.valueOf(qtyBbls));
+                Double qtyKl =
+                    billOfLaddings1.stream()
+                        .mapToDouble(o -> Double.parseDouble(o.getQuantityKl()))
+                        .sum();
+                bolBuilder.setQuantityKl(String.valueOf(qtyKl));
+                Double qtyMT =
+                    billOfLaddings1.stream()
+                        .mapToDouble(o -> Double.parseDouble(o.getQuantityMt()))
+                        .sum();
+                bolBuilder.setQuantityMt(String.valueOf(qtyMT));
+                Double api =
+                    billOfLaddings1.stream()
+                        .mapToDouble(o -> Double.parseDouble(o.getApi()))
+                        .average()
+                        .getAsDouble();
+                bolBuilder.setApi(String.valueOf(api));
+                Double temperature =
+                    billOfLaddings1.stream()
+                        .mapToDouble(o -> Double.parseDouble(o.getTemperature()))
+                        .average()
+                        .getAsDouble();
+                bolBuilder.setTemperature(String.valueOf(temperature));
+                builder.addBillOfLadding(bolBuilder);
+              });
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else throw new Exception("Cannot find loadable pattern");
     builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return builder;
   }
