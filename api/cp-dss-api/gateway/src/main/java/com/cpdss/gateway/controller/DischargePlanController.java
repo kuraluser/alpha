@@ -8,14 +8,13 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /** @Author jerin.g */
 @Log4j2
@@ -55,10 +54,7 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       return this.dischargeStudyService.getDischargeStudyByVoyage(
-          vesselId,
-          voyageId,
-          dischargeStudyId,
-          headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId, voyageId, dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching getDischargeStudyByVoyage", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
