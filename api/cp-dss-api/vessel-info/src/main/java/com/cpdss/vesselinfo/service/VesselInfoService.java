@@ -1489,7 +1489,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 
   /** To retrieve vessel rule based on vessel id OR To save rule for vessel */
   @Override
-  @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
+  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
   public void getRulesByVesselIdAndSectionId(
       VesselRuleRequest request, StreamObserver<VesselRuleReply> responseObserver) {
     com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder =
@@ -1530,10 +1530,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(ruleVesselMapping::setIsEnable);
                             Optional.ofNullable(rule.getIsHardRule())
-                            .ifPresent(ruleVesselMapping::setIsHardRule);
-                            //Hard rule cannot be disable
-                            if(rule.getIsHardRule()) {
-                            	ruleVesselMapping.setIsEnable(true);
+                                .ifPresent(ruleVesselMapping::setIsHardRule);
+                            // Hard rule cannot be disable
+                            if (rule.getIsHardRule()) {
+                              ruleVesselMapping.setIsEnable(true);
                             }
                             ruleVesselMapping.setVessel(vessel);
                             if (!CollectionUtils.isEmpty(ruleTypeList)
