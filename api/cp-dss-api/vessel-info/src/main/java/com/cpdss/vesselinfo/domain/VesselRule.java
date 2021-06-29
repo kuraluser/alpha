@@ -1,3 +1,4 @@
+
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.vesselinfo.domain;
 
@@ -23,4 +24,6 @@ public class VesselRule {
   private String templateInputMinValue;
   private String templateInputTypeValue;
   private Boolean isHardRule;
+  private Boolean isMandatory;
+  private Long ruleOrder;
 }

@@ -47,4 +47,7 @@ public class RuleTemplateInput extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+  
+  @Column(name = "is_mandatory")
+  private Boolean isMandatory;
 }
