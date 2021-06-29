@@ -43270,6 +43270,46 @@ public final class LoadingPlanModels {
      * @return The loadablePatternId.
      */
     long getLoadablePatternId();
+
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The api.
+     */
+    java.lang.String getApi();
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The bytes for api.
+     */
+    com.google.protobuf.ByteString getApiBytes();
+
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The temperature.
+     */
+    java.lang.String getTemperature();
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The bytes for temperature.
+     */
+    com.google.protobuf.ByteString getTemperatureBytes();
+
+    /**
+     * <code>int32 displayOrder = 13;</code>
+     *
+     * @return The displayOrder.
+     */
+    int getDisplayOrder();
+
+    /**
+     * <code>int64 portRotationId = 14;</code>
+     *
+     * @return The portRotationId.
+     */
+    long getPortRotationId();
   }
   /** Protobuf type {@code CargoToppingOffSequence} */
   public static final class CargoToppingOffSequence extends com.google.protobuf.GeneratedMessageV3
@@ -43288,6 +43328,8 @@ public final class LoadingPlanModels {
       ullage_ = "";
       volume_ = "";
       weight_ = "";
+      api_ = "";
+      temperature_ = "";
     }
 
     @java.lang.Override
@@ -43377,6 +43419,30 @@ public final class LoadingPlanModels {
             case 80:
               {
                 loadablePatternId_ = input.readInt64();
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                api_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                temperature_ = s;
+                break;
+              }
+            case 104:
+              {
+                displayOrder_ = input.readInt32();
+                break;
+              }
+            case 112:
+              {
+                portRotationId_ = input.readInt64();
                 break;
               }
             default:
@@ -43645,6 +43711,98 @@ public final class LoadingPlanModels {
       return loadablePatternId_;
     }
 
+    public static final int API_FIELD_NUMBER = 11;
+    private volatile java.lang.Object api_;
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The api.
+     */
+    public java.lang.String getApi() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        api_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string api = 11;</code>
+     *
+     * @return The bytes for api.
+     */
+    public com.google.protobuf.ByteString getApiBytes() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        api_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TEMPERATURE_FIELD_NUMBER = 12;
+    private volatile java.lang.Object temperature_;
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The temperature.
+     */
+    public java.lang.String getTemperature() {
+      java.lang.Object ref = temperature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        temperature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string temperature = 12;</code>
+     *
+     * @return The bytes for temperature.
+     */
+    public com.google.protobuf.ByteString getTemperatureBytes() {
+      java.lang.Object ref = temperature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        temperature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DISPLAYORDER_FIELD_NUMBER = 13;
+    private int displayOrder_;
+    /**
+     * <code>int32 displayOrder = 13;</code>
+     *
+     * @return The displayOrder.
+     */
+    public int getDisplayOrder() {
+      return displayOrder_;
+    }
+
+    public static final int PORTROTATIONID_FIELD_NUMBER = 14;
+    private long portRotationId_;
+    /**
+     * <code>int64 portRotationId = 14;</code>
+     *
+     * @return The portRotationId.
+     */
+    public long getPortRotationId() {
+      return portRotationId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -43689,6 +43847,18 @@ public final class LoadingPlanModels {
       if (loadablePatternId_ != 0L) {
         output.writeInt64(10, loadablePatternId_);
       }
+      if (!getApiBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, api_);
+      }
+      if (!getTemperatureBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, temperature_);
+      }
+      if (displayOrder_ != 0) {
+        output.writeInt32(13, displayOrder_);
+      }
+      if (portRotationId_ != 0L) {
+        output.writeInt64(14, portRotationId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -43728,6 +43898,18 @@ public final class LoadingPlanModels {
       if (loadablePatternId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, loadablePatternId_);
       }
+      if (!getApiBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, api_);
+      }
+      if (!getTemperatureBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, temperature_);
+      }
+      if (displayOrder_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(13, displayOrder_);
+      }
+      if (portRotationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(14, portRotationId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -43756,6 +43938,10 @@ public final class LoadingPlanModels {
       if (!getVolume().equals(other.getVolume())) return false;
       if (!getWeight().equals(other.getWeight())) return false;
       if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
+      if (!getApi().equals(other.getApi())) return false;
+      if (!getTemperature().equals(other.getTemperature())) return false;
+      if (getDisplayOrder() != other.getDisplayOrder()) return false;
+      if (getPortRotationId() != other.getPortRotationId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -43787,6 +43973,14 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getWeight().hashCode();
       hash = (37 * hash) + LOADABLEPATTERNID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternId());
+      hash = (37 * hash) + API_FIELD_NUMBER;
+      hash = (53 * hash) + getApi().hashCode();
+      hash = (37 * hash) + TEMPERATURE_FIELD_NUMBER;
+      hash = (53 * hash) + getTemperature().hashCode();
+      hash = (37 * hash) + DISPLAYORDER_FIELD_NUMBER;
+      hash = (53 * hash) + getDisplayOrder();
+      hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -43957,6 +44151,14 @@ public final class LoadingPlanModels {
 
         loadablePatternId_ = 0L;
 
+        api_ = "";
+
+        temperature_ = "";
+
+        displayOrder_ = 0;
+
+        portRotationId_ = 0L;
+
         return this;
       }
 
@@ -44000,6 +44202,10 @@ public final class LoadingPlanModels {
         result.volume_ = volume_;
         result.weight_ = weight_;
         result.loadablePatternId_ = loadablePatternId_;
+        result.api_ = api_;
+        result.temperature_ = temperature_;
+        result.displayOrder_ = displayOrder_;
+        result.portRotationId_ = portRotationId_;
         onBuilt();
         return result;
       }
@@ -44092,6 +44298,20 @@ public final class LoadingPlanModels {
         }
         if (other.getLoadablePatternId() != 0L) {
           setLoadablePatternId(other.getLoadablePatternId());
+        }
+        if (!other.getApi().isEmpty()) {
+          api_ = other.api_;
+          onChanged();
+        }
+        if (!other.getTemperature().isEmpty()) {
+          temperature_ = other.temperature_;
+          onChanged();
+        }
+        if (other.getDisplayOrder() != 0) {
+          setDisplayOrder(other.getDisplayOrder());
+        }
+        if (other.getPortRotationId() != 0L) {
+          setPortRotationId(other.getPortRotationId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -44666,6 +44886,224 @@ public final class LoadingPlanModels {
       public Builder clearLoadablePatternId() {
 
         loadablePatternId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object api_ = "";
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @return The api.
+       */
+      public java.lang.String getApi() {
+        java.lang.Object ref = api_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          api_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @return The bytes for api.
+       */
+      public com.google.protobuf.ByteString getApiBytes() {
+        java.lang.Object ref = api_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          api_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @param value The api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApi(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearApi() {
+
+        api_ = getDefaultInstance().getApi();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 11;</code>
+       *
+       * @param value The bytes for api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApiBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object temperature_ = "";
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @return The temperature.
+       */
+      public java.lang.String getTemperature() {
+        java.lang.Object ref = temperature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          temperature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @return The bytes for temperature.
+       */
+      public com.google.protobuf.ByteString getTemperatureBytes() {
+        java.lang.Object ref = temperature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          temperature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @param value The temperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTemperature(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        temperature_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTemperature() {
+
+        temperature_ = getDefaultInstance().getTemperature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string temperature = 12;</code>
+       *
+       * @param value The bytes for temperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTemperatureBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        temperature_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int displayOrder_;
+      /**
+       * <code>int32 displayOrder = 13;</code>
+       *
+       * @return The displayOrder.
+       */
+      public int getDisplayOrder() {
+        return displayOrder_;
+      }
+      /**
+       * <code>int32 displayOrder = 13;</code>
+       *
+       * @param value The displayOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplayOrder(int value) {
+
+        displayOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 displayOrder = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDisplayOrder() {
+
+        displayOrder_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long portRotationId_;
+      /**
+       * <code>int64 portRotationId = 14;</code>
+       *
+       * @return The portRotationId.
+       */
+      public long getPortRotationId() {
+        return portRotationId_;
+      }
+      /**
+       * <code>int64 portRotationId = 14;</code>
+       *
+       * @param value The portRotationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortRotationId(long value) {
+
+        portRotationId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portRotationId = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortRotationId() {
+
+        portRotationId_ = 0L;
         onChanged();
         return this;
       }
@@ -49908,12 +50346,14 @@ public final class LoadingPlanModels {
           + "rrection\030\031 \001(\t\022\020\n\010subTotal\030\032 \001(\t\022\032\n\022tota"
           + "lFoConsumption\030\033 \001(\t\022\025\n\rtotalQuantity\030\034 "
           + "\001(\t\022\022\n\ntpcatDraft\030\035 \001(\t\022\032\n\022vesselAverage"
-          + "Speed\030\036 \001(\t\"\325\001\n\027CargoToppingOffSequence\022"
+          + "Speed\030\036 \001(\t\"\245\002\n\027CargoToppingOffSequence\022"
           + "\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fillingRatio\030\002 \001(\t\022"
           + "\020\n\010isActive\030\003 \001(\010\022\023\n\013orderNumber\030\004 \001(\005\022\017"
           + "\n\007remarks\030\005 \001(\t\022\017\n\007tankXId\030\006 \001(\003\022\016\n\006ulla"
           + "ge\030\007 \001(\t\022\016\n\006volume\030\010 \001(\t\022\016\n\006weight\030\t \001(\t"
-          + "\022\031\n\021loadablePatternId\030\n \001(\003\"\316\001\n\026LoadingP"
+          + "\022\031\n\021loadablePatternId\030\n \001(\003\022\013\n\003api\030\013 \001(\t"
+          + "\022\023\n\013temperature\030\014 \001(\t\022\024\n\014displayOrder\030\r "
+          + "\001(\005\022\026\n\016portRotationId\030\016 \001(\003\"\316\001\n\026LoadingP"
           + "lanSyncDetails\022;\n\030loadingInformationDeta"
           + "il\030\001 \001(\0132\031.LoadingInformationDetail\022;\n\030l"
           + "oadablePlanDetailsReply\030\002 \001(\0132\031.Loadable"
@@ -50301,6 +50741,10 @@ public final class LoadingPlanModels {
               "Volume",
               "Weight",
               "LoadablePatternId",
+              "Api",
+              "Temperature",
+              "DisplayOrder",
+              "PortRotationId",
             });
     internal_static_LoadingPlanSyncDetails_descriptor = getDescriptor().getMessageTypes().get(24);
     internal_static_LoadingPlanSyncDetails_fieldAccessorTable =
