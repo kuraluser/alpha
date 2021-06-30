@@ -32,7 +32,8 @@ public interface LoadingPlanGrpcService {
       Long loadableStudyId,
       Long portId,
       Long portOrder,
-      Long portRotationId);
+      Long portRotationId,
+      String operationType);
 
   List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
       Long patternId, String operationType, Long portRotationId, Long portId);
