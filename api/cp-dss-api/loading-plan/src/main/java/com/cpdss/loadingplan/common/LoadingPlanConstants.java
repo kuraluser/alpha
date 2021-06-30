@@ -12,4 +12,6 @@ public final class LoadingPlanConstants {
   public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
   public static final Long LOADING_INFORMATION_REQUEST_ID = 9L;
+
+  public static final Long DEFAULT_STAGE_OFFSET_ID = 4L;
 }
