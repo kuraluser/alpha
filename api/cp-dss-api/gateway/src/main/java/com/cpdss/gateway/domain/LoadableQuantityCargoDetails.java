@@ -3,6 +3,7 @@ package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
 
@@ -62,4 +63,8 @@ public class LoadableQuantityCargoDetails {
 
   private List<CargoToppingOffSequence> toppingSequence;
   private String cargoNominationTemperature;
+
+  private String cargoNominationQuantity;
+  private String orderQuantity;
+  private String maxLoadingRate = BigDecimal.ZERO.toString();
 }

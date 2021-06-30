@@ -441,6 +441,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setPriority(lqcd.getPriority());
       cargoDetails.setLoadingOrder(lqcd.getLoadingOrder());
 
+      cargoDetails.setOrderQuantity(lqcd.getOrderQuantity());
+      cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
+
       response.add(cargoDetails);
     }
     return response;
