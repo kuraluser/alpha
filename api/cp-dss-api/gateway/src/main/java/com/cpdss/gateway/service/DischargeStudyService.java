@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
+import static java.lang.String.valueOf;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
@@ -13,12 +15,14 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
+import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import java.util.ArrayList;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -145,6 +149,63 @@ public class DischargeStudyService {
           loadableStudyService.getLoadableStudyPortRotationList(
               vesselId, voyageId, patternReply.getLoadableStudyId(), correlationId);
     }
+    return response;
+  }
+
+  /**
+   * @param request
+   * @param correlationId
+   * @param headers
+   * @return
+   * @throws GenericServiceException
+   */
+  public PortRotationResponse savePortRotation(
+      PortRotation request, String correlationId, HttpHeaders headers)
+      throws GenericServiceException {
+    log.info("Inside DischargeStudy savePortRotation");
+    LoadableStudy.PortRotationDetail portRotationDetail =
+        loadableStudyService.createPortRotationDetail(request, headers);
+    LoadableStudy.PortRotationReply grpcReply =
+        loadableStudyService.savePortRotation(portRotationDetail);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save loadable study - ports",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
+    }
+    PortRotationResponse response = new PortRotationResponse();
+    response.setId(grpcReply.getPortRotationId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param id
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public PortRotationResponse deletePortRotation(
+      Long loadableStudyId, Long id, String correlationId) throws GenericServiceException {
+    LoadableStudy.PortRotationRequest request =
+        LoadableStudy.PortRotationRequest.newBuilder()
+            .setId(id)
+            .setLoadableStudyId(loadableStudyId)
+            .build();
+    LoadableStudy.PortRotationReply grpcReply = loadableStudyService.deletePortRotation(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to delete port rotation",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
+    }
+    PortRotationResponse response = new PortRotationResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
     return response;
   }
 }
