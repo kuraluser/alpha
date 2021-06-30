@@ -43,6 +43,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBas
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.vesselinfo.domain.CargoTankMaster;
+import com.cpdss.vesselinfo.domain.RuleMasterData;
 import com.cpdss.vesselinfo.domain.TypeValue;
 import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.domain.VesselInfo;
@@ -1591,6 +1592,46 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                                   .ifPresent(ruleTemplateInput::setTypeValue);
                               Optional.ofNullable(input.getIsMandatory())
                                   .ifPresent(ruleTemplateInput::setIsMandatory);
+
+                              try {
+                                if (input.getType() != null
+                                    && input
+                                        .getType()
+                                        .trim()
+                                        .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                                    && input.getDefaultValue() != null
+                                    && input.getDefaultValue().trim() != "") {
+                                  if (input.getSuffix() != null
+                                      && input.getPrefix() != null
+                                      && input
+                                          .getSuffix()
+                                          .trim()
+                                          .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
+                                      && input
+                                          .getPrefix()
+                                          .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
+
+                                    this.ruleMasterDropDownValidation(
+                                        listOfDropDownValue,
+                                        cargoTankMaster,
+                                        true,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  } else {
+                                    this.ruleMasterDropDownValidation(
+                                        listOfDropDownValue,
+                                        cargoTankMaster,
+                                        false,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  }
+                                }
+                              } catch (GenericServiceException e) {
+                                throw new RuntimeException(
+                                    "Master rule drop down value does not exist");
+                              }
                               ruleTemplateInput.setIsActive(true);
                               ruleTemplateInput.setRuleVesselMapping(ruleVesselMapping);
                               ruleVesselMappingInputList.add(ruleTemplateInput);
@@ -1628,6 +1669,14 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       }
 
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when save or get vessel rule", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Exception in save or get vessel rule", e);
@@ -1640,6 +1689,94 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void ruleMasterDropDownValidation(
+      List<RuleVesselDropDownValues> listOfDropDownValue,
+      List<CargoTankMaster> cargoTankMaster,
+      boolean isCargoTankMaster,
+      RulesInputs input,
+      RuleVesselMappingInput ruleTemplateInput,
+      Rules rule)
+      throws GenericServiceException {
+    String value = "";
+    List<RuleVesselDropDownValues> filterMasterByRule =
+        listOfDropDownValue.stream()
+            .filter(
+                rDropDown ->
+                    rDropDown.getRuleTemplateXid() != null
+                        && rule.getRuleTemplateId() != null
+                        && rDropDown
+                            .getRuleTemplateXid()
+                            .equals(Long.parseLong(rule.getRuleTemplateId())))
+            .collect(Collectors.toList());
+    if (input.getDefaultValue().contains(",")) {
+      String[] masterIds = input.getDefaultValue().split(",");
+      for (int id = 0; id < masterIds.length; id++) {
+        int finalId = id;
+        if (isCargoTankMaster) {
+          if (cargoTankMaster.stream()
+              .map(CargoTankMaster::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        } else {
+          if (filterMasterByRule.stream()
+              .map(RuleVesselDropDownValues::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        }
+      }
+      ruleTemplateInput.setDefaultValue(value);
+    } else {
+      if (isCargoTankMaster) {
+        if (!cargoTankMaster.stream()
+            .map(CargoTankMaster::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Cargo master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      } else {
+        if (!filterMasterByRule.stream()
+            .map(RuleVesselDropDownValues::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Rulemaster master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      }
+      ruleTemplateInput.setDefaultValue(input.getDefaultValue());
     }
   }
 
@@ -1709,8 +1846,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                             .get(id)
                             .getTemplateInputSuffix()
                             .trim()
-                            .equalsIgnoreCase("tank can be filled with commingled cargo")
-                        && value.get(id).getTemplateInputPrefix().trim().equalsIgnoreCase("Only")) {
+                            .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
+                        && value
+                            .get(id)
+                            .getTemplateInputPrefix()
+                            .trim()
+                            .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
                       cargoTankMaster.forEach(
                           cargoTank -> {
                             Optional.ofNullable(cargoTank.getId())
@@ -1720,23 +1861,32 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                             ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
                           });
                     } else {
-                      Long ruleTemplateId = value.get(id).getTemplateFId();
-                      List<RuleVesselDropDownValues> filterMasterByRule =
-                          listOfDropDownValue.stream()
-                              .filter(
-                                  rDropDown ->
-                                      rDropDown.getRuleTemplateXid() != null
-                                          && ruleTemplateId != null
-                                          && rDropDown.getRuleTemplateXid().equals(ruleTemplateId))
-                              .collect(Collectors.toList());
-                      filterMasterByRule.forEach(
-                          masterDropDownRule -> {
-                            Optional.ofNullable(masterDropDownRule.getId())
-                                .ifPresent(ruleDropDownMaster::setId);
-                            Optional.ofNullable(masterDropDownRule.getDropDownValue())
-                                .ifPresent(ruleDropDownMaster::setValue);
-                            ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
-                          });
+                      Optional<Long> ruleTempId;
+                      if (isDisplayId) {
+                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateId());
+                      } else {
+                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateFId());
+                      }
+                      if (ruleTempId.isPresent()) {
+                        List<RuleVesselDropDownValues> filterMasterByRule =
+                            listOfDropDownValue.stream()
+                                .filter(
+                                    rDropDown ->
+                                        rDropDown.getRuleTemplateXid() != null
+                                            && ruleTempId.get() != null
+                                            && rDropDown
+                                                .getRuleTemplateXid()
+                                                .equals(ruleTempId.get()))
+                                .collect(Collectors.toList());
+                        filterMasterByRule.forEach(
+                            masterDropDownRule -> {
+                              Optional.ofNullable(masterDropDownRule.getId())
+                                  .ifPresent(ruleDropDownMaster::setId);
+                              Optional.ofNullable(masterDropDownRule.getDropDownValue())
+                                  .ifPresent(ruleDropDownMaster::setValue);
+                              ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+                            });
+                      }
                     }
                   }
                   if (isDisplayId) {
