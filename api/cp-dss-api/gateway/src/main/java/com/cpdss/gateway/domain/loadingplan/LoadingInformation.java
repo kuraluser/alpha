@@ -29,6 +29,7 @@ public class LoadingInformation {
   private CommonSuccessResponse responseStatus;
   private Long loadingInfoId;
   private Long synopticTableId;
+  private Boolean isLoadingInfoComplete;
   private LoadingDetails loadingDetails;
   private LoadingRates loadingRates;
   private LoadingBerthDetails berthDetails;
