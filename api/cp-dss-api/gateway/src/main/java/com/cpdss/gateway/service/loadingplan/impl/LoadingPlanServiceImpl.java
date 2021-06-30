@@ -57,7 +57,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       Long vesselId, Long planId, Long portRId) throws GenericServiceException {
     LoadingInformation var1 = new LoadingInformation();
 
-    final String OPERATION_TYPE = "ARR";
+    final String OPERATION_TYPE = "DEP";
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(

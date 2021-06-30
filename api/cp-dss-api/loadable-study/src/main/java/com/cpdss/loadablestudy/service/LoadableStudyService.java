@@ -12690,7 +12690,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     synopticalTable.getIsActive()
                         && synopticalTable
                             .getOperationType()
-                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
             .findFirst();
     if (synopticalTableOpt.isPresent()) {
       builder
