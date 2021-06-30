@@ -7,7 +7,7 @@ import lombok.*;
 
 /** @author vinoth kumar M */
 @Entity
-@Table(name = "rule_list_master")
+@Table(name = "rule_drop_down_values")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,8 +16,8 @@ public class RuleVesselDropDownValues extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "rule_vessel_mapping_input_xid")
-  private Long rule_vessel_mapping_input_xid;
+  @Column(name = "rule_template_xid")
+  private Long ruleTemplateXid;
 
   @Column(name = "drop_down_values")
   private String dropDownValue;

@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -21,4 +22,8 @@ public class RulesInputs {
   private String suffix;
 
   private String id;
+
+  private List<RuleDropDownMaster> ruleDropDownMaster;
+
+  private Boolean isMandatory;
 }
