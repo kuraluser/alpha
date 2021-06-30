@@ -12650,6 +12650,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       .filter(
                           details ->
                               details.getPortRotationId().equals(portRotation.getId())
+                                  && details
+                                      .getOperationType()
+                                      .equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)
                                   && details.getTankId().equals(sequenceBuilder.getTankXId()))
                       .findAny();
               if (cargoDetailOpt.isPresent()) {

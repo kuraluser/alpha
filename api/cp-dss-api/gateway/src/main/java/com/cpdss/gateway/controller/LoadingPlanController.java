@@ -29,6 +29,8 @@ public class LoadingPlanController {
   @Autowired LoadingPlanService loadingPlanService;
   @Autowired LoadingInformationService loadingInformationService;
 
+  private static final String CORRELATION_ID_HEADER = "correlationId";
+
   /**
    * Get API to collect the port rotation details of active Voyage
    *
@@ -122,7 +124,8 @@ public class LoadingPlanController {
       throws CommonRestException {
     try {
       log.info("Save Loading Info, api for vessel {}", vesselId);
-      return this.loadingPlanService.saveLoadingInformation(request);
+      return this.loadingPlanService.saveLoadingInformation(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("Exception in Save Loading Information API");
       e.printStackTrace();
