@@ -45,7 +45,7 @@ public interface LoadingInformationService {
   List<ToppingOffSequence> getToppingOffSequence(List<LoadingPlanModels.LoadingToppingOff> var1);
 
   List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
-      Long patternId, String operationType, Long portRotationId, Long portId);
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
 
   LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay);
 
