@@ -191,10 +191,25 @@ service LoadableStudyService {
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
+	rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){
+	}
 }
 message CargoNominationDetailReply{
 	CargoNominationDetail cargoNominationdetail = 1;
 	ResponseStatus responseStatus = 2;
+}
+
+message DischargeStudyDetail{
+	string name = 1;
+	string enquiryName = 2;
+	int64 vesselId = 3;
+	int64 voyageId = 4;
+}
+
+message DischargeStudyReply{
+	ResponseStatus responseStatus = 1;
+	DischargeStudyDetail dischargeStudy = 2;
+	int64 id = 3;
 }
 
 message  LoadablePatternConfirmedReply{

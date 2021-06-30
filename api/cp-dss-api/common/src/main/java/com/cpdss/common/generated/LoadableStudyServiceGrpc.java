@@ -3323,6 +3323,55 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadableCommingleByPatternIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail,
+          com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+      getSaveDischargeStudyMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveDischargeStudy",
+      requestType = com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.DischargeStudyReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail,
+          com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+      getSaveDischargeStudyMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail,
+            com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+        getSaveDischargeStudyMethod;
+    if ((getSaveDischargeStudyMethod = LoadableStudyServiceGrpc.getSaveDischargeStudyMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveDischargeStudyMethod = LoadableStudyServiceGrpc.getSaveDischargeStudyMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveDischargeStudyMethod =
+              getSaveDischargeStudyMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail,
+                          com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveDischargeStudy"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.DischargeStudyReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveDischargeStudy"))
+                      .build();
+        }
+      }
+    }
+    return getSaveDischargeStudyMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3907,6 +3956,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadableCommingleByPatternIdMethod(), responseObserver);
     }
 
+    /** */
+    public void saveDischargeStudy(
+        com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveDischargeStudyMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4367,6 +4424,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>(
                       this, METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID)))
+          .addMethod(
+              getSaveDischargeStudyMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail,
+                      com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>(
+                      this, METHODID_SAVE_DISCHARGE_STUDY)))
           .build();
     }
   }
@@ -5110,6 +5174,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveDischargeStudy(
+        com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveDischargeStudyMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -5594,6 +5669,13 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableCommingleByPatternIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.DischargeStudyReply saveDischargeStudy(
+        com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveDischargeStudyMethod(), getCallOptions(), request);
     }
   }
 
@@ -6176,6 +6258,14 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+        saveDischargeStudy(com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveDischargeStudyMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6243,6 +6333,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_PATTERN_BY_VOYAGE_AND_STATUS = 62;
   private static final int METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID = 63;
   private static final int METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID = 64;
+  private static final int METHODID_SAVE_DISCHARGE_STUDY = 65;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -6706,6 +6797,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_DISCHARGE_STUDY:
+          serviceImpl.saveDischargeStudy(
+              (com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -6835,6 +6933,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadablePatternByVoyageAndStatusMethod())
                       .addMethod(getGetCargoNominationByCargoNominationIdMethod())
                       .addMethod(getGetLoadableCommingleByPatternIdMethod())
+                      .addMethod(getSaveDischargeStudyMethod())
                       .build();
         }
       }

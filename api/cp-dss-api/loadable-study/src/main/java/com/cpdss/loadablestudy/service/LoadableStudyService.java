@@ -36,6 +36,8 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
+import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
@@ -13789,4 +13791,77 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void saveDischargeStudy(
+      DischargeStudyDetail request, StreamObserver<DischargeStudyReply> responseObserver) {
+    DischargeStudyReply.Builder builder = DischargeStudyReply.newBuilder();
+    try {
+      Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+      if (null == voyage) {
+        throw new GenericServiceException(
+            "Voyage does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      List<LoadableStudy> loadables = loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(request.getVesselId(), voyage, true,CONFIRMED_STATUS_ID);
+      if(loadables.isEmpty()) {
+    	  throw new GenericServiceException(
+    	            "No confirmed loadable study",
+    	            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+    	            HttpStatusCode.BAD_REQUEST);
+      }
+      LoadableStudy loadableStudy = loadables.get(0);
+
+    List<LoadableStudyPortRotation> portrotation = loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idAndIsActive(loadableStudy, DISCHARGING_OPERATION_ID, true);
+    if(portrotation.isEmpty()) {
+    	  throw new GenericServiceException(
+  	            "No discharging port in port rotation against loadable study",
+  	            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+  	            HttpStatusCode.BAD_REQUEST);
+    }
+    LoadableStudy dischargeStudy = new LoadableStudy();
+    dischargeStudy.setName(request.getName());
+    dischargeStudy.setActive(true);
+    dischargeStudy.setVesselXId(request.getVesselId());
+    dischargeStudy.setVoyage(voyage);
+    LoadableStudy savedDischargeStudy = loadableStudyRepository.save(dischargeStudy);
+
+    portrotation.sort(Comparator.comparing(LoadableStudyPortRotation::getPortOrder).reversed());
+    LoadableStudyPortRotation loadableStudyPortRotation = copyPortRotationData(portrotation.get(0),savedDischargeStudy);
+    LoadableStudyPortRotation dischargeport = loadableStudyPortRotationRepository.save(loadableStudyPortRotation);
+    builder.setId(savedDischargeStudy.getId());
+    builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+private LoadableStudyPortRotation copyPortRotationData(LoadableStudyPortRotation loadableStudyPortRotation, LoadableStudy savedDischargeStudy) {
+	LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
+	portRotation.setActive(loadableStudyPortRotation.isActive());
+	portRotation.setAirDraftRestriction(loadableStudyPortRotation.getAirDraftRestriction());
+	portRotation.setBerthXId(loadableStudyPortRotation.getBerthXId());
+	portRotation.setDistanceBetweenPorts(loadableStudyPortRotation.getDistanceBetweenPorts());
+	portRotation.setEta(loadableStudyPortRotation.getEta());
+	portRotation.setEtd(loadableStudyPortRotation.getEtd());
+	portRotation.setIsPortRotationOhqComplete(loadableStudyPortRotation.getIsPortRotationOhqComplete());
+	portRotation.setLayCanFrom(loadableStudyPortRotation.getLayCanFrom());
+	portRotation.setLayCanTo(loadableStudyPortRotation.getLayCanTo());
+	portRotation.setLoadableStudy(savedDischargeStudy);
+	portRotation.setMaxDraft(loadableStudyPortRotation.getMaxDraft());
+	portRotation.setOperation(loadableStudyPortRotation.getOperation());
+	portRotation.setPortOrder(loadableStudyPortRotation.getPortOrder());
+	portRotation.setPortXId(loadableStudyPortRotation.getPortXId());
+	portRotation.setSeaWaterDensity(loadableStudyPortRotation.getSeaWaterDensity());
+	portRotation.setSynopticalTable(loadableStudyPortRotation.getSynopticalTable());
+	portRotation.setTimeOfStay(loadableStudyPortRotation.getTimeOfStay());
+	portRotation.setVersion(loadableStudyPortRotation.getVersion());
+	return portRotation;
+}
 }

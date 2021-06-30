@@ -5,6 +5,8 @@ import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
+import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.dischargestudy.DischargeStudyServiceGrpc.DischargeStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
@@ -13,11 +15,14 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.BillOfLadding;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
+import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import java.util.ArrayList;
+import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -207,5 +212,32 @@ public class DischargeStudyService {
     response.setResponseStatus(
         new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  public LoadableStudyResponse saveDischargeStudy(
+      DischargeStudyRequest request, String correlationId) throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.Builder builder =
+        DischargeStudyDetail.newBuilder();
+    
+    Optional.ofNullable(request.getName()).ifPresent(builder::setName);
+    Optional.ofNullable(request.getEnquiryName()).ifPresent(builder::setEnquiryName);
+    Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
+    Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
+    DischargeStudyReply reply = this.saveDischargeStudy(builder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save loadable studies",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+    }
+    LoadableStudyResponse response = new LoadableStudyResponse();
+    response.setLoadableStudyId(reply.getId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private DischargeStudyReply saveDischargeStudy(DischargeStudyDetail dischargeStudyDetail) {
+    return this.loadableStudyServiceBlockingStub.saveDischargeStudy(dischargeStudyDetail);
   }
 }
