@@ -1,7 +1,22 @@
-/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated.loading_plan;
 
-/** */
+import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
+import static io.grpc.stub.ClientCalls.blockingUnaryCall;
+import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
+
+/**
+ */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
     comments = "Source: loading_plan/loading_plan_service.proto")
@@ -12,60 +27,63 @@ public final class LoadingInstructionServiceGrpc {
   public static final String SERVICE_NAME = "LoadingInstructionService";
 
   // Static method descriptors that strictly reflect the proto.
-  /** Creates a new async stub that supports all call types for the service */
+  /**
+   * Creates a new async stub that supports all call types for the service
+   */
   public static LoadingInstructionServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceStub>() {
-          @java.lang.Override
-          public LoadingInstructionServiceStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new LoadingInstructionServiceStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceStub>() {
+        @java.lang.Override
+        public LoadingInstructionServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new LoadingInstructionServiceStub(channel, callOptions);
+        }
+      };
     return LoadingInstructionServiceStub.newStub(factory, channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static LoadingInstructionServiceBlockingStub newBlockingStub(io.grpc.Channel channel) {
+  public static LoadingInstructionServiceBlockingStub newBlockingStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceBlockingStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceBlockingStub>() {
-          @java.lang.Override
-          public LoadingInstructionServiceBlockingStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new LoadingInstructionServiceBlockingStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceBlockingStub>() {
+        @java.lang.Override
+        public LoadingInstructionServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new LoadingInstructionServiceBlockingStub(channel, callOptions);
+        }
+      };
     return LoadingInstructionServiceBlockingStub.newStub(factory, channel);
   }
 
-  /** Creates a new ListenableFuture-style stub that supports unary calls on the service */
-  public static LoadingInstructionServiceFutureStub newFutureStub(io.grpc.Channel channel) {
+  /**
+   * Creates a new ListenableFuture-style stub that supports unary calls on the service
+   */
+  public static LoadingInstructionServiceFutureStub newFutureStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceFutureStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceFutureStub>() {
-          @java.lang.Override
-          public LoadingInstructionServiceFutureStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new LoadingInstructionServiceFutureStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceFutureStub>() {
+        @java.lang.Override
+        public LoadingInstructionServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new LoadingInstructionServiceFutureStub(channel, callOptions);
+        }
+      };
     return LoadingInstructionServiceFutureStub.newStub(factory, channel);
   }
 
-  /** */
-  public abstract static class LoadingInstructionServiceImplBase
-      implements io.grpc.BindableService {
+  /**
+   */
+  public static abstract class LoadingInstructionServiceImplBase implements io.grpc.BindableService {
 
-    @java.lang.Override
-    public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor()).build();
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+          .build();
     }
   }
 
-  /** */
-  public static final class LoadingInstructionServiceStub
-      extends io.grpc.stub.AbstractAsyncStub<LoadingInstructionServiceStub> {
+  /**
+   */
+  public static final class LoadingInstructionServiceStub extends io.grpc.stub.AbstractAsyncStub<LoadingInstructionServiceStub> {
     private LoadingInstructionServiceStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -78,9 +96,9 @@ public final class LoadingInstructionServiceGrpc {
     }
   }
 
-  /** */
-  public static final class LoadingInstructionServiceBlockingStub
-      extends io.grpc.stub.AbstractBlockingStub<LoadingInstructionServiceBlockingStub> {
+  /**
+   */
+  public static final class LoadingInstructionServiceBlockingStub extends io.grpc.stub.AbstractBlockingStub<LoadingInstructionServiceBlockingStub> {
     private LoadingInstructionServiceBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -93,9 +111,9 @@ public final class LoadingInstructionServiceGrpc {
     }
   }
 
-  /** */
-  public static final class LoadingInstructionServiceFutureStub
-      extends io.grpc.stub.AbstractFutureStub<LoadingInstructionServiceFutureStub> {
+  /**
+   */
+  public static final class LoadingInstructionServiceFutureStub extends io.grpc.stub.AbstractFutureStub<LoadingInstructionServiceFutureStub> {
     private LoadingInstructionServiceFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -108,11 +126,12 @@ public final class LoadingInstructionServiceGrpc {
     }
   }
 
-  private static final class MethodHandlers<Req, Resp>
-      implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
+
+  private static final class MethodHandlers<Req, Resp> implements
+      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
     private final LoadingInstructionServiceImplBase serviceImpl;
     private final int methodId;
 
@@ -141,9 +160,8 @@ public final class LoadingInstructionServiceGrpc {
     }
   }
 
-  private abstract static class LoadingInstructionServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier,
-          io.grpc.protobuf.ProtoServiceDescriptorSupplier {
+  private static abstract class LoadingInstructionServiceBaseDescriptorSupplier
+      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     LoadingInstructionServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
@@ -185,11 +203,9 @@ public final class LoadingInstructionServiceGrpc {
       synchronized (LoadingInstructionServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
-          serviceDescriptor =
-              result =
-                  io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-                      .setSchemaDescriptor(new LoadingInstructionServiceFileDescriptorSupplier())
-                      .build();
+          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+              .setSchemaDescriptor(new LoadingInstructionServiceFileDescriptorSupplier())
+              .build();
         }
       }
     }
