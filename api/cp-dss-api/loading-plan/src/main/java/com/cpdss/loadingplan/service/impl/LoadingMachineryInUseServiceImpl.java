@@ -10,6 +10,7 @@ import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,24 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
   @Autowired LoadingInformationRepository loadingInformationRepository;
 
   @Override
-  public void saveLoadingMachineryList(List<LoadingMachinesInUse> loadingMachinesList)
+  public void saveLoadingMachineryList(
+      List<LoadingMachinesInUse> loadingMachinesList, LoadingInformation loadingInformation)
       throws Exception {
+    List<LoadingMachineryInUse> existingMachineries =
+        loadingMachineryInUseRepository.findByLoadingInformationIdAndIsActive(
+            loadingInformation.getId(), true);
+    List<Long> requestedMachineries =
+        loadingMachinesList.stream()
+            .map(machinery -> machinery.getId())
+            .collect(Collectors.toList());
+
+    existingMachineries.stream()
+        .filter(machinery -> !requestedMachineries.contains(machinery.getId()))
+        .forEach(
+            machinery -> {
+              loadingMachineryInUseRepository.deleteById(machinery.getId());
+            });
+
     for (LoadingMachinesInUse machine : loadingMachinesList) {
       log.info(
           "Saving LoadingMachinery {} for LoadingInformation {}",
