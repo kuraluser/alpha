@@ -52,6 +52,12 @@ public class LoadablePatternCargoToppingOffSequence extends EntityDoc {
   @Column(name = "remarks")
   private String remarks;
 
+  @Column(name = "display_order")
+  private Integer displayOrder;
+
+  @Column(name = "loadable_study_port_rotation_xid")
+  private Long portRotationXId;
+
   @Column(name = "is_active")
   private Boolean isActive;
 }

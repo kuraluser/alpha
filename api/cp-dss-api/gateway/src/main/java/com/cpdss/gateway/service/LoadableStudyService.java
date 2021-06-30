@@ -3573,9 +3573,25 @@ public class LoadableStudyService {
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
-
+              buildLoadablePlanConstrains(lpd, planBuilder);
               request.addLoadablePlanDetails(planBuilder);
             });
+  }
+
+  /**
+   * @param lpd
+   * @param planBuilder void
+   */
+  private void buildLoadablePlanConstrains(
+      com.cpdss.gateway.domain.LoadablePlanDetails lpd,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails.Builder planBuilder) {
+    if (!lpd.getConstraints().isEmpty()) {
+      lpd.getConstraints()
+          .forEach(
+              constrain -> {
+                planBuilder.addConstraints(constrain);
+              });
+    }
   }
 
   /**
