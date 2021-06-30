@@ -9,10 +9,13 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,6 +39,8 @@ public class SynopticService {
   @Autowired SynopticalTableRepository synopticalTableRepository;
 
   @Autowired LoadablePlanQuantityRepository loadablePlanQuantityRepository;
+
+  @Autowired CargoNominationRepository cargoNominationRepository;
 
   public void fetchLoadingInformationSynopticDetails(
       LoadableStudy.LoadingPlanIdRequest request,
@@ -153,6 +158,17 @@ public class SynopticService {
         Optional.ofNullable(var1.getLoadingOrder()).ifPresent(builder1::setLoadingOrder);
         Optional.ofNullable(var1.getSlopQuantity()).ifPresent(builder1::setSlopQuantity);
 
+        Optional.ofNullable(var1.getOrderQuantity())
+            .ifPresent(
+                v -> {
+                  builder1.setOrderQuantity(v.toString());
+                });
+        Optional.ofNullable(this.getCargoNominationQuantity(var1.getCargoNominationId()))
+            .ifPresent(
+                v -> {
+                  builder1.setCargoNominationQuantity(v.toString());
+                });
+
         Optional.ofNullable(var1.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
         Optional.ofNullable(var1.getTimeRequiredForLoading())
             .ifPresent(builder1::setTimeRequiredForLoading);
@@ -162,6 +178,21 @@ public class SynopticService {
       }
     }
     builder.setResponseStatus(repBuilder.setStatus(SUCCESS).build());
+  }
+
+  private BigDecimal getCargoNominationQuantity(Long cargoNominationId) {
+    try {
+      Optional<CargoNomination> var1 =
+          cargoNominationRepository.findByIdAndIsActive(cargoNominationId, true);
+      if (var1.isPresent()) {
+        if (var1.get().getQuantity() != null) {
+          return var1.get().getQuantity();
+        }
+      }
+    } catch (Exception e) {
+      log.error("Failed to get cargo nomination quantity");
+    }
+    return BigDecimal.ZERO;
   }
 
   /**

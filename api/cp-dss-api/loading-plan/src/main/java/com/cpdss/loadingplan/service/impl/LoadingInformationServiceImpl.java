@@ -72,6 +72,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         .ifPresent(loadingInformation::setVoyageId);
     Optional.ofNullable(loadingInformationDetail.getPortRotationId())
         .ifPresent(loadingInformation::setPortRotationXId);
+    Optional<StageOffset> defaultOffsetOpt =
+        stageOffsetRepository.findByIdAndIsActiveTrue(DEFAULT_STAGE_OFFSET_ID);
+    if (defaultOffsetOpt.isPresent()) {
+      loadingInformation.setStageOffset(defaultOffsetOpt.get());
+    }
     loadingInformation.setIsActive(true);
     return loadingInformationRepository.save(loadingInformation);
   }
