@@ -10,4 +10,7 @@ public class VesselTankTCG {
   private Long tankId;
   private String capacity;
   private String tcg;
+  private String lcg;
+  private String vcg;
+  private String inertia;
 }

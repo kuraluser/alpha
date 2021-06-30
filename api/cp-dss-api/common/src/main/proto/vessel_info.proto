@@ -215,6 +215,9 @@ message VesselReply {
 		int64 tankId = 2;
 		string capacity = 3;
 		string tcg = 4;
+		string lcg = 5;
+		string vcg = 6;
+		string inertia = 7;
 	}
 		
 	message BMAndSF {

@@ -536,6 +536,9 @@ public class VesselInfoService {
               tankTCG.setId(vesselTankTCG.getId());
               tankTCG.setTankId(vesselTankTCG.getTankId());
               tankTCG.setTcg(vesselTankTCG.getTcg());
+              tankTCG.setLcg(vesselTankTCG.getLcg());
+              tankTCG.setVcg(vesselTankTCG.getVcg());
+              tankTCG.setInertia(vesselTankTCG.getInertia());
               vesselTankTCGs.add(tankTCG);
             });
     return vesselTankTCGs;

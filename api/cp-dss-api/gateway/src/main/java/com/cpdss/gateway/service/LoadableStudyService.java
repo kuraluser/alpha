@@ -3998,6 +3998,7 @@ public class LoadableStudyService {
               synopticalRecord.setPortTimezoneId(str.getPortTimezoneId());
               synopticalRecord.setBm(str.getBm());
               synopticalRecord.setSf(str.getSf());
+              synopticalRecord.setList(str.getList());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
