@@ -127,6 +127,11 @@ public class SynopticService {
         Optional.ofNullable(var1.getGrade()).ifPresent(builder1::setGrade);
         Optional.ofNullable(var1.getEstimatedApi())
             .ifPresent(v -> builder1.setEstimatedAPI(v.toString()));
+        Optional.ofNullable(var1.getEstimatedTemperature())
+            .ifPresent(v -> builder1.setEstimatedTemp(v.toString()));
+        Optional.ofNullable(var1.getCargoNominationTemperature())
+            .ifPresent(v -> builder1.setCargoNominationTemperature(v.toString()));
+
         Optional.ofNullable(var1.getOrderBblsDbs()).ifPresent(builder1::setOrderBblsdbs);
         Optional.ofNullable(var1.getOrderBbls60f()).ifPresent(builder1::setOrderBbls60F);
         Optional.ofNullable(var1.getMinTolerence()).ifPresent(builder1::setMinTolerence);

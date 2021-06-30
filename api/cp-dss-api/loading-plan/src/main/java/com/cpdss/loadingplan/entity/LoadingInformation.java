@@ -87,10 +87,10 @@ public class LoadingInformation extends EntityDoc {
   private StageDuration stageDuration;
 
   @Column(name = "is_track_start_end_stage")
-  private Boolean trackStartEndStage;
+  private Boolean trackStartEndStage = true;
 
   @Column(name = "is_track_grade_switching")
-  private Boolean trackGradeSwitch;
+  private Boolean trackGradeSwitch = true;
 
   @Column(name = "voyage_xid")
   private Long voyageId;
