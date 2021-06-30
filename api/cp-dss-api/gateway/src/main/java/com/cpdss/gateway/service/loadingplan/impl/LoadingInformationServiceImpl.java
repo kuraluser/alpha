@@ -30,6 +30,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
@@ -438,8 +439,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
-      throws GenericServiceException {
+  public LoadingInformationResponse saveLoadingInformation(
+      LoadingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
       LoadingInformation loadingInformation =
@@ -449,7 +450,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       if (response.getStatus().equalsIgnoreCase(SUCCESS)) {
         // Updating synoptical table
         this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
-        return buildLoadingInformationResponse();
+        return buildLoadingInformationResponse(correlationId);
       } else {
         log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
         throw new GenericServiceException(
@@ -565,9 +566,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         synopticalId, loadingDetails.getTimeOfSunrise(), loadingDetails.getTimeOfSunset());
   }
 
-  LoadingInformationResponse buildLoadingInformationResponse() {
+  LoadingInformationResponse buildLoadingInformationResponse(String correlationId) {
     LoadingInformationResponse response = new LoadingInformationResponse();
-    CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+    CommonSuccessResponse successResponse =
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId);
     response.setResponseStatus(successResponse);
     return response;
   }

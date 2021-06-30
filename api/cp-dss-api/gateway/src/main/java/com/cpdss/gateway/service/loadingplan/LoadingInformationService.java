@@ -49,8 +49,8 @@ public interface LoadingInformationService {
 
   LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay);
 
-  LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
-      throws GenericServiceException;
+  LoadingInformationResponse saveLoadingInformation(
+      LoadingInformationRequest request, String correlationId) throws GenericServiceException;
 
   UpdateUllage processUpdateUllage(
       Long vesselId,

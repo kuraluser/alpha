@@ -158,8 +158,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   @Override
-  public LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
-      throws GenericServiceException {
-    return this.loadingInformationService.saveLoadingInformation(request);
+  public LoadingInformationResponse saveLoadingInformation(
+      LoadingInformationRequest request, String correlationId) throws GenericServiceException {
+    return this.loadingInformationService.saveLoadingInformation(request, correlationId);
   }
 }
