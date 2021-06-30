@@ -21,4 +21,12 @@ public interface LoadingMachineryInUseRepository
   @Modifying
   @Query("UPDATE LoadingMachineryInUse SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInformationId);
+
+  List<LoadingMachineryInUse> findByLoadingInformationIdAndIsActive(
+      Long loadingInformationId, Boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingMachineryInUse SET isActive = false WHERE id = ?1")
+  public void deleteById(Long id);
 }
