@@ -77,6 +77,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     if (defaultOffsetOpt.isPresent()) {
       loadingInformation.setStageOffset(defaultOffsetOpt.get());
     }
+    loadingInformation.setIsLoadingInfoComplete(false);
     loadingInformation.setIsActive(true);
     return loadingInformationRepository.save(loadingInformation);
   }
