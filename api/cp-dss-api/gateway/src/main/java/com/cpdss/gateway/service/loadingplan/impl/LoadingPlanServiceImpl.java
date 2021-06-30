@@ -57,7 +57,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       Long vesselId, Long planId, Long portRId) throws GenericServiceException {
     LoadingInformation var1 = new LoadingInformation();
 
-    final String OPERATION_TYPE = "ARR";
+    final String OPERATION_TYPE = "DEP";
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
@@ -131,7 +131,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             activeVoyage.getActiveLs().getId(),
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
-            portRotation.get().getId());
+            portRotation.get().getId(),
+            OPERATION_TYPE);
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     vesselTankDetails.setLoadableQuantityCargoDetails(
         this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
@@ -145,6 +146,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     var1.setLoadingInfoId(loadingInfo.getLoadingInfoId());
     var1.setSynopticTableId(loadingInfo.getSynopticTableId());
+    var1.setIsLoadingInfoComplete(loadingInfo.getIsLoadingInfoComplete());
     var1.setLoadingDetails(loadingDetails);
     var1.setLoadingRates(loadingRates);
     var1.setBerthDetails(new LoadingBerthDetails(masterBerthDetails, loadingBerthDetails));
@@ -158,8 +160,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   @Override
-  public LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
-      throws GenericServiceException {
-    return this.loadingInformationService.saveLoadingInformation(request);
+  public LoadingInformationResponse saveLoadingInformation(
+      LoadingInformationRequest request, String correlationId) throws GenericServiceException {
+    return this.loadingInformationService.saveLoadingInformation(request, correlationId);
   }
 }

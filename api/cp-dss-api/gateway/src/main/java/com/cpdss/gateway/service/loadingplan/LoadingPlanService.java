@@ -13,6 +13,6 @@ public interface LoadingPlanService {
   LoadingInformation getLoadingInformationByPortRotation(Long vesselId, Long planId, Long portRId)
       throws GenericServiceException;
 
-  public LoadingInformationResponse saveLoadingInformation(LoadingInformationRequest request)
-      throws GenericServiceException;
+  public LoadingInformationResponse saveLoadingInformation(
+      LoadingInformationRequest request, String correlationId) throws GenericServiceException;
 }

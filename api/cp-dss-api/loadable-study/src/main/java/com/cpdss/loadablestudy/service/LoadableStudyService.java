@@ -12650,6 +12650,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       .filter(
                           details ->
                               details.getPortRotationId().equals(portRotation.getId())
+                                  && details
+                                      .getOperationType()
+                                      .equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)
                                   && details.getTankId().equals(sequenceBuilder.getTankXId()))
                       .findAny();
               if (cargoDetailOpt.isPresent()) {
@@ -12690,7 +12693,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     synopticalTable.getIsActive()
                         && synopticalTable
                             .getOperationType()
-                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
             .findFirst();
     if (synopticalTableOpt.isPresent()) {
       builder

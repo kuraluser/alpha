@@ -212,6 +212,7 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
         StringUtils.isEmpty(toppingOff.getUllage())
             ? null
             : new BigDecimal(toppingOff.getUllage()));
+    Optional.ofNullable(toppingOff.getDisplayOrder()).ifPresent(cargoToppingOff::setDisplayOrder);
     cargoToppingOff.setIsActive(true);
   }
 }
