@@ -29,4 +29,5 @@ public class LoadablePlanSynopticalRecord {
   private Long portTimezoneId;
   private BigDecimal bm;
   private BigDecimal sf;
+  private BigDecimal list;
 }
