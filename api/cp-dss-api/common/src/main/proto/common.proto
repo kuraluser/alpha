@@ -59,4 +59,12 @@ message RulesInputs{
 	 string value = 6;
 	 string suffix = 7;
 	 string id = 8;
+	 repeated RuleDropDownMaster ruleDropDownMaster = 9;
+	 bool isMandatory = 10;
 }
+
+message RuleDropDownMaster{
+     int64 id = 1;
+     string value = 2;
+}
+

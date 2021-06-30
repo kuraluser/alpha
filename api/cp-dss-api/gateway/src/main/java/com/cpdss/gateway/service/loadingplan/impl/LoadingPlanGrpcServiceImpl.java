@@ -178,11 +178,12 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
       Long loadableStudyId,
       Long portId,
       Long portOrder,
-      Long portRotationId) {
+      Long portRotationId,
+      String operationType) {
     CargoVesselTankDetails cvt = new CargoVesselTankDetails();
     VoyageStatusRequest request = new VoyageStatusRequest();
     request.setPortOrder(portOrder);
-    request.setOperationType("ARR");
+    request.setOperationType(operationType);
     request.setPortRotationId(portRotationId);
     try {
       VoyageStatusResponse rpcResponse =

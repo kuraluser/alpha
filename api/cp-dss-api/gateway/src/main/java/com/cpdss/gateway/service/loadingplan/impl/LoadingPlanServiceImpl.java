@@ -131,7 +131,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             activeVoyage.getActiveLs().getId(),
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
-            portRotation.get().getId());
+            portRotation.get().getId(),
+            OPERATION_TYPE);
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     vesselTankDetails.setLoadableQuantityCargoDetails(
         this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
@@ -145,6 +146,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     var1.setLoadingInfoId(loadingInfo.getLoadingInfoId());
     var1.setSynopticTableId(loadingInfo.getSynopticTableId());
+    var1.setIsLoadingInfoComplete(loadingInfo.getIsLoadingInfoComplete());
     var1.setLoadingDetails(loadingDetails);
     var1.setLoadingRates(loadingRates);
     var1.setBerthDetails(new LoadingBerthDetails(masterBerthDetails, loadingBerthDetails));
