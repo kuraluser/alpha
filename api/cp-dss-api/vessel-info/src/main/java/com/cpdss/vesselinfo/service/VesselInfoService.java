@@ -957,6 +957,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         .ifPresent(tankId -> vesselTankTcgBuilder.setTankId(tankId));
     Optional.ofNullable(vesselTankTcg.getTcg())
         .ifPresent(tcg -> vesselTankTcgBuilder.setTcg(String.valueOf(tcg)));
+    Optional.ofNullable(vesselTankTcg.getLcg())
+        .ifPresent(lcg -> vesselTankTcgBuilder.setLcg(String.valueOf(lcg)));
+    Optional.ofNullable(vesselTankTcg.getVcg())
+        .ifPresent(vcg -> vesselTankTcgBuilder.setVcg(String.valueOf(vcg)));
+    Optional.ofNullable(vesselTankTcg.getInertia())
+        .ifPresent(inertia -> vesselTankTcgBuilder.setInertia(String.valueOf(inertia)));
     return vesselTankTcgBuilder.build();
   }
 

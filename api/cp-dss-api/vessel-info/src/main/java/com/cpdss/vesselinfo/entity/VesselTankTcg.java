@@ -37,6 +37,15 @@ public class VesselTankTcg extends EntityDoc {
   @Column(name = "tcg")
   private BigDecimal tcg;
 
+  @Column(name = "lcg")
+  private BigDecimal lcg;
+
+  @Column(name = "vcg")
+  private BigDecimal vcg;
+
+  @Column(name = "inertia")
+  private BigDecimal inertia;
+
   @Column(name = "is_active")
   private Boolean isActive;
 }

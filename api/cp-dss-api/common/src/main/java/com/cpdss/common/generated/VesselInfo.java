@@ -25032,6 +25032,45 @@ public final class VesselInfo {
      * @return The bytes for tcg.
      */
     com.google.protobuf.ByteString getTcgBytes();
+
+    /**
+     * <code>string lcg = 5;</code>
+     *
+     * @return The lcg.
+     */
+    java.lang.String getLcg();
+    /**
+     * <code>string lcg = 5;</code>
+     *
+     * @return The bytes for lcg.
+     */
+    com.google.protobuf.ByteString getLcgBytes();
+
+    /**
+     * <code>string vcg = 6;</code>
+     *
+     * @return The vcg.
+     */
+    java.lang.String getVcg();
+    /**
+     * <code>string vcg = 6;</code>
+     *
+     * @return The bytes for vcg.
+     */
+    com.google.protobuf.ByteString getVcgBytes();
+
+    /**
+     * <code>string inertia = 7;</code>
+     *
+     * @return The inertia.
+     */
+    java.lang.String getInertia();
+    /**
+     * <code>string inertia = 7;</code>
+     *
+     * @return The bytes for inertia.
+     */
+    com.google.protobuf.ByteString getInertiaBytes();
   }
   /** Protobuf type {@code VesselTankTCG} */
   public static final class VesselTankTCG extends com.google.protobuf.GeneratedMessageV3
@@ -25047,6 +25086,9 @@ public final class VesselInfo {
     private VesselTankTCG() {
       capacity_ = "";
       tcg_ = "";
+      lcg_ = "";
+      vcg_ = "";
+      inertia_ = "";
     }
 
     @java.lang.Override
@@ -25100,6 +25142,27 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 tcg_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lcg_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                vcg_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                inertia_ = s;
                 break;
               }
             default:
@@ -25226,6 +25289,111 @@ public final class VesselInfo {
       }
     }
 
+    public static final int LCG_FIELD_NUMBER = 5;
+    private volatile java.lang.Object lcg_;
+    /**
+     * <code>string lcg = 5;</code>
+     *
+     * @return The lcg.
+     */
+    public java.lang.String getLcg() {
+      java.lang.Object ref = lcg_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lcg_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lcg = 5;</code>
+     *
+     * @return The bytes for lcg.
+     */
+    public com.google.protobuf.ByteString getLcgBytes() {
+      java.lang.Object ref = lcg_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lcg_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int VCG_FIELD_NUMBER = 6;
+    private volatile java.lang.Object vcg_;
+    /**
+     * <code>string vcg = 6;</code>
+     *
+     * @return The vcg.
+     */
+    public java.lang.String getVcg() {
+      java.lang.Object ref = vcg_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        vcg_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string vcg = 6;</code>
+     *
+     * @return The bytes for vcg.
+     */
+    public com.google.protobuf.ByteString getVcgBytes() {
+      java.lang.Object ref = vcg_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        vcg_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int INERTIA_FIELD_NUMBER = 7;
+    private volatile java.lang.Object inertia_;
+    /**
+     * <code>string inertia = 7;</code>
+     *
+     * @return The inertia.
+     */
+    public java.lang.String getInertia() {
+      java.lang.Object ref = inertia_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        inertia_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string inertia = 7;</code>
+     *
+     * @return The bytes for inertia.
+     */
+    public com.google.protobuf.ByteString getInertiaBytes() {
+      java.lang.Object ref = inertia_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        inertia_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -25252,6 +25420,15 @@ public final class VesselInfo {
       if (!getTcgBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, tcg_);
       }
+      if (!getLcgBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, lcg_);
+      }
+      if (!getVcgBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, vcg_);
+      }
+      if (!getInertiaBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, inertia_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -25273,6 +25450,15 @@ public final class VesselInfo {
       if (!getTcgBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, tcg_);
       }
+      if (!getLcgBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, lcg_);
+      }
+      if (!getVcgBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, vcg_);
+      }
+      if (!getInertiaBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, inertia_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -25293,6 +25479,9 @@ public final class VesselInfo {
       if (getTankId() != other.getTankId()) return false;
       if (!getCapacity().equals(other.getCapacity())) return false;
       if (!getTcg().equals(other.getTcg())) return false;
+      if (!getLcg().equals(other.getLcg())) return false;
+      if (!getVcg().equals(other.getVcg())) return false;
+      if (!getInertia().equals(other.getInertia())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -25312,6 +25501,12 @@ public final class VesselInfo {
       hash = (53 * hash) + getCapacity().hashCode();
       hash = (37 * hash) + TCG_FIELD_NUMBER;
       hash = (53 * hash) + getTcg().hashCode();
+      hash = (37 * hash) + LCG_FIELD_NUMBER;
+      hash = (53 * hash) + getLcg().hashCode();
+      hash = (37 * hash) + VCG_FIELD_NUMBER;
+      hash = (53 * hash) + getVcg().hashCode();
+      hash = (37 * hash) + INERTIA_FIELD_NUMBER;
+      hash = (53 * hash) + getInertia().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -25459,6 +25654,12 @@ public final class VesselInfo {
 
         tcg_ = "";
 
+        lcg_ = "";
+
+        vcg_ = "";
+
+        inertia_ = "";
+
         return this;
       }
 
@@ -25489,6 +25690,9 @@ public final class VesselInfo {
         result.tankId_ = tankId_;
         result.capacity_ = capacity_;
         result.tcg_ = tcg_;
+        result.lcg_ = lcg_;
+        result.vcg_ = vcg_;
+        result.inertia_ = inertia_;
         onBuilt();
         return result;
       }
@@ -25553,6 +25757,18 @@ public final class VesselInfo {
         }
         if (!other.getTcg().isEmpty()) {
           tcg_ = other.tcg_;
+          onChanged();
+        }
+        if (!other.getLcg().isEmpty()) {
+          lcg_ = other.lcg_;
+          onChanged();
+        }
+        if (!other.getVcg().isEmpty()) {
+          vcg_ = other.vcg_;
+          onChanged();
+        }
+        if (!other.getInertia().isEmpty()) {
+          inertia_ = other.inertia_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -25799,6 +26015,234 @@ public final class VesselInfo {
         checkByteStringIsUtf8(value);
 
         tcg_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lcg_ = "";
+      /**
+       * <code>string lcg = 5;</code>
+       *
+       * @return The lcg.
+       */
+      public java.lang.String getLcg() {
+        java.lang.Object ref = lcg_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lcg_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lcg = 5;</code>
+       *
+       * @return The bytes for lcg.
+       */
+      public com.google.protobuf.ByteString getLcgBytes() {
+        java.lang.Object ref = lcg_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lcg_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lcg = 5;</code>
+       *
+       * @param value The lcg to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLcg(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lcg_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lcg = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLcg() {
+
+        lcg_ = getDefaultInstance().getLcg();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lcg = 5;</code>
+       *
+       * @param value The bytes for lcg to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLcgBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lcg_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object vcg_ = "";
+      /**
+       * <code>string vcg = 6;</code>
+       *
+       * @return The vcg.
+       */
+      public java.lang.String getVcg() {
+        java.lang.Object ref = vcg_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          vcg_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string vcg = 6;</code>
+       *
+       * @return The bytes for vcg.
+       */
+      public com.google.protobuf.ByteString getVcgBytes() {
+        java.lang.Object ref = vcg_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          vcg_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string vcg = 6;</code>
+       *
+       * @param value The vcg to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVcg(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        vcg_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string vcg = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearVcg() {
+
+        vcg_ = getDefaultInstance().getVcg();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string vcg = 6;</code>
+       *
+       * @param value The bytes for vcg to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVcgBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        vcg_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object inertia_ = "";
+      /**
+       * <code>string inertia = 7;</code>
+       *
+       * @return The inertia.
+       */
+      public java.lang.String getInertia() {
+        java.lang.Object ref = inertia_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          inertia_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string inertia = 7;</code>
+       *
+       * @return The bytes for inertia.
+       */
+      public com.google.protobuf.ByteString getInertiaBytes() {
+        java.lang.Object ref = inertia_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          inertia_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string inertia = 7;</code>
+       *
+       * @param value The inertia to set.
+       * @return This builder for chaining.
+       */
+      public Builder setInertia(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        inertia_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string inertia = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearInertia() {
+
+        inertia_ = getDefaultInstance().getInertia();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string inertia = 7;</code>
+       *
+       * @param value The bytes for inertia to set.
+       * @return This builder for chaining.
+       */
+      public Builder setInertiaBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        inertia_ = value;
         onChanged();
         return this;
       }
@@ -59410,134 +59854,135 @@ public final class VesselInfo {
           + "draft\030\003 \001(\t\022\024\n\014displacement\030\004 \001(\t\022\013\n\003lcb"
           + "\030\005 \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm\030"
           + "\010 \001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030\013"
-          + " \001(\t\"J\n\rVesselTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tan"
+          + " \001(\t\"u\n\rVesselTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tan"
           + "kId\030\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001(\t"
-          + "\"\316\002\n\007BMAndSF\022%\n\rbendingMoment\030\001 \003(\0132\016.Be"
-          + "ndingMoment\022%\n\rshearingForce\030\002 \003(\0132\016.She"
-          + "aringForce\022+\n\020calculationSheet\030\003 \003(\0132\021.C"
-          + "alculationSheet\022=\n\031calculationSheetTankG"
-          + "roup\030\004 \003(\0132\032.CalculationSheetTankGroup\0227"
-          + "\n\026minMaxValuesForBMAndSf\030\005 \003(\0132\027.MinMaxV"
-          + "aluesForBMAndSf\022%\n\rstationValues\030\006 \003(\0132\016"
-          + ".StationValues\022)\n\017InnerBulkHeadSF\030\007 \003(\0132"
-          + "\020.InnerBulkHeadSF\"\207\001\n\rBendingMoment\022\n\n\002i"
-          + "d\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraf"
-          + "t\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCorre"
-          + "ction\030\005 \001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"\207\001\n\r"
-          + "ShearingForce\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber"
-          + "\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004"
-          + " \001(\t\022\027\n\017draftCorrection\030\005 \001(\t\022\026\n\016trimCor"
-          + "rection\030\006 \001(\t\"c\n\020CalculationSheet\022\n\n\002id\030"
-          + "\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006tankId\030\003 \001(\003"
-          + "\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n\031Ca"
-          + "lculationSheetTankGroup\022\n\n\002id\030\001 \001(\003\022\021\n\tt"
-          + "ankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumb"
-          + "er\030\004 \001(\t\"u\n\026MinMaxValuesForBMAndSf\022\n\n\002id"
-          + "\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001"
-          + "(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxS"
-          + "f\030\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013stationFrom"
-          + "\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017frameNumber"
-          + "From\030\003 \001(\t\022\025\n\rframeNumberTo\030\004 \001(\t\022\020\n\010dis"
-          + "tance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHea"
-          + "dSF\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tforeAlpha\030\002 "
-          + "\001(\t\022\035\n\025foreCenterCargoTankId\030\003 \001(\003\022\016\n\006fo"
-          + "reC1\030\004 \001(\t\022\027\n\017foreWingTankIds\030\005 \001(\t\022\016\n\006f"
-          + "oreC2\030\006 \001(\t\022\030\n\020foreBallastTanks\030\007 \001(\t\022\016\n"
-          + "\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorrection\030\t \001(\t\022"
-          + "\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxAllowence\030\013 \001("
-          + "\t\022\030\n\020foreMinAllowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022"
-          + "\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftCenterCargoTankI"
-          + "d\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftWingTankIds"
-          + "\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBallastTanks"
-          + "\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCorrection"
-          + "\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowen"
-          + "ce\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t\"\200\002\n\024"
-          + "UllageTrimCorrection\022\n\n\002id\030\001 \001(\003\022\016\n\006tank"
-          + "Id\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\016\n\006trimM1\030"
-          + "\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006trimM3\030\006 \001(\t\022\016\n"
-          + "\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n\005trim0\030\t"
-          + " \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2\030\013 \001(\t\022\r\n\005tr"
-          + "im3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005trim5\030\016 \001(\t\022"
-          + "\r\n\005trim6\030\017 \001(\t\"$\n\021VesselTankRequest\022\017\n\007t"
-          + "ankIds\030\001 \003(\003\"`\n\017VesselTankOrder\022\020\n\010tankN"
-          + "ame\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tshortName\030\003"
-          + " \001(\t\022\030\n\020tankDisplayOrder\030\004 \001(\005\"h\n\022Vessel"
-          + "TankResponse\022)\n\017vesselTankOrder\030\001 \003(\0132\020."
-          + "VesselTankOrder\022\'\n\016responseStatus\030\002 \001(\0132"
-          + "\017.ResponseStatus\"#\n\017VesselIdRequest\022\020\n\010v"
-          + "esselId\030\001 \001(\003\"`\n\020VesselIdResponse\022#\n\014ves"
-          + "selDetail\030\001 \001(\0132\r.VesselDetail\022\'\n\016respon"
-          + "seStatus\030\002 \001(\0132\017.ResponseStatus\"8\n\020Vesse"
-          + "lDWTRequest\022\020\n\010vesselId\030\001 \001(\003\022\022\n\ndraftVa"
-          + "lue\030\002 \001(\t\"t\n\021VesselDWTResponse\022\020\n\010vessel"
-          + "Id\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n\tdwtResult"
-          + "\030\003 \001(\t\022\'\n\016responseStatus\030\004 \001(\0132\017.Respons"
-          + "eStatus\"\242\001\n\023VesselPumpsResponse\022\'\n\016respo"
-          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\033\n\010pump"
-          + "Type\030\002 \003(\0132\t.PumpType\022\037\n\nvesselPump\030\003 \003("
-          + "\0132\013.VesselPump\022$\n\rvesselDetails\030\004 \001(\0132\r."
-          + "VesselDetail\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022\014\n\004"
-          + "name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010"
-          + "vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pu"
-          + "mpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCa"
-          + "pacity\030\006 \001(\t\"o\n\021VesselRuleRequest\022\020\n\010ves"
-          + "selId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePl"
-          + "an\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefaultRule\030"
-          + "\004 \001(\010\"X\n\017VesselRuleReply\022\'\n\016responseStat"
-          + "us\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePlan\030\002 "
-          + "\003(\0132\n.RulePlans\"\260\001\n\030VesselValveSequenceR"
-          + "eply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseS"
-          + "tatus\0220\n\022vvSequenceEntities\030\002 \003(\0132\024.Vess"
-          + "elValveSequence\0229\n\023vvEducationEntities\030\003"
-          + " \003(\0132\034.VesselValveEducationProcess\"\255\004\n\023V"
-          + "esselValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risComm"
-          + "onValve\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpip"
-          + "elineColor\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024"
-          + "\n\014pipelineType\030\006 \001(\t\022\026\n\016sequenceNumber\030\007"
-          + " \001(\t\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025seq"
-          + "uenceOperationName\030\t \001(\t\022\026\n\016sequenceType"
-          + "Id\030\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027se"
-          + "quenceVesselMappingId\030\014 \001(\005\022\025\n\rtankShort"
-          + "Name\030\r \001(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017val"
-          + "veCategoryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022"
-          + "\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022"
-          + "\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001"
-          + "(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\034\n\024vesselValve"
-          + "MappingId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033V"
-          + "esselValveEducationProcess\022\n\n\002id\030\001 \001(\003\022\023"
-          + "\n\013eductorName\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 "
-          + "\001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001"
-          + "(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027eductionProcess"
-          + "MasterId\030\007 \001(\005\"+\n\027LoadingInfoRulesReques"
-          + "t\022\020\n\010vesselId\030\001 \001(\003\"W\n\025LoadingInfoRulesR"
-          + "eply\022\025\n\005rules\030\001 \003(\0132\006.Rules\022\'\n\016responseS"
-          + "tatus\030\002 \001(\0132\017.ResponseStatus2\344\007\n\021VesselI"
-          + "nfoService\0228\n\026GetAllVesselsByCompany\022\016.V"
-          + "esselRequest\032\014.VesselReply\"\000\0226\n\024GetVesse"
-          + "lDetailsById\022\016.VesselRequest\032\014.VesselRep"
-          + "ly\"\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014"
-          + ".VesselReply\"\000\0225\n\023GetVesselCargoTanks\022\016."
-          + "VesselRequest\032\014.VesselReply\"\000\022A\n\027GetVess"
-          + "elDetailsForAlgo\022\022.VesselAlgoRequest\032\020.V"
-          + "esselAlgoReply\"\000\022C\n!GetVesselDetailForSy"
-          + "nopticalTable\022\016.VesselRequest\032\014.VesselRe"
-          + "ply\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Ves"
-          + "selRequest\032\014.VesselReply\"\000\022A\n\025GetVesselI"
-          + "nfoByPaging\022\030.VesselRequestWithPaging\032\014."
-          + "VesselReply\"\000\022C\n\026GetVesselInfoBytankIds\022"
-          + "\022.VesselTankRequest\032\023.VesselTankResponse"
-          + "\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Vesse"
-          + "lDWTRequest\032\022.VesselDWTResponse\022@\n\027GetVe"
-          + "sselInfoByVesselId\022\020.VesselIdRequest\032\021.V"
-          + "esselIdResponse\"\000\022D\n\030GetVesselPumpsByVes"
-          + "selId\022\020.VesselIdRequest\032\024.VesselPumpsRes"
-          + "ponse\"\000\022H\n\036GetRulesByVesselIdAndSectionI"
-          + "d\022\022.VesselRuleRequest\032\020.VesselRuleReply\""
-          + "\000\022E\n\026GetVesselValveSequence\022\016.VesselRequ"
-          + "est\032\031.VesselValveSequenceReply\"\000\022I\n\023GetL"
-          + "oadingInfoRules\022\030.LoadingInfoRulesReques"
-          + "t\032\026.LoadingInfoRulesReply\"\000B\036\n\032com.cpdss"
-          + ".common.generatedP\000b\006proto3"
+          + "\022\013\n\003lcg\030\005 \001(\t\022\013\n\003vcg\030\006 \001(\t\022\017\n\007inertia\030\007 "
+          + "\001(\t\"\316\002\n\007BMAndSF\022%\n\rbendingMoment\030\001 \003(\0132\016"
+          + ".BendingMoment\022%\n\rshearingForce\030\002 \003(\0132\016."
+          + "ShearingForce\022+\n\020calculationSheet\030\003 \003(\0132"
+          + "\021.CalculationSheet\022=\n\031calculationSheetTa"
+          + "nkGroup\030\004 \003(\0132\032.CalculationSheetTankGrou"
+          + "p\0227\n\026minMaxValuesForBMAndSf\030\005 \003(\0132\027.MinM"
+          + "axValuesForBMAndSf\022%\n\rstationValues\030\006 \003("
+          + "\0132\016.StationValues\022)\n\017InnerBulkHeadSF\030\007 \003"
+          + "(\0132\020.InnerBulkHeadSF\"\207\001\n\rBendingMoment\022\n"
+          + "\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseD"
+          + "raft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCo"
+          + "rrection\030\005 \001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"\207"
+          + "\001\n\rShearingForce\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNum"
+          + "ber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValu"
+          + "e\030\004 \001(\t\022\027\n\017draftCorrection\030\005 \001(\t\022\026\n\016trim"
+          + "Correction\030\006 \001(\t\"c\n\020CalculationSheet\022\n\n\002"
+          + "id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006tankId\030\003 "
+          + "\001(\003\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n"
+          + "\031CalculationSheetTankGroup\022\n\n\002id\030\001 \001(\003\022\021"
+          + "\n\ttankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameN"
+          + "umber\030\004 \001(\t\"u\n\026MinMaxValuesForBMAndSf\022\n\n"
+          + "\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r\n\005minBm\030"
+          + "\003 \001(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005m"
+          + "axSf\030\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013stationF"
+          + "rom\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017frameNum"
+          + "berFrom\030\003 \001(\t\022\025\n\rframeNumberTo\030\004 \001(\t\022\020\n\010"
+          + "distance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulk"
+          + "HeadSF\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tforeAlpha"
+          + "\030\002 \001(\t\022\035\n\025foreCenterCargoTankId\030\003 \001(\003\022\016\n"
+          + "\006foreC1\030\004 \001(\t\022\027\n\017foreWingTankIds\030\005 \001(\t\022\016"
+          + "\n\006foreC2\030\006 \001(\t\022\030\n\020foreBallastTanks\030\007 \001(\t"
+          + "\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorrection\030\t \001"
+          + "(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxAllowence\030\013"
+          + " \001(\t\022\030\n\020foreMinAllowence\030\014 \001(\t\022\n\n\002id\030\r \001"
+          + "(\003\022\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftCenterCargoTa"
+          + "nkId\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftWingTank"
+          + "Ids\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBallastTa"
+          + "nks\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCorrect"
+          + "ion\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllo"
+          + "wence\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t\"\200"
+          + "\002\n\024UllageTrimCorrection\022\n\n\002id\030\001 \001(\003\022\016\n\006t"
+          + "ankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\016\n\006trim"
+          + "M1\030\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006trimM3\030\006 \001(\t"
+          + "\022\016\n\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n\005trim"
+          + "0\030\t \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2\030\013 \001(\t\022\r\n"
+          + "\005trim3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005trim5\030\016 \001"
+          + "(\t\022\r\n\005trim6\030\017 \001(\t\"$\n\021VesselTankRequest\022\017"
+          + "\n\007tankIds\030\001 \003(\003\"`\n\017VesselTankOrder\022\020\n\010ta"
+          + "nkName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tshortNam"
+          + "e\030\003 \001(\t\022\030\n\020tankDisplayOrder\030\004 \001(\005\"h\n\022Ves"
+          + "selTankResponse\022)\n\017vesselTankOrder\030\001 \003(\013"
+          + "2\020.VesselTankOrder\022\'\n\016responseStatus\030\002 \001"
+          + "(\0132\017.ResponseStatus\"#\n\017VesselIdRequest\022\020"
+          + "\n\010vesselId\030\001 \001(\003\"`\n\020VesselIdResponse\022#\n\014"
+          + "vesselDetail\030\001 \001(\0132\r.VesselDetail\022\'\n\016res"
+          + "ponseStatus\030\002 \001(\0132\017.ResponseStatus\"8\n\020Ve"
+          + "sselDWTRequest\022\020\n\010vesselId\030\001 \001(\003\022\022\n\ndraf"
+          + "tValue\030\002 \001(\t\"t\n\021VesselDWTResponse\022\020\n\010ves"
+          + "selId\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n\tdwtRes"
+          + "ult\030\003 \001(\t\022\'\n\016responseStatus\030\004 \001(\0132\017.Resp"
+          + "onseStatus\"\242\001\n\023VesselPumpsResponse\022\'\n\016re"
+          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022\033\n\010p"
+          + "umpType\030\002 \003(\0132\t.PumpType\022\037\n\nvesselPump\030\003"
+          + " \003(\0132\013.VesselPump\022$\n\rvesselDetails\030\004 \001(\013"
+          + "2\r.VesselDetail\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022"
+          + "\014\n\004name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022"
+          + "\020\n\010vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n"
+          + "\010pumpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pum"
+          + "pCapacity\030\006 \001(\t\"o\n\021VesselRuleRequest\022\020\n\010"
+          + "vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rul"
+          + "ePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefaultRu"
+          + "le\030\004 \001(\010\"X\n\017VesselRuleReply\022\'\n\016responseS"
+          + "tatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePlan"
+          + "\030\002 \003(\0132\n.RulePlans\"\260\001\n\030VesselValveSequen"
+          + "ceReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
+          + "seStatus\0220\n\022vvSequenceEntities\030\002 \003(\0132\024.V"
+          + "esselValveSequence\0229\n\023vvEducationEntitie"
+          + "s\030\003 \003(\0132\034.VesselValveEducationProcess\"\255\004"
+          + "\n\023VesselValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risC"
+          + "ommonValve\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\r"
+          + "pipelineColor\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001("
+          + "\t\022\024\n\014pipelineType\030\006 \001(\t\022\026\n\016sequenceNumbe"
+          + "r\030\007 \001(\t\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025"
+          + "sequenceOperationName\030\t \001(\t\022\026\n\016sequenceT"
+          + "ypeId\030\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n"
+          + "\027sequenceVesselMappingId\030\014 \001(\005\022\025\n\rtankSh"
+          + "ortName\030\r \001(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017"
+          + "valveCategoryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001"
+          + "(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001"
+          + "(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nvesselName\030"
+          + "\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\034\n\024vesselVa"
+          + "lveMappingId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001"
+          + "\n\033VesselValveEducationProcess\022\n\n\002id\030\001 \001("
+          + "\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n\016sequenceNumber"
+          + "\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valveNumber\030"
+          + "\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027eductionProc"
+          + "essMasterId\030\007 \001(\005\"+\n\027LoadingInfoRulesReq"
+          + "uest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025LoadingInfoRul"
+          + "esReply\022\025\n\005rules\030\001 \003(\0132\006.Rules\022\'\n\016respon"
+          + "seStatus\030\002 \001(\0132\017.ResponseStatus2\344\007\n\021Vess"
+          + "elInfoService\0228\n\026GetAllVesselsByCompany\022"
+          + "\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024GetVe"
+          + "sselDetailsById\022\016.VesselRequest\032\014.Vessel"
+          + "Reply\"\000\0220\n\016GetVesselTanks\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\0225\n\023GetVesselCargoTanks"
+          + "\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\027GetV"
+          + "esselDetailsForAlgo\022\022.VesselAlgoRequest\032"
+          + "\020.VesselAlgoReply\"\000\022C\n!GetVesselDetailFo"
+          + "rSynopticalTable\022\016.VesselRequest\032\014.Vesse"
+          + "lReply\"\000\022;\n\031GetVesselDetailByVesselId\022\016."
+          + "VesselRequest\032\014.VesselReply\"\000\022A\n\025GetVess"
+          + "elInfoByPaging\022\030.VesselRequestWithPaging"
+          + "\032\014.VesselReply\"\000\022C\n\026GetVesselInfoBytankI"
+          + "ds\022\022.VesselTankRequest\032\023.VesselTankRespo"
+          + "nse\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Ve"
+          + "sselDWTRequest\032\022.VesselDWTResponse\022@\n\027Ge"
+          + "tVesselInfoByVesselId\022\020.VesselIdRequest\032"
+          + "\021.VesselIdResponse\"\000\022D\n\030GetVesselPumpsBy"
+          + "VesselId\022\020.VesselIdRequest\032\024.VesselPumps"
+          + "Response\"\000\022H\n\036GetRulesByVesselIdAndSecti"
+          + "onId\022\022.VesselRuleRequest\032\020.VesselRuleRep"
+          + "ly\"\000\022E\n\026GetVesselValveSequence\022\016.VesselR"
+          + "equest\032\031.VesselValveSequenceReply\"\000\022I\n\023G"
+          + "etLoadingInfoRules\022\030.LoadingInfoRulesReq"
+          + "uest\032\026.LoadingInfoRulesReply\"\000B\036\n\032com.cp"
+          + "dss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -59748,7 +60193,7 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselTankTCG_descriptor,
             new java.lang.String[] {
-              "Id", "TankId", "Capacity", "Tcg",
+              "Id", "TankId", "Capacity", "Tcg", "Lcg", "Vcg", "Inertia",
             });
     internal_static_BMAndSF_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_BMAndSF_fieldAccessorTable =
