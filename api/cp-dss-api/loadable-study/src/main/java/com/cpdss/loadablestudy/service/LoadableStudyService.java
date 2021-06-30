@@ -2858,6 +2858,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Override
   public void getOnHandQuantity(
       OnHandQuantityRequest request, StreamObserver<OnHandQuantityReply> responseObserver) {
+    log.info("getOnHandQuantity");
     OnHandQuantityReply.Builder replyBuilder = OnHandQuantityReply.newBuilder();
     try {
 
@@ -2989,11 +2990,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
     Voyage previousVoyage =
         this.voyageRepository
-            .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                loadableStudyOpt.get().getVoyage().getVoyageStartDate(),
-                loadableStudyOpt.get().getVoyage().getVesselXId(),
-                true,
-                voyageStatus);
+            .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                loadableStudyOpt.get().getVoyage().getVesselXId(), true, voyageStatus);
 
     Optional<LoadableStudy> confirmedLoadableStudyOpt =
         this.loadableStudyRepository
@@ -7046,11 +7044,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  currentVoyage.getVoyageStartDate(),
-                  currentVoyage.getVesselXId(),
-                  true,
-                  voyageStatus);
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  currentVoyage.getVesselXId(), true, voyageStatus);
       if (previousVoyage != null) {
         Optional<LoadableStudyStatus> confimredLSStatus =
             loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
@@ -7110,8 +7105,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true, voyageStatus);
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  voyage.getVesselXId(), true, voyageStatus);
       if (null == previousVoyage) {
         log.error("Could not find previous voyage of {}", voyage.getVoyageNo());
       } else {
@@ -12650,9 +12645,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       .filter(
                           details ->
                               details.getPortRotationId().equals(portRotation.getId())
-                                  && details
-                                      .getOperationType()
-                                      .equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)
                                   && details.getTankId().equals(sequenceBuilder.getTankXId()))
                       .findAny();
               if (cargoDetailOpt.isPresent()) {
@@ -12693,7 +12685,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     synopticalTable.getIsActive()
                         && synopticalTable
                             .getOperationType()
-                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
             .findFirst();
     if (synopticalTableOpt.isPresent()) {
       builder
@@ -13369,7 +13361,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
-  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
   public void getOrSaveRulesForLoadableStudy(
       com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver) {
@@ -13378,7 +13369,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       if (!RuleMasterSection.Plan.getId().equals(request.getSectionId())) {
         throw new GenericServiceException(
-            "Planning can be only fetched against loadble study not loading or discharging",
+            "Planning can be fetched against loadble study",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
@@ -13527,7 +13518,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
-      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Exception in save or get loadable study rule", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
