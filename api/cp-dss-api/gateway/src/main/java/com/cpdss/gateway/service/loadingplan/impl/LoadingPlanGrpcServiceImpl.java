@@ -66,7 +66,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
       log.error("Failed to collect Active Voyage Data, Vessel Id {}", vesselId);
       throw new GenericServiceException(
           "No Active Voyage Exist",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          CommonErrorCodes.E_CPDSS_NO_ACTIVE_VOYAGE_FOUND,
           HttpStatusCode.BAD_REQUEST);
     }
     VoyageResponse voyageResponse = new VoyageResponse();
