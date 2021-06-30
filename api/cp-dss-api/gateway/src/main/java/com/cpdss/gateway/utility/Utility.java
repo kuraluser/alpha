@@ -93,7 +93,26 @@ public class Utility {
           if (isBlankString(rInputsList.getId())) {
             rulesInputs.setId(rInputsList.getId());
           }
+          Optional.ofNullable(rInputsList.getIsMandatory()).ifPresent(rulesInputs::setIsMandatory);
           Optional.ofNullable(rInputsList.getType()).ifPresent(rulesInputs::setType);
+          if (rInputsList.getType() != null
+              && rInputsList.getType().trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+              && rInputsList.getRuleDropDownMasterList() != null
+              && rInputsList.getRuleDropDownMasterList().size() > 0) {
+            List<RuleDropDownMaster> ruleDropDownMasters = new ArrayList<>();
+            rInputsList
+                .getRuleDropDownMasterList()
+                .forEach(
+                    ruleDropDownValue -> {
+                      RuleDropDownMaster ruleDropDownMaster = new RuleDropDownMaster();
+                      Optional.ofNullable(ruleDropDownValue.getId())
+                          .ifPresent(ruleDropDownMaster::setId);
+                      Optional.ofNullable(ruleDropDownValue.getValue())
+                          .ifPresent(ruleDropDownMaster::setValue);
+                      ruleDropDownMasters.add(ruleDropDownMaster);
+                    });
+            rulesInputs.setRuleDropDownMaster(ruleDropDownMasters);
+          }
           ruleInputsList.add(rulesInputs);
         });
     return ruleInputsList;
