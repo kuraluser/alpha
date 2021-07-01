@@ -45,29 +45,30 @@ public class VesselValveService {
                 });
         int x = 1;
         for (VesselValveSequence v : seqEntityList.getValue()) {
-          map4.put("Sequence_" + x, new VesselValveSeq().getInstance(v));
+          map4.put("sequence_" + x, new VesselValveSeq().getInstance(v));
           x++;
         }
         map3.put(toCamelCase(seqEntityList.getKey()), map4);
       }
-      map11.put(var2.getKey(), map3);
+      map11.put(toCamelCase(var2.getKey()), map3);
     }
     return map11;
   }
 
   public static String toCamelCase(final String init) {
-    if (init == null) return null;
-
+    if (init == null || init.isEmpty()) return null;
     final StringBuilder ret = new StringBuilder(init.length());
-
-    for (final String word : init.split(" ")) {
+    List<String> words = Arrays.asList(init.split(" "));
+    for (final String word : words) {
       if (!word.isEmpty()) {
-        ret.append(Character.toUpperCase(word.charAt(0)));
+        if (words.get(0).equals(word)) {
+          ret.append(Character.toLowerCase(word.charAt(0)));
+        } else {
+          ret.append(Character.toUpperCase(word.charAt(0)));
+        }
         ret.append(word.substring(1).toLowerCase());
       }
-      if (!(ret.length() == init.length())) ret.append(" ");
     }
-
     return ret.toString();
   }
 
@@ -99,13 +100,13 @@ public class VesselValveService {
           mp.getValue().stream()
               .collect(
                   Collectors.groupingBy(
-                      VesselValveEducationProcess::getEductorName,
+                      v -> toCamelCase(v.getEductorName()),
                       Collectors.mapping(
                           v -> {
                             return new VesselValveEdu(v.getSequenceNumber(), v.getValveNumber());
                           },
                           Collectors.toList())));
-      map11.put(mp.getKey(), map12);
+      map11.put(toCamelCase(mp.getKey()), map12);
     }
     return map11;
   }
