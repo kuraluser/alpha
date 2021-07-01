@@ -158,9 +158,9 @@ public class Utility {
                             Optional.ofNullable(rule.getIsHardRule())
                                 .ifPresent(ruleBuilder::setIsHardRule);
                             Optional.ofNullable(rule.getNumericPrecision())
-                            .ifPresent(ruleBuilder::setNumericPrecision);
+                                .ifPresent(ruleBuilder::setNumericPrecision);
                             Optional.ofNullable(rule.getNumericScale())
-                            .ifPresent(ruleBuilder::setNumericScale);
+                                .ifPresent(ruleBuilder::setNumericScale);
                             rule.getInputs()
                                 .forEach(
                                     input -> {

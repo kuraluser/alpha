@@ -1217,11 +1217,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     Optional.ofNullable(lsRules.getIsActive())
                         .ifPresent(loadableStudyRules::setIsActive);
                     Optional.ofNullable(lsRules.getNumericPrecision())
-                    .ifPresent(loadableStudyRules::setNumericPrecision);
+                        .ifPresent(loadableStudyRules::setNumericPrecision);
                     Optional.ofNullable(lsRules.getNumericScale())
-                    .ifPresent(loadableStudyRules::setNumericScale);
+                        .ifPresent(loadableStudyRules::setNumericScale);
                     Optional.ofNullable(lsRules.getParentRuleXId())
-                    .ifPresent(loadableStudyRules::setParentRuleXId);
+                        .ifPresent(loadableStudyRules::setParentRuleXId);
                     List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
                     lsRules.getLoadableStudyRuleInputs().stream()
                         .forEach(
@@ -1291,11 +1291,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                               Optional.ofNullable(vesselRule.getIsHardRule())
                                   .ifPresent(loadableStudyRules::setIsHardRule);
                               Optional.ofNullable(vesselRule.getNumericPrecision())
-                              .ifPresent(loadableStudyRules::setNumericPrecision);
+                                  .ifPresent(loadableStudyRules::setNumericPrecision);
                               Optional.ofNullable(vesselRule.getNumericScale())
-                              .ifPresent(loadableStudyRules::setNumericScale);
+                                  .ifPresent(loadableStudyRules::setNumericScale);
                               Optional.ofNullable(vesselRule.getRuleTemplateId())
-                              .ifPresent(item->loadableStudyRules.setParentRuleXId(Long.parseLong(item)));
+                                  .ifPresent(
+                                      item ->
+                                          loadableStudyRules.setParentRuleXId(
+                                              Long.parseLong(item)));
                               loadableStudyRules.setIsActive(true);
                               List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
                               vesselRule.getInputsList().stream()
@@ -13510,9 +13513,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             Optional.ofNullable(rule.getIsHardRule())
                                 .ifPresent(loadableStudyRules::setIsHardRule);
                             Optional.ofNullable(rule.getNumericPrecision())
-                            .ifPresent(loadableStudyRules::setNumericPrecision);
+                                .ifPresent(loadableStudyRules::setNumericPrecision);
                             Optional.ofNullable(rule.getNumericScale())
-                            .ifPresent(loadableStudyRules::setNumericScale);
+                                .ifPresent(loadableStudyRules::setNumericScale);
                             LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
                             Optional.ofNullable(rule.getRuleTemplateId())
                                 .ifPresent(
@@ -13799,9 +13802,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getParentRuleXId())
           .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericPrecision())
-      .ifPresent(item -> rulesBuilder.setNumericPrecision(item));
+          .ifPresent(item -> rulesBuilder.setNumericPrecision(item));
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericScale())
-      .ifPresent(item -> rulesBuilder.setNumericScale(item));
+          .ifPresent(item -> rulesBuilder.setNumericScale(item));
       RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
       for (int inputIndex = 0;
           inputIndex < lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().size();

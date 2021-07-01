@@ -24,8 +24,8 @@ public class Rules {
   private String vesselRuleXId;
 
   private Boolean isHardRule;
-  
+
   private Long numericPrecision;
-  
+
   private Long numericScale;
 }
