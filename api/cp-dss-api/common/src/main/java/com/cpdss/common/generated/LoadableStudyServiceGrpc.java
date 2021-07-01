@@ -3907,53 +3907,8 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadableCommingleByPatternIdMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveAlgoErrorsMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnimplementedUnaryCall(getFetchAllAlgoErrorsMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void getCargoHistoryByCargo(com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoHistoryByCargoMethod(), responseObserver);
-    }
-
-    /** */
-    public void getActiveVoyagesByVessel(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getGetActiveVoyagesByVesselMethod(), responseObserver);
-    }
-
-    /** */
-    public void getSynopticDataForLoadingPlan(
-        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getGetSynopticDataForLoadingPlanMethod(), responseObserver);
-    }
-
-    /** */
-    public void saveLoadingInfoToSynopticData(
-        com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadingInfoToSynopticDataMethod(), responseObserver);
-    }
-
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+    @java.lang.Override
+    public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
               getSaveVoyageMethod(),
@@ -4329,35 +4284,7 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>(
                       this, METHODID_GET_ALL_CARGO_HISTORY)))
           .addMethod(
-            getSaveJsonMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.LoadableStudy.JsonRequest,
-                com.cpdss.common.generated.LoadableStudy.StatusReply>(
-                  this, METHODID_SAVE_JSON)))
-          .addMethod(
-            getSaveAlgoErrorsMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.LoadableStudy.AlgoErrors,
-                com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
-                  this, METHODID_SAVE_ALGO_ERRORS)))
-          .addMethod(
-            getFetchAllAlgoErrorsMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.LoadableStudy.AlgoErrors,
-                com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
-                  this, METHODID_FETCH_ALL_ALGO_ERRORS)))
-          .addMethod(
-              getGetCargoHistoryByCargoMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
-                      com.cpdss.common.generated.LoadableStudy.LatestCargoReply>(
-                      this, METHODID_GET_CARGO_HISTORY_BY_CARGO)))
-          .addMethod(
-              getGetActiveVoyagesByVesselMethod(),
+              getSaveJsonMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.LoadableStudy.JsonRequest,
@@ -5180,64 +5107,6 @@ public final class LoadableStudyServiceGrpc {
             responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /**
-     */
-    public void saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void getCargoHistoryByCargo(com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /** */
-    public void getActiveVoyagesByVessel(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getSynopticDataForLoadingPlan(
-        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetSynopticDataForLoadingPlanMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void saveLoadingInfoToSynopticData(
-        com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getSaveLoadingInfoToSynopticDataMethod(), getCallOptions()),
           request,
           responseObserver);
     }
