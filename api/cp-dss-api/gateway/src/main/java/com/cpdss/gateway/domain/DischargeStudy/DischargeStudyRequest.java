@@ -8,7 +8,7 @@ import lombok.Data;
 public class DischargeStudyRequest {
 
   private String name;
-  private String enquiryName;
+  private String enquiryDetails;
   private Long vesselId;
   private Long voyageId;
 }

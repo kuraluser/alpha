@@ -220,7 +220,7 @@ public class DischargeStudyService {
         DischargeStudyDetail.newBuilder();
 
     Optional.ofNullable(request.getName()).ifPresent(builder::setName);
-    Optional.ofNullable(request.getEnquiryName()).ifPresent(builder::setEnquiryName);
+    Optional.ofNullable(request.getEnquiryDetails()).ifPresent(builder::setEnquiryDetails);
     Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
     Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
     DischargeStudyReply reply = this.saveDischargeStudy(builder.build());

@@ -13925,6 +13925,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private LoadableStudy saveDischargeStudy(DischargeStudyDetail request, Voyage voyage) {
     LoadableStudy dischargeStudy = new LoadableStudy();
     dischargeStudy.setName(request.getName());
+    dischargeStudy.setDetails(request.getEnquiryDetails());
     dischargeStudy.setActive(true);
     dischargeStudy.setVesselXId(request.getVesselId());
     dischargeStudy.setVoyage(voyage);

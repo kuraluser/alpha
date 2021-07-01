@@ -201,7 +201,7 @@ message CargoNominationDetailReply{
 
 message DischargeStudyDetail{
 	string name = 1;
-	string enquiryName = 2;
+	string enquiryDetails = 2;
 	int64 vesselId = 3;
 	int64 voyageId = 4;
 }
