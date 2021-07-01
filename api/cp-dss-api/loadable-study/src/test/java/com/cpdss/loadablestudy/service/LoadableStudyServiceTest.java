@@ -3599,11 +3599,18 @@ class LoadableStudyServiceTest {
                 anyLong(), anyBoolean()))
         .thenReturn(this.createBallastEntities());
 
-    /*Mockito.when(
-        this.voyageRepository
-            .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                any(LocalDateTime.class), anyLong(), anyBoolean(), any()))
-    .thenReturn(voyage);*/
+    //    Mockito.when(
+    //            this.voyageRepository
+    //
+    // .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+    //                    any(LocalDateTime.class), anyLong(), anyBoolean(), any()))
+    //        .thenReturn(voyage);
+
+    Mockito.when(
+            this.voyageRepository
+                .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                    anyLong(), anyBoolean(), any()))
+        .thenReturn(voyage);
     Mockito.when(
             this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(any(Voyage.class)))
         .thenReturn((VoyageHistory) createDummyObject(VoyageHistory.class));
