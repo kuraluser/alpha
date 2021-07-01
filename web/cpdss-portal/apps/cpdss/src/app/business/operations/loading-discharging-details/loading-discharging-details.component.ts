@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } fro
 import { ILoadingDetails } from '../models/loading-information.model';
 import { LoadingDischargingDetailsTransformationService } from './loading-discharging-details-transformation.service';
 import { loadingDetailsValidator } from '../directives/validator/loading-details-time-validator.directive';
+import { numberValidator } from '../../core/directives/number-validator.directive';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-details',
@@ -34,9 +35,9 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset','<')]),
       timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise','>')]),
       startTime: this.fb.control(this.getDateByDate(this.loadingDetails?.startTime), [Validators.required]),
-      initialTrim: this.fb.control(this.loadingDetails.trimAllowed?.initialTrim, [Validators.required]),
-      maximumTrim: this.fb.control(this.loadingDetails.trimAllowed?.maximumTrim, [Validators.required]),
-      finalTrim: this.fb.control(this.loadingDetails.trimAllowed?.finalTrim, [Validators.required])
+      initialTrim: this.fb.control(this.loadingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
+      maximumTrim: this.fb.control(this.loadingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
+      finalTrim: this.fb.control(this.loadingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)])
     })
   }
 
@@ -93,7 +94,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   onTimeChange(field) {
     if (this.loadingDetailsForm.value[field]) {
       const selectedTime = new Date(this.loadingDetailsForm.value[field]);
-      this.loadingDetailsResponse[field] = selectedTime.getHours() + ":" + selectedTime.getMinutes();
+      this.loadingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
       if(!this.fieldError(field)){
         this.updateLoadingDetails.emit(this.loadingDetailsResponse);
       }

@@ -156,7 +156,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     // Common fields
     var1.ifPresent(v -> builder.setLoadingInfoId(v.getId()));
     var1.ifPresent(v -> builder.setSynopticTableId(v.getSynopticalTableXId()));
-    var1.ifPresent(v -> builder.setIsLoadingInfoComplete(v.getIsLoadingInfoComplete()));
+    var1.ifPresent(
+        v -> {
+          if (v.getIsLoadingInfoComplete() != null) {
+            builder.setIsLoadingInfoComplete(v.getIsLoadingInfoComplete());
+          }
+        });
 
     // Loading Details
     LoadingPlanModels.LoadingDetails details =

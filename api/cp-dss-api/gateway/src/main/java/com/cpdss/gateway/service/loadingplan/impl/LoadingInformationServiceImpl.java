@@ -173,38 +173,39 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       try {
         for (PortInfo.BerthDetail bd : response.getBerthsList()) {
           BerthDetails dto = new BerthDetails();
+
           Optional.ofNullable(bd.getId()).ifPresent(dto::setBerthId);
           Optional.ofNullable(bd.getPortId()).ifPresent(dto::setPortId);
-          // Optional.ofNullable(bd.getId()).ifPresent(dto::setLoadingInfoId);
           dto.setMaxShpChannel(
               bd.getMaxShipChannel().isEmpty()
                   ? BigDecimal.ZERO
                   : new BigDecimal(bd.getMaxShipChannel()));
-          Optional.ofNullable(bd.getBerthName()).ifPresent(dto::setBerthName);
-          // Optional.ofNullable(bd.getId()).ifPresent(dto::setLoadingBerthId);
 
+          Optional.ofNullable(bd.getBerthName()).ifPresent(dto::setBerthName);
           dto.setMaxShipDepth(
               bd.getMaxShipDepth().isEmpty()
                   ? BigDecimal.ZERO
                   : new BigDecimal(bd.getMaxShipDepth()));
-          dto.setMaxShipDepth(
+          dto.setSeaDraftLimitation(
               bd.getSeaDraftLimitation().isEmpty()
                   ? BigDecimal.ZERO
                   : new BigDecimal(bd.getSeaDraftLimitation()));
-          dto.setMaxShipDepth(
-              bd.getSeaDraftLimitation().isEmpty()
+          dto.setAirDraftLimitation(
+              bd.getAirDraftLimitation().isEmpty()
                   ? BigDecimal.ZERO
                   : new BigDecimal(bd.getSeaDraftLimitation()));
-          dto.setMaxShipDepth(
+          dto.setMaxManifoldHeight(
               bd.getMaxManifoldHeight().isEmpty()
                   ? BigDecimal.ZERO
                   : new BigDecimal(bd.getMaxManifoldHeight()));
+
           Optional.ofNullable(bd.getRegulationAndRestriction())
               .ifPresent(dto::setRegulationAndRestriction);
-          dto.setMaxShipDepth(
+          dto.setMaxLoa(
               bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
           dto.setMaxShipDepth(
               bd.getMaxDraft().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxDraft()));
+          dto.setLineDisplacement(bd.getLineDisplacement());
           berthDetails.add(dto);
         }
       } catch (Exception e) {
@@ -418,13 +419,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
       cargoDetails.setGrade(lqcd.getGrade());
       cargoDetails.setId(lqcd.getId());
-
       cargoDetails.setLoadableBbls60f(lqcd.getLoadableBbls60F());
       cargoDetails.setLoadableBblsdbs(lqcd.getLoadableBblsdbs());
       cargoDetails.setLoadableKL(lqcd.getLoadableKL());
       cargoDetails.setLoadableLT(lqcd.getLoadableLT());
       cargoDetails.setLoadableMT(lqcd.getLoadableMT());
-
       cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
       cargoDetails.setMinTolerence(lqcd.getMinTolerence());
       cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());

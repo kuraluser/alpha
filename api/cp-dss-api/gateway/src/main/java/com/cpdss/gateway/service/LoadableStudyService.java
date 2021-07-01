@@ -2019,7 +2019,7 @@ public class LoadableStudyService {
    * @param grpcReply
    * @return
    */
-  private OnHandQuantityResponse buildOnHandQuantityResponse(
+  public OnHandQuantityResponse buildOnHandQuantityResponse(
       OnHandQuantityReply grpcReply, String correlationId) {
     OnHandQuantityResponse response = new OnHandQuantityResponse();
     response.setOnHandQuantities(new ArrayList<>());
@@ -5064,6 +5064,7 @@ public class LoadableStudyService {
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadablePatternId(loadablePatternId);
     request.setValidated(patternValidateResultRequest.getValidated());
+    request.setHasLodicator(patternValidateResultRequest.getHasLoadicator());
 
     if (patternValidateResultRequest.getValidated()) {
       LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();

@@ -13,13 +13,12 @@ import com.cpdss.common.generated.PortInfo.TimezoneResponse;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.entity.BerthInfo;
+import com.cpdss.portinfo.entity.BerthManifold;
 import com.cpdss.portinfo.entity.PortInfo;
 import com.cpdss.portinfo.entity.Timezone;
-import com.cpdss.portinfo.repository.BerthInfoRepository;
-import com.cpdss.portinfo.repository.CargoPortMappingRepository;
-import com.cpdss.portinfo.repository.PortInfoRepository;
-import com.cpdss.portinfo.repository.TimezoneRepository;
+import com.cpdss.portinfo.repository.*;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -277,6 +276,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
   @Autowired BerthInfoRepository berthInfoRepository;
 
+  @Autowired BerthManifoldRepository berthManifoldRepository;
+
   @Override
   public void getBerthDetailsByPortId(
       com.cpdss.common.generated.PortInfo.PortIdRequest request,
@@ -323,14 +324,35 @@ public class PortInfoService extends PortInfoServiceImplBase {
           .ifPresent(v -> builder2.setBerthName(String.valueOf(v)));
       Optional.ofNullable(bi.getMaxShipDepth())
           .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
-      builder2.setSeaDraftLimitation("0000");
+
+      Optional.ofNullable(bi.getMaximumDraft())
+          .ifPresent(v -> builder2.setSeaDraftLimitation(String.valueOf(v)));
+      builder2.setMaxManifoldHeight(this.getMaxManifoldHeight(bi).toString());
+
       Optional.ofNullable(bi.getAirDraft())
           .ifPresent(v -> builder2.setAirDraftLimitation(String.valueOf(v)));
-      builder2.setMaxManifoldHeight("0000");
       Optional.ofNullable(bi.getMaximumLoa()).ifPresent(v -> builder2.setMaxLoa(String.valueOf(v)));
       Optional.ofNullable(bi.getMaximumDraft())
           .ifPresent(v -> builder2.setMaxDraft(String.valueOf(v)));
+
+      Optional.ofNullable(bi.getLineDisplacement())
+          .ifPresent(v -> builder2.setLineDisplacement(String.valueOf(v)));
       builder.addBerths(builder2);
     }
+  }
+
+  private BigDecimal getMaxManifoldHeight(BerthInfo berth) {
+    try {
+      List<BerthManifold> var1 =
+          berthManifoldRepository.findByBerthInfoAndIsActiveTrue(berth.getId());
+      if (!var1.isEmpty()) {
+        BerthManifold va =
+            var1.stream().max(Comparator.comparing(BerthManifold::getManifoldHeight)).get();
+        if (va.getManifoldHeight() != null) return va.getManifoldHeight();
+      }
+    } catch (Exception e) {
+      log.error("Failed to get manifold data for berth Id {}, {}", berth.getId(), e.getMessage());
+    }
+    return BigDecimal.ZERO;
   }
 }

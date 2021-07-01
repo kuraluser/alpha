@@ -26,6 +26,7 @@ export class QuantityDecimalFormatPipe implements PipeTransform {
    */
   transform(value: string | number, unit?: string): string {
     let decimal;
+    const data: any = value;
     const qunatityUnit = unit ? unit : <QUANTITY_UNIT>localStorage.getItem('unit');
     switch (qunatityUnit) {
       case QUANTITY_UNIT.KL:
@@ -52,8 +53,8 @@ export class QuantityDecimalFormatPipe implements PipeTransform {
         decimal = AppConfigurationService.settings.quantityNumberFormatMT;
         break;
     }
-
-    const convertedValue = this.decimalPipe.transform(value, decimal);
+    let convertedValue;
+    convertedValue = isNaN(data) ?  value : this.decimalPipe.transform(value, decimal);
     return convertedValue;
   }
 

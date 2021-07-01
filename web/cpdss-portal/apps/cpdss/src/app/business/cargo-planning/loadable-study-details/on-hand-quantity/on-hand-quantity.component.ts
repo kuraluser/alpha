@@ -362,6 +362,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     formControl.updateValueAndValidity();
     if (fromGroup.valid) {
       event.data.processing = true;
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
       const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
       if (res) {
@@ -445,6 +446,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   private swMessageHandler = async (event) => {
     const translationKeys = await this.translateService.get(['OHQ_UPDATE_ERROR', 'OHQ_UPDATE_STATUS_ERROR']).toPromise();
     if (event?.data?.type === 'ohq_sync_finished') {
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
       const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.selectedPortOHQTankDetails[index].processing = false;

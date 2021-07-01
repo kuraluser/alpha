@@ -114,5 +114,5 @@ public class LoadingInformation extends EntityDoc {
   private Long portRotationXId;
 
   @Column(name = "is_loading_information_complete")
-  private Boolean isLoadingInfoComplete;
+  private Boolean isLoadingInfoComplete = false;
 }

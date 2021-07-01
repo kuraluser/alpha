@@ -1,5 +1,5 @@
 /**
- * ENUM for tabs in cargo-planning rules
+ * ENUM for tabs in admin rules
  *
  * @export
  * @enum {string}
@@ -18,5 +18,5 @@
  */
 export enum RULE_TYPES {
     ABSOLUTE = "Absolute",
-    PREFERRABLE = "Preferrable",
-} 
+    PREFERRABLE = "Preferable",
+}

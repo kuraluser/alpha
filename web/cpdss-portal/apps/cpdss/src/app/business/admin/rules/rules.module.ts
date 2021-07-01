@@ -4,13 +4,16 @@ import { RulesComponent } from './rules.component';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
-import { RulesService } from './services/rules.service'
+import { RulesService } from '../../core/services/rules.service'
 import { RulesApiService } from './services/rules-api.service'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RulesTableComponent } from './rules-table/rules-table.component';
-import { TableModule } from 'primeng/table';
+import { RulesTableModule } from '../../core/components/rules-table/rules-table.module'
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import { TableModule } from 'primeng/table';
+
+
 
 const routes: Routes = [
   {
@@ -26,7 +29,7 @@ const routes: Routes = [
  * @class RulesModule
  */
 @NgModule({
-  declarations: [RulesComponent, RulesTableComponent],
+  declarations: [RulesComponent],
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
@@ -34,9 +37,11 @@ const routes: Routes = [
     ReactiveFormsModule,
     TranslateModule,
     DropdownModule,
-    TableModule,
     InputSwitchModule,
-    ValidationErrorModule
+    ValidationErrorModule,
+    RadioButtonModule,
+    RulesTableModule,
+    TableModule
   ],
   providers:[
     RulesService,

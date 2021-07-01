@@ -18,5 +18,5 @@ export enum RULES_TABS {
  */
 export enum RULE_TYPES {
     ABSOLUTE = "Absolute",
-    PREFERRABLE = "Preferrable",
+    PREFERRABLE = "Preferable",
 }

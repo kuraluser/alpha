@@ -2831,7 +2831,6 @@ statu: boolean;
     }
   }
 
-
   /**
   * Method to get the control of a particular field
   * @param {number} colIndex

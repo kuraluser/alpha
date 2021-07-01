@@ -1,7 +1,7 @@
 import { IResponse } from '../../../shared/models/common.model';
 import { LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 /**
- * Model for loadable study list 
+ * Model for loadable study list
  */
 export class LoadableStudy {
     public id: number;
@@ -67,7 +67,7 @@ export interface ILoadableStudyAttachment {
  */
 export interface IDischargingPortIds {
     portIds: number[];
-    dischargingCargoId: number;
+    cargoNominationId: number;
     isDischargingPortComplete: boolean;
 }
 

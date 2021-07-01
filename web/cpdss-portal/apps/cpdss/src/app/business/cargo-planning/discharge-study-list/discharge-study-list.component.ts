@@ -143,6 +143,7 @@ export class DischargeStudyListComponent implements OnInit {
     this.edit = true;
     this.display = true;
     this.selectedDischargeStudy = event.data;
+    this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
   }
 
   /**

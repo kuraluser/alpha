@@ -9,6 +9,8 @@
     ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    dischargePorts: "++,storeKey,timeStamp,vesselId,voyageId,dischargeStudyId,status",
+    dischargeOhq: "++,storeKey,timeStamp,vesselId,voyageId,dischargeStudyId,status",
     loadingInformations: "++,storeKey,timeStamp,vesselId,voyageId,loadingInfoId,status",
     properties: ""
   });
@@ -370,7 +372,7 @@
                 'Authorization': 'Bearer ' + token
 
               }
-              const syncResponse = await fetch(`${apiUrl}/vessels/${loadingInformation?.vesselId}/voyages/${loadingInformation?.voyageId}/loading-plan/${loadingInformation?.loadingInfoId}/loading-information`, {
+              const syncResponse = await fetch(`${apiUrl}/vessels/${loadingInformation?.vesselId}/voyages/${loadingInformation?.voyageId}/loading-info`, {
                 method: 'POST',
                 body: JSON.stringify(loadingInformation),
                 headers: headers
@@ -378,15 +380,15 @@
 
               if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
                 const sync = await syncResponse.json();
-                sync.storeKey = loadingInformation.storeKey;
-                sync.type = 'cargo_nomination_sync_finished';
+                sync.storeKey = loadingInformation?.storeKey;
+                sync.type = 'loading_information_sync_finished';
                 const refreshedToken = syncResponse.headers.get('token');
                 sync.refreshedToken = refreshedToken;
                 // update id of loading information if there are any new rows with same storekey
-                const updated = await db.loadingInformations.where({ 'storeKey': key }).modify({ 'id': loadingInformations?.id });
+                const updated = await db.loadingInformations?.where({ 'storeKey': key }).modify({ 'id': loadingInformation?.id });
                 if (updated) {
                   //on success of api call remove all rows of selected primary keys
-                  primaryKey.forEach(async (primaryKey) => await db.loadingInformations.delete(primaryKey));
+                  primaryKey.forEach(async (primaryKey) => await db.loadingInformations?.delete(primaryKey));
                 }
                 return notifyClients(sync);
               }
@@ -480,6 +482,11 @@
     }, 5000);
   }
 
+  /**
+   * Method for monitoring loadable study status after pattern generation is started
+   *
+   * @param {*} data
+   */
   async function checkLoadableStudyStatus(data) {
     let currentStatus;
     const sync = {};
@@ -506,6 +513,11 @@
           sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
         }
+        if (syncView?.loadableStudyStatusId === 7) {
+          sync.type = 'loadable-pattern-loadicator-checking';
+          sync.statusId = syncView?.loadableStudyStatusId;
+          notifyClients(sync);
+        }
         if (syncView?.loadableStudyStatusId === 3) {
           clearInterval(timer);
           sync.type = 'loadable-pattern-completed';
@@ -515,6 +527,12 @@
         if (syncView?.loadableStudyStatusId === 6) {
           clearInterval(timer);
           sync.type = 'loadable-pattern-no-solution';
+          sync.statusId = syncView?.loadableStudyStatusId;
+          notifyClients(sync);
+        }
+        if (syncView?.loadableStudyStatusId === 11) {
+          clearInterval(timer);
+          sync.type = 'loadable-pattern-error-occured';
           sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
         }
@@ -533,7 +551,7 @@
         notifyClients(sync);
         clearInterval(timer);
       }
-    }, 3600000);
+    }, 7200000);
   }
 
 
