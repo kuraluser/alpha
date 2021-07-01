@@ -13602,15 +13602,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 });
         loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
       }
-
       List<Long> ruleListId =
           vesselRuleReply.getRulePlanList().stream()
               .flatMap(rulesList -> rulesList.getRulesList().stream())
               .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
               .collect(Collectors.toList());
       List<LoadableStudyRules> loadableStudyRulesList =
-          loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdIn(
-              loadableStudy.get(), request.getVesselId(), true, ruleListId);
+          loadableStudyRuleRepository
+              .findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
+                  loadableStudy.get(), request.getVesselId(), true, ruleListId);
       if (loadableStudyRulesList.size() > 0) {
         log.info("Fetch  loadable study rules");
         vesselRuleReply
@@ -13673,7 +13673,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     rDropDown.getRuleTemplateId() != 0
                         && rule.getRuleTemplateId() != null
                         && rDropDown.getRuleTemplateId()
-                            == Long.parseLong(rule.getRuleTemplateId()))
+                            == Long.parseLong(rule.getRuleTemplateId().trim()))
             .collect(Collectors.toList());
     if (input.getDefaultValue().contains(",")) {
       String[] masterIds = input.getDefaultValue().split(",");
@@ -13682,7 +13682,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         if (isCargoTankMaster) {
           if (cargoTankMaster.stream()
               .map(CargoTankMaster::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -13699,7 +13699,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         } else {
           if (filterMasterByRule.stream()
               .map(RuleDropDownValueMaster::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -13720,7 +13720,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (isCargoTankMaster) {
         if (!cargoTankMaster.stream()
             .map(CargoTankMaster::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(
@@ -13731,7 +13731,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         if (!filterMasterByRule.stream()
             .map(RuleDropDownValueMaster::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(

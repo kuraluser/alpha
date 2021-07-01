@@ -1762,7 +1762,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                         && rule.getRuleTemplateId() != null
                         && rDropDown
                             .getRuleTemplateXid()
-                            .equals(Long.parseLong(rule.getRuleTemplateId())))
+                            .equals(Long.parseLong(rule.getRuleTemplateId().trim())))
             .collect(Collectors.toList());
     if (input.getDefaultValue().contains(",")) {
       String[] masterIds = input.getDefaultValue().split(",");
@@ -1771,7 +1771,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         if (isCargoTankMaster) {
           if (cargoTankMaster.stream()
               .map(CargoTankMaster::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -1788,7 +1788,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         } else {
           if (filterMasterByRule.stream()
               .map(RuleVesselDropDownValues::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -1809,7 +1809,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       if (isCargoTankMaster) {
         if (!cargoTankMaster.stream()
             .map(CargoTankMaster::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(
@@ -1820,7 +1820,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       } else {
         if (!filterMasterByRule.stream()
             .map(RuleVesselDropDownValues::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(
