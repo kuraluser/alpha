@@ -171,8 +171,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   onRowSelection(event) {
-    this.selectedLoadableStudy = event?.data;
-    this.selectedLoadableStudyChange.emit(event?.data?.id);
+    this.selectedLoadableStudyChange.emit(event?.data);
   }
 
   /**

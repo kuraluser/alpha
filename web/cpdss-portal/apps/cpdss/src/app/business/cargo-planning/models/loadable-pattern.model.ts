@@ -40,6 +40,7 @@ export interface ILoadablePattern {
     loadablePlanBallastDetails: IBallastStowageDetails[];
     loadablePlanSynopticRecord: ILoadablePlanSynopticalRecord;
     loadableQuantityCommingleCargoDetails: ICommingleDetails[];
+    validated?: boolean;
 }
 
 /**

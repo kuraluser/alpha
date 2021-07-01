@@ -268,7 +268,6 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
     const newBallast = <IBallastStowageDetails>JSON.parse(JSON.stringify(ballast))
     newBallast.cubicMeter = (Number(newBallast.metricTon) / Number(newBallast.sg)).toFixed(2);
     if (newBallast.fullCapacityCubm) {
-      newBallast.percentage = (Number(newBallast.cubicMeter) / Number(newBallast.fullCapacityCubm) * 100).toString();
       newBallast.percentage = this.decimalConvertion(_decimalPipe, newBallast.percentage, "1.2-2");
     } else {
       newBallast.percentage = "0.00"

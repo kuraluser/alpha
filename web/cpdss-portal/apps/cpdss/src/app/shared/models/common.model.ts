@@ -129,6 +129,8 @@ export class CPDSSDB extends Dexie {
     ports!: Dexie.Table<any, number>;
     ohq!: Dexie.Table<any, number>;
     obq!: Dexie.Table<any, number>;
+    dischargePorts!: Dexie.Table<any, number>;
+    dischargeOhq!: Dexie.Table<any , number>;
     loadingInformations: Dexie.Table<any, number>;
     properties!: Dexie.Table<any>;
     constructor() {
@@ -138,7 +140,9 @@ export class CPDSSDB extends Dexie {
             ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
             ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
             obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
-            loadingInformations: "++,storeKey,timeStamp,vesselId,voyageId,loadingInfoId,status",
+            dischargePorts: "++,storeKey,timeStamp,vesselId,voyageId,dischargeStudyId,status",
+            dischargeOhq: "++,storeKey,timeStamp,vesselId,voyageId,dischargeStudyId,status",
+            loadingInformations: "++,storeKey,timeStamp,vesselId,voyageId,loadablePlanId,status",
             properties: ""
         });
     }
@@ -431,4 +435,14 @@ export interface ISubTotal {
     public loadableQuantityId?: number;
     public id?: number;
     private loadableStudyId?: number
+}
+
+/**
+ * Interface for cargo conditions model
+ */
+ export class ICargoConditions {
+    id: number;
+    plannedWeight: number;
+    actualWeight: number;
+    abbreviation?: string;
 }

@@ -7,7 +7,10 @@ import { IVesselsResponse, IVessel } from '../../core/models/vessel-details.mode
 /**
  * Service for vessels api
  */
-@Injectable()
+ @Injectable({
+  providedIn: 'root'
+})
+
 export class VesselsApiService {
   private _vesselDetails: IVessel[];
 

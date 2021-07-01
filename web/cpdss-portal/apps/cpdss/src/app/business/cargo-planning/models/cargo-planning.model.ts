@@ -2,7 +2,7 @@ import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { CPDSSDB, IFuelType, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
-import { IPort, IPortList } from '../../core/models/common.model';
+import { IPort, IPortList , IDischargePortList } from '../../core/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -98,6 +98,7 @@ export interface ICargo {
     abbreviation?: string;
     api?: number;
     ports?: IPort[];
+    color?: string;
 }
 
 /**
@@ -163,6 +164,7 @@ export interface ILoadingPopupData {
     rowIndex: number;
     ports: IPort[];
     isUpdate?: boolean;
+    loadableStudyPorts?: number[];
 }
 
 /**
@@ -287,6 +289,19 @@ export enum LOADABLE_STUDY_DETAILS_TABS {
     PORTS = "PORTS",
     OHQ = "OHQ",
     OBQ = "OBQ"
+}
+
+/**
+ * ENUM for discharge study details page
+ *
+ * @export
+ * @enum {number}
+ */
+ export enum DISCHARGE_STUDY_DETAILS_TABS {
+    CARGONOMINATION = "CARGONOMINATION",
+    PORTS = "PORTS",
+    OHQ = "OHQ",
+    DISCHARGE_STUDY = "DISCHARGE_STUDY"
 }
 
 /**
@@ -462,6 +477,20 @@ export class OHQDB extends CPDSSDB {
 }
 
 /**
+ * Class for OHQ Dexie db
+ *
+ * @export
+ * @class DischargeOHQDB
+ * @extends {CPDSSDB}
+ */
+export class DischargeOHQDB extends CPDSSDB {
+    dischargeOhq!: Dexie.Table<IPortOHQTankDetail, number>;
+    constructor() {
+        super();
+    }
+}
+
+/**
  * Class for port Dexie db
  *
  * @export
@@ -470,6 +499,22 @@ export class OHQDB extends CPDSSDB {
  */
 export class PortsDB extends CPDSSDB {
     ports!: Dexie.Table<IPortList, number>;
+
+    constructor() {
+        super();
+    }
+
+}
+
+/**
+ * Class for discharge port Dexie db
+ *
+ * @export
+ * @class PortsDB
+ * @extends {CPDSSDB}
+ */
+ export class DischargePortsDB extends CPDSSDB {
+    dischargePorts!: Dexie.Table<IDischargePortList, number>;
 
     constructor() {
         super();

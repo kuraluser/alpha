@@ -175,7 +175,11 @@ export class LoadingPortsPopupComponent implements OnInit {
       this.popupData.isUpdate = true;
       this.popupData.rowData.loadingPorts.value = this.loadingPort?.reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValue(port));
       this.popupDataChange.emit(this.popupData);
-      this.portOhqTabStatusUpdate.emit(false);
+      if (this.checkNewPortOccured()) {
+        this.portOhqTabStatusUpdate.emit(false);
+      } else {
+        this.portOhqTabStatusUpdate.emit(true);
+      }
       this.closePopup();
     } else {
       if (this.loadingPortsFrom.controls.dataTable?.errors?.required) {
@@ -204,6 +208,16 @@ export class LoadingPortsPopupComponent implements OnInit {
       name: this.fb.control(loadingPort.name.value, Validators.required),
       quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)])
     });
+  }
+
+  /**
+   * function to check new loading port occured
+   * @return {*}  {boolean}
+   * @memberof LoadingPortsPopupComponent
+   */
+  checkNewPortOccured(): boolean {
+    const isNewPort = this.loadingPort.some(port => (!this.popupData.loadableStudyPorts.includes(port.id)));
+    return isNewPort;
   }
 
 }

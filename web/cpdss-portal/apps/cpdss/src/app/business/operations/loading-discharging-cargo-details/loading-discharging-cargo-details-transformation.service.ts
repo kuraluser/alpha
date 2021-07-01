@@ -41,8 +41,8 @@ getCargotobeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColum
       numberFormat: '1.2-2'
     },
     {
-      field: 'loadingPort',
-      header: 'LOADING_CARGO_TO_BE_LOADED_LOADING_PORT'
+      field: 'maxLoadingRate',
+      header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE'
     },
     {
       field: 'orderedQuantity',
@@ -84,7 +84,6 @@ getCargotobeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColum
  * @memberof LoadingInformationTransformationService
  */
      formatCargoTanks(cargoTank: IShipCargoTank[][], cargoTankQuantities: ICargoQuantities[], prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): IShipCargoTank[][] {
-
       for (let groupIndex = 0; groupIndex < cargoTank?.length; groupIndex++) {
         for (let tankIndex = 0; tankIndex < cargoTank[groupIndex].length; tankIndex++) {
           for (let index = 0; index < cargoTankQuantities?.length; index++) {
@@ -95,7 +94,6 @@ getCargotobeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColum
               const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
               cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;         
               cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api,cargoTank[groupIndex][tankIndex].commodity?.temperature);
-              cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
               if (cargoTank[groupIndex][tankIndex].commodity?.isCommingleCargo) {
                 cargoTank[groupIndex][tankIndex].commodity.colorCode = AppConfigurationService.settings.commingleColor;
               }
@@ -107,23 +105,7 @@ getCargotobeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColum
       return cargoTank;
     }
 
-       /**
-   * Method to get percentage filled in tank
-   *
-   * @param {ITank} tank
-   * @returns
-   * @memberof LoadingInformationTransformationService
-   */
-  getFillingPercentage(tank: ITank) {
-    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(2);
-    if (Number(fillingratio) >= 100) {
-      fillingratio = 100;
-    }
-    if (isNaN(fillingratio)) {
-      fillingratio = 0;
-    }
-    return fillingratio;
-  }
+
 
     /**
 *

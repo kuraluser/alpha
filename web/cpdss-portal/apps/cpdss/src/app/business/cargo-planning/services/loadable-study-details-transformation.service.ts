@@ -38,6 +38,7 @@ export class LoadableStudyDetailsTransformationService {
   private OPERATIONS: OPERATIONS;
   private _loadLineChangeSource: Subject<any> = new Subject();
   private _loadableStudyUpdate: Subject<any> = new Subject();
+  private _loadablePatternBtnDisable: Subject<any> = new Subject();
 
   // public fields
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
@@ -51,6 +52,7 @@ export class LoadableStudyDetailsTransformationService {
   portUpdate$ = this._portUpdate.asObservable();
   loadLineChange$ = this._loadLineChangeSource.asObservable();
   loadableStudyUpdate$ = this._loadableStudyUpdate.asObservable();
+  loadablePatternBtnDisable$ = this._loadablePatternBtnDisable.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
   constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
@@ -790,7 +792,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'PORT_WATER_DENSITY_REQUIRED_ERROR',
           'min': 'PORT_WATER_DENSITY_MIN_ERROR',
-          'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR',
+          'waterDensityError': 'PORT_WATER_DENSITY_RANGE_ERROR'
         }
       },
       {
@@ -1675,5 +1678,14 @@ export class LoadableStudyDetailsTransformationService {
  */
   updateLoadableStudyData(value){
     this._loadableStudyUpdate.next(value);
+  }
+   /**
+ * Method for updating disable/enable loadable study generate button
+ *
+ * @param value
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  disableGenerateLoadablePatternBtn(value){
+    this._loadablePatternBtnDisable.next(value);
   }
 }

@@ -5,6 +5,10 @@ import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import com.cpdss.common.generated.*;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
@@ -2871,6 +2875,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
+      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+
       LoadableStudyPortRotation portRotation =
           this.loadableStudyPortRotationRepository.findByIdAndIsActive(
               request.getPortRotationId(), true);
@@ -4040,6 +4046,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       loadablePlanCommingleDetails.setTankShortName(
           loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
+      loadableQuantityCommingleCargoDetailsList
+          .get(i)
+          .getToppingOffSequencesList()
+          .forEach(
+              toppingSequence -> {
+                LoadablePatternCargoToppingOffSequence lpctos =
+                    new LoadablePatternCargoToppingOffSequence();
+                lpctos.setCargoXId(toppingSequence.getCargoId());
+                lpctos.setTankXId(toppingSequence.getTankId());
+                lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                lpctos.setLoadablePattern(loadablePattern);
+                lpctos.setIsActive(true);
+                toppingOffSequenceRepository.save(lpctos);
+              });
     }
   }
 
@@ -4075,6 +4095,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   new BigDecimal(lqcd.getCargoNominationTemperature()));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
+              lqcd.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(lqcd.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
+                      });
             });
   }
 
@@ -4981,8 +5013,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("Exception in update ullage", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
-              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception while recalculating volume")
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
               .setStatus(FAILED)
               .build());
     } finally {
@@ -5594,22 +5626,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
     } catch (Exception e) {
-      log.error("Exception when fetching get Loadable Pattern Details", e);
-      builder.setResponseStatus(
+      log.error("Exception in update ullage", e);
+      replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception when fetching Loadable Pattern Commingle Details")
+              .setMessage("Exception while recalculating volume")
               .setStatus(FAILED)
               .build());
     } finally {
-      responseObserver.onNext(builder.build());
+      responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
   }
 
   /**
-   * @param loadablePatternComingleDetails void
-   * @param builder
+   * Build upadate ullage reply
+   *
+   * @param algoResponse
+   * @param request
+   * @return
    */
   private void buildLoadablePatternComingleDetails(
       LoadablePlanCommingleDetails loadablePlanCommingleDetails,
@@ -9718,11 +9753,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setIsOhqComplete(loadableStudyOpt.get().getIsOhqComplete());
         entity.setIsPortsComplete(loadableStudyOpt.get().getIsPortsComplete());
 
-        List<OnHandQuantity> onHandQuantityList =
-            this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
-                loadableStudyOpt.get(), true);
-        if (!onHandQuantityList.isEmpty()) {
-          List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
+            if (!duplicated.isPresent()) {
+              throw new GenericServiceException(
+                  "Could not find the duplicated port rotation entity",
+                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                  HttpStatusCode.BAD_REQUEST);
+            }
 
           for (OnHandQuantity onHandQuantity : onHandQuantityList) {
 
@@ -11037,6 +11073,1220 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       return daysBetween;
     }
     return null;
+  }
+
+  /**
+   * @param build
+   * @return PortReply
+   */
+  public PortReply getPortDetails(PortRequest build) {
+    return portInfoGrpcService.getPortInfo(build);
+  }
+
+  /**
+   * Method to build VesselPlanTable data
+   *
+   * @param vesselId vesselId value
+   * @param loadablePatternId loadablePatternId value
+   * @return VesselPlanTable object
+   */
+  public VesselPlanTable buildVesselPlanTableData(long vesselId, long loadablePatternId)
+      throws GenericServiceException {
+
+    //    Get vessel details
+    VesselRequest vesselRequest = VesselRequest.newBuilder().setVesselId(vesselId).build();
+    VesselReply vesselReply = this.getVesselDetailByVesselId(vesselRequest);
+
+    VesselInfo.VesselDetail vesselDetail =
+        vesselReply.getVesselsList().stream()
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new GenericServiceException(
+                        String.format(
+                            "Vessel details not found for VesselId: %d, LoadablePatterId: %d",
+                            vesselId, loadablePatternId),
+                        CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                        HttpStatusCode.BAD_REQUEST));
+
+    //    Get loadable pattern details
+    Optional<LoadablePattern> loadablePatternDetails =
+        this.loadablePatternRepository.findByIdAndIsActive(loadablePatternId, true);
+
+    //    Get loadable plan details
+    LoadablePlanDetailsReply.Builder loadablePlanDetailsBuilder =
+        LoadablePlanDetailsReply.newBuilder();
+    buildLoadablePlanDetails(loadablePatternDetails, loadablePlanDetailsBuilder);
+    LoadablePlanDetailsReply loadablePlanDetails = loadablePlanDetailsBuilder.build();
+
+    //    Get vessel tank details
+    List<VesselTankDetail> vesselTankDetailList =
+        vesselReply.getVesselTanksList().stream()
+            .filter(vessel -> CARGO_TANK_CATEGORY_ID == vessel.getTankCategoryId())
+            .sorted(Comparator.comparing(VesselTankDetail::getFrameNumberFrom))
+            .collect(Collectors.toList());
+
+    //    Get stowage plan details
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        loadablePlanStowageDetails = loadablePlanDetails.getLoadablePlanStowageDetailsList();
+
+    List<VesselTanksTable> vesselTanksTableList = new ArrayList<>();
+    List<Float> frameFromCells = new ArrayList<>();
+    List<Float> frameToCells = new ArrayList<>();
+
+    vesselTankDetailList.forEach(
+        vesselTankDetail -> {
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails stowageDetails =
+              loadablePlanStowageDetails.stream()
+                  .filter(
+                      stowageDetail -> vesselTankDetail.getTankId() == stowageDetail.getTankId())
+                  .findFirst()
+                  .orElse(null);
+
+          VesselTanksTable.VesselTanksTableBuilder vesselTanksTableBuilder =
+              VesselTanksTable.builder();
+
+          if (null != stowageDetails) {
+
+            //          Build VesselTanksTable
+            float obsBbsValue =
+                convertToBbls(
+                    Float.parseFloat(stowageDetails.getWeight()),
+                    Float.parseFloat(stowageDetails.getApi()),
+                    Float.parseFloat(stowageDetails.getTemperature()),
+                    ConversionUnit.MT);
+            float klValue = convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C);
+            float fillingPercentage =
+                klValue / Float.parseFloat(vesselTankDetail.getFullCapacityCubm()) * 100;
+            // TODO Remove check if not necessary
+            String colorCode =
+                stowageDetails.getColorCode().isEmpty()
+                    ? WHITE_COLOR_CODE
+                    : stowageDetails.getColorCode();
+            vesselTanksTableBuilder
+                .colorCode(
+                    stowageDetails.getIsCommingle() ? COMMINGLE_DEFAULT_COLOR_CODE : colorCode)
+                .cargoCode(stowageDetails.getCargoAbbreviation())
+                // TODO ullage for commingle is empty check and set value
+                .ullage(
+                    Float.parseFloat(
+                        stowageDetails.getRdgUllage().isEmpty()
+                            ? "0.0"
+                            : stowageDetails.getRdgUllage()))
+                .loadedPercentage((float) (Math.round(fillingPercentage * 100.0) / 100.0))
+                .shipsNBbls(obsBbsValue)
+                .shipsMt(Float.parseFloat(stowageDetails.getWeight()))
+                .shipsKlAt15C(klValue);
+          } else {
+            //            Set default color to white if no stowage details found
+            vesselTanksTableBuilder.colorCode(WHITE_COLOR_CODE);
+          }
+          if (!frameFromCells.contains(Float.parseFloat(vesselTankDetail.getFrameNumberFrom()))) {
+            //            TODO Check padding
+            frameFromCells.add(-10F);
+            frameFromCells.add(Float.parseFloat(vesselTankDetail.getFrameNumberFrom()));
+          }
+          if (!frameToCells.contains(Float.parseFloat(vesselTankDetail.getFrameNumberTo()))) {
+            frameToCells.add(-10F);
+            frameToCells.add(Float.parseFloat(vesselTankDetail.getFrameNumberTo()));
+          }
+
+          vesselTanksTableBuilder
+              .frameNoFrom(Float.parseFloat(vesselTankDetail.getFrameNumberFrom()))
+              .frameNoTo(Float.parseFloat(vesselTankDetail.getFrameNumberTo()))
+              .tankNo(vesselTankDetail.getShortName());
+
+          vesselTanksTableList.add(vesselTanksTableBuilder.build());
+        });
+
+    return VesselPlanTable.builder()
+        .vesselName(vesselDetail.getName())
+        .voyageNo(loadablePlanDetails.getVoyageNumber())
+        .date(loadablePlanDetails.getDate())
+        .frameFromCellsList(frameFromCells)
+        .frameToCellsList(frameToCells)
+        .vesselTanksTableList(vesselTanksTableList)
+        .build();
+  }
+
+  /**
+   * Method to draw vessel plan table
+   *
+   * @param spreadsheet XSSFSheet spreadsheet object
+   * @param vesselPlanTable VesselPlanTable object
+   * @param startRow Table start row
+   * @param starColumn Table start column
+   * @return SheetCoordinates with final row and column numbers
+   */
+  public SheetCoordinates drawVesselPlanTable(
+      XSSFSheet spreadsheet, VesselPlanTable vesselPlanTable, int startRow, int starColumn) {
+    //    Set value for iterable values
+    int rowNo = startRow;
+    int columnNo = starColumn;
+
+    //    Set title rows >> START
+    XSSFRow titleRow = spreadsheet.createRow(rowNo);
+
+    for (VesselPlanTableTitles vesselPlanTableTitle : VesselPlanTableTitles.values()) {
+
+      XSSFCell titleCell = titleRow.createCell(columnNo);
+      titleCell.setCellStyle(
+          getCellStyle(
+              spreadsheet, TableCellStyle.STOWAGE_PLAN_TITLE, Optional.empty(), Optional.empty()));
+
+      //      Set values
+      switch (vesselPlanTableTitle) {
+        case STOWAGE_PLAN:
+          titleCell.setCellValue(vesselPlanTableTitle.getColumnName());
+          break;
+        case VESSEL_NAME:
+          titleCell.setCellValue(
+              vesselPlanTableTitle.getColumnName() + vesselPlanTable.getVesselName());
+          break;
+        case VOYAGE_NO:
+          titleCell.setCellValue(
+              vesselPlanTableTitle.getColumnName() + vesselPlanTable.getVoyageNo());
+          break;
+        case DATE:
+          titleCell.setCellValue(vesselPlanTableTitle.getColumnName() + vesselPlanTable.getDate());
+          break;
+      }
+
+      //      Merge columns
+      spreadsheet.addMergedRegion(
+          new CellRangeAddress(
+              rowNo, rowNo, columnNo, columnNo + LOADABLE_PLAN_REPORT_TITLE_WIDTH - 1));
+      columnNo += LOADABLE_PLAN_REPORT_TITLE_WIDTH;
+    }
+
+    //    Add table spacer
+    rowNo += LOADABLE_PLAN_REPORT_TABLE_SPACER;
+    //    Reset columnNo
+    columnNo = starColumn;
+
+    //    Set title rows >> END
+
+    //    Add vessel tanks >> START
+    int vesselTanksTableStartRow = rowNo;
+
+    //    TODO get dynamic row endings
+    List<String> rowEndings = Arrays.asList("P", "C", "S");
+    int midRowIndex = rowEndings.size() / 2;
+    String midRow = rowEndings.get(midRowIndex);
+
+    for (String rowEnding : rowEndings) {
+      for (StowagePlanTableTitles stowagePlanTableTitle : StowagePlanTableTitles.values()) {
+        XSSFRow stowagePlanDetailsRow = spreadsheet.createRow(rowNo);
+
+        //        Add FPT value to Ship's head
+        if (stowagePlanTableTitle.equals(Arrays.asList(StowagePlanTableTitles.values()).get(0))
+            && rowEnding.equals(rowEndings.get(0))) {
+          XSSFCell fptCell =
+              stowagePlanDetailsRow.createCell(vesselPlanTable.getFrameFromCellsList().size() + 1);
+          fptCell.setCellValue(LOADABLE_PLAN_REPORT_FPT_VALUE);
+          fptCell.setCellStyle(
+              getCellStyle(
+                  spreadsheet, TableCellStyle.FPT_CELL_STYLE, Optional.empty(), Optional.empty()));
+        }
+
+        for (VesselTanksTable vesselTankDetail : vesselPlanTable.getVesselTanksTableList()) {
+          if (rowEnding.charAt(0)
+              == vesselTankDetail.getTankNo().charAt(vesselTankDetail.getTankNo().length() - 1)) {
+
+            //            Add tank description column values
+            if (rowEnding.charAt(0) == midRow.charAt(0)) {
+              XSSFCell descriptionCell = stowagePlanDetailsRow.createCell(starColumn - 1);
+              descriptionCell.setCellValue(stowagePlanTableTitle.getColumnName());
+              descriptionCell.setCellStyle(
+                  getCellStyle(
+                      spreadsheet,
+                      TableCellStyle.VESSEL_TANK_DESCRIPTION,
+                      Optional.empty(),
+                      Optional.empty()));
+            }
+
+            //            TODO Change merge logic
+            //            Merge cells
+            CellRangeAddress mergeRange =
+                new CellRangeAddress(
+                    rowNo,
+                    rowNo,
+                    vesselPlanTable
+                        .getFrameFromCellsList()
+                        .indexOf(vesselTankDetail.getFrameNoFrom()),
+                    vesselPlanTable.getFrameToCellsList().indexOf(vesselTankDetail.getFrameNoTo())
+                        + 1);
+            spreadsheet.addMergedRegion(mergeRange);
+
+            //            Set values
+            XSSFCell stowagePlanDetailsCell =
+                stowagePlanDetailsRow.createCell(
+                    vesselPlanTable
+                        .getFrameFromCellsList()
+                        .indexOf(vesselTankDetail.getFrameNoFrom()));
+
+            XSSFCellStyle cellStyle = spreadsheet.getWorkbook().createCellStyle();
+            switch (stowagePlanTableTitle) {
+              case TANK_NO:
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getTankNo());
+                cellStyle =
+                    getCellStyle(
+                        spreadsheet,
+                        TableCellStyle.VESSEL_TANK_TANK_NO,
+                        Optional.of(getColour(vesselTankDetail.getColorCode())),
+                        Optional.of(stowagePlanTableTitle.getFormat()));
+                setMergedStyle(spreadsheet, CellBorder.CLOSED, mergeRange, cellStyle);
+                break;
+              case CARGO_CODE:
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getCargoCode());
+                cellStyle =
+                    getCellStyle(
+                        spreadsheet,
+                        TableCellStyle.VESSEL_TANK_CARGO_CODE,
+                        Optional.of(getColour(vesselTankDetail.getColorCode())),
+                        Optional.empty());
+                setMergedStyle(spreadsheet, CellBorder.CLOSED, mergeRange, cellStyle);
+                break;
+              case ULLAGE:
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getUllage());
+                cellStyle =
+                    getCellStyle(
+                        spreadsheet,
+                        TableCellStyle.VESSEL_TANK_ULLAGE,
+                        Optional.of(getColour(vesselTankDetail.getColorCode())),
+                        Optional.of(stowagePlanTableTitle.getFormat()));
+                setMergedStyle(spreadsheet, CellBorder.OPEN_BOTTOM, mergeRange, cellStyle);
+                break;
+              case LOADED_PERCENTAGE:
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getLoadedPercentage() + "%");
+                cellStyle =
+                    getCellStyle(
+                        spreadsheet,
+                        TableCellStyle.VESSEL_TANK_LOADED_PERCENTAGE,
+                        Optional.of(getColour(vesselTankDetail.getColorCode())),
+                        Optional.of(stowagePlanTableTitle.getFormat()));
+                setMergedStyle(spreadsheet, CellBorder.OPEN_TOP_AND_BOTTOM, mergeRange, cellStyle);
+                break;
+              case SHIPS_NBBLS:
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getShipsNBbls());
+                cellStyle =
+                    getCellStyle(
+                        spreadsheet,
+                        TableCellStyle.VESSEL_TANK_SHIPS_NBBLS,
+                        Optional.of(getColour(vesselTankDetail.getColorCode())),
+                        Optional.of(stowagePlanTableTitle.getFormat()));
+                setMergedStyle(spreadsheet, CellBorder.OPEN_TOP_AND_BOTTOM, mergeRange, cellStyle);
+                break;
+              case SHIPS_MT:
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getShipsMt());
+                cellStyle =
+                    getCellStyle(
+                        spreadsheet,
+                        TableCellStyle.VESSEL_TANK_SHIPS_MT,
+                        Optional.of(getColour(vesselTankDetail.getColorCode())),
+                        Optional.of(stowagePlanTableTitle.getFormat()));
+                setMergedStyle(spreadsheet, CellBorder.OPEN_TOP_AND_BOTTOM, mergeRange, cellStyle);
+                break;
+              case SHIPS_KL_15C:
+                stowagePlanDetailsCell.setCellValue(vesselTankDetail.getShipsKlAt15C());
+                cellStyle =
+                    getCellStyle(
+                        spreadsheet,
+                        TableCellStyle.VESSEL_TANK_SHIPS_KL_15C,
+                        Optional.of(getColour(vesselTankDetail.getColorCode())),
+                        Optional.of(stowagePlanTableTitle.getFormat()));
+                setMergedStyle(spreadsheet, CellBorder.OPEN_TOP, mergeRange, cellStyle);
+                break;
+            }
+
+            //            Set styling
+            stowagePlanDetailsCell.setCellStyle(cellStyle);
+          }
+        }
+        //        Update row counter
+        rowNo++;
+      }
+    }
+
+    //            Merge FPT cells
+    CellRangeAddress mergeRange =
+        new CellRangeAddress(
+            vesselTanksTableStartRow,
+            rowNo - 1,
+            vesselPlanTable.getFrameFromCellsList().size() + 1,
+            vesselPlanTable.getFrameFromCellsList().size() + 1);
+    spreadsheet.addMergedRegion(mergeRange);
+
+    //    Add vessel tanks >> END
+
+    //    Draw ship's head >> START
+
+    //    Draw downward diagonal
+    XSSFDrawing drawing = spreadsheet.createDrawingPatriarch();
+    XSSFClientAnchor anchor =
+        new XSSFClientAnchor(
+            0,
+            0,
+            0,
+            0,
+            vesselPlanTable.getFrameFromCellsList().size() + 1,
+            vesselTanksTableStartRow,
+            vesselPlanTable.getFrameFromCellsList().size() + 2,
+            startRow + StowagePlanTableTitles.values().length + vesselTanksTableStartRow);
+    anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+    XSSFSimpleShape diagonalDown = drawing.createSimpleShape(anchor);
+    diagonalDown.setShapeType(ShapeTypes.LINE);
+    diagonalDown.setFillColor(Color.BLACK.getRed(), Color.BLACK.getGreen(), Color.BLACK.getBlue());
+    diagonalDown.setLineStyleColor(
+        Color.BLACK.getRed(), Color.BLACK.getGreen(), Color.BLACK.getBlue());
+
+    //    Draw side line
+    XSSFDrawing drawing2 = spreadsheet.createDrawingPatriarch();
+    XSSFClientAnchor anchor2 =
+        new XSSFClientAnchor(
+            0,
+            0,
+            0,
+            0,
+            vesselPlanTable.getFrameFromCellsList().size() + 2,
+            vesselTanksTableStartRow + StowagePlanTableTitles.values().length,
+            vesselPlanTable.getFrameFromCellsList().size() + 2,
+            ((midRowIndex + 1) * StowagePlanTableTitles.values().length)
+                + vesselTanksTableStartRow);
+    XSSFSimpleShape straightLine = drawing2.createSimpleShape(anchor2);
+    straightLine.setShapeType(ShapeTypes.LINE);
+    straightLine.setLineStyleColor(
+        Color.BLACK.getRed(), Color.BLACK.getGreen(), Color.BLACK.getBlue());
+
+    //    Draw upward diagonal
+    XSSFDrawing drawing3 = spreadsheet.createDrawingPatriarch();
+    XSSFClientAnchor anchor3 =
+        new XSSFClientAnchor(
+            0,
+            0,
+            0,
+            0,
+            vesselPlanTable.getFrameFromCellsList().size() + 1,
+            ((midRowIndex + 1) * StowagePlanTableTitles.values().length) + vesselTanksTableStartRow,
+            vesselPlanTable.getFrameFromCellsList().size() + 2,
+            rowEndings.size() * StowagePlanTableTitles.values().length + vesselTanksTableStartRow);
+    XSSFSimpleShape diagonalUp = drawing3.createSimpleShape(anchor3);
+    diagonalUp.setShapeType(ShapeTypes.LINE);
+    diagonalUp.setLineStyleColor(
+        Color.BLACK.getRed(), Color.BLACK.getGreen(), Color.BLACK.getBlue());
+    diagonalUp.getCTShape().getSpPr().getXfrm().setFlipH(true);
+    //    Draw ship's head >> END
+
+    return new SheetCoordinates(rowNo, columnNo);
+  }
+
+  /**
+   * Method to build cargo details table
+   *
+   * @param loadableStudyId loadable study id value
+   * @param loadablePatternId loadable pattern id value
+   * @return CargoDetailsTable object
+   */
+  public CargoDetailsTable buildCargoDetailsTable(long loadableStudyId, long loadablePatternId)
+      throws GenericServiceException {
+
+    float cargoNominationTotal = 0;
+    float nBblsTotal = 0F;
+    float mtTotal = 0F;
+    float kl15CTotal = 0F;
+    float ltTotal = 0F;
+    float diffBblsTotal = 0F;
+    float diffPercentageTotal = 0F;
+
+    //    Get cargo nominations
+    List<CargosTable> cargosTableList = new ArrayList<>();
+    List<CargoNomination> cargoNominationList =
+        this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
+            loadableStudyId, true);
+
+    //    Get loadable pattern
+    Optional<LoadablePattern> loadablePatternDetails =
+        this.loadablePatternRepository.findByIdAndIsActive(loadablePatternId, true);
+
+    //    Get loadable plan details
+    LoadablePlanDetailsReply.Builder loadablePlanDetailsBuilder =
+        LoadablePlanDetailsReply.newBuilder();
+    buildLoadablePlanDetails(loadablePatternDetails, loadablePlanDetailsBuilder);
+    LoadablePlanDetailsReply loadablePlanDetails = loadablePlanDetailsBuilder.build();
+
+    //    Get loadable quantity cargo details
+    List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList =
+        loadablePlanDetails.getLoadableQuantityCargoDetailsList();
+
+    //    Get loadable plan stowage details
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        loadablePlanStowageDetails = loadablePlanDetails.getLoadablePlanStowageDetailsList();
+
+    //    Build cargo details
+    for (LoadableQuantityCargoDetails loadableQuantityCargoDetails :
+        loadableQuantityCargoDetailsList) {
+      Optional<CargoNomination> cargoNominationDetails =
+          cargoNominationList.stream()
+              .filter(
+                  cargoNomination ->
+                      cargoNomination
+                          .getAbbreviation()
+                          .equalsIgnoreCase(loadableQuantityCargoDetails.getCargoAbbreviation()))
+              .findFirst();
+
+      float shipsFigureMtTotal =
+          (float)
+              loadablePlanStowageDetails.stream()
+                  .filter(
+                      loadablePlanStowageDetails1 ->
+                          loadableQuantityCargoDetails
+                              .getCargoAbbreviation()
+                              .equalsIgnoreCase(loadablePlanStowageDetails1.getCargoAbbreviation()))
+                  .mapToDouble(detail -> Double.parseDouble(detail.getWeight()))
+                  .sum();
+      float nBblsValue =
+          convertToBbls(
+              shipsFigureMtTotal,
+              Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
+              Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
+              ConversionUnit.MT);
+      float cargoNominationValue =
+          cargoNominationDetails
+              .map(
+                  cargoNomination ->
+                      convertToBbls(
+                          cargoNomination.getQuantity().floatValue(),
+                          cargoNomination.getApi().floatValue(),
+                          cargoNomination.getTemperature().floatValue(),
+                          ConversionUnit.MT))
+              .orElseThrow(
+                  () ->
+                      new GenericServiceException(
+                          String.format(
+                              "Invalid quantity in cargo nomination. LoadableStudyId: %d, LoadablePatterId: %d",
+                              loadableStudyId, loadablePatternId),
+                          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                          HttpStatusCode.BAD_REQUEST));
+
+      float diffBbls = nBblsValue - cargoNominationValue;
+      float kl15CValue = convertFromBbls(nBblsValue, 0F, 0F, ConversionUnit.KL15C);
+      float ltValue =
+          convertFromBbls(
+              nBblsValue,
+              Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
+              0F,
+              ConversionUnit.LT);
+      float diffPercentage = diffBbls / cargoNominationValue;
+
+      //      Calculate totals
+      cargoNominationTotal += cargoNominationValue;
+      nBblsTotal += nBblsValue;
+      mtTotal += shipsFigureMtTotal;
+      kl15CTotal += kl15CValue;
+      ltTotal += ltValue;
+      diffBblsTotal += diffBbls;
+      diffPercentageTotal += diffPercentage;
+      Long portId =
+          cargoNominationDetails.get().getCargoNominationPortDetails().stream()
+              .findFirst()
+              .get()
+              .getPortId();
+      GetPortInfoByPortIdsRequest request =
+          GetPortInfoByPortIdsRequest.newBuilder().addId(portId).build();
+      PortDetail portReply =
+          getPortInfo(request).getPortsList().stream()
+              .findFirst()
+              .orElse(PortDetail.getDefaultInstance());
+
+      CargosTable cargosTable =
+          CargosTable.builder()
+              .cargoCode(loadableQuantityCargoDetails.getCargoAbbreviation())
+              .loadingPort(portReply.getName())
+              .api(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()))
+              .temp(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
+              .cargoNomination(cargoNominationValue)
+              .tolerance(
+                  String.format(
+                      "+%s %% / -%s %%",
+                      loadableQuantityCargoDetails.getMaxTolerence().isEmpty()
+                          ? 0.00
+                          : loadableQuantityCargoDetails.getMaxTolerence(),
+                      loadableQuantityCargoDetails.getMinTolerence().isEmpty()
+                          ? 0.00
+                          : loadableQuantityCargoDetails.getMinTolerence()))
+              .nBbls(nBblsValue)
+              .mt(shipsFigureMtTotal)
+              .kl15C(kl15CValue)
+              .lt(ltValue)
+              .colorCode(loadableQuantityCargoDetails.getColorCode())
+              .diffBbls(diffBbls)
+              .diffPercentage(diffPercentage)
+              .build();
+
+      cargosTableList.add(cargosTable);
+    }
+    return CargoDetailsTable.builder()
+        .cargosTableList(cargosTableList)
+        .cargoNominationTotal(cargoNominationTotal)
+        .nBblsTotal(nBblsTotal)
+        .mtTotal(mtTotal)
+        .kl15CTotal(kl15CTotal)
+        .ltTotal(ltTotal)
+        .diffBblsTotal(diffBblsTotal)
+        .diffPercentageTotal(diffPercentageTotal)
+        .build();
+  }
+
+  /**
+   * Method to draw cargo details table
+   *
+   * @param spreadsheet XSSFSheet spreadsheet object
+   * @param cargoDetailsTable CargoDetailsTable object
+   * @param startRow Table start row
+   * @param starColumn Table start column
+   * @return
+   */
+  public SheetCoordinates drawCargoDetailsTable(
+      XSSFSheet spreadsheet, CargoDetailsTable cargoDetailsTable, int startRow, int starColumn) {
+    int rowNo = startRow;
+    int columnNo = starColumn;
+
+    //    Set cargo rows >> START
+    for (CargoDetailsTableTitles cargoTableColumnDetails : CargoDetailsTableTitles.values()) {
+      columnNo = starColumn;
+      XSSFRow cargoRow = spreadsheet.createRow(rowNo);
+
+      //      Set cargo table titles
+      XSSFCell cargoTitleCell = cargoRow.createCell(columnNo);
+      cargoTitleCell.setCellValue(cargoTableColumnDetails.getColumnName());
+      cargoTitleCell.setCellStyle(
+          getCellStyle(
+              spreadsheet, TableCellStyle.CARGO_TITLES, Optional.empty(), Optional.empty()));
+
+      //      Merge title rows
+      if (cargoTableColumnDetails.isXMerge()) {
+        //      Merge columns
+        spreadsheet.addMergedRegion(
+            new CellRangeAddress(
+                rowNo, rowNo, starColumn, starColumn + LOADABLE_PLAN_REPORT_CARGO_TITLE_WIDTH - 1));
+      }
+      columnNo += LOADABLE_PLAN_REPORT_CARGO_TITLE_WIDTH - 1;
+
+      //      Set cargo table sub columns
+      XSSFCell cargoSubTitleCell = cargoRow.createCell(columnNo);
+      cargoSubTitleCell.setCellValue(cargoTableColumnDetails.getSubColumnName());
+      cargoSubTitleCell.setCellStyle(
+          getCellStyle(
+              spreadsheet, TableCellStyle.CARGO_TITLES, Optional.empty(), Optional.empty()));
+      columnNo++;
+
+      int cargoDetailsColumn = columnNo;
+      //        Set values
+      for (CargosTable cargoDetails : cargoDetailsTable.getCargosTableList()) {
+        XSSFCell cargoValueCell = cargoRow.createCell(cargoDetailsColumn);
+        XSSFCell totalValueCell =
+            cargoRow.createCell(columnNo + cargoDetailsTable.getCargosTableList().size());
+
+        XSSFCellStyle cellStyle = spreadsheet.getWorkbook().createCellStyle();
+        XSSFCellStyle totalCellStyle = spreadsheet.getWorkbook().createCellStyle();
+        switch (cargoTableColumnDetails) {
+          case CARGO_CODE:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_CARGO_CODE,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.empty());
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet, TableCellStyle.CARGO_TOTAL, Optional.empty(), Optional.empty());
+
+            totalValueCell.setCellValue(LOADABLE_PLAN_REPORT_TOTAL_VALUE);
+            cargoValueCell.setCellValue(cargoDetails.getCargoCode());
+            break;
+          case LOADING_PORT:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_LOADING_PORT,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.empty());
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet, TableCellStyle.CARGO_TOTAL, Optional.empty(), Optional.empty());
+
+            cargoValueCell.setCellValue(cargoDetails.getLoadingPort());
+            break;
+          case API:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_API,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet, TableCellStyle.CARGO_TOTAL, Optional.empty(), Optional.empty());
+
+            cargoValueCell.setCellValue(cargoDetails.getApi());
+            break;
+          case TEMP:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TEMP,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet, TableCellStyle.CARGO_TOTAL, Optional.empty(), Optional.empty());
+
+            cargoValueCell.setCellValue(cargoDetails.getTemp());
+            break;
+          case CARGO_NOMINATION:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_CARGO_NOMINATION,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOTAL,
+                    Optional.empty(),
+                    Optional.of(cargoTableColumnDetails.getTotalFormat()));
+
+            totalValueCell.setCellValue(cargoDetailsTable.getCargoNominationTotal());
+            cargoValueCell.setCellValue(cargoDetails.getCargoNomination());
+            break;
+          case TOLERANCE:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOLERANCE,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.empty());
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet, TableCellStyle.CARGO_TOTAL, Optional.empty(), Optional.empty());
+
+            cargoValueCell.setCellValue(cargoDetails.getTolerance());
+            break;
+          case NBBLS:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_NBBLS,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOTAL,
+                    Optional.empty(),
+                    Optional.of(cargoTableColumnDetails.getTotalFormat()));
+
+            totalValueCell.setCellValue(cargoDetailsTable.getNBblsTotal());
+            cargoValueCell.setCellValue(cargoDetails.getNBbls());
+            break;
+          case MT:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_MT,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOTAL,
+                    Optional.empty(),
+                    Optional.of(cargoTableColumnDetails.getTotalFormat()));
+
+            totalValueCell.setCellValue(cargoDetailsTable.getMtTotal());
+            cargoValueCell.setCellValue(cargoDetails.getMt());
+            break;
+          case KL15C:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_KL15C,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOTAL,
+                    Optional.empty(),
+                    Optional.of(cargoTableColumnDetails.getTotalFormat()));
+
+            totalValueCell.setCellValue(cargoDetailsTable.getKl15CTotal());
+            cargoValueCell.setCellValue(cargoDetails.getKl15C());
+            break;
+          case LT:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_LT,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOTAL,
+                    Optional.empty(),
+                    Optional.of(cargoTableColumnDetails.getTotalFormat()));
+
+            totalValueCell.setCellValue(cargoDetailsTable.getLtTotal());
+            cargoValueCell.setCellValue(cargoDetails.getLt());
+            break;
+          case DIFF_BBLS:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_DIFF_BBLS,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOTAL,
+                    Optional.empty(),
+                    Optional.of(cargoTableColumnDetails.getTotalFormat()));
+
+            totalValueCell.setCellValue(cargoDetailsTable.getDiffBblsTotal());
+            cargoValueCell.setCellValue(cargoDetails.getDiffBbls());
+            break;
+          case DIFF_PERCENTAGE:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_DIFF_DIFF_PERCENTAGE,
+                    Optional.of(getColour(cargoDetails.getColorCode())),
+                    Optional.of(cargoTableColumnDetails.getFormat()));
+            totalCellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_TOTAL,
+                    Optional.empty(),
+                    Optional.of(cargoTableColumnDetails.getTotalFormat()));
+
+            totalValueCell.setCellValue(cargoDetailsTable.getDiffPercentageTotal());
+            cargoValueCell.setCellValue(cargoDetails.getDiffPercentage());
+            break;
+        }
+
+        cargoValueCell.setCellStyle(cellStyle);
+        totalValueCell.setCellStyle(totalCellStyle);
+
+        cargoDetailsColumn++;
+      }
+      rowNo++;
+    }
+    //    Set cargo rows >> END
+    return new SheetCoordinates(rowNo, columnNo);
+  }
+
+  /**
+   * Method to build port operations table
+   *
+   * @param loadableStudyId loadable study id value
+   * @param loadablePatterId loadable pattern id value
+   * @return PortOperationTable object
+   */
+  public PortOperationTable buildPortOperationsTable(long loadableStudyId, long loadablePatterId)
+      throws GenericServiceException {
+
+    //    Get loadable study port rotation details
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    ModelMapper modelMapper = new ModelMapper();
+    buildLoadableStudyPortRotationDetails(loadableStudyId, loadableStudy, modelMapper);
+
+    //    Get loadable study details
+    LoadableStudy loadableStudyDetails =
+        loadableStudyRepository
+            .findByIdAndIsActive(loadableStudyId, true)
+            .orElseThrow(
+                () ->
+                    new GenericServiceException(
+                        String.format(
+                            "Loadable study details not found for LoadableStudyId: %d",
+                            loadableStudyId),
+                        CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                        HttpStatusCode.BAD_REQUEST));
+
+    //    Get port rotation details
+    buildportRotationDetails(loadableStudyDetails, loadableStudy);
+
+    // Get loadicator data detail
+    List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
+        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+            loadablePatterId, true);
+
+    //    Set OperationsTable details
+    List<OperationsTable> operationsTableList = new ArrayList<>();
+    for (com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portDetails :
+        loadableStudy.getLoadableStudyPortRotation()) {
+
+      //      Get port rotations
+      LoadableStudyPortRotation loadableStudyPortRotation =
+          loadableStudyDetails.getPortRotations().stream()
+              .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
+              .findFirst()
+              .orElse(new LoadableStudyPortRotation());
+      Optional<SynopticalTable> arrSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  arrSynopticRecord.get(), loadablePatterId, true);
+      Optional<SynopticalTable> depSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  depSynopticRecord.get(), loadablePatterId, true);
+      OperationsTable operationsTableData =
+          OperationsTable.builder()
+              .operation(loadableStudyPortRotation.getOperation().getName())
+              .portName(
+                  loadableStudy.getPortDetails().stream()
+                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                      .findFirst()
+                      .orElse(new PortDetails())
+                      .getName())
+              .eta(
+                  loadableStudyPortRotation.getEta() != null
+                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
+                          .format(loadableStudyPortRotation.getEta())
+                      : "")
+              .etd(
+                  loadableStudyPortRotation.getEtd() != null
+                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
+                          .format(loadableStudyPortRotation.getEtd())
+                      : "")
+              .country(
+                  loadableStudy.getPortDetails().stream()
+                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                      .findFirst()
+                      .orElse(new PortDetails())
+                      .getCountryName())
+              .laycanRange(
+                  String.format(
+                      "%s / %s",
+                      null != loadableStudyPortRotation.getLayCanFrom()
+                          ? loadableStudyPortRotation.getLayCanFrom()
+                          : "",
+                      null != loadableStudyPortRotation.getLayCanTo()
+                          ? loadableStudyPortRotation.getLayCanTo()
+                          : ""))
+              .arrFwdDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
+                      : "")
+              .depFwdDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                      ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
+                      : "")
+              .arrAftDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
+                      : "")
+              .depAftDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                      ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
+                      : "")
+              .arrDisplacement(
+                  arrSynopticRecord.get().getDisplacementPlanned() != null
+                      ? arrSynopticRecord.get().getDisplacementPlanned().toString()
+                      : "")
+              .depDisp(
+                  depSynopticRecord.get().getDisplacementPlanned() != null
+                      ? depSynopticRecord.get().getDisplacementPlanned().toString()
+                      : "")
+              .build();
+      operationsTableList.add(operationsTableData);
+    }
+    return PortOperationTable.builder().operationsTableList(operationsTableList).build();
+  }
+
+  /**
+   * @param spreadsheet XSSF spreadsheet object
+   * @param portOperationTable PortOperationTable object
+   * @param startRow Table start row
+   * @param starColumn Table start column
+   * @return SheetCoordinates object
+   */
+  public SheetCoordinates drawPortOperationTable(
+      XSSFSheet spreadsheet, PortOperationTable portOperationTable, int startRow, int starColumn) {
+    int rowNo = startRow;
+    int columnNo = starColumn;
+
+    for (PortOperationsTableTitles portOperationsTableTitle : PortOperationsTableTitles.values()) {
+      columnNo = starColumn;
+
+      //      Write titles
+      XSSFRow operationsValueRow = spreadsheet.createRow(rowNo);
+      XSSFCell titleCell = operationsValueRow.createCell(columnNo);
+      titleCell.setCellValue(portOperationsTableTitle.getColumnName());
+      titleCell.setCellStyle(
+          getCellStyle(
+              spreadsheet,
+              TableCellStyle.PORT_OPERATIONS_TITLES,
+              Optional.empty(),
+              Optional.empty()));
+      columnNo++;
+
+      //      Write table values
+      int portColumnIndex = columnNo;
+      for (OperationsTable portOperationDetails : portOperationTable.getOperationsTableList()) {
+        XSSFCell operationsValueCell = operationsValueRow.createCell(portColumnIndex);
+        switch (portOperationsTableTitle) {
+          case OPERATION:
+            operationsValueCell.setCellValue(portOperationDetails.getOperation());
+            break;
+          case PORT_NAME:
+            operationsValueCell.setCellValue(portOperationDetails.getPortName());
+            break;
+          case COUNTRY:
+            operationsValueCell.setCellValue(portOperationDetails.getCountry());
+            break;
+          case LAYCAN_RANGE:
+            operationsValueCell.setCellValue(portOperationDetails.getLaycanRange());
+            break;
+          case ETA:
+            operationsValueCell.setCellValue(portOperationDetails.getEta());
+            break;
+          case ETD:
+            operationsValueCell.setCellValue(portOperationDetails.getEtd());
+            break;
+          case ARR_FWD_DRAFT:
+            operationsValueCell.setCellValue(portOperationDetails.getArrFwdDraft());
+            break;
+          case ARR_AFT_DRAFT:
+            operationsValueCell.setCellValue(portOperationDetails.getArrAftDraft());
+            break;
+          case ARR_DISPLACEMENT:
+            operationsValueCell.setCellValue(portOperationDetails.getArrDisplacement());
+            break;
+          case DEP_FWD_DRAFT:
+            operationsValueCell.setCellValue(portOperationDetails.getDepFwdDraft());
+            break;
+          case DEP_AFT_DRAFT:
+            operationsValueCell.setCellValue(portOperationDetails.getDepAftDraft());
+            break;
+          case DEP_DISP:
+            operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
+            break;
+        }
+        XSSFCellStyle cellStyle =
+            getCellStyle(
+                spreadsheet,
+                TableCellStyle.PORT_OPERATIONS_VALUES,
+                Optional.empty(),
+                Optional.empty());
+        operationsValueCell.setCellStyle(cellStyle);
+        portColumnIndex++;
+      }
+      rowNo++;
+    }
+    return new SheetCoordinates(rowNo, columnNo);
+  }
+
+  /**
+   * Method to generate loadable plan report
+   *
+   * @param request LoadablePlanReportRequest object
+   * @param responseObserver StreamObserver<LoadablePlanReportReply> object
+   */
+  @Override
+  public void getLoadablePlanReport(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder dataChunkBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.newBuilder();
+
+    //      Create workbook
+    try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+      XSSFSheet spreadsheet = workbook.createSheet(LOADABLE_PLAN_REPORT_BEFORE_LOADING_SHEET_NAME);
+      spreadsheet.setDefaultColumnWidth(LOADABLE_PLAN_REPORT_DEFAULT_COLUMN_WIDTH);
+
+      //    Create vesselPlanTable
+      VesselPlanTable vesselPlanTable =
+          buildVesselPlanTableData(request.getVesselId(), request.getLoadablePatternId());
+      SheetCoordinates vesselPlanTableCoordinates =
+          drawVesselPlanTable(
+              spreadsheet,
+              vesselPlanTable,
+              LOADABLE_PLAN_REPORT_START_ROW,
+              LOADABLE_PLAN_REPORT_START_COLUMN);
+
+      //    Create cargoDetailsTable
+      CargoDetailsTable cargoDetailsTable =
+          buildCargoDetailsTable(request.getLoadableStudyId(), request.getLoadablePatternId());
+      SheetCoordinates cargoDetailsTableCoordinates =
+          drawCargoDetailsTable(
+              spreadsheet,
+              cargoDetailsTable,
+              vesselPlanTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
+              LOADABLE_PLAN_REPORT_START_COLUMN);
+
+      //    Create port operations table
+      PortOperationTable portOperationTable =
+          buildPortOperationsTable(request.getLoadableStudyId(), request.getLoadablePatternId());
+      drawPortOperationTable(
+          spreadsheet,
+          portOperationTable,
+          cargoDetailsTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
+          LOADABLE_PLAN_REPORT_START_COLUMN);
+
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      workbook.write(byteArrayOutputStream);
+
+      byte[] bytes = byteArrayOutputStream.toByteArray();
+      dataChunkBuilder
+          .setData(ByteString.copyFrom(bytes))
+          .setSize(bytes.length)
+          .setResponseStatus(
+              StatusReply.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setCode(HttpStatusCode.OK.getReasonPhrase())
+                  .build())
+          .build();
+
+      byteArrayOutputStream.close();
+
+    } catch (Exception e) {
+      log.error("Error in getLoadablePlanReport method ", e);
+      dataChunkBuilder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(dataChunkBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Method to set merged style for cells
+   *
+   * @param xssfSheet XSSFSheet spreadsheet object
+   * @param cellBorder CellBorder type
+   * @param cellAddresses Cell address range
+   * @param style XSSFCellStyle object
+   */
+  private void setMergedStyle(
+      XSSFSheet xssfSheet,
+      CellBorder cellBorder,
+      CellRangeAddress cellAddresses,
+      XSSFCellStyle style) {
+    switch (cellBorder) {
+      case CLOSED:
+        RegionUtil.setBorderTop(style.getBorderTop(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderBottom(style.getBorderBottom(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderLeft(style.getBorderLeft(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderRight(style.getBorderRight(), cellAddresses, xssfSheet);
+        break;
+      case OPEN_TOP:
+        RegionUtil.setBorderBottom(style.getBorderBottom(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderLeft(style.getBorderLeft(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderRight(style.getBorderRight(), cellAddresses, xssfSheet);
+        break;
+      case OPEN_BOTTOM:
+        RegionUtil.setBorderTop(style.getBorderTop(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderLeft(style.getBorderLeft(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderRight(style.getBorderRight(), cellAddresses, xssfSheet);
+        break;
+      case OPEN_TOP_AND_BOTTOM:
+        RegionUtil.setBorderLeft(style.getBorderLeft(), cellAddresses, xssfSheet);
+        RegionUtil.setBorderRight(style.getBorderRight(), cellAddresses, xssfSheet);
+        break;
+      case OPEN:
+        break;
+    }
+  }
+
+  /**
+   * Method to convert hexColorCode to Color object
+   *
+   * @param hexColorCode hex color code string
+   * @return Color object
+   */
+  private Color getColour(String hexColorCode) {
+    return Color.decode(hexColorCode);
+  }
+
+  /**
+   * Method to get contrast color for a given background color
+   *
+   * @param backgroundColor Color value of background
+   * @return Contrast Color object
+   */
+  private Color getContrastColor(Color backgroundColor) {
+    double lumaValue =
+        ((0.299 * backgroundColor.getRed())
+                + (0.587 * backgroundColor.getGreen())
+                + (0.114 * backgroundColor.getBlue()))
+            / 255;
+    //    Threshold set to 0.5 for lumaValue
+    return lumaValue > 0.5 ? Color.BLACK : Color.WHITE;
+  }
+
+  /**
+   * Method to convert other units to Bbls
+   *
+   * @param value value to be converted
+   * @param api api value
+   * @param temperature temperature value
+   * @param conversionUnit Unit in which the value is provided
+   * @return Bbls value
+   */
+  public float convertToBbls(
+      float value, float api, float temperature, ConversionUnit conversionUnit) {
+    float conversionConstant = getConversionConstant(conversionUnit, api, temperature);
+    switch (conversionUnit) {
+      case OBSBBLS:
+        return value * conversionConstant;
+      case MT:
+      case KL15C:
+      case LT:
+        return value / conversionConstant;
+      default:
+        throw new IllegalStateException("Unexpected value: " + conversionUnit);
+    }
+  }
+
+  /**
+   * Method to convert to other values from Bbls value
+   *
+   * @param value value to be converted
+   * @param api api value
+   * @param temperature temperature value
+   * @param conversionUnit unit to be converted to
+   * @return value in the conversionUnit
+   */
+  public float convertFromBbls(
+      float value, float api, float temperature, ConversionUnit conversionUnit) {
+    float conversionConstant = getConversionConstant(conversionUnit, api, temperature);
+    switch (conversionUnit) {
+      case OBSBBLS:
+        return value / conversionConstant;
+      case MT:
+      case KL15C:
+      case LT:
+        return value * conversionConstant;
+      default:
+        throw new IllegalStateException("Unexpected value: " + conversionUnit);
+    }
   }
 
   /**

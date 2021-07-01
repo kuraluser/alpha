@@ -33,6 +33,10 @@ const routes: Routes = [
         path: 'discharge-study-list',
         loadChildren: () => import('./discharge-study-list/discharge-study-list.module').then(m => m.DischargeStudyListModule)
       },
+      {
+        path: 'discharge-study-details/:vesselId/:voyageId/:dischargeStudyId',
+        loadChildren: () => import('./discharge-study-details/discharge-study-details.module').then(m => m.DischargeStudyDetailsModule)
+      }
     ]
   },
 ];

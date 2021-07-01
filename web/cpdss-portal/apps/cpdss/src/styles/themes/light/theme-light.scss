@@ -11,7 +11,7 @@ body{
 
 .pencil-icon {
     background: url($images-theme + 'pencil-icon.png') no-repeat;
-  } 
+  }
 
   tr{
     .pencil-icon {
@@ -38,7 +38,7 @@ body{
       color: $hover-color!important;
     }
   }
-  .cargo-nomiantion-tab  .tab-btn{
+  .cargo-nomiantion-tab  .tab-btn, .loading-and-discharging-tab .tab-btn{
     color: $text-primary!important;
     .tab-status-icon{
       border: 1px solid $status-border;
@@ -75,7 +75,7 @@ body{
         color: $text-secondary;
       }
     }
-  
+
     &.heading {
       border-bottom: 2px solid $border-color;
       li {
@@ -83,7 +83,7 @@ body{
       }
     }
   }
-  
+
 
   .tank-outer {
     .tank-inner-wrapper {
@@ -100,11 +100,11 @@ body{
         }
       }
     }
-  
+
     &:after {
       background: url($images-theme + 'ship-tank-rear.png') no-repeat;
     }
-  
+
     &:before {
       background: url($images-theme + 'ship-tank-front.png') no-repeat;
     }
@@ -114,12 +114,12 @@ body{
     border: 1px solid $tank-bg;
     background: $tank-btn;
   }
-  
+
   .secondary-text {
     color: $text-secondary;
   }
 
-  
+
 a {
     color: $link-text;
     &:hover {
@@ -200,7 +200,7 @@ header .header-nav .nav li.active {
       background: none;
       border-top: 1px solid $tab-border;
     }
-    
+
 }
 .p-dialog-mask.p-component-overlay {
   background-color: rgba($body-bg, 0.4);
@@ -275,7 +275,7 @@ hr{
 .main-head{
   color: $main-head;
 }
-.p-datatable .p-datatable-thead{ 
+.p-datatable .p-datatable-thead{
   > tr > th{
   color: $text-secondary;
   border: 0;
@@ -395,9 +395,9 @@ hr{
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background:$dropdown-bg; 
+  background:$dropdown-bg;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: $scrollbar;
@@ -405,7 +405,7 @@ hr{
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: $scrollbar; 
+  background: $scrollbar;
 }
 ::-webkit-scrollbar-corner{
   background: $body-bg;
@@ -503,11 +503,17 @@ tr:hover{
 .icon-status-3{
   background: url($images-theme + 'plan-generated.png') no-repeat center center;
 }
-.icon-status-4{
+.icon-status-4, .icon-status-7 {
   background: url($images-theme + 'processing.png') no-repeat center center;
+}
+.icon-status-5{
+  background: url($images-theme + 'processing-completed.png') no-repeat center center;
 }
 .icon-status-6{
   background: url($images-theme + 'no-solution.png') no-repeat center center;
+}
+.icon-status-11{
+  background: url($images-theme + 'algo-error.png') no-repeat center center;
 }
 .icon-api-temp{
   background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
@@ -619,10 +625,11 @@ a{
 }
 
 .tanks-inner-wrapper-ohq{
-  border: 2px solid $tank-ohq-border;  
+  border: 2px solid $tank-ohq-border;
 }
 
 .badge-custom{
+  color: $active-color;
   &.error{
     background:$red;
     color: $active-color;
@@ -637,10 +644,10 @@ a{
     }
 }
 .tanks-inner-outer-ohq{
-  border-color: $tank-ohq-border;  
+  border-color: $tank-ohq-border;
   .tanks-column-ohq{
     >div{
-      border-color: $tank-ohq-border!important;  
+      border-color: $tank-ohq-border!important;
       .tank-name{
         color: $text-secondary;
       }
@@ -648,7 +655,7 @@ a{
   }
 }
 
-.rear-tank-wrapper-ohq{ 
+.rear-tank-wrapper-ohq{
   border-left:2px solid $tank-ohq-border;
   > div{
     border-color: $tank-ohq-border!important;
@@ -684,8 +691,8 @@ a{
       }
   }
 }
-.loadable-quantity-pop-up{ 
- 
+.loadable-quantity-pop-up{
+
 .row.form-group{
     border-bottom:1px solid $border-color;
     margin: 0;
@@ -709,13 +716,13 @@ a{
   color: $red;
   border-color: $red;
   background: $toast-bg;
-} 
+}
 .p-toast-icon-close-icon {
-  color: $text-primary; 
-} 
+  color: $text-primary;
+}
 
-.loadable-quantity-pop-up{ 
- 
+.loadable-quantity-pop-up{
+
 .row.form-group{
     border-bottom:1px solid $border-color;
     margin: 0;
@@ -749,7 +756,7 @@ a{
 .confirmation-dialog{
   &.p-toast .p-toast-message.p-toast-message-warn{
     border: 1px solid $border-color!important;
-    
+
   }
 }
 .p-dropdown .p-dropdown-label.p-placeholder{
@@ -769,14 +776,14 @@ a{
 }
 
 .tank-inner-wrapper-pattern{
-  border-top: 1px solid $tank-ohq-border; 
-  border-bottom: 1px solid $tank-ohq-border; 
+  border-top: 1px solid $tank-ohq-border;
+  border-bottom: 1px solid $tank-ohq-border;
   .tank-column-pattern{
     >div{
       border-color: $tank-ohq-border!important;
       color: $text-secondary;
       >div{
-        border-color: $tank-ohq-border; 
+        border-color: $tank-ohq-border;
       }
     }
   }
@@ -796,7 +803,7 @@ a{
 }
 
 .ship-rear-pattern{
-  border-left: 2px solid $tank-ohq-border; 
+  border-left: 2px solid $tank-ohq-border;
   .rear-top-pattern{
     border-top: 25px solid $tank-ohq-border;
     &:after{
@@ -889,16 +896,16 @@ a{
 .loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
   .ship-rear-pattern{
     .rear-top-pattern{
-      border-top: 35px solid $tank-ohq-border; 
+      border-top: 35px solid $tank-ohq-border;
       &:after{
-        border-top: 35px solid $body-bg; 
+        border-top: 35px solid $body-bg;
         top: -36px;
       }
     }
     .rear-bottom-pattern{
-      border-bottom: 35px solid $tank-ohq-border; 
+      border-bottom: 35px solid $tank-ohq-border;
       &:after{
-        border-bottom: 35px solid $body-bg; 
+        border-bottom: 35px solid $body-bg;
         bottom: -36px;
       }
     }
@@ -912,7 +919,7 @@ a{
   .p-orderlist .p-orderlist-list .p-orderlist-item{
     border-top: 1px solid $table-border;
     color: $text-primary;
-    
+
   }
   .p-orderlist .p-orderlist-list .p-orderlist-item:not(.p-highlight):hover, .p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight{
     background: $dropdown-menu-hover-bg url($images-theme + 'grab-handles.png') no-repeat;
@@ -949,7 +956,7 @@ a{
     color: $hover-color;
 }
 .p-datatable-scrollable-header-table .p-calendar .p-inputtext{
- background: $body-bg!important; 
+ background: $body-bg!important;
 }
 
 .body-header-row-span-table.p-datatable .p-datatable-tbody > tr:hover{
@@ -1101,33 +1108,33 @@ tr:hover a.btn-secondary{
 .tab-btn{
   &.tank-icon{
       background: url($images-theme + 'tank-icon.png') no-repeat center center;
-     
+
       &.active, &:hover{
        background: $selected-bg url($images-theme + 'tank-icon-active.png') no-repeat center center;
    }
-  } 
+  }
   &.ballast-icon{
    background:  url($images-theme + 'ballast.png') no-repeat center center;
-  
+
    &.active, &:hover{
     background: $selected-bg url($images-theme + 'ballast-active.png') no-repeat center center;
        }
-   } 
+   }
    &.bunker-icon{
        background:  url($images-theme + 'tank-level-gauging-system.png') no-repeat center center;
-      
+
        &.active, &:hover{
         background: $selected-bg url($images-theme + 'tank-level-gauging-system-active.png') no-repeat center center;
            }
-       } 
+       }
    &.pipeline{
        background: url($images-theme + 'pipeline.png') no-repeat center center;
-       
+
        &.active, &:hover{
            background: $selected-bg url($images-theme + 'pipeline-active.png') no-repeat center center;
            }
-       } 
-  
+       }
+
 }
 .p-inputswitch .p-inputswitch-slider{
   background: $selected-bg;
@@ -1140,9 +1147,9 @@ tr:hover a.btn-secondary{
 }
 
 .tank-outer-pattern.cargo .ship-rear-pattern{
-  border-top: 2px  solid $tank-ohq-border; 
+  border-top: 2px  solid $tank-ohq-border;
   border-left: 0;
-  border-bottom: 2px  solid $tank-ohq-border; 
+  border-bottom: 2px  solid $tank-ohq-border;
 }
 
 .p-overlaypanel{
@@ -1171,19 +1178,19 @@ tr:hover a.btn-secondary{
 .btn.confirmed{
   background: $btn-highlight !important;
   color: $hover-color;
-} 
+}
 .row-loader {
   color: $login-btn;
 }
 
 .synoptical-table-wrapper{
-  .p-datatable .p-datatable-thead > tr{ 
+  .p-datatable .p-datatable-thead > tr{
     &:first-child{
       > th{
         border-bottom: 2px solid $table-border;
       }
     }
-    
+
 }
 }
 
@@ -1284,9 +1291,9 @@ header{
   background: $body-bg!important;
 }
 @media (max-width: 1600px){
- 
+
   .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern{
-    border-top: 28px solid $tank-ohq-border!important; 
+    border-top: 28px solid $tank-ohq-border!important;
   }
   .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern{
     border-right: 82px solid transparent;
@@ -1303,9 +1310,9 @@ header{
   }
 }
 @media (max-width: 1400px){
- 
+
   .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern{
-    border-top: 23px solid $tank-ohq-border!important; 
+    border-top: 23px solid $tank-ohq-border!important;
   }
   .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-ballast .tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-top-pattern, .loadable-plan-stowage.tank-outer-pattern .ship-rear-pattern .rear-bottom-pattern{
     border-right: 62px solid transparent;
@@ -1358,4 +1365,30 @@ header{
 }
 .icon-chat{
   background: url($images-theme + 'chat-icon.png') no-repeat center center;
+}
+
+
+.loading-and-discharging-tab{
+  .tab-btn {
+    &:before{
+      border-left: 24px solid $selected-bg;
+    }
+    &:after{
+      border-left: 24px solid $body-bg;
+    }
+  }
+}
+
+.item-row-wrapper{
+  .row{
+      border-bottom: 1px solid $border-color;
+  }
+}
+
+.bg-highlight{
+  background: $selected-bg;
+}
+
+.download-icon{
+  background: url($images-theme + 'download-icon.png') no-repeat center center;
 }

@@ -1,4 +1,4 @@
-import { CPDSSDB, IResponse } from "../../../shared/models/common.model";
+import { CPDSSDB, ICargoConditions, IResponse } from "../../../shared/models/common.model";
 import { ICargoQuantities, ILoadableQuantityCargo, IShipCargoTank } from "../../core/models/common.model";
 
 /**
@@ -18,7 +18,8 @@ export interface ILoadingInformationResponse {
     toppingOffSequence: IToppingOffSequence[];
     cargoVesselTankDetails: ICargoVesselTankDetails;
     loadingInfoId: number;
-    synopticalTableId: number;
+    synopticTableId: number;
+    isLoadingInfoComplete: boolean;
 }
 
 
@@ -99,6 +100,7 @@ export interface IVesselPumps {
     pumpCapacity: number;
     capacity?: number;
     isUsing?: boolean;
+    machineId?: number;
 }
 
 /**
@@ -130,7 +132,7 @@ export interface ILoadingRates {
     maxDeBallastingRate: number;
     noticeTimeRateReduction: number;
     noticeTimeStopLoading: number;
-    lineContentRemaining: number;
+    lineContentRemaining?: number;
     id: number;
 }
 
@@ -141,7 +143,7 @@ export interface ILoadingRates {
  * @interface IBerth
  */
 export interface IBerth {
-    id: number;
+    berthId: number;
     portId: number;
     berthName: string;
     maxShipDepth: number;
@@ -217,6 +219,9 @@ export interface IToppingOffSequence {
     ullage: number;
     quantity: number;
     fillingRatio: number;
+    api: number;
+displayOrder: number;
+temperature: number;
 }
 
 /**
@@ -263,6 +268,7 @@ export interface ILoadingDelays {
 * @interface ICargoVesselTankDetails
 */
 export interface ICargoVesselTankDetails {
+    cargoConditions: ICargoConditions[];
     cargoTanks: IShipCargoTank[][];
     cargoQuantities: ICargoQuantities[];
     loadableQuantityCargoDetails: ILoadableQuantityCargo[];

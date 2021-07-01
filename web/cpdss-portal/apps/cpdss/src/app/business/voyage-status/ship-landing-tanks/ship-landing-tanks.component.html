@@ -19,14 +19,14 @@
                 <p-inputSwitch [(ngModel)]="viewAll"></p-inputSwitch>
             </div>
            </div>
-        <div class="col col-11 landing-page-tank-wrapper m-auto" *ngIf="selectedTab === tankType.CARGO">
+        <div class="col col-12 landing-page-tank-wrapper m-auto" *ngIf="selectedTab === tankType.CARGO">
             <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions" *ngIf="!viewAll">
             </cpdss-portal-cargo-tank-layout>
             <cpdss-portal-datatable [tableId]="'cargoTank'"  [columns]="cargoColumns"
             [value]="cargoQuantities" *ngIf="viewAll">
         </cpdss-portal-datatable>
         </div>
-        <div class="col-11 m-auto loadable-plan-ballast landing-page-tank-wrapper" *ngIf="selectedTab === tankType.BALLAST">
+        <div class="col-12 m-auto loadable-plan-ballast landing-page-tank-wrapper" *ngIf="selectedTab === tankType.BALLAST">
             <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
                     [frontTanks]="frontBallastTanks" [options]="ballastTankOptions" *ngIf="!viewAll">
                 </cpdss-portal-ballast-layout>
