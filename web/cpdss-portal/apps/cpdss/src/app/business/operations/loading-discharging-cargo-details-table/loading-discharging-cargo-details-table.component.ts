@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IDataTableColumn, DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
-import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { ICargoConditions, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities } from '../../core/models/common.model';
@@ -21,7 +21,7 @@ import { LoadingDischargingCargoDetailsTableTransformationService } from './load
  */
 export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
 
-  @Input() cargoConditions: any[];
+  @Input() cargoConditions: ICargoConditions[];
 
   @Input() get cargoQuantities(): ICargoQuantities[] {
     return this._cargoQuantities;
@@ -75,23 +75,15 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
    * @memberof LoadingDischargingCargoDetailsTableComponent
    */
   setCargoDetails() {
-    //TODO: remove after api update
-    this.cargoConditions = [{
-      abbreviation: "ARL",
-      actualWeight: 0,
-      api: "34.4000",
-      companyId: null,
-      id: 0,
-      name: null,
-      plannedWeight: 0.14,
-      temp: "0"
-    }]
     this.newCargoList = this.cargoConditions?.map(itm => ({
-      ...this.cargoQuantities?.find((item) => item.cargoId === itm.id),
+      ...this.cargoQuantities?.find((item) => item.abbreviation === itm.abbreviation),
       ...itm
     }));
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
-    this.convertQuantityToSelectedUnit();
+    if(this.currentQuantitySelectedUnit){
+      this.convertQuantityToSelectedUnit();
+    }
+
   }
 
   /**

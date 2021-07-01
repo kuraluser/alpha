@@ -1,0 +1,38 @@
+<h5>{{'DISCHARGE_STUDY_CARGO_NOMINATION_BF_HEADER' | translate}}</h5>
+<cpdss-portal-datatable [tableId]="'cargo_nomination'"  [columns]="columns"
+    [value]="billOfLaddingsValueObject" [showTotal]="true">
+</cpdss-portal-datatable>
+<h5 class="secondary-text heading-border pb-10 mb-15">{{'DISCHARGE_STUDY_COMMINGLED_CARGO_DETAILS' | translate}}</h5>
+<p-table #datatable [columns]="cargoColumns" [value]="loadableQuantityCargoObjectValue">
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div [class]="col.fieldColumnClass">{{col.header | translate}}</div></th>
+        </tr>
+        <tr>
+            <ng-container *ngFor="let col of columns; let colIndex = index">
+                <ng-container *ngIf="col?.subColumns?.length;">
+                    <th *ngFor="let subCol of col.subColumns;">{{subCol.header | translate}}</th>
+                </ng-container>
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <ng-container *ngFor="let col of columns">
+                <ng-container *ngIf="col?.subColumns?.length; else col_field">
+                    <ng-container *ngFor="let sub of col.subColumns">
+                       <td><span [innerHTML]="rowData[sub?.field]"></span></td> 
+                    </ng-container>
+            </ng-container>
+                <ng-template #col_field><td><span>{{rowData[col?.field]}}</span></td></ng-template>
+        </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+            <td [attr.colspan]="11">
+                {{'NO_RECORDS_FOUND'| translate}}
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

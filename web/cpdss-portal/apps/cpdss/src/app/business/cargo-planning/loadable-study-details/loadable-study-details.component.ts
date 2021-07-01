@@ -107,6 +107,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   loadablePatternHistoryPermission: IPermission;
   errorPopup: boolean;
   errorMessage: IAlgoError[];
+  isServiceWorkerCallActive = false;
   isRuleModalVisible:boolean = false;
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -243,9 +244,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
       this.isDischargePortAvailable();
-      if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION) {
+      if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ERROR) {
         this.getAlgoErrorMessage(false);
-      } else if(this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED){
+      } else if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING) {
         this.isGenerateClicked = true;
       }
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
@@ -311,7 +312,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async addCargoNomination() {
-    if(AppConfigurationService.settings.restrictMaxNumberOfCargo && this.loadableStudyDetailsApiService.cargoNominations.length >= AppConfigurationService.settings.maxCargoLimit){
+    if (AppConfigurationService.settings.restrictMaxNumberOfCargo && this.loadableStudyDetailsApiService.cargoNominations.length >= AppConfigurationService.settings.maxCargoLimit) {
       const translationKeys = await this.translateService.get(['MAXIMUM_CARGO_WARNING', 'MAXIMUM_CARGO_LIMIT_REACHED']).toPromise();
       this.messageService.add({ severity: 'warn', summary: translationKeys['MAXIMUM_CARGO_WARNING'], detail: translationKeys['MAXIMUM_CARGO_LIMIT_REACHED'] });
       return;
@@ -343,7 +344,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.obqValidity$.subscribe((res) => {
       this.obqComplete = res;
     });
-    this.loadableStudyDetailsTransformationService.loadableStudyUpdate$.subscribe(value => {
+    this.loadableStudyDetailsTransformationService.loadableStudyUpdate$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
       if (value) {
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       }
@@ -376,7 +377,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     });
     this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
       this.displayLoadableQuntity = true;
-    })
+    });
+    this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.subscribe(value=>{
+      this.isServiceWorkerCallActive = value;
+    });
   }
 
   /**
@@ -397,10 +401,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    */
   private swMessageHandler = async event => {
     let isValidStatus = false;
-    if([LOADABLE_STUDY_STATUS.PLAN_PENDING ,LOADABLE_STUDY_STATUS.PLAN_CONFIRMED ,LOADABLE_STUDY_STATUS.PLAN_GENERATED ,LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING ,LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED ,
-      LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION , LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(event.data.statusId)) {
-        isValidStatus = true;
-      }
+    if ([LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_CONFIRMED, LOADABLE_STUDY_STATUS.PLAN_GENERATED, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED,
+    LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(event.data.statusId)) {
+      isValidStatus = true;
+    }
     if (event?.data?.status === '401' && event?.data?.errorCode === '210' && isValidStatus) {
       this.globalErrorHandler.sessionOutMessage();
     } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200') && isValidStatus) {
@@ -410,6 +414,18 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isGenerateClicked = true;
         this.processingMessage();
+      } else {
+        this.messageService.clear();
+      }
+    }
+    else if (event.data.type === 'loadable-pattern-loadicator-checking' && this.router.url.includes('loadable-study-details')) {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isGenerateClicked = true;
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_LOADICATOR_CHECKING;
+        this.messageService.clear();
+        const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_INFO', 'GENERATE_LOADABLE_PATTERN_LOADICATOR_CHECKING']).toPromise();
+        this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LOADABLE_PATTERN_INFO'], detail: translationKeys['GENERATE_LOADABLE_PATTERN_LOADICATOR_CHECKING'], life: 1000, closable: false });
       } else {
         this.messageService.clear();
       }
@@ -433,6 +449,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
     }
+    else if (event.data.type === 'loadable-pattern-error-occured') {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isPatternOpenOrNoplan = false;
+        this.isPatternGenerated = false;
+        this.isGenerateClicked = false;
+        this.getAlgoErrorMessage(true);
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_ERROR;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR;
+      }
+      this.errorOccurdMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
+    }
     else if (event.data.type === 'loadable-pattern-no-response') {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isPatternOpenOrNoplan = false;
@@ -441,7 +468,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
     }
-    if(isValidStatus) {
+    if (isValidStatus) {
       this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
     }
   }
@@ -498,6 +525,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           case 6:
             loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_NO_SOLUTION
             break;
+          case 7:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_LOADICATOR_CHECKING
+            break;
           case 11:
             loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR
             break;
@@ -519,7 +549,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           }
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }
@@ -650,7 +680,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (this.selectedTab !== 'PORTS') {
       this.portUpdate(false);
     }
-
+    this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
   }
 
   /**
@@ -746,20 +776,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async onLoadableStudyChange(event) {
     if (event) {
       this.ngxSpinnerService.show();
-      this.loadableStudyId = event;
+      this.loadableStudyId = event?.id;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
       this.loadableStudyDetailsTransformationService.setOHQValidity([]);
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
       this.isGenerateClicked = false;
-      const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselId, this.voyageId).toPromise();
-      const loadableStudies = result?.loadableStudies ?? [];
-      if (loadableStudies.length) {
-        this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
-        this.selectedLoadableStudy = this.loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === this.loadableStudyId) : this.loadableStudies[0];
-      } else {
-        this.loadableStudies = [];
-      }
       this.tabPermission();
       this.ngxSpinnerService.hide();
       this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
@@ -804,8 +826,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   onCargoNominationChange() {
     this.dischargeCargos = []
     this.loadableStudyDetailsApiService.cargoNominations.forEach(cargoNomination => {
-      if (!cargoNomination.isAdd && this.dischargeCargos.indexOf(cargoNomination.cargo.value) === -1)
-        this.dischargeCargos.push(cargoNomination.cargo.value)
+      if (!cargoNomination.isAdd && !this.dischargeCargos.some(cargo => cargo?.id === cargoNomination?.id)) {
+        const _cargo = <ICargo>{ id: cargoNomination.id, name: cargoNomination.cargo.value.name, color: cargoNomination.color.value, abbreviation: cargoNomination.abbreviation.value };
+        this.dischargeCargos.push(_cargo);
+      }
     });
     if (this.selectedDischargeCargo) {
       this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
@@ -836,7 +860,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.selectedLoadableStudy.dischargingCargoId = this.selectedDischargeCargo?.id;
     const dischargingPortIds: IDischargingPortIds = {
       portIds: this.selectedLoadableStudy.dischargingPortIds,
-      dischargingCargoId: this.selectedDischargeCargo?.id ?? null,
+      cargoNominationId: this.selectedDischargeCargo?.id ?? null,
       isDischargingPortComplete: !!this.selectedLoadableStudy.dischargingPortIds?.length
     };
     try {
@@ -1021,6 +1045,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_STATUS_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_STATUS_ERROR'], life: 10000 });
       }
+      if(errorResponse?.error?.errorCode === 'ERR-RICO-114'){
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR', 'LOADABLE_STUDY_COMMINGLE_LOADABLE_QTY_ERROR']).toPromise();
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR'], detail: translationKeys['LOADABLE_STUDY_COMMINGLE_LOADABLE_QTY_ERROR'], life: 10000 });
+      }
     }
     this.ngxSpinnerService.hide();
   }
@@ -1059,6 +1087,18 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.messageService.clear();
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_PLAN', 'GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']).toPromise();
     this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'] });
+  }
+
+  /**
+   * Toast to show for generating pattern have algo error
+   * @param {string} selectedVoyageNo
+   * @param {string} selectedLoadableStudyName
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async errorOccurdMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
+    this.messageService.clear();
+    const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_ERROR_OCCURED', 'GENERATE_LOADABLE_PATTERN_ERROR_OCCURED_MESSAGE']).toPromise();
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_ERROR_OCCURED'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_ERROR_OCCURED_MESSAGE'] });
   }
 
   /**
@@ -1122,13 +1162,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   }
 
 
-/**
- * Method to close rules pop up.
- *
- * @memberof LoadableStudyDetailsComponent
- */
-closeModal(event)
-  {
-  this.isRuleModalVisible = event;
+  /**
+   * Method to close rules pop up.
+   *
+   * @memberof LoadableStudyDetailsComponent
+   */
+  closeModal(event) {
+    this.isRuleModalVisible = event;
   }
 }

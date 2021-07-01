@@ -381,7 +381,6 @@ message VesselReply {
 		string pumpCode = 5;
 		string pumpCapacity = 6;
 	}
-
 	message VesselRuleRequest{
 	    int64 vesselId = 1;
 		int64 sectionId = 2;

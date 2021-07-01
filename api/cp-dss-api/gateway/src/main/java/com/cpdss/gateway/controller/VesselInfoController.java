@@ -137,7 +137,8 @@ public class VesselInfoController {
    */
   @GetMapping(
       value = "/vessel-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
   public RuleResponse getAllRulesForVessel(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable

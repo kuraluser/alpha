@@ -117,6 +117,8 @@ public class LoadingInformationBuilderService {
           // maxShipDepth is taken as depth in LoadingBerthDetails table
           Optional.ofNullable(berth.getMaxShipDepth())
               .ifPresent(depth -> builder.setDepth(String.valueOf(depth)));
+          Optional.ofNullable(berth.getLineDisplacement())
+              .ifPresent(v -> builder.setLineDisplacement(v));
           berthList.add(builder.build());
         });
     return berthList;

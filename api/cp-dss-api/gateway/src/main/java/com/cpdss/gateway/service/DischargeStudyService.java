@@ -9,14 +9,10 @@ import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.dischargestudy.DischargeStudyServiceGrpc.DischargeStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
-import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.BillOfLadding;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
-import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationResponse;
 import java.util.ArrayList;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -104,9 +100,9 @@ public class DischargeStudyService {
 
     } else {
       throw new GenericServiceException(
-          "Error in calling loadablestudy service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
+          "Failed to fetch Confirmed lS",
+          patternReply.getResponseStatus().getCode(),
+          HttpStatusCode.BAD_REQUEST);
     }
   }
 
@@ -136,19 +132,10 @@ public class DischargeStudyService {
       Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
       throws GenericServiceException {
     PortRotationResponse response = new PortRotationResponse();
-    LoadableStudy.LoadableStudyRequest.Builder loadableStudyRequest =
-        LoadableStudy.LoadableStudyRequest.newBuilder();
-    loadableStudyRequest.setVoyageId(voyageId);
-    LoadableStudy.LoadablePatternConfirmedReply patternReply =
-        loadableStudyServiceBlockingStub.getLoadablePatternByVoyageAndStatus(
-            loadableStudyRequest.build());
-    if (patternReply != null
-        && patternReply.getResponseStatus() != null
-        && SUCCESS.equalsIgnoreCase(patternReply.getResponseStatus().getStatus())) {
-      response =
-          loadableStudyService.getLoadableStudyPortRotationList(
-              vesselId, voyageId, patternReply.getLoadableStudyId(), correlationId);
-    }
+
+    response =
+        loadableStudyService.getLoadableStudyPortRotationList(
+            vesselId, voyageId, dischargeStudyId, correlationId);
     return response;
   }
 
@@ -207,5 +194,24 @@ public class DischargeStudyService {
     response.setResponseStatus(
         new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  public OnHandQuantityResponse getOnHandQuantity(
+      Long vesselId, Long dischargeStudyId, Long portRotationId, String correlationId)
+      throws GenericServiceException {
+    LoadableStudy.OnHandQuantityRequest request =
+        LoadableStudy.OnHandQuantityRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setLoadableStudyId(dischargeStudyId)
+            .setPortRotationId(portRotationId)
+            .build();
+    LoadableStudy.OnHandQuantityReply grpcReply = loadableStudyService.getOnHandQuantity(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch on hand quantities",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return loadableStudyService.buildOnHandQuantityResponse(grpcReply, correlationId);
   }
 }

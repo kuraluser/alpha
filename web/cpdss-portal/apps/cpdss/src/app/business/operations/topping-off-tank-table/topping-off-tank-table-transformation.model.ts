@@ -20,4 +20,7 @@ import { ValueObject } from '../../../shared/models/common.model';
     ullage: ValueObject<number>;
     quantity: number;
     fillingRatio: number;
+    api: number;
+    displayOrder: number;
+    temperature: number;
  }

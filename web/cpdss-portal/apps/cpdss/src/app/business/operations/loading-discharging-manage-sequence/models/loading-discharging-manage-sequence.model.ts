@@ -11,9 +11,10 @@ import { IReasonForDelays } from '../../models/loading-information.model';
  export interface ILoadingSequenceValueObject {
     id: number;
     reasonForDelay: ValueObject<IReasonForDelays>;
-    duration: ValueObject<number>;
+    duration: ValueObject<string>;
     cargo: ValueObject<ILoadableQuantityCargo>;
     quantity: ValueObject<number>;
+    isAdd: boolean;
  }
 
 /**

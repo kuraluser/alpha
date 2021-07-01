@@ -106,7 +106,11 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       this.taskExecutor.execute(
           () -> {
             try {
-              this.getStatus(stowagePlanList, request.getIsPattern());
+              this.getStatus(
+                  stowagePlanList,
+                  request.getIsPattern(),
+                  request.getLoadableStudyId(),
+                  request.getLoadablePatternId());
             } catch (InterruptedException e) {
               log.error("Encounted error while checking loadicator status");
               replyBuilder.setResponseStatus(
@@ -327,11 +331,19 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     return stowagePlan;
   }
 
-  public void getStatus(List<StowagePlan> stowagePlans, Boolean isPattern)
+  public void getStatus(
+      List<StowagePlan> stowagePlans,
+      Boolean isPattern,
+      Long loadableStudyId,
+      Long loadablePatternId)
       throws InterruptedException {
     boolean status = false;
     do {
-      log.info("Checking loadicator status");
+      log.info(
+          "Checking loadicator status of "
+              + (!isPattern
+                  ? ("Loadable Study " + loadableStudyId)
+                  : ("Loadable Pattern " + loadablePatternId)));
       Thread.sleep(10000);
       List<Long> stowagePlanIds =
           stowagePlans.stream().map(StowagePlan::getId).collect(Collectors.toList());
@@ -340,7 +352,11 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
-        log.info("Loadicator check completed");
+        log.info(
+            "Loadicator check completed for "
+                + (!isPattern
+                    ? ("Loadable Study " + loadableStudyId)
+                    : ("Loadable Pattern " + loadablePatternId)));
         LoadicatorDataRequest loadableStudyrequest =
             this.sendLoadicatorData(stowagePlanList, isPattern);
 

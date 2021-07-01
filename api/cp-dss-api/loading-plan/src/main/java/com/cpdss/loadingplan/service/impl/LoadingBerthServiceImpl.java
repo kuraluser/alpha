@@ -96,6 +96,10 @@ public class LoadingBerthServiceImpl implements LoadingBerthService {
         .ifPresent(loadingBerthDetail::setHoseConnections);
     Optional.ofNullable(berth.getItemsToBeAgreedWith())
         .ifPresent(loadingBerthDetail::setItemToBeAgreedWith);
+    loadingBerthDetail.setLineDisplacement(
+        berth.getLineDisplacement().isEmpty()
+            ? BigDecimal.ZERO
+            : new BigDecimal(berth.getLineDisplacement()));
     loadingBerthDetail.setIsActive(true);
   }
 }

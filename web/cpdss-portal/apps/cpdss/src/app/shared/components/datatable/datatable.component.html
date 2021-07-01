@@ -12,7 +12,7 @@
                     <col *ngIf="tableRowReOrder" class="column-class re-order">
                     <ng-container *ngFor="let col of columns">
                         <col *ngIf="!col?.columns?.length" class="column-class" [class]="col.fieldHeaderClass"
-                            [ngClass]="{'column-actions': col?.field === 'actions'}">
+                            [ngClass]="{'column-actions': (col?.field === 'actions' || col?.field === 'buttons')}">
                         <col *ngFor="let subCol of col?.columns" class="column-class" [class]="subCol.fieldHeaderClass">
                     </ng-container>
                 </colgroup>
@@ -353,6 +353,25 @@
                                         <span *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value
                                             }}</span>
                                     </ng-container>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="fieldType.MASK">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
+                                        <p-inputMask type="text" styleClass="form-control" [formControlName]="col.field"
+                                            [placeholder]="col.fieldPlaceholder| translate"
+                                            [mask]="col.maskFormat"
+                                            (onComplete)="onChange($event, rowData, rowIndex, col)"
+                                            id="{{col.field+'_'+rowIndex}}"
+                                            [readonly]="!rowData[col.field]?.isEditable"></p-inputMask>
+                                        <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
+                                            [errorMessages]="col.errorMessages">
+                                        </cpdss-portal-validation-error>
+                                    </ng-container>
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                        <span>{{rowData[col.field].value}}</span>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="fieldType.BADGE" >
+                                    <span class="badge-custom"  [ngStyle]="{'background': rowData[col.badgeColorField]}">{{rowData[col.field]}}</span>
                                 </ng-container>
                                 <span *ngSwitchDefault>
                                     {{col?.numberFormat ? (rowData[col.field] | number: col?.numberFormat) : rowData[col.field]}}</span>

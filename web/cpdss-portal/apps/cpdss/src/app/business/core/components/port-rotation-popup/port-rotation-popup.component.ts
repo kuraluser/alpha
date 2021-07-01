@@ -146,6 +146,7 @@ export class PortRotationPopupComponent implements OnInit {
       dataTable: this.fb.array([...portListArray])
     });
     this.portLoaded = true;
+    this.enableSaveButton = this.portsForm.valid ? true : false;
     this.ngxSpinnerService.hide()
   }
 
@@ -284,7 +285,7 @@ export class PortRotationPopupComponent implements OnInit {
       control.markAsDirty();
       control.markAsTouched();
     }
-    this.portsForm.valid ? this.enableSaveButton = true : this.enableSaveButton = false; 
+    this.enableSaveButton = this.portsForm.valid ? true : false;
   }
 
   /**

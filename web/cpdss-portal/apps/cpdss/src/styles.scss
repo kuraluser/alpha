@@ -1116,7 +1116,7 @@ input[type=number] {
   margin-right: 10px;
   .checkmark {
     position: absolute;
-    top: 0;
+    top: 2px;
     left: 0;
     height: 14px;
     width: 14px;
@@ -1155,7 +1155,7 @@ input[type=number] {
   margin-right: 10px;
   .checkmark {
     position: absolute;
-    top: 0;
+    top: 2px;
     left: 0;
     height: 14px;
     width: 14px;
@@ -1914,10 +1914,10 @@ height: 15px;
 
 .p-inputswitch .p-inputswitch-slider:before{
   width: 17px;
-  height: 10px;
-  left: 0px;
-  margin-top: -5px;
-  border-radius: 4px;
+  height: 8px;
+  left: 1px;
+  margin-top: -4px;
+  border-radius: 2px;
 }
 
 .p-inputswitch {
@@ -2533,4 +2533,154 @@ textarea{
 
 .column-dropdown, .column-checkbox{
   width: 140px;
+}
+
+.loading-and-discharging-tab{
+  .tab-btn {
+    padding: 10px 15px;
+    text-transform: uppercase;
+    text-align: center;
+    border-radius: 5px;
+    min-width: 200px;
+    border-right: 0;
+    position: relative;
+    margin-right: 40px;
+    &:before{
+      width: 0;
+      height: 0;
+      content: "";
+      border-top: 30px solid #0000;
+      border-bottom: 30px solid #0000;
+      border-left: 24px solid #008000;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -33px;
+      margin: auto;
+    }
+    &:after{
+      width: 0;
+      height: 0;
+      content: "";
+      border-top: 30px solid #0000;
+      border-bottom: 30px solid #0000;
+      border-left: 24px solid #f8f8f8;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -31px;
+      margin: auto;
+    }
+    &:last-child{
+      margin-right: 0;
+      &:after, &:before{
+        display: none;
+      }
+    }
+  }
+}
+
+.tab-center-btn{
+  vertical-align: text-bottom;
+  margin-right: 10px;
+}
+.full-width-field.p-calendar{
+  display: flex;
+}
+
+.loading-discharging-tank-layout{
+  .tank-outer-pattern{
+    min-height: 200px;
+  }
+}
+
+.item-row-wrapper{
+  .row{
+      margin-bottom: 0;
+      padding:3px 0 1px;
+  }
+}
+
+.plus-icon{
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.row-divider{
+  padding:2px 0;
+}
+
+.download-icon{
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+.v-none{
+  vertical-align: unset !important;
+}
+
+.table-header-grade, .table-header-last{
+  width: 80px;
+}
+
+.table-column-flexible-wrapper{
+  .column-class{
+    width: auto!important;
+    &.re-order{
+      width: 50px!important;
+    }
+  }
+}
+
+.auto-layout{
+  table{
+    table-layout: auto!important;
+  }
+}
+.v-bottom{
+  vertical-align: bottom;
+}
+
+.v-t-bottom{
+  vertical-align: text-bottom;
+}
+.table-rules{
+  input.form-control{
+    width: 83px;
+    margin-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
+  transform: translateX(1rem);
+}
+
+
+.loading-discharging-tank-layout{
+  .tank-btn-rounded{
+    margin-left: 2px;
+  }
+  .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
+    top: 3px !important;
+    left: 14px !important;
+    margin-top: 0 !important;
+    width: auto !important;
+  }
+  .tank-item-valign{
+    position: absolute;
+    left: 2px;
+    top: 13px;
+  }
+  .tank-filling-percentage{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

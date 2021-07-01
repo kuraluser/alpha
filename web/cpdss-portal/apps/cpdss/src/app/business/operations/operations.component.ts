@@ -7,6 +7,7 @@ import { IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common
 import { IVessel } from '../core/models/vessel-details.model';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { VoyageService } from '../core/services/voyage.service';
+import { LoadingTransformationService } from './services/loading-transformation.service';
 
 @Component({
   selector: 'cpdss-portal-operations',
@@ -16,7 +17,7 @@ import { VoyageService } from '../core/services/voyage.service';
 export class OperationsComponent implements OnInit {
   vessel: IVessel;
   voyages: Voyage[];
-
+  showAddPortPopup = false;
   get selectedVoyage(): Voyage {
     return this._selectedVoyage;
   }
@@ -36,7 +37,8 @@ export class OperationsComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private ngxSpinnerService: NgxSpinnerService) { }
+    private ngxSpinnerService: NgxSpinnerService,
+    private loadingTransformationService: LoadingTransformationService) { }
 
   ngOnInit(): void {
     this.getVesselInfo();
@@ -47,12 +49,12 @@ export class OperationsComponent implements OnInit {
    *
    * @memberof OperationsComponent
    */
-   async getVesselInfo() {
-     this.ngxSpinnerService.show();
+  async getVesselInfo() {
+    this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vessel = res[0] ?? <IVessel>{};
     if (this.vessel?.id) {
-      localStorage.setItem("vesselId",this.vessel?.id.toString())
+      localStorage.setItem("vesselId", this.vessel?.id.toString())
       await this.getVoyageInfo(this.vessel?.id);
       this.ngxSpinnerService.hide();
     }
@@ -65,9 +67,15 @@ export class OperationsComponent implements OnInit {
    * @memberof OperationsComponent
    */
   async getVoyageInfo(vesselId: number) {
+    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
-    this.voyages = this.getSelectedVoyages(voyages);
-    this.selectedVoyage = this.voyages[0];
+    this.voyages = await this.getSelectedVoyages(voyages);
+    if(this.voyages.length){
+      this.selectedVoyage = this.voyages[0];
+    }else{
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE'], detail: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE'] });
+    }
+    
   }
 
   /**
@@ -77,11 +85,10 @@ export class OperationsComponent implements OnInit {
    * @returns {Voyage[]}
    * @memberof OperationsComponent
    */
-   getSelectedVoyages(voyages: Voyage[]): Voyage[] {
-     const defaultVoyage = localStorage.getItem("voyageId") ? voyages?.find(voyage => voyage?.id === Number(localStorage.getItem("voyageId"))) : null;
-    this.selectedVoyage = localStorage.getItem("voyageId") && defaultVoyage ? defaultVoyage : voyages?.find(voyage => voyage?.statusId === VOYAGE_STATUS.ACTIVE);
-    const latestClosedVoyages = [...voyages?.filter(voyage => voyage?.statusId === VOYAGE_STATUS.CLOSE)]?.sort((a,b) => this.convertToDate(b?.actualStartDate)?.getTime() - this.convertToDate(a?.actualStartDate)?.getTime())?.slice(0, this.selectedVoyage ? 9 : 10);
-    return [this.selectedVoyage, ...latestClosedVoyages];
+  getSelectedVoyages(voyages: Voyage[]): Voyage[] {
+    this.selectedVoyage = voyages?.find(voyage => voyage?.statusId === VOYAGE_STATUS.ACTIVE);
+    const _voyage = this.selectedVoyage ? [this.selectedVoyage] : [];
+    return [..._voyage];
   }
 
   /**
@@ -111,9 +118,10 @@ export class OperationsComponent implements OnInit {
    * @param {IVoyagePortDetails} port
    * @memberof OperationsComponent
    */
-  onPortSelection(port: IVoyagePortDetails) {
-    if(port?.operationId === 1) {
-      this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute});
+  async onPortSelection(port: IVoyagePortDetails) {
+    await localStorage.setItem('selectedPortName', port?.name);
+    if (port?.operationId === 1) {
+      this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
     } else if (port?.operationId === 2) {
       this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id], { relativeTo: this.activatedRoute });
     } else {
@@ -121,5 +129,31 @@ export class OperationsComponent implements OnInit {
       this.messageService.add({ severity: 'info', summary: translationKeys['OPERATION_PLAN_NOT_AVAILABLE_INFO_SUMMARY'], detail: translationKeys['OPERATION_PLAN_NOT_AVAILABLE_INFO_DETAILS'] });
     }
   }
+
+  /**
+ * Method for add port pop up visible
+ *
+ * @memberof OperationsComponent
+ */
+  addPort() {
+    this.showAddPortPopup = true;
+  }
+
+  /**
+  * Value from add-port
+  */
+  closeAddPortPoup(displayNew_: boolean) {
+    this.showAddPortPopup = displayNew_;
+  }
+
+    /**
+  * Handler for unit change event
+  *
+  * @param {*} event
+  * @memberof OperationsComponent
+  */
+     onUnitChange() {
+       this.loadingTransformationService.setUnitChanged(true);
+     }
 
 }

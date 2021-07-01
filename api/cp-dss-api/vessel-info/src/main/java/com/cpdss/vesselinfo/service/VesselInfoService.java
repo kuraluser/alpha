@@ -1859,7 +1859,6 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
                 Rules.Builder rulesBuilder = Rules.newBuilder();
                 for (int id = 0; id < value.size(); id++) {
-
                   Optional.ofNullable(value.get(id).getTemplateInputDefaultValue())
                       .ifPresent(item -> ruleInput.setDefaultValue(item));
                   Optional.ofNullable(value.get(id).getTemplateInputPrefix())

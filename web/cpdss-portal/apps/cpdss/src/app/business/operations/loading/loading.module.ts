@@ -28,6 +28,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { LoadingInformationApiService } from '../services/loading-information-api.service';
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
 
+
 /**
  * Module for loading operation
  *
@@ -67,6 +68,6 @@ import { LoadingDischargingManageSequenceModule } from '../loading-discharging-m
     LoadingDischargingManageSequenceModule
 
   ],
-  providers: [LoadingInformationApiService]
+  providers: [LoadingInformationApiService],
 })
 export class LoadingModule { }

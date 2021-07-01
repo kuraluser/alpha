@@ -858,7 +858,7 @@ export class DatatableComponent implements OnInit {
       this.filteredValue.forEach(row => {
         if (row[col.field]) {
           const value = row[col.field].value ?? 0;
-          total += value
+          total += Number(value)
         }
       })
       return total;
