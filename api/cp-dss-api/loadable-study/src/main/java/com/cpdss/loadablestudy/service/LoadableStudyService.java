@@ -123,6 +123,7 @@ import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfo.CargoTankMaster;
 import com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
@@ -1231,6 +1232,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                   .ifPresent(loadableStudyRuleInput::setSuffix);
                               Optional.ofNullable(lsRulesInput.getIsActive())
                                   .ifPresent(loadableStudyRuleInput::setIsActive);
+                              Optional.ofNullable(lsRulesInput.getIsMandatory())
+                              .ifPresent(loadableStudyRuleInput::setIsMandatory);
                               lisOfLsRulesInput.add(loadableStudyRuleInput);
                             });
                     loadableStudyRules.setLoadableStudyRuleInputs(lisOfLsRulesInput);
@@ -1297,6 +1300,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                             .ifPresent(loadableStudyRuleInput::setMinValue);
                                         Optional.ofNullable(vesselRuleInput.getSuffix())
                                             .ifPresent(loadableStudyRuleInput::setSuffix);
+                                        Optional.ofNullable(vesselRuleInput.getIsMandatory())
+                                        .ifPresent(loadableStudyRuleInput::setIsMandatory);
                                         loadableStudyRuleInput.setIsActive(true);
                                         lisOfLsRulesInput.add(loadableStudyRuleInput);
                                       });
@@ -13490,6 +13495,49 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                   .ifPresent(ruleTemplateInput::setIsMandatory);
                               ruleTemplateInput.setIsActive(true);
                               ruleTemplateInput.setLoadableStudyRuleXId(loadableStudyRules);
+                              try {
+                                  if (input.getType() != null
+                                      && (input
+                                              .getType()
+                                              .trim()
+                                              .equalsIgnoreCase(com.cpdss.loadablestudy.domain.TypeValue.DROPDOWN.getType())
+                                          || input
+                                              .getType()
+                                              .trim()
+                                              .equalsIgnoreCase(com.cpdss.loadablestudy.domain.TypeValue.MULTISELECT.getType()))
+                                      && input.getDefaultValue() != null
+                                      && input.getDefaultValue().trim() != "") {
+                                    if (input.getSuffix() != null
+                                        && input.getPrefix() != null
+                                        && input
+                                            .getSuffix()
+                                            .trim()
+                                            .equalsIgnoreCase(com.cpdss.loadablestudy.domain.RuleMasterData.CargoTank.getSuffix())
+                                        && input
+                                            .getPrefix()
+                                            .equalsIgnoreCase(com.cpdss.loadablestudy.domain.RuleMasterData.CargoTank.getPrefix())) {
+
+                                      this.ruleMasterDropDownValidation(
+                                    		  vesselRuleReply.getRuleDropDownValueMasterList(),
+                                    		  vesselRuleReply.getCargoTankMasterList(),                                       
+                                    		  true,
+                                          input,
+                                          ruleTemplateInput,
+                                          rule);
+                                    } else {
+                                      this.ruleMasterDropDownValidation(
+                                    		  vesselRuleReply.getRuleDropDownValueMasterList(),
+                                    		  vesselRuleReply.getCargoTankMasterList(),       
+                                          false,
+                                          input,
+                                          ruleTemplateInput,
+                                          rule);
+                                    }
+                                  }
+                                } catch (GenericServiceException e) {
+                                  throw new RuntimeException(
+                                      "Master rule drop down value does not exist");
+                                }
                               ruleVesselMappingInputList.add(ruleTemplateInput);
                             }
                             loadableStudyRules.setLoadableStudyRuleInputs(
@@ -13554,7 +13602,90 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  private void buildResponseForRules(
+  private void ruleMasterDropDownValidation(List<RuleDropDownValueMaster> listOfDropDownValue,
+		List<CargoTankMaster> cargoTankMaster, boolean isCargoTankMaster, RulesInputs input,
+		LoadableStudyRuleInput ruleTemplateInput, Rules rule) throws GenericServiceException {
+	  String value = "";
+	    List<RuleDropDownValueMaster> filterMasterByRule =
+	        listOfDropDownValue.stream()
+	            .filter(
+	                rDropDown ->
+	                    rDropDown.getRuleTemplateId() != 0
+	                        && rule.getRuleTemplateId() != null
+	                        && rDropDown
+	                            .getRuleTemplateId() ==
+	                            Long.parseLong(rule.getRuleTemplateId()))
+	            .collect(Collectors.toList());
+	    if (input.getDefaultValue().contains(",")) {
+	      String[] masterIds = input.getDefaultValue().split(",");
+	      for (int id = 0; id < masterIds.length; id++) {
+	        int finalId = id;
+	        if (isCargoTankMaster) {
+	          if (cargoTankMaster.stream()
+	              .map(CargoTankMaster::getId)
+	              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+	              .findFirst()
+	              .isPresent()) {
+	            if (masterIds.length - 1 != id) {
+	              value += masterIds[id] + ",";
+	            } else {
+	              value += masterIds[id];
+	            }
+	          } else {
+	            throw new GenericServiceException(
+	                "Rulemaster master with given id does not exist",
+	                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+	                HttpStatusCode.BAD_REQUEST);
+	          }
+	        } else {
+	          if (filterMasterByRule.stream()
+	              .map(RuleDropDownValueMaster::getId)
+	              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+	              .findFirst()
+	              .isPresent()) {
+	            if (masterIds.length - 1 != id) {
+	              value += masterIds[id] + ",";
+	            } else {
+	              value += masterIds[id];
+	            }
+	          } else {
+	            throw new GenericServiceException(
+	                "Rulemaster master with given id does not exist",
+	                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+	                HttpStatusCode.BAD_REQUEST);
+	          }
+	        }
+	      }
+	      ruleTemplateInput.setDefaultValue(value);
+	    } else {
+	      if (isCargoTankMaster) {
+	        if (!cargoTankMaster.stream()
+	            .map(CargoTankMaster::getId)
+	            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+	            .findFirst()
+	            .isPresent()) {
+	          throw new GenericServiceException(
+	              "Cargo master with given id does not exist",
+	              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+	              HttpStatusCode.BAD_REQUEST);
+	        }
+	      } else {
+	        if (!filterMasterByRule.stream()
+	            .map(RuleDropDownValueMaster::getId)
+	            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+	            .findFirst()
+	            .isPresent()) {
+	          throw new GenericServiceException(
+	              "Rulemaster master with given id does not exist",
+	              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+	              HttpStatusCode.BAD_REQUEST);
+	        }
+	      }
+	      ruleTemplateInput.setDefaultValue(input.getDefaultValue());
+	    }
+}
+
+private void buildResponseForRules(
       List<LoadableStudyRules> lStudyRulesList,
       List<Long> ruleId,
       com.cpdss.common.generated.Common.RulePlans.Builder rulePlanBuider,
