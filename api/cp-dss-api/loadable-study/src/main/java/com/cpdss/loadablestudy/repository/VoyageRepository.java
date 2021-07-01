@@ -4,7 +4,6 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageStatus;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,12 +21,15 @@ public interface VoyageRepository
 
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
 
-  public Voyage
-      findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-          LocalDateTime currentVoyageStartDate,
-          Long vesselId,
-          boolean isActive,
-          VoyageStatus voyageStatus);
+  /*
+   * public Voyage
+   * findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+   * LocalDateTime currentVoyageStartDate, Long vesselId, boolean isActive,
+   * VoyageStatus voyageStatus);
+   */
+
+  public Voyage findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+      Long vesselId, boolean isActive, VoyageStatus voyageStatus);
 
   @Query(
       "select V from Voyage V WHERE V.isActive = :isActive AND V.vesselXId= :vesselId AND "

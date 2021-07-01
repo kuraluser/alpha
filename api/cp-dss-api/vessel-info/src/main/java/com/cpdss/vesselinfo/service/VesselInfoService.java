@@ -1523,7 +1523,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       List<RuleType> ruleTypeList = ruleTypeRepository.findByIsActive(true);
       if (!CollectionUtils.isEmpty(request.getRulePlanList())) {
         log.info("To save rule against vessel");
-        
+
         List<RuleTemplate> ruleTemplateList = ruleTemplateRepository.findByIsActive(true);
         List<RuleVesselMapping> ruleVesselMappingList = new ArrayList<>();
         request
@@ -1601,10 +1601,14 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 
                               try {
                                 if (input.getType() != null
-                                    && input
-                                        .getType()
-                                        .trim()
-                                        .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                                    && (input
+                                            .getType()
+                                            .trim()
+                                            .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                                        || input
+                                            .getType()
+                                            .trim()
+                                            .equalsIgnoreCase(TypeValue.MULTISELECT.getType()))
                                     && input.getDefaultValue() != null
                                     && input.getDefaultValue().trim() != "") {
                                   if (input.getSuffix() != null
@@ -1700,18 +1704,20 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     }
   }
 
-  private void buildRuleTypeMaster(com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
-		List<RuleType> ruleTypeList) {
-	  com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder ruleTypeBuilder = com.cpdss.common.generated.VesselInfo.RuleTypeMaster.newBuilder();
-	  ruleTypeList.forEach(rule->{
-		  Optional.ofNullable(rule.getId()).ifPresent(ruleTypeBuilder::setId);
-		  Optional.ofNullable(rule.getRuleType()).ifPresent(ruleTypeBuilder::setRuleType);
-		  builder.addRuleTypeMaster(ruleTypeBuilder.build());
-	  });
-	
-}
+  private void buildRuleTypeMaster(
+      com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
+      List<RuleType> ruleTypeList) {
+    com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder ruleTypeBuilder =
+        com.cpdss.common.generated.VesselInfo.RuleTypeMaster.newBuilder();
+    ruleTypeList.forEach(
+        rule -> {
+          Optional.ofNullable(rule.getId()).ifPresent(ruleTypeBuilder::setId);
+          Optional.ofNullable(rule.getRuleType()).ifPresent(ruleTypeBuilder::setRuleType);
+          builder.addRuleTypeMaster(ruleTypeBuilder.build());
+        });
+  }
 
-private void buildRuleTypeMasterMaster(
+  private void buildRuleTypeMasterMaster(
       com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
       List<RuleVesselDropDownValues> listOfDropDownValue) {
     com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder rBuilder =
@@ -1882,10 +1888,14 @@ private void buildRuleTypeMasterMaster(
                     ruleInput.setDefaultValue("false");
                   }
                   if (value.get(id).getTemplateInputTypeValue() != null
-                      && value
-                          .get(id)
-                          .getTemplateInputTypeValue()
-                          .equalsIgnoreCase(TypeValue.DROPDOWN.getType())) {
+                      && (value
+                              .get(id)
+                              .getTemplateInputTypeValue()
+                              .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                          || value
+                              .get(id)
+                              .getTemplateInputTypeValue()
+                              .equalsIgnoreCase(TypeValue.MULTISELECT.getType()))) {
                     RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
                     if (value.get(id).getTemplateInputSuffix() != null
                         && value.get(id).getTemplateInputPrefix() != null
