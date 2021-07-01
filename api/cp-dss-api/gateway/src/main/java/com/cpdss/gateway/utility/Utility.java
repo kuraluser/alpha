@@ -179,7 +179,7 @@ public class Utility {
                                       Optional.ofNullable(input.getValue())
                                           .ifPresent(ruleInputBuilder::setValue);
                                       Optional.ofNullable(input.getIsMandatory())
-                                       .ifPresent(ruleInputBuilder::setIsMandatory);
+                                          .ifPresent(ruleInputBuilder::setIsMandatory);
                                       ruleBuilder.addInputs(ruleInputBuilder);
                                     });
                             rulePlanBuilder.addRules(ruleBuilder);
