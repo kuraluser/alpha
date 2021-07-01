@@ -96,7 +96,8 @@ public class Utility {
           Optional.ofNullable(rInputsList.getIsMandatory()).ifPresent(rulesInputs::setIsMandatory);
           Optional.ofNullable(rInputsList.getType()).ifPresent(rulesInputs::setType);
           if (rInputsList.getType() != null
-              && rInputsList.getType().trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+              && (rInputsList.getType().trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                  || rInputsList.getType().trim().equalsIgnoreCase(TypeValue.MULTISELECT.getType()))
               && rInputsList.getRuleDropDownMasterList() != null
               && rInputsList.getRuleDropDownMasterList().size() > 0) {
             List<RuleDropDownMaster> ruleDropDownMasters = new ArrayList<>();
