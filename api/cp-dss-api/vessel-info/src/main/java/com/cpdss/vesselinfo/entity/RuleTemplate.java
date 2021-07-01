@@ -35,4 +35,10 @@ public class RuleTemplate extends EntityDoc {
 
   @Column(name = "is_hard_rule")
   private Boolean isHardRule;
+
+  @Column(name = "numeric_precision")
+  private Long numericPrecision;
+
+  @Column(name = "numeric_scale")
+  private Long numericScale;
 }

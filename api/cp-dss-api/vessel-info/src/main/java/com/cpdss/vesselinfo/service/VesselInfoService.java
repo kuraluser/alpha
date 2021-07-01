@@ -1517,7 +1517,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       }
       // Fetch master records
       List<RuleVesselDropDownValues> listOfDropDownValue =
-          ruleVesselDropDownValuesRepository.findAll();
+          ruleVesselDropDownValuesRepository.findByIsActive(true);
       List<CargoTankMaster> cargoTankMaster =
           vesselTankRepository.findCargoTankMaster(request.getVesselId(), true);
       List<RuleType> ruleTypeList = ruleTypeRepository.findByIsActive(true);
@@ -1545,6 +1545,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                             ruleVesselMapping.setIsActive(true);
                             Optional.ofNullable(rule.getDisplayInSettings())
                                 .ifPresent(ruleVesselMapping::setDisplayInSettings);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                            .ifPresent(ruleVesselMapping::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                            .ifPresent(ruleVesselMapping::setNumericScale);
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(ruleVesselMapping::setIsEnable);
                             Optional.ofNullable(rule.getIsHardRule())
@@ -1871,6 +1875,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       .ifPresent(item -> ruleInput.setType(item));
                   Optional.ofNullable(value.get(id).getTemplateInputSuffix())
                       .ifPresent(item -> ruleInput.setSuffix(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputSuffix())
+                  .ifPresent(item -> ruleInput.setSuffix(item));
                   Optional.ofNullable(value.get(id).getIsMandatory())
                       .ifPresent(ruleInput::setIsMandatory);
                   if (value.get(id).getTemplateInputTypeValue() != null
@@ -1951,6 +1957,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                   }
                   rulesBuilder.addInputs(ruleInput.build());
                   if (id == value.size() - 1) {
+                	Optional.ofNullable(value.get(id).getNumericPrecision())
+                      .ifPresent(item -> rulesBuilder.setNumericPrecision(item));
+                	Optional.ofNullable(value.get(id).getNumericScale())
+                    .ifPresent(item -> rulesBuilder.setNumericScale(item));
                     Optional.ofNullable(value.get(id).getTemplateIsEnable())
                         .ifPresent(item -> rulesBuilder.setEnable(item));
                     Optional.ofNullable(value.get(id).getTemplateDisplayInSettings())
