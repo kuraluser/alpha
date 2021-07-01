@@ -16,7 +16,6 @@ import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.Rules;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
-import com.cpdss.gateway.domain.VesselRuleRequest;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.VesselInfoServiceTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
