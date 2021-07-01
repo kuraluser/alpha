@@ -6912,6 +6912,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
     }
+
+    if (Optional.ofNullable(loadableStudyOpt.get().getFeedbackLoop()).isPresent()) {
+      loadableStudy.setFeedbackLoop(loadableStudyOpt.get().getFeedbackLoop());
+    } else {
+      loadableStudy.setFeedbackLoop(false);
+    }
+
+    if (Optional.ofNullable(loadableStudyOpt.get().getFeedbackLoopCount()).isPresent()) {
+      loadableStudy.setFeedbackLoopCount(loadableStudyOpt.get().getFeedbackLoopCount());
+    } else {
+      loadableStudy.setFeedbackLoopCount(0);
+    }
   }
 
   /** Get on board quantity details corresponding to a loadable study */
