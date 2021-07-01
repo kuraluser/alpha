@@ -10,12 +10,9 @@ import lombok.*;
  */
 @AllArgsConstructor
 @Getter
-public enum TypeValue {
-  NUMBER("Number"),
-  BOOLEAN("Boolean"),
-  DROPDOWN("Dropdown"),
-  MULTISELECT("MultiSelect"),
-  STRING("string");
+public enum RuleMasterData {
+  CargoTank("only", "tank can be filled with commingled cargo");
 
-  private String type;
+  private String prefix;
+  private String suffix;
 }
