@@ -2019,7 +2019,7 @@ public class LoadableStudyService {
    * @param grpcReply
    * @return
    */
-  private OnHandQuantityResponse buildOnHandQuantityResponse(
+  public OnHandQuantityResponse buildOnHandQuantityResponse(
       OnHandQuantityReply grpcReply, String correlationId) {
     OnHandQuantityResponse response = new OnHandQuantityResponse();
     response.setOnHandQuantities(new ArrayList<>());
