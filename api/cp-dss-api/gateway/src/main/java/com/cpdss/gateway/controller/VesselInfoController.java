@@ -9,7 +9,6 @@ import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.VesselRuleRequest;
 import com.cpdss.gateway.service.VesselInfoService;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -107,84 +106,6 @@ public class VesselInfoController {
           @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long sectionId,
       @RequestBody RuleRequest vesselRuleRequest,
-      @RequestHeader HttpHeaders headers)
-      throws CommonRestException {
-    try {
-      return this.vesselInfoService.getRulesByVesselIdAndSectionId(
-          vesselId, sectionId, vesselRuleRequest, headers.getFirst(CORRELATION_ID_HEADER));
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException when fetching vessels", e);
-      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-    } catch (Exception e) {
-      log.error("Exception when fetching vessels", e);
-      throw new CommonRestException(
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          headers,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          e.getMessage(),
-          e);
-    }
-  }
-
-  /**
-   * To retrieve rule for vessel
-   *
-   * @param vesselId
-   * @param sectionId
-   * @param vesselRuleRequest
-   * @param headers
-   * @return
-   * @throws CommonRestException
-   */
-  @GetMapping(
-      value = "/vessel-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public RuleResponse getAllRulesForVessel(
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @PathVariable
-          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long sectionId,
-      @RequestHeader HttpHeaders headers)
-      throws CommonRestException {
-    try {
-      return this.vesselInfoService.getRulesByVesselIdAndSectionId(
-          vesselId, sectionId, null, headers.getFirst(CORRELATION_ID_HEADER));
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException when fetching vessels", e);
-      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-    } catch (Exception e) {
-      log.error("Exception when fetching vessels", e);
-      throw new CommonRestException(
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          headers,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          e.getMessage(),
-          e);
-    }
-  }
-
-  /**
-   * To save rule for vessel
-   *
-   * @param vesselId
-   * @param sectionId
-   * @param vesselRuleRequest
-   * @param headers
-   * @return
-   * @throws CommonRestException
-   */
-  @PostMapping(
-      value = "/vessel-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}",
-      produces = MediaType.APPLICATION_JSON_VALUE,
-      consumes = MediaType.APPLICATION_JSON_VALUE)
-  public RuleResponse saveRulesForVessel(
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @PathVariable
-          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long sectionId,
-      @RequestBody VesselRuleRequest vesselRuleRequest,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
