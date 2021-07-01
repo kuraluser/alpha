@@ -40,7 +40,7 @@ public interface LoadableStudyPortRotationRepository
       final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
 
   public List<LoadableStudyPortRotation> findByLoadableStudyAndOperation_idAndIsActive(
-	      final LoadableStudy loadableStudy, Long operation, final boolean isActive);
+      final LoadableStudy loadableStudy, Long operation, final boolean isActive);
   /**
    * Get active port rotation for discharging ports against a loadable study order by port order
    *

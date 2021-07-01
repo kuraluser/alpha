@@ -218,7 +218,7 @@ public class DischargeStudyService {
       DischargeStudyRequest request, String correlationId) throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.Builder builder =
         DischargeStudyDetail.newBuilder();
-    
+
     Optional.ofNullable(request.getName()).ifPresent(builder::setName);
     Optional.ofNullable(request.getEnquiryName()).ifPresent(builder::setEnquiryName);
     Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
