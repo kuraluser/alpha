@@ -7,6 +7,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -70,6 +71,37 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error when saving discharge study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PutMapping(
+      value = "/discharge-studies/{dischargeStudyId}",
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public DischargeStudyUpdateResponse updateDischargeStudies(
+      @PathVariable Long dischargeStudyId,
+      @Valid final DischargeStudyRequest request,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      if (request.getName() == null || request.getName().isEmpty()) {
+        throw new GenericServiceException(
+            "No name found", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+      }
+      log.info("updateDischargeStudy: {}", getClientIp());
+      return this.dischargeStudyService.updateDischargeStudy(
+          request, headers.getFirst(CORRELATION_ID_HEADER), dischargeStudyId);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when updating discharge study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when updating discharge study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

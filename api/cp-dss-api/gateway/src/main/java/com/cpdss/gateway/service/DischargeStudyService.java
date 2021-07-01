@@ -7,6 +7,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.dischargestudy.DischargeStudyServiceGrpc.DischargeStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
@@ -17,12 +18,15 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import java.util.ArrayList;
 import java.util.Optional;
+import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -239,5 +243,39 @@ public class DischargeStudyService {
 
   private DischargeStudyReply saveDischargeStudy(DischargeStudyDetail dischargeStudyDetail) {
     return this.loadableStudyServiceBlockingStub.saveDischargeStudy(dischargeStudyDetail);
+  }
+
+  private UpdateDischargeStudyReply updateDischargeStudy(
+      DischargeStudyDetail dischargeStudyDetail) {
+    return this.loadableStudyServiceBlockingStub.updateDischargeStudy(dischargeStudyDetail);
+  }
+
+  public DischargeStudyUpdateResponse updateDischargeStudy(
+      @Valid DischargeStudyRequest request, String correlationId, Long dischargeStudyId)
+      throws GenericServiceException {
+
+    com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.Builder builder =
+        DischargeStudyDetail.newBuilder();
+
+    Optional.ofNullable(request.getName()).ifPresent(builder::setName);
+    Optional.ofNullable(request.getEnquiryDetails()).ifPresent(builder::setEnquiryDetails);
+    Optional.ofNullable(dischargeStudyId).ifPresent(builder::setDischargeStudyId);
+
+    UpdateDischargeStudyReply reply = this.updateDischargeStudy(builder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save loadable studies",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+    }
+    DischargeStudyUpdateResponse response = new DischargeStudyUpdateResponse();
+    response.setDischargeStudy(
+        new DischargeStudyValue(
+            reply.getDischargeStudy().getId(),
+            reply.getDischargeStudy().getName(),
+            reply.getDischargeStudy().getEnquiryDetails()));
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
   }
 }

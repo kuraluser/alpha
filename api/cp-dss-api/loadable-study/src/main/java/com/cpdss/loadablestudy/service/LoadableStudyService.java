@@ -99,6 +99,8 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
+import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyDetail;
+import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
@@ -13978,5 +13980,37 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     portRotation.setTimeOfStay(loadableStudyPortRotation.getTimeOfStay());
     portRotation.setVersion(loadableStudyPortRotation.getVersion());
     return portRotation;
+  }
+
+  @Override
+  public void updateDischargeStudy(
+      DischargeStudyDetail request, StreamObserver<UpdateDischargeStudyReply> responseObserver) {
+    UpdateDischargeStudyReply.Builder builder = UpdateDischargeStudyReply.newBuilder();
+    try {
+      LoadableStudy loadable =
+          this.loadableStudyRepository.findById(request.getDischargeStudyId()).orElse(null);
+      if (loadable == null) {
+        throw new GenericServiceException(
+            "No discharge study found",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      loadable.setName(request.getName());
+      loadable.setDetails(request.getEnquiryDetails());
+      LoadableStudy updatedDischarge = this.loadableStudyRepository.save(loadable);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      UpdateDischargeStudyDetail.Builder detail = UpdateDischargeStudyDetail.newBuilder();
+      detail.setId(updatedDischarge.getId());
+      detail.setName(updatedDischarge.getName());
+      detail.setEnquiryDetails(updatedDischarge.getDetails());
+      builder.setDischargeStudy(detail.build());
+    } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

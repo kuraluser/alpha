@@ -11,4 +11,5 @@ public class DischargeStudyRequest {
   private String enquiryDetails;
   private Long vesselId;
   private Long voyageId;
+  private Long dischargeId;
 }
