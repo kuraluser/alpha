@@ -1,0 +1,80 @@
+import { FormArray, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { iif } from 'rxjs';
+
+/**
+ * Validator Function for CargoQuantity
+ * @param control 
+ */
+export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormControl): ValidationErrors | null => {
+  if (!control.root || !control.parent || control.value === '') {
+    return null;
+  }
+
+  const portDetails = control.root.get('portDetails') as FormArray;
+  let totalParentQuantityIndex;
+  let calculatedTotalQuantity = 0;
+  let totalQuantity = 0;
+  let maxQuantity;
+  let isAutoModeAvailable;
+  let noCargoFoundtStatus;
+  let isQuantityAutoCorrect;
+
+  portDetails['controls'].map((item, itemIndex) => {
+
+    if (totalParentQuantityIndex === undefined) {
+      const dischargeCargoFormControls = item.get('cargoDetail').get('dataTable') as FormArray;
+      dischargeCargoFormControls['controls'].map((backLoadingItems) => {
+        if (control.parent?.value?.color && backLoadingItems.get('color').value === control.parent?.value?.color) {
+          totalParentQuantityIndex = itemIndex;
+          if(backLoadingItems.get('mode').value.id === 2) {
+            totalQuantity = Number(backLoadingItems.get('maxKl').value) - Number(backLoadingItems.get('kl').value);
+            calculatedTotalQuantity += Number(backLoadingItems.get('kl').value);
+          } else {
+            isAutoModeAvailable = true;
+            totalQuantity = Number(backLoadingItems.get('maxKl').value);
+          }
+          maxQuantity = Number(backLoadingItems.get('maxKl').value);
+        }
+      })
+
+      const backLoadingDetailsFormControls = item.get('backLoadingDetails').get('dataTable') as FormArray;
+      backLoadingDetailsFormControls['controls'].map((backLoadingItems) => {
+        if (control.parent?.value?.color && backLoadingItems.get('color').value === control.parent?.value?.color) {
+          totalParentQuantityIndex = itemIndex;
+          totalQuantity = Number(backLoadingItems.get('kl').value);
+          maxQuantity = totalQuantity;
+        }
+      })
+      if(calculatedTotalQuantity === maxQuantity) {
+        isQuantityAutoCorrect = true;
+      }
+    } else {
+      const cargoDataTable = item.get('cargoDetail').get('dataTable') as FormArray;
+      const findCargo = cargoDataTable['controls'].find((cargoDetailItems, cargoDetailIndex) => {
+        if (control.parent.value.color && cargoDetailItems.get('color').value === control.parent.value.color) {
+          if(cargoDetailItems.get('mode').value?.id === 1) {
+            isAutoModeAvailable = true;
+          }
+          return cargoDetailItems;
+        }
+      })
+      
+      if (findCargo && findCargo.get('mode').value?.id === 2) {
+        calculatedTotalQuantity += Number(findCargo.get('kl').value);
+      } else if(!findCargo) {
+        noCargoFoundtStatus = true;
+      }
+      if(calculatedTotalQuantity === maxQuantity) {
+        isQuantityAutoCorrect = true;
+      }
+    }
+  })
+  
+  if(!isQuantityAutoCorrect && calculatedTotalQuantity > maxQuantity) {
+    return { greaterThanTotalQuantity: true }
+  } else if(!noCargoFoundtStatus && !isAutoModeAvailable && calculatedTotalQuantity !== maxQuantity && !isQuantityAutoCorrect) {
+    return { quantityNotEqual : true }
+  } else {
+    return null;
+  }
+};

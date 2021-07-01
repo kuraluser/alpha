@@ -1002,7 +1002,28 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselReply>(
                       this, METHODID_GET_VESSEL_DETAIL_BY_VESSEL_ID)))
           .addMethod(
-              getGetVesselInfoByPagingMethod(),
+            getGetVesselInfoByPagingMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging,
+                com.cpdss.common.generated.VesselInfo.VesselReply>(
+                  this, METHODID_GET_VESSEL_INFO_BY_PAGING)))
+          .addMethod(
+            getGetVesselInfoBytankIdsMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.VesselInfo.VesselTankRequest,
+                com.cpdss.common.generated.VesselInfo.VesselTankResponse>(
+                  this, METHODID_GET_VESSEL_INFO_BYTANK_IDS)))
+          .addMethod(
+            getGetDWTFromVesselByVesselIdMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.VesselInfo.VesselDWTRequest,
+                com.cpdss.common.generated.VesselInfo.VesselDWTResponse>(
+                  this, METHODID_GET_DWTFROM_VESSEL_BY_VESSEL_ID)))
+          .addMethod(
+              getGetVesselInfoByVesselIdMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging,

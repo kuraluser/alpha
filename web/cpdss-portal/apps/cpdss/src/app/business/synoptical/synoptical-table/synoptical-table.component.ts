@@ -23,6 +23,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { seaWaterDensityRangeValidator } from '../../core/directives/seawater-density-range-validator.directive';
 
 /**
  * Component class of synoptical table
@@ -66,7 +67,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'etdMin': 'SYNOPTICAL_ETD_MIN',
     'etaMax': 'SYNOPTICAL_ETA_MAX',
     'etdMax': "SYNOPTICAL_ETD_MAX",
-    'invalidNumber': 'SYNOPTICAL_INVALID'
+    'invalidNumber': 'SYNOPTICAL_INVALID',
+    'waterDensityError': 'PORT_WATER_DENSITY_RANGE_ERROR'
   };
   expandedRows = [];
   ngUnsubscribe: Subject<void> = new Subject();
@@ -362,7 +364,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
-          validators: ['d.dddd.+'],
+          validators: ['d.dddd.+', 'seaWaterDensity'],
           numberFormat: AppConfigurationService.settings?.sgNumberFormat
         }],
         editable: true,
@@ -497,7 +499,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftFwdPlanned",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required', 'dd.dd']
+                      validators: ['required', 'dd.dd.-']
                     }],
                     editable: false,
                   },
@@ -507,7 +509,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftFwdActual",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required', 'dd.dd']
+                      validators: ['required', 'dd.dd.-']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -522,7 +524,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftAftPlanned",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required', 'dd.dd']
+                      validators: ['required', 'dd.dd.-']
                     }],
                     editable: false,
                   },
@@ -532,7 +534,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftAftActual",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required','dd.dd']
+                      validators: ['required','dd.dd.-']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -547,7 +549,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftMidPlanned",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required', 'dd.dd']
+                      validators: ['required', 'dd.dd.-']
                     }],
                     editable: false,
                   },
@@ -557,7 +559,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       key: "calculatedDraftMidActual",
                       type: this.fieldType.NUMBER,
                       numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                      validators: ['required', 'dd.dd']
+                      validators: ['required', 'dd.dd.-']
                     }],
                     editable: this.checkIfConfirmed(),
                   },
@@ -574,7 +576,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                   key: "calculatedTrimPlanned",
                   type: this.fieldType.NUMBER,
                   numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                  validators: ['required', 'dd.dd']
+                  validators: ['required', 'dd.dd.-']
                 }],
                 editable: false,
               },
@@ -584,7 +586,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                   key: "calculatedTrimActual",
                   type: this.fieldType.NUMBER,
                   numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
-                  validators: ['required', 'dd.dd']
+                  validators: ['required', 'dd.dd.-']
                 }],
                 editable: this.checkIfConfirmed(),
               },
@@ -1217,7 +1219,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   getValidators(validator: string): ValidatorFn {
     if (validator === 'required')
       return Validators.required;
-    else if (/^(d*(.d)?d*(.\+)?)$/.test(validator)) {
+    else if (/^(d*(.d)?d*(.\+|.\-)?)$/.test(validator)) {
       let decimals = 0;
       let isNegativeAccepted = true;
       const arr = validator.split('.')
@@ -1227,8 +1229,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       if (/\+/.test(validator))
         isNegativeAccepted = false;
       return numberValidator(decimals, digits, isNegativeAccepted);
-    }
-    else
+    } else if(validator === 'seaWaterDensity'){
+      return seaWaterDensityRangeValidator();
+    } else
       return null;
   }
 

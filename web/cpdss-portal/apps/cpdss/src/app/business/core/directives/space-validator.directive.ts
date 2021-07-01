@@ -5,7 +5,7 @@ import { AbstractControl , FormControl } from '@angular/forms';
  * @param control 
  */
 export function whiteSpaceValidator(control: FormControl): { whitespace: boolean } {
-  const isWhitespace = (control.value || '').trim().length === 0;
+  const isWhitespace = (control.value || '')?.toString().trim().length === 0;
   const isValid = !isWhitespace;
   return isValid ? null : { 'whitespace': true };
 }

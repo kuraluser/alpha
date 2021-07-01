@@ -28,7 +28,7 @@ export class LoadingInformationApiService {
       * @param {number} portRotationId
    */
   getLoadingInformation(vesselId: number, voyageId: number, portRotationId: number): Observable<ILoadingInformationResponse> {
-   return this.commonApiService.get<ILoadingInformationResponse>(`vessels/${vesselId}/voyages/${voyageId}/loading-plan/0/loading-information/${portRotationId}`);
+   return this.commonApiService.get<ILoadingInformationResponse>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/0/port-rotation/${portRotationId}`);
   }
 
   /**

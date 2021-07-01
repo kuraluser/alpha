@@ -70,16 +70,15 @@
                 </ng-template>
             </a>
             <div class="pr-15 text-right">
-                <button id="rulesButton" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button>
-                <cpdss-portal-cargo-planning-rules *ngIf="isRuleModalVisible" [visible]="isRuleModalVisible"  (popUpClosed)="closeModal($event)"></cpdss-portal-cargo-planning-rules>
+                <cpdss-portal-rules *ngIf="isRuleModalVisible" [selectedLoadableStudyId]="selectedLoadableStudy.id" [visible]="isRuleModalVisible" [isPatternGenerated] = "isPatternGenerated"  (popUpClosed)="closeModal($event)"></cpdss-portal-rules>
             </div>
         </div>
-      
+        
         <div class="pr-15 text-right">
             <button id="pattern_history" class="btn btn-main mr-10" (click)="navigateToPatternHistory('0')"
                 [disabled]="!loadableStudies?.length || !loadablePatternHistoryPermission?.view">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
                 <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
-                [disabled]="(!loadableStudies?.length || !cargoNominationComplete || !portsComplete || !ohqComplete || !obqComplete || isGenerateClicked || isPatternGenerated || isPatternOpenOrNoplan ||[VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId) || !(generateBtnPermissionContext?.view))" *ngIf="showGenerateBtn">{{'LOADABLE_PATTERN_GENERATE_BUTTON_LABEL'
+                [disabled]="(!loadableStudies?.length || isServiceWorkerCallActive || !cargoNominationComplete || !portsComplete || !ohqComplete || !obqComplete  || isGenerateClicked || isPatternGenerated || isPatternOpenOrNoplan ||[VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId) || !(generateBtnPermissionContext?.view))" *ngIf="showGenerateBtn">{{'LOADABLE_PATTERN_GENERATE_BUTTON_LABEL'
                 | translate}}</button>
             <button id="view_pattern" class="btn btn-main" (click)="navigateToPatternHistory('1')"
                 *ngIf="isPatternGenerated">{{'VIEW_PATTERN_BUTTON_LABEL' | translate }}</button>
@@ -90,7 +89,7 @@
             <label class=" text-secondary  pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_STUDY_LABEL'| translate}}
                 <span>{{selectedLoadableStudy?.name}}</span></label>
 
-            
+
                 <div class="pr-20 inline-block">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit +
                     ')'}}
                     <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
@@ -102,9 +101,11 @@
                 [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange"
                 (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
         </div>
-        <div class="pr-5" *ngIf="selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION">
+        <div class="pr-5" *ngIf="selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ERROR">
             <button class="btn btn-main" id="view_error" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
         </div>
+        <!-- <button id="rulesButton" [disabled]="isPatternGenerated" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button> needed later  --> 
+ 
 
         <div class="pr-15"
             *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
@@ -112,7 +113,8 @@
                 [disabled]="showCommingleButton || !addComminglePermission?.view">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
 
-        <div *ngIf="false">
+        <!-- This code may be use in future -->
+        <!-- <div *ngIf="false">
             <ng-container [ngSwitch]="selectedLoadableStudy?.statusId">  
                 <span class="badge-custom badge-muted" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_PENDING">{{'GENERATE_LOADABLE_PATTERN_PENDING' | translate}}</span>  
                 <span class="badge-custom badge-info" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING">{{'GENERATE_LOADABLE_PATTERN_ALGO_PROCESSING' | translate}}</span>  
@@ -122,7 +124,7 @@
                 <span class="badge-custom badge-danger" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_ERROR">{{'GENERATE_LOADABLE_PATTERN_PLAN_ERROR' | translate}}</span>
                 <span class="badge-custom badge-sucess" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_GENERATED">{{'GENERATE_LOADABLE_PATTERN_PLAN_GENERATED' | translate}}</span>  
             </ng-container> 
-        </div>
+        </div> -->
         
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
@@ -145,7 +147,7 @@
             <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
             <div class="sidebar-content">
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
-                    [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
+                    [selectedLoadableStudy]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
                     (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
                     (selectedLoadableStudyChange)="onLoadableStudyChange($event)" (newLoadableStudyAdded)="onLoadableStudyChange($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
@@ -198,6 +200,18 @@
                                     placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}"
                                     (onChange)="onDischargeCargoChange($event)" resetFilterOnHide="true"
                                     [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
+                                    <ng-template pTemplate="selectedItem">
+                                      <span *ngIf="selectedDischargeCargo">
+                                        <i class="color-rounded align-text-bottom mr-5" [ngStyle]="{'background' : selectedDischargeCargo?.color}"></i>
+                                        <span>{{selectedDischargeCargo.name}}</span>
+                                      </span>
+                                    </ng-template>
+                                    <ng-template let-cargo pTemplate="item">
+                                      <span>
+                                        <i class="color-rounded align-text-bottom mr-5" [ngStyle]="{'background' : cargo.value.color}"></i>
+                                        <span>{{cargo.label}}</span>
+                                      </span>
+                                    </ng-template>
                                 </p-dropdown>
                             </ng-container>
                         </ng-container>
@@ -212,9 +226,9 @@
     [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-loadable-quantity>
 <cpdss-portal-commingle *ngIf="displayCommingle" (displayPopUp)="displayComminglePopUpTab($event)" [vesselId]="vesselId" [voyage]="selectedVoyage" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"></cpdss-portal-commingle>
 
-<cpdss-portal-error-log-popup 
-    [(visible)]="errorPopup"  
-    (visibleChange)="viewError($event)" 
-    [header]="'GENERATED_PATTERN_ERROR_MESSAGE_HEADING'"  
+<cpdss-portal-error-log-popup
+    [(visible)]="errorPopup"
+    (visibleChange)="viewError($event)"
+    [header]="'GENERATED_PATTERN_ERROR_MESSAGE_HEADING'"
     [errorMessage]="errorMessage"
     ></cpdss-portal-error-log-popup>

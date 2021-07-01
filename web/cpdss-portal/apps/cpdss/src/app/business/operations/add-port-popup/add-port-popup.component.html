@@ -1,0 +1,73 @@
+<p-dialog header="{{'OPERATIONS_ADD_PORT_POPUP_HEADER' | translate}}" [(visible)]="display"
+    styleClass="operations-add-port-pop-up" [closable]="false" [draggable]="false" [modal]="true">
+    <form [formGroup]="addPortForm"  *ngIf="addPortForm">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="form-group row">
+                        <label for="port"
+                            class="col-md-3 col-form-label text-secondary">{{'OPERATIONS_ADD_PORT_PORT_LABEL' |
+                            translate}}</label>
+                        <div class="col-md-6">
+                            <p-dropdown id="port" styleClass="form-control" appendTo="body"
+                                formControlName="port" [options]="ports" optionLabel="name"
+                                placeholder="{{'OPERATIONS_ADD_PORT_SELECT_PORT_LABEL'|translate}}" filter="true"
+                                resetFilterOnHide="true" focusTrap>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="operation"
+                            class="col-md-3 col-form-label text-secondary">{{'OPERATIONS_ADD_PORT_OPERATIONS_LABEL' |
+                            translate}}</label>
+                        <div class="col-md-3">
+                            <p-dropdown id="port" styleClass="form-control" appendTo="body"
+                                formControlName="operation" [options]="operations" optionLabel="name"
+                                placeholder="{{'OPERATIONS_ADD_PORT_SELECT_OPERATION_LABEL'|translate}}" filter="true"
+                                resetFilterOnHide="true" focusTrap>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="afterPort"
+                            class="col-md-3 col-form-label text-secondary">{{'OPERATIONS_ADD_PORT_AFTER_PORT_LABEL' |
+                            translate}}</label>
+                        <div class="col-md-6">
+                            <p-dropdown id="port" styleClass="form-control" appendTo="body"
+                                formControlName="afterPort" [options]="afterPorts" optionLabel="name"
+                                placeholder="{{'OPERATIONS_ADD_PORT_SELECT_AFTER_PORT_LABEL'|translate}}" filter="true"
+                                resetFilterOnHide="true" focusTrap>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="beforePort"
+                            class="col-md-3 col-form-label text-secondary">{{'OPERATIONS_ADD_PORT_BEFORE_PORT_LABEL' |
+                            translate}}</label>
+                        <div class="col-md-3">
+                            <p-dropdown id="port" styleClass="form-control" appendTo="body"
+                                formControlName="beforePort" [options]="beforePorts" optionLabel="name"
+                                placeholder="{{'OPERATIONS_ADD_PORT_SELECT_BEFORE_PORT_LABEL'|translate}}" filter="true"
+                                resetFilterOnHide="true" focusTrap>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    <p-footer>
+        <div class="row">
+            <div class="col text-center">
+                <button class="btn btn-main mr-10" id="voyage_popup_cancel" (click)="cancel()">{{
+                    'CANCEL_BUTTON_OPERATIONS_ADD_PORT_POPUP' | translate }}</button>
+                <button class="btn btn-main" type="submit" id="voyage_popup_submit" (click)="save()">{{
+                    'SAVE_BUTTON_OPERATIONS_ADD_PORT_POPUP' | translate }}</button>
+            </div>
+        </div>
+
+    </p-footer>
+</p-dialog>

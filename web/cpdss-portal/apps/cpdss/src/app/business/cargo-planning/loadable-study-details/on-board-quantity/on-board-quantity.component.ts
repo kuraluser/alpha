@@ -319,6 +319,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
     if (formGroup.valid && formGroup.controls.api.value && formGroup.controls.quantity.value) {
       event.data.processing = true;
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.obqForm.controls.dataTable.valid);
@@ -396,6 +397,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   private swMessageHandler = async (event) => {
     const translationKeys = await this.translateService.get(['OBQ_UPDATE_ERROR', 'OBQ_UPDATE_STATUS_ERROR']).toPromise();
     if (event?.data?.type === 'obq_sync_finished') {
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
       const index = this.selectedPortOBQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.selectedPortOBQTankDetails[index].processing = false;
