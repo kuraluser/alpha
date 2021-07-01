@@ -1919,7 +1919,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                           });
                     } else {
                       Optional<Long> ruleTempId;
-                      if (isDisplayId) {
+                      if (isDisplayId || isDisplayVesselRuleXId) {
                         ruleTempId = Optional.ofNullable(value.get(id).getTemplateId());
                       } else {
                         ruleTempId = Optional.ofNullable(value.get(id).getTemplateFId());

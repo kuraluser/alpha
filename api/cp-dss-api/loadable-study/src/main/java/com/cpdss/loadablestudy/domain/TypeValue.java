@@ -14,6 +14,7 @@ public enum TypeValue {
   NUMBER("Number"),
   BOOLEAN("Boolean"),
   DROPDOWN("Dropdown"),
+  MULTISELECT("MultiSelect"),
   STRING("string");
 
   private String type;

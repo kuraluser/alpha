@@ -13375,6 +13375,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
   public void getOrSaveRulesForLoadableStudy(
       com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver) {
@@ -13485,6 +13486,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                   .ifPresent(ruleTemplateInput::setPrefix);
                               Optional.ofNullable(input.getType())
                                   .ifPresent(ruleTemplateInput::setTypeValue);
+                              Optional.ofNullable(input.getIsMandatory())
+                                  .ifPresent(ruleTemplateInput::setIsMandatory);
                               ruleTemplateInput.setIsActive(true);
                               ruleTemplateInput.setLoadableStudyRuleXId(loadableStudyRules);
                               ruleVesselMappingInputList.add(ruleTemplateInput);
@@ -13537,6 +13540,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Exception in save or get loadable study rule", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -13579,6 +13583,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXId())
           .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getParentRuleXId())
+          .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));
       RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
       for (int inputIndex = 0;
           inputIndex < lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().size();
@@ -13629,6 +13635,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Optional.ofNullable(
                 lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().get(inputIndex).getId())
             .ifPresent(item -> finalRuleInput.setId(String.valueOf(item)));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getIsMandatory())
+            .ifPresent(finalRuleInput::setIsMandatory);
         if (lStudyRulesList
                     .get(ruleIndex)
                     .getLoadableStudyRuleInputs()
@@ -13655,13 +13668,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .get(inputIndex)
                     .getTypeValue()
                 != null
-            && lStudyRulesList
-                .get(ruleIndex)
-                .getLoadableStudyRuleInputs()
-                .get(inputIndex)
-                .getTypeValue()
-                .trim()
-                .equalsIgnoreCase(com.cpdss.loadablestudy.domain.TypeValue.DROPDOWN.getType())) {
+            && (lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue()
+                    .trim()
+                    .equalsIgnoreCase(com.cpdss.loadablestudy.domain.TypeValue.DROPDOWN.getType())
+                || lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue()
+                    .trim()
+                    .equalsIgnoreCase(
+                        com.cpdss.loadablestudy.domain.TypeValue.MULTISELECT.getType()))) {
           RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
           if (lStudyRulesList
                       .get(ruleIndex)
