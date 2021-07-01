@@ -24,7 +24,7 @@ export class ToppingOffTankTableTransformationService {
   getDatatableColumns(): IDataTableColumn[] {
     return [
       {
-        field: 'sequence',
+        field: 'displayOrder',
         header: 'LOADABLE_PLAN_TOPPING_OFF_TANK_SEQUENCE',
       },
       {
@@ -32,13 +32,16 @@ export class ToppingOffTankTableTransformationService {
         header: 'LOADABLE_PLAN_TOPPING_OFF_TANK',
       },
       {
-        field: 'type',
+        field: 'cargoAbbreviation',
         header: 'LOADABLE_PLAN_TOPPING_OFF_TANK_TYPE',
+        fieldType: DATATABLE_FIELD_TYPE.BADGE,
+        badgeColorField: 'colourCode'
       },
       {
         field: 'ullage',
         header: 'LOADABLE_PLAN_TOPPING_OFF_TANK_ULLAGE',
-        fieldType: DATATABLE_FIELD_TYPE.NUMBER
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: "LOADABLE_PLAN_TOPPING_OFF_TANK_ULLAGE_PLACEHOLDER"
       },
       {
         field: 'quantity',
@@ -51,7 +54,8 @@ export class ToppingOffTankTableTransformationService {
       {
         field: 'remark',
         header: 'LOADABLE_PLAN_TOPPING_OFF_TANK_REMARKS',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldPlaceholder: "LOADABLE_PLAN_TOPPING_OFF_TANK_REMARKS_PLACEHOLDER"
       },
     ];
   }
@@ -79,6 +83,9 @@ export class ToppingOffTankTableTransformationService {
     _toppingOffSequence.ullage = new ValueObject<number>(toppingOffSequence.ullage, true, isNewValue, false, true);
     _toppingOffSequence.quantity = toppingOffSequence.quantity;
     _toppingOffSequence.fillingRatio = toppingOffSequence.fillingRatio;
+    _toppingOffSequence.api = toppingOffSequence.api;
+    _toppingOffSequence.temperature = toppingOffSequence.temperature;
+    _toppingOffSequence.displayOrder = toppingOffSequence.displayOrder;
     return _toppingOffSequence;
   }
 
@@ -107,6 +114,7 @@ export class ToppingOffTankTableTransformationService {
       _toppingOffSequence.ullage = Number(valueObject.ullage.value);
       _toppingOffSequence.quantity = valueObject.quantity;
       _toppingOffSequence.fillingRatio = valueObject.fillingRatio;
+      _toppingOffSequence.displayOrder = valueObject.displayOrder;
       toppingOffSequence.push(_toppingOffSequence);
      })
     })

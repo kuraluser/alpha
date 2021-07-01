@@ -98,7 +98,6 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
    * @memberof NewDischargeStudyPopUpComponent
    */
   fieldError(formControlName: string): ValidationErrors { 
-    debugger;
     const formControl = this.field(formControlName);
     return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }

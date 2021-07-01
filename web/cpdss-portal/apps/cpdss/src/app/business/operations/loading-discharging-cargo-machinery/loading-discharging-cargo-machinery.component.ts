@@ -15,6 +15,7 @@ import { ILoadingMachinesInUses, IMachineryInUses } from '../models/loading-info
  * @implements {OnInit}
  */
 export class LoadingDischargingCargoMachineryComponent implements OnInit {
+  @Input() loadingInfoId: number;
   @Input() machineryInUses: IMachineryInUses;
   @Output() updatemachineryInUses: EventEmitter<ILoadingMachinesInUses[]> = new EventEmitter();
 
@@ -24,7 +25,9 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
 
   ngOnInit(): void {
     this.machineryInUses?.vesselPumps?.map((vesselpump) => {
-      vesselpump.isUsing = this.machineryInUses?.loadingMachinesInUses?.some(loadingmachine => loadingmachine.pumpId === vesselpump.pumpTypeId);
+      vesselpump.isUsing = this.machineryInUses?.loadingMachinesInUses?.some(loadingmachine => loadingmachine.pumpId === vesselpump.id);
+      const usedMachine = this.machineryInUses?.loadingMachinesInUses?.find(loadingmachine => loadingmachine.pumpId === vesselpump.id);
+      vesselpump.machineId = usedMachine?.id;
     })
     this.machinery = this.machineryInUses?.vesselPumps?.reduce((acc, obj) => {
       const key = obj['pumpTypeId'];
@@ -49,7 +52,13 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
 * @memberof LoadingDischargingCargoMachineryComponent
 */
   onChange(column) {
-
+    this.machineryInUses.loadingMachinesInUses = this.machineryInUses.loadingMachinesInUses.map((machine) => {
+      if (machine.pumpId === column.id) {
+        machine.capacity = column.capacity;
+      }
+      return machine;
+    })
+    this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses)
   }
 
   /**
@@ -58,19 +67,24 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
 * @memberof LoadingDischargingCargoMachineryComponent
 */
   onUse(column) {
-    if (column.isUsing) {
+    if (column?.isUsing) {
       const machineInUse: ILoadingMachinesInUses = {
         id: 0,
-        loadingInfoId: 43,
-        pumpId: column.pumpTypeId,
+        loadingInfoId: this.loadingInfoId,
+        pumpId: column.id,
         capacity: column.capacity,
         isUsing: column.isUsing
       }
       this.machineryInUses.loadingMachinesInUses.push(machineInUse)
+      if (column?.capacity !== 0) {
+        this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses);
+      }
     } else {
-      this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses?.filter((machineUse) => machineUse.pumpId !== column.pumpTypeId)
+      this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses?.filter((machineUse) => machineUse.id !== column.machineId);
+      this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses);
     }
-    this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses)
+
+
   }
 
 

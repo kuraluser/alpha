@@ -1,4 +1,12 @@
-<p-table [value]="values">
+<p-table [value]="values" styleClass="body-header-row-span-table">
+    <ng-template pTemplate="colgroup" >
+        <colgroup>
+            <col class="table-header-machinery">
+            <col class="checkbox-column">
+            <col class="name-column">
+            <col class="">
+        </colgroup>
+    </ng-template>
     <ng-template pTemplate="header">
         <tr>
             <th>CARGO MACHINERY IN USE</th>
@@ -16,7 +24,7 @@
                 </td>
                 <td>{{column?.pumpName}}</td>
                 <td>
-                    <input type="text" [(ngModel)]="column.capacity" [disabled]="!column.isUsing" (change)="onChange(column)">
+                    <input type="text" cpdssPortalNumberDecimal [(ngModel)]="column.capacity" class="form-control" [disabled]="!column.isUsing" (change)="onChange(column)">
                 </td>
             </tr>
         </ng-container>    

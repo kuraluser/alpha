@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ToppingOffTankTableComponent } from './topping-off-tank-table.component';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
 import { ToppingOffTankTableTransformationService } from './topping-off-tank-table-transformation.service';
+import { ToppingOffTankTableApiService } from './topping-off-tank-table-api.service';
 
 /**
  * Module for topping off table
@@ -20,6 +21,6 @@ import { ToppingOffTankTableTransformationService } from './topping-off-tank-tab
     DatatableModule
   ],
   exports: [ToppingOffTankTableComponent],
-  providers: [ ToppingOffTankTableTransformationService ]
+  providers: [ ToppingOffTankTableTransformationService, ToppingOffTankTableApiService ]
 })
 export class ToppingOffTankTableModule { }

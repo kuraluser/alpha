@@ -419,13 +419,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
       cargoDetails.setGrade(lqcd.getGrade());
       cargoDetails.setId(lqcd.getId());
-
       cargoDetails.setLoadableBbls60f(lqcd.getLoadableBbls60F());
       cargoDetails.setLoadableBblsdbs(lqcd.getLoadableBblsdbs());
       cargoDetails.setLoadableKL(lqcd.getLoadableKL());
       cargoDetails.setLoadableLT(lqcd.getLoadableLT());
       cargoDetails.setLoadableMT(lqcd.getLoadableMT());
-
       cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
       cargoDetails.setMinTolerence(lqcd.getMinTolerence());
       cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());

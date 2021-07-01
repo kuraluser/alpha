@@ -1,4 +1,4 @@
-import { IResponseStatus } from '../../../shared/models/common.model';
+import { ICargoConditions, IResponseStatus } from '../../../shared/models/common.model';
 import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
 
 
@@ -21,14 +21,7 @@ export class IVoyageStatus {
     stabilityConditions: IDraftCondition;
 }
 
-/**
- * Interface for cargo conditions model
- */
-export class ICargoConditions {
-    id: number;
-    plannedWeight: number;
-    actualWeight: number;
-}
+
 /**
  * Interface for bunker condition model
  */

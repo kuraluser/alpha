@@ -24,14 +24,27 @@ import { LoadingDischargingCargoDetailsTransformationService } from './loading-d
 export class LoadingDischargingCargoDetailsComponent implements OnInit {
   @Input() cargos: ICargo[];
   @Input() cargoVesselTankDetails: ICargoVesselTankDetails;
+  @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
+  @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
+    return this._currentQuantitySelectedUnit;
+  }
+
+  set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
+    this._currentQuantitySelectedUnit = value;
+    if( this.cargoVesselTankDetails?.loadableQuantityCargoDetails){
+      this.updateCargoTobeLoadedData();
+    }
+  }
+  
+  private _currentQuantitySelectedUnit: QUANTITY_UNIT;
+
   cargoTanks: IShipCargoTank[][];
   cargoConditions: any = [];
   cargoQuantities: ICargoQuantities[];
-  prevQuantitySelectedUnit: QUANTITY_UNIT;
-  currentQuantitySelectedUnit: QUANTITY_UNIT;
   cargoTobeLoadedColumns: IDataTableColumn[];
   cargoTobeLoaded: ILoadableQuantityCargo[] = [];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, fillingPercentageField: 'fillingRatio', weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
   constructor(
     private _decimalPipe: DecimalPipe,
     private quantityPipe: QuantityPipe,
@@ -41,24 +54,10 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.cargoTobeLoadedColumns = this.loadingDischargingCargoDetailsTransformationService.getCargotobeLoadedDatatableColumns(this.currentQuantitySelectedUnit);
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
-    this.currentQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
+    this.cargoConditions = this.cargoVesselTankDetails?.cargoConditions;
     this.cargoQuantities = this.cargoVesselTankDetails?.cargoQuantities;
     this.cargoTanks = this.loadingDischargingCargoDetailsTransformationService.formatCargoTanks(this.cargoVesselTankDetails?.cargoTanks, this.cargoVesselTankDetails?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.updateCargoTobeLoadedData();
-
-    //TODO: remove after api update
-    this.cargoConditions = [
-      {
-        abbreviation: null,
-        actualWeight: 0,
-        api: null,
-        companyId: null,
-        id: 0,
-        name: null,
-        plannedWeight: 242400,
-        temp: null
-      }
-    ];
   }
 
 
@@ -77,7 +76,7 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
         loadable.differencePercentage = loadable.differencePercentage ? (loadable.differencePercentage.includes('%') ? loadable.differencePercentage : loadable.differencePercentage + '%') : '';
         loadable.grade = this.findCargo(loadable);
 
-        const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingCargoDetailsTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
+        const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingCargoDetailsTransformationService.convertToNumber(loadable?.orderQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
         loadable.orderedQuantity = orderedQuantity?.toString();
 
         const loadableMT = this.quantityPipe.transform(this.loadingDischargingCargoDetailsTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);

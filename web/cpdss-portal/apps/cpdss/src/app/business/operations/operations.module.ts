@@ -9,11 +9,12 @@ import { UnitDropdownModule } from '../../shared/components/unit-dropdown/unit-d
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbon/port-rotation-ribbon.module';
-
+import { AddPortPopupModule } from './add-port-popup/add-port-popup.module';
+import { LoadingTransformationService } from './services/loading-transformation.service';
 
 @NgModule({
   declarations: [
-    OperationsComponent,
+    OperationsComponent
   ],
   imports: [
     CommonModule,
@@ -22,8 +23,9 @@ import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbo
     OperationsRoutingModule,
     VesselInfoModule,
     UnitDropdownModule,
-    PortRotationRibbonModule
+    PortRotationRibbonModule,
+    AddPortPopupModule
   ],
-  providers: [VesselsApiService]
+  providers: [VesselsApiService, LoadingTransformationService]
 })
 export class OperationsModule { }

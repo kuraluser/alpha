@@ -38,7 +38,7 @@ export class PlanSidePanelComponent implements OnInit {
 
     this.selectedBerths = [
       {
-        "id": 15035,
+        "berthId": 15035,
         "portId": null,
         "loadingInfoId": 43,
         "maxShpChannel": null,

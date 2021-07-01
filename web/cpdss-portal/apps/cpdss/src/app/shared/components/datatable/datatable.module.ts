@@ -13,6 +13,7 @@ import { NumberDirectiveModule } from '../../directives/number-directive/number-
 import { PaginatorModule } from 'primeng/paginator';
 import { TooltipModule } from 'primeng/tooltip';
 import { QuantityDecimalFormatPipeModule } from '../../pipes/quantity-decimal-format/quantity-decimal-format.module';
+import {InputMaskModule} from 'primeng/inputmask';
 
 /**
  * Module for DataTable
@@ -35,7 +36,8 @@ import { QuantityDecimalFormatPipeModule } from '../../pipes/quantity-decimal-fo
     PaginatorModule,
     NumberDirectiveModule,
     TooltipModule,
-    QuantityDecimalFormatPipeModule
+    QuantityDecimalFormatPipeModule,
+    InputMaskModule
   ],
   exports: [DatatableComponent],
   providers: [DecimalPipe]
