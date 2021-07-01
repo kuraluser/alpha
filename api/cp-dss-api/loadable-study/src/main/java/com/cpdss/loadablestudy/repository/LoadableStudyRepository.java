@@ -27,6 +27,9 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
         vesselXId, voyage, planningId);
   }
 
+  public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
+      final Long vesselXId, final Voyage voyage, final boolean isActive, Long id);
+
   // Use at test Only
   public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
       final Long vesselXId, final Voyage voyage, final boolean isActive);
