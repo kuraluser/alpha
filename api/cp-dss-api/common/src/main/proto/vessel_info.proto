@@ -392,6 +392,9 @@ message VesselReply {
 	message VesselRuleReply{
 	   ResponseStatus responseStatus = 1;
 	   repeated RulePlans rulePlan = 2;
+	   repeated CargoTankMaster cargoTankMaster = 3;
+	   repeated RuleDropDownValueMaster ruleDropDownValueMaster = 4;
+	   repeated RuleTypeMaster ruleTypeMaster = 5;
 	}
 
 	message VesselValveSequenceReply{
@@ -444,3 +447,21 @@ message VesselReply {
 		repeated Rules rules = 1;
 		ResponseStatus responseStatus = 2;
 	}
+	
+	message CargoTankMaster{
+	  int64 id = 1;
+	  string shortName = 2;
+	}
+	
+	message RuleDropDownValueMaster{
+	  int64 id = 1;
+	  string value = 2;
+	  int64 ruleTemplateId = 3;
+	}
+	
+	message RuleTypeMaster{
+	  int64 id = 1;
+	  string ruleType = 2;
+	}
+	
+	
