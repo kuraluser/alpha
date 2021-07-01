@@ -343,12 +343,15 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
   private BigDecimal getMaxManifoldHeight(BerthInfo berth) {
     try {
-      List<BerthManifold> var1 = berthManifoldRepository.findByBerthInfoAndIsActiveTrue(berth);
-      BerthManifold va =
-          var1.stream().max(Comparator.comparing(BerthManifold::getManifoldHeight)).get();
-      if (va.getManifoldHeight() != null) return va.getManifoldHeight();
+      List<BerthManifold> var1 =
+          berthManifoldRepository.findByBerthInfoAndIsActiveTrue(berth.getId());
+      if (!var1.isEmpty()) {
+        BerthManifold va =
+            var1.stream().max(Comparator.comparing(BerthManifold::getManifoldHeight)).get();
+        if (va.getManifoldHeight() != null) return va.getManifoldHeight();
+      }
     } catch (Exception e) {
-
+      log.error("Failed to get manifold data for berth Id {}, {}", berth.getId(), e.getMessage());
     }
     return BigDecimal.ZERO;
   }
