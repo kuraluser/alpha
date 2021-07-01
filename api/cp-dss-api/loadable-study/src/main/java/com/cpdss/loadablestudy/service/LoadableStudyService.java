@@ -2816,13 +2816,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudyPortRotation entity = entityOpt.get();
-      if (null != entity.getOperation()
-          && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
-              || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
-        throw new GenericServiceException(
-            "Cannot delete loading/discharging ports",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
+      if (loadableStudy.getPlanningTypeXId() != null
+          && loadableStudy.getPlanningTypeXId().equals(Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE)) {
+        if (null != entity.getOperation()
+            && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
+                || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
+          throw new GenericServiceException(
+              "Cannot delete loading/discharging ports",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
       }
       entity.setActive(false);
       // delete ports from synoptical table
@@ -13740,23 +13743,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudy> loadableStudy =
           loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
               voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
-      if (loadableStudy.isPresent()) {
-        builder.setLoadableStudyId(loadableStudy.get().getId());
-        log.info("Confirmed Ls - ls id {}", loadableStudy.get().getId());
-        Optional<LoadablePattern> pattern =
-            loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
-                loadableStudy.get(), CONFIRMED_STATUS_ID, true);
-        if (pattern.isPresent()) {
-          com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePattern =
-              com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
-          loadablePattern.setLoadablePatternId(pattern.get().getId());
-          builder.setPattern(loadablePattern.build());
-        }
+      if (loadableStudy.isEmpty()) {
+        throw new GenericServiceException(
+            "Confirmed Loadable study does not exist",
+            CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      builder.setLoadableStudyId(loadableStudy.get().getId());
+      log.info("Confirmed Ls - ls id {}", loadableStudy.get().getId());
+      Optional<LoadablePattern> pattern =
+          loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+              loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+      if (pattern.isPresent()) {
+        com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePattern =
+            com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+        loadablePattern.setLoadablePatternId(pattern.get().getId());
+        builder.setPattern(loadablePattern.build());
       }
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-    } catch (Exception e) {
-      e.printStackTrace();
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } catch (GenericServiceException e) {
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

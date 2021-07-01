@@ -100,7 +100,7 @@ public class LoadingInformationDischargeService {
                 builder.addBillOfLadding(bolBuilder);
               });
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-    } else throw new Exception("Cannot find loadable pattern");
+    }
     builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return builder;
   }
