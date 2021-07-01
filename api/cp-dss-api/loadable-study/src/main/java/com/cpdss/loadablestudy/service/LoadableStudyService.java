@@ -6418,6 +6418,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       pattern.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
       pattern.setLdIntactStability(
           this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(
+              patternDetails.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        pattern.setFeedbackLoop(
+            Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoop()).isPresent()
+                ? loadablePatternOpt.get().getFeedbackLoop()
+                : false);
+        pattern.setFeedbackLoopCount(
+            Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoopCount()).isPresent()
+                ? loadablePatternOpt.get().getFeedbackLoopCount()
+                : 0);
+      }
       loadicator.setLoadicatorPatternDetail(pattern);
     } else {
       request
@@ -10244,12 +10257,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.loadablePatternRepository.findByLoadableStudyAndIsActive(
                 loadableStudyEntity, true);
         loadicatorRequestBuilder.setIsPattern(false);
+        loadicatorRequestBuilder.setLoadableStudyId(loadableStudyEntity.getId());
       } else {
         Optional<LoadablePattern> lpOpt =
             this.loadablePatternRepository.findByIdAndIsActive(patternId, true);
         loadablePatterns =
             lpOpt.isPresent() ? new ArrayList<LoadablePattern>(Arrays.asList(lpOpt.get())) : null;
         loadicatorRequestBuilder.setIsPattern(true);
+        loadicatorRequestBuilder.setLoadablePatternId(lpOpt.get().getId());
       }
       if (null == loadablePatterns) {
         throw new GenericServiceException(
