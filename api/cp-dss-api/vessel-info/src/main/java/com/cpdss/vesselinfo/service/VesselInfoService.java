@@ -5,6 +5,7 @@ import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.Common.RuleDropDownMaster;
 import com.cpdss.common.generated.Common.RulePlans;
 import com.cpdss.common.generated.Common.Rules;
 import com.cpdss.common.generated.Common.RulesInputs;
@@ -41,6 +42,8 @@ import com.cpdss.common.generated.VesselInfo.VesselTankTCG;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.vesselinfo.domain.CargoTankMaster;
+import com.cpdss.vesselinfo.domain.RuleMasterData;
 import com.cpdss.vesselinfo.domain.TypeValue;
 import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.domain.VesselInfo;
@@ -54,6 +57,7 @@ import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
 import com.cpdss.vesselinfo.entity.RuleTemplate;
 import com.cpdss.vesselinfo.entity.RuleTemplateInput;
 import com.cpdss.vesselinfo.entity.RuleType;
+import com.cpdss.vesselinfo.entity.RuleVesselDropDownValues;
 import com.cpdss.vesselinfo.entity.RuleVesselMapping;
 import com.cpdss.vesselinfo.entity.RuleVesselMappingInput;
 import com.cpdss.vesselinfo.entity.TankCategory;
@@ -73,6 +77,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -84,6 +89,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -120,6 +126,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired RuleVesselMappingInputRespository ruleVesselMappingInputRespository;
   @Autowired VesselValveSequenceRepository vesselValveSequenceRepository;
   @Autowired RuleTemplateInputRepository ruleTemplateInputRepository;
+  @Autowired RuleVesselDropDownValuesRepository ruleVesselDropDownValuesRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -950,6 +957,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         .ifPresent(tankId -> vesselTankTcgBuilder.setTankId(tankId));
     Optional.ofNullable(vesselTankTcg.getTcg())
         .ifPresent(tcg -> vesselTankTcgBuilder.setTcg(String.valueOf(tcg)));
+    Optional.ofNullable(vesselTankTcg.getLcg())
+        .ifPresent(lcg -> vesselTankTcgBuilder.setLcg(String.valueOf(lcg)));
+    Optional.ofNullable(vesselTankTcg.getVcg())
+        .ifPresent(vcg -> vesselTankTcgBuilder.setVcg(String.valueOf(vcg)));
+    Optional.ofNullable(vesselTankTcg.getInertia())
+        .ifPresent(inertia -> vesselTankTcgBuilder.setInertia(String.valueOf(inertia)));
     return vesselTankTcgBuilder.build();
   }
 
@@ -1488,7 +1501,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 
   /** To retrieve vessel rule based on vessel id OR To save rule for vessel */
   @Override
-  @Transactional
+  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
   public void getRulesByVesselIdAndSectionId(
       VesselRuleRequest request, StreamObserver<VesselRuleReply> responseObserver) {
     com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder =
@@ -1502,6 +1515,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      // Fetch master records
+      List<RuleVesselDropDownValues> listOfDropDownValue =
+          ruleVesselDropDownValuesRepository.findAll();
+      List<CargoTankMaster> cargoTankMaster =
+          vesselTankRepository.findCargoTankMaster(request.getVesselId(), true);
+
       if (!CollectionUtils.isEmpty(request.getRulePlanList())) {
         log.info("To save rule against vessel");
         List<RuleType> ruleTypeList = ruleTypeRepository.findByIsActive(true);
@@ -1523,13 +1542,13 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                                 ruleVesselMapping = rVesselMapping.get();
                               }
                             }
-                            Optional.ofNullable(rule.getIsHardRule())
-                                .ifPresent(ruleVesselMapping::setIsHardRule);
                             ruleVesselMapping.setIsActive(true);
                             Optional.ofNullable(rule.getDisplayInSettings())
                                 .ifPresent(ruleVesselMapping::setDisplayInSettings);
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(ruleVesselMapping::setIsEnable);
+                            Optional.ofNullable(rule.getIsHardRule())
+                                .ifPresent(ruleVesselMapping::setIsHardRule);
                             ruleVesselMapping.setVessel(vessel);
                             if (!CollectionUtils.isEmpty(ruleTypeList)
                                 && rule.getRuleType() != null
@@ -1577,6 +1596,48 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                                   .ifPresent(ruleTemplateInput::setPrefix);
                               Optional.ofNullable(input.getType())
                                   .ifPresent(ruleTemplateInput::setTypeValue);
+                              Optional.ofNullable(input.getIsMandatory())
+                                  .ifPresent(ruleTemplateInput::setIsMandatory);
+
+                              try {
+                                if (input.getType() != null
+                                    && input
+                                        .getType()
+                                        .trim()
+                                        .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                                    && input.getDefaultValue() != null
+                                    && input.getDefaultValue().trim() != "") {
+                                  if (input.getSuffix() != null
+                                      && input.getPrefix() != null
+                                      && input
+                                          .getSuffix()
+                                          .trim()
+                                          .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
+                                      && input
+                                          .getPrefix()
+                                          .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
+
+                                    this.ruleMasterDropDownValidation(
+                                        listOfDropDownValue,
+                                        cargoTankMaster,
+                                        true,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  } else {
+                                    this.ruleMasterDropDownValidation(
+                                        listOfDropDownValue,
+                                        cargoTankMaster,
+                                        false,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  }
+                                }
+                              } catch (GenericServiceException e) {
+                                throw new RuntimeException(
+                                    "Master rule drop down value does not exist");
+                              }
                               ruleTemplateInput.setIsActive(true);
                               ruleTemplateInput.setRuleVesselMapping(ruleVesselMapping);
                               ruleVesselMappingInputList.add(ruleTemplateInput);
@@ -1597,21 +1658,33 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       if (vesselRuleList != null && vesselRuleList.size() > 0) {
         if (!request.getIsNoDefaultRule()) {
           log.info("Fetch vessel rule1");
-          buildReponseForVesselRules(builder, vesselRuleList, true, false);
+          buildReponseForVesselRules(
+              builder, vesselRuleList, true, false, listOfDropDownValue, cargoTankMaster);
         } else {
           log.info("Fetch vessel rule2");
-          buildReponseForVesselRules(builder, vesselRuleList, false, true);
+          buildReponseForVesselRules(
+              builder, vesselRuleList, false, true, listOfDropDownValue, cargoTankMaster);
         }
       } else {
         if (!request.getIsNoDefaultRule()) {
           log.info("Fetch default rule template");
           vesselRuleList = vesselRepository.findRuleTemplateForNoVessel(request.getSectionId());
-          buildReponseForVesselRules(builder, vesselRuleList, false, false);
+          buildReponseForVesselRules(
+              builder, vesselRuleList, false, false, listOfDropDownValue, cargoTankMaster);
         }
       }
 
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when save or get vessel rule", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Exception in save or get vessel rule", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -1625,19 +1698,115 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     }
   }
 
+  private void ruleMasterDropDownValidation(
+      List<RuleVesselDropDownValues> listOfDropDownValue,
+      List<CargoTankMaster> cargoTankMaster,
+      boolean isCargoTankMaster,
+      RulesInputs input,
+      RuleVesselMappingInput ruleTemplateInput,
+      Rules rule)
+      throws GenericServiceException {
+    String value = "";
+    List<RuleVesselDropDownValues> filterMasterByRule =
+        listOfDropDownValue.stream()
+            .filter(
+                rDropDown ->
+                    rDropDown.getRuleTemplateXid() != null
+                        && rule.getRuleTemplateId() != null
+                        && rDropDown
+                            .getRuleTemplateXid()
+                            .equals(Long.parseLong(rule.getRuleTemplateId())))
+            .collect(Collectors.toList());
+    if (input.getDefaultValue().contains(",")) {
+      String[] masterIds = input.getDefaultValue().split(",");
+      for (int id = 0; id < masterIds.length; id++) {
+        int finalId = id;
+        if (isCargoTankMaster) {
+          if (cargoTankMaster.stream()
+              .map(CargoTankMaster::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        } else {
+          if (filterMasterByRule.stream()
+              .map(RuleVesselDropDownValues::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        }
+      }
+      ruleTemplateInput.setDefaultValue(value);
+    } else {
+      if (isCargoTankMaster) {
+        if (!cargoTankMaster.stream()
+            .map(CargoTankMaster::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Cargo master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      } else {
+        if (!filterMasterByRule.stream()
+            .map(RuleVesselDropDownValues::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Rulemaster master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      }
+      ruleTemplateInput.setDefaultValue(input.getDefaultValue());
+    }
+  }
+
   private void buildReponseForVesselRules(
       com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
       List<VesselRule> vesselRuleList,
       boolean isDisplayId,
-      boolean isDisplayVesselRuleXId) {
+      boolean isDisplayVesselRuleXId,
+      List<RuleVesselDropDownValues> listOfDropDownValue,
+      List<CargoTankMaster> cargoTankMaster) {
     Map<String, List<VesselRule>> groupByHeader =
-        vesselRuleList.stream().collect(Collectors.groupingBy(VesselRule::getHeader));
+        vesselRuleList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    VesselRule::getHeader, LinkedHashMap::new, Collectors.toList()));
     groupByHeader.forEach(
         (header, v) -> {
           RulePlans.Builder rulePlanBuider = RulePlans.newBuilder();
           Optional.ofNullable(header).ifPresent(item -> rulePlanBuider.setHeader(item));
           Map<Long, List<VesselRule>> groupByRuleTemplateId =
-              v.stream().collect(Collectors.groupingBy(VesselRule::getTemplateId));
+              v.stream()
+                  .collect(
+                      Collectors.groupingBy(
+                          VesselRule::getTemplateId, LinkedHashMap::new, Collectors.toList()));
           groupByRuleTemplateId.forEach(
               (key, value) -> {
                 RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
@@ -1656,6 +1825,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       .ifPresent(item -> ruleInput.setType(item));
                   Optional.ofNullable(value.get(id).getTemplateInputSuffix())
                       .ifPresent(item -> ruleInput.setSuffix(item));
+                  Optional.ofNullable(value.get(id).getIsMandatory())
+                      .ifPresent(ruleInput::setIsMandatory);
                   if (value.get(id).getTemplateInputTypeValue() != null
                       && value
                           .get(id)
@@ -1668,6 +1839,61 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                               .trim()
                               .equalsIgnoreCase("true"))) {
                     ruleInput.setDefaultValue("false");
+                  }
+                  if (value.get(id).getTemplateInputTypeValue() != null
+                      && value
+                          .get(id)
+                          .getTemplateInputTypeValue()
+                          .equalsIgnoreCase(TypeValue.DROPDOWN.getType())) {
+                    RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
+                    if (value.get(id).getTemplateInputSuffix() != null
+                        && value.get(id).getTemplateInputPrefix() != null
+                        && value
+                            .get(id)
+                            .getTemplateInputSuffix()
+                            .trim()
+                            .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
+                        && value
+                            .get(id)
+                            .getTemplateInputPrefix()
+                            .trim()
+                            .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
+                      cargoTankMaster.forEach(
+                          cargoTank -> {
+                            Optional.ofNullable(cargoTank.getId())
+                                .ifPresent(ruleDropDownMaster::setId);
+                            Optional.ofNullable(cargoTank.getValue())
+                                .ifPresent(ruleDropDownMaster::setValue);
+                            ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+                          });
+                    } else {
+                      Optional<Long> ruleTempId;
+                      if (isDisplayId) {
+                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateId());
+                      } else {
+                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateFId());
+                      }
+                      if (ruleTempId.isPresent()) {
+                        List<RuleVesselDropDownValues> filterMasterByRule =
+                            listOfDropDownValue.stream()
+                                .filter(
+                                    rDropDown ->
+                                        rDropDown.getRuleTemplateXid() != null
+                                            && ruleTempId.get() != null
+                                            && rDropDown
+                                                .getRuleTemplateXid()
+                                                .equals(ruleTempId.get()))
+                                .collect(Collectors.toList());
+                        filterMasterByRule.forEach(
+                            masterDropDownRule -> {
+                              Optional.ofNullable(masterDropDownRule.getId())
+                                  .ifPresent(ruleDropDownMaster::setId);
+                              Optional.ofNullable(masterDropDownRule.getDropDownValue())
+                                  .ifPresent(ruleDropDownMaster::setValue);
+                              ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+                            });
+                      }
+                    }
                   }
                   if (isDisplayId) {
                     Optional.ofNullable(value.get(id).getTemplateInputId())

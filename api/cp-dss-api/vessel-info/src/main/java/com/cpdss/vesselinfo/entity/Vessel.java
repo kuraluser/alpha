@@ -177,4 +177,13 @@ public class Vessel extends EntityDoc {
 
   @OneToMany(mappedBy = "vessel", fetch = FetchType.LAZY)
   private Set<UllageTrimCorrection> ullageTrimCorrections;
+
+  @Column(name = "homegeneous_loading_rate")
+  private BigDecimal homogeneousLoadingRate;
+
+  @Column(name = "wing_tank_loading_rate")
+  private BigDecimal wingTankLoadingRate;
+
+  @Column(name = "center_tank_loading_rate")
+  private BigDecimal centerTankLoadingRate;
 }

@@ -5763,6 +5763,27 @@ public final class Common {
      * @return The bytes for id.
      */
     com.google.protobuf.ByteString getIdBytes();
+
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    java.util.List<com.cpdss.common.generated.Common.RuleDropDownMaster>
+        getRuleDropDownMasterList();
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    com.cpdss.common.generated.Common.RuleDropDownMaster getRuleDropDownMaster(int index);
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    int getRuleDropDownMasterCount();
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    java.util.List<? extends com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder>
+        getRuleDropDownMasterOrBuilderList();
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder getRuleDropDownMasterOrBuilder(
+        int index);
+
+    /**
+     * <code>bool isMandatory = 10;</code>
+     *
+     * @return The isMandatory.
+     */
+    boolean getIsMandatory();
   }
   /** Protobuf type {@code RulesInputs} */
   public static final class RulesInputs extends com.google.protobuf.GeneratedMessageV3
@@ -5784,6 +5805,7 @@ public final class Common {
       value_ = "";
       suffix_ = "";
       id_ = "";
+      ruleDropDownMaster_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -5805,6 +5827,7 @@ public final class Common {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -5871,6 +5894,25 @@ public final class Common {
                 id_ = s;
                 break;
               }
+            case 74:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  ruleDropDownMaster_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.Common.RuleDropDownMaster>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                ruleDropDownMaster_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.RuleDropDownMaster.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 80:
+              {
+                isMandatory_ = input.readBool();
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -5885,6 +5927,9 @@ public final class Common {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          ruleDropDownMaster_ = java.util.Collections.unmodifiableList(ruleDropDownMaster_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -6183,6 +6228,44 @@ public final class Common {
       }
     }
 
+    public static final int RULEDROPDOWNMASTER_FIELD_NUMBER = 9;
+    private java.util.List<com.cpdss.common.generated.Common.RuleDropDownMaster>
+        ruleDropDownMaster_;
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    public java.util.List<com.cpdss.common.generated.Common.RuleDropDownMaster>
+        getRuleDropDownMasterList() {
+      return ruleDropDownMaster_;
+    }
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder>
+        getRuleDropDownMasterOrBuilderList() {
+      return ruleDropDownMaster_;
+    }
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    public int getRuleDropDownMasterCount() {
+      return ruleDropDownMaster_.size();
+    }
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    public com.cpdss.common.generated.Common.RuleDropDownMaster getRuleDropDownMaster(int index) {
+      return ruleDropDownMaster_.get(index);
+    }
+    /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+    public com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder
+        getRuleDropDownMasterOrBuilder(int index) {
+      return ruleDropDownMaster_.get(index);
+    }
+
+    public static final int ISMANDATORY_FIELD_NUMBER = 10;
+    private boolean isMandatory_;
+    /**
+     * <code>bool isMandatory = 10;</code>
+     *
+     * @return The isMandatory.
+     */
+    public boolean getIsMandatory() {
+      return isMandatory_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -6221,6 +6304,12 @@ public final class Common {
       if (!getIdBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, id_);
       }
+      for (int i = 0; i < ruleDropDownMaster_.size(); i++) {
+        output.writeMessage(9, ruleDropDownMaster_.get(i));
+      }
+      if (isMandatory_ != false) {
+        output.writeBool(10, isMandatory_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -6254,6 +6343,13 @@ public final class Common {
       if (!getIdBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, id_);
       }
+      for (int i = 0; i < ruleDropDownMaster_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(9, ruleDropDownMaster_.get(i));
+      }
+      if (isMandatory_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(10, isMandatory_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -6278,6 +6374,8 @@ public final class Common {
       if (!getValue().equals(other.getValue())) return false;
       if (!getSuffix().equals(other.getSuffix())) return false;
       if (!getId().equals(other.getId())) return false;
+      if (!getRuleDropDownMasterList().equals(other.getRuleDropDownMasterList())) return false;
+      if (getIsMandatory() != other.getIsMandatory()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -6305,6 +6403,12 @@ public final class Common {
       hash = (53 * hash) + getSuffix().hashCode();
       hash = (37 * hash) + ID_FIELD_NUMBER;
       hash = (53 * hash) + getId().hashCode();
+      if (getRuleDropDownMasterCount() > 0) {
+        hash = (37 * hash) + RULEDROPDOWNMASTER_FIELD_NUMBER;
+        hash = (53 * hash) + getRuleDropDownMasterList().hashCode();
+      }
+      hash = (37 * hash) + ISMANDATORY_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsMandatory());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -6436,7 +6540,9 @@ public final class Common {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getRuleDropDownMasterFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -6457,6 +6563,14 @@ public final class Common {
         suffix_ = "";
 
         id_ = "";
+
+        if (ruleDropDownMasterBuilder_ == null) {
+          ruleDropDownMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          ruleDropDownMasterBuilder_.clear();
+        }
+        isMandatory_ = false;
 
         return this;
       }
@@ -6484,6 +6598,7 @@ public final class Common {
       public com.cpdss.common.generated.Common.RulesInputs buildPartial() {
         com.cpdss.common.generated.Common.RulesInputs result =
             new com.cpdss.common.generated.Common.RulesInputs(this);
+        int from_bitField0_ = bitField0_;
         result.prefix_ = prefix_;
         result.defaultValue_ = defaultValue_;
         result.type_ = type_;
@@ -6492,6 +6607,16 @@ public final class Common {
         result.value_ = value_;
         result.suffix_ = suffix_;
         result.id_ = id_;
+        if (ruleDropDownMasterBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            ruleDropDownMaster_ = java.util.Collections.unmodifiableList(ruleDropDownMaster_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.ruleDropDownMaster_ = ruleDropDownMaster_;
+        } else {
+          result.ruleDropDownMaster_ = ruleDropDownMasterBuilder_.build();
+        }
+        result.isMandatory_ = isMandatory_;
         onBuilt();
         return result;
       }
@@ -6576,6 +6701,36 @@ public final class Common {
           id_ = other.id_;
           onChanged();
         }
+        if (ruleDropDownMasterBuilder_ == null) {
+          if (!other.ruleDropDownMaster_.isEmpty()) {
+            if (ruleDropDownMaster_.isEmpty()) {
+              ruleDropDownMaster_ = other.ruleDropDownMaster_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureRuleDropDownMasterIsMutable();
+              ruleDropDownMaster_.addAll(other.ruleDropDownMaster_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.ruleDropDownMaster_.isEmpty()) {
+            if (ruleDropDownMasterBuilder_.isEmpty()) {
+              ruleDropDownMasterBuilder_.dispose();
+              ruleDropDownMasterBuilder_ = null;
+              ruleDropDownMaster_ = other.ruleDropDownMaster_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              ruleDropDownMasterBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getRuleDropDownMasterFieldBuilder()
+                      : null;
+            } else {
+              ruleDropDownMasterBuilder_.addAllMessages(other.ruleDropDownMaster_);
+            }
+          }
+        }
+        if (other.getIsMandatory() != false) {
+          setIsMandatory(other.getIsMandatory());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -6604,6 +6759,8 @@ public final class Common {
         }
         return this;
       }
+
+      private int bitField0_;
 
       private java.lang.Object prefix_ = "";
       /**
@@ -7213,6 +7370,260 @@ public final class Common {
         return this;
       }
 
+      private java.util.List<com.cpdss.common.generated.Common.RuleDropDownMaster>
+          ruleDropDownMaster_ = java.util.Collections.emptyList();
+
+      private void ensureRuleDropDownMasterIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          ruleDropDownMaster_ =
+              new java.util.ArrayList<com.cpdss.common.generated.Common.RuleDropDownMaster>(
+                  ruleDropDownMaster_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.Common.RuleDropDownMaster,
+              com.cpdss.common.generated.Common.RuleDropDownMaster.Builder,
+              com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder>
+          ruleDropDownMasterBuilder_;
+
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public java.util.List<com.cpdss.common.generated.Common.RuleDropDownMaster>
+          getRuleDropDownMasterList() {
+        if (ruleDropDownMasterBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(ruleDropDownMaster_);
+        } else {
+          return ruleDropDownMasterBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public int getRuleDropDownMasterCount() {
+        if (ruleDropDownMasterBuilder_ == null) {
+          return ruleDropDownMaster_.size();
+        } else {
+          return ruleDropDownMasterBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public com.cpdss.common.generated.Common.RuleDropDownMaster getRuleDropDownMaster(int index) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          return ruleDropDownMaster_.get(index);
+        } else {
+          return ruleDropDownMasterBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder setRuleDropDownMaster(
+          int index, com.cpdss.common.generated.Common.RuleDropDownMaster value) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleDropDownMasterIsMutable();
+          ruleDropDownMaster_.set(index, value);
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder setRuleDropDownMaster(
+          int index, com.cpdss.common.generated.Common.RuleDropDownMaster.Builder builderForValue) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          ensureRuleDropDownMasterIsMutable();
+          ruleDropDownMaster_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder addRuleDropDownMaster(
+          com.cpdss.common.generated.Common.RuleDropDownMaster value) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleDropDownMasterIsMutable();
+          ruleDropDownMaster_.add(value);
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder addRuleDropDownMaster(
+          int index, com.cpdss.common.generated.Common.RuleDropDownMaster value) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleDropDownMasterIsMutable();
+          ruleDropDownMaster_.add(index, value);
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder addRuleDropDownMaster(
+          com.cpdss.common.generated.Common.RuleDropDownMaster.Builder builderForValue) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          ensureRuleDropDownMasterIsMutable();
+          ruleDropDownMaster_.add(builderForValue.build());
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder addRuleDropDownMaster(
+          int index, com.cpdss.common.generated.Common.RuleDropDownMaster.Builder builderForValue) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          ensureRuleDropDownMasterIsMutable();
+          ruleDropDownMaster_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder addAllRuleDropDownMaster(
+          java.lang.Iterable<? extends com.cpdss.common.generated.Common.RuleDropDownMaster>
+              values) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          ensureRuleDropDownMasterIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, ruleDropDownMaster_);
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder clearRuleDropDownMaster() {
+        if (ruleDropDownMasterBuilder_ == null) {
+          ruleDropDownMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public Builder removeRuleDropDownMaster(int index) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          ensureRuleDropDownMasterIsMutable();
+          ruleDropDownMaster_.remove(index);
+          onChanged();
+        } else {
+          ruleDropDownMasterBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public com.cpdss.common.generated.Common.RuleDropDownMaster.Builder
+          getRuleDropDownMasterBuilder(int index) {
+        return getRuleDropDownMasterFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder
+          getRuleDropDownMasterOrBuilder(int index) {
+        if (ruleDropDownMasterBuilder_ == null) {
+          return ruleDropDownMaster_.get(index);
+        } else {
+          return ruleDropDownMasterBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder>
+          getRuleDropDownMasterOrBuilderList() {
+        if (ruleDropDownMasterBuilder_ != null) {
+          return ruleDropDownMasterBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(ruleDropDownMaster_);
+        }
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public com.cpdss.common.generated.Common.RuleDropDownMaster.Builder
+          addRuleDropDownMasterBuilder() {
+        return getRuleDropDownMasterFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.Common.RuleDropDownMaster.getDefaultInstance());
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public com.cpdss.common.generated.Common.RuleDropDownMaster.Builder
+          addRuleDropDownMasterBuilder(int index) {
+        return getRuleDropDownMasterFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.Common.RuleDropDownMaster.getDefaultInstance());
+      }
+      /** <code>repeated .RuleDropDownMaster ruleDropDownMaster = 9;</code> */
+      public java.util.List<com.cpdss.common.generated.Common.RuleDropDownMaster.Builder>
+          getRuleDropDownMasterBuilderList() {
+        return getRuleDropDownMasterFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.Common.RuleDropDownMaster,
+              com.cpdss.common.generated.Common.RuleDropDownMaster.Builder,
+              com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder>
+          getRuleDropDownMasterFieldBuilder() {
+        if (ruleDropDownMasterBuilder_ == null) {
+          ruleDropDownMasterBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.Common.RuleDropDownMaster,
+                  com.cpdss.common.generated.Common.RuleDropDownMaster.Builder,
+                  com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder>(
+                  ruleDropDownMaster_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          ruleDropDownMaster_ = null;
+        }
+        return ruleDropDownMasterBuilder_;
+      }
+
+      private boolean isMandatory_;
+      /**
+       * <code>bool isMandatory = 10;</code>
+       *
+       * @return The isMandatory.
+       */
+      public boolean getIsMandatory() {
+        return isMandatory_;
+      }
+      /**
+       * <code>bool isMandatory = 10;</code>
+       *
+       * @param value The isMandatory to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsMandatory(boolean value) {
+
+        isMandatory_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isMandatory = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsMandatory() {
+
+        isMandatory_ = false;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -7265,6 +7676,654 @@ public final class Common {
     }
   }
 
+  public interface RuleDropDownMasterOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:RuleDropDownMaster)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The value.
+     */
+    java.lang.String getValue();
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The bytes for value.
+     */
+    com.google.protobuf.ByteString getValueBytes();
+  }
+  /** Protobuf type {@code RuleDropDownMaster} */
+  public static final class RuleDropDownMaster extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:RuleDropDownMaster)
+      RuleDropDownMasterOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use RuleDropDownMaster.newBuilder() to construct.
+    private RuleDropDownMaster(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private RuleDropDownMaster() {
+      value_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new RuleDropDownMaster();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private RuleDropDownMaster(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                value_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.Common.internal_static_RuleDropDownMaster_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.Common.internal_static_RuleDropDownMaster_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.Common.RuleDropDownMaster.class,
+              com.cpdss.common.generated.Common.RuleDropDownMaster.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int VALUE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object value_;
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The value.
+     */
+    public java.lang.String getValue() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        value_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The bytes for value.
+     */
+    public com.google.protobuf.ByteString getValueBytes() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        value_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, value_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, value_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.Common.RuleDropDownMaster)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.Common.RuleDropDownMaster other =
+          (com.cpdss.common.generated.Common.RuleDropDownMaster) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getValue().equals(other.getValue())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getValue().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.Common.RuleDropDownMaster prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code RuleDropDownMaster} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:RuleDropDownMaster)
+        com.cpdss.common.generated.Common.RuleDropDownMasterOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.Common.internal_static_RuleDropDownMaster_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.Common
+            .internal_static_RuleDropDownMaster_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.Common.RuleDropDownMaster.class,
+                com.cpdss.common.generated.Common.RuleDropDownMaster.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.Common.RuleDropDownMaster.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        value_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.Common.internal_static_RuleDropDownMaster_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.Common.RuleDropDownMaster getDefaultInstanceForType() {
+        return com.cpdss.common.generated.Common.RuleDropDownMaster.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.Common.RuleDropDownMaster build() {
+        com.cpdss.common.generated.Common.RuleDropDownMaster result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.Common.RuleDropDownMaster buildPartial() {
+        com.cpdss.common.generated.Common.RuleDropDownMaster result =
+            new com.cpdss.common.generated.Common.RuleDropDownMaster(this);
+        result.id_ = id_;
+        result.value_ = value_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.Common.RuleDropDownMaster) {
+          return mergeFrom((com.cpdss.common.generated.Common.RuleDropDownMaster) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.Common.RuleDropDownMaster other) {
+        if (other == com.cpdss.common.generated.Common.RuleDropDownMaster.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getValue().isEmpty()) {
+          value_ = other.value_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.Common.RuleDropDownMaster parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.Common.RuleDropDownMaster) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object value_ = "";
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return The value.
+       */
+      public java.lang.String getValue() {
+        java.lang.Object ref = value_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          value_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return The bytes for value.
+       */
+      public com.google.protobuf.ByteString getValueBytes() {
+        java.lang.Object ref = value_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          value_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @param value The value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValue(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValue() {
+
+        value_ = getDefaultInstance().getValue();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @param value The bytes for value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValueBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:RuleDropDownMaster)
+    }
+
+    // @@protoc_insertion_point(class_scope:RuleDropDownMaster)
+    private static final com.cpdss.common.generated.Common.RuleDropDownMaster DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.Common.RuleDropDownMaster();
+    }
+
+    public static com.cpdss.common.generated.Common.RuleDropDownMaster getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RuleDropDownMaster> PARSER =
+        new com.google.protobuf.AbstractParser<RuleDropDownMaster>() {
+          @java.lang.Override
+          public RuleDropDownMaster parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new RuleDropDownMaster(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<RuleDropDownMaster> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RuleDropDownMaster> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.Common.RuleDropDownMaster getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_ResponseStatus_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -7284,6 +8343,10 @@ public final class Common {
       internal_static_RulesInputs_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_RulesInputs_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_RuleDropDownMaster_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RuleDropDownMaster_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -7308,13 +8371,16 @@ public final class Common {
           + "(\010\022\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010ruleTyp"
           + "e\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInputs\022\026\n"
           + "\016ruleTemplateId\030\007 \001(\t\022\025\n\rvesselRuleXId\030\010"
-          + " \001(\t\022\022\n\nisHardRule\030\t \001(\010\"\206\001\n\013RulesInputs"
+          + " \001(\t\022\022\n\nisHardRule\030\t \001(\010\"\314\001\n\013RulesInputs"
           + "\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030\002 \001(\t\022\014"
           + "\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030\005 \001(\t\022\r"
           + "\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002id\030\010 \001("
-          + "\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADA"
-          + "BLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B\036\n\032com."
-          + "cpdss.common.generatedP\000b\006proto3"
+          + "\t\022/\n\022ruleDropDownMaster\030\t \003(\0132\023.RuleDrop"
+          + "DownMaster\022\023\n\013isMandatory\030\n \001(\010\"/\n\022RuleD"
+          + "ropDownMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t"
+          + "*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADAB"
+          + "LE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B\036\n\032com.c"
+          + "pdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -7372,7 +8438,23 @@ public final class Common {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_RulesInputs_descriptor,
             new java.lang.String[] {
-              "Prefix", "DefaultValue", "Type", "Max", "Min", "Value", "Suffix", "Id",
+              "Prefix",
+              "DefaultValue",
+              "Type",
+              "Max",
+              "Min",
+              "Value",
+              "Suffix",
+              "Id",
+              "RuleDropDownMaster",
+              "IsMandatory",
+            });
+    internal_static_RuleDropDownMaster_descriptor = getDescriptor().getMessageTypes().get(5);
+    internal_static_RuleDropDownMaster_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_RuleDropDownMaster_descriptor,
+            new java.lang.String[] {
+              "Id", "Value",
             });
   }
 

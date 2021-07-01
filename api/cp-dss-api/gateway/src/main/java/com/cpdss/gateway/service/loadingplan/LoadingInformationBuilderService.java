@@ -180,6 +180,7 @@ public class LoadingInformationBuilderService {
           Optional.ofNullable(topOff.getTankId()).ifPresent(builder::setTankId);
           Optional.ofNullable(topOff.getUllage())
               .ifPresent(ullage -> builder.setUllage(String.valueOf(ullage)));
+          Optional.ofNullable(topOff.getDisplayOrder()).ifPresent(builder::setDisplayOrder);
           cargoToppingOffList.add(builder.build());
         });
     return cargoToppingOffList;

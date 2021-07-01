@@ -72,6 +72,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         .ifPresent(loadingInformation::setVoyageId);
     Optional.ofNullable(loadingInformationDetail.getPortRotationId())
         .ifPresent(loadingInformation::setPortRotationXId);
+    Optional<StageOffset> defaultOffsetOpt =
+        stageOffsetRepository.findByIdAndIsActiveTrue(DEFAULT_STAGE_OFFSET_ID);
+    if (defaultOffsetOpt.isPresent()) {
+      loadingInformation.setStageOffset(defaultOffsetOpt.get());
+    }
+    loadingInformation.setIsLoadingInfoComplete(false);
     loadingInformation.setIsActive(true);
     return loadingInformationRepository.save(loadingInformation);
   }
@@ -150,6 +156,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     // Common fields
     var1.ifPresent(v -> builder.setLoadingInfoId(v.getId()));
     var1.ifPresent(v -> builder.setSynopticTableId(v.getSynopticalTableXId()));
+    var1.ifPresent(v -> builder.setIsLoadingInfoComplete(v.getIsLoadingInfoComplete()));
 
     // Loading Details
     LoadingPlanModels.LoadingDetails details =
@@ -217,7 +224,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       loadingInformationRepository.save(loadingInformation);
       loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList(), loadingInformation);
       loadingDelayService.saveLoadingDelayList(request.getLoadingDelays(), loadingInformation);
-      loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList());
+      loadingMachineryInUseService.saveLoadingMachineryList(
+          request.getLoadingMachinesList(), loadingInformation);
       toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
     } else {
       throw new Exception(

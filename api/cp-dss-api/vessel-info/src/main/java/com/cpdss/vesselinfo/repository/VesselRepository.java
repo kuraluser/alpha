@@ -51,13 +51,13 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " ruleTemplateInput.prefix as templateInputPrefix, ruleTemplateInput.suffix as templateInputSuffix, "
           + " ruleTemplateInput.defaultValue as templateInputDefaultValue, ruleTemplateInput.maxValue as templateInputMaxValue,"
           + " ruleTemplateInput.minValue as templateInputMinValue, ruleTemplateInput.typeValue as templateInputTypeValue, "
-          + " ruleTemplate.isHardRule as isHardRule ) "
+          + " ruleTemplate.isHardRule as isHardRule, ruleTemplateInput.isMandatory as isMandatory, ruleListMaster.ruleOrder as ruleOrder ) "
           + " FROM RuleMasterSection ruleMasterSection "
           + " INNER JOIN RuleListMaster ruleListMaster ON ruleMasterSection.id = ruleListMaster.ruleMasterSection "
           + " INNER JOIN RuleTemplate ruleTemplate ON ruleListMaster.id = ruleTemplate.ruleListMaster"
           + " INNER JOIN RuleType ruleType ON ruleTemplate.ruleType = ruleType.id "
           + " INNER JOIN RuleTemplateInput ruleTemplateInput ON ruleTemplate.id = ruleTemplateInput.ruleTemplate "
-          + " WHERE ruleMasterSection.id = :sectionId")
+          + " WHERE ruleMasterSection.id = :sectionId ORDER BY ruleListMaster.ruleOrder, ruleTemplateInput.id ASC")
   public List<VesselRule> findRuleTemplateForNoVessel(@Param("sectionId") Long sectionId);
 
   @Query(
@@ -68,7 +68,7 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " ruleVesselInput.prefix as templateInputPrefix, ruleVesselInput.suffix as templateInputSuffix, "
           + " ruleVesselInput.defaultValue as templateInputDefaultValue, ruleVesselInput.maxValue as templateInputMaxValue,"
           + " ruleVesselInput.minValue as templateInputMinValue, ruleVesselInput.typeValue as templateInputTypeValue, "
-          + " ruleVesselMapping.isHardRule as isHardRule ) "
+          + " ruleVesselMapping.isHardRule as isHardRule, ruleVesselInput.isMandatory as isMandatory, ruleListMaster.ruleOrder as ruleOrder) "
           + " FROM Vessel vessel "
           + " INNER JOIN RuleVesselMapping ruleVesselMapping ON vessel.id = ruleVesselMapping.vessel "
           + " INNER JOIN RuleVesselMappingInput ruleVesselInput on ruleVesselMapping.id = ruleVesselInput.ruleVesselMapping "
@@ -76,7 +76,7 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " INNER JOIN RuleTemplate ruleTemplate ON ruleVesselMapping.ruleTemplate =  ruleTemplate.id "
           + " INNER JOIN RuleListMaster ruleListMaster ON ruleTemplate.ruleListMaster = ruleListMaster.id "
           + " INNER JOIN RuleMasterSection ruleMasterSection ON ruleListMaster.ruleMasterSection = ruleMasterSection.id "
-          + " WHERE vessel.id = :vesselId AND ruleMasterSection.id = :sectionId")
+          + " WHERE vessel.id = :vesselId AND ruleMasterSection.id = :sectionId ORDER BY ruleListMaster.ruleOrder, ruleVesselInput.id ASC")
   public List<VesselRule> findVesselRuleByVesselIdAndSectionId(
       @Param("vesselId") Long vesselId, @Param("sectionId") Long sectionId);
 

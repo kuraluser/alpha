@@ -2860,6 +2860,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Override
   public void getOnHandQuantity(
       OnHandQuantityRequest request, StreamObserver<OnHandQuantityReply> responseObserver) {
+    log.info("getOnHandQuantity");
     OnHandQuantityReply.Builder replyBuilder = OnHandQuantityReply.newBuilder();
     try {
 
@@ -2991,11 +2992,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
     Voyage previousVoyage =
         this.voyageRepository
-            .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                loadableStudyOpt.get().getVoyage().getVoyageStartDate(),
-                loadableStudyOpt.get().getVoyage().getVesselXId(),
-                true,
-                voyageStatus);
+            .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                loadableStudyOpt.get().getVoyage().getVesselXId(), true, voyageStatus);
 
     Optional<LoadableStudy> confirmedLoadableStudyOpt =
         this.loadableStudyRepository
@@ -6914,6 +6912,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
     }
+
+    if (Optional.ofNullable(loadableStudyOpt.get().getFeedbackLoop()).isPresent()) {
+      loadableStudy.setFeedbackLoop(loadableStudyOpt.get().getFeedbackLoop());
+    } else {
+      loadableStudy.setFeedbackLoop(false);
+    }
+
+    if (Optional.ofNullable(loadableStudyOpt.get().getFeedbackLoopCount()).isPresent()) {
+      loadableStudy.setFeedbackLoopCount(loadableStudyOpt.get().getFeedbackLoopCount());
+    } else {
+      loadableStudy.setFeedbackLoopCount(0);
+    }
   }
 
   /** Get on board quantity details corresponding to a loadable study */
@@ -7048,11 +7058,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  currentVoyage.getVoyageStartDate(),
-                  currentVoyage.getVesselXId(),
-                  true,
-                  voyageStatus);
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  currentVoyage.getVesselXId(), true, voyageStatus);
       if (previousVoyage != null) {
         Optional<LoadableStudyStatus> confimredLSStatus =
             loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
@@ -7112,8 +7119,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true, voyageStatus);
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  voyage.getVesselXId(), true, voyageStatus);
       if (null == previousVoyage) {
         log.error("Could not find previous voyage of {}", voyage.getVoyageNo());
       } else {
@@ -12652,9 +12659,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       .filter(
                           details ->
                               details.getPortRotationId().equals(portRotation.getId())
-                                  && details
-                                      .getOperationType()
-                                      .equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)
                                   && details.getTankId().equals(sequenceBuilder.getTankXId()))
                       .findAny();
               if (cargoDetailOpt.isPresent()) {
@@ -12695,7 +12699,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     synopticalTable.getIsActive()
                         && synopticalTable
                             .getOperationType()
-                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
             .findFirst();
     if (synopticalTableOpt.isPresent()) {
       builder

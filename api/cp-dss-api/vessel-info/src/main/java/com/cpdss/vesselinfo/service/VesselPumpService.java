@@ -42,6 +42,7 @@ public class VesselPumpService {
           vesselPumpRepository.findAllByVesselAndIsActiveTrue(vessel, defaultPage);
       this.buildPumpTypeGrpcBuilder(pumpTypes.toList(), builder);
       this.buildVesselPumpGrpcBuilder(vesselPumps.toList(), builder);
+      this.buildVesselDetails(vessel, builder);
       builder1.setStatus("SUCCESS");
       builder.setResponseStatus(builder1);
       log.info(
@@ -51,6 +52,16 @@ public class VesselPumpService {
           pumpTypes.getTotalElements());
     }
     return builder.build();
+  }
+
+  private void buildVesselDetails(Vessel vessel, VesselInfo.VesselPumpsResponse.Builder builder) {
+    VesselInfo.VesselDetail.Builder builder1 = VesselInfo.VesselDetail.newBuilder();
+    builder1.setId(vessel.getId());
+    builder1.setHomogeneousLoadingRate(vessel.getHomogeneousLoadingRate().toString());
+    builder1.setWingTankLoadingRate(vessel.getWingTankLoadingRate().toString());
+    builder1.setCenterTankLoadingRate(vessel.getCenterTankLoadingRate().toString());
+    builder1.setName(vessel.getName());
+    builder.setVesselDetails(builder1.build());
   }
 
   private void buildPumpTypeGrpcBuilder(

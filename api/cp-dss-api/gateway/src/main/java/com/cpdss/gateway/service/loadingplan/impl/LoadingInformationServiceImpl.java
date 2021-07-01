@@ -371,11 +371,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Override
   public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
-      Long patternId, String operationType, Long portRotationId, Long portId) {
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
             patternId, operationType, portRotationId, portId);
-    return this.buildLoadablePlanQuantity(list);
+    return this.buildLoadablePlanQuantity(list, vesselId);
   }
 
   @Override
@@ -406,7 +406,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   private List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> buildLoadablePlanQuantity(
-      List<LoadableStudy.LoadableQuantityCargoDetails> list) {
+      List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId) {
     List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> response = new ArrayList<>();
     log.info("Cargo to be loaded data from LS, Size {}", list.size());
     for (LoadableStudy.LoadableQuantityCargoDetails lqcd : list) {
@@ -418,24 +418,59 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
       cargoDetails.setGrade(lqcd.getGrade());
       cargoDetails.setId(lqcd.getId());
+
       cargoDetails.setLoadableBbls60f(lqcd.getLoadableBbls60F());
       cargoDetails.setLoadableBblsdbs(lqcd.getLoadableBblsdbs());
       cargoDetails.setLoadableKL(lqcd.getLoadableKL());
       cargoDetails.setLoadableLT(lqcd.getLoadableLT());
       cargoDetails.setLoadableMT(lqcd.getLoadableMT());
+
       cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
       cargoDetails.setMinTolerence(lqcd.getMinTolerence());
       cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
       cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
-      cargoDetails.setCargoId(lqcd.getCargoId());
       cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
-      cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
-      cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
+
+      cargoDetails.setCargoNominationTemperature(lqcd.getCargoNominationTemperature());
+      cargoDetails.setCargoId(lqcd.getCargoId());
+      cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
+      cargoDetails.setColorCode(lqcd.getColorCode());
+      cargoDetails.setPriority(lqcd.getPriority());
+      cargoDetails.setLoadingOrder(lqcd.getLoadingOrder());
+
+      cargoDetails.setOrderQuantity(lqcd.getOrderQuantity());
+      cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
+      cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
+      cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
+
       response.add(cargoDetails);
     }
     return response;
+  }
+
+  /**
+   * A grpc call to vessel info to get Max Loading Rate only Similar grpc calling for get machines
+   * in use.
+   *
+   * @param vesselId
+   * @return Max Loading Rate
+   */
+  private String getLoadingRateFromVesselService(Long vesselId) {
+    VesselInfo.VesselPumpsResponse grpcReply =
+        vesselInfoService.getVesselPumpsFromVesselInfo(vesselId);
+    if (grpcReply.getResponseStatus().getStatus().equals("SUCCESS")) {
+      log.info(
+          "Vessel Max Loading Rate found for LoadablePlanQuantity- {}",
+          grpcReply.getVesselDetails().getHomogeneousLoadingRate());
+      String maxLoadingRate = grpcReply.getVesselDetails().getHomogeneousLoadingRate();
+      if (!maxLoadingRate.isEmpty()) {
+        return maxLoadingRate;
+      }
+    }
+    return BigDecimal.ZERO.toString();
   }
 
   @Override

@@ -577,6 +577,8 @@ message LoadableQuantityCargoDetails {
 	 string timeRequiredForLoading = 25;
 	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 26;
 	 string cargoNominationTemperature = 27;
+	 string cargoNominationQuantity = 28;
+	 string orderQuantity = 29;
 }
 
 message CargoToppingOffSequenceDetails {

@@ -43,6 +43,7 @@ message LoadingInformation{
   repeated LoadingToppingOff toppingOffSequence = 11;
   int64 loadingInfoId = 12;
   int64 synopticTableId = 13;
+  bool isLoadingInfoComplete = 14;
 }
 
 message LoadingDetails{

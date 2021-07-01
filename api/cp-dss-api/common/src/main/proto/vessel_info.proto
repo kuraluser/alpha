@@ -104,6 +104,9 @@ message VesselDetail {
   string frameSpace3l = 36;
   string frameSpace7l = 37;
   bool hasLoadicator = 38;
+  string homogeneousLoadingRate = 39;
+  string wingTankLoadingRate = 40;
+  string centerTankLoadingRate = 41;
 }
 
 message VesselLoadableQuantityDetails {
@@ -215,6 +218,9 @@ message VesselReply {
 		int64 tankId = 2;
 		string capacity = 3;
 		string tcg = 4;
+		string lcg = 5;
+		string vcg = 6;
+		string inertia = 7;
 	}
 		
 	message BMAndSF {
@@ -359,6 +365,7 @@ message VesselReply {
 		ResponseStatus responseStatus = 1;
 		repeated PumpType pumpType = 2;
 		repeated VesselPump vesselPump = 3;
+		VesselDetail vesselDetails = 4;
 	}
 
 	message PumpType{
