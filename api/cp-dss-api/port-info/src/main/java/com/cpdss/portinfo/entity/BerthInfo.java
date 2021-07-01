@@ -52,6 +52,9 @@ public class BerthInfo extends EntityDoc {
   @Column(name = "berth_order")
   private Long berthOrder;
 
+  @Column(name = "line_content_displacement")
+  private BigDecimal lineDisplacement;
+
   @ManyToOne
   @JoinColumn(name = "port_xid")
   private PortInfo portInfo;

@@ -123,5 +123,6 @@ message BerthDetail{
 	string regulationAndRestriction = 9;
 	string maxLoa = 10;
 	string maxDraft = 11;
+	string lineDisplacement = 13;
 }
 // <------ end loading plan, by john -------->

@@ -85,6 +85,7 @@ message LoadingBerths{
   string specialRegulationRestriction = 8;
   string itemsToBeAgreedWith = 9; // Not added in gateway
   string hoseConnections = 10; // Not added in gateway
+  string lineDisplacement = 11;
 }
 
 message LoadingStages{

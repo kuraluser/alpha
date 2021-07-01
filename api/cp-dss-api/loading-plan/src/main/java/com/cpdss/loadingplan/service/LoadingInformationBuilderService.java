@@ -84,6 +84,8 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var1.getItemToBeAgreedWith())
           .ifPresent(v -> builder.setItemsToBeAgreedWith(v));
       Optional.ofNullable(var1.getHoseConnections()).ifPresent(v -> builder.setHoseConnections(v));
+      Optional.ofNullable(var1.getLineDisplacement())
+          .ifPresent(v -> builder.setLineDisplacement(v.toString()));
       berths.add(builder.build());
     }
     return berths;

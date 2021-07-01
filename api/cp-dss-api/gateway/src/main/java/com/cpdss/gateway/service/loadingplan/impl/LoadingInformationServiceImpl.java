@@ -205,6 +205,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
           dto.setMaxShipDepth(
               bd.getMaxDraft().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxDraft()));
+          dto.setLineDisplacement(bd.getLineDisplacement());
           berthDetails.add(dto);
         }
       } catch (Exception e) {
