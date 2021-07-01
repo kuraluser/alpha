@@ -54,4 +54,7 @@ public class LoadingBerthDetail extends EntityDoc {
 
   @Column(name = "item_to_be_agreed")
   private String itemToBeAgreedWith;
+
+  @Column(name = "line_content_displacement")
+  private BigDecimal lineDisplacement;
 }

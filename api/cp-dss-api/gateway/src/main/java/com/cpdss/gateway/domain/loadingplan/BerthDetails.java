@@ -22,4 +22,5 @@ public class BerthDetails {
   private BigDecimal maxLoa;
   private BigDecimal maxDraft;
   private String itemsToBeAgreedWith;
+  private String lineDisplacement;
 }

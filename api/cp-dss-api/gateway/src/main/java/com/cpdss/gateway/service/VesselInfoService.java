@@ -18,27 +18,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.BMAndSF;
-import com.cpdss.gateway.domain.BendingMoment;
-import com.cpdss.gateway.domain.CalculationSheet;
-import com.cpdss.gateway.domain.CalculationSheetTankGroup;
-import com.cpdss.gateway.domain.HydrostaticData;
-import com.cpdss.gateway.domain.InnerBulkHeadValues;
-import com.cpdss.gateway.domain.LoadLine;
-import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
-import com.cpdss.gateway.domain.Parameter;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.SelectableParameter;
-import com.cpdss.gateway.domain.ShearingForce;
-import com.cpdss.gateway.domain.StationValues;
-import com.cpdss.gateway.domain.UllageDetails;
-import com.cpdss.gateway.domain.UllageTrimCorrection;
-import com.cpdss.gateway.domain.Vessel;
-import com.cpdss.gateway.domain.VesselDetailsResponse;
-import com.cpdss.gateway.domain.VesselDraftCondition;
-import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.VesselTank;
-import com.cpdss.gateway.domain.VesselTankTCG;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
@@ -228,7 +208,7 @@ public class VesselInfoService {
           this.vesselValveService.buildVesselValveResponse(reply.getVvSequenceEntitiesList()));
       // Vessel Eductor Process
       response.put(
-          "EductionProcess",
+          "eductionProcess",
           this.vesselValveService.buildVesselValveEductorResponse(
               reply.getVvEducationEntitiesList()));
       log.info("Vessel Valve Sequence data size {}", response);
