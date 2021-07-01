@@ -56,6 +56,12 @@ public class DischargePlanController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+    	if(request.getName()==null||!request.getName().isEmpty()) {
+    		 throw new GenericServiceException(
+    		          "No name found",
+    		          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+    		          HttpStatusCode.BAD_REQUEST);
+    	}
       log.info("saveDischargeStudy: {}", getClientIp());
       request.setVesselId(vesselId);
       request.setVoyageId(voyageId);
