@@ -57,4 +57,10 @@ public class LoadableStudyRules extends EntityDoc {
 
   @Column(name = "parent_rule_xid")
   private Long parentRuleXId;
+
+  @Column(name = "numeric_precision")
+  private Long numericPrecision;
+
+  @Column(name = "numeric_scale")
+  private Long numericScale;
 }

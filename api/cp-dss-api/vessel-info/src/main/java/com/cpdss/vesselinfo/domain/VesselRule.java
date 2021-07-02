@@ -25,4 +25,6 @@ public class VesselRule {
   private Boolean isHardRule;
   private Boolean isMandatory;
   private Long ruleOrder;
+  private Long numericPrecision;
+  private Long numericScale;
 }

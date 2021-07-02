@@ -1029,6 +1029,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param {@link StreamObserver}
    */
   @Override
+  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
   public void saveLoadableStudy(
       LoadableStudyDetail request, StreamObserver<LoadableStudyReply> responseObserver) {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
@@ -1215,6 +1216,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         .ifPresent(loadableStudyRules::setIsHardRule);
                     Optional.ofNullable(lsRules.getIsActive())
                         .ifPresent(loadableStudyRules::setIsActive);
+                    Optional.ofNullable(lsRules.getNumericPrecision())
+                        .ifPresent(loadableStudyRules::setNumericPrecision);
+                    Optional.ofNullable(lsRules.getNumericScale())
+                        .ifPresent(loadableStudyRules::setNumericScale);
+                    Optional.ofNullable(lsRules.getParentRuleXId())
+                        .ifPresent(loadableStudyRules::setParentRuleXId);
                     List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
                     lsRules.getLoadableStudyRuleInputs().stream()
                         .forEach(
@@ -1283,6 +1290,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                   .ifPresent(loadableStudyRules::setIsEnable);
                               Optional.ofNullable(vesselRule.getIsHardRule())
                                   .ifPresent(loadableStudyRules::setIsHardRule);
+                              Optional.ofNullable(vesselRule.getNumericPrecision())
+                                  .ifPresent(loadableStudyRules::setNumericPrecision);
+                              Optional.ofNullable(vesselRule.getNumericScale())
+                                  .ifPresent(loadableStudyRules::setNumericScale);
+                              Optional.ofNullable(vesselRule.getRuleTemplateId())
+                                  .ifPresent(
+                                      item ->
+                                          loadableStudyRules.setParentRuleXId(
+                                              Long.parseLong(item)));
                               loadableStudyRules.setIsActive(true);
                               List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
                               vesselRule.getInputsList().stream()
@@ -1321,6 +1337,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .setId(entity.getId());
 
     } catch (GenericServiceException e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("GenericServiceException when saving loadable study", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -1331,6 +1348,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .build());
       this.deleteFiles(entity);
     } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Error saving loadable study", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -13469,6 +13487,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                 .ifPresent(loadableStudyRules::setIsEnable);
                             Optional.ofNullable(rule.getIsHardRule())
                                 .ifPresent(loadableStudyRules::setIsHardRule);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(loadableStudyRules::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(loadableStudyRules::setNumericScale);
                             LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
                             Optional.ofNullable(rule.getRuleTemplateId())
                                 .ifPresent(
@@ -13581,15 +13603,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 });
         loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
       }
-
       List<Long> ruleListId =
           vesselRuleReply.getRulePlanList().stream()
               .flatMap(rulesList -> rulesList.getRulesList().stream())
               .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
               .collect(Collectors.toList());
       List<LoadableStudyRules> loadableStudyRulesList =
-          loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdIn(
-              loadableStudy.get(), request.getVesselId(), true, ruleListId);
+          loadableStudyRuleRepository
+              .findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
+                  loadableStudy.get(), request.getVesselId(), true, ruleListId);
       if (loadableStudyRulesList.size() > 0) {
         log.info("Fetch  loadable study rules");
         vesselRuleReply
@@ -13652,7 +13674,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     rDropDown.getRuleTemplateId() != 0
                         && rule.getRuleTemplateId() != null
                         && rDropDown.getRuleTemplateId()
-                            == Long.parseLong(rule.getRuleTemplateId()))
+                            == Long.parseLong(rule.getRuleTemplateId().trim()))
             .collect(Collectors.toList());
     if (input.getDefaultValue().contains(",")) {
       String[] masterIds = input.getDefaultValue().split(",");
@@ -13661,7 +13683,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         if (isCargoTankMaster) {
           if (cargoTankMaster.stream()
               .map(CargoTankMaster::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -13678,7 +13700,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         } else {
           if (filterMasterByRule.stream()
               .map(RuleDropDownValueMaster::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -13699,7 +13721,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (isCargoTankMaster) {
         if (!cargoTankMaster.stream()
             .map(CargoTankMaster::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(
@@ -13710,7 +13732,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         if (!filterMasterByRule.stream()
             .map(RuleDropDownValueMaster::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(
@@ -13754,6 +13776,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getParentRuleXId())
           .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericPrecision())
+          .ifPresent(item -> rulesBuilder.setNumericPrecision(item));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericScale())
+          .ifPresent(item -> rulesBuilder.setNumericScale(item));
       RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
       for (int inputIndex = 0;
           inputIndex < lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().size();

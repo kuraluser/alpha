@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 public interface LoadableStudyRuleRepository
     extends CommonCrudRepository<LoadableStudyRules, Long> {
 
-  List<LoadableStudyRules> findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdIn(
+  List<LoadableStudyRules> findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
       LoadableStudy loadableStudy, Long vesselId, boolean isActive, List<Long> vesselRuleXId);
 
   List<LoadableStudyRules> findByLoadableStudyAndVesselXIdAndIsActive(
