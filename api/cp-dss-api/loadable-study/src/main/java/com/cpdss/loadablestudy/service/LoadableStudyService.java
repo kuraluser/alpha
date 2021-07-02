@@ -4074,20 +4074,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       loadablePlanCommingleDetails.setTankShortName(
           loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
-      loadableQuantityCommingleCargoDetailsList
-          .get(i)
-          .getToppingOffSequencesList()
-          .forEach(
-              toppingSequence -> {
-                LoadablePatternCargoToppingOffSequence lpctos =
-                    new LoadablePatternCargoToppingOffSequence();
-                lpctos.setCargoXId(toppingSequence.getCargoId());
-                lpctos.setTankXId(toppingSequence.getTankId());
-                lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                lpctos.setLoadablePattern(loadablePattern);
-                lpctos.setIsActive(true);
-                toppingOffSequenceRepository.save(lpctos);
-              });
     }
   }
 
@@ -4123,18 +4109,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   new BigDecimal(lqcd.getCargoNominationTemperature()));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
-              lqcd.getToppingOffSequencesList()
-                  .forEach(
-                      toppingSequence -> {
-                        LoadablePatternCargoToppingOffSequence lpctos =
-                            new LoadablePatternCargoToppingOffSequence();
-                        lpctos.setCargoXId(lqcd.getCargoId());
-                        lpctos.setTankXId(toppingSequence.getTankId());
-                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                        lpctos.setLoadablePattern(loadablePattern);
-                        lpctos.setIsActive(true);
-                        toppingOffSequenceRepository.save(lpctos);
-                      });
             });
   }
 
@@ -6437,6 +6411,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator) {
     loadicator.setProcessId(request.getProcessId());
     loadicator.setLoadicatorPatternDetails(new ArrayList<>());
+    
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+            new com.cpdss.loadablestudy.domain.LoadableStudy();
+    Optional<LoadableStudy> loadableStudyOpt =
+            loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (loadableStudyOpt.isPresent()) {
+        ModelMapper modelMapper = new ModelMapper();
+        buildLoadableStudy(
+            request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+    }
+    
     if (request.getIsPattern()) {
       com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails patternDetails =
           request.getLoadicatorPatternDetails(0);
@@ -6450,11 +6435,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadablePatternRepository.findByIdAndIsActive(
               patternDetails.getLoadablePatternId(), true);
       if (loadablePatternOpt.isPresent()) {
-        pattern.setFeedbackLoop(
+        loadableStudy.setFeedbackLoop(
             Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoop()).isPresent()
                 ? loadablePatternOpt.get().getFeedbackLoop()
                 : false);
-        pattern.setFeedbackLoopCount(
+        loadableStudy.setFeedbackLoopCount(
             Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoopCount()).isPresent()
                 ? loadablePatternOpt.get().getFeedbackLoopCount()
                 : 0);
@@ -6474,17 +6459,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadicator.getLoadicatorPatternDetails().add(patterns);
               });
     }
-
-    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.domain.LoadableStudy();
-    Optional<LoadableStudy> loadableStudyOpt =
-        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-    if (loadableStudyOpt.isPresent()) {
-      ModelMapper modelMapper = new ModelMapper();
-      buildLoadableStudy(
-          request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
-    }
-
+    
     loadicator.setLoadableStudy(loadableStudy);
   }
 

@@ -7,6 +7,7 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -396,6 +397,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               v -> {
                 if (!v.isEmpty()) val1.setDuration(new BigDecimal(v));
               });
+      Optional.ofNullable(var2.getQuantity())
+          .ifPresent(
+              v -> {
+                if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
+              });
       BeanUtils.copyProperties(var2, val1);
       loadingDelays.add(val1);
     }
@@ -479,12 +485,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
       LoadingInformation loadingInformation =
           loadingInfoBuilderService.buildLoadingInformation(request);
-      ResponseStatus response =
+      LoadingInfoSaveResponse response =
           this.loadingPlanGrpcService.saveLoadingInformation(loadingInformation);
-      if (response.getStatus().equalsIgnoreCase(SUCCESS)) {
+      if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
         // Updating synoptical table
-        this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
-        return buildLoadingInformationResponse(correlationId);
+        this.updateSynopticalTable(request.getLoadingDetails(), response.getSynopticalTableId());
+        return buildLoadingInformationResponse(response, correlationId);
       } else {
         log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
         throw new GenericServiceException(
@@ -600,11 +606,17 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         synopticalId, loadingDetails.getTimeOfSunrise(), loadingDetails.getTimeOfSunset());
   }
 
-  LoadingInformationResponse buildLoadingInformationResponse(String correlationId) {
+  LoadingInformationResponse buildLoadingInformationResponse(
+      LoadingInfoSaveResponse saveResponse, String correlationId) {
     LoadingInformationResponse response = new LoadingInformationResponse();
     CommonSuccessResponse successResponse =
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId);
     response.setResponseStatus(successResponse);
+    response.setLoadingInfoId(saveResponse.getLoadingInfoId());
+    response.setPortRotationId(saveResponse.getPortRotationId());
+    response.setSynopticalTableId(saveResponse.getSynopticalTableId());
+    response.setVesseld(saveResponse.getVesselId());
+    response.setVoyageId(saveResponse.getVoyageId());
     return response;
   }
 
