@@ -25,11 +25,32 @@ export class ToppingOffTankTableComponent implements OnInit {
   @Input() voyageId: number;
   @Input() vesselId: number;
   @Input() portRotationId: number;
-  @Input() cargos: ICargo[];
-  @Input() toppingOffSequence: IToppingOffSequence[];
   @Input() cargoTanks: IShipCargoTank[][];
+  @Input() get cargos(): ICargo[] {
+    return this._cargos;
+  }
+
+  set cargos(cargos: ICargo[]) {
+    this._cargos = cargos;
+    if (this.cargos) {
+      this.initToppingOffSequence();
+    }
+  }
+  @Input() get toppingOffSequence(): IToppingOffSequence[] {
+    return this._toppingOffSequence;
+  }
+
+  set toppingOffSequence(toppingOffSequence: IToppingOffSequence[]) {
+    this._toppingOffSequence = toppingOffSequence;
+    if (this.toppingOffSequence) {
+      this.initToppingOffSequence();
+    }
+  }
 
   @Output() updateToppingOff: EventEmitter<IToppingOffSequence[]> = new EventEmitter();
+
+  private _toppingOffSequence: IToppingOffSequence[];
+  private _cargos: ICargo[];
 
   cargoTypeColumns: IDataTableColumn[] = [];
   cargoTypeList: any = [];
@@ -52,19 +73,28 @@ export class ToppingOffTankTableComponent implements OnInit {
       toppingOffSequence: this.fb.array([])
     });
     this.cargoTypeColumns = this.toppingOffTankTableTransformationService.getDatatableColumns();
-    this.toppingOffSequence.map((topping) => {
-      const cargo = this.findCargo(topping.cargoId);
-      const foundTank = this.findTank(topping?.tankId)
-      topping.cargoName = cargo?.name;
-      topping.cargoAbbreviation = cargo?.abbreviation;
-      topping.shortName = foundTank?.shortName;
-      topping.colourCode = foundTank?.commodity?.colorCode;
-      return topping;
-    })
-    this.toppingOffSequence.sort((a, b) => (a.displayOrder > b.displayOrder) ? 1 : ((b.displayOrder > a.displayOrder) ? -1 : 0))
-    this.initiToppingSequenceArray();
+    this.initToppingOffSequence();
+  }
 
-
+  /**
+* Method to init Topping off sequence
+*
+* @memberof ToppingOffTankTableComponent
+*/
+  initToppingOffSequence() {
+    if (this.toppingOffSequence && this.cargos) {
+      this.toppingOffSequence?.map((topping) => {
+        const cargo = this.findCargo(topping?.cargoId);
+        const foundTank = this.findTank(topping?.tankId)
+        topping.cargoName = cargo?.name;
+        topping.cargoAbbreviation = cargo?.abbreviation;
+        topping.shortName = foundTank?.shortName;
+        topping.colourCode = foundTank?.commodity?.colorCode;
+        return topping;
+      })
+      this.toppingOffSequence.sort((a, b) => (a.displayOrder > b.displayOrder) ? 1 : ((b.displayOrder > a.displayOrder) ? -1 : 0))
+      this.initiToppingSequenceArray();
+    }
   }
 
   /**
@@ -75,7 +105,7 @@ export class ToppingOffTankTableComponent implements OnInit {
   findCargo(cargoId): ICargo {
     let cargoDetail;
     this.cargos?.map((cargo) => {
-      if (cargo.id === cargoId) {
+      if (cargo?.id === cargoId) {
         cargoDetail = cargo;
       }
     })
@@ -108,8 +138,8 @@ export class ToppingOffTankTableComponent implements OnInit {
       const toppingOffSequenceForm = this.fb.group({
         dataTable: this.fb.array([...toppingArray])
       });
-      const toppingOffSequenceArray = this.toppingOffSequenceFormArray.get('toppingOffSequence') as FormArray;
-      toppingOffSequenceArray.push(toppingOffSequenceForm);
+      const toppingOffSequenceArray = this.toppingOffSequenceFormArray?.get('toppingOffSequence') as FormArray;
+      toppingOffSequenceArray?.push(toppingOffSequenceForm);
     }
   }
 
@@ -170,11 +200,11 @@ export class ToppingOffTankTableComponent implements OnInit {
   }
 
   findTank(tankId) {
-    const tankGroup = this.cargoTanks.find((groupTank) => {
-      let found = groupTank.find((tank) => tank.id === tankId)
+    const tankGroup = this.cargoTanks?.find((groupTank) => {
+      let found = groupTank?.find((tank) => tank?.id === tankId)
       return found;
     })
-    const tank = tankGroup.find((tank) => tank.id === tankId)
+    const tank = tankGroup?.find((tank) => tank?.id === tankId)
     return tank;
   }
 

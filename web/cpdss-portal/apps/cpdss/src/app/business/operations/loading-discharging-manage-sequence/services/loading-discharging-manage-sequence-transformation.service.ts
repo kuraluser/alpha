@@ -92,10 +92,12 @@ export class LoadingDischargingManageSequenceTransformationService {
  */
   getLoadingDelayAsValueObject(loadingDelay: ILoadingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceListData): ILoadingSequenceValueObject {
     const _loadingDelay = <ILoadingSequenceValueObject>{};
-    const reasonDelayObj: IReasonForDelays = listData.reasonForDelays.find(reason => reason.id === loadingDelay.reasonForDelayId);
-    const cargoObj: ILoadableQuantityCargo = listData.loadableQuantityCargo.find(loadable => loadable.cargoId === loadingDelay.cargoId);
+    const reasonDelayObj: IReasonForDelays = listData?.reasonForDelays?.find(reason => reason.id === loadingDelay.reasonForDelayId);
+    const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDelay.cargoId);
     _loadingDelay.id = loadingDelay.id;
-    const hourDuration = loadingDelay.duration / 60;
+    let hourDuration = (loadingDelay.duration / 60).toString();
+    hourDuration = hourDuration.includes('.') ? hourDuration.split('.')[0] : hourDuration;
+    hourDuration = Number(hourDuration) < 10 ? ('0' + hourDuration) : hourDuration
     const minuteDuration = loadingDelay.duration % 60;
     _loadingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
     _loadingDelay.quantity = new ValueObject<number>(loadingDelay.quantity, true, isEditable ? isNewValue : false, false, isEditable);

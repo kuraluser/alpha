@@ -25,20 +25,23 @@
             </p-dropdown>
             <span class="pl-15 text-danger" *ngIf="!isVoyageIdSelected"> {{'NO_VOYAGE_NO_SELECTED' | translate }}
             </span>
-            <div class="text-right pr-15">
-                <button class="btn btn-main" (click)="callNewDischargeStudyPopup()"
-                    id="btn_callNewDischargeStudyPopup" >{{'DISCHARGE_STUDY_LIST_CREATE_NEW_DISCHARGE_STUDY' | translate}}</button>
-            </div>
-    
         </div>
-        <div class="row">
-            <div class="col discharge-study-table-wrapper">
-                <cpdss-portal-datatable *ngIf="dischargeStudyList" [columns]="columns" [value]="dischargeStudyList" (columnClick)="onRowSelect($event)"
-                    [filterable]="true" >
-                </cpdss-portal-datatable>
+        <div class="text-right pr-15">
+            <button class="btn btn-main" (click)="callNewDischargeStudyPopup()"
+                id="btn_callNewDischargeStudyPopup">{{'DISCHARGE_STUDY_LIST_CREATE_NEW_DISCHARGE_STUDY' |
+                translate}}</button>
+        </div>
+        <div class="container-fluid pt-20">
+            <div class="row">
+                <div class="col discharge-study-table-wrapper">
+                    <cpdss-portal-datatable *ngIf="dischargeStudyList" [columns]="columns" [value]="dischargeStudyList"
+                        (columnClick)="onRowSelect($event)" [filterable]="true">
+                    </cpdss-portal-datatable>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<cpdss-portal-new-discharge-study-pop-up [display]="display" [isEdit]="edit" [selectedDischargeStudy]="selectedDischargeStudy" (displayPopup)="display=false" ></cpdss-portal-new-discharge-study-pop-up>
-
+<cpdss-portal-new-discharge-study-pop-up [display]="display" [isEdit]="edit"
+    [selectedDischargeStudy]="selectedDischargeStudy" (displayPopup)="display=false">
+</cpdss-portal-new-discharge-study-pop-up>

@@ -20,8 +20,19 @@ export class LoadingDischargingBerthComponent implements OnInit {
   @Input() editMode = true;
   @Input() loadingInfoId: number;
   @Input() availableBerths: IBerth[];
-  @Input() selectedBerths: IBerth[];
+
+  @Input() get selectedBerths(): IBerth[] {
+    return this._selectedBerths;
+  }
+
+  set selectedBerths(selectedBerths: IBerth[]) {
+    this._selectedBerths = selectedBerths;
+  }
+
   @Output() berthChange: EventEmitter<IBerth[]> = new EventEmitter();
+
+  private _selectedBerths: IBerth[];
+
   berthDetailsForm: FormGroup;
   berthForm: FormGroup;
   berthFormArray: FormArray;
@@ -39,6 +50,14 @@ export class LoadingDischargingBerthComponent implements OnInit {
 
   ngOnInit(): void {
     this.errorMesages = this.loadingDischargingBerthTransformationService.setValidationErrorMessage();
+    this.initBerths();
+  }
+
+  
+  /**
+* initialise berth details
+*/
+  initBerths(){
     this.availableBerths = this.availableBerths.map(berth => {
       const found = this.selectedBerths.find(selectedBerth => selectedBerth.berthId === berth.berthId);
       if (found) {
