@@ -32,6 +32,8 @@ import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.security.ship.ShipJwtService;
 import com.cpdss.gateway.security.ship.ShipUserContext;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -776,7 +778,8 @@ public class UserService {
     response.setToken(this.jwtService.generateToken(user));
     if (user.getPasswordExpiryDate() != null) { // Password expire reminder
       LocalDateTime timeNow = LocalDateTime.now();
-      long daysDiff = DAYS.between(timeNow, user.getPasswordExpiryDate());
+      long hours = ChronoUnit.HOURS.between(timeNow, user.getPasswordExpiryDate());
+      long daysDiff = (long) Math.ceil(hours/24.0);
       if (daysDiff <= PASSWORD_EXPIRE_REMINDER) {
         response.setExpiryReminder(new PasswordExpiryReminder(daysDiff));
       }
