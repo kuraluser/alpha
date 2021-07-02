@@ -54,4 +54,13 @@ public class LoadableStudyRules extends EntityDoc {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "loadableStudyRuleXId", cascade = CascadeType.ALL)
   private List<LoadableStudyRuleInput> loadableStudyRuleInputs;
+
+  @Column(name = "parent_rule_xid")
+  private Long parentRuleXId;
+
+  @Column(name = "numeric_precision")
+  private Long numericPrecision;
+
+  @Column(name = "numeric_scale")
+  private Long numericScale;
 }

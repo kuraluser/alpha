@@ -3607,6 +3607,11 @@ class LoadableStudyServiceTest {
     //        .thenReturn(voyage);
 
     Mockito.when(
+            this.voyageRepository
+                .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                    anyLong(), anyBoolean(), any()))
+        .thenReturn(voyage);
+    Mockito.when(
             this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(any(Voyage.class)))
         .thenReturn((VoyageHistory) createDummyObject(VoyageHistory.class));
     Mockito.when(this.cargoHistoryRepository.findCargoHistory(anyLong(), anyLong()))

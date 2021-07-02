@@ -48,6 +48,8 @@ message Rules{
 	 string ruleTemplateId = 7;
 	 string vesselRuleXId = 8;
 	 bool isHardRule = 9;
+	 int64 numericPrecision = 10;
+	 int64 numericScale = 11;
 }
 	
 message RulesInputs{

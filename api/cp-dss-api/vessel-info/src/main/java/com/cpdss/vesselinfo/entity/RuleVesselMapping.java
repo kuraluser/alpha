@@ -46,4 +46,10 @@ public class RuleVesselMapping extends EntityDoc {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "ruleVesselMapping", cascade = CascadeType.ALL)
   private List<RuleVesselMappingInput> ruleVesselMappingInput;
+
+  @Column(name = "numeric_precision")
+  private Long numericPrecision;
+
+  @Column(name = "numeric_scale")
+  private Long numericScale;
 }

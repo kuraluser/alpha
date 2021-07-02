@@ -55,6 +55,8 @@ public class Utility {
             rule.setId(rList.getId());
           }
           Optional.ofNullable(rList.getIsHardRule()).ifPresent(rule::setIsHardRule);
+          Optional.ofNullable(rList.getNumericPrecision()).ifPresent(rule::setNumericPrecision);
+          Optional.ofNullable(rList.getNumericScale()).ifPresent(rule::setNumericScale);
           Optional.ofNullable(rList.getRuleTemplateId()).ifPresent(rule::setRuleTemplateId);
           Optional.ofNullable(rList.getRuleType()).ifPresent(rule::setRuleType);
           Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
@@ -96,7 +98,8 @@ public class Utility {
           Optional.ofNullable(rInputsList.getIsMandatory()).ifPresent(rulesInputs::setIsMandatory);
           Optional.ofNullable(rInputsList.getType()).ifPresent(rulesInputs::setType);
           if (rInputsList.getType() != null
-              && rInputsList.getType().trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+              && (rInputsList.getType().trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                  || rInputsList.getType().trim().equalsIgnoreCase(TypeValue.MULTISELECT.getType()))
               && rInputsList.getRuleDropDownMasterList() != null
               && rInputsList.getRuleDropDownMasterList().size() > 0) {
             List<RuleDropDownMaster> ruleDropDownMasters = new ArrayList<>();
@@ -154,6 +157,10 @@ public class Utility {
                                 .ifPresent(ruleBuilder::setVesselRuleXId);
                             Optional.ofNullable(rule.getIsHardRule())
                                 .ifPresent(ruleBuilder::setIsHardRule);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(ruleBuilder::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(ruleBuilder::setNumericScale);
                             rule.getInputs()
                                 .forEach(
                                     input -> {
@@ -177,6 +184,8 @@ public class Utility {
                                           .ifPresent(ruleInputBuilder::setType);
                                       Optional.ofNullable(input.getValue())
                                           .ifPresent(ruleInputBuilder::setValue);
+                                      Optional.ofNullable(input.getIsMandatory())
+                                          .ifPresent(ruleInputBuilder::setIsMandatory);
                                       ruleBuilder.addInputs(ruleInputBuilder);
                                     });
                             rulePlanBuilder.addRules(ruleBuilder);

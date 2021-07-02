@@ -21,12 +21,12 @@ public interface VoyageRepository
 
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
 
-  /*
-   * public Voyage
-   * findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-   * LocalDateTime currentVoyageStartDate, Long vesselId, boolean isActive,
-   * VoyageStatus voyageStatus);
-   */
+  /*public Voyage
+  findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
+      LocalDateTime currentVoyageStartDate,
+      Long vesselId,
+      boolean isActive,
+      VoyageStatus voyageStatus);*/
 
   public Voyage findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
       Long vesselId, boolean isActive, VoyageStatus voyageStatus);

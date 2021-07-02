@@ -51729,6 +51729,47 @@ public final class VesselInfo {
         getRulePlanOrBuilderList();
     /** <code>repeated .RulePlans rulePlan = 2;</code> */
     com.cpdss.common.generated.Common.RulePlansOrBuilder getRulePlanOrBuilder(int index);
+
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.CargoTankMaster> getCargoTankMasterList();
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.CargoTankMaster getCargoTankMaster(int index);
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    int getCargoTankMasterCount();
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder>
+        getCargoTankMasterOrBuilderList();
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder getCargoTankMasterOrBuilder(
+        int index);
+
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>
+        getRuleDropDownValueMasterList();
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster getRuleDropDownValueMaster(
+        int index);
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    int getRuleDropDownValueMasterCount();
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder>
+        getRuleDropDownValueMasterOrBuilderList();
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder
+        getRuleDropDownValueMasterOrBuilder(int index);
+
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.RuleTypeMaster> getRuleTypeMasterList();
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    com.cpdss.common.generated.VesselInfo.RuleTypeMaster getRuleTypeMaster(int index);
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    int getRuleTypeMasterCount();
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder>
+        getRuleTypeMasterOrBuilderList();
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder getRuleTypeMasterOrBuilder(
+        int index);
   }
   /** Protobuf type {@code VesselRuleReply} */
   public static final class VesselRuleReply extends com.google.protobuf.GeneratedMessageV3
@@ -51743,6 +51784,9 @@ public final class VesselInfo {
 
     private VesselRuleReply() {
       rulePlan_ = java.util.Collections.emptyList();
+      cargoTankMaster_ = java.util.Collections.emptyList();
+      ruleDropDownValueMaster_ = java.util.Collections.emptyList();
+      ruleTypeMaster_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -51804,6 +51848,48 @@ public final class VesselInfo {
                         com.cpdss.common.generated.Common.RulePlans.parser(), extensionRegistry));
                 break;
               }
+            case 26:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  cargoTankMaster_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.CargoTankMaster>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                cargoTankMaster_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.CargoTankMaster.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 34:
+              {
+                if (!((mutable_bitField0_ & 0x00000004) != 0)) {
+                  ruleDropDownValueMaster_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>();
+                  mutable_bitField0_ |= 0x00000004;
+                }
+                ruleDropDownValueMaster_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 42:
+              {
+                if (!((mutable_bitField0_ & 0x00000008) != 0)) {
+                  ruleTypeMaster_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.RuleTypeMaster>();
+                  mutable_bitField0_ |= 0x00000008;
+                }
+                ruleTypeMaster_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.RuleTypeMaster.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -51820,6 +51906,16 @@ public final class VesselInfo {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           rulePlan_ = java.util.Collections.unmodifiableList(rulePlan_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          cargoTankMaster_ = java.util.Collections.unmodifiableList(cargoTankMaster_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) != 0)) {
+          ruleDropDownValueMaster_ =
+              java.util.Collections.unmodifiableList(ruleDropDownValueMaster_);
+        }
+        if (((mutable_bitField0_ & 0x00000008) != 0)) {
+          ruleTypeMaster_ = java.util.Collections.unmodifiableList(ruleTypeMaster_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -51889,6 +51985,87 @@ public final class VesselInfo {
       return rulePlan_.get(index);
     }
 
+    public static final int CARGOTANKMASTER_FIELD_NUMBER = 3;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.CargoTankMaster> cargoTankMaster_;
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.CargoTankMaster>
+        getCargoTankMasterList() {
+      return cargoTankMaster_;
+    }
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder>
+        getCargoTankMasterOrBuilderList() {
+      return cargoTankMaster_;
+    }
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    public int getCargoTankMasterCount() {
+      return cargoTankMaster_.size();
+    }
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.CargoTankMaster getCargoTankMaster(int index) {
+      return cargoTankMaster_.get(index);
+    }
+    /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+    public com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder
+        getCargoTankMasterOrBuilder(int index) {
+      return cargoTankMaster_.get(index);
+    }
+
+    public static final int RULEDROPDOWNVALUEMASTER_FIELD_NUMBER = 4;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>
+        ruleDropDownValueMaster_;
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>
+        getRuleDropDownValueMasterList() {
+      return ruleDropDownValueMaster_;
+    }
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder>
+        getRuleDropDownValueMasterOrBuilderList() {
+      return ruleDropDownValueMaster_;
+    }
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    public int getRuleDropDownValueMasterCount() {
+      return ruleDropDownValueMaster_.size();
+    }
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster getRuleDropDownValueMaster(
+        int index) {
+      return ruleDropDownValueMaster_.get(index);
+    }
+    /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+    public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder
+        getRuleDropDownValueMasterOrBuilder(int index) {
+      return ruleDropDownValueMaster_.get(index);
+    }
+
+    public static final int RULETYPEMASTER_FIELD_NUMBER = 5;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.RuleTypeMaster> ruleTypeMaster_;
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.RuleTypeMaster>
+        getRuleTypeMasterList() {
+      return ruleTypeMaster_;
+    }
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder>
+        getRuleTypeMasterOrBuilderList() {
+      return ruleTypeMaster_;
+    }
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    public int getRuleTypeMasterCount() {
+      return ruleTypeMaster_.size();
+    }
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    public com.cpdss.common.generated.VesselInfo.RuleTypeMaster getRuleTypeMaster(int index) {
+      return ruleTypeMaster_.get(index);
+    }
+    /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+    public com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder getRuleTypeMasterOrBuilder(
+        int index) {
+      return ruleTypeMaster_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -51909,6 +52086,15 @@ public final class VesselInfo {
       for (int i = 0; i < rulePlan_.size(); i++) {
         output.writeMessage(2, rulePlan_.get(i));
       }
+      for (int i = 0; i < cargoTankMaster_.size(); i++) {
+        output.writeMessage(3, cargoTankMaster_.get(i));
+      }
+      for (int i = 0; i < ruleDropDownValueMaster_.size(); i++) {
+        output.writeMessage(4, ruleDropDownValueMaster_.get(i));
+      }
+      for (int i = 0; i < ruleTypeMaster_.size(); i++) {
+        output.writeMessage(5, ruleTypeMaster_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -51923,6 +52109,18 @@ public final class VesselInfo {
       }
       for (int i = 0; i < rulePlan_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, rulePlan_.get(i));
+      }
+      for (int i = 0; i < cargoTankMaster_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(3, cargoTankMaster_.get(i));
+      }
+      for (int i = 0; i < ruleDropDownValueMaster_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                4, ruleDropDownValueMaster_.get(i));
+      }
+      for (int i = 0; i < ruleTypeMaster_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, ruleTypeMaster_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -51945,6 +52143,10 @@ public final class VesselInfo {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
       if (!getRulePlanList().equals(other.getRulePlanList())) return false;
+      if (!getCargoTankMasterList().equals(other.getCargoTankMasterList())) return false;
+      if (!getRuleDropDownValueMasterList().equals(other.getRuleDropDownValueMasterList()))
+        return false;
+      if (!getRuleTypeMasterList().equals(other.getRuleTypeMasterList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -51963,6 +52165,18 @@ public final class VesselInfo {
       if (getRulePlanCount() > 0) {
         hash = (37 * hash) + RULEPLAN_FIELD_NUMBER;
         hash = (53 * hash) + getRulePlanList().hashCode();
+      }
+      if (getCargoTankMasterCount() > 0) {
+        hash = (37 * hash) + CARGOTANKMASTER_FIELD_NUMBER;
+        hash = (53 * hash) + getCargoTankMasterList().hashCode();
+      }
+      if (getRuleDropDownValueMasterCount() > 0) {
+        hash = (37 * hash) + RULEDROPDOWNVALUEMASTER_FIELD_NUMBER;
+        hash = (53 * hash) + getRuleDropDownValueMasterList().hashCode();
+      }
+      if (getRuleTypeMasterCount() > 0) {
+        hash = (37 * hash) + RULETYPEMASTER_FIELD_NUMBER;
+        hash = (53 * hash) + getRuleTypeMasterList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -52099,6 +52313,9 @@ public final class VesselInfo {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
           getRulePlanFieldBuilder();
+          getCargoTankMasterFieldBuilder();
+          getRuleDropDownValueMasterFieldBuilder();
+          getRuleTypeMasterFieldBuilder();
         }
       }
 
@@ -52116,6 +52333,24 @@ public final class VesselInfo {
           bitField0_ = (bitField0_ & ~0x00000001);
         } else {
           rulePlanBuilder_.clear();
+        }
+        if (cargoTankMasterBuilder_ == null) {
+          cargoTankMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          cargoTankMasterBuilder_.clear();
+        }
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ruleDropDownValueMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          ruleDropDownValueMasterBuilder_.clear();
+        }
+        if (ruleTypeMasterBuilder_ == null) {
+          ruleTypeMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          ruleTypeMasterBuilder_.clear();
         }
         return this;
       }
@@ -52157,6 +52392,34 @@ public final class VesselInfo {
           result.rulePlan_ = rulePlan_;
         } else {
           result.rulePlan_ = rulePlanBuilder_.build();
+        }
+        if (cargoTankMasterBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            cargoTankMaster_ = java.util.Collections.unmodifiableList(cargoTankMaster_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.cargoTankMaster_ = cargoTankMaster_;
+        } else {
+          result.cargoTankMaster_ = cargoTankMasterBuilder_.build();
+        }
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            ruleDropDownValueMaster_ =
+                java.util.Collections.unmodifiableList(ruleDropDownValueMaster_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.ruleDropDownValueMaster_ = ruleDropDownValueMaster_;
+        } else {
+          result.ruleDropDownValueMaster_ = ruleDropDownValueMasterBuilder_.build();
+        }
+        if (ruleTypeMasterBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) != 0)) {
+            ruleTypeMaster_ = java.util.Collections.unmodifiableList(ruleTypeMaster_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
+          result.ruleTypeMaster_ = ruleTypeMaster_;
+        } else {
+          result.ruleTypeMaster_ = ruleTypeMasterBuilder_.build();
         }
         onBuilt();
         return result;
@@ -52237,6 +52500,87 @@ public final class VesselInfo {
                       : null;
             } else {
               rulePlanBuilder_.addAllMessages(other.rulePlan_);
+            }
+          }
+        }
+        if (cargoTankMasterBuilder_ == null) {
+          if (!other.cargoTankMaster_.isEmpty()) {
+            if (cargoTankMaster_.isEmpty()) {
+              cargoTankMaster_ = other.cargoTankMaster_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureCargoTankMasterIsMutable();
+              cargoTankMaster_.addAll(other.cargoTankMaster_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.cargoTankMaster_.isEmpty()) {
+            if (cargoTankMasterBuilder_.isEmpty()) {
+              cargoTankMasterBuilder_.dispose();
+              cargoTankMasterBuilder_ = null;
+              cargoTankMaster_ = other.cargoTankMaster_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              cargoTankMasterBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getCargoTankMasterFieldBuilder()
+                      : null;
+            } else {
+              cargoTankMasterBuilder_.addAllMessages(other.cargoTankMaster_);
+            }
+          }
+        }
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          if (!other.ruleDropDownValueMaster_.isEmpty()) {
+            if (ruleDropDownValueMaster_.isEmpty()) {
+              ruleDropDownValueMaster_ = other.ruleDropDownValueMaster_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureRuleDropDownValueMasterIsMutable();
+              ruleDropDownValueMaster_.addAll(other.ruleDropDownValueMaster_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.ruleDropDownValueMaster_.isEmpty()) {
+            if (ruleDropDownValueMasterBuilder_.isEmpty()) {
+              ruleDropDownValueMasterBuilder_.dispose();
+              ruleDropDownValueMasterBuilder_ = null;
+              ruleDropDownValueMaster_ = other.ruleDropDownValueMaster_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              ruleDropDownValueMasterBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getRuleDropDownValueMasterFieldBuilder()
+                      : null;
+            } else {
+              ruleDropDownValueMasterBuilder_.addAllMessages(other.ruleDropDownValueMaster_);
+            }
+          }
+        }
+        if (ruleTypeMasterBuilder_ == null) {
+          if (!other.ruleTypeMaster_.isEmpty()) {
+            if (ruleTypeMaster_.isEmpty()) {
+              ruleTypeMaster_ = other.ruleTypeMaster_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+            } else {
+              ensureRuleTypeMasterIsMutable();
+              ruleTypeMaster_.addAll(other.ruleTypeMaster_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.ruleTypeMaster_.isEmpty()) {
+            if (ruleTypeMasterBuilder_.isEmpty()) {
+              ruleTypeMasterBuilder_.dispose();
+              ruleTypeMasterBuilder_ = null;
+              ruleTypeMaster_ = other.ruleTypeMaster_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              ruleTypeMasterBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getRuleTypeMasterFieldBuilder()
+                      : null;
+            } else {
+              ruleTypeMasterBuilder_.addAllMessages(other.ruleTypeMaster_);
             }
           }
         }
@@ -52596,6 +52940,679 @@ public final class VesselInfo {
           rulePlan_ = null;
         }
         return rulePlanBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.CargoTankMaster>
+          cargoTankMaster_ = java.util.Collections.emptyList();
+
+      private void ensureCargoTankMasterIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          cargoTankMaster_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.CargoTankMaster>(
+                  cargoTankMaster_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.CargoTankMaster,
+              com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder,
+              com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder>
+          cargoTankMasterBuilder_;
+
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.CargoTankMaster>
+          getCargoTankMasterList() {
+        if (cargoTankMasterBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(cargoTankMaster_);
+        } else {
+          return cargoTankMasterBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public int getCargoTankMasterCount() {
+        if (cargoTankMasterBuilder_ == null) {
+          return cargoTankMaster_.size();
+        } else {
+          return cargoTankMasterBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.CargoTankMaster getCargoTankMaster(int index) {
+        if (cargoTankMasterBuilder_ == null) {
+          return cargoTankMaster_.get(index);
+        } else {
+          return cargoTankMasterBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder setCargoTankMaster(
+          int index, com.cpdss.common.generated.VesselInfo.CargoTankMaster value) {
+        if (cargoTankMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoTankMasterIsMutable();
+          cargoTankMaster_.set(index, value);
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder setCargoTankMaster(
+          int index,
+          com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder builderForValue) {
+        if (cargoTankMasterBuilder_ == null) {
+          ensureCargoTankMasterIsMutable();
+          cargoTankMaster_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder addCargoTankMaster(
+          com.cpdss.common.generated.VesselInfo.CargoTankMaster value) {
+        if (cargoTankMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoTankMasterIsMutable();
+          cargoTankMaster_.add(value);
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder addCargoTankMaster(
+          int index, com.cpdss.common.generated.VesselInfo.CargoTankMaster value) {
+        if (cargoTankMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoTankMasterIsMutable();
+          cargoTankMaster_.add(index, value);
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder addCargoTankMaster(
+          com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder builderForValue) {
+        if (cargoTankMasterBuilder_ == null) {
+          ensureCargoTankMasterIsMutable();
+          cargoTankMaster_.add(builderForValue.build());
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder addCargoTankMaster(
+          int index,
+          com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder builderForValue) {
+        if (cargoTankMasterBuilder_ == null) {
+          ensureCargoTankMasterIsMutable();
+          cargoTankMaster_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder addAllCargoTankMaster(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.CargoTankMaster>
+              values) {
+        if (cargoTankMasterBuilder_ == null) {
+          ensureCargoTankMasterIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoTankMaster_);
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder clearCargoTankMaster() {
+        if (cargoTankMasterBuilder_ == null) {
+          cargoTankMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public Builder removeCargoTankMaster(int index) {
+        if (cargoTankMasterBuilder_ == null) {
+          ensureCargoTankMasterIsMutable();
+          cargoTankMaster_.remove(index);
+          onChanged();
+        } else {
+          cargoTankMasterBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder
+          getCargoTankMasterBuilder(int index) {
+        return getCargoTankMasterFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder
+          getCargoTankMasterOrBuilder(int index) {
+        if (cargoTankMasterBuilder_ == null) {
+          return cargoTankMaster_.get(index);
+        } else {
+          return cargoTankMasterBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder>
+          getCargoTankMasterOrBuilderList() {
+        if (cargoTankMasterBuilder_ != null) {
+          return cargoTankMasterBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(cargoTankMaster_);
+        }
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder
+          addCargoTankMasterBuilder() {
+        return getCargoTankMasterFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.CargoTankMaster.getDefaultInstance());
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder
+          addCargoTankMasterBuilder(int index) {
+        return getCargoTankMasterFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.CargoTankMaster.getDefaultInstance());
+      }
+      /** <code>repeated .CargoTankMaster cargoTankMaster = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder>
+          getCargoTankMasterBuilderList() {
+        return getCargoTankMasterFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.CargoTankMaster,
+              com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder,
+              com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder>
+          getCargoTankMasterFieldBuilder() {
+        if (cargoTankMasterBuilder_ == null) {
+          cargoTankMasterBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.CargoTankMaster,
+                  com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder,
+                  com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder>(
+                  cargoTankMaster_,
+                  ((bitField0_ & 0x00000002) != 0),
+                  getParentForChildren(),
+                  isClean());
+          cargoTankMaster_ = null;
+        }
+        return cargoTankMasterBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>
+          ruleDropDownValueMaster_ = java.util.Collections.emptyList();
+
+      private void ensureRuleDropDownValueMasterIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          ruleDropDownValueMaster_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>(
+                  ruleDropDownValueMaster_);
+          bitField0_ |= 0x00000004;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster,
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder,
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder>
+          ruleDropDownValueMasterBuilder_;
+
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>
+          getRuleDropDownValueMasterList() {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(ruleDropDownValueMaster_);
+        } else {
+          return ruleDropDownValueMasterBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public int getRuleDropDownValueMasterCount() {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          return ruleDropDownValueMaster_.size();
+        } else {
+          return ruleDropDownValueMasterBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster
+          getRuleDropDownValueMaster(int index) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          return ruleDropDownValueMaster_.get(index);
+        } else {
+          return ruleDropDownValueMasterBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder setRuleDropDownValueMaster(
+          int index, com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster value) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleDropDownValueMasterIsMutable();
+          ruleDropDownValueMaster_.set(index, value);
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder setRuleDropDownValueMaster(
+          int index,
+          com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder builderForValue) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ensureRuleDropDownValueMasterIsMutable();
+          ruleDropDownValueMaster_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder addRuleDropDownValueMaster(
+          com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster value) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleDropDownValueMasterIsMutable();
+          ruleDropDownValueMaster_.add(value);
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder addRuleDropDownValueMaster(
+          int index, com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster value) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleDropDownValueMasterIsMutable();
+          ruleDropDownValueMaster_.add(index, value);
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder addRuleDropDownValueMaster(
+          com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder builderForValue) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ensureRuleDropDownValueMasterIsMutable();
+          ruleDropDownValueMaster_.add(builderForValue.build());
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder addRuleDropDownValueMaster(
+          int index,
+          com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder builderForValue) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ensureRuleDropDownValueMasterIsMutable();
+          ruleDropDownValueMaster_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder addAllRuleDropDownValueMaster(
+          java.lang.Iterable<
+                  ? extends com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster>
+              values) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ensureRuleDropDownValueMasterIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, ruleDropDownValueMaster_);
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder clearRuleDropDownValueMaster() {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ruleDropDownValueMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public Builder removeRuleDropDownValueMaster(int index) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ensureRuleDropDownValueMasterIsMutable();
+          ruleDropDownValueMaster_.remove(index);
+          onChanged();
+        } else {
+          ruleDropDownValueMasterBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder
+          getRuleDropDownValueMasterBuilder(int index) {
+        return getRuleDropDownValueMasterFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder
+          getRuleDropDownValueMasterOrBuilder(int index) {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          return ruleDropDownValueMaster_.get(index);
+        } else {
+          return ruleDropDownValueMasterBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder>
+          getRuleDropDownValueMasterOrBuilderList() {
+        if (ruleDropDownValueMasterBuilder_ != null) {
+          return ruleDropDownValueMasterBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(ruleDropDownValueMaster_);
+        }
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder
+          addRuleDropDownValueMasterBuilder() {
+        return getRuleDropDownValueMasterFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.getDefaultInstance());
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder
+          addRuleDropDownValueMasterBuilder(int index) {
+        return getRuleDropDownValueMasterFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.getDefaultInstance());
+      }
+      /** <code>repeated .RuleDropDownValueMaster ruleDropDownValueMaster = 4;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder>
+          getRuleDropDownValueMasterBuilderList() {
+        return getRuleDropDownValueMasterFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster,
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder,
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder>
+          getRuleDropDownValueMasterFieldBuilder() {
+        if (ruleDropDownValueMasterBuilder_ == null) {
+          ruleDropDownValueMasterBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster,
+                  com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder,
+                  com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder>(
+                  ruleDropDownValueMaster_,
+                  ((bitField0_ & 0x00000004) != 0),
+                  getParentForChildren(),
+                  isClean());
+          ruleDropDownValueMaster_ = null;
+        }
+        return ruleDropDownValueMasterBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.RuleTypeMaster> ruleTypeMaster_ =
+          java.util.Collections.emptyList();
+
+      private void ensureRuleTypeMasterIsMutable() {
+        if (!((bitField0_ & 0x00000008) != 0)) {
+          ruleTypeMaster_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.RuleTypeMaster>(
+                  ruleTypeMaster_);
+          bitField0_ |= 0x00000008;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RuleTypeMaster,
+              com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder,
+              com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder>
+          ruleTypeMasterBuilder_;
+
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RuleTypeMaster>
+          getRuleTypeMasterList() {
+        if (ruleTypeMasterBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(ruleTypeMaster_);
+        } else {
+          return ruleTypeMasterBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public int getRuleTypeMasterCount() {
+        if (ruleTypeMasterBuilder_ == null) {
+          return ruleTypeMaster_.size();
+        } else {
+          return ruleTypeMasterBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMaster getRuleTypeMaster(int index) {
+        if (ruleTypeMasterBuilder_ == null) {
+          return ruleTypeMaster_.get(index);
+        } else {
+          return ruleTypeMasterBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder setRuleTypeMaster(
+          int index, com.cpdss.common.generated.VesselInfo.RuleTypeMaster value) {
+        if (ruleTypeMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleTypeMasterIsMutable();
+          ruleTypeMaster_.set(index, value);
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder setRuleTypeMaster(
+          int index, com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder builderForValue) {
+        if (ruleTypeMasterBuilder_ == null) {
+          ensureRuleTypeMasterIsMutable();
+          ruleTypeMaster_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder addRuleTypeMaster(com.cpdss.common.generated.VesselInfo.RuleTypeMaster value) {
+        if (ruleTypeMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleTypeMasterIsMutable();
+          ruleTypeMaster_.add(value);
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder addRuleTypeMaster(
+          int index, com.cpdss.common.generated.VesselInfo.RuleTypeMaster value) {
+        if (ruleTypeMasterBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRuleTypeMasterIsMutable();
+          ruleTypeMaster_.add(index, value);
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder addRuleTypeMaster(
+          com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder builderForValue) {
+        if (ruleTypeMasterBuilder_ == null) {
+          ensureRuleTypeMasterIsMutable();
+          ruleTypeMaster_.add(builderForValue.build());
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder addRuleTypeMaster(
+          int index, com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder builderForValue) {
+        if (ruleTypeMasterBuilder_ == null) {
+          ensureRuleTypeMasterIsMutable();
+          ruleTypeMaster_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder addAllRuleTypeMaster(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.RuleTypeMaster>
+              values) {
+        if (ruleTypeMasterBuilder_ == null) {
+          ensureRuleTypeMasterIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, ruleTypeMaster_);
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder clearRuleTypeMaster() {
+        if (ruleTypeMasterBuilder_ == null) {
+          ruleTypeMaster_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public Builder removeRuleTypeMaster(int index) {
+        if (ruleTypeMasterBuilder_ == null) {
+          ensureRuleTypeMasterIsMutable();
+          ruleTypeMaster_.remove(index);
+          onChanged();
+        } else {
+          ruleTypeMasterBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder getRuleTypeMasterBuilder(
+          int index) {
+        return getRuleTypeMasterFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder
+          getRuleTypeMasterOrBuilder(int index) {
+        if (ruleTypeMasterBuilder_ == null) {
+          return ruleTypeMaster_.get(index);
+        } else {
+          return ruleTypeMasterBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder>
+          getRuleTypeMasterOrBuilderList() {
+        if (ruleTypeMasterBuilder_ != null) {
+          return ruleTypeMasterBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(ruleTypeMaster_);
+        }
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder
+          addRuleTypeMasterBuilder() {
+        return getRuleTypeMasterFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.RuleTypeMaster.getDefaultInstance());
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder addRuleTypeMasterBuilder(
+          int index) {
+        return getRuleTypeMasterFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.RuleTypeMaster.getDefaultInstance());
+      }
+      /** <code>repeated .RuleTypeMaster ruleTypeMaster = 5;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder>
+          getRuleTypeMasterBuilderList() {
+        return getRuleTypeMasterFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.RuleTypeMaster,
+              com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder,
+              com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder>
+          getRuleTypeMasterFieldBuilder() {
+        if (ruleTypeMasterBuilder_ == null) {
+          ruleTypeMasterBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.RuleTypeMaster,
+                  com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder,
+                  com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder>(
+                  ruleTypeMaster_,
+                  ((bitField0_ & 0x00000008) != 0),
+                  getParentForChildren(),
+                  isClean());
+          ruleTypeMaster_ = null;
+        }
+        return ruleTypeMasterBuilder_;
       }
 
       @java.lang.Override
@@ -59598,6 +60615,2033 @@ public final class VesselInfo {
     }
   }
 
+  public interface CargoTankMasterOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:CargoTankMaster)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string shortName = 2;</code>
+     *
+     * @return The shortName.
+     */
+    java.lang.String getShortName();
+    /**
+     * <code>string shortName = 2;</code>
+     *
+     * @return The bytes for shortName.
+     */
+    com.google.protobuf.ByteString getShortNameBytes();
+  }
+  /** Protobuf type {@code CargoTankMaster} */
+  public static final class CargoTankMaster extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:CargoTankMaster)
+      CargoTankMasterOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use CargoTankMaster.newBuilder() to construct.
+    private CargoTankMaster(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private CargoTankMaster() {
+      shortName_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new CargoTankMaster();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private CargoTankMaster(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                shortName_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_CargoTankMaster_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_CargoTankMaster_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.CargoTankMaster.class,
+              com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int SHORTNAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object shortName_;
+    /**
+     * <code>string shortName = 2;</code>
+     *
+     * @return The shortName.
+     */
+    public java.lang.String getShortName() {
+      java.lang.Object ref = shortName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        shortName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string shortName = 2;</code>
+     *
+     * @return The bytes for shortName.
+     */
+    public com.google.protobuf.ByteString getShortNameBytes() {
+      java.lang.Object ref = shortName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        shortName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getShortNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, shortName_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getShortNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, shortName_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.CargoTankMaster)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.CargoTankMaster other =
+          (com.cpdss.common.generated.VesselInfo.CargoTankMaster) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getShortName().equals(other.getShortName())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + SHORTNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getShortName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.CargoTankMaster prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code CargoTankMaster} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:CargoTankMaster)
+        com.cpdss.common.generated.VesselInfo.CargoTankMasterOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_CargoTankMaster_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_CargoTankMaster_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.CargoTankMaster.class,
+                com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.CargoTankMaster.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        shortName_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_CargoTankMaster_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CargoTankMaster getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.CargoTankMaster.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CargoTankMaster build() {
+        com.cpdss.common.generated.VesselInfo.CargoTankMaster result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CargoTankMaster buildPartial() {
+        com.cpdss.common.generated.VesselInfo.CargoTankMaster result =
+            new com.cpdss.common.generated.VesselInfo.CargoTankMaster(this);
+        result.id_ = id_;
+        result.shortName_ = shortName_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.CargoTankMaster) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.CargoTankMaster) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.CargoTankMaster other) {
+        if (other == com.cpdss.common.generated.VesselInfo.CargoTankMaster.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getShortName().isEmpty()) {
+          shortName_ = other.shortName_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.CargoTankMaster parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.CargoTankMaster) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object shortName_ = "";
+      /**
+       * <code>string shortName = 2;</code>
+       *
+       * @return The shortName.
+       */
+      public java.lang.String getShortName() {
+        java.lang.Object ref = shortName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          shortName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string shortName = 2;</code>
+       *
+       * @return The bytes for shortName.
+       */
+      public com.google.protobuf.ByteString getShortNameBytes() {
+        java.lang.Object ref = shortName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          shortName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string shortName = 2;</code>
+       *
+       * @param value The shortName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShortName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        shortName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shortName = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearShortName() {
+
+        shortName_ = getDefaultInstance().getShortName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shortName = 2;</code>
+       *
+       * @param value The bytes for shortName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShortNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        shortName_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:CargoTankMaster)
+    }
+
+    // @@protoc_insertion_point(class_scope:CargoTankMaster)
+    private static final com.cpdss.common.generated.VesselInfo.CargoTankMaster DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.CargoTankMaster();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CargoTankMaster getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CargoTankMaster> PARSER =
+        new com.google.protobuf.AbstractParser<CargoTankMaster>() {
+          @java.lang.Override
+          public CargoTankMaster parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CargoTankMaster(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<CargoTankMaster> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CargoTankMaster> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.CargoTankMaster getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface RuleDropDownValueMasterOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:RuleDropDownValueMaster)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The value.
+     */
+    java.lang.String getValue();
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The bytes for value.
+     */
+    com.google.protobuf.ByteString getValueBytes();
+
+    /**
+     * <code>int64 ruleTemplateId = 3;</code>
+     *
+     * @return The ruleTemplateId.
+     */
+    long getRuleTemplateId();
+  }
+  /** Protobuf type {@code RuleDropDownValueMaster} */
+  public static final class RuleDropDownValueMaster extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:RuleDropDownValueMaster)
+      RuleDropDownValueMasterOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use RuleDropDownValueMaster.newBuilder() to construct.
+    private RuleDropDownValueMaster(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private RuleDropDownValueMaster() {
+      value_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new RuleDropDownValueMaster();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private RuleDropDownValueMaster(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                value_ = s;
+                break;
+              }
+            case 24:
+              {
+                ruleTemplateId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_RuleDropDownValueMaster_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_RuleDropDownValueMaster_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.class,
+              com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int VALUE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object value_;
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The value.
+     */
+    public java.lang.String getValue() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        value_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string value = 2;</code>
+     *
+     * @return The bytes for value.
+     */
+    public com.google.protobuf.ByteString getValueBytes() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        value_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RULETEMPLATEID_FIELD_NUMBER = 3;
+    private long ruleTemplateId_;
+    /**
+     * <code>int64 ruleTemplateId = 3;</code>
+     *
+     * @return The ruleTemplateId.
+     */
+    public long getRuleTemplateId() {
+      return ruleTemplateId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, value_);
+      }
+      if (ruleTemplateId_ != 0L) {
+        output.writeInt64(3, ruleTemplateId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getValueBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, value_);
+      }
+      if (ruleTemplateId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, ruleTemplateId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster other =
+          (com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getValue().equals(other.getValue())) return false;
+      if (getRuleTemplateId() != other.getRuleTemplateId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getValue().hashCode();
+      hash = (37 * hash) + RULETEMPLATEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getRuleTemplateId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code RuleDropDownValueMaster} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:RuleDropDownValueMaster)
+        com.cpdss.common.generated.VesselInfo.RuleDropDownValueMasterOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_RuleDropDownValueMaster_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_RuleDropDownValueMaster_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.class,
+                com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        value_ = "";
+
+        ruleTemplateId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_RuleDropDownValueMaster_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster build() {
+        com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster buildPartial() {
+        com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster result =
+            new com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster(this);
+        result.id_ = id_;
+        result.value_ = value_;
+        result.ruleTemplateId_ = ruleTemplateId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster other) {
+        if (other
+            == com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getValue().isEmpty()) {
+          value_ = other.value_;
+          onChanged();
+        }
+        if (other.getRuleTemplateId() != 0L) {
+          setRuleTemplateId(other.getRuleTemplateId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object value_ = "";
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return The value.
+       */
+      public java.lang.String getValue() {
+        java.lang.Object ref = value_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          value_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return The bytes for value.
+       */
+      public com.google.protobuf.ByteString getValueBytes() {
+        java.lang.Object ref = value_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          value_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @param value The value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValue(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValue() {
+
+        value_ = getDefaultInstance().getValue();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string value = 2;</code>
+       *
+       * @param value The bytes for value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValueBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        value_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long ruleTemplateId_;
+      /**
+       * <code>int64 ruleTemplateId = 3;</code>
+       *
+       * @return The ruleTemplateId.
+       */
+      public long getRuleTemplateId() {
+        return ruleTemplateId_;
+      }
+      /**
+       * <code>int64 ruleTemplateId = 3;</code>
+       *
+       * @param value The ruleTemplateId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRuleTemplateId(long value) {
+
+        ruleTemplateId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 ruleTemplateId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRuleTemplateId() {
+
+        ruleTemplateId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:RuleDropDownValueMaster)
+    }
+
+    // @@protoc_insertion_point(class_scope:RuleDropDownValueMaster)
+    private static final com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RuleDropDownValueMaster> PARSER =
+        new com.google.protobuf.AbstractParser<RuleDropDownValueMaster>() {
+          @java.lang.Override
+          public RuleDropDownValueMaster parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new RuleDropDownValueMaster(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<RuleDropDownValueMaster> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RuleDropDownValueMaster> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface RuleTypeMasterOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:RuleTypeMaster)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string ruleType = 2;</code>
+     *
+     * @return The ruleType.
+     */
+    java.lang.String getRuleType();
+    /**
+     * <code>string ruleType = 2;</code>
+     *
+     * @return The bytes for ruleType.
+     */
+    com.google.protobuf.ByteString getRuleTypeBytes();
+  }
+  /** Protobuf type {@code RuleTypeMaster} */
+  public static final class RuleTypeMaster extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:RuleTypeMaster)
+      RuleTypeMasterOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use RuleTypeMaster.newBuilder() to construct.
+    private RuleTypeMaster(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private RuleTypeMaster() {
+      ruleType_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new RuleTypeMaster();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private RuleTypeMaster(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ruleType_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_RuleTypeMaster_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_RuleTypeMaster_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.RuleTypeMaster.class,
+              com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int RULETYPE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object ruleType_;
+    /**
+     * <code>string ruleType = 2;</code>
+     *
+     * @return The ruleType.
+     */
+    public java.lang.String getRuleType() {
+      java.lang.Object ref = ruleType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ruleType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ruleType = 2;</code>
+     *
+     * @return The bytes for ruleType.
+     */
+    public com.google.protobuf.ByteString getRuleTypeBytes() {
+      java.lang.Object ref = ruleType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ruleType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getRuleTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, ruleType_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getRuleTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, ruleType_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.RuleTypeMaster)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.RuleTypeMaster other =
+          (com.cpdss.common.generated.VesselInfo.RuleTypeMaster) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getRuleType().equals(other.getRuleType())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + RULETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getRuleType().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.RuleTypeMaster prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code RuleTypeMaster} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:RuleTypeMaster)
+        com.cpdss.common.generated.VesselInfo.RuleTypeMasterOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RuleTypeMaster_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_RuleTypeMaster_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.RuleTypeMaster.class,
+                com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.RuleTypeMaster.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        ruleType_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_RuleTypeMaster_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMaster getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.RuleTypeMaster.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMaster build() {
+        com.cpdss.common.generated.VesselInfo.RuleTypeMaster result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.RuleTypeMaster buildPartial() {
+        com.cpdss.common.generated.VesselInfo.RuleTypeMaster result =
+            new com.cpdss.common.generated.VesselInfo.RuleTypeMaster(this);
+        result.id_ = id_;
+        result.ruleType_ = ruleType_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.RuleTypeMaster) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.RuleTypeMaster) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.RuleTypeMaster other) {
+        if (other == com.cpdss.common.generated.VesselInfo.RuleTypeMaster.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getRuleType().isEmpty()) {
+          ruleType_ = other.ruleType_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.RuleTypeMaster parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.RuleTypeMaster) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object ruleType_ = "";
+      /**
+       * <code>string ruleType = 2;</code>
+       *
+       * @return The ruleType.
+       */
+      public java.lang.String getRuleType() {
+        java.lang.Object ref = ruleType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ruleType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ruleType = 2;</code>
+       *
+       * @return The bytes for ruleType.
+       */
+      public com.google.protobuf.ByteString getRuleTypeBytes() {
+        java.lang.Object ref = ruleType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ruleType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ruleType = 2;</code>
+       *
+       * @param value The ruleType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRuleType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ruleType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ruleType = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRuleType() {
+
+        ruleType_ = getDefaultInstance().getRuleType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ruleType = 2;</code>
+       *
+       * @param value The bytes for ruleType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRuleTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ruleType_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:RuleTypeMaster)
+    }
+
+    // @@protoc_insertion_point(class_scope:RuleTypeMaster)
+    private static final com.cpdss.common.generated.VesselInfo.RuleTypeMaster DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.RuleTypeMaster();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.RuleTypeMaster getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RuleTypeMaster> PARSER =
+        new com.google.protobuf.AbstractParser<RuleTypeMaster>() {
+          @java.lang.Override
+          public RuleTypeMaster parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new RuleTypeMaster(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<RuleTypeMaster> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RuleTypeMaster> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.RuleTypeMaster getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VesselRequestWithPaging_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -59762,6 +62806,18 @@ public final class VesselInfo {
       internal_static_LoadingInfoRulesReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadingInfoRulesReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_CargoTankMaster_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CargoTankMaster_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_RuleDropDownValueMaster_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RuleDropDownValueMaster_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_RuleTypeMaster_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RuleTypeMaster_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -59928,35 +62984,43 @@ public final class VesselInfo {
           + "pCapacity\030\006 \001(\t\"o\n\021VesselRuleRequest\022\020\n\010"
           + "vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rul"
           + "ePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefaultRu"
-          + "le\030\004 \001(\010\"X\n\017VesselRuleReply\022\'\n\016responseS"
-          + "tatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePlan"
-          + "\030\002 \003(\0132\n.RulePlans\"\260\001\n\030VesselValveSequen"
-          + "ceReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
-          + "seStatus\0220\n\022vvSequenceEntities\030\002 \003(\0132\024.V"
-          + "esselValveSequence\0229\n\023vvEducationEntitie"
-          + "s\030\003 \003(\0132\034.VesselValveEducationProcess\"\255\004"
-          + "\n\023VesselValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risC"
-          + "ommonValve\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\r"
-          + "pipelineColor\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001("
-          + "\t\022\024\n\014pipelineType\030\006 \001(\t\022\026\n\016sequenceNumbe"
-          + "r\030\007 \001(\t\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025"
-          + "sequenceOperationName\030\t \001(\t\022\026\n\016sequenceT"
-          + "ypeId\030\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n"
-          + "\027sequenceVesselMappingId\030\014 \001(\005\022\025\n\rtankSh"
-          + "ortName\030\r \001(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017"
-          + "valveCategoryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001"
-          + "(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001"
-          + "(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nvesselName\030"
-          + "\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\034\n\024vesselVa"
-          + "lveMappingId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001"
-          + "\n\033VesselValveEducationProcess\022\n\n\002id\030\001 \001("
-          + "\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n\016sequenceNumber"
-          + "\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valveNumber\030"
-          + "\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027eductionProc"
-          + "essMasterId\030\007 \001(\005\"+\n\027LoadingInfoRulesReq"
-          + "uest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025LoadingInfoRul"
-          + "esReply\022\025\n\005rules\030\001 \003(\0132\006.Rules\022\'\n\016respon"
-          + "seStatus\030\002 \001(\0132\017.ResponseStatus2\344\007\n\021Vess"
+          + "le\030\004 \001(\010\"\347\001\n\017VesselRuleReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePla"
+          + "n\030\002 \003(\0132\n.RulePlans\022)\n\017cargoTankMaster\030\003"
+          + " \003(\0132\020.CargoTankMaster\0229\n\027ruleDropDownVa"
+          + "lueMaster\030\004 \003(\0132\030.RuleDropDownValueMaste"
+          + "r\022\'\n\016ruleTypeMaster\030\005 \003(\0132\017.RuleTypeMast"
+          + "er\"\260\001\n\030VesselValveSequenceReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\0220\n\022vvSe"
+          + "quenceEntities\030\002 \003(\0132\024.VesselValveSequen"
+          + "ce\0229\n\023vvEducationEntities\030\003 \003(\0132\034.Vessel"
+          + "ValveEducationProcess\"\255\004\n\023VesselValveSeq"
+          + "uence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010"
+          + "\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineColor\030\004 "
+          + "\001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipelineTyp"
+          + "e\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t\022\033\n\023seque"
+          + "nceOperationId\030\010 \001(\005\022\035\n\025sequenceOperatio"
+          + "nName\030\t \001(\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n\020s"
+          + "equenceTypeName\030\013 \001(\t\022\037\n\027sequenceVesselM"
+          + "appingId\030\014 \001(\005\022\025\n\rtankShortName\030\r \001(\t\022\025\n"
+          + "\rvalveCategory\030\016 \001(\t\022\027\n\017valveCategoryId\030"
+          + "\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tvalveSide\030"
+          + "\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rvalveTypeN"
+          + "ame\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesselT"
+          + "ankXid\030\025 \001(\005\022\034\n\024vesselValveMappingId\030\026 \001"
+          + "(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselValveEdu"
+          + "cationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorName"
+          + "\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010stepNa"
+          + "me\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\teductor"
+          + "Id\030\006 \001(\005\022\037\n\027eductionProcessMasterId\030\007 \001("
+          + "\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010vesselId"
+          + "\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005rules"
+          + "\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001(\0132\017"
+          + ".ResponseStatus\"0\n\017CargoTankMaster\022\n\n\002id"
+          + "\030\001 \001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDropDow"
+          + "nValueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022"
+          + "\026\n\016ruleTemplateId\030\003 \001(\003\".\n\016RuleTypeMaste"
+          + "r\022\n\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n\021Vess"
           + "elInfoService\0228\n\026GetAllVesselsByCompany\022"
           + "\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024GetVe"
           + "sselDetailsById\022\016.VesselRequest\032\014.Vessel"
@@ -60384,7 +63448,11 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselRuleReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "RulePlan",
+              "ResponseStatus",
+              "RulePlan",
+              "CargoTankMaster",
+              "RuleDropDownValueMaster",
+              "RuleTypeMaster",
             });
     internal_static_VesselValveSequenceReply_descriptor = getDescriptor().getMessageTypes().get(36);
     internal_static_VesselValveSequenceReply_fieldAccessorTable =
@@ -60449,6 +63517,27 @@ public final class VesselInfo {
             internal_static_LoadingInfoRulesReply_descriptor,
             new java.lang.String[] {
               "Rules", "ResponseStatus",
+            });
+    internal_static_CargoTankMaster_descriptor = getDescriptor().getMessageTypes().get(41);
+    internal_static_CargoTankMaster_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_CargoTankMaster_descriptor,
+            new java.lang.String[] {
+              "Id", "ShortName",
+            });
+    internal_static_RuleDropDownValueMaster_descriptor = getDescriptor().getMessageTypes().get(42);
+    internal_static_RuleDropDownValueMaster_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_RuleDropDownValueMaster_descriptor,
+            new java.lang.String[] {
+              "Id", "Value", "RuleTemplateId",
+            });
+    internal_static_RuleTypeMaster_descriptor = getDescriptor().getMessageTypes().get(43);
+    internal_static_RuleTypeMaster_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_RuleTypeMaster_descriptor,
+            new java.lang.String[] {
+              "Id", "RuleType",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }
