@@ -19,23 +19,30 @@ public final class DischargeStudyServiceOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n,dischargestudy/discharge_study_service"
-          + ".proto\032\014common.proto\032&loading_plan/loadi"
-          + "ng_plan_models.proto2\200\001\n\025DischargeStudyS"
-          + "ervice\022g\n\031getDischargeStudyByVoyage\022$.Lo"
-          + "adingInformationSynopticalRequest\032\".Load"
-          + "ingInformationSynopticalReply\"\000B-\n)com.c"
-          + "pdss.common.generated.dischargestudyP\000b\006"
-          + "proto3"
+          + ".proto\032\014common.proto\032\024loadable_study.pro"
+          + "to\032&loading_plan/loading_plan_models.pro"
+          + "to\032*dischargestudy/discharge_study_model"
+          + ".proto2\310\001\n\025DischargeStudyService\022g\n\031getD"
+          + "ischargeStudyByVoyage\022$.LoadingInformati"
+          + "onSynopticalRequest\032\".LoadingInformation"
+          + "SynopticalReply\"\000\022F\n\024deleteDischargeStud"
+          + "y\022\026.DischargeStudyRequest\032\024.DischargeStu"
+          + "dyReply\"\000B-\n)com.cpdss.common.generated."
+          + "dischargestudyP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
             descriptorData,
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
+              com.cpdss.common.generated.LoadableStudy.getDescriptor(),
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor(),
+              com.cpdss.common.generated.dischargestudy.DischargeStudyModel.getDescriptor(),
             });
     com.cpdss.common.generated.Common.getDescriptor();
+    com.cpdss.common.generated.LoadableStudy.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();
+    com.cpdss.common.generated.dischargestudy.DischargeStudyModel.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

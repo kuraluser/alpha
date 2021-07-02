@@ -4,12 +4,17 @@ option java_multiple_files = false;
 option java_package = "com.cpdss.common.generated.dischargestudy";
 
 import "common.proto";
-
+import "loadable_study.proto";
 import "loading_plan/loading_plan_models.proto";
+import "dischargestudy/discharge_study_model.proto";
 
 service DischargeStudyService {
 
   rpc getDischargeStudyByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
+  rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
+  
   
 }
+
+  
 

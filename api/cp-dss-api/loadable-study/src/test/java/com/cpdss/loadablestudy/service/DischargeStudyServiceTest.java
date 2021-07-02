@@ -157,8 +157,7 @@ class DischargeStudyServiceTest {
   @MockBean private JsonTypeRepository jsonTypeRepository;
 
   private static final String SUCCESS = "SUCCESS";
-  
- 
+
   @BeforeAll
   public static void beforeAll() {
     MockedStatic<Files> mockedStatic = Mockito.mockStatic(Files.class);

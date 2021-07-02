@@ -676,7 +676,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudy> loadableStudy =
           loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
       if (loadableStudy.isPresent()) {
-        this.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
+        this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
 
         // One Loadable Quantity Record For One LS
         List<LoadableQuantity> lqs =
@@ -1037,7 +1037,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     VesselRuleReply vesselRuleReply = null;
     try {
 
-      this.checkIfVoyageClosed(request.getVoyageId());
+       this.voyageService.checkIfVoyageClosed(request.getVoyageId());
       List<LoadableStudyRules> listOfExistingLSRules = null;
       if (request.getId() != 0) {
         Optional<LoadableStudy> loadableStudy =
@@ -1483,7 +1483,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudy loadableStudyRecord = loadableStudy.get();
-      this.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudy.get());
 
       CargoNomination cargoNomination = null;
@@ -2301,7 +2301,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       if (!request.getIsLandingPage()) {
-        this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+         this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       }
       LoadableStudyPortRotation entity = null;
       boolean portEdited = false;
@@ -2379,7 +2379,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
       loadableStudy.setDischargeCargoNominationId(request.getCargoNominationId());
@@ -2695,7 +2695,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       LoadableStudy entity = entityOpt.get();
 
-      this.checkIfVoyageClosed(entity.getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(entity.getVoyage().getId());
 
       this.isPatternGeneratedOrConfirmed(entity);
 
@@ -2825,7 +2825,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
       if (null != loadableStudy.getLoadableStudyStatus()
@@ -3275,7 +3275,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setPortRotation(portRotation);
         entity.setPortXId(portRotation.getPortXId());
       }
-      this.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
       entity = this.buildOnHandQuantityEntity(entity, request);
@@ -4845,7 +4845,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
 
       if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
@@ -5889,7 +5889,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudy> loadableStudyOpt =
           loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (loadableStudyOpt.isPresent()) {
-        this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+         this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
         this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
         this.validateLoadableStudyWithCommingle(loadableStudyOpt.get());
         ModelMapper modelMapper = new ModelMapper();
@@ -7264,7 +7264,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
       }
-      this.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
       this.buildOnBoardQuantityEntity(entity, request);
@@ -7377,7 +7377,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
 
       Optional<LoadablePattern> patternOpt = Optional.empty();
       if (request.getLoadablePatternId() > 0) {
@@ -10028,7 +10028,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       // validates the input port rotation list for valid ids
       List<LoadableStudyPortRotation> existingPortRotationList = new ArrayList<>();
       if (!CollectionUtils.isEmpty(request.getPortRotationDetailsList())) {
@@ -10237,7 +10237,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
 
       LoadableStudy entity = loadableStudyOpt.get();
       entity.setLoadOnTop(request.getLoadOnTop());
@@ -13135,7 +13135,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    this.checkIfVoyageClosed(entityOpt.get().getVoyage().getId());
+     this.voyageService.checkIfVoyageClosed(entityOpt.get().getVoyage().getId());
     this.isPatternGeneratedOrConfirmed(entityOpt.get());
   }
 
@@ -13206,18 +13206,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.info(String.format("Saved %s JSON in database.", jsonTypeOpt.get().getTypeName()));
     } else {
       log.error("Cannot find JSON type in database.");
-    }
-  }
-
-  void checkIfVoyageClosed(Long voyageId) throws GenericServiceException {
-    Voyage voyage = this.voyageRepository.findByIdAndIsActive(voyageId, true);
-    if (null != voyage
-        && null != voyage.getVoyageStatus()
-        && voyage.getVoyageStatus().getId().equals(CLOSE_VOYAGE_STATUS)) {
-      throw new GenericServiceException(
-          "Save /Edit /Duplicate/Delete operations  not allowed for closed voyage",
-          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-          HttpStatusCode.BAD_REQUEST);
     }
   }
 

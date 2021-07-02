@@ -288,4 +288,33 @@ public class DischargeStudyService {
     }
     return loadableStudyService.buildOnHandQuantityResponse(grpcReply, correlationId);
   }
+
+  public DischargeStudyResponse deleteDischargeStudy(Long dischargeStudyId, String correlationId)
+      throws GenericServiceException {
+
+    com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest.Builder
+        builder =
+            com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest
+                .newBuilder();
+
+    Optional.ofNullable(dischargeStudyId).ifPresent(builder::setDischargeStudyId);
+
+    DischargeStudyReply reply = this.deleteDischargeStudy(builder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to delete discharge study",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+    }
+    DischargeStudyResponse response = new DischargeStudyResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private DischargeStudyReply deleteDischargeStudy(
+      com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest
+          dischargeStudyRequest) {
+    return this.dischargeStudyGrpcService.deleteDischargeStudy(dischargeStudyRequest);
+  }
 }

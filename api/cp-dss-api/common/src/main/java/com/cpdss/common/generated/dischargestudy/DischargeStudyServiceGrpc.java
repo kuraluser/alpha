@@ -84,6 +84,59 @@ public final class DischargeStudyServiceGrpc {
     return getGetDischargeStudyByVoyageMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest,
+          com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+      getDeleteDischargeStudyMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "deleteDischargeStudy",
+      requestType =
+          com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.DischargeStudyReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest,
+          com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+      getDeleteDischargeStudyMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest,
+            com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+        getDeleteDischargeStudyMethod;
+    if ((getDeleteDischargeStudyMethod = DischargeStudyServiceGrpc.getDeleteDischargeStudyMethod)
+        == null) {
+      synchronized (DischargeStudyServiceGrpc.class) {
+        if ((getDeleteDischargeStudyMethod =
+                DischargeStudyServiceGrpc.getDeleteDischargeStudyMethod)
+            == null) {
+          DischargeStudyServiceGrpc.getDeleteDischargeStudyMethod =
+              getDeleteDischargeStudyMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.dischargestudy.DischargeStudyModel
+                              .DischargeStudyRequest,
+                          com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "deleteDischargeStudy"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.dischargestudy.DischargeStudyModel
+                                  .DischargeStudyRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.DischargeStudyReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyServiceMethodDescriptorSupplier("deleteDischargeStudy"))
+                      .build();
+        }
+      }
+    }
+    return getDeleteDischargeStudyMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyServiceStub> factory =
@@ -140,6 +193,14 @@ public final class DischargeStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetDischargeStudyByVoyageMethod(), responseObserver);
     }
 
+    /** */
+    public void deleteDischargeStudy(
+        com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getDeleteDischargeStudyMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -152,6 +213,14 @@ public final class DischargeStudyServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInformationSynopticalReply>(
                       this, METHODID_GET_DISCHARGE_STUDY_BY_VOYAGE)))
+          .addMethod(
+              getDeleteDischargeStudyMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.dischargestudy.DischargeStudyModel
+                          .DischargeStudyRequest,
+                      com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>(
+                      this, METHODID_DELETE_DISCHARGE_STUDY)))
           .build();
     }
   }
@@ -183,6 +252,17 @@ public final class DischargeStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void deleteDischargeStudy(
+        com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getDeleteDischargeStudyMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -208,6 +288,14 @@ public final class DischargeStudyServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetDischargeStudyByVoyageMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.DischargeStudyReply deleteDischargeStudy(
+        com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest
+            request) {
+      return blockingUnaryCall(
+          getChannel(), getDeleteDischargeStudyMethod(), getCallOptions(), request);
     }
   }
 
@@ -236,9 +324,20 @@ public final class DischargeStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetDischargeStudyByVoyageMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>
+        deleteDischargeStudy(
+            com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getDeleteDischargeStudyMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_DISCHARGE_STUDY_BY_VOYAGE = 0;
+  private static final int METHODID_DELETE_DISCHARGE_STUDY = 1;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -265,6 +364,14 @@ public final class DischargeStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInformationSynopticalReply>)
+                  responseObserver);
+          break;
+        case METHODID_DELETE_DISCHARGE_STUDY:
+          serviceImpl.deleteDischargeStudy(
+              (com.cpdss.common.generated.dischargestudy.DischargeStudyModel.DischargeStudyRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.DischargeStudyReply>)
                   responseObserver);
           break;
         default:
@@ -333,6 +440,7 @@ public final class DischargeStudyServiceGrpc {
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new DischargeStudyServiceFileDescriptorSupplier())
                       .addMethod(getGetDischargeStudyByVoyageMethod())
+                      .addMethod(getDeleteDischargeStudyMethod())
                       .build();
         }
       }

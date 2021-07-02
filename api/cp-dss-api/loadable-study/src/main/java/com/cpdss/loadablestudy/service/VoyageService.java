@@ -3,7 +3,10 @@ package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
@@ -143,4 +146,17 @@ public class VoyageService {
     Optional.ofNullable(entity.getSeaWaterDensity())
         .ifPresent(v -> builder.setSeaWaterDensity(String.valueOf(v)));
   }
+  
+  public void checkIfVoyageClosed(Long voyageId) throws GenericServiceException {
+	    Voyage voyage = this.voyageRepository.findByIdAndIsActive(voyageId, true);
+	    if (null != voyage
+	        && null != voyage.getVoyageStatus()
+	        && voyage.getVoyageStatus().getId().equals(CLOSE_VOYAGE_STATUS)) {
+	      throw new GenericServiceException(
+	          "Save /Edit /Duplicate/Delete operations  not allowed for closed voyage",
+	          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+	          HttpStatusCode.BAD_REQUEST);
+	    }
+	  }
+  
 }

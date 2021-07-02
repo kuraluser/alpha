@@ -7,6 +7,8 @@ option java_package = "com.cpdss.common.generated.dischargestudy";
 import "common.proto";
 import "loadable_study.proto";
 
-
+  message DischargeStudyRequest{
+	int64 dischargeStudyId = 1;
+}
 
 
