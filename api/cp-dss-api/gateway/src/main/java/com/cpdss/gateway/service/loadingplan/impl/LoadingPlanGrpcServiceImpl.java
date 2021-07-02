@@ -7,6 +7,7 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -223,7 +224,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   @Override
-  public ResponseStatus saveLoadingInformation(LoadingInformation loadingInformation) {
+  public LoadingInfoSaveResponse saveLoadingInformation(LoadingInformation loadingInformation) {
     return this.loadingInfoServiceBlockingStub.saveLoadingInformation(loadingInformation);
   }
 

@@ -4,6 +4,7 @@ package com.cpdss.loadingplan.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
+import com.cpdss.loadingplan.domain.LoadingInfoResponse;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import java.util.Optional;
 
@@ -23,6 +24,6 @@ public interface LoadingInformationService {
       LoadingPlanModels.LoadingInformation.Builder response)
       throws GenericServiceException;
 
-  public void saveLoadingInformation(LoadingPlanModels.LoadingInformation loadingInformation)
-      throws Exception;
+  public LoadingInfoResponse saveLoadingInformation(
+      LoadingPlanModels.LoadingInformation loadingInformation) throws Exception;
 }

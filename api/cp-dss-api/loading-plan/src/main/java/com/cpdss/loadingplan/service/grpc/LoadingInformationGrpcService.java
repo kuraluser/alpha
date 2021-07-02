@@ -9,15 +9,19 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadingplan.domain.LoadingInfoResponse;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import com.cpdss.loadingplan.service.algo.LoadingInformationAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingInformationDischargeService;
 import io.grpc.stub.StreamObserver;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,26 +104,45 @@ public class LoadingInformationGrpcService
 
   @Override
   public void saveLoadingInformation(
-      LoadingInformation request, StreamObserver<ResponseStatus> responseObserver) {
-    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+      LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
+    LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
     try {
       log.info("Saving Loading Information for id {}", request.getLoadingDetail().getId());
-      this.loadingInformationService.saveLoadingInformation(request);
-      builder.setMessage("Successfully saved Loading information").setStatus(SUCCESS).build();
+      LoadingInfoResponse response = this.loadingInformationService.saveLoadingInformation(request);
+      buildLoadingInfoSaveResponse(builder, response);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
     } catch (Exception e) {
       log.error(
           "Exception occured while saving Loading Information for id {}",
           request.getLoadingDetail().getId());
       e.printStackTrace();
       builder
-          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-          .setMessage(e.getMessage())
-          .setStatus(FAILED)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                  .setMessage(e.getMessage())
+                  .setStatus(FAILED)
+                  .build())
           .build();
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private void buildLoadingInfoSaveResponse(Builder builder, LoadingInfoResponse response) {
+    Optional.ofNullable(response.getLoadingInfoId()).ifPresent(builder::setLoadingInfoId);
+    Optional.ofNullable(response.getPortRotationId()).ifPresent(builder::setPortRotationId);
+    Optional.ofNullable(response.getSynopticalTableId()).ifPresent(builder::setLoadingInfoId);
+    Optional.ofNullable(response.getVesselId()).ifPresent(builder::setVesselId);
+    Optional.ofNullable(response.getVoyageId()).ifPresent(builder::setVoyageId);
+    Optional.ofNullable(response.getSynopticalTableId()).ifPresent(builder::setSynopticalTableId);
   }
 
   @Override

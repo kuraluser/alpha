@@ -11,7 +11,7 @@ service LoadingInformationService {
 
   rpc GetLoadingInformation(LoadingInformationRequest) returns (LoadingInformation) {}
   
-  rpc SaveLoadingInformation(LoadingInformation) returns (ResponseStatus) {}
+  rpc SaveLoadingInformation(LoadingInformation) returns (LoadingInfoSaveResponse) {}
 
   rpc GetLoadigInformationByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
 
