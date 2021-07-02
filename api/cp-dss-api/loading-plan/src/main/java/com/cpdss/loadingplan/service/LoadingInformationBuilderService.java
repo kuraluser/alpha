@@ -171,7 +171,7 @@ public class LoadingInformationBuilderService {
           .ifPresent(value -> builder1.setDuration(value.toString()));
       Optional.ofNullable(var.getCargoXId()).ifPresent(builder1::setCargoId);
       Optional.ofNullable(var.getQuantity())
-          .ifPresent(value -> builder1.setDuration(value.toString()));
+          .ifPresent(value -> builder1.setQuantity(value.toString()));
       builder.addDelays(builder1);
     }
     // Cargo List for drop down, at gate way

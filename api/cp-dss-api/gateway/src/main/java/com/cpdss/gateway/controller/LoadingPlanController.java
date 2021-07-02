@@ -123,7 +123,7 @@ public class LoadingPlanController {
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId)
       throws CommonRestException {
     try {
-      log.info("Save Loading Info, api for vessel {}", vesselId);
+      log.info("Save Loading Info, api for vessel {}, voyage {}", vesselId, voyageId);
       return this.loadingPlanService.saveLoadingInformation(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
