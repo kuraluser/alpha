@@ -4134,6 +4134,20 @@ public final class Common {
      * @return The isHardRule.
      */
     boolean getIsHardRule();
+
+    /**
+     * <code>int64 numericPrecision = 10;</code>
+     *
+     * @return The numericPrecision.
+     */
+    long getNumericPrecision();
+
+    /**
+     * <code>int64 numericScale = 11;</code>
+     *
+     * @return The numericScale.
+     */
+    long getNumericScale();
   }
   /** Protobuf type {@code Rules} */
   public static final class Rules extends com.google.protobuf.GeneratedMessageV3
@@ -4242,6 +4256,16 @@ public final class Common {
             case 72:
               {
                 isHardRule_ = input.readBool();
+                break;
+              }
+            case 80:
+              {
+                numericPrecision_ = input.readInt64();
+                break;
+              }
+            case 88:
+              {
+                numericScale_ = input.readInt64();
                 break;
               }
             default:
@@ -4487,6 +4511,28 @@ public final class Common {
       return isHardRule_;
     }
 
+    public static final int NUMERICPRECISION_FIELD_NUMBER = 10;
+    private long numericPrecision_;
+    /**
+     * <code>int64 numericPrecision = 10;</code>
+     *
+     * @return The numericPrecision.
+     */
+    public long getNumericPrecision() {
+      return numericPrecision_;
+    }
+
+    public static final int NUMERICSCALE_FIELD_NUMBER = 11;
+    private long numericScale_;
+    /**
+     * <code>int64 numericScale = 11;</code>
+     *
+     * @return The numericScale.
+     */
+    public long getNumericScale() {
+      return numericScale_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -4528,6 +4574,12 @@ public final class Common {
       if (isHardRule_ != false) {
         output.writeBool(9, isHardRule_);
       }
+      if (numericPrecision_ != 0L) {
+        output.writeInt64(10, numericPrecision_);
+      }
+      if (numericScale_ != 0L) {
+        output.writeInt64(11, numericScale_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4564,6 +4616,12 @@ public final class Common {
       if (isHardRule_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, isHardRule_);
       }
+      if (numericPrecision_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, numericPrecision_);
+      }
+      if (numericScale_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(11, numericScale_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4588,6 +4646,8 @@ public final class Common {
       if (!getRuleTemplateId().equals(other.getRuleTemplateId())) return false;
       if (!getVesselRuleXId().equals(other.getVesselRuleXId())) return false;
       if (getIsHardRule() != other.getIsHardRule()) return false;
+      if (getNumericPrecision() != other.getNumericPrecision()) return false;
+      if (getNumericScale() != other.getNumericScale()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4619,6 +4679,10 @@ public final class Common {
       hash = (53 * hash) + getVesselRuleXId().hashCode();
       hash = (37 * hash) + ISHARDRULE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsHardRule());
+      hash = (37 * hash) + NUMERICPRECISION_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getNumericPrecision());
+      hash = (37 * hash) + NUMERICSCALE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getNumericScale());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4780,6 +4844,10 @@ public final class Common {
 
         isHardRule_ = false;
 
+        numericPrecision_ = 0L;
+
+        numericScale_ = 0L;
+
         return this;
       }
 
@@ -4824,6 +4892,8 @@ public final class Common {
         result.ruleTemplateId_ = ruleTemplateId_;
         result.vesselRuleXId_ = vesselRuleXId_;
         result.isHardRule_ = isHardRule_;
+        result.numericPrecision_ = numericPrecision_;
+        result.numericScale_ = numericScale_;
         onBuilt();
         return result;
       }
@@ -4929,6 +4999,12 @@ public final class Common {
         }
         if (other.getIsHardRule() != false) {
           setIsHardRule(other.getIsHardRule());
+        }
+        if (other.getNumericPrecision() != 0L) {
+          setNumericPrecision(other.getNumericPrecision());
+        }
+        if (other.getNumericScale() != 0L) {
+          setNumericScale(other.getNumericScale());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5599,6 +5675,72 @@ public final class Common {
       public Builder clearIsHardRule() {
 
         isHardRule_ = false;
+        onChanged();
+        return this;
+      }
+
+      private long numericPrecision_;
+      /**
+       * <code>int64 numericPrecision = 10;</code>
+       *
+       * @return The numericPrecision.
+       */
+      public long getNumericPrecision() {
+        return numericPrecision_;
+      }
+      /**
+       * <code>int64 numericPrecision = 10;</code>
+       *
+       * @param value The numericPrecision to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNumericPrecision(long value) {
+
+        numericPrecision_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 numericPrecision = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearNumericPrecision() {
+
+        numericPrecision_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long numericScale_;
+      /**
+       * <code>int64 numericScale = 11;</code>
+       *
+       * @return The numericScale.
+       */
+      public long getNumericScale() {
+        return numericScale_;
+      }
+      /**
+       * <code>int64 numericScale = 11;</code>
+       *
+       * @param value The numericScale to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNumericScale(long value) {
+
+        numericScale_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 numericScale = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearNumericScale() {
+
+        numericScale_ = 0L;
         onChanged();
         return this;
       }
@@ -8366,21 +8508,22 @@ public final class Common {
           + "oColor\030\t \001(\t\022\021\n\tcargoName\030\n \001(\t\022\030\n\020cargo"
           + "Abbrevation\030\013 \001(\t\022\023\n\013loadingPort\030\014 \003(\003\022\017"
           + "\n\007cargoId\030\r \001(\003\"2\n\tRulePlans\022\016\n\006header\030\001"
-          + " \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\302\001\n\005Rules\022\n\n"
+          + " \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\362\001\n\005Rules\022\n\n"
           + "\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disable\030\003 \001"
           + "(\010\022\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010ruleTyp"
           + "e\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInputs\022\026\n"
           + "\016ruleTemplateId\030\007 \001(\t\022\025\n\rvesselRuleXId\030\010"
-          + " \001(\t\022\022\n\nisHardRule\030\t \001(\010\"\314\001\n\013RulesInputs"
-          + "\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030\002 \001(\t\022\014"
-          + "\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030\005 \001(\t\022\r"
-          + "\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002id\030\010 \001("
-          + "\t\022/\n\022ruleDropDownMaster\030\t \003(\0132\023.RuleDrop"
-          + "DownMaster\022\023\n\013isMandatory\030\n \001(\010\"/\n\022RuleD"
-          + "ropDownMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t"
-          + "*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADAB"
-          + "LE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B\036\n\032com.c"
-          + "pdss.common.generatedP\000b\006proto3"
+          + " \001(\t\022\022\n\nisHardRule\030\t \001(\010\022\030\n\020numericPreci"
+          + "sion\030\n \001(\003\022\024\n\014numericScale\030\013 \001(\003\"\314\001\n\013Rul"
+          + "esInputs\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue"
+          + "\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min"
+          + "\030\005 \001(\t\022\r\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n"
+          + "\002id\030\010 \001(\t\022/\n\022ruleDropDownMaster\030\t \003(\0132\023."
+          + "RuleDropDownMaster\022\023\n\013isMandatory\030\n \001(\010\""
+          + "/\n\022RuleDropDownMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005val"
+          + "ue\030\002 \001(\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022"
+          + "\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B"
+          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -8432,6 +8575,8 @@ public final class Common {
               "RuleTemplateId",
               "VesselRuleXId",
               "IsHardRule",
+              "NumericPrecision",
+              "NumericScale",
             });
     internal_static_RulesInputs_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_RulesInputs_fieldAccessorTable =

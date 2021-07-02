@@ -1517,7 +1517,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       }
       // Fetch master records
       List<RuleVesselDropDownValues> listOfDropDownValue =
-          ruleVesselDropDownValuesRepository.findAll();
+          ruleVesselDropDownValuesRepository.findByIsActive(true);
       List<CargoTankMaster> cargoTankMaster =
           vesselTankRepository.findCargoTankMaster(request.getVesselId(), true);
       List<RuleType> ruleTypeList = ruleTypeRepository.findByIsActive(true);
@@ -1545,6 +1545,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                             ruleVesselMapping.setIsActive(true);
                             Optional.ofNullable(rule.getDisplayInSettings())
                                 .ifPresent(ruleVesselMapping::setDisplayInSettings);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(ruleVesselMapping::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(ruleVesselMapping::setNumericScale);
                             Optional.ofNullable(rule.getEnable())
                                 .ifPresent(ruleVesselMapping::setIsEnable);
                             Optional.ofNullable(rule.getIsHardRule())
@@ -1762,7 +1766,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                         && rule.getRuleTemplateId() != null
                         && rDropDown
                             .getRuleTemplateXid()
-                            .equals(Long.parseLong(rule.getRuleTemplateId())))
+                            .equals(Long.parseLong(rule.getRuleTemplateId().trim())))
             .collect(Collectors.toList());
     if (input.getDefaultValue().contains(",")) {
       String[] masterIds = input.getDefaultValue().split(",");
@@ -1771,7 +1775,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         if (isCargoTankMaster) {
           if (cargoTankMaster.stream()
               .map(CargoTankMaster::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -1788,7 +1792,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         } else {
           if (filterMasterByRule.stream()
               .map(RuleVesselDropDownValues::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId]))
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
               .findFirst()
               .isPresent()) {
             if (masterIds.length - 1 != id) {
@@ -1809,7 +1813,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       if (isCargoTankMaster) {
         if (!cargoTankMaster.stream()
             .map(CargoTankMaster::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(
@@ -1820,7 +1824,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       } else {
         if (!filterMasterByRule.stream()
             .map(RuleVesselDropDownValues::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue()))
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
             .findFirst()
             .isPresent()) {
           throw new GenericServiceException(
@@ -1869,6 +1873,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       .ifPresent(item -> ruleInput.setMax(item));
                   Optional.ofNullable(value.get(id).getTemplateInputTypeValue())
                       .ifPresent(item -> ruleInput.setType(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputSuffix())
+                      .ifPresent(item -> ruleInput.setSuffix(item));
                   Optional.ofNullable(value.get(id).getTemplateInputSuffix())
                       .ifPresent(item -> ruleInput.setSuffix(item));
                   Optional.ofNullable(value.get(id).getIsMandatory())
@@ -1951,6 +1957,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                   }
                   rulesBuilder.addInputs(ruleInput.build());
                   if (id == value.size() - 1) {
+                    Optional.ofNullable(value.get(id).getNumericPrecision())
+                        .ifPresent(item -> rulesBuilder.setNumericPrecision(item));
+                    Optional.ofNullable(value.get(id).getNumericScale())
+                        .ifPresent(item -> rulesBuilder.setNumericScale(item));
                     Optional.ofNullable(value.get(id).getTemplateIsEnable())
                         .ifPresent(item -> rulesBuilder.setEnable(item));
                     Optional.ofNullable(value.get(id).getTemplateDisplayInSettings())

@@ -55,6 +55,8 @@ public class Utility {
             rule.setId(rList.getId());
           }
           Optional.ofNullable(rList.getIsHardRule()).ifPresent(rule::setIsHardRule);
+          Optional.ofNullable(rList.getNumericPrecision()).ifPresent(rule::setNumericPrecision);
+          Optional.ofNullable(rList.getNumericScale()).ifPresent(rule::setNumericScale);
           Optional.ofNullable(rList.getRuleTemplateId()).ifPresent(rule::setRuleTemplateId);
           Optional.ofNullable(rList.getRuleType()).ifPresent(rule::setRuleType);
           Optional.ofNullable(rList.getEnable()).ifPresent(rule::setEnable);
@@ -155,6 +157,10 @@ public class Utility {
                                 .ifPresent(ruleBuilder::setVesselRuleXId);
                             Optional.ofNullable(rule.getIsHardRule())
                                 .ifPresent(ruleBuilder::setIsHardRule);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(ruleBuilder::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(ruleBuilder::setNumericScale);
                             rule.getInputs()
                                 .forEach(
                                     input -> {
