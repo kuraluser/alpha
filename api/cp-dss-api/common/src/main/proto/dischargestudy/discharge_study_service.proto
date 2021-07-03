@@ -11,7 +11,6 @@ import "dischargestudy/discharge_study_model.proto";
 service DischargeStudyService {
 
   rpc getDischargeStudyByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
-  rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
   
   
 }

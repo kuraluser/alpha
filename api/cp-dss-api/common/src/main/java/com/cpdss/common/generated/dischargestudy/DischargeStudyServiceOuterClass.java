@@ -22,13 +22,11 @@ public final class DischargeStudyServiceOuterClass {
           + ".proto\032\014common.proto\032\024loadable_study.pro"
           + "to\032&loading_plan/loading_plan_models.pro"
           + "to\032*dischargestudy/discharge_study_model"
-          + ".proto2\310\001\n\025DischargeStudyService\022g\n\031getD"
+          + ".proto2\200\001\n\025DischargeStudyService\022g\n\031getD"
           + "ischargeStudyByVoyage\022$.LoadingInformati"
           + "onSynopticalRequest\032\".LoadingInformation"
-          + "SynopticalReply\"\000\022F\n\024deleteDischargeStud"
-          + "y\022\026.DischargeStudyRequest\032\024.DischargeStu"
-          + "dyReply\"\000B-\n)com.cpdss.common.generated."
-          + "dischargestudyP\000b\006proto3"
+          + "SynopticalReply\"\000B-\n)com.cpdss.common.ge"
+          + "nerated.dischargestudyP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

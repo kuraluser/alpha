@@ -5,6 +5,7 @@ option java_package = "com.cpdss.common.generated";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "loadable_study/loadable_study_models.proto";
 
 service LoadableStudyService {
 	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
@@ -196,6 +197,11 @@ service LoadableStudyService {
 	rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){
 	}
 }
+
+service DischargeStudyOperationService {
+  rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
+}
+
 message CargoNominationDetailReply{
 	CargoNominationDetail cargoNominationdetail = 1;
 	ResponseStatus responseStatus = 2;

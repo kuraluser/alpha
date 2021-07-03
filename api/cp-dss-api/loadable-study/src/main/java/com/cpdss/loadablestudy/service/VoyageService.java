@@ -146,17 +146,16 @@ public class VoyageService {
     Optional.ofNullable(entity.getSeaWaterDensity())
         .ifPresent(v -> builder.setSeaWaterDensity(String.valueOf(v)));
   }
-  
+
   public void checkIfVoyageClosed(Long voyageId) throws GenericServiceException {
-	    Voyage voyage = this.voyageRepository.findByIdAndIsActive(voyageId, true);
-	    if (null != voyage
-	        && null != voyage.getVoyageStatus()
-	        && voyage.getVoyageStatus().getId().equals(CLOSE_VOYAGE_STATUS)) {
-	      throw new GenericServiceException(
-	          "Save /Edit /Duplicate/Delete operations  not allowed for closed voyage",
-	          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-	          HttpStatusCode.BAD_REQUEST);
-	    }
-	  }
-  
+    Voyage voyage = this.voyageRepository.findByIdAndIsActive(voyageId, true);
+    if (null != voyage
+        && null != voyage.getVoyageStatus()
+        && voyage.getVoyageStatus().getId().equals(CLOSE_VOYAGE_STATUS)) {
+      throw new GenericServiceException(
+          "Save /Edit /Duplicate/Delete operations  not allowed for closed voyage",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
 }
