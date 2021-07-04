@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -31,6 +32,7 @@ import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
@@ -48,6 +50,8 @@ import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleInputRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
@@ -89,6 +93,10 @@ import org.springframework.web.client.RestTemplate;
 class DischargeStudyServiceTest {
 
   @Autowired private LoadableStudyService loadableStudyService;
+  @MockBean LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+  @MockBean LoadableStudyRuleRepository loadableStudyRuleRepository;
+  @MockBean SynopticService synopticService;
+  @MockBean private VoyageService voyageService;
   @MockBean private VoyageRepository voyageRepository;
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
@@ -155,6 +163,9 @@ class DischargeStudyServiceTest {
 
   @MockBean private JsonDataRepository jsonDataRepository;
   @MockBean private JsonTypeRepository jsonTypeRepository;
+  @MockBean private LoadablePlanService loadablePlanService;
+  @MockBean private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
+  @MockBean private LoadableQuantityService loadableQuantityService;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -183,12 +194,7 @@ class DischargeStudyServiceTest {
   @Test
   void testSaveDischargeStudy() {
     DischargeStudyDetail request =
-        DischargeStudyDetail.newBuilder()
-            .setName("DS")
-            .setVesselId(1L)
-            .setVoyageId(1L)
-            .setName(any(String.class))
-            .build();
+        DischargeStudyDetail.newBuilder().setName("DS").setVesselId(1L).setVoyageId(1L).build();
     LoadableStudy entity = new LoadableStudy();
     entity.setId(2L);
     when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -205,7 +211,7 @@ class DischargeStudyServiceTest {
     when(this.synopticalTableRepository
             .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
                 anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(createLoadableSynopticalTableList());
+        .thenReturn(Arrays.asList(new SynopticalTable()));
 
     when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
             any(LoadableStudy.class), any(LoadableStudyPortRotation.class), anyBoolean()))
@@ -224,14 +230,34 @@ class DischargeStudyServiceTest {
     assertEquals(2L, replies.get(0).getId());
   }
 
+  @Test
+  void testUpdateDischargeStudy() {
+    DischargeStudyDetail request =
+        DischargeStudyDetail.newBuilder().setName("update DS").setEnquiryDetails("details").build();
+    LoadableStudy entity = new LoadableStudy();
+    entity.setId(2L);
+    entity.setName("update DS");
+    entity.setDetails("details");
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<UpdateDischargeStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.updateDischargeStudy(request, responseObserver);
+    List<UpdateDischargeStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(2L, replies.get(0).getDischargeStudy().getId());
+  }
+
   private List<OnHandQuantity> createOnHandQuantityList() {
     OnHandQuantity onHandQuantity = new OnHandQuantity();
     return Arrays.asList(onHandQuantity);
   }
 
   private List<SynopticalTable> createLoadableSynopticalTableList() {
-    SynopticalTable synopticalTable = new SynopticalTable();
-    return Arrays.asList(synopticalTable);
+    return Arrays.asList(new SynopticalTable());
   }
 
   private List<LoadableStudyPortRotation> createLoadableStudyPortRotationList() {
