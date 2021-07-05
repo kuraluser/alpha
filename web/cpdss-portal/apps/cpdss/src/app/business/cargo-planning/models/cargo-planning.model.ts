@@ -897,4 +897,5 @@ export interface ICargoHistoryDetails {
     ballastPlanned: number;
     sf: number;
     bm: number;
+    constantPlanned: number;
 }

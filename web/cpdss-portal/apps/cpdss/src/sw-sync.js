@@ -40,8 +40,9 @@
       if (self.location.protocol === 'https:') {
         apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}${apiEndPoint}`;
       } else {
-        const port = environment === 'shore' ? 8085 : 8084;
-        apiUrl = `${self.location.protocol}//192.168.2.89:${port}${apiEndPoint}`;
+        const port = 8085;
+        const hostName = environment === 'shore' ? '13.251.141.12' : '13.251.226.207';
+        apiUrl = `${self.location.protocol}//${hostName}:${port}${apiEndPoint}`;
       }
 
       const token = await getToken();

@@ -577,7 +577,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   private addCargoNomination(cargoNomination: ICargoNomination = null) {
-    cargoNomination = cargoNomination ?? <ICargoNomination>{ id: 0, priority: null, color: null, cargoId: null, abbreviation: null, quantity: null, segregationId: 1, loadingPorts: null };
+    cargoNomination = cargoNomination ?? <ICargoNomination>{ id: 0, priority: 1, color: null, cargoId: null, abbreviation: null, quantity: null, segregationId: 1, loadingPorts: null };
     const _cargoNomination = this.loadableStudyDetailsTransformationService.getCargoNominationAsValueObject(cargoNomination, true, this.listData);
     this.cargoNominations = [...this.cargoNominations, _cargoNomination];
     const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');

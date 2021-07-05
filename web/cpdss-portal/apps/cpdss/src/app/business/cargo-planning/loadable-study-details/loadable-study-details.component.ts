@@ -776,7 +776,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async onLoadableStudyChange(event) {
     if (event) {
       this.ngxSpinnerService.show();
-      this.loadableStudyId = event?.id;
+      this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
       this.loadableStudyDetailsTransformationService.setOHQValidity([]);

@@ -274,7 +274,7 @@ export interface IFuelType {
 /**
  * Interface for cargo response
  * @export
- * @interface 
+ * @interface
  */
 export interface ICargoResponseModel {
     cargos: ICargo[],

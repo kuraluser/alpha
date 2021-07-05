@@ -98,12 +98,12 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
 */
   findCargo(loadableQuantityCargoDetails): string {
     let cargoDetail;
-    this.cargos.map((cargo) => {
-      if (cargo.id === loadableQuantityCargoDetails.cargoId) {
+    this.cargos?.map((cargo) => {
+      if (cargo?.id === loadableQuantityCargoDetails?.cargoId) {
         cargoDetail = cargo;
       }
     })
-    return cargoDetail.name;
+    return cargoDetail?.name;
   }
 
 }

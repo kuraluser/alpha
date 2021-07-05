@@ -47,7 +47,7 @@
               },
               "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/themes/saga-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",         
+              "node_modules/primeng/resources/primeng.min.css",
               "node_modules/animate.css/animate.min.css",
               "apps/cpdss/src/styles.scss"
             ],
@@ -276,6 +276,70 @@
               "serviceWorker": true,
               "ngswConfigPath": "apps/cpdss/ngsw-config.json"
             },
+            "ship-staging": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/cpdss/src/environments/environment.ts",
+                  "with": "apps/cpdss/src/environments/environment.ship.staging.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "apps/cpdss/ngsw-config.json"
+            },
+            "shore-staging": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/cpdss/src/environments/environment.ts",
+                  "with": "apps/cpdss/src/environments/environment.shore.staging.ts"
+                },
+                {
+                  "replace": "apps/cpdss/src/app/business/core/routing-configuration/business-routing.config.ship.ts",
+                  "with": "apps/cpdss/src/app/business/core/routing-configuration/business-routing.config.shore.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "apps/cpdss/ngsw-config.json"
+            },
             "ship-development": {
               "fileReplacements": [
                 {
@@ -415,7 +479,7 @@
               },
               "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/themes/saga-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",         
+              "node_modules/primeng/resources/primeng.min.css",
               "node_modules/animate.css/animate.min.css",
               "apps/login/src/styles.scss"
             ],
@@ -603,6 +667,66 @@
                 {
                   "replace": "apps/login/src/environments/environment.ts",
                   "with": "apps/login/src/environments/environment.shore.test.ts"
+                },
+                {
+                  "replace": "apps/login/src/app/routing-configuration/app-routing.config.ship.ts",
+                  "with": "apps/login/src/app/routing-configuration/app-routing.config.shore.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "ship-staging": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/login/src/environments/environment.ts",
+                  "with": "apps/login/src/environments/environment.ship.staging.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "shore-staging": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/login/src/environments/environment.ts",
+                  "with": "apps/login/src/environments/environment.shore.staging.ts"
                 },
                 {
                   "replace": "apps/login/src/app/routing-configuration/app-routing.config.ship.ts",

@@ -13,5 +13,6 @@ public final class LoadingPlanConstants {
 
   public static final Long LOADING_INFORMATION_REQUEST_ID = 9L;
 
-  public static final Long DEFAULT_STAGE_OFFSET_ID = 4L;
+  public static final Integer DEFAULT_STAGE_OFFSET_VALUE = 4;
+  public static final Integer DEFAULT_STAGE_DURATION_VALUE = 4;
 }

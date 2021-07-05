@@ -175,6 +175,15 @@ a {
         background: url($images-menu-icons + 'admin-icon-hover.png') no-repeat;
     }
   }
+  &.operations {
+    &:before {
+        background: url($images-menu-icons + 'operation-icon.png') no-repeat;
+    }
+
+    &:after {
+        background: url($images-menu-icons + 'operation-icon-hover.png') no-repeat;
+    }
+  }
 }
 
 header .header-nav .nav li.active {

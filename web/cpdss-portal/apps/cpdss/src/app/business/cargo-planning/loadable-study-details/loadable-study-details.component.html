@@ -69,9 +69,7 @@
                     </div>
                 </ng-template>
             </a>
-            <div class="pr-15 text-right">
-                <cpdss-portal-rules *ngIf="isRuleModalVisible" [selectedLoadableStudyId]="selectedLoadableStudy.id" [visible]="isRuleModalVisible" [isPatternGenerated] = "isPatternGenerated"  (popUpClosed)="closeModal($event)"></cpdss-portal-rules>
-            </div>
+            
         </div>
         
         <div class="pr-15 text-right">
@@ -104,8 +102,7 @@
         <div class="pr-5" *ngIf="selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ERROR">
             <button class="btn btn-main" id="view_error" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
         </div>
-        <!-- <button id="rulesButton" [disabled]="isPatternGenerated" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button> needed later  --> 
- 
+        
 
         <div class="pr-15"
             *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
@@ -140,6 +137,10 @@
                     (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|
                     translate}}</a>
             </ng-container>
+        </div>
+        <button id="rulesButton" [disabled]="isPatternGenerated" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button>
+        <div>
+            <cpdss-portal-rules *ngIf="isRuleModalVisible" [selectedLoadableStudyId]="selectedLoadableStudy.id" [visible]="isRuleModalVisible" [isPatternGenerated] = "isPatternGenerated"  (popUpClosed)="closeModal($event)"></cpdss-portal-rules>
         </div>
     </div>
     <div class="content-outer" *ngIf="voyages" [ngClass]="{'sidebar-collapsed': !openSidePane}">

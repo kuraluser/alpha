@@ -30,4 +30,5 @@ public class LoadablePlanSynopticalRecord {
   private BigDecimal bm;
   private BigDecimal sf;
   private BigDecimal list;
+  private BigDecimal constantPlanned;
 }

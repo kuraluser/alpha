@@ -126,8 +126,8 @@
         <div class="row">
             <div class="col pt-5 ml-30">
 
-                <cpdss-portal-topping-off-tank-table [vesselId]="vesselId" [voyageId]="voyageId"
-                    [portRotationId]="portRotationId" [cargos]="cargos"
+                <cpdss-portal-topping-off-tank-table [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId"
+                    [portRotationId]="portRotationId" 
                     [toppingOffSequence]="loadingInformationData?.toppingOffSequence"
                     [cargoTanks]="loadingInformationData?.cargoVesselTankDetails?.cargoTanks"
                     (updateToppingOff)="onUpdateToppingOff($event)">
