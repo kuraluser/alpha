@@ -1,0 +1,46 @@
+<div>
+    <form [formGroup]="dischargeStudyForm">
+        <div formArrayName="portDetails">
+        <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last" formGroupName="{{portIndex}}">
+
+            <div>
+                <div  style="display: inline-block;">
+                    <label>{{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}</label>
+                    {{portDetail.portName}}
+                </div>
+                <div  style="display: inline-block;">
+                    <label>{{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }}</label>
+                    <span>{{getFeild(portIndex,'instruction','value')}}</span>
+                </div>
+                <div  style="display: inline-block;">
+                    <label>{{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION' | translate }}</label>
+                    <span>{{getFeild(portIndex,'draftRestriction')}}</span>
+                </div>
+                <div  style="display: inline-block;">
+                    <label>{{ 'DISCHARGE_STUDY_COW' | translate }}</label>
+                    <span>{{getFeild(portIndex,'cow','name')}}</span>
+                </div>
+                <div style="display: inline-block;">
+                    <label >{{'DISCHARGE_STUDY_VIEW_DISCHARGE_RATE' | translate}}</label>
+                    <span>{{getFeild(portIndex,'dischargeRate')}}</span>
+                    <span>{{'DISCHARGE_STUDY_VIEW_DISCHARGE_RATE_UNIT' | translate}}</span>
+                </div>
+            </div>
+            <div>
+                <cpdss-portal-datatable [tableId]="'discharge_cargo'" [form]="getFeild(portIndex,'cargoDetail')" [columns]="columns"
+                    [value]="portDetail.cargoDetail" [listData]="listData">
+                </cpdss-portal-datatable>
+            </div>
+
+            <div>
+                {{'DISCHARGE_STUDY_BACK_LOADING' | translate}}
+                <cpdss-portal-datatable [tableId]="'discharge_cargo_back_loading'" [form]="getFeild(portIndex,'backLoadingDetails')" [columns]="backLoadingColumns"
+                    [value]="portDetail?.backLoadingDetails"  [listData]="listData"
+                    [showTotal]="true">
+                </cpdss-portal-datatable>
+            </div>
+            <br>
+        </div>
+    </div>
+    </form>
+</div>

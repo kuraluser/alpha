@@ -288,6 +288,20 @@ export interface IPortsDetailsResponse {
 }
 
 /**
+ * Interface for Ports api response
+ *
+ * @export 
+ * @interface IDischargePortsDetailsResponse
+ */
+ export interface IDischargePortsDetailsResponse {
+    responseStatus: IResponseStatus;
+    portList: IDischargeStudyPortList[];
+    operations: IOperations[];
+    portId?: number;
+    lastModifiedPortId?: number;
+}
+
+/**
  * Interface for port
  *
  * @export
@@ -319,21 +333,20 @@ export interface IPortList {
     isPortsComplete?: boolean;
 }
 
-
 /**
  * Interface for port
  *
  * @export
- * @interface IDischargePortList
+ * @interface IDischargeStudyPortList
  */
- export interface IDischargePortList {
+ export interface IDischargeStudyPortList {
     id: number;
     portOrder: number;
-    loadableStudyId: number;
+    dischargeStudyId: number;
     portId: number;
     portTimezoneId?: number;
     operationId: number;
-    seaWaterDensity: number;
+    seaWaterDensity: any;
     distanceBetweenPorts: number;
     timeOfStay: number;
     maxDraft: number;
@@ -349,6 +362,7 @@ export interface IPortList {
     etdActual?: string;
     isPortsComplete?: boolean;
 }
+
 
 /**
  * ENUM for voyage status

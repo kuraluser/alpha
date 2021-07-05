@@ -1,6 +1,6 @@
-import { IResponse , ValueObject } from '../../../shared/models/common.model';
+import { IResponse , ValueObject , IMode , IInstruction , IPercentage , ITankDetails , ICargo } from '../../../shared/models/common.model';
 import { DISCHARGE_STUDY_STATUS  } from '../../core/models/common.model';
-import { IPort, IPortList , IDischargePortList } from '../../core/models/common.model';
+import { IPort, IPortList , IDischargeStudyPortList } from '../../core/models/common.model';
 
 
 /**
@@ -185,23 +185,7 @@ export interface IDischargeStudyAttachment {
     
 }
 
-/**
- * Interface for cargo
- *
- * @export
- * @interface ICargo
- */
- export interface ICargo {
-    id: number;
-    companyId: number;
-    actualWeight: string;
-    plannedWeight: string;
-    name?: string;
-    abbreviation?: string;
-    api?: number;
-    ports?: IPort[];
-    temp: string
-}
+
 
 /**
  * Interface for port details value object
@@ -233,6 +217,7 @@ export interface IBackLoadingDetails {
     isAdd: boolean;
     abbreviation: ValueObject<string>;
     cargoAbbreviation: string;
+    storedKey: ValueObject<string>;
 }
 
 /**
@@ -252,51 +237,10 @@ export interface IPortCargo {
     temp: ValueObject<number>;
     maxKl: ValueObject<number>;
     abbreviation: ValueObject<string>;
+    storedKey: ValueObject<string>;
 }
 
 
-/**
- * Interface for Mode
- *
- * @export
- * @interface IMode
- */
- export interface IMode {
-    name: string;
-    id: number;
-}
-
-
-/**
- * Interface for instruction
- *
- * @export
- * @interface IInstruction
- */
-export interface IInstruction {
-    value: string;
-}
-
-
-/**
- * Interface for percentage
- *
- * @export
- * @interface IPercentage
- */
- export interface IPercentage {
-    value: string;
-}
-
-export interface ITankDetails {
-    displayOrder: number,
-    group: number,
-    id: number,
-    name: string,
-    order: number,
-    shortName: string,
-    slopTank: boolean,
-}
 
 /**
  * Interface for discharge study list data
