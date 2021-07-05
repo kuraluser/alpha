@@ -2,7 +2,7 @@ import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { CPDSSDB, IFuelType, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
-import { IPort, IPortList , IDischargePortList } from '../../core/models/common.model';
+import { IPort, IPortList , IDischargeStudyPortList } from '../../core/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -252,6 +252,32 @@ export interface IPortsValueObject {
     layCan: ValueObject<string>;
     layCanFrom: ValueObject<string>;
     layCanTo: ValueObject<string>;
+    maxDraft: ValueObject<number>;
+    maxAirDraft: ValueObject<number>;
+    eta: ValueObject<any>;
+    etd: ValueObject<any>;
+    isAdd: boolean;
+    isDelete?: boolean;
+    storeKey: number;
+    isActionsEnabled: boolean;
+    processing?: boolean;
+}
+
+/**
+ * Interface for ports value object
+ *
+ * @export
+ * @interface IDischargeStudyPortsValueObject
+ */
+ export interface IDischargeStudyPortsValueObject {
+    id: number;
+    portOrder: number;
+    portTimezoneId?: number;
+    slNo: number;
+    port: ValueObject<IPort>;
+    portcode: ValueObject<string>;
+    operation: ValueObject<IOperations>;
+    seaWaterDensity: ValueObject<number>;
     maxDraft: ValueObject<number>;
     maxAirDraft: ValueObject<number>;
     eta: ValueObject<any>;
@@ -514,7 +540,7 @@ export class PortsDB extends CPDSSDB {
  * @extends {CPDSSDB}
  */
  export class DischargePortsDB extends CPDSSDB {
-    dischargePorts!: Dexie.Table<IDischargePortList, number>;
+    dischargePorts!: Dexie.Table<IDischargeStudyPortList, number>;
 
     constructor() {
         super();
@@ -541,7 +567,9 @@ export enum OPERATIONS {
     LOADING = 1,
     DISCHARGING = 2,
     BUNKERING = 3,
-    TRANSIT = 4
+    TRANSIT = 4,
+    STSLOADING = 5,
+    STSDISCHARGING = 6
 }
 
 /**

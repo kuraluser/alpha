@@ -274,7 +274,7 @@ export interface IFuelType {
 /**
  * Interface for cargo response
  * @export
- * @interface
+ * @interface 
  */
 export interface ICargoResponseModel {
     cargos: ICargo[],
@@ -445,4 +445,66 @@ export interface ISubTotal {
     plannedWeight: number;
     actualWeight: number;
     abbreviation?: string;
+}
+
+/**
+ * Interface for Mode
+ *
+ * @export
+ * @interface IMode
+ */
+ export interface IMode {
+    name: string;
+    id: number;
+}
+
+
+/**
+ * Interface for instruction
+ *
+ * @export
+ * @interface IInstruction
+ */
+export interface IInstruction {
+    value: string;
+}
+
+
+/**
+ * Interface for percentage
+ *
+ * @export
+ * @interface IPercentage
+ */
+ export interface IPercentage {
+    value: string;
+    name: string;
+}
+
+export interface ITankDetails {
+    displayOrder: number,
+    group: number,
+    id: number,
+    name: string,
+    order: number,
+    shortName: string,
+    slopTank: boolean,
+}
+
+/**
+ * Interface for cargo
+ *
+ * @export
+ * @interface ICargo
+ */
+ export interface ICargo {
+    id: number;
+    companyId: number;
+    actualWeight: string;
+    plannedWeight: string;
+    name?: string;
+    abbreviation?: string;
+    api?: number;
+    ports?: IPort[];
+    temp: string;
 }

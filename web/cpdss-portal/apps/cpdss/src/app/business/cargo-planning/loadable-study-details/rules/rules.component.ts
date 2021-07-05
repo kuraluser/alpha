@@ -92,6 +92,7 @@ export class RulesComponent implements OnInit {
     if (result?.responseStatus?.status === '200') {   
        msgkeys = ['RULES_UPDATE_SUCCESS', 'RULES_UPDATE_SUCCESSFULLY']
        severity = 'success';
+       this.cancelChanges();
       }   
     }
     catch(error){
@@ -147,7 +148,7 @@ export class RulesComponent implements OnInit {
    * @memberof RulesComponent
    */
   triggerSaveChanges() {
-    this.rulesService.save.next();
+    this.rulesService.save.next();   
   }
 
  
