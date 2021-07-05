@@ -1,7 +1,7 @@
 import { Component, OnInit , OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -176,7 +176,7 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       if (dischargeStudies.length) {
         this.setProcessingLoadableStudyActions(0, 0, dischargeStudies);
         this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(loadableStudy => loadableStudy.id === dischargeStudyId) : this.dischargeStudies[0];
-        this.dischargeStudyDetailsTransformationService.setOHQValidity(this.selectedDischargeStudy.ohqPorts ?? []);
+        this.dischargeStudyDetailsTransformationService.setOHQValidity(this.selectedDischargeStudy?.ohqPorts ?? []);
       } else {
         this.dischargeStudies = [];
       }

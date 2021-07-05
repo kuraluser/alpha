@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { from, Observable, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { IPort, IDischargePortList , IPortsDetailsResponse, IPortsResponse , IAlgoResponse } from '../../core/models/common.model';
+import { IPort, IDischargeStudyPortList , IDischargePortsDetailsResponse , IPortsResponse , IAlgoResponse } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { CargoNominationDB, ICargoNomination, ICargoPortsResponse, DischargePortsDB , IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, DischargeOHQDB , IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop, IGeneratePatternResponse, ICargoApiTempHistoryResponse, IApiTempHistoryRequest } from '../models/cargo-planning.model';
 
@@ -52,11 +52,11 @@ export class DischargeStudyDetailsApiService {
         /**
    * Method to get all port details
    *
-   * @returns {Observable<IPortsDetailsResponse>}
+   * @returns {Observable<IDischargePortsDetailsResponse>}
    * @memberof DischargeStudyDetailsApiService
    */
-    getPortsDetails(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IPortsDetailsResponse> {
-      return this.commonApiService.get<IPortsDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/ports`);
+    getPortsDetails(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IDischargePortsDetailsResponse> {
+      return this.commonApiService.get<IDischargePortsDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/ports`);
     }
 
     /**
@@ -78,10 +78,10 @@ export class DischargeStudyDetailsApiService {
      * @returns {Observable<IPortsDetailsResponse>}
      * @memberof DischargeStudyDetailsApiService
      */
-    setPort(ports: IDischargePortList, vesselId: number, voyageId: number, dischargeStudyId: number, isPortsComplete: boolean): Promise<number> {
+    setPort(ports: IDischargeStudyPortList, vesselId: number, voyageId: number, dischargeStudyId: number, isPortsComplete: boolean): Promise<number> {
       ports.vesselId = vesselId;
       ports.voyageId = voyageId;
-      // ports.dischargeStudyId = dischargeStudyId;
+      ports.dischargeStudyId = dischargeStudyId;
       ports.isPortsComplete = isPortsComplete;
       return this._portsDb.dischargePorts.add(ports);
     }
@@ -110,7 +110,7 @@ export class DischargeStudyDetailsApiService {
        * @memberof DischargeStudyDetailsApiService
        */
       getPortOHQDetails(vesselId: number, voyageId: number, dischargeStudyId: number, portId: number): Observable<IPortOHQResponse> {
-          return this.commonApiService.get<IPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/port-rotation/${portId}/on-hand-quantities`);
+          return this.commonApiService.get<IPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/port-rotation/${portId}/on-hand-quantities`);
       }
   
       /**

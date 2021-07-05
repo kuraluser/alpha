@@ -16,7 +16,7 @@ export const dischargeStudyColorValidator: ValidatorFn = (control: FormControl):
     const backLoadingCargoDetails = item.backLoadingDetails.dataTable;
     
     const dischargeCargoColor = dischargeCargoDetails.filter((cargoData) => {
-      if(cargoData !== control.parent.value  && cargoData.color && cargoData.abbreviation !== control.parent.value?.abbreviation) {
+      if(cargoData !== control.parent.value  && cargoData.color && cargoData.storedKey !== control.parent.value?.storedKey) {
         return cargoData;
       }
     }).map(cargoData => cargoData.color);

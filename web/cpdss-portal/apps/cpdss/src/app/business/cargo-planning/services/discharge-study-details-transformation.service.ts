@@ -7,19 +7,18 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 import { ValueObject } from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
-import {  DischargeStudyDetailsModule } from '../discharge-study-details/discharge-study-details.module';
+
 
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
-import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ICargoNomination,  ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IMonths, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ISubTotal } from '../../../shared/models/common.model';
-import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails , ICargo , IBillingOfLaddings } from '../models/discharge-study-list.model';
-import { IOperations, IPort, IPortList, DISCHARGE_STUDY_STATUS , VOYAGE_STATUS } from '../../core/models/common.model';
-import { ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject , IMode ,  IPortDetailValueObject , IPortCargo , ITankDetails
-} from '../models/discharge-study-list.model';
+import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { IPortAllDropdownData, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject , OPERATIONS } from '../models/cargo-planning.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode , ICargo } from '../../../shared/models/common.model';
+import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo ,} from '../models/discharge-study-list.model';
+import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS } from '../../core/models/common.model';
+
 
 
 /**
@@ -42,6 +41,7 @@ export class DischargeStudyDetailsTransformationService {
   private _dischargeStudyValiditySource: Subject<boolean> = new Subject();
   private _addPortSource = new Subject();
   private _portUpdate: Subject<any> = new Subject();
+  private _loadablePatternBtnDisable: Subject<any> = new Subject();
 
   public baseUnit = AppConfigurationService.settings.baseUnit;
   portValidity$ = this._portValiditySource.asObservable();
@@ -363,7 +363,7 @@ export class DischargeStudyDetailsTransformationService {
         {
           field: 'eta',
           header: 'DISCHARGE_STUDY_ETA',
-          fieldHeaderClass: 'column-eta',
+          fieldHeaderClass: '',
           fieldType: DATATABLE_FIELD_TYPE.DATETIME,
           filter: true,
           filterPlaceholder: 'SEARCH_PORT_ETA',
@@ -386,7 +386,7 @@ export class DischargeStudyDetailsTransformationService {
         {
           field: 'etd',
           header: 'DISCHARGE_STUDY_ETD',
-          fieldHeaderClass: 'column-etd',
+          fieldHeaderClass: '',
           fieldType: DATATABLE_FIELD_TYPE.DATETIME,
           filter: true,
           filterPlaceholder: 'SEARCH_PORT_ETD',
@@ -409,8 +409,8 @@ export class DischargeStudyDetailsTransformationService {
       ]
       columns = [...columns, ...etaEtd];
     }
-
-    if (permission &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(dischargeStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    // Note:- Permission is not implemented in port tab. 
+    // if (permission &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(dischargeStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
@@ -426,18 +426,18 @@ export class DischargeStudyDetailsTransformationService {
         actions: actions
       };
       columns = [...columns, action];
-    }
+    // }
     return columns;
   }
   
     /**
  * Method for formating cargo nomination data
  *
- * @param {IPortsValueObject} ports
- * @returns {IPortsValueObject}
+ * @param {IDischargeStudyPortsValueObject} ports
+ * @returns {IDischargeStudyPortsValueObject}
  * @memberof DischargeStudyDetailsTransformationService
  */
-  formatPorts(ports: IPortsValueObject): IPortsValueObject {
+  formatPorts(ports: IDischargeStudyPortsValueObject): IDischargeStudyPortsValueObject {
     ports.storeKey = ports.storeKey ?? uuid4();
     return ports;
   }
@@ -445,12 +445,12 @@ export class DischargeStudyDetailsTransformationService {
     /**
   * Method for converting from port value object model
   *
-  * @param {IPortsValueObject} cargoNomination
-  * @returns {IPortList}
+  * @param {IDischargeStudyPortsValueObject} cargoNomination
+  * @returns {IDischargeStudyPortList}
   * @memberof DischargeStudyDetailsTransformationService
   */
-  getPortAsValue(port: IPortsValueObject): IPortList {
-    const _ports = <IPortList>{};
+  getPortAsValue(port: IDischargeStudyPortsValueObject): IDischargeStudyPortList {
+    const _ports = <IDischargeStudyPortList>{};
     for (const key in port) {
       if (Object.prototype.hasOwnProperty.call(port, key)) {
         if (key === 'port') {
@@ -497,14 +497,14 @@ export class DischargeStudyDetailsTransformationService {
     /**
    * Method for converting ports data to value object model
    *
-   * @param {IPortList} port
+   * @param {IDischargeStudyPortList} port
    * @param {boolean} [isNewValue=true]
    * @param {IPortAllDropdownData} listData
-   * @returns {IPortsValueObject}
+   * @returns {IDischargeStudyPortsValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-     getPortAsValueObject(port: IPortList, isNewValue = true, isEditable = true, listData: IPortAllDropdownData, portEtaEtdPermission: IPermission): IPortsValueObject {
-      const _port = <IPortsValueObject>{};
+     getPortAsValueObject(port: IDischargeStudyPortList, isNewValue = true, isEditable = true, listData: IPortAllDropdownData, portEtaEtdPermission: IPermission): IDischargeStudyPortsValueObject {
+      const _port = <IDischargeStudyPortsValueObject>{};
       const isEtaEtadEdtitable = this.isEtaEtdViewable(portEtaEtdPermission, isNewValue);
       const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
       const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
@@ -514,15 +514,15 @@ export class DischargeStudyDetailsTransformationService {
       _port.portOrder = port.portOrder;
       _port.portTimezoneId = port.portTimezoneId;
       _port.portcode = new ValueObject<string>(portObj?.code, true, false, false, false);
-      _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEdit && isEditable);
-      _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit && isEditable);
+      _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEditable);
+      _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false,  isEditable);
       _port.seaWaterDensity = new ValueObject<number>(port.seaWaterDensity, true, isNewValue, false, isEditable);
       _port.maxDraft = new ValueObject<number>(port.maxDraft, true, isNewValue, false, isEditable);
       _port.maxAirDraft = new ValueObject<number>(port.maxAirDraft, true, isNewValue, false, isEditable);
       _port.eta = new ValueObject<string>(port.eta, true, isNewValue, false, isEtaEtadEdtitable);
       _port.etd = new ValueObject<string>(port.etd, true, isNewValue, false, isEtaEtadEdtitable);
       _port.isAdd = isNewValue;
-      _port.isActionsEnabled = isEdit;
+      _port.isActionsEnabled = true;
       _port.isDelete = false;
       return _port;
     }
@@ -972,13 +972,14 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getPortDetailAsValueObject(portDetail: any, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true): IPortDetailValueObject {
+    getPortDetailAsValueObject(portDetail: any, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any): IPortDetailValueObject {
       const _portDetail = <IPortDetailValueObject>{};
       _portDetail.portName = portDetail.portName;
       _portDetail.instruction = portDetail.instruction ? portDetail.instruction : listData.instructions[0];
       _portDetail.draftRestriction = portDetail.draftRestriction;
       _portDetail.cargoDetail  = portDetail.cargo.map((cargoDetail) => {
-        return this.getCargoDetailsAsValueObject(cargoDetail,listData);
+        const storedKey = this.getStoreKey(portUniqueColorAbbrList,cargoDetail);
+        return this.getCargoDetailsAsValueObject(cargoDetail,listData,storedKey,true);
       })
       const cow:IMode = listData.mode.find(modeDetails => modeDetails.id === portDetail.cow);
       _portDetail.cow = cow;
@@ -988,9 +989,31 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       })
       _portDetail.enableBackToLoading = portDetail.enableBackToLoading !== '' && !isLastIndex ? true : false;
       _portDetail.backLoadingDetails =  portDetail.backLoadingDetails.map((backLoadingDetail) => {
-        return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData , isNewValue);
+        const storedKey = this.getStoreKey(portUniqueColorAbbrList,backLoadingDetail);
+        return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData , storedKey , isNewValue);
       });
       return _portDetail;
+    }
+
+    /**
+   * Method to set stored key for unique color
+   * @param {*} data
+   * @param {*} portUniqueColorAbbrList
+   * @memberof DischargeStudyDetailsTransformationService
+   */
+    getStoreKey(portUniqueColorAbbrList: any,data: any) {
+      const isColorUnique = portUniqueColorAbbrList?.find((item) => {
+        if(item.color === data.color) {
+          return portUniqueColorAbbrList.storedKey;
+        }
+      })
+      if(isColorUnique) {
+        return isColorUnique.storedKey
+      } else {
+        const storedKey = uuid4();
+        portUniqueColorAbbrList.push({color: data.color , abbreviation: data.abbreviation , storedKey: storedKey})
+        return storedKey;
+      }
     }
 
    /**
@@ -1002,7 +1025,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getCargoDetailsAsValueObject(cargoDetail: any, listData:IDischargeStudyDropdownData,isNewValue = true) {
+    getCargoDetailsAsValueObject(cargoDetail: any, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
       const _cargoDetailValuObject = <IPortCargo>{};
       const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
@@ -1017,6 +1040,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
       _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);
       _cargoDetailValuObject.temp = new ValueObject<number>(cargoDetail.temp);
+      _cargoDetailValuObject.storedKey = new ValueObject<string>(storedKey);
       return _cargoDetailValuObject;
     }
 
@@ -1029,6 +1053,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    */
     setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode) {
       return { 
+        storedKey: new ValueObject<string>(backLoadingDetails.storedKey.value),
         maxKl: new ValueObject<string>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
         abbreviation: new ValueObject<string>(backLoadingDetails.abbreviation.value, true , false),
         color: new ValueObject<string>(backLoadingDetails.color.value, true , false),
@@ -1051,7 +1076,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getBackLoadingDetailAsValueObject(backLoadingDetail: any, listData:IDischargeStudyDropdownData ,isNewValue = true): IBackLoadingDetails {
+    getBackLoadingDetailAsValueObject(backLoadingDetail: any, listData:IDischargeStudyDropdownData ,storedKey: string ,isNewValue = true): IBackLoadingDetails {
       const _backLoadingDetailDetail = <IBackLoadingDetails>{};
       const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
@@ -1063,6 +1088,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temp , true , isNewValue);
       _backLoadingDetailDetail.isDelete = true;
       _backLoadingDetailDetail.isAdd = isNewValue;
+      _backLoadingDetailDetail.storedKey = new ValueObject<string>(storedKey),
       _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation);
       _backLoadingDetailDetail.cargoAbbreviation = Math.random().toString();
       return _backLoadingDetailDetail;
@@ -1081,6 +1107,16 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
         'whitespace': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
       }
     }
+  }
+
+     /**
+ * Method for updating disable/enable loadable study generate button
+ *
+ * @param value
+ * @memberof DischargeStudyDetailsTransformationService
+ */
+  disableGenerateLoadablePatternBtn(value){
+    this._loadablePatternBtnDisable.next(value);
   }
 
 }

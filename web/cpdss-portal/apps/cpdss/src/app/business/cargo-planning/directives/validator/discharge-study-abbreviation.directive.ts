@@ -18,7 +18,7 @@ export const dischargeStudyAbbreviationValidator: ValidatorFn = (control: FormCo
     const backLoadingCargoDetails = item.backLoadingDetails.dataTable;
     
     const dischargeCargoAbbrevation = dischargeCargoDetails.filter((cargoData) => {
-        if(cargoData !== control.parent.value  && cargoData.color && cargoData.color !== control.parent.value?.color) {
+        if(cargoData !== control.parent.value  && cargoData.color && cargoData.storedKey !== control.parent.value?.storedKey) {
           return cargoData;
         }
       }).map(cargoData => cargoData.abbreviation?.toLowerCase());

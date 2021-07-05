@@ -402,7 +402,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   disableForm() {
     this.rules?.forEach((rule, ruleIndex) => {
       if (rule?.isHardRule) {
-        this.rulesForm.at(ruleIndex).disable()
+        this.rulesForm?.at(ruleIndex)?.disable()
       }
     })
   }
