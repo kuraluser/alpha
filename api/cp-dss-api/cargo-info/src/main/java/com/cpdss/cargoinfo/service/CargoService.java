@@ -12,6 +12,7 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import io.grpc.stub.StreamObserver;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -100,6 +101,9 @@ public class CargoService extends CargoInfoServiceImplBase {
     if (!StringUtils.isEmpty(cargo.getCrudeType())) {
       cargoDetail.setCrudeType(cargo.getCrudeType());
     }
+
+    Optional.ofNullable(cargo.getIsCondensateCargo()).ifPresent(cargoDetail::setIsCondensateCargo);
+    Optional.ofNullable(cargo.getIsCondensateCargo()).ifPresent(cargoDetail::setIsHrvpCargo);
   }
 
   @Override
