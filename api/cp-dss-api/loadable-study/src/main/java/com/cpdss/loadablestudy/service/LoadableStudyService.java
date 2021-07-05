@@ -5791,9 +5791,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePatternOpt.get().getLoadableStudy(),
               request.getProcesssId(),
               request.getLoadablePatternId());
+        } else {
+          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
         }
-        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
 
       builder
@@ -6224,14 +6225,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 algoResponse.getFeedbackLoopCount(),
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-            loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
+            loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+                LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
           }
         }
       } else {
         this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
+        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
       }
       replyBuilder =
           LoadicatorDataReply.newBuilder()
