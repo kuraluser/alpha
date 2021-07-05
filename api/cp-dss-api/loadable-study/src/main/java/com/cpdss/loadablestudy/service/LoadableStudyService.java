@@ -6891,6 +6891,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
     entity.setBendingMoment(isEmpty(result.getBm()) ? null : new BigDecimal(result.getBm()));
     entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
+    entity.setHog(isEmpty(result.getHog()) ? null : new BigDecimal(result.getHog()));
     return entity;
   }
 
@@ -7083,6 +7084,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           trim.setTrimValue(ldTrim.getTrimValue());
           trim.setPortId(ldTrim.getPortId());
           trim.setSynopticalId(ldTrim.getSynopticalId());
+          trim.setHog(ldTrim.getHogSag());
           ldTrims.add(trim);
         });
 
@@ -7393,6 +7395,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           cargoNominationDto =
               modelMapper.map(
                   cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
+          CargoRequest.Builder cargoReq = CargoRequest.newBuilder();
+          cargoReq.setCargoId(cargoNomination.getCargoXId());
+          com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
+              this.getCargoInfoById(cargoReq.build());
+          if (cargoDetailReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+            log.info("Fetched cargo info of cargo with id {}", cargoNomination.getCargoXId());
+            cargoNominationDto.setIsCondensateCargo(
+                cargoDetailReply.getCargoDetail().getIsCondensateCargo());
+            cargoNominationDto.setIsHrvpCargo(cargoDetailReply.getCargoDetail().getIsHrvpCargo());
+          } else {
+            log.error(
+                "Could not fetch cargo info of cargo with id {}", cargoNomination.getCargoXId());
+          }
           loadableStudy.getCargoNomination().add(cargoNominationDto);
         });
   }

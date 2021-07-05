@@ -2254,6 +2254,20 @@ public final class CargoInfo {
      * @return The bytes for api.
      */
     com.google.protobuf.ByteString getApiBytes();
+
+    /**
+     * <code>bool isCondensateCargo = 5;</code>
+     *
+     * @return The isCondensateCargo.
+     */
+    boolean getIsCondensateCargo();
+
+    /**
+     * <code>bool isHrvpCargo = 6;</code>
+     *
+     * @return The isHrvpCargo.
+     */
+    boolean getIsHrvpCargo();
   }
   /** Protobuf type {@code CargoDetail} */
   public static final class CargoDetail extends com.google.protobuf.GeneratedMessageV3
@@ -2325,6 +2339,16 @@ public final class CargoInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 api_ = s;
+                break;
+              }
+            case 40:
+              {
+                isCondensateCargo_ = input.readBool();
+                break;
+              }
+            case 48:
+              {
+                isHrvpCargo_ = input.readBool();
                 break;
               }
             default:
@@ -2475,6 +2499,28 @@ public final class CargoInfo {
       }
     }
 
+    public static final int ISCONDENSATECARGO_FIELD_NUMBER = 5;
+    private boolean isCondensateCargo_;
+    /**
+     * <code>bool isCondensateCargo = 5;</code>
+     *
+     * @return The isCondensateCargo.
+     */
+    public boolean getIsCondensateCargo() {
+      return isCondensateCargo_;
+    }
+
+    public static final int ISHRVPCARGO_FIELD_NUMBER = 6;
+    private boolean isHrvpCargo_;
+    /**
+     * <code>bool isHrvpCargo = 6;</code>
+     *
+     * @return The isHrvpCargo.
+     */
+    public boolean getIsHrvpCargo() {
+      return isHrvpCargo_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -2501,6 +2547,12 @@ public final class CargoInfo {
       if (!getApiBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, api_);
       }
+      if (isCondensateCargo_ != false) {
+        output.writeBool(5, isCondensateCargo_);
+      }
+      if (isHrvpCargo_ != false) {
+        output.writeBool(6, isHrvpCargo_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2522,6 +2574,12 @@ public final class CargoInfo {
       if (!getApiBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, api_);
       }
+      if (isCondensateCargo_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(5, isCondensateCargo_);
+      }
+      if (isHrvpCargo_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(6, isHrvpCargo_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2542,6 +2600,8 @@ public final class CargoInfo {
       if (!getCrudeType().equals(other.getCrudeType())) return false;
       if (!getAbbreviation().equals(other.getAbbreviation())) return false;
       if (!getApi().equals(other.getApi())) return false;
+      if (getIsCondensateCargo() != other.getIsCondensateCargo()) return false;
+      if (getIsHrvpCargo() != other.getIsHrvpCargo()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2561,6 +2621,10 @@ public final class CargoInfo {
       hash = (53 * hash) + getAbbreviation().hashCode();
       hash = (37 * hash) + API_FIELD_NUMBER;
       hash = (53 * hash) + getApi().hashCode();
+      hash = (37 * hash) + ISCONDENSATECARGO_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsCondensateCargo());
+      hash = (37 * hash) + ISHRVPCARGO_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsHrvpCargo());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2706,6 +2770,10 @@ public final class CargoInfo {
 
         api_ = "";
 
+        isCondensateCargo_ = false;
+
+        isHrvpCargo_ = false;
+
         return this;
       }
 
@@ -2736,6 +2804,8 @@ public final class CargoInfo {
         result.crudeType_ = crudeType_;
         result.abbreviation_ = abbreviation_;
         result.api_ = api_;
+        result.isCondensateCargo_ = isCondensateCargo_;
+        result.isHrvpCargo_ = isHrvpCargo_;
         onBuilt();
         return result;
       }
@@ -2802,6 +2872,12 @@ public final class CargoInfo {
         if (!other.getApi().isEmpty()) {
           api_ = other.api_;
           onChanged();
+        }
+        if (other.getIsCondensateCargo() != false) {
+          setIsCondensateCargo(other.getIsCondensateCargo());
+        }
+        if (other.getIsHrvpCargo() != false) {
+          setIsHrvpCargo(other.getIsHrvpCargo());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -3090,6 +3166,72 @@ public final class CargoInfo {
         checkByteStringIsUtf8(value);
 
         api_ = value;
+        onChanged();
+        return this;
+      }
+
+      private boolean isCondensateCargo_;
+      /**
+       * <code>bool isCondensateCargo = 5;</code>
+       *
+       * @return The isCondensateCargo.
+       */
+      public boolean getIsCondensateCargo() {
+        return isCondensateCargo_;
+      }
+      /**
+       * <code>bool isCondensateCargo = 5;</code>
+       *
+       * @param value The isCondensateCargo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsCondensateCargo(boolean value) {
+
+        isCondensateCargo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isCondensateCargo = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsCondensateCargo() {
+
+        isCondensateCargo_ = false;
+        onChanged();
+        return this;
+      }
+
+      private boolean isHrvpCargo_;
+      /**
+       * <code>bool isHrvpCargo = 6;</code>
+       *
+       * @return The isHrvpCargo.
+       */
+      public boolean getIsHrvpCargo() {
+        return isHrvpCargo_;
+      }
+      /**
+       * <code>bool isHrvpCargo = 6;</code>
+       *
+       * @param value The isHrvpCargo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsHrvpCargo(boolean value) {
+
+        isHrvpCargo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isHrvpCargo = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsHrvpCargo() {
+
+        isHrvpCargo_ = false;
         onChanged();
         return this;
       }
@@ -4134,17 +4276,18 @@ public final class CargoInfo {
           + "\001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022"
           + "\027\n\017loadableStudyId\030\004 \001(\003\022\017\n\007cargoId\030\005 \001("
           + "\003\"7\n\026CargoRequestWithPaging\022\016\n\006offset\030\001 "
-          + "\001(\003\022\r\n\005limit\030\002 \001(\003\"O\n\013CargoDetail\022\n\n\002id\030"
+          + "\001(\003\022\r\n\005limit\030\002 \001(\003\"\177\n\013CargoDetail\022\n\n\002id\030"
           + "\001 \001(\003\022\021\n\tcrudeType\030\002 \001(\t\022\024\n\014abbreviation"
-          + "\030\003 \001(\t\022\013\n\003api\030\004 \001(\t\"S\n\nCargoReply\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006ca"
-          + "rgos\030\002 \003(\0132\014.CargoDetail2\270\001\n\020CargoInfoSe"
-          + "rvice\022,\n\014GetCargoInfo\022\r.CargoRequest\032\013.C"
-          + "argoReply\"\000\022>\n\024GetCargoInfoByPaging\022\027.Ca"
-          + "rgoRequestWithPaging\032\013.CargoReply\"\000\0226\n\020G"
-          + "etCargoInfoById\022\r.CargoRequest\032\021.CargoDe"
-          + "tailReply\"\000B\036\n\032com.cpdss.common.generate"
-          + "dP\000b\006proto3"
+          + "\030\003 \001(\t\022\013\n\003api\030\004 \001(\t\022\031\n\021isCondensateCargo"
+          + "\030\005 \001(\010\022\023\n\013isHrvpCargo\030\006 \001(\010\"S\n\nCargoRepl"
+          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
+          + "us\022\034\n\006cargos\030\002 \003(\0132\014.CargoDetail2\270\001\n\020Car"
+          + "goInfoService\022,\n\014GetCargoInfo\022\r.CargoReq"
+          + "uest\032\013.CargoReply\"\000\022>\n\024GetCargoInfoByPag"
+          + "ing\022\027.CargoRequestWithPaging\032\013.CargoRepl"
+          + "y\"\000\0226\n\020GetCargoInfoById\022\r.CargoRequest\032\021"
+          + ".CargoDetailReply\"\000B\036\n\032com.cpdss.common."
+          + "generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -4178,7 +4321,7 @@ public final class CargoInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoDetail_descriptor,
             new java.lang.String[] {
-              "Id", "CrudeType", "Abbreviation", "Api",
+              "Id", "CrudeType", "Abbreviation", "Api", "IsCondensateCargo", "IsHrvpCargo",
             });
     internal_static_CargoReply_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_CargoReply_fieldAccessorTable =
