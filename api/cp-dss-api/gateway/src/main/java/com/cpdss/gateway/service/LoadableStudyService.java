@@ -4002,6 +4002,7 @@ public class LoadableStudyService {
               synopticalRecord.setBm(str.getBm());
               synopticalRecord.setSf(str.getSf());
               synopticalRecord.setList(str.getList());
+              synopticalRecord.setConstantPlanned(str.getConstantPlanned());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
