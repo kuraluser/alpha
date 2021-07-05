@@ -74,9 +74,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     Optional.ofNullable(loadingInformationDetail.getPortRotationId())
         .ifPresent(loadingInformation::setPortRotationXId);
     Optional<StageOffset> defaultOffsetOpt =
-        stageOffsetRepository.findByIdAndIsActiveTrue(DEFAULT_STAGE_OFFSET_ID);
+        stageOffsetRepository.findByStageOffsetValAndIsActiveTrue(DEFAULT_STAGE_OFFSET_VALUE);
     Optional<StageDuration> defaultDurationOpt =
-        stageDurationRepository.findByIdAndIsActiveTrue(DEFAULT_STAGE_DURATION_ID);
+        stageDurationRepository.findByDurationAndIsActiveTrue(DEFAULT_STAGE_DURATION_VALUE);
     if (defaultOffsetOpt.isPresent()) {
       loadingInformation.setStageOffset(defaultOffsetOpt.get());
     }

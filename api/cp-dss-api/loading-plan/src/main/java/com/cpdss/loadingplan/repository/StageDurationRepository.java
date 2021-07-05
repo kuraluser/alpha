@@ -11,4 +11,6 @@ public interface StageDurationRepository extends CommonCrudRepository<StageDurat
   List<StageDuration> findAllByIsActiveTrue();
 
   public Optional<StageDuration> findByIdAndIsActiveTrue(Long id);
+
+  Optional<StageDuration> findByDurationAndIsActiveTrue(Integer duration);
 }
