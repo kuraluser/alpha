@@ -12,8 +12,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
-import com.cpdss.gateway.domain.UpdateUllage;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
@@ -24,6 +23,7 @@ import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import com.cpdss.gateway.utility.Utility;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +124,128 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   // Call in VesselInfoService
   @Override
   public LoadingRates getLoadingRateForVessel(LoadingPlanModels.LoadingRates var1, Long vesselId) {
+    final Long loadingRuleMasterId = 2l;
+    final String VFR = "vesselfacilityrule";
+    final String RLR = "reducedloadingrate";
+    final String MIDBR = "mindeballastrate";
+    final String MXDBR = "maxdeballastrate";
+    final String NTFRR = "noticetimeforratereduction";
+    final String NTFSL = "noticetimeforstoppingloading";
+    final String LCR = "linecontentremaining";
     LoadingRates loadingRates = new LoadingRates();
+
+    try {
+      // If it grater that 0 means, it already populated and saved the value at loading Information
+      RuleResponse ruleResponse =
+          vesselInfoService.getRulesByVesselIdAndSectionId(
+              vesselId, loadingRuleMasterId, null, null);
+      if (!ruleResponse.getPlan().isEmpty()) {
+        log.info(
+            "Admin rules data collected for vessel {}, Size {}",
+            vesselId,
+            ruleResponse.getPlan().size());
+        for (RulePlans plan : ruleResponse.getPlan()) {
+          if (Utility.toLowerAndRemoveSpace(plan.getHeader()).equals(VFR)) {
+            if (!plan.getRules().isEmpty()) {
+              for (Rules rules : plan.getRules()) {
+                if (!rules.getInputs().isEmpty()) {
+                  for (RulesInputs rInput : rules.getInputs()) {
+                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(RLR)) {
+                      if (var1.getReducedLoadingRate().isEmpty()) {
+                        log.info(
+                            "Admin Rule added for key {}, value {}", RLR, rInput.getDefaultValue());
+                        loadingRates.setReducedLoadingRate(
+                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
+                                ? BigDecimal.ZERO
+                                : new BigDecimal(rInput.getDefaultValue()));
+                      } else {
+                        loadingRates.setReducedLoadingRate(
+                            new BigDecimal(var1.getReducedLoadingRate()));
+                      }
+                    }
+                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(MIDBR)) {
+                      if (var1.getMinDeBallastingRate().isEmpty()) {
+                        log.info(
+                            "Admin Rule added for key {}, value {}",
+                            MIDBR,
+                            rInput.getDefaultValue());
+                        loadingRates.setMinDeBallastingRate(
+                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
+                                ? BigDecimal.ZERO
+                                : new BigDecimal(rInput.getDefaultValue()));
+                      } else {
+                        loadingRates.setMinDeBallastingRate(
+                            new BigDecimal(var1.getMinDeBallastingRate()));
+                      }
+                    }
+                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(MXDBR)) {
+                      if (var1.getMaxDeBallastingRate().isEmpty()) {
+                        log.info(
+                            "Admin Rule added for key {}, value {}",
+                            MXDBR,
+                            rInput.getDefaultValue());
+                        loadingRates.setMaxDeBallastingRate(
+                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
+                                ? BigDecimal.ZERO
+                                : new BigDecimal(rInput.getDefaultValue()));
+                      } else {
+                        loadingRates.setMaxDeBallastingRate(
+                            new BigDecimal(var1.getMaxDeBallastingRate()));
+                      }
+                    }
+                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(NTFRR)) {
+                      if (var1.getNoticeTimeRateReduction().isEmpty()) {
+                        log.info(
+                            "Admin Rule added for key {}, value {}",
+                            NTFRR,
+                            rInput.getDefaultValue());
+                        loadingRates.setNoticeTimeRateReduction(
+                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
+                                ? BigDecimal.ZERO
+                                : new BigDecimal(rInput.getDefaultValue()));
+                      } else {
+                        loadingRates.setNoticeTimeRateReduction(
+                            new BigDecimal(var1.getNoticeTimeRateReduction()));
+                      }
+                    }
+                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(NTFSL)) {
+                      if (var1.getNoticeTimeStopLoading().isEmpty()) {
+                        log.info(
+                            "Admin Rule added for key {}, value {}",
+                            NTFSL,
+                            rInput.getDefaultValue());
+                        loadingRates.setNoticeTimeStopLoading(
+                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
+                                ? BigDecimal.ZERO
+                                : new BigDecimal(rInput.getDefaultValue()));
+                      } else {
+                        loadingRates.setNoticeTimeStopLoading(
+                            new BigDecimal(var1.getNoticeTimeStopLoading()));
+                      }
+                    }
+                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(LCR)) {
+                      if (var1.getLineContentRemaining().isEmpty()) {
+                        log.info(
+                            "Admin Rule added for key {}, value {}", LCR, rInput.getDefaultValue());
+                        loadingRates.setLineContentRemaining(
+                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
+                                ? BigDecimal.ZERO
+                                : new BigDecimal(rInput.getDefaultValue()));
+                      } else {
+                        loadingRates.setLineContentRemaining(
+                            new BigDecimal(var1.getLineContentRemaining()));
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
     try {
       loadingRates.setInitialLoadingRate(
           var1.getInitialLoadingRate().isEmpty()
@@ -134,30 +255,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           var1.getMaxLoadingRate().isEmpty()
               ? BigDecimal.ZERO
               : new BigDecimal(var1.getMaxLoadingRate()));
-      loadingRates.setReducedLoadingRate(
-          var1.getReducedLoadingRate().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getReducedLoadingRate()));
-      loadingRates.setMinDeBallastingRate(
-          var1.getMinDeBallastingRate().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getMinDeBallastingRate()));
-      loadingRates.setMaxDeBallastingRate(
-          var1.getMaxDeBallastingRate().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getMaxDeBallastingRate()));
-      loadingRates.setNoticeTimeStopLoading(
-          var1.getNoticeTimeStopLoading().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getNoticeTimeStopLoading()));
-      loadingRates.setNoticeTimeRateReduction(
-          var1.getNoticeTimeRateReduction().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getNoticeTimeRateReduction()));
-      loadingRates.setLineContentRemaining(
-          var1.getLineContentRemaining().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getLineContentRemaining()));
       log.info("Loading Rates added from Loading plan Service");
     } catch (Exception e) {
       e.printStackTrace();

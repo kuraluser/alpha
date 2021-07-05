@@ -203,4 +203,17 @@ public class Utility {
   static Boolean isBlankString(String value) {
     return value != null && value.trim() != "";
   }
+
+  public static String toLowerAndRemoveSpace(final String init) {
+    if (init == null || init.isEmpty()) return null;
+    final StringBuilder ret = new StringBuilder(init.length());
+    List<String> words = Arrays.asList(init.split(" "));
+    for (final String word : words) {
+      if (!word.isEmpty()) {
+        ret.append(Character.toLowerCase(word.charAt(0)));
+        ret.append(word.substring(1).toLowerCase());
+      }
+    }
+    return ret.toString();
+  }
 }
