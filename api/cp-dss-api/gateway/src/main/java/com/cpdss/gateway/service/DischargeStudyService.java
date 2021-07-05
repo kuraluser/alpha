@@ -288,4 +288,9 @@ public class DischargeStudyService {
     }
     return loadableStudyService.buildOnHandQuantityResponse(grpcReply, correlationId);
   }
+
+  public OnHandQuantityResponse saveOnHandQuantity(OnHandQuantity request, String correlationId)
+      throws GenericServiceException {
+    return this.loadableStudyService.saveOnHandQuantity(request, correlationId);
+  }
 }

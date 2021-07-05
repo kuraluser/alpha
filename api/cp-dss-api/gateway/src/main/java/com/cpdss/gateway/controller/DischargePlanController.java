@@ -5,13 +5,10 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
-import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.OnHandQuantityResponse;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -305,6 +302,41 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching on hand quantities", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}"
+              + "/port-rotation/{portRotationId}/on-hand-quantities/{id}",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public OnHandQuantityResponse saveOnHandQuantity(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargeStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long id,
+      @RequestBody @Valid OnHandQuantity request,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      request.setId(id);
+      request.setPortRotationId(portRotationId);
+      request.setLoadableStudyId(dischargeStudyId);
+      return this.dischargeStudyService.saveOnHandQuantity(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving on hand quantities", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when saving on hand quantities", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
