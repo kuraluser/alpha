@@ -109,6 +109,7 @@ export class LoadablePlanComponent implements OnInit {
   public loadableQuantity: number;
   loadableQuantityCargo: IloadableQuantityCargoDetails[];
   portRotationId: number;
+  vesselLightWeight: number;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -197,7 +198,7 @@ export class LoadablePlanComponent implements OnInit {
           this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
           this.validationPending = false;
           this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
-        } 
+        }
       } else if (event.data.type === 'loadable-pattern-validation-failed') {
         if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
           navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
@@ -207,7 +208,7 @@ export class LoadablePlanComponent implements OnInit {
           this.validationPending = false;
           this.getAlgoErrorMessage(true);
         }
-  
+
       } else if (event.data.type === 'loadable-pattern-validation-success') {
         if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
           navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
@@ -387,7 +388,8 @@ export class LoadablePlanComponent implements OnInit {
       const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
       this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence })
     })
-    loadablePlanRes.loadableQuantity ? this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) : this.getLoadableQuantity();
+    await this.getLoadableQuantity();
+    this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) ?? this.loadableQuantity;
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => {
       const tank = this.findCargoTank(cargo.tankId, loadablePlanRes?.tankLists)
@@ -433,7 +435,8 @@ export class LoadablePlanComponent implements OnInit {
     const loadableQuantityResult = await this.loadablePlanApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.loadableStudyId, this.portRotationId ? this.portRotationId : 0).toPromise();
     if (loadableQuantityResult.responseStatus.status === "200") {
       loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantity = Number(loadableQuantityResult.loadableQuantity.totalQuantity);
-    }
+      this.vesselLightWeight = Number(loadableQuantityResult?.loadableQuantity?.vesselLightWeight);
+	}
   }
 
   /**
