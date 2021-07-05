@@ -65,6 +65,15 @@ function buildApp(cb) {
       console.log(stderr);
       cb(err);
     });
+  } else if (argv.staging) {
+    let cmd = `npm run build:${appName}:${argv.shore ? 'shore' : argv.ship ? 'ship' : ''
+      }`;
+    console.log(`${cmd}:staging`);
+    exec(`${cmd}:staging`, function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
   } else if (argv.test) {
     let cmd = `npm run build:${appName}:${
       argv.shore ? 'shore' : argv.ship ? 'ship' : ''
