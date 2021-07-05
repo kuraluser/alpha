@@ -34,4 +34,5 @@ public class LoadableStudy {
   private List<PortDetails> portDetails;
   private Boolean feedbackLoop;
   private Integer feedbackLoopCount;
+  private List<RulePlans> loadableStudyRuleList;
 }
