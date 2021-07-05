@@ -5,10 +5,6 @@ import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
-import com.cpdss.common.generated.*;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
@@ -6441,17 +6437,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator) {
     loadicator.setProcessId(request.getProcessId());
     loadicator.setLoadicatorPatternDetails(new ArrayList<>());
-    
+
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-            new com.cpdss.loadablestudy.domain.LoadableStudy();
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
     Optional<LoadableStudy> loadableStudyOpt =
-            loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     if (loadableStudyOpt.isPresent()) {
-        ModelMapper modelMapper = new ModelMapper();
-        buildLoadableStudy(
-            request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+      ModelMapper modelMapper = new ModelMapper();
+      buildLoadableStudy(
+          request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
     }
-    
+
     if (request.getIsPattern()) {
       com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails patternDetails =
           request.getLoadicatorPatternDetails(0);
@@ -6489,7 +6485,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadicator.getLoadicatorPatternDetails().add(patterns);
               });
     }
-    
+
     loadicator.setLoadableStudy(loadableStudy);
   }
 
