@@ -107,6 +107,7 @@ message VesselDetail {
   string homogeneousLoadingRate = 39;
   string wingTankLoadingRate = 40;
   string centerTankLoadingRate = 41;
+  string maxLoadingRate = 42;
 }
 
 message VesselLoadableQuantityDetails {

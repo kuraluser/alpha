@@ -23,7 +23,8 @@ import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
-import com.cpdss.gateway.utility.Utility;
+import com.cpdss.gateway.utility.AdminRuleTemplate;
+import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
+
+  private final Long LOADING_RULE_MASTER_ID = 2l;
 
   @Autowired VesselInfoService vesselInfoService;
 
@@ -74,27 +77,50 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       Long portId) {
     LoadingDetails var = new LoadingDetails();
     try {
+
+      try {
+        // RPC call to vessel info, Get Rules (default value for Loading Info)
+        RuleResponse ruleResponse =
+            vesselInfoService.getRulesByVesselIdAndSectionId(
+                vesselId, LOADING_RULE_MASTER_ID, null, null);
+        AdminRuleValueExtract extract =
+            AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
+
+        var b = extract.getDefaultValueForKey(AdminRuleTemplate.MAXIMUM_TRIM);
+        var c = extract.getDefaultValueForKey(AdminRuleTemplate.FINAL_TRIM);
+
+        TrimAllowed trimAllowedDto = new TrimAllowed();
+        if (var1.hasTrimAllowed()) {
+          LoadingPlanModels.TrimAllowed trimAllowed = var1.getTrimAllowed();
+          if (trimAllowed.getInitialTrim().isEmpty()) {
+            var a = extract.getDefaultValueForKey(AdminRuleTemplate.INITIAL_TRIM);
+            trimAllowedDto.setInitialTrim(a.isEmpty() ? null : new BigDecimal(a));
+          } else {
+            trimAllowedDto.setInitialTrim(new BigDecimal(trimAllowed.getInitialTrim()));
+          }
+
+          if (trimAllowed.getMaximumTrim().isEmpty()) {
+            var a = extract.getDefaultValueForKey(AdminRuleTemplate.MAXIMUM_TRIM);
+            trimAllowedDto.setMaximumTrim(a.isEmpty() ? null : new BigDecimal(a));
+          } else {
+            trimAllowedDto.setMaximumTrim(new BigDecimal(trimAllowed.getMaximumTrim()));
+          }
+
+          if (trimAllowed.getFinalTrim().isEmpty()) {
+            var a = extract.getDefaultValueForKey(AdminRuleTemplate.INITIAL_TRIM);
+            trimAllowedDto.setFinalTrim(a.isEmpty() ? null : new BigDecimal(a));
+          } else {
+            trimAllowedDto.setFinalTrim(new BigDecimal(trimAllowed.getFinalTrim()));
+          }
+        }
+        var.setTrimAllowed(trimAllowedDto);
+      } catch (Exception e) {
+        e.printStackTrace();
+        log.error("Filed to get admin rule for trim data");
+      }
+
       // Set Values from Loading plan
       Optional.ofNullable(var1.getStartTime()).ifPresent(var::setStartTime);
-      if (var1.hasTrimAllowed()) {
-        TrimAllowed trimAllowed = new TrimAllowed();
-        Optional.ofNullable(var1.getTrimAllowed().getInitialTrim())
-            .ifPresent(
-                v -> {
-                  if (!v.isEmpty()) trimAllowed.setInitialTrim(new BigDecimal(v));
-                });
-        Optional.ofNullable(var1.getTrimAllowed().getMaximumTrim())
-            .ifPresent(
-                v -> {
-                  if (!v.isEmpty()) trimAllowed.setMaximumTrim(new BigDecimal(v));
-                });
-        Optional.ofNullable(var1.getTrimAllowed().getFinalTrim())
-            .ifPresent(
-                v -> {
-                  if (!v.isEmpty()) trimAllowed.setFinalTrim(new BigDecimal(v));
-                });
-        var.setTrimAllowed(trimAllowed);
-      }
 
       // For Sunrise and Sunset, 1st  call to LS
       LoadableStudy.LoadingSynopticResponse response =
@@ -121,142 +147,123 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return var;
   }
 
-  // Call in VesselInfoService
+  /**
+   * Common Rule to set value, If Loading Info Response have value ADD that in response Else set the
+   * default values from vessel/rule apis.
+   *
+   * @param rateFromLoading LoadingPlanModels.LoadingRates rpc-response of loading info
+   * @param vesselId Long Id
+   * @return LoadingRates
+   */
   @Override
-  public LoadingRates getLoadingRateForVessel(LoadingPlanModels.LoadingRates var1, Long vesselId) {
-    final Long loadingRuleMasterId = 2l;
-    final String VFR = "vesselfacilityrule";
-    final String RLR = "reducedloadingrate";
-    final String MIDBR = "mindeballastrate";
-    final String MXDBR = "maxdeballastrate";
-    final String NTFRR = "noticetimeforratereduction";
-    final String NTFSL = "noticetimeforstoppingloading";
-    final String LCR = "linecontentremaining";
-    LoadingRates loadingRates = new LoadingRates();
+  public LoadingRates getLoadingRateForVessel(
+      LoadingPlanModels.LoadingRates rateFromLoading, Long vesselId) {
 
+    LoadingRates loadingRates = new LoadingRates();
     try {
-      // If it grater that 0 means, it already populated and saved the value at loading Information
+      // RPC call to vessel info, Get Rules (default value for Loading Info)
       RuleResponse ruleResponse =
           vesselInfoService.getRulesByVesselIdAndSectionId(
-              vesselId, loadingRuleMasterId, null, null);
-      if (!ruleResponse.getPlan().isEmpty()) {
-        log.info(
-            "Admin rules data collected for vessel {}, Size {}",
-            vesselId,
-            ruleResponse.getPlan().size());
-        for (RulePlans plan : ruleResponse.getPlan()) {
-          if (Utility.toLowerAndRemoveSpace(plan.getHeader()).equals(VFR)) {
-            if (!plan.getRules().isEmpty()) {
-              for (Rules rules : plan.getRules()) {
-                if (!rules.getInputs().isEmpty()) {
-                  for (RulesInputs rInput : rules.getInputs()) {
-                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(RLR)) {
-                      if (var1.getReducedLoadingRate().isEmpty()) {
-                        log.info(
-                            "Admin Rule added for key {}, value {}", RLR, rInput.getDefaultValue());
-                        loadingRates.setReducedLoadingRate(
-                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
-                                ? BigDecimal.ZERO
-                                : new BigDecimal(rInput.getDefaultValue()));
-                      } else {
-                        loadingRates.setReducedLoadingRate(
-                            new BigDecimal(var1.getReducedLoadingRate()));
-                      }
-                    }
-                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(MIDBR)) {
-                      if (var1.getMinDeBallastingRate().isEmpty()) {
-                        log.info(
-                            "Admin Rule added for key {}, value {}",
-                            MIDBR,
-                            rInput.getDefaultValue());
-                        loadingRates.setMinDeBallastingRate(
-                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
-                                ? BigDecimal.ZERO
-                                : new BigDecimal(rInput.getDefaultValue()));
-                      } else {
-                        loadingRates.setMinDeBallastingRate(
-                            new BigDecimal(var1.getMinDeBallastingRate()));
-                      }
-                    }
-                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(MXDBR)) {
-                      if (var1.getMaxDeBallastingRate().isEmpty()) {
-                        log.info(
-                            "Admin Rule added for key {}, value {}",
-                            MXDBR,
-                            rInput.getDefaultValue());
-                        loadingRates.setMaxDeBallastingRate(
-                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
-                                ? BigDecimal.ZERO
-                                : new BigDecimal(rInput.getDefaultValue()));
-                      } else {
-                        loadingRates.setMaxDeBallastingRate(
-                            new BigDecimal(var1.getMaxDeBallastingRate()));
-                      }
-                    }
-                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(NTFRR)) {
-                      if (var1.getNoticeTimeRateReduction().isEmpty()) {
-                        log.info(
-                            "Admin Rule added for key {}, value {}",
-                            NTFRR,
-                            rInput.getDefaultValue());
-                        loadingRates.setNoticeTimeRateReduction(
-                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
-                                ? BigDecimal.ZERO
-                                : new BigDecimal(rInput.getDefaultValue()));
-                      } else {
-                        loadingRates.setNoticeTimeRateReduction(
-                            new BigDecimal(var1.getNoticeTimeRateReduction()));
-                      }
-                    }
-                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(NTFSL)) {
-                      if (var1.getNoticeTimeStopLoading().isEmpty()) {
-                        log.info(
-                            "Admin Rule added for key {}, value {}",
-                            NTFSL,
-                            rInput.getDefaultValue());
-                        loadingRates.setNoticeTimeStopLoading(
-                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
-                                ? BigDecimal.ZERO
-                                : new BigDecimal(rInput.getDefaultValue()));
-                      } else {
-                        loadingRates.setNoticeTimeStopLoading(
-                            new BigDecimal(var1.getNoticeTimeStopLoading()));
-                      }
-                    }
-                    if (Utility.toLowerAndRemoveSpace(rInput.getPrefix()).equals(LCR)) {
-                      if (var1.getLineContentRemaining().isEmpty()) {
-                        log.info(
-                            "Admin Rule added for key {}, value {}", LCR, rInput.getDefaultValue());
-                        loadingRates.setLineContentRemaining(
-                            rInput.getDefaultValue() == null || rInput.getDefaultValue().isEmpty()
-                                ? BigDecimal.ZERO
-                                : new BigDecimal(rInput.getDefaultValue()));
-                      } else {
-                        loadingRates.setLineContentRemaining(
-                            new BigDecimal(var1.getLineContentRemaining()));
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+              vesselId, LOADING_RULE_MASTER_ID, null, null);
+
+      // RPC call to vessel info, Get Vessel Details
+      VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);
+      if (vesselDetail != null) {
+        // Min Loading Rate, SME Confirmation pending
+
+        // Max Loading Rate
+        if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
+          loadingRates.setMaxLoadingRate(
+              vesselDetail.getMaxLoadingRate().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(vesselDetail.getMaxLoadingRate()));
+        } else {
+          loadingRates.setMaxLoadingRate(
+              rateFromLoading.getMaxLoadingRate().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(rateFromLoading.getMaxLoadingRate()));
+        }
+
+        // Reduced loading rate
+        // 50% of max loading rate, By Thomas mail: 'Loading Rate Query'
+        if (rateFromLoading.getReducedLoadingRate().isEmpty()) {
+          BigDecimal maxLoadingRate =
+              vesselDetail.getMaxLoadingRate().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(vesselDetail.getMaxLoadingRate());
+          BigDecimal percentageAmount =
+              maxLoadingRate.multiply(BigDecimal.valueOf((double) 50 / 100));
+          loadingRates.setReducedLoadingRate(percentageAmount);
+        } else {
+          loadingRates.setReducedLoadingRate(
+              rateFromLoading.getReducedLoadingRate().isEmpty()
+                  ? null
+                  : new BigDecimal(rateFromLoading.getReducedLoadingRate()));
         }
       }
-    } catch (GenericServiceException e) {
-      e.printStackTrace();
-    }
-    try {
-      loadingRates.setInitialLoadingRate(
-          var1.getInitialLoadingRate().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getInitialLoadingRate()));
-      loadingRates.setMaxLoadingRate(
-          var1.getMaxLoadingRate().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(var1.getMaxLoadingRate()));
+
+      AdminRuleValueExtract extract =
+          AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
+
+      // Min De ballast rate
+      if (rateFromLoading.getMinDeBallastingRate().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.MIN_DE_BALLAST_RATE);
+        loadingRates.setMinDeBallastingRate(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setMinDeBallastingRate(
+            rateFromLoading.getMinDeBallastingRate().isEmpty()
+                ? null
+                : new BigDecimal(rateFromLoading.getMinDeBallastingRate()));
+      }
+
+      // Max De Ballast rate
+      if (rateFromLoading.getMaxDeBallastingRate().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.MAX_DE_BALLAST_RATE);
+        loadingRates.setMaxDeBallastingRate(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setMaxDeBallastingRate(
+            rateFromLoading.getMaxDeBallastingRate().isEmpty()
+                ? null
+                : new BigDecimal(rateFromLoading.getMaxDeBallastingRate()));
+      }
+
+      // Notice Time for Rate Reduction
+      if (rateFromLoading.getNoticeTimeRateReduction().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.NOTICE_TIME_FOR_RATE_REDUCTION);
+        loadingRates.setNoticeTimeRateReduction(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setNoticeTimeRateReduction(
+            rateFromLoading.getNoticeTimeRateReduction().isEmpty()
+                ? null
+                : new BigDecimal(rateFromLoading.getNoticeTimeRateReduction()));
+      }
+
+      // Notice Time for Rate Reduction
+      if (rateFromLoading.getNoticeTimeStopLoading().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.NOTICE_TIME_FOR_STOPPING_LOADING);
+        loadingRates.setNoticeTimeStopLoading(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setNoticeTimeStopLoading(
+            rateFromLoading.getNoticeTimeStopLoading().isEmpty()
+                ? null
+                : new BigDecimal(rateFromLoading.getNoticeTimeStopLoading()));
+      }
+
+      // Line Content Remaining
+      if (rateFromLoading.getLineContentRemaining().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.LINE_CONTENT_REMAINING);
+        loadingRates.setLineContentRemaining(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setLineContentRemaining(
+            rateFromLoading.getLineContentRemaining().isEmpty()
+                ? null
+                : new BigDecimal(rateFromLoading.getLineContentRemaining()));
+      }
+
+      // Set Loading Info Id
+      loadingRates.setId(rateFromLoading.getId());
       log.info("Loading Rates added from Loading plan Service");
-    } catch (Exception e) {
+    } catch (GenericServiceException e) {
       e.printStackTrace();
       log.error("Failed to cast loading rates");
     }

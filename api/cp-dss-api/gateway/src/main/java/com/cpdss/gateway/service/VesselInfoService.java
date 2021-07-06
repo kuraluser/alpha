@@ -721,4 +721,16 @@ public class VesselInfoService {
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;
   }
+
+  public VesselDetail getVesselInfoByVesselId(Long vesselId) {
+    VesselInfo.VesselIdRequest builder =
+        VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build();
+    VesselInfo.VesselIdResponse response = vesselInfoGrpcService.getVesselInfoByVesselId(builder);
+    if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.info("Fetched vessel details by vessel Id {}", vesselId);
+      return response.getVesselDetail();
+    }
+    log.info("No data found for vessel Id {}", vesselId);
+    return null;
+  }
 }

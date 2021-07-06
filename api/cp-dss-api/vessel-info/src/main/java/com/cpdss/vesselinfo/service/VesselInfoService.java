@@ -1461,6 +1461,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .ifPresent(item -> builder.setDeadweightConstant(item.toString()));
           Optional.ofNullable(vesselDetails.getProvisionalConstant())
               .ifPresent(item -> builder.setProvisionalConstant(item.toString()));
+          Optional.ofNullable(vesselDetails.getMaxLoadRate())
+              .ifPresent(v -> builder.setMaxLoadingRate(v.toString()));
           replyBuilder.setVesselDetail(builder.build());
           replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
         }

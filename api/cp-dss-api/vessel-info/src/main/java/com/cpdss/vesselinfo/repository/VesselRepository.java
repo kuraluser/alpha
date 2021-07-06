@@ -33,7 +33,7 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
 
   @Query(
       "SELECT new com.cpdss.vesselinfo.domain.VesselInfo"
-          + "(V.id, V.name, V.imoNumber,V.typeOfShip,V.code,V.deadweightConstant,V.provisionalConstant) "
+          + "(V.id, V.name, V.imoNumber,V.typeOfShip,V.code,V.deadweightConstant,V.provisionalConstant, V.maxLoadRate) "
           + "from Vessel V "
           + "WHERE V.id = ?1 AND V.isActive = ?2")
   public VesselInfo findVesselDetailsByVesselId(Long id, Boolean isActive);
