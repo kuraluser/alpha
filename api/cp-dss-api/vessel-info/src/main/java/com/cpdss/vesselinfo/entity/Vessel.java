@@ -189,4 +189,7 @@ public class Vessel extends EntityDoc {
 
   @Column(name = "max_load_rate")
   private BigDecimal maxLoadRate;
+
+  @Column(name = "min_load_rate")
+  private BigDecimal minLoadRate;
 }

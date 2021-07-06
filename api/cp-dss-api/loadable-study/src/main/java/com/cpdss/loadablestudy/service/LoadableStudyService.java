@@ -12284,7 +12284,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               0F,
               ConversionUnit.LT);
-      double diffPercentage = Double.parseDouble(Float.toString(diffBbls)) / Double.parseDouble(Float.toString(cargoNominationValue));
+      double diffPercentage =
+          Double.parseDouble(Float.toString(diffBbls))
+              / Double.parseDouble(Float.toString(cargoNominationValue));
 
       //      Calculate totals
       cargoNominationTotal += cargoNominationValue;

@@ -16,4 +16,5 @@ public class VesselInfo {
   private BigDecimal deadweightConstant;
   private BigDecimal provisionalConstant;
   private BigDecimal maxLoadRate;
+  private BigDecimal minLoadRate;
 }
