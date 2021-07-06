@@ -11875,14 +11875,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .cargoCode(stowageDetails.getCargoAbbreviation())
                 // TODO ullage for commingle is empty check and set value
                 .ullage(
-                    Float.parseFloat(
+                    Double.parseDouble(
                         stowageDetails.getRdgUllage().isEmpty()
                             ? "0.0"
                             : stowageDetails.getRdgUllage()))
-                .loadedPercentage((float) (Math.round(fillingPercentage * 100.0) / 100.0))
-                .shipsNBbls(obsBbsValue)
-                .shipsMt(Float.parseFloat(stowageDetails.getWeight()))
-                .shipsKlAt15C(klValue);
+                .loadedPercentage((Math.round(fillingPercentage * 100.0) / 100.0))
+                .shipsNBbls(Double.parseDouble(Float.toString(obsBbsValue)))
+                .shipsMt(Double.parseDouble(stowageDetails.getWeight()))
+                .shipsKlAt15C(Double.parseDouble(Float.toString(klValue)));
           } else {
             //            Set default color to white if no stowage details found
             vesselTanksTableBuilder.colorCode(WHITE_COLOR_CODE);
@@ -12202,7 +12202,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     float kl15CTotal = 0F;
     float ltTotal = 0F;
     float diffBblsTotal = 0F;
-    float diffPercentageTotal = 0F;
+    double diffPercentageTotal = 0;
 
     //    Get cargo nominations
     List<CargosTable> cargosTableList = new ArrayList<>();
@@ -12284,7 +12284,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               0F,
               ConversionUnit.LT);
-      float diffPercentage = diffBbls / cargoNominationValue;
+      double diffPercentage = Double.parseDouble(Float.toString(diffBbls)) / Double.parseDouble(Float.toString(cargoNominationValue));
 
       //      Calculate totals
       cargoNominationTotal += cargoNominationValue;
@@ -12310,12 +12310,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CargosTable.builder()
               .cargoCode(loadableQuantityCargoDetails.getCargoAbbreviation())
               .loadingPort(portReply.getName())
-              .api(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()))
+              .api(Double.parseDouble(loadableQuantityCargoDetails.getEstimatedAPI()))
               .temp(
                   loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
                       ? 0
                       : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
-              .cargoNomination(cargoNominationValue)
+              .cargoNomination(Double.parseDouble(Float.toString(cargoNominationValue)))
               .tolerance(
                   String.format(
                       "+%s %% / -%s %%",
@@ -12325,12 +12325,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadableQuantityCargoDetails.getMinTolerence().isEmpty()
                           ? 0.00
                           : loadableQuantityCargoDetails.getMinTolerence()))
-              .nBbls(nBblsValue)
-              .mt(shipsFigureMtTotal)
-              .kl15C(kl15CValue)
-              .lt(ltValue)
+              .nBbls(Double.parseDouble(Float.toString(nBblsValue)))
+              .mt(Double.parseDouble(Float.toString(shipsFigureMtTotal)))
+              .kl15C(Double.parseDouble(Float.toString(kl15CValue)))
+              .lt(Double.parseDouble(Float.toString(ltValue)))
               .colorCode(loadableQuantityCargoDetails.getColorCode())
-              .diffBbls(diffBbls)
+              .diffBbls(Double.parseDouble(Float.toString(diffBbls)))
               .diffPercentage(diffPercentage)
               .build();
 
@@ -12338,12 +12338,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
-        .cargoNominationTotal(cargoNominationTotal)
-        .nBblsTotal(nBblsTotal)
-        .mtTotal(mtTotal)
-        .kl15CTotal(kl15CTotal)
-        .ltTotal(ltTotal)
-        .diffBblsTotal(diffBblsTotal)
+        .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationTotal)))
+        .nBblsTotal(Double.parseDouble(Float.toString(nBblsTotal)))
+        .mtTotal(Double.parseDouble(Float.toString(mtTotal)))
+        .kl15CTotal(Double.parseDouble(Float.toString(kl15CTotal)))
+        .ltTotal(Double.parseDouble(Float.toString(ltTotal)))
+        .diffBblsTotal(Double.parseDouble(Float.toString(diffBblsTotal)))
         .diffPercentageTotal(diffPercentageTotal)
         .build();
   }
