@@ -3176,6 +3176,7 @@ public class LoadableStudyService {
         isEmpty(synopticalProtoRecord.getDisplacementPlanned())
             ? BigDecimal.ZERO
             : new BigDecimal(synopticalProtoRecord.getDisplacementPlanned()));
+    synopticalRecord.setHasLoadicator(synopticalProtoRecord.getHasLoadicator());
   }
 
   /**

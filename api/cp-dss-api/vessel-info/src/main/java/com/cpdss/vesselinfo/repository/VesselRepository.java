@@ -24,7 +24,7 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
 
   @Query(
       "SELECT new com.cpdss.vesselinfo.domain.VesselDetails"
-          + "(VDC.displacement, V.lightweight, VDC.deadweight, VDC.draftCondition.name, V.deadweightConstant) "
+          + "(VDC.displacement, V.lightweight, VDC.deadweight, VDC.draftCondition.name, V.deadweightConstant, V.hasLoadicator) "
           + "from Vessel V "
           + "LEFT JOIN VesselDraftCondition VDC on V.id = VDC.vessel.id "
           + "WHERE V.id = ?1 AND VDC.draftCondition.id = ?2 AND VDC.draftExtreme = ?3")

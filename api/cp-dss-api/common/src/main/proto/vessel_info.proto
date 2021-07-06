@@ -117,6 +117,7 @@ message VesselLoadableQuantityDetails {
 	string tpc = 4;
 	string dwt = 5;
 	string draftConditionName = 6;
+	bool hasLoadicator = 7;
 }
 
 message VesselTankDetail{

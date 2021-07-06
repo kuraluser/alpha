@@ -1222,6 +1222,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             .ifPresent(builder::setDraftConditionName);
         Optional.ofNullable(vesselDetails.getConstant())
             .ifPresent(constant -> builder.setConstant(constant.toString()));
+        Optional.ofNullable(vesselDetails.getHasLoadicator())
+            .ifPresent(hasLoadicator -> builder.setHasLoadicator(hasLoadicator));
       }
       replyBuilder.setVesselLoadableQuantityDetails(builder.build());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
