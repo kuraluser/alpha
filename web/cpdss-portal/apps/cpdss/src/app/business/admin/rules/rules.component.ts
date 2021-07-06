@@ -90,7 +90,9 @@ export class RulesComponent implements OnInit {
    * @memberof RulesComponent
    */
   async getRules() {
+    this.ngxSpinner.show();
     this.rulesJson = await this.rulesService.getRules(this.vesselId, this.tabIndex).toPromise();
+    this.ngxSpinner.hide();
   }
 
   /**

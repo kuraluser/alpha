@@ -21,7 +21,6 @@ import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -183,14 +182,22 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setCountryName(port.getCountry().getName()));
 
           if (!port.getBerthInfoSet().isEmpty()) {
-            BerthInfo maxDraftBerthInfo =
-                Collections.max(port.getBerthInfoSet(), byMaxDraftComparator);
-            Optional.ofNullable(maxDraftBerthInfo.getMaximumDraft())
-                .ifPresent(maxDraft -> portDetail.setMaxDraft(String.valueOf(maxDraft)));
-            BerthInfo maxAirDraftBerthInfo =
-                Collections.max(port.getBerthInfoSet(), byAirDraftComparator);
-            Optional.ofNullable(maxAirDraftBerthInfo.getAirDraft())
-                .ifPresent(airDraft -> portDetail.setMaxAirDraft(String.valueOf(airDraft)));
+            Optional<BigDecimal> minDraftOfBerths =
+                port.getBerthInfoSet().stream()
+                    .filter(v -> v.getMaximumDraft() != null)
+                    .map(BerthInfo::getMaximumDraft)
+                    .min(BigDecimal::compareTo);
+            if (minDraftOfBerths.isPresent()) {
+              portDetail.setMaxDraft(minDraftOfBerths.get().toString());
+            }
+            Optional<BigDecimal> minAirDraftOfBerths =
+                port.getBerthInfoSet().stream()
+                    .filter(v -> v.getAirDraft() != null)
+                    .map(BerthInfo::getAirDraft)
+                    .min(BigDecimal::compareTo);
+            if (minAirDraftOfBerths.isPresent()) {
+              portDetail.setMaxAirDraft(minAirDraftOfBerths.get().toString());
+            }
           }
           portReply.addPorts(portDetail);
         });

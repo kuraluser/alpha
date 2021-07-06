@@ -22,6 +22,7 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -321,5 +322,10 @@ public class DischargeStudyService {
       com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
           dischargeStudyRequest) {
     return dischargeStudyOperationServiceBlockingStub.deleteDischargeStudy(dischargeStudyRequest);
+  }
+
+  public OnHandQuantityResponse saveOnHandQuantity(OnHandQuantity request, String correlationId)
+      throws GenericServiceException {
+    return this.loadableStudyService.saveOnHandQuantity(request, correlationId);
   }
 }

@@ -131,7 +131,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       },
       {
         'menu': 'OPERATIONS',
-        'menuIcon': '',
+        'menuIcon': 'operations',
         'menuLink': 'operations',
         'routerLinkActive': 'operations',
         'isSubMenuOpen': false,

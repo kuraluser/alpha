@@ -2625,6 +2625,46 @@ textarea{
   width: 80px;
 }
 
+.table-rules{
+  input.form-control{
+    width: 83px;
+    margin-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
+  transform: translateX(1rem);
+}
+
+
+.loading-discharging-tank-layout{
+  .tank-btn-rounded{
+    margin-left: 2px;
+  }
+  .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
+    top: 3px !important;
+    left: 14px !important;
+    margin-top: 0 !important;
+    width: auto !important;
+  }
+  .tank-item-valign{
+    position: absolute;
+    left: 2px;
+    top: 13px;
+  }
+  .tank-filling-percentage{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+
 .table-column-flexible-wrapper{
   .column-class{
     width: auto!important;

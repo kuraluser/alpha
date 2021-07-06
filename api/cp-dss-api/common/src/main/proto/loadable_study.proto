@@ -330,6 +330,7 @@ message LDtrim {
    int64 portId = 21;
    int64 stowagePlanId = 22;
    int64 synopticalId = 23;
+   string hogSag = 24;
 }
 
 message LDStrength{

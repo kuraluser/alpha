@@ -4,11 +4,11 @@
       {{selectedPortName}}
     </div>
     <div class="col text-right">
-      <button class="btn btn-main mr-10" id="in_use" >
+      <button class="btn btn-main mr-10" id="in_use"  [disabled]="true">
         <span class="pi pi-check check-rounded v-t-bottom"></span>
         {{'LOADING_INFORMATION_IN_USE_BUTTON_LABEL' |translate}}
     </button>
-    <button class="btn btn-main mr-10" id="in_use" >
+    <button class="btn btn-main mr-10" id="in_use" [disabled]="true">
       <span class="pi pi-check check-rounded v-t-bottom"></span>
       {{'LOADING_INFORMATION_ACTUAL_BUTTON_LABEL' |translate}}
   </button>

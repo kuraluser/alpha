@@ -11,4 +11,6 @@ public interface StageOffsetRepository extends CommonCrudRepository<StageOffset,
   List<StageOffset> findAllByIsActiveTrue();
 
   public Optional<StageOffset> findByIdAndIsActiveTrue(Long id);
+
+  Optional<StageOffset> findByStageOffsetValAndIsActiveTrue(Integer offsetVal);
 }

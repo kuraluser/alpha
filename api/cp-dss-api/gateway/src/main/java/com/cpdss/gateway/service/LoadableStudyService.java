@@ -253,6 +253,7 @@ public class LoadableStudyService {
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
 
   private static final String VOYAGE_STATUS_URI = "voyage-status";
+  private static final String OPERATIONS_URI = "operations";
 
   @Autowired private UsersRepository usersRepository;
 
@@ -1158,7 +1159,9 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setIsPortsComplete(item));
     Optional.ofNullable(request.getType()).ifPresent(builder::setOperationType);
     List<String> referer = headers.get("Referer");
-    if (referer != null && referer.get(0).contains(VOYAGE_STATUS_URI)) {
+    if (referer != null
+        && (referer.get(0).contains(VOYAGE_STATUS_URI)
+            || referer.get(0).contains(OPERATIONS_URI))) {
       builder.setIsLandingPage(true);
     }
     return builder.build();
@@ -3999,6 +4002,7 @@ public class LoadableStudyService {
               synopticalRecord.setBm(str.getBm());
               synopticalRecord.setSf(str.getSf());
               synopticalRecord.setList(str.getList());
+              synopticalRecord.setConstantPlanned(str.getConstantPlanned());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }

@@ -26,10 +26,22 @@ import { TranslateService } from '@ngx-translate/core';
 export class LoadingDischargingManageSequenceComponent implements OnInit {
   @Input() cargos: ICargo[];
   @Input() loadableQuantityCargo: ILoadableQuantityCargo[];
-  @Input() loadingSequences: ILoadingSequences;
+
   @Input() loadingInfoId: number;
 
+  @Input() get loadingSequences(): ILoadingSequences {
+    return this._loadingSequences;
+  }
+
+  set loadingSequences(loadingSequences: ILoadingSequences) {
+    this._loadingSequences = loadingSequences;
+    if (this.loadingSequences) {
+      this.initiLoadingSequenceArray();
+    }
+  }
   @Output() updateLoadingDelays: EventEmitter<ILoadingDelays[]> = new EventEmitter();
+
+  private _loadingSequences: ILoadingSequences;
 
   loadingSequenceForm: FormGroup;
   columns: IDataTableColumn[];
@@ -46,10 +58,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     private loadingDischargingManageSequenceTransformationService: LoadingDischargingManageSequenceTransformationService) { }
 
   async ngOnInit(): Promise<void> {
-    this.listData = await this.getDropdownData();
-    this.listData.reasonForDelays = this.loadingSequences.reasonForDelays;
     this.columns = this.loadingDischargingManageSequenceTransformationService.getDatatableColumns();
-    this.initiLoadingSequenceArray();
+    await this.initiLoadingSequenceArray();
   }
 
   /**
@@ -57,9 +67,11 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
 *
 * @memberof LoadingDischargingManageSequenceComponent
 */
-  initiLoadingSequenceArray() {
+  async initiLoadingSequenceArray() {
+    this.listData = await this.getDropdownData();
+    this.listData.reasonForDelays = this.loadingSequences.reasonForDelays;
     const _loadingDelays = this.loadingSequences.loadingDelays?.map((loadingDelay) => {
-      const loadingSequenceData = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, false, this.listData);
+      const loadingSequenceData = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, true, this.listData);
       if (!loadingDelay.cargoId && !loadingDelay.quantity) {
         this.addInitialDelay = true;
       }
@@ -102,11 +114,11 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   findCargo(loadableQuantityCargoDetails): string {
     let cargoDetail;
     this.cargos?.map((cargo) => {
-      if (cargo.id === loadableQuantityCargoDetails.cargoId) {
+      if (cargo.id === loadableQuantityCargoDetails?.cargoId) {
         cargoDetail = cargo;
       }
     })
-    return cargoDetail.name;
+    return cargoDetail?.name;
   }
 
   /**

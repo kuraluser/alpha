@@ -37,6 +37,8 @@ message CargoDetail {
 	string crudeType = 2;
 	string abbreviation = 3;
 	string api = 4;
+	bool isCondensateCargo = 5;
+	bool isHrvpCargo = 6;
 }
 
 message CargoReply {

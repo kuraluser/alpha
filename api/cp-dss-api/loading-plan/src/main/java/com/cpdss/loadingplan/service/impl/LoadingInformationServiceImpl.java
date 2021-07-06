@@ -7,6 +7,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
+import com.cpdss.loadingplan.domain.LoadingInfoResponse;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
@@ -73,9 +74,14 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     Optional.ofNullable(loadingInformationDetail.getPortRotationId())
         .ifPresent(loadingInformation::setPortRotationXId);
     Optional<StageOffset> defaultOffsetOpt =
-        stageOffsetRepository.findByIdAndIsActiveTrue(DEFAULT_STAGE_OFFSET_ID);
+        stageOffsetRepository.findByStageOffsetValAndIsActiveTrue(DEFAULT_STAGE_OFFSET_VALUE);
+    Optional<StageDuration> defaultDurationOpt =
+        stageDurationRepository.findByDurationAndIsActiveTrue(DEFAULT_STAGE_DURATION_VALUE);
     if (defaultOffsetOpt.isPresent()) {
       loadingInformation.setStageOffset(defaultOffsetOpt.get());
+    }
+    if (defaultDurationOpt.isPresent()) {
+      loadingInformation.setStageDuration(defaultDurationOpt.get());
     }
     loadingInformation.setIsLoadingInfoComplete(false);
     loadingInformation.setIsActive(true);
@@ -218,9 +224,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public void saveLoadingInformation(
+  public LoadingInfoResponse saveLoadingInformation(
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request)
       throws Exception {
+    LoadingInfoResponse response = new LoadingInfoResponse();
     Optional<LoadingInformation> loadingInformationOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingDetail().getId());
     if (loadingInformationOpt.isPresent()) {
@@ -232,10 +239,22 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       loadingMachineryInUseService.saveLoadingMachineryList(
           request.getLoadingMachinesList(), loadingInformation);
       toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
+      buildLoadingInfoResponse(loadingInformation, response);
     } else {
       throw new Exception(
           "Cannot find loading information with id " + request.getLoadingDetail().getId());
     }
+
+    return response;
+  }
+
+  private void buildLoadingInfoResponse(
+      LoadingInformation loadingInformation, LoadingInfoResponse loadingInfoResponse) {
+    loadingInfoResponse.setLoadingInfoId(loadingInformation.getId());
+    loadingInfoResponse.setVesselId(loadingInformation.getVesselXId());
+    loadingInfoResponse.setVoyageId(loadingInformation.getVoyageId());
+    loadingInfoResponse.setPortRotationId(loadingInformation.getPortRotationXId());
+    loadingInfoResponse.setSynopticalTableId(loadingInformation.getSynopticalTableXId());
   }
 
   private void buildLoadingInformation(

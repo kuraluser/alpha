@@ -23,4 +23,6 @@ public class LoadicatorResultDetails {
 
   @JsonProperty(value = "SF")
   private String sf;
+
+  private String hog;
 }

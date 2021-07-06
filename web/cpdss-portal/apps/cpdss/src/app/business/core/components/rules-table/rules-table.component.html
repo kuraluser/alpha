@@ -17,8 +17,8 @@
                 <p-table *ngIf="rules?.length && rulesJson[data].length>0 ; else empty" [columns]="columns" [value]="rules"
                     dataKey="header" id="rules-table" styleClass="body-header-row-span-table">
                     <ng-template pTemplate="colgroup">
-                        <colgroup>
-                            <col class="column-checkbox">
+                        <colgroup >
+                            <col class="column-checkbox" *ngIf="displaySettings">
                             <col>
                             <col class="column-dropdown">
                             <col class="column-checkbox">
@@ -32,12 +32,15 @@
                     <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
                         <tr>
 
-                            <td class="text-center">
-                                <label class="checkbox-custom">
-                                    <input type="checkbox" *ngIf="displaySettings" [formControl]="getControl('displayInSettings',rowIndex)" >
-                                    <span class="checkmark"></span>
+                            <td class="text-center" *ngIf="displaySettings" >
+                                <label class="checkbox-custom" >
+                                    <input type="checkbox"  [formControl]="getControl('displayInSettings',rowIndex)" >
+                                    <span class="checkmark" ></span>
                                 </label>
                             </td>
+
+                                                         
+
                             <td *ngIf="rowData.inputs.length>0">
                                 <ng-container *ngFor="let input of rowData.inputs; let inputIndex = index">
 
@@ -46,7 +49,7 @@
                                     <ng-container *ngIf="input?.type=='Boolean'">
                                         <label class="radio-custom">{{'RULES_TRUE' | translate}}
                                             <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
-                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="true" (blur)="checkForFormValueChanges()" >
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="true" (change)="checkForFormValueChanges()" >
                                             <span class="checkmark"></span>
                                         </label>
 
@@ -54,9 +57,9 @@
                                         
                                             <label class="radio-custom">{{'RULES_FALSE' | translate}}
                                         <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
-                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="false" value="null" (blur)="checkForFormValueChanges">
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="false" (change)="checkForFormValueChanges()">
                                             <span class="checkmark"></span>
-                                        </label>:
+                                        </label>
                                     </ng-container>
 
                                     <div class="error-icon-wrapper" *ngIf="input?.type">
@@ -70,11 +73,15 @@
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)"
                                             (blur)="checkForFormValueChanges()"
                                             >   
-                                            <p-multiSelect *ngIf="input.type==='Dropdown' && input.ruleDropDownMaster!='null'" [options]="input.ruleDropDownMaster"
-                                                optionLabel="value" [formControl]="getControl('inputs',rowIndex,inputIndex)"></p-multiSelect> <cpdss-portal-validation-error *ngIf="input?.type"
-                                            [errors]="fieldError('inputs',rowIndex,inputIndex)"
-                                            [errorMessages]="errorMessages">
-                                        </cpdss-portal-validation-error>
+                                            <cpdss-portal-validation-error *ngIf="input?.type" [errors]="fieldError('inputs',rowIndex,inputIndex)"
+                                                [errorMessages]="errorMessages">
+                                            </cpdss-portal-validation-error>
+                                            <p-multiSelect *ngIf="input.type==='MultiSelect' && input.ruleDropDownMaster!='null'"
+                                                [options]="input.ruleDropDownMaster" optionLabel="value" [formControl]="getControl('inputs',rowIndex,inputIndex)">
+                                            </p-multiSelect>
+                                            <p-dropdown *ngIf="input.type==='Dropdown'" [options]="input.ruleDropDownMaster" styleClass="form-control"
+                                                [formControl]="getControl('inputs',rowIndex,inputIndex)" optionLabel="value" resetFilterOnHide="true">
+                                            </p-dropdown>
                                     </div>
                                     {{input.suffix}}
                                 </ng-container>

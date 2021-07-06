@@ -544,8 +544,13 @@ export class LoadablePlanTransformationService {
   * @returns {ISynopticalRecordArrangeModel}
   * @param { ILoadablePlanSynopticalRecord } synopticalRecord
   */
-  public getFormatedEtaEtdData(_decimalPipe: any, synopticalRecord: ILoadablePlanSynopticalRecord): ISynopticalRecordArrangeModel {
+  public getFormatedEtaEtdData(_decimalPipe: any, synopticalRecord: ILoadablePlanSynopticalRecord, vesselLightWeight: number): ISynopticalRecordArrangeModel {
     const _synopticalRecord = <ISynopticalRecordArrangeModel>{};
+    const totalDwtPlanned = synopticalRecord?.plannedFOTotal + synopticalRecord?.plannedDOTotal
+      + synopticalRecord?.plannedFWTotal + synopticalRecord?.cargoPlannedTotal
+      + synopticalRecord?.ballastPlanned + synopticalRecord?.othersPlanned
+      + synopticalRecord?.constantPlanned;
+    const displacementPlanned = totalDwtPlanned + vesselLightWeight;
     _synopticalRecord.id = synopticalRecord.id;
     _synopticalRecord.operationType = synopticalRecord.operationType;
     _synopticalRecord.portId = synopticalRecord.portId;
@@ -555,8 +560,8 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.plannedDOTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedDOTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.plannedFWTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedFWTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.othersPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.othersPlanned,QUANTITY_UNIT.MT);
-    _synopticalRecord.totalDwtPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.totalDwtPlanned,QUANTITY_UNIT.MT);
-    _synopticalRecord.displacementPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.displacementPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.totalDwtPlanned = this.quantityDecimalFormatPipe.transform(totalDwtPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.displacementPlanned = this.quantityDecimalFormatPipe.transform(displacementPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, AppConfigurationService.settings?.sgNumberFormat);
     _synopticalRecord.cargoPlannedTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.cargoPlannedTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.ballastPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.ballastPlanned,QUANTITY_UNIT.MT);

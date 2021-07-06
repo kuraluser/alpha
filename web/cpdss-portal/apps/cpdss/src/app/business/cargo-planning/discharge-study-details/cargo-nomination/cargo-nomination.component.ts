@@ -41,7 +41,7 @@ export class CargoNominationComponent implements OnInit {
   @Input() vesselId: number;
   @Input() ports: number;
 
-  loadableQuantityCargoObjectValue: ICommingleCargoDispaly[] = [];
+  loadableQuantityCargoObjectValue: ICommingleCargoDispaly[];
 
   @Output() cargoNominationUpdate = new EventEmitter<any>();
 
@@ -79,7 +79,7 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
   */
   arrangeCommingleCargoDetails(loadableQuantityCargoDetail: ILoadableQuantityCommingleCargo) {
-    this.loadableQuantityCargoObjectValue.push(this.dischargeStudyDetailsTransformationService.getFormatedLoadableCommingleCargo(this.decimalPipe, loadableQuantityCargoDetail));
+    return this.dischargeStudyDetailsTransformationService.getFormatedLoadableCommingleCargo(this.decimalPipe, loadableQuantityCargoDetail);
   }
 
   /**
@@ -89,18 +89,21 @@ export class CargoNominationComponent implements OnInit {
  * @memberof CargoNominationComponent
  */
   async getCargoNominationDetails() {
-    // Note: will be removed dymmy data when api is set
     const result = await this.dischargeStudyDetailsApiService.getCargoNominationDetails(this.vesselId, this.voyageId,this.dischargeStudyId).toPromise();
     this.listData = {
       portsList: this.ports
     }
     const billOfLaddings = result.billOfLaddings;
     const loadableQuantityCommingleCargoDetails = result.loadableQuantityCommingleCargoDetails; 
+    const billOfLaddingsValueObject = [];
     billOfLaddings.map(billOfLadding => {
-      this.billOfLaddingsValueObject.push(this.dischargeStudyDetailsTransformationService.getFormatedBillingDetails(billOfLadding, this.listData))
+      billOfLaddingsValueObject.push(this.dischargeStudyDetailsTransformationService.getFormatedBillingDetails(billOfLadding, this.listData))
     })
+    this.billOfLaddingsValueObject = [...billOfLaddingsValueObject];
+    const loadableQuantityCargoObjectValue = [];
     loadableQuantityCommingleCargoDetails?.map((loadableQuantityCargoDetail) => {
-      this.arrangeCommingleCargoDetails(loadableQuantityCargoDetail)
+      loadableQuantityCargoObjectValue.push(this.arrangeCommingleCargoDetails(loadableQuantityCargoDetail))
     });
+    this.loadableQuantityCargoObjectValue = [...loadableQuantityCargoObjectValue];
   }
 }

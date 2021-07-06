@@ -1,6 +1,6 @@
 {
     "apiUrl": "",
-    "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
+    "keycloakUrl": "https://cpdss-dev.alphaorimarine.com/auth/",
     "path": "",
     "redirectPath": ":9002",
     "clientId": "frontend",

@@ -7,8 +7,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RULE_TYPES } from '../../models/rules.model'
 import { numberValidator } from '../../../core/directives/number-validator.directive'
-import { invalid } from '@angular/compiler/src/render3/view/util';
 import {RulesValidator} from '../../../core/directives/rules-validator-directive'
+import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
  * Component Class for Rules Table
@@ -57,7 +57,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   rules: any;
 
   constructor(private translateService: TranslateService,
-    private messageService: MessageService,) { }
+    private messageService: MessageService,private ngxSpinner: NgxSpinnerService,) { }
 
   /**
   * Component lifecycle ngOnInit
@@ -66,6 +66,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   * @memberof RulesTableComponent
   */
   async ngOnInit(): Promise<void> {
+    this.ngxSpinner.show()
     this.rulesService.init();
     this.showHideDisplaySetttingsColumn();
     this.initActionSubscriptions();  
@@ -74,7 +75,8 @@ export class RulesTableComponent implements OnInit, OnDestroy {
     this.disableForm();
     this.checkForFormValueChanges();  
     if (this.rulesJson &&  this.rulesJson[this.data] && this.rulesJson[this.data][this.selectedIndex])
-      this.rules = this.rulesJson[this.data][this.selectedIndex].rules;  
+      this.rules = this.rulesJson[this.data][this.selectedIndex].rules; 
+    this.ngxSpinner.hide(); 
   }
 
   /**
@@ -96,7 +98,9 @@ export class RulesTableComponent implements OnInit, OnDestroy {
    * @memberof RulesTableComponent
    */
   ngOnChanges(changes: SimpleChanges) {  
-    this.resetForm(changes); 
+    this.ngxSpinner.show();
+    this.resetForm(changes);
+    this.ngxSpinner.hide(); 
   }
   
 
@@ -231,8 +235,12 @@ export class RulesTableComponent implements OnInit, OnDestroy {
                 if (this.rulesJson[this.data][index] && this.rulesJson["plan"][index]["rules"][j]) {
                   if (this.rulesJson[this.data][index]["rules"][j]["inputs"] && this.rulesJson["plan"][index]["rules"][j]["inputs"][t]) {
                     if (Array.isArray(controls["controls"]["inputs"]["controls"][t].value)) {
-                      this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = this.convertArrayIntoString(controls["controls"]["inputs"]["controls"][t].value, 'id');
+                      this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = this.convertIntoString(controls["controls"]["inputs"]["controls"][t].value, 'id','Array');
                     }
+                    else if(typeof controls["controls"]["inputs"]["controls"][t].value=='object' ){
+                      this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = this.convertIntoString(controls["controls"]["inputs"]["controls"][t].value, 'id','Object');
+                    }
+  
                     else {
                       this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = controls["controls"]["inputs"]["controls"][t].value;
                     }
@@ -274,6 +282,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   * @memberof RulesTableComponent
   */
   initForm() {
+    this.ngxSpinner.show();
     let errorMessageGreater, errorMessageLesser;
       this.translateService.get(['ADMIN_RULE_GREATER_THAN', 'ADMIN_RULE_LESSER_THAN']).subscribe((res) => {
         errorMessageGreater = res['ADMIN_RULE_GREATER_THAN'];
@@ -306,7 +315,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
 
               }
             }
-          if(input.type==='Dropdown' && input.ruleDropDownMaster!=null){
+          if(input.type==='MultiSelect' && input.ruleDropDownMaster!=null){
             value = [];
              let defaultValuesArray = input?.defaultValue?.split(',');
              defaultValuesArray?.forEach(element => {
@@ -314,9 +323,11 @@ export class RulesTableComponent implements OnInit, OnDestroy {
                value?.push(result);
              });
             }
-            
+            if(input.type=="Dropdown"  && input.ruleDropDownMaster!=null ){
+              value = input?.ruleDropDownMaster?.find(r=>r.id===Number(input?.defaultValue))
+            }
             let validationArray = [];
-            if (input.isMandatory && !input?.isHardRule == false) {
+            if (input.isMandatory && rule?.isHardRule == false) {
               validationArray.push(Validators.required);
             }
 
@@ -333,8 +344,10 @@ export class RulesTableComponent implements OnInit, OnDestroy {
             }
               
             
-            if(input.type==='Number' || input.type=='number'){
-             validationArray.push(numberValidator(2, 3))
+            if (input.type === 'Number' || input.type == 'number') {
+              if (rule.numericScale !== 0 || rule?.numericPrecision != 0) {
+                validationArray.push(numberValidator((rule.numericPrecision - rule.numericScale), rule.numericScale))
+              }
             }
             formArray.push(new FormControl(value, validationArray))
           });
@@ -346,7 +359,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
       )
       this.rulesForm.push(formArrayTemp);
     })
-  
+  this.ngxSpinner.hide();
   }
 
 
@@ -389,7 +402,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   disableForm() {
     this.rules?.forEach((rule, ruleIndex) => {
       if (rule?.isHardRule) {
-        this.rulesForm.at(ruleIndex).disable()
+        this.rulesForm?.at(ruleIndex)?.disable()
       }
     })
   }
@@ -409,9 +422,17 @@ export class RulesTableComponent implements OnInit, OnDestroy {
    *
    * @memberof RulesTableComponent
    */
-  convertArrayIntoString(value:any, propertyName:any)
-  {
-   return Array.prototype.map.call(value, s => s[propertyName]).toString();
+  convertIntoString(value: any, propertyName: any, convertFrom: any) {
+    if (convertFrom == 'Array') {
+      return Array.prototype.map.call(value, s => s[propertyName]).toString();
+    }
+    else if (convertFrom == 'Object') {
+      if (value != null)
+        return JSON.stringify(value[propertyName]);
+      else {
+        return '';
+      }
+    }
   }
     
 }

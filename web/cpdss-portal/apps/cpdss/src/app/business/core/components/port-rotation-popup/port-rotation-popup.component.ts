@@ -219,7 +219,7 @@ export class PortRotationPopupComponent implements OnInit {
     const required = isRequired ? [Validators.required] : []
     switch (key) {
       case 'eta':
-        return [...required, portDateRangeValidator, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
+        return [...required, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
       case 'etd':
         return [...required, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
       default:

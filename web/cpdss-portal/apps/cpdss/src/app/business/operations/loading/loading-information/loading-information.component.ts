@@ -92,7 +92,22 @@ export class LoadingInformationComponent implements OnInit {
   async getLoadingInformation() {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
-    this.loadingInformationData = await this.loadingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.loadingInformationData = await this.loadingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      await this.updateGetData();
+    }
+    catch (error) {
+      if (error.error.errorCode === 'ERR-RICO-522') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE'], detail: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE'] });
+      }
+    }
+  }
+
+  /**
+ * Method to update Get data
+ *
+ * @memberof LoadingInformationComponent
+ */
+  async updateGetData() {
     if (this.loadingInformationData) {
       await this.updatePostData();
     }
@@ -105,12 +120,6 @@ export class LoadingInformationComponent implements OnInit {
     this.stageDurationList = this.loadingInformationData?.loadingStages.stageDurationList;
     this.stageDuration = this.stageDurationList?.find(duration => duration.id === this.loadingInformationData?.loadingStages?.stageDuration);
     this.stageOffset = this.stageOffsetList?.find(offset => offset.id === this.loadingInformationData?.loadingStages?.stageOffset);
-  }
-  catch (error) {
-    if (error.error.errorCode === 'ERR-RICO-522') {
-      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE'], detail: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE'] });
-    }
-  }
   }
 
   /**
@@ -165,7 +174,8 @@ export class LoadingInformationComponent implements OnInit {
   private swMessageHandler = async (event) => {
     if (event?.data?.type === 'loading_information_sync_finished') {
       if (event?.data?.responseStatus?.status === '200') {
-        this.getLoadingInformation();
+        this.loadingInformationData = event?.data?.loadingInformation;
+        await this.updateGetData();
       }
       if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
         this.globalErrorHandler.sessionOutMessage();
@@ -274,6 +284,5 @@ export class LoadingInformationComponent implements OnInit {
     this.loadingInformationApiService.setLoadingInformation(this.loadingInformationPostData, this.vesselId, this.voyageId)
   }
 
- 
 
 }

@@ -1,0 +1,6 @@
+{
+    "apiUrl" : "",
+    "keycloakUrl": "https://cpdss-dev.alphaorimarine.com/auth/",
+    "path": "/cpdss/",
+    "clientId": "frontend"
+}

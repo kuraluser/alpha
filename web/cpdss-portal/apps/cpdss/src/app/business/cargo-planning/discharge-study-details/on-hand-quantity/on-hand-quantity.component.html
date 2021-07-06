@@ -1,7 +1,7 @@
 <form *ngIf="ohqForm" [formGroup]="ohqForm">
     <div class="content-outer-ohq">
         <div class="">
-            <div class="container-fluid">
+            <div class="container-fluid pl-0">
                 <div class="row h-100 no-wrap">
                     <div class="col">
                         <div class="row">
@@ -29,7 +29,7 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-group row">
-                                    <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
+                                    <div class="col pl-0" [ngClass]="{'datatable-loading': dataTableLoading }">
                                         <div class="table-responsive-custom cargo-nomination-table ohq" #ohqDatatable>
                                             <cpdss-portal-datatable [tableId]="'ohq'" [form]="ohqForm"
                                                 [columns]="columns" [value]="selectedPortOHQTankDetails"
