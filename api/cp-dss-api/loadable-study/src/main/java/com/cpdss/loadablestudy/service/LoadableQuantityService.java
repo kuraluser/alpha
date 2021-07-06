@@ -102,6 +102,8 @@ public class LoadableQuantityService {
     String seaWaterDensity = "";
     String dwtValue = "";
 
+    List<BigDecimal> minDraftValue = new ArrayList<>();
+
     if (portRotationId == 0) {
       // GRPC call to Vessel Info
       dwtValue =
@@ -123,8 +125,12 @@ public class LoadableQuantityService {
         log.info(
             "Loadable Quantity, Port Rotation Operation Type - {}",
             portRotation.getOperation().getId());
-        draftRestriction1 =
-            portRotation.getMaxDraft() != null ? String.valueOf(portRotation.getMaxDraft()) : "";
+        minDraftValue.add(portRotation.getMaxDraft());
+        minDraftValue.add(loadableStudy.get().getDraftMark());
+        Optional<BigDecimal> minVal =
+            minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
+        log.info("Minimum draft value among 2 {}", minVal.get());
+        draftRestriction1 = minVal.isPresent() ? String.valueOf(minVal.get()) : "";
         seaWaterDensity =
             portRotation.getSeaWaterDensity() != null
                 ? String.valueOf(portRotation.getSeaWaterDensity())
