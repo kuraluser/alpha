@@ -43,4 +43,6 @@ public class LoadableStudiesConstants {
   public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
   public static final Long CLOSE_VOYAGE_STATUS = 2L;
   public static final Long OPEN_VOYAGE_STATUS = 1L;
+  public static final Long CONFIRMED_STATUS_ID = 2L;
+  public static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
 }

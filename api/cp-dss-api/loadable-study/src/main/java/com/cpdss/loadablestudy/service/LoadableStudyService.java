@@ -6,16 +6,18 @@ import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.Common.RuleDropDownMaster;
 import com.cpdss.common.generated.Common.RulePlans;
 import com.cpdss.common.generated.Common.Rules;
 import com.cpdss.common.generated.Common.RulesInputs;
+import com.cpdss.common.generated.EnvoyReader;
+import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
 import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
@@ -37,8 +39,6 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
@@ -100,8 +100,6 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
-import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyDetail;
-import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
@@ -177,9 +175,43 @@ import com.cpdss.loadablestudy.domain.UllageUpdateResponse;
 import com.cpdss.loadablestudy.domain.VesselPlanTable;
 import com.cpdss.loadablestudy.domain.VesselPlanTableTitles;
 import com.cpdss.loadablestudy.domain.VesselTanksTable;
-import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
+import com.cpdss.loadablestudy.entity.ApiTempHistory;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
+import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.JsonData;
+import com.cpdss.loadablestudy.entity.JsonType;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
+import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComments;
+import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.LoadableStudyRuleInput;
+import com.cpdss.loadablestudy.entity.LoadableStudyRules;
+import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
+import com.cpdss.loadablestudy.entity.OnBoardQuantity;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
+import com.cpdss.loadablestudy.entity.StabilityParameters;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageHistory;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
@@ -209,6 +241,8 @@ import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleInputRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
@@ -228,7 +262,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import io.grpc.stub.StreamObserver;
-import java.awt.*;
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -14588,222 +14622,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else throw new Exception("Cannot find loadable pattern");
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
-      e.printStackTrace();
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
-    } finally {
-      responseObserver.onNext(builder.build());
-      responseObserver.onCompleted();
-    }
-  }
-
-  @Override
-  public void saveDischargeStudy(
-      DischargeStudyDetail request, StreamObserver<DischargeStudyReply> responseObserver) {
-    DischargeStudyReply.Builder builder = DischargeStudyReply.newBuilder();
-    try {
-      Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
-      if (null == voyage) {
-        throw new GenericServiceException(
-            "Voyage does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      List<LoadableStudy> loadables =
-          this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
-              request.getVesselId(), voyage, true, CONFIRMED_STATUS_ID);
-      if (loadables.isEmpty()) {
-        throw new GenericServiceException(
-            "No confirmed loadable study",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      LoadableStudy loadableStudy = loadables.get(0);
-      LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
-      List<SynopticalTable> synopticalData =
-          this.synopticalTableRepository
-              .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
-                  loadableStudy.getId(), loadableStudyPortRotation.getId(), true);
-      if (synopticalData.isEmpty()) {
-        throw new GenericServiceException(
-            "synoptical data missing",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      List<OnHandQuantity> onhandQuantity =
-          this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-              loadableStudy, loadableStudyPortRotation, true);
-      if (onhandQuantity.isEmpty()) {
-        throw new GenericServiceException(
-            "on hand quantity data missing",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      LoadableStudy savedDischargeStudy = saveDischargeStudy(request, voyage);
-      LoadableStudyPortRotation dischargeStudyPortRotation =
-          createDischargeStudyPortRotationData(loadableStudyPortRotation, savedDischargeStudy);
-      LoadableStudyPortRotation savedDischargeport =
-          loadableStudyPortRotationRepository.save(dischargeStudyPortRotation);
-      this.synopticalTableRepository.saveAll(
-          createDischargeSynoptical(synopticalData, savedDischargeport));
-      this.onHandQuantityRepository.saveAll(
-          createDischargeOnHandQuantity(onhandQuantity, savedDischargeport));
-      builder.setId(savedDischargeStudy.getId());
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-
-    } catch (Exception e) {
-      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-      e.printStackTrace();
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
-    } finally {
-      responseObserver.onNext(builder.build());
-      responseObserver.onCompleted();
-    }
-  }
-
-  private List<OnHandQuantity> createDischargeOnHandQuantity(
-      List<OnHandQuantity> onhandQuantity, LoadableStudyPortRotation savedDischargeport) {
-    List<OnHandQuantity> dischargeOHQList = new ArrayList<>();
-    onhandQuantity.forEach(
-        ohq -> {
-          OnHandQuantity dischargeOHQ = new OnHandQuantity();
-          dischargeOHQ.setActualArrivalQuantity(ohq.getActualArrivalQuantity());
-          dischargeOHQ.setActualDepartureQuantity(ohq.getActualDepartureQuantity());
-          dischargeOHQ.setArrivalQuantity(ohq.getArrivalQuantity());
-          dischargeOHQ.setArrivalVolume(ohq.getArrivalVolume());
-          dischargeOHQ.setDensity(ohq.getDensity());
-          dischargeOHQ.setDepartureQuantity(ohq.getDepartureQuantity());
-          dischargeOHQ.setDepartureVolume(ohq.getDepartureVolume());
-          dischargeOHQ.setFuelTypeXId(ohq.getFuelTypeXId());
-          dischargeOHQ.setIsActive(ohq.getIsActive());
-          dischargeOHQ.setLoadableStudy(savedDischargeport.getLoadableStudy());
-          dischargeOHQ.setPortRotation(savedDischargeport);
-          dischargeOHQ.setPortXId(ohq.getPortXId());
-          dischargeOHQ.setTankXId(ohq.getTankXId());
-          dischargeOHQList.add(dischargeOHQ);
-        });
-    return dischargeOHQList;
-  }
-
-  private List<SynopticalTable> createDischargeSynoptical(
-      List<SynopticalTable> synopticalData, LoadableStudyPortRotation entity) {
-    List<SynopticalTable> dischargeSynopticalList = new ArrayList<>();
-    synopticalData.forEach(
-        data -> {
-          SynopticalTable dischargeSynoptical = new SynopticalTable();
-          dischargeSynoptical.setConstantActual(data.getConstantActual());
-          dischargeSynoptical.setConstantPlanned(data.getConstantPlanned());
-          dischargeSynoptical.setDeadWeightActual(data.getDeadWeightActual());
-          dischargeSynoptical.setDeadWeightPlanned(data.getDeadWeightPlanned());
-          dischargeSynoptical.setDisplacementActual(data.getDisplacementActual());
-          dischargeSynoptical.setDisplacementPlanned(data.getDisplacementPlanned());
-          dischargeSynoptical.setDistance(data.getDistance());
-          dischargeSynoptical.setEtaActual(data.getEtaActual());
-          dischargeSynoptical.setEtdActual(data.getEtdActual());
-          dischargeSynoptical.setHwTideFrom(data.getHwTideFrom());
-          dischargeSynoptical.setHwTideTimeFrom(data.getHwTideTimeFrom());
-          dischargeSynoptical.setHwTideTimeTo(data.getHwTideTimeTo());
-          dischargeSynoptical.setHwTideTo(data.getHwTideTo());
-          dischargeSynoptical.setInPortHours(data.getInPortHours());
-          dischargeSynoptical.setIsActive(data.getIsActive());
-          dischargeSynoptical.setLoadableStudyPortRotation(entity);
-          dischargeSynoptical.setLoadableStudyXId(entity.getLoadableStudy().getId());
-          dischargeSynoptical.setLwTideFrom(data.getLwTideFrom());
-          dischargeSynoptical.setLwTideTimeFrom(data.getLwTideTimeFrom());
-          dischargeSynoptical.setLwTideTimeTo(data.getLwTideTimeTo());
-          dischargeSynoptical.setLwTideTo(data.getLwTideTo());
-          dischargeSynoptical.setOperationType(data.getOperationType());
-          dischargeSynoptical.setOthersActual(data.getOthersActual());
-          dischargeSynoptical.setOthersPlanned(data.getOthersPlanned());
-          dischargeSynoptical.setPortXid(data.getPortXid());
-          dischargeSynoptical.setRunningHours(data.getRunningHours());
-          dischargeSynoptical.setSpecificGravity(data.getSpecificGravity());
-          dischargeSynoptical.setSpeed(data.getSpeed());
-          dischargeSynoptical.setTimeOfSunrise(data.getTimeOfSunrise());
-          dischargeSynoptical.setTimeOfSunSet(data.getTimeOfSunSet());
-          dischargeSynopticalList.add(dischargeSynoptical);
-        });
-
-    return dischargeSynopticalList;
-  }
-
-  private LoadableStudy saveDischargeStudy(DischargeStudyDetail request, Voyage voyage) {
-    LoadableStudy dischargeStudy = new LoadableStudy();
-    dischargeStudy.setName(request.getName());
-    dischargeStudy.setDetails(request.getEnquiryDetails());
-    dischargeStudy.setActive(true);
-    dischargeStudy.setVesselXId(request.getVesselId());
-    dischargeStudy.setVoyage(voyage);
-    dischargeStudy.setPlanningTypeXId(2);
-    dischargeStudy.setLoadableStudyStatus(
-        loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
-    LoadableStudy savedDischargeStudy = loadableStudyRepository.save(dischargeStudy);
-    return savedDischargeStudy;
-  }
-
-  private LoadableStudyPortRotation getportRotationData(LoadableStudy loadableStudy)
-      throws GenericServiceException {
-    List<LoadableStudyPortRotation> portrotation =
-        loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idAndIsActive(
-            loadableStudy, DISCHARGING_OPERATION_ID, true);
-    if (portrotation.isEmpty()) {
-      throw new GenericServiceException(
-          "No discharging port in port rotation against loadable study",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-    portrotation.sort(Comparator.comparing(LoadableStudyPortRotation::getPortOrder).reversed());
-    return portrotation.get(0);
-  }
-
-  private LoadableStudyPortRotation createDischargeStudyPortRotationData(
-      LoadableStudyPortRotation loadableStudyPortRotation, LoadableStudy savedDischargeStudy) {
-    LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
-    portRotation.setActive(loadableStudyPortRotation.isActive());
-    portRotation.setAirDraftRestriction(loadableStudyPortRotation.getAirDraftRestriction());
-    portRotation.setBerthXId(loadableStudyPortRotation.getBerthXId());
-    portRotation.setDistanceBetweenPorts(loadableStudyPortRotation.getDistanceBetweenPorts());
-    portRotation.setEta(loadableStudyPortRotation.getEta());
-    portRotation.setEtd(loadableStudyPortRotation.getEtd());
-    portRotation.setIsPortRotationOhqComplete(
-        loadableStudyPortRotation.getIsPortRotationOhqComplete());
-    portRotation.setLayCanFrom(loadableStudyPortRotation.getLayCanFrom());
-    portRotation.setLayCanTo(loadableStudyPortRotation.getLayCanTo());
-    portRotation.setLoadableStudy(savedDischargeStudy);
-    portRotation.setMaxDraft(loadableStudyPortRotation.getMaxDraft());
-    portRotation.setOperation(loadableStudyPortRotation.getOperation());
-    portRotation.setPortOrder(loadableStudyPortRotation.getPortOrder());
-    portRotation.setPortXId(loadableStudyPortRotation.getPortXId());
-    portRotation.setSeaWaterDensity(loadableStudyPortRotation.getSeaWaterDensity());
-    portRotation.setSynopticalTable(loadableStudyPortRotation.getSynopticalTable());
-    portRotation.setTimeOfStay(loadableStudyPortRotation.getTimeOfStay());
-    portRotation.setVersion(loadableStudyPortRotation.getVersion());
-    return portRotation;
-  }
-
-  @Override
-  public void updateDischargeStudy(
-      DischargeStudyDetail request, StreamObserver<UpdateDischargeStudyReply> responseObserver) {
-    UpdateDischargeStudyReply.Builder builder = UpdateDischargeStudyReply.newBuilder();
-    try {
-      LoadableStudy loadable =
-          this.loadableStudyRepository.findById(request.getDischargeStudyId()).orElse(null);
-      if (loadable == null) {
-        throw new GenericServiceException(
-            "No discharge study found",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      loadable.setName(request.getName());
-      loadable.setDetails(request.getEnquiryDetails());
-      LoadableStudy updatedDischarge = this.loadableStudyRepository.save(loadable);
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      UpdateDischargeStudyDetail.Builder detail = UpdateDischargeStudyDetail.newBuilder();
-      detail.setId(updatedDischarge.getId());
-      detail.setName(updatedDischarge.getName());
-      detail.setEnquiryDetails(updatedDischarge.getDetails());
-      builder.setDischargeStudy(detail.build());
-    } catch (Exception e) {
-      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       e.printStackTrace();
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
     } finally {

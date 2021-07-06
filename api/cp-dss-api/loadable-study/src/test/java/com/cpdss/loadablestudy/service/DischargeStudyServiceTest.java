@@ -1,16 +1,20 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
-import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -19,6 +23,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
@@ -66,6 +71,7 @@ import io.grpc.internal.testing.StreamRecorder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -89,15 +95,17 @@ import org.springframework.web.client.RestTemplate;
  *
  * <p>Class for writing test cases for discharge study
  */
-@SpringJUnitConfig(classes = {LoadableStudyService.class})
+@SpringJUnitConfig(classes = {DischargeStudyService.class})
 class DischargeStudyServiceTest {
 
-  @Autowired private LoadableStudyService loadableStudyService;
+  @Autowired private DischargeStudyService dischargeStudyService;
   @MockBean LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
   @MockBean LoadableStudyRuleRepository loadableStudyRuleRepository;
   @MockBean SynopticService synopticService;
-  @MockBean private VoyageService voyageService;
   @MockBean private VoyageRepository voyageRepository;
+  @MockBean private LoadablePatternRepository loadablePatternRepository;
+
+  @MockBean private VoyageService voyageService;
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
 
@@ -116,7 +124,6 @@ class DischargeStudyServiceTest {
   @MockBean private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
   @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
-  @MockBean private LoadablePatternRepository loadablePatternRepository;
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
@@ -167,6 +174,8 @@ class DischargeStudyServiceTest {
   @MockBean private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
   @MockBean private LoadableQuantityService loadableQuantityService;
 
+  DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
   private static final String SUCCESS = "SUCCESS";
 
   @BeforeAll
@@ -199,30 +208,29 @@ class DischargeStudyServiceTest {
     entity.setId(2L);
     when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(new com.cpdss.loadablestudy.entity.Voyage());
+    
     when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
             anyLong(), any(Voyage.class), anyBoolean(), anyLong()))
         .thenReturn(createLoadableList());
-
+    when(this.synopticalTableRepository
+            .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
+                anyLong(), anyLong(), anyBoolean()))
+        .thenReturn(createLoadableSynopticalTableList());
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            any(LoadableStudy.class), any(LoadableStudyPortRotation.class), anyBoolean()))
+        .thenReturn(createOnHandQuantityList());
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
     when(this.cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.CargoNomination()));
     when(loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idAndIsActive(
             any(LoadableStudy.class), anyLong(), anyBoolean()))
         .thenReturn(createLoadableStudyPortRotationList());
-    when(this.synopticalTableRepository
-            .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
-                anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(Arrays.asList(new SynopticalTable()));
-
-    when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-            any(LoadableStudy.class), any(LoadableStudyPortRotation.class), anyBoolean()))
-        .thenReturn(createOnHandQuantityList());
 
     when(this.loadableStudyStatusRepository.getOne(anyLong()))
         .thenReturn(new LoadableStudyStatus());
 
-    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
     StreamRecorder<DischargeStudyReply> responseObserver = StreamRecorder.create();
-    this.loadableStudyService.saveDischargeStudy(request, responseObserver);
+    this.dischargeStudyService.saveDischargeStudy(request, responseObserver);
     List<DischargeStudyReply> replies = responseObserver.getValues();
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
@@ -243,12 +251,40 @@ class DischargeStudyServiceTest {
 
     when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
     StreamRecorder<UpdateDischargeStudyReply> responseObserver = StreamRecorder.create();
-    this.loadableStudyService.updateDischargeStudy(request, responseObserver);
+    this.dischargeStudyService.updateDischargeStudy(request, responseObserver);
     List<UpdateDischargeStudyReply> replies = responseObserver.getValues();
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
     assertEquals(2L, replies.get(0).getDischargeStudy().getId());
+  }
+
+  @Test
+  void testDeleteDischargeStudy() throws GenericServiceException {
+    DischargeStudyRequest request =
+        DischargeStudyRequest.newBuilder().setDischargeStudyId(1L).build();
+    LoadableStudy entity = new LoadableStudy();
+    entity.setId(2L);
+    entity.setName("update DS");
+    entity.setDetails("details");
+    entity.setActive(false);
+    Voyage voyage = new com.cpdss.loadablestudy.entity.Voyage();
+    VoyageStatus status = new VoyageStatus();
+    status.setId(3L);
+    status.setName("ACTIVE");
+    voyage.setVoyageStatus(status);
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    doNothing().when(this.voyageService).checkIfVoyageClosed(anyLong());
+
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<DischargeStudyReply> responseObserver = StreamRecorder.create();
+    this.dischargeStudyService.deleteDischargeStudy(request, responseObserver);
+    List<DischargeStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
   }
 
   private List<OnHandQuantity> createOnHandQuantityList() {

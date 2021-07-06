@@ -9,3 +9,27 @@ import "common.proto";
  message DischargeStudyRequest{
 	int64 dischargeStudyId = 1;
 }
+
+message DischargeStudyDetail{
+	string name = 1;
+	string enquiryDetails = 2;
+	int64 vesselId = 3;
+	int64 voyageId = 4;
+	int64 dischargeStudyId = 5;
+}
+message UpdateDischargeStudyReply{
+	ResponseStatus responseStatus = 1;
+	UpdateDischargeStudyDetail dischargeStudy = 2;
+}
+
+message UpdateDischargeStudyDetail{
+	string name = 1;
+	string enquiryDetails = 2;
+	int64 id = 3;
+}
+
+message DischargeStudyReply{
+	ResponseStatus responseStatus = 1;
+	DischargeStudyDetail dischargeStudy = 2;
+	int64 id = 3;
+}

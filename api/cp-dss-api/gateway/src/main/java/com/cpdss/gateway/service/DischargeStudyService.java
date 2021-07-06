@@ -6,11 +6,11 @@ import static java.lang.String.valueOf;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
-import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.dischargestudy.DischargeStudyServiceGrpc.DischargeStudyServiceBlockingStub;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -217,8 +217,7 @@ public class DischargeStudyService {
 
   public LoadableStudyResponse saveDischargeStudy(
       DischargeStudyRequest request, String correlationId) throws GenericServiceException {
-    com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.Builder builder =
-        DischargeStudyDetail.newBuilder();
+    DischargeStudyDetail.Builder builder = DischargeStudyDetail.newBuilder();
 
     Optional.ofNullable(request.getName()).ifPresent(builder::setName);
     Optional.ofNullable(request.getEnquiryDetails()).ifPresent(builder::setEnquiryDetails);
@@ -239,20 +238,20 @@ public class DischargeStudyService {
   }
 
   private DischargeStudyReply saveDischargeStudy(DischargeStudyDetail dischargeStudyDetail) {
-    return this.loadableStudyServiceBlockingStub.saveDischargeStudy(dischargeStudyDetail);
+    return this.dischargeStudyOperationServiceBlockingStub.saveDischargeStudy(dischargeStudyDetail);
   }
 
   private UpdateDischargeStudyReply updateDischargeStudy(
       DischargeStudyDetail dischargeStudyDetail) {
-    return this.loadableStudyServiceBlockingStub.updateDischargeStudy(dischargeStudyDetail);
+    return this.dischargeStudyOperationServiceBlockingStub.updateDischargeStudy(
+        dischargeStudyDetail);
   }
 
   public DischargeStudyUpdateResponse updateDischargeStudy(
       @Valid DischargeStudyRequest request, String correlationId, Long dischargeStudyId)
       throws GenericServiceException {
 
-    com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.Builder builder =
-        DischargeStudyDetail.newBuilder();
+    DischargeStudyDetail.Builder builder = DischargeStudyDetail.newBuilder();
 
     Optional.ofNullable(request.getName()).ifPresent(builder::setName);
     Optional.ofNullable(request.getEnquiryDetails()).ifPresent(builder::setEnquiryDetails);
