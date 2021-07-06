@@ -78,4 +78,5 @@ public class SynopticalRecord {
   private Long portTimezoneId;
   private BigDecimal bm;
   private BigDecimal sf;
+  private Boolean hasLoadicator;
 }

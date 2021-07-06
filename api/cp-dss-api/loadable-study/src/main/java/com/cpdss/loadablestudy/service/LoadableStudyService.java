@@ -8815,6 +8815,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(item -> builder.setDisplacementPlanned(valueOf(item)));
     ofNullable(synopticalEntity.getDisplacementActual())
         .ifPresent(item -> builder.setDisplacementActual(valueOf(item)));
+    ofNullable(vesselLoadableQuantityDetails.getHasLoadicator())
+    	.ifPresent(item -> builder.setHasLoadicator(item));
   }
 
   /**
