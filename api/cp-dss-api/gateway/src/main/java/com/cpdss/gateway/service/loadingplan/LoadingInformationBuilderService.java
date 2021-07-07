@@ -67,7 +67,7 @@ public class LoadingInformationBuilderService {
     Optional.ofNullable(loadingInfoId).ifPresent(builder::setId);
     // remove this comment after confirm with shafeer
     /*Optional.ofNullable(loadingRates.getInitialLoadingRate())
-        .ifPresent(initLoadRate -> builder.setInitialLoadingRate(String.valueOf(initLoadRate)));*/
+    .ifPresent(initLoadRate -> builder.setInitialLoadingRate(String.valueOf(initLoadRate)));*/
     Optional.ofNullable(loadingRates.getLineContentRemaining())
         .ifPresent(lineContent -> builder.setLineContentRemaining(String.valueOf(lineContent)));
     Optional.ofNullable(loadingRates.getMaxDeBallastingRate())
