@@ -347,8 +347,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           lb.getMaxManifoldHeight().isEmpty()
               ? BigDecimal.ZERO
               : new BigDecimal(lb.getMaxManifoldHeight()));
-      var2.setRegulationAndRestriction(lb.getDepth());
+      var2.setRegulationAndRestriction(lb.getSpecialRegulationRestriction());
+      var2.setItemsToBeAgreedWith(lb.getItemsToBeAgreedWith());
       var2.setHoseConnections(lb.getHoseConnections());
+      var2.setLineDisplacement(lb.getLineDisplacement());
       list.add(var2);
     }
     log.info("Loading Plan Berth data added Size {}", var1.size());
