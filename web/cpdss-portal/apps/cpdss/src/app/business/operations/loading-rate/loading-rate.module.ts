@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LoadingRateComponent } from './loading-rate.component';
 
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
+import { DropdownModule } from 'primeng/dropdown';
 
 /**
  * Module for loading rate module
@@ -23,7 +24,8 @@ import { NumberDirectiveModule } from '../../../shared/directives/number-directi
     ReactiveFormsModule,
     TranslateModule,
     ValidationErrorModule,
-    NumberDirectiveModule
+    NumberDirectiveModule,
+    DropdownModule
   ],
   exports: [LoadingRateComponent]
 })

@@ -11,8 +11,6 @@
         </div>
         <div class="row pt-30">
             <div class="col">
-                <h5 class="text-uppercase heading-border">{{'LOADING_INFORMATION_LOADING_RATES_HEADER' | translate}}
-                </h5>
                 <cpdss-portal-loading-rate [editMode]="loadingRateEditMode"
                     [loadingRates]="loadingInformationData.loadingRates"
                     (loadingRateChange)="onLoadingRateChange($event)"></cpdss-portal-loading-rate>

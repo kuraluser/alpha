@@ -44,12 +44,12 @@
                             </div>
                             <div class="row"> <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_PORT' |
                                     translate}}</label>
-                                <div class="col text-secondary">{{port.name}} {{showOperationType && port?.operation ? '(' + port?.operation + ')' : ''}}</div>
+                                <div class="col text-secondary content-ellipsis">{{port.name}} {{showOperationType && port?.operation ? '(' + port?.operation + ')' : ''}}</div>
 
                             </div>
                             <div class="row" *ngIf=" port.type === 'Arrival'" (click)="editPort($event, port, 'date')">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETA' | translate }}</label>
-                                <div *ngIf="!port?.isDateEditable" class="col text-secondary text-capitalise">
+                                <div *ngIf="!port?.isDateEditable" class="col text-secondary content-ellipsis text-capitalise">
                                     {{port.portDate}}</div>
                                 <div class="col text-secondary error-icon-wrapper relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
@@ -67,7 +67,7 @@
                             <div class="row" *ngIf=" port.type === 'Departure'"
                                 (click)="editPort($event, port, 'date')">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETD' | translate }}</label>
-                                <div *ngIf="!port?.isDateEditable" class="col text-secondary text-capitalise" >
+                                <div *ngIf="!port?.isDateEditable" class="col text-secondary content-ellipsis text-capitalise" >
                                     {{port.portDate}}</div>
                                 <div class="col text-secondary validation-error relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
@@ -85,7 +85,7 @@
                             </div>
                             <div (click)="editPort($event, port, 'time')" class="row" *ngIf=" port.type === 'Arrival'">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_TIME' | translate }}</label>
-                                <div *ngIf="!port?.isTimeEditable" class="col text-secondary">
+                                <div *ngIf="!port?.isTimeEditable" class="col text-secondary content-ellipsis">
                                     {{port.portTime}}
                                 </div>
                                 <div class="col text-secondary relative error-icon-wrapper mr-10" *ngIf="port?.isTimeEditable">
@@ -110,7 +110,7 @@
                             <div (click)="editPort($event, port, 'time')" class="row"
                                 *ngIf=" port.type === 'Departure'">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_TIME' | translate }}</label>
-                                <div *ngIf="!port?.isTimeEditable" class="col text-secondary">
+                                <div *ngIf="!port?.isTimeEditable" class="col content-ellipsis text-secondary">
                                     {{port.portTime}}
                                 </div>
                                 <div class="col text-secondary relative error-icon-wrapper mr-10" *ngIf="port?.isTimeEditable">

@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid discharge-study-wrapper">
     <div class="row">
         <div class="col vessel-info-wrapper">
             <div class="row">
@@ -73,7 +73,7 @@
         </div>
     </div>
  
-        <div class="pr-15">
+        <div class="pr-15 clearfix">
             <ng-container *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !dischargeStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
