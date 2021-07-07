@@ -10449,14 +10449,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantity lq, List<LoadableStudyPortRotation> newPrList) {
     if (lq != null && lq.getLoadableStudyPortRotation() != null) {
       LoadableStudyPortRotation pr = lq.getLoadableStudyPortRotation();
-      Optional<LoadableStudyPortRotation> portRotaionIdToAdd =
-          newPrList.stream()
-              .filter(
-                  var ->
-                      (pr.getPortXId().equals(var.getPortXId()))
-                          && (pr.getOperation().getId().equals(var.getOperation().getId())))
-              .findFirst();
-      lq.setLoadableStudyPortRotation(portRotaionIdToAdd.get());
+      if (pr.isActive()) {
+        Optional<LoadableStudyPortRotation> portRotaionIdToAdd =
+            newPrList.stream()
+                .filter(
+                    var ->
+                        (pr.getPortXId().equals(var.getPortXId()))
+                            && (pr.getOperation().getId().equals(var.getOperation().getId())))
+                .findFirst();
+        lq.setLoadableStudyPortRotation(portRotaionIdToAdd.get());
+      }
     }
   }
 

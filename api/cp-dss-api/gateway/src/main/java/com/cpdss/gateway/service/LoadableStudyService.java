@@ -3488,6 +3488,7 @@ public class LoadableStudyService {
         .forEach(
             lpd -> {
               planBuilder.clearLoadablePlanPortWiseDetails();
+              planBuilder.clearConstraints();
               LoadablePlanPortWiseDetails.Builder portWiseBuilder =
                   LoadablePlanPortWiseDetails.newBuilder();
               lpd.getLoadablePlanPortWiseDetails()
