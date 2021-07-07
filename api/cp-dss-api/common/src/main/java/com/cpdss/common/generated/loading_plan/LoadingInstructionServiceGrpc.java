@@ -1,6 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated.loading_plan;
 
+import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingUnaryCall;
+import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
+
 /** */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
@@ -12,6 +19,63 @@ public final class LoadingInstructionServiceGrpc {
   public static final String SERVICE_NAME = "LoadingInstructionService";
 
   // Static method descriptors that strictly reflect the proto.
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails>
+      getGetLoadingInstructionsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadingInstructions",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails>
+      getGetLoadingInstructionsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails>
+        getGetLoadingInstructionsMethod;
+    if ((getGetLoadingInstructionsMethod =
+            LoadingInstructionServiceGrpc.getGetLoadingInstructionsMethod)
+        == null) {
+      synchronized (LoadingInstructionServiceGrpc.class) {
+        if ((getGetLoadingInstructionsMethod =
+                LoadingInstructionServiceGrpc.getGetLoadingInstructionsMethod)
+            == null) {
+          LoadingInstructionServiceGrpc.getGetLoadingInstructionsMethod =
+              getGetLoadingInstructionsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInstructionRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInstructionDetails>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadingInstructions"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInstructionRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInstructionDetails.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInstructionServiceMethodDescriptorSupplier(
+                              "GetLoadingInstructions"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadingInstructionsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingInstructionServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceStub> factory =
@@ -57,9 +121,27 @@ public final class LoadingInstructionServiceGrpc {
   public abstract static class LoadingInstructionServiceImplBase
       implements io.grpc.BindableService {
 
+    /** */
+    public void getLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadingInstructionsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor()).build();
+      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+          .addMethod(
+              getGetLoadingInstructionsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInstructionRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInstructionDetails>(this, METHODID_GET_LOADING_INSTRUCTIONS)))
+          .build();
     }
   }
 
@@ -76,6 +158,18 @@ public final class LoadingInstructionServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadingInstructionServiceStub(channel, callOptions);
     }
+
+    /** */
+    public void getLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadingInstructionsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -90,6 +184,15 @@ public final class LoadingInstructionServiceGrpc {
     protected LoadingInstructionServiceBlockingStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadingInstructionServiceBlockingStub(channel, callOptions);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails
+        getLoadingInstructions(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest
+                request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadingInstructionsMethod(), getCallOptions(), request);
     }
   }
 
@@ -106,7 +209,19 @@ public final class LoadingInstructionServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadingInstructionServiceFutureStub(channel, callOptions);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails>
+        getLoadingInstructions(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadingInstructionsMethod(), getCallOptions()), request);
+    }
   }
+
+  private static final int METHODID_GET_LOADING_INSTRUCTIONS = 0;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -125,6 +240,15 @@ public final class LoadingInstructionServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_GET_LOADING_INSTRUCTIONS:
+          serviceImpl.getLoadingInstructions(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInstructionDetails>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -189,6 +313,7 @@ public final class LoadingInstructionServiceGrpc {
               result =
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new LoadingInstructionServiceFileDescriptorSupplier())
+                      .addMethod(getGetLoadingInstructionsMethod())
                       .build();
         }
       }

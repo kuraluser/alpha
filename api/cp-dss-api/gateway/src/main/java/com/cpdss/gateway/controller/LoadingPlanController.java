@@ -10,8 +10,11 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
@@ -28,6 +31,7 @@ public class LoadingPlanController {
 
   @Autowired LoadingPlanService loadingPlanService;
   @Autowired LoadingInformationService loadingInformationService;
+  @Autowired LoadingInstructionService loadingInstructionService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
@@ -195,4 +199,32 @@ public class LoadingPlanController {
           e);
     }
   }
+  
+  /**
+   * Retrieve all loading Instructions
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
+  public LoadingInstructionResponse getAllLoadingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portRotationId)
+      throws CommonRestException {
+    try {
+      log.info("Getting all Loading instructions of vesselID: {} on port: {}", vesselId,portRotationId);
+      return loadingInstructionService.getLoadingInstructions(vesselId,infoId,portRotationId);
+    } catch (GenericServiceException e) {
+      log.error("Getting all Loading instructions");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  
 }

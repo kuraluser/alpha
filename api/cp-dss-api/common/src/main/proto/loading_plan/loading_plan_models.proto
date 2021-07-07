@@ -383,3 +383,15 @@ message LoadingInfoSaveResponse {
 }
 
 
+message LoadingInstructionRequest {
+  int64 loadingInfoId = 1;
+  int64 vesselId = 2;
+  int64 portRotationId = 3; 
+}
+
+
+message LoadingInstructionDetails {
+  int64 id = 1;
+  ResponseStatus responseStatus = 6;
+}
+

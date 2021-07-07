@@ -22,6 +22,7 @@ service LoadingInformationService {
 
 service LoadingInstructionService {
 
+	rpc GetLoadingInstructions(LoadingInstructionRequest) returns (LoadingInstructionDetails) {}
 }
 
 service LoadingPlanService {

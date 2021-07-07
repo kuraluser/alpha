@@ -31,11 +31,13 @@ public final class LoadingPlanServiceOuterClass {
           + "\022\033.UpdateUllageLoadingRequest\032\032.UpdateUl"
           + "lageLoadingReplay\"\000\022A\n\023GenerateLoadingPl"
           + "an\022\027.LoadingInfoAlgoRequest\032\017.ResponseSt"
-          + "atus\"\0002\033\n\031LoadingInstructionService2d\n\022L"
-          + "oadingPlanService\022N\n\032LoadingPlanSynchron"
-          + "ization\022\027.LoadingPlanSyncDetails\032\025.Loadi"
-          + "ngPlanSyncReply\"\000B+\n\'com.cpdss.common.ge"
-          + "nerated.loading_planP\000b\006proto3"
+          + "atus\"\0002o\n\031LoadingInstructionService\022R\n\026G"
+          + "etLoadingInstructions\022\032.LoadingInstructi"
+          + "onRequest\032\032.LoadingInstructionDetails\"\0002"
+          + "d\n\022LoadingPlanService\022N\n\032LoadingPlanSync"
+          + "hronization\022\027.LoadingPlanSyncDetails\032\025.L"
+          + "oadingPlanSyncReply\"\000B+\n\'com.cpdss.commo"
+          + "n.generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
