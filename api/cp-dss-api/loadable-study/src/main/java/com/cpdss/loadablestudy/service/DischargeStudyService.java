@@ -17,6 +17,7 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischa
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
@@ -52,6 +53,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private SynopticalTableRepository synopticalTableRepository;
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+  @Autowired private CargoNominationService cargoNominationService;
 
   @Override
   public void saveDischargeStudy(
@@ -96,11 +98,16 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
       LoadableStudy savedDischargeStudy = saveDischargeStudy(request, voyage);
       LoadableStudyPortRotation dischargeStudyPortRotation =
           createDischargeStudyPortRotationData(loadableStudyPortRotation, savedDischargeStudy);
       LoadableStudyPortRotation savedDischargeport =
           loadableStudyPortRotationRepository.save(dischargeStudyPortRotation);
+      List<CargoNomination> dischargeCargos =
+          this.cargoNominationService.saveDsichargeStudyCargoNominations(
+              savedDischargeStudy.getId(), loadableStudy.getId(), savedDischargeport.getPortXId());
+
       this.synopticalTableRepository.saveAll(
           createDischargeSynoptical(synopticalData, savedDischargeport));
       this.onHandQuantityRepository.saveAll(
@@ -304,7 +311,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudy entity = entityOpt.get();
-      
+
       this.voyageService.checkIfVoyageClosed(entity.getVoyage().getId());
 
       entity.setActive(false);

@@ -305,5 +305,5 @@ class DischargeStudyServiceTest {
   private List<LoadableStudy> createLoadableList() {
 
     return Arrays.asList(new LoadableStudy());
-  }
+  } 
 }
