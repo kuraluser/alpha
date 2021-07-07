@@ -2986,6 +2986,19 @@ public final class VesselInfo {
      * @return The bytes for maxLoadingRate.
      */
     com.google.protobuf.ByteString getMaxLoadingRateBytes();
+
+    /**
+     * <code>string minLoadingRate = 43;</code>
+     *
+     * @return The minLoadingRate.
+     */
+    java.lang.String getMinLoadingRate();
+    /**
+     * <code>string minLoadingRate = 43;</code>
+     *
+     * @return The bytes for minLoadingRate.
+     */
+    com.google.protobuf.ByteString getMinLoadingRateBytes();
   }
   /** Protobuf type {@code VesselDetail} */
   public static final class VesselDetail extends com.google.protobuf.GeneratedMessageV3
@@ -3036,6 +3049,7 @@ public final class VesselInfo {
       wingTankLoadingRate_ = "";
       centerTankLoadingRate_ = "";
       maxLoadingRate_ = "";
+      minLoadingRate_ = "";
     }
 
     @java.lang.Override
@@ -3357,6 +3371,13 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 maxLoadingRate_ = s;
+                break;
+              }
+            case 346:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                minLoadingRate_ = s;
                 break;
               }
             default:
@@ -4734,6 +4755,41 @@ public final class VesselInfo {
       }
     }
 
+    public static final int MINLOADINGRATE_FIELD_NUMBER = 43;
+    private volatile java.lang.Object minLoadingRate_;
+    /**
+     * <code>string minLoadingRate = 43;</code>
+     *
+     * @return The minLoadingRate.
+     */
+    public java.lang.String getMinLoadingRate() {
+      java.lang.Object ref = minLoadingRate_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        minLoadingRate_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string minLoadingRate = 43;</code>
+     *
+     * @return The bytes for minLoadingRate.
+     */
+    public com.google.protobuf.ByteString getMinLoadingRateBytes() {
+      java.lang.Object ref = minLoadingRate_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        minLoadingRate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -4875,6 +4931,9 @@ public final class VesselInfo {
       }
       if (!getMaxLoadingRateBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 42, maxLoadingRate_);
+      }
+      if (!getMinLoadingRateBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 43, minLoadingRate_);
       }
       unknownFields.writeTo(output);
     }
@@ -5020,6 +5079,9 @@ public final class VesselInfo {
       if (!getMaxLoadingRateBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(42, maxLoadingRate_);
       }
+      if (!getMinLoadingRateBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(43, minLoadingRate_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -5080,6 +5142,7 @@ public final class VesselInfo {
       if (!getWingTankLoadingRate().equals(other.getWingTankLoadingRate())) return false;
       if (!getCenterTankLoadingRate().equals(other.getCenterTankLoadingRate())) return false;
       if (!getMaxLoadingRate().equals(other.getMaxLoadingRate())) return false;
+      if (!getMinLoadingRate().equals(other.getMinLoadingRate())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5177,6 +5240,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getCenterTankLoadingRate().hashCode();
       hash = (37 * hash) + MAXLOADINGRATE_FIELD_NUMBER;
       hash = (53 * hash) + getMaxLoadingRate().hashCode();
+      hash = (37 * hash) + MINLOADINGRATE_FIELD_NUMBER;
+      hash = (53 * hash) + getMinLoadingRate().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5404,6 +5469,8 @@ public final class VesselInfo {
 
         maxLoadingRate_ = "";
 
+        minLoadingRate_ = "";
+
         return this;
       }
 
@@ -5481,6 +5548,7 @@ public final class VesselInfo {
         result.wingTankLoadingRate_ = wingTankLoadingRate_;
         result.centerTankLoadingRate_ = centerTankLoadingRate_;
         result.maxLoadingRate_ = maxLoadingRate_;
+        result.minLoadingRate_ = minLoadingRate_;
         onBuilt();
         return result;
       }
@@ -5717,6 +5785,10 @@ public final class VesselInfo {
         }
         if (!other.getMaxLoadingRate().isEmpty()) {
           maxLoadingRate_ = other.maxLoadingRate_;
+          onChanged();
+        }
+        if (!other.getMinLoadingRate().isEmpty()) {
+          minLoadingRate_ = other.minLoadingRate_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -8866,6 +8938,82 @@ public final class VesselInfo {
         checkByteStringIsUtf8(value);
 
         maxLoadingRate_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object minLoadingRate_ = "";
+      /**
+       * <code>string minLoadingRate = 43;</code>
+       *
+       * @return The minLoadingRate.
+       */
+      public java.lang.String getMinLoadingRate() {
+        java.lang.Object ref = minLoadingRate_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          minLoadingRate_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string minLoadingRate = 43;</code>
+       *
+       * @return The bytes for minLoadingRate.
+       */
+      public com.google.protobuf.ByteString getMinLoadingRateBytes() {
+        java.lang.Object ref = minLoadingRate_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          minLoadingRate_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string minLoadingRate = 43;</code>
+       *
+       * @param value The minLoadingRate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMinLoadingRate(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        minLoadingRate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string minLoadingRate = 43;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMinLoadingRate() {
+
+        minLoadingRate_ = getDefaultInstance().getMinLoadingRate();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string minLoadingRate = 43;</code>
+       *
+       * @param value The bytes for minLoadingRate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMinLoadingRateBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        minLoadingRate_ = value;
         onChanged();
         return this;
       }
@@ -63053,7 +63201,7 @@ public final class VesselInfo {
           + "tConditionId\030\003 \001(\003\022\024\n\014draftExtreme\030\004 \001(\t"
           + "\022\026\n\016tankCategories\030\005 \003(\003\">\n\016LoadLineDeta"
           + "il\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\022\n\ndraftMar"
-          + "ks\030\003 \003(\t\"\207\010\n\014VesselDetail\022\n\n\002id\030\001 \001(\003\022\014\n"
+          + "ks\030\003 \003(\t\"\237\010\n\014VesselDetail\022\n\n\002id\030\001 \001(\003\022\014\n"
           + "\004name\030\002 \001(\t\022\021\n\tcaptainId\030\003 \001(\003\022\026\n\016cheifO"
           + "fficerId\030\004 \001(\003\022\021\n\timoNumber\030\005 \001(\t\022\014\n\004fla"
           + "g\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\"\n\tloadLines\030"
@@ -63079,194 +63227,195 @@ public final class VesselInfo {
           + "\030& \001(\010\022\036\n\026homogeneousLoadingRate\030\' \001(\t\022\033"
           + "\n\023wingTankLoadingRate\030( \001(\t\022\035\n\025centerTan"
           + "kLoadingRate\030) \001(\t\022\026\n\016maxLoadingRate\030* \001"
-          + "(\t\"\276\001\n\035VesselLoadableQuantityDetails\022#\n\033"
-          + "displacmentDraftRestriction\030\001 \001(\t\022\031\n\021ves"
-          + "selLightWeight\030\002 \001(\t\022\020\n\010constant\030\003 \001(\t\022\013"
-          + "\n\003tpc\030\004 \001(\t\022\013\n\003dwt\030\005 \001(\t\022\032\n\022draftConditi"
-          + "onName\030\006 \001(\t\022\025\n\rhasLoadicator\030\007 \001(\010\"\274\004\n\020"
-          + "VesselTankDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tank"
-          + "CategoryId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001"
-          + "(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030"
-          + "\005 \001(\t\022\025\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortNam"
-          + "e\030\007 \001(\t\022\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007den"
-          + "sity\030\t \001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheight"
-          + "From\030\013 \001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrde"
-          + "r\030\r \001(\005\022\021\n\ttankGroup\030\016 \001(\005\022\013\n\003lcg\030\017 \001(\t\022"
-          + "\013\n\003vcg\030\020 \001(\t\022\013\n\003tcg\030\021 \001(\t\022\025\n\rcoatingType"
-          + "Id\030\022 \001(\003\022\022\n\ntankTypeId\030\023 \001(\003\022\030\n\020fullCapa"
-          + "cityCubm\030\024 \001(\t\022\022\n\ncolourCode\030\025 \001(\t\022\035\n\025ta"
-          + "nkCategoryShortName\030\026 \001(\t\022\024\n\014showInOhqOb"
-          + "q\030\027 \001(\010\022\030\n\020tankDisplayOrder\030\030 \001(\005\022\034\n\024tan"
-          + "kPositionCategory\030\031 \001(\t\022\031\n\021isLoadicatorU"
-          + "sing\030\032 \001(\010\"\327\001\n\013VesselReply\022\020\n\010vesselId\030\001"
-          + " \001(\003\022&\n\013vesselTanks\030\002 \003(\0132\021.VesselTankDe"
-          + "tail\022\'\n\016responseStatus\030\003 \001(\0132\017.ResponseS"
-          + "tatus\022\036\n\007vessels\030\004 \003(\0132\r.VesselDetail\022E\n"
-          + "\035vesselLoadableQuantityDetails\030\005 \001(\0132\036.V"
-          + "esselLoadableQuantityDetails\"%\n\021VesselAl"
-          + "goRequest\022\020\n\010vesselId\030\001 \001(\003\"\275\003\n\017VesselAl"
-          + "goReply\022#\n\014vesselDetail\030\001 \001(\0132\r.VesselDe"
-          + "tail\0223\n\024vesselDraftCondition\030\002 \003(\0132\025.Ves"
-          + "selDraftCondition\022+\n\020vesselTankDetail\030\003 "
-          + "\003(\0132\021.VesselTankDetail\022)\n\017hydrostaticDat"
-          + "a\030\004 \003(\0132\020.HydrostaticData\022%\n\rvesselTankT"
-          + "CG\030\005 \003(\0132\016.VesselTankTCG\022\031\n\007bMAndSF\030\006 \001("
-          + "\0132\010.BMAndSF\022\'\n\016responseStatus\030\007 \001(\0132\017.Re"
-          + "sponseStatus\022%\n\rullageDetails\030\010 \003(\0132\016.Ul"
-          + "lageDetails\0223\n\024ullageTrimCorrection\030\t \003("
-          + "\0132\025.UllageTrimCorrection\0221\n\023selectablePa"
-          + "rameter\030\n \003(\0132\024.SelectableParameter\"L\n\023S"
-          + "electableParameter\022\024\n\014paramterName\030\001 \001(\t"
-          + "\022\037\n\006values\030\002 \003(\0132\017.ParameterValue\"-\n\016Par"
-          + "ameterValue\022\014\n\004type\030\001 \001(\003\022\r\n\005value\030\002 \001(\t"
-          + "\"r\n\rUllageDetails\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030"
-          + "\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\034\n\024evenKeelCa"
-          + "pacityCubm\030\004 \001(\t\022\022\n\nsoundDepth\030\005 \001(\t\"\236\001\n"
-          + "\024VesselDraftCondition\022\n\n\002id\030\001 \001(\003\022\030\n\020dra"
-          + "ftConditionId\030\002 \001(\003\022\r\n\005depth\030\003 \001(\t\022\021\n\tfr"
-          + "eeboard\030\004 \001(\t\022\024\n\014draftExtreme\030\005 \001(\t\022\024\n\014d"
-          + "isplacement\030\006 \001(\t\022\022\n\ndeadWeight\030\007 \001(\t\"\253\001"
-          + "\n\017HydrostaticData\022\n\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 "
-          + "\001(\t\022\r\n\005draft\030\003 \001(\t\022\024\n\014displacement\030\004 \001(\t"
-          + "\022\013\n\003lcb\030\005 \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022"
-          + "\013\n\003tkm\030\010 \001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013"
-          + "\n\003tpc\030\013 \001(\t\"u\n\rVesselTankTCG\022\n\n\002id\030\001 \001(\003"
-          + "\022\016\n\006tankId\030\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022\013\n\003tc"
-          + "g\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\022\013\n\003vcg\030\006 \001(\t\022\017\n\007ine"
-          + "rtia\030\007 \001(\t\"\316\002\n\007BMAndSF\022%\n\rbendingMoment\030"
-          + "\001 \003(\0132\016.BendingMoment\022%\n\rshearingForce\030\002"
-          + " \003(\0132\016.ShearingForce\022+\n\020calculationSheet"
-          + "\030\003 \003(\0132\021.CalculationSheet\022=\n\031calculation"
-          + "SheetTankGroup\030\004 \003(\0132\032.CalculationSheetT"
-          + "ankGroup\0227\n\026minMaxValuesForBMAndSf\030\005 \003(\013"
-          + "2\027.MinMaxValuesForBMAndSf\022%\n\rstationValu"
-          + "es\030\006 \003(\0132\016.StationValues\022)\n\017InnerBulkHea"
-          + "dSF\030\007 \003(\0132\020.InnerBulkHeadSF\"\207\001\n\rBendingM"
-          + "oment\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\021"
-          + "\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017"
-          + "draftCorrection\030\005 \001(\t\022\026\n\016trimCorrection\030"
-          + "\006 \001(\t\"\207\001\n\rShearingForce\022\n\n\002id\030\001 \001(\003\022\023\n\013f"
-          + "rameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tb"
-          + "aseValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005 \001(\t\022"
-          + "\026\n\016trimCorrection\030\006 \001(\t\"c\n\020CalculationSh"
-          + "eet\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006ta"
-          + "nkId\030\003 \001(\003\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030\005"
-          + " \001(\t\"\\\n\031CalculationSheetTankGroup\022\n\n\002id\030"
-          + "\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n"
-          + "\013frameNumber\030\004 \001(\t\"u\n\026MinMaxValuesForBMA"
-          + "ndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r\n"
-          + "\005minBm\030\003 \001(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001"
-          + "(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013s"
-          + "tationFrom\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017f"
-          + "rameNumberFrom\030\003 \001(\t\022\025\n\rframeNumberTo\030\004 "
-          + "\001(\t\022\020\n\010distance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017In"
-          + "nerBulkHeadSF\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tfo"
-          + "reAlpha\030\002 \001(\t\022\035\n\025foreCenterCargoTankId\030\003"
-          + " \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n\017foreWingTankIds\030"
-          + "\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022\030\n\020foreBallastTank"
-          + "s\030\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorrect"
-          + "ion\030\t \001(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxAllo"
-          + "wence\030\013 \001(\t\022\030\n\020foreMinAllowence\030\014 \001(\t\022\n\n"
-          + "\002id\030\r \001(\003\022\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftCenter"
-          + "CargoTankId\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftW"
-          + "ingTankIds\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBa"
-          + "llastTanks\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBW"
-          + "Correction\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMa"
-          + "xFlAllowence\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030"
-          + "\030 \001(\t\"\200\002\n\024UllageTrimCorrection\022\n\n\002id\030\001 \001"
-          + "(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022"
-          + "\016\n\006trimM1\030\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006trimM"
-          + "3\030\006 \001(\t\022\016\n\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t\022"
-          + "\r\n\005trim0\030\t \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2\030\013"
-          + " \001(\t\022\r\n\005trim3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005tr"
-          + "im5\030\016 \001(\t\022\r\n\005trim6\030\017 \001(\t\"$\n\021VesselTankRe"
-          + "quest\022\017\n\007tankIds\030\001 \003(\003\"`\n\017VesselTankOrde"
-          + "r\022\020\n\010tankName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\ts"
-          + "hortName\030\003 \001(\t\022\030\n\020tankDisplayOrder\030\004 \001(\005"
-          + "\"h\n\022VesselTankResponse\022)\n\017vesselTankOrde"
-          + "r\030\001 \003(\0132\020.VesselTankOrder\022\'\n\016responseSta"
-          + "tus\030\002 \001(\0132\017.ResponseStatus\"#\n\017VesselIdRe"
-          + "quest\022\020\n\010vesselId\030\001 \001(\003\"`\n\020VesselIdRespo"
-          + "nse\022#\n\014vesselDetail\030\001 \001(\0132\r.VesselDetail"
-          + "\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStatu"
-          + "s\"8\n\020VesselDWTRequest\022\020\n\010vesselId\030\001 \001(\003\022"
-          + "\022\n\ndraftValue\030\002 \001(\t\"t\n\021VesselDWTResponse"
-          + "\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n"
-          + "\tdwtResult\030\003 \001(\t\022\'\n\016responseStatus\030\004 \001(\013"
-          + "2\017.ResponseStatus\"\242\001\n\023VesselPumpsRespons"
-          + "e\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
-          + "us\022\033\n\010pumpType\030\002 \003(\0132\t.PumpType\022\037\n\nvesse"
-          + "lPump\030\003 \003(\0132\013.VesselPump\022$\n\rvesselDetail"
-          + "s\030\004 \001(\0132\r.VesselDetail\"$\n\010PumpType\022\n\n\002id"
-          + "\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id"
-          + "\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003"
-          + " \001(\003\022\020\n\010pumpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t"
-          + "\022\024\n\014pumpCapacity\030\006 \001(\t\"o\n\021VesselRuleRequ"
-          + "est\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003"
-          + "\022\034\n\010rulePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDe"
-          + "faultRule\030\004 \001(\010\"\347\001\n\017VesselRuleReply\022\'\n\016r"
-          + "esponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\010"
-          + "rulePlan\030\002 \003(\0132\n.RulePlans\022)\n\017cargoTankM"
-          + "aster\030\003 \003(\0132\020.CargoTankMaster\0229\n\027ruleDro"
-          + "pDownValueMaster\030\004 \003(\0132\030.RuleDropDownVal"
-          + "ueMaster\022\'\n\016ruleTypeMaster\030\005 \003(\0132\017.RuleT"
-          + "ypeMaster\"\260\001\n\030VesselValveSequenceReply\022\'"
-          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022"
-          + "0\n\022vvSequenceEntities\030\002 \003(\0132\024.VesselValv"
-          + "eSequence\0229\n\023vvEducationEntities\030\003 \003(\0132\034"
-          + ".VesselValveEducationProcess\"\255\004\n\023VesselV"
-          + "alveSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValv"
-          + "e\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineC"
-          + "olor\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipe"
-          + "lineType\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t\022\033"
-          + "\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025sequenceO"
-          + "perationName\030\t \001(\t\022\026\n\016sequenceTypeId\030\n \001"
-          + "(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027sequence"
-          + "VesselMappingId\030\014 \001(\005\022\025\n\rtankShortName\030\r"
-          + " \001(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017valveCate"
-          + "goryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tval"
-          + "veSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rval"
-          + "veTypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\r"
-          + "vesselTankXid\030\025 \001(\005\022\034\n\024vesselValveMappin"
-          + "gId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselV"
-          + "alveEducationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013educ"
-          + "torName\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n"
-          + "\010stepName\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\t"
-          + "eductorId\030\006 \001(\005\022\037\n\027eductionProcessMaster"
-          + "Id\030\007 \001(\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010v"
-          + "esselId\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025"
-          + "\n\005rules\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030"
-          + "\002 \001(\0132\017.ResponseStatus\"0\n\017CargoTankMaste"
-          + "r\022\n\n\002id\030\001 \001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027Rule"
-          + "DropDownValueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value"
-          + "\030\002 \001(\t\022\026\n\016ruleTemplateId\030\003 \001(\003\".\n\016RuleTy"
-          + "peMaster\022\n\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344"
-          + "\007\n\021VesselInfoService\0228\n\026GetAllVesselsByC"
-          + "ompany\022\016.VesselRequest\032\014.VesselReply\"\000\0226"
-          + "\n\024GetVesselDetailsById\022\016.VesselRequest\032\014"
-          + ".VesselReply\"\000\0220\n\016GetVesselTanks\022\016.Vesse"
-          + "lRequest\032\014.VesselReply\"\000\0225\n\023GetVesselCar"
-          + "goTanks\022\016.VesselRequest\032\014.VesselReply\"\000\022"
-          + "A\n\027GetVesselDetailsForAlgo\022\022.VesselAlgoR"
-          + "equest\032\020.VesselAlgoReply\"\000\022C\n!GetVesselD"
-          + "etailForSynopticalTable\022\016.VesselRequest\032"
-          + "\014.VesselReply\"\000\022;\n\031GetVesselDetailByVess"
-          + "elId\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\025"
-          + "GetVesselInfoByPaging\022\030.VesselRequestWit"
-          + "hPaging\032\014.VesselReply\"\000\022C\n\026GetVesselInfo"
-          + "BytankIds\022\022.VesselTankRequest\032\023.VesselTa"
-          + "nkResponse\"\000\022C\n\032GetDWTFromVesselByVessel"
-          + "Id\022\021.VesselDWTRequest\032\022.VesselDWTRespons"
-          + "e\022@\n\027GetVesselInfoByVesselId\022\020.VesselIdR"
-          + "equest\032\021.VesselIdResponse\"\000\022D\n\030GetVessel"
-          + "PumpsByVesselId\022\020.VesselIdRequest\032\024.Vess"
-          + "elPumpsResponse\"\000\022H\n\036GetRulesByVesselIdA"
-          + "ndSectionId\022\022.VesselRuleRequest\032\020.Vessel"
-          + "RuleReply\"\000\022E\n\026GetVesselValveSequence\022\016."
-          + "VesselRequest\032\031.VesselValveSequenceReply"
-          + "\"\000\022I\n\023GetLoadingInfoRules\022\030.LoadingInfoR"
-          + "ulesRequest\032\026.LoadingInfoRulesReply\"\000B\036\n"
-          + "\032com.cpdss.common.generatedP\000b\006proto3"
+          + "(\t\022\026\n\016minLoadingRate\030+ \001(\t\"\276\001\n\035VesselLoa"
+          + "dableQuantityDetails\022#\n\033displacmentDraft"
+          + "Restriction\030\001 \001(\t\022\031\n\021vesselLightWeight\030\002"
+          + " \001(\t\022\020\n\010constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\022\013\n\003d"
+          + "wt\030\005 \001(\t\022\032\n\022draftConditionName\030\006 \001(\t\022\025\n\r"
+          + "hasLoadicator\030\007 \001(\010\"\274\004\n\020VesselTankDetail"
+          + "\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003"
+          + "\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004"
+          + " \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNu"
+          + "mberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fillC"
+          + "apacityCubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\nis"
+          + "SlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010he"
+          + "ightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\021\n\ttankG"
+          + "roup\030\016 \001(\005\022\013\n\003lcg\030\017 \001(\t\022\013\n\003vcg\030\020 \001(\t\022\013\n\003"
+          + "tcg\030\021 \001(\t\022\025\n\rcoatingTypeId\030\022 \001(\003\022\022\n\ntank"
+          + "TypeId\030\023 \001(\003\022\030\n\020fullCapacityCubm\030\024 \001(\t\022\022"
+          + "\n\ncolourCode\030\025 \001(\t\022\035\n\025tankCategoryShortN"
+          + "ame\030\026 \001(\t\022\024\n\014showInOhqObq\030\027 \001(\010\022\030\n\020tankD"
+          + "isplayOrder\030\030 \001(\005\022\034\n\024tankPositionCategor"
+          + "y\030\031 \001(\t\022\031\n\021isLoadicatorUsing\030\032 \001(\010\"\327\001\n\013V"
+          + "esselReply\022\020\n\010vesselId\030\001 \001(\003\022&\n\013vesselTa"
+          + "nks\030\002 \003(\0132\021.VesselTankDetail\022\'\n\016response"
+          + "Status\030\003 \001(\0132\017.ResponseStatus\022\036\n\007vessels"
+          + "\030\004 \003(\0132\r.VesselDetail\022E\n\035vesselLoadableQ"
+          + "uantityDetails\030\005 \001(\0132\036.VesselLoadableQua"
+          + "ntityDetails\"%\n\021VesselAlgoRequest\022\020\n\010ves"
+          + "selId\030\001 \001(\003\"\275\003\n\017VesselAlgoReply\022#\n\014vesse"
+          + "lDetail\030\001 \001(\0132\r.VesselDetail\0223\n\024vesselDr"
+          + "aftCondition\030\002 \003(\0132\025.VesselDraftConditio"
+          + "n\022+\n\020vesselTankDetail\030\003 \003(\0132\021.VesselTank"
+          + "Detail\022)\n\017hydrostaticData\030\004 \003(\0132\020.Hydros"
+          + "taticData\022%\n\rvesselTankTCG\030\005 \003(\0132\016.Vesse"
+          + "lTankTCG\022\031\n\007bMAndSF\030\006 \001(\0132\010.BMAndSF\022\'\n\016r"
+          + "esponseStatus\030\007 \001(\0132\017.ResponseStatus\022%\n\r"
+          + "ullageDetails\030\010 \003(\0132\016.UllageDetails\0223\n\024u"
+          + "llageTrimCorrection\030\t \003(\0132\025.UllageTrimCo"
+          + "rrection\0221\n\023selectableParameter\030\n \003(\0132\024."
+          + "SelectableParameter\"L\n\023SelectableParamet"
+          + "er\022\024\n\014paramterName\030\001 \001(\t\022\037\n\006values\030\002 \003(\013"
+          + "2\017.ParameterValue\"-\n\016ParameterValue\022\014\n\004t"
+          + "ype\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"r\n\rUllageDetail"
+          + "s\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageD"
+          + "epth\030\003 \001(\t\022\034\n\024evenKeelCapacityCubm\030\004 \001(\t"
+          + "\022\022\n\nsoundDepth\030\005 \001(\t\"\236\001\n\024VesselDraftCond"
+          + "ition\022\n\n\002id\030\001 \001(\003\022\030\n\020draftConditionId\030\002 "
+          + "\001(\003\022\r\n\005depth\030\003 \001(\t\022\021\n\tfreeboard\030\004 \001(\t\022\024\n"
+          + "\014draftExtreme\030\005 \001(\t\022\024\n\014displacement\030\006 \001("
+          + "\t\022\022\n\ndeadWeight\030\007 \001(\t\"\253\001\n\017HydrostaticDat"
+          + "a\022\n\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 \001(\t\022\r\n\005draft\030\003 \001"
+          + "(\t\022\024\n\014displacement\030\004 \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n"
+          + "\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003"
+          + "lkm\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030\013 \001(\t\"u\n\rV"
+          + "esselTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003"
+          + "\022\020\n\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001(\t\022\013\n\003lcg\030\005"
+          + " \001(\t\022\013\n\003vcg\030\006 \001(\t\022\017\n\007inertia\030\007 \001(\t\"\316\002\n\007B"
+          + "MAndSF\022%\n\rbendingMoment\030\001 \003(\0132\016.BendingM"
+          + "oment\022%\n\rshearingForce\030\002 \003(\0132\016.ShearingF"
+          + "orce\022+\n\020calculationSheet\030\003 \003(\0132\021.Calcula"
+          + "tionSheet\022=\n\031calculationSheetTankGroup\030\004"
+          + " \003(\0132\032.CalculationSheetTankGroup\0227\n\026minM"
+          + "axValuesForBMAndSf\030\005 \003(\0132\027.MinMaxValuesF"
+          + "orBMAndSf\022%\n\rstationValues\030\006 \003(\0132\016.Stati"
+          + "onValues\022)\n\017InnerBulkHeadSF\030\007 \003(\0132\020.Inne"
+          + "rBulkHeadSF\"\207\001\n\rBendingMoment\022\n\n\002id\030\001 \001("
+          + "\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001("
+          + "\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCorrection\030"
+          + "\005 \001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"\207\001\n\rSheari"
+          + "ngForce\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t"
+          + "\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027"
+          + "\n\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorrectio"
+          + "n\030\006 \001(\t\"c\n\020CalculationSheet\022\n\n\002id\030\001 \001(\003\022"
+          + "\021\n\ttankGroup\030\002 \001(\005\022\016\n\006tankId\030\003 \001(\003\022\023\n\013we"
+          + "ightRatio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n\031Calculat"
+          + "ionSheetTankGroup\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGro"
+          + "up\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumber\030\004 \001"
+          + "(\t\"u\n\026MinMaxValuesForBMAndSf\022\n\n\002id\030\001 \001(\003"
+          + "\022\023\n\013frameNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001(\t\022\r\n\005"
+          + "maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030\006 \001("
+          + "\t\"\205\001\n\rStationValues\022\023\n\013stationFrom\030\001 \001(\t"
+          + "\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017frameNumberFrom\030\003"
+          + " \001(\t\022\025\n\rframeNumberTo\030\004 \001(\t\022\020\n\010distance\030"
+          + "\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHeadSF\022\023\n"
+          + "\013frameNumber\030\001 \001(\t\022\021\n\tforeAlpha\030\002 \001(\t\022\035\n"
+          + "\025foreCenterCargoTankId\030\003 \001(\003\022\016\n\006foreC1\030\004"
+          + " \001(\t\022\027\n\017foreWingTankIds\030\005 \001(\t\022\016\n\006foreC2\030"
+          + "\006 \001(\t\022\030\n\020foreBallastTanks\030\007 \001(\t\022\016\n\006foreC"
+          + "3\030\010 \001(\t\022\030\n\020foreBWCorrection\030\t \001(\t\022\016\n\006for"
+          + "eC4\030\n \001(\t\022\030\n\020foreMaxAllowence\030\013 \001(\t\022\030\n\020f"
+          + "oreMinAllowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022\020\n\010aft"
+          + "Alpha\030\016 \001(\t\022\034\n\024aftCenterCargoTankId\030\017 \001("
+          + "\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftWingTankIds\030\021 \001(\t"
+          + "\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023 \001(\t"
+          + "\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025 \001(\t"
+          + "\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence\030\027 \001"
+          + "(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t\"\200\002\n\024Ullage"
+          + "TrimCorrection\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001"
+          + "(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\016\n\006trimM1\030\004 \001(\t\022"
+          + "\016\n\006trimM2\030\005 \001(\t\022\016\n\006trimM3\030\006 \001(\t\022\016\n\006trimM"
+          + "4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n\005trim0\030\t \001(\t\022\r"
+          + "\n\005trim1\030\n \001(\t\022\r\n\005trim2\030\013 \001(\t\022\r\n\005trim3\030\014 "
+          + "\001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005trim5\030\016 \001(\t\022\r\n\005tri"
+          + "m6\030\017 \001(\t\"$\n\021VesselTankRequest\022\017\n\007tankIds"
+          + "\030\001 \003(\003\"`\n\017VesselTankOrder\022\020\n\010tankName\030\001 "
+          + "\001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tshortName\030\003 \001(\t\022\030"
+          + "\n\020tankDisplayOrder\030\004 \001(\005\"h\n\022VesselTankRe"
+          + "sponse\022)\n\017vesselTankOrder\030\001 \003(\0132\020.Vessel"
+          + "TankOrder\022\'\n\016responseStatus\030\002 \001(\0132\017.Resp"
+          + "onseStatus\"#\n\017VesselIdRequest\022\020\n\010vesselI"
+          + "d\030\001 \001(\003\"`\n\020VesselIdResponse\022#\n\014vesselDet"
+          + "ail\030\001 \001(\0132\r.VesselDetail\022\'\n\016responseStat"
+          + "us\030\002 \001(\0132\017.ResponseStatus\"8\n\020VesselDWTRe"
+          + "quest\022\020\n\010vesselId\030\001 \001(\003\022\022\n\ndraftValue\030\002 "
+          + "\001(\t\"t\n\021VesselDWTResponse\022\020\n\010vesselId\030\001 \001"
+          + "(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n\tdwtResult\030\003 \001(\t"
+          + "\022\'\n\016responseStatus\030\004 \001(\0132\017.ResponseStatu"
+          + "s\"\242\001\n\023VesselPumpsResponse\022\'\n\016responseSta"
+          + "tus\030\001 \001(\0132\017.ResponseStatus\022\033\n\010pumpType\030\002"
+          + " \003(\0132\t.PumpType\022\037\n\nvesselPump\030\003 \003(\0132\013.Ve"
+          + "sselPump\022$\n\rvesselDetails\030\004 \001(\0132\r.Vessel"
+          + "Detail\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002"
+          + " \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010vessel"
+          + "Id\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pumpName"
+          + "\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCapacity"
+          + "\030\006 \001(\t\"o\n\021VesselRuleRequest\022\020\n\010vesselId\030"
+          + "\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003"
+          + "(\0132\n.RulePlans\022\027\n\017isNoDefaultRule\030\004 \001(\010\""
+          + "\347\001\n\017VesselRuleReply\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n"
+          + ".RulePlans\022)\n\017cargoTankMaster\030\003 \003(\0132\020.Ca"
+          + "rgoTankMaster\0229\n\027ruleDropDownValueMaster"
+          + "\030\004 \003(\0132\030.RuleDropDownValueMaster\022\'\n\016rule"
+          + "TypeMaster\030\005 \003(\0132\017.RuleTypeMaster\"\260\001\n\030Ve"
+          + "sselValveSequenceReply\022\'\n\016responseStatus"
+          + "\030\001 \001(\0132\017.ResponseStatus\0220\n\022vvSequenceEnt"
+          + "ities\030\002 \003(\0132\024.VesselValveSequence\0229\n\023vvE"
+          + "ducationEntities\030\003 \003(\0132\034.VesselValveEduc"
+          + "ationProcess\"\255\004\n\023VesselValveSequence\022\n\n\002"
+          + "id\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010\022\022\n\npipel"
+          + "ineId\030\003 \001(\005\022\025\n\rpipelineColor\030\004 \001(\t\022\024\n\014pi"
+          + "pelineName\030\005 \001(\t\022\024\n\014pipelineType\030\006 \001(\t\022\026"
+          + "\n\016sequenceNumber\030\007 \001(\t\022\033\n\023sequenceOperat"
+          + "ionId\030\010 \001(\005\022\035\n\025sequenceOperationName\030\t \001"
+          + "(\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n\020sequenceTy"
+          + "peName\030\013 \001(\t\022\037\n\027sequenceVesselMappingId\030"
+          + "\014 \001(\005\022\025\n\rtankShortName\030\r \001(\t\022\025\n\rvalveCat"
+          + "egory\030\016 \001(\t\022\027\n\017valveCategoryId\030\017 \001(\005\022\023\n\013"
+          + "valveNumber\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013"
+          + "valveTypeId\030\022 \001(\005\022\025\n\rvalveTypeName\030\023 \001(\t"
+          + "\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesselTankXid\030\025 "
+          + "\001(\005\022\034\n\024vesselValveMappingId\030\026 \001(\005\022\021\n\tves"
+          + "selXid\030\027 \001(\003\"\261\001\n\033VesselValveEducationPro"
+          + "cess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n"
+          + "\016sequenceNumber\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022"
+          + "\023\n\013valveNumber\030\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022"
+          + "\037\n\027eductionProcessMasterId\030\007 \001(\005\"+\n\027Load"
+          + "ingInfoRulesRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n"
+          + "\025LoadingInfoRulesReply\022\025\n\005rules\030\001 \003(\0132\006."
+          + "Rules\022\'\n\016responseStatus\030\002 \001(\0132\017.Response"
+          + "Status\"0\n\017CargoTankMaster\022\n\n\002id\030\001 \001(\003\022\021\n"
+          + "\tshortName\030\002 \001(\t\"L\n\027RuleDropDownValueMas"
+          + "ter\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ruleTe"
+          + "mplateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n\n\002id\030\001"
+          + " \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n\021VesselInfoSer"
+          + "vice\0228\n\026GetAllVesselsByCompany\022\016.VesselR"
+          + "equest\032\014.VesselReply\"\000\0226\n\024GetVesselDetai"
+          + "lsById\022\016.VesselRequest\032\014.VesselReply\"\000\0220"
+          + "\n\016GetVesselTanks\022\016.VesselRequest\032\014.Vesse"
+          + "lReply\"\000\0225\n\023GetVesselCargoTanks\022\016.Vessel"
+          + "Request\032\014.VesselReply\"\000\022A\n\027GetVesselDeta"
+          + "ilsForAlgo\022\022.VesselAlgoRequest\032\020.VesselA"
+          + "lgoReply\"\000\022C\n!GetVesselDetailForSynoptic"
+          + "alTable\022\016.VesselRequest\032\014.VesselReply\"\000\022"
+          + ";\n\031GetVesselDetailByVesselId\022\016.VesselReq"
+          + "uest\032\014.VesselReply\"\000\022A\n\025GetVesselInfoByP"
+          + "aging\022\030.VesselRequestWithPaging\032\014.Vessel"
+          + "Reply\"\000\022C\n\026GetVesselInfoBytankIds\022\022.Vess"
+          + "elTankRequest\032\023.VesselTankResponse\"\000\022C\n\032"
+          + "GetDWTFromVesselByVesselId\022\021.VesselDWTRe"
+          + "quest\032\022.VesselDWTResponse\022@\n\027GetVesselIn"
+          + "foByVesselId\022\020.VesselIdRequest\032\021.VesselI"
+          + "dResponse\"\000\022D\n\030GetVesselPumpsByVesselId\022"
+          + "\020.VesselIdRequest\032\024.VesselPumpsResponse\""
+          + "\000\022H\n\036GetRulesByVesselIdAndSectionId\022\022.Ve"
+          + "sselRuleRequest\032\020.VesselRuleReply\"\000\022E\n\026G"
+          + "etVesselValveSequence\022\016.VesselRequest\032\031."
+          + "VesselValveSequenceReply\"\000\022I\n\023GetLoading"
+          + "InfoRules\022\030.LoadingInfoRulesRequest\032\026.Lo"
+          + "adingInfoRulesReply\"\000B\036\n\032com.cpdss.commo"
+          + "n.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -63342,6 +63491,7 @@ public final class VesselInfo {
               "WingTankLoadingRate",
               "CenterTankLoadingRate",
               "MaxLoadingRate",
+              "MinLoadingRate",
             });
     internal_static_VesselLoadableQuantityDetails_descriptor =
         getDescriptor().getMessageTypes().get(4);

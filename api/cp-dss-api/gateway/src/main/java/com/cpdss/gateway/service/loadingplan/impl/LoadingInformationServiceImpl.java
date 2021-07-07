@@ -169,7 +169,15 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // RPC call to vessel info, Get Vessel Details
       VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);
       if (vesselDetail != null) {
-        // Min Loading Rate, SME Confirmation pending
+        // Min Loading Rate
+        if (rateFromLoading.getMinLoadingRate().isEmpty()) {
+          loadingRates.setMinLoadingRate(
+              vesselDetail.getMinLoadingRate().isEmpty()
+                  ? null
+                  : new BigDecimal(vesselDetail.getMinLoadingRate()));
+        } else {
+          loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
+        }
 
         // Max Loading Rate
         if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
@@ -185,15 +193,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         }
 
         // Reduced loading rate
-        // 50% of max loading rate, By Thomas mail: 'Loading Rate Query'
+        // Default value shows as - 1500 (min value for this)
         if (rateFromLoading.getReducedLoadingRate().isEmpty()) {
-          BigDecimal maxLoadingRate =
-              vesselDetail.getMaxLoadingRate().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(vesselDetail.getMaxLoadingRate());
-          BigDecimal percentageAmount =
-              maxLoadingRate.multiply(BigDecimal.valueOf((double) 50 / 100));
-          loadingRates.setReducedLoadingRate(percentageAmount);
+          loadingRates.setReducedLoadingRate(new BigDecimal(1500));
         } else {
           loadingRates.setReducedLoadingRate(
               rateFromLoading.getReducedLoadingRate().isEmpty()

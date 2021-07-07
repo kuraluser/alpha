@@ -35,7 +35,7 @@ public class LoadingInformation {
   private LoadingBerthDetails berthDetails;
   private CargoMachineryInUse machineryInUses;
   private LoadingStages loadingStages;
-  private LoadingSequences loadingSequences; // TO DO
+  private LoadingSequences loadingSequences;
   private List<ToppingOffSequence> toppingOffSequence;
   private CargoVesselTankDetails cargoVesselTankDetails;
 }

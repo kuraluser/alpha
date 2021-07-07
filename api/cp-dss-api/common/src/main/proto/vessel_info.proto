@@ -108,6 +108,7 @@ message VesselDetail {
   string wingTankLoadingRate = 40;
   string centerTankLoadingRate = 41;
   string maxLoadingRate = 42;
+	string minLoadingRate = 43;
 }
 
 message VesselLoadableQuantityDetails {
