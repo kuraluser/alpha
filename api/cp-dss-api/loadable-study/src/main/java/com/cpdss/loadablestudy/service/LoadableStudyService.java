@@ -249,6 +249,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -259,6 +260,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -1087,15 +1089,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CommonErrorCodes.E_HTTP_BAD_REQUEST,
                 HttpStatusCode.BAD_REQUEST);
           }
-          listOfExistingLSRules =
-              loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
-                  loadableStudy.get(), request.getVesselId(), true);
-          /*  if (listOfExistingLSRules.size() == 0) {
             VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
             vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
             vesselRuleBuilder.setVesselId(request.getVesselId());
             vesselRuleBuilder.setIsNoDefaultRule(true);
-            vesselRuleReply =
+            VesselRuleReply vesselRuleReply =
                 this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
                     vesselRuleBuilder.build());
             if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
@@ -1104,17 +1102,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   vesselRuleReply.getResponseStatus().getCode(),
                   HttpStatusCode.valueOf(
                       Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
-            } else {
-              if (vesselRuleReply.getRulePlanList() == null
-                  || vesselRuleReply.getRulePlanList().size() == 0) {
-                throw new GenericServiceException(
-                    " Rules does not mapped against particular vessel ",
-                    CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                    HttpStatusCode.BAD_REQUEST);
-              }
-              log.info("Rules has mapped against particular vessel");
-            }
-          }*/
+            } 
+            updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
+            listOfExistingLSRules =
+                    loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
+                        loadableStudy.get(), request.getVesselId(), true);
+          
         }
       }
 
@@ -14117,6 +14110,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 });
         loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
       }
+      updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
       List<Long> ruleListId =
           vesselRuleReply.getRulePlanList().stream()
               .flatMap(rulesList -> rulesList.getRulesList().stream())
@@ -14147,7 +14141,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       lStudyRulesList, ruleId, rulePlanBuider, builder, vesselRuleReply);
                 });
       } else {
-        log.info("Fetch default loadable study rules : ");
+    	log.info("Fetch default loadable study rules : ");
         vesselRuleReply
             .getRulePlanList()
             .forEach(
@@ -14155,7 +14149,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   builder.addRulePlan(rulePlans);
                 });
       }
-
+    
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -14170,6 +14164,28 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+  
+  private void updateDisplayInSettingsInLoadableStudyRules(VesselRuleReply vesselRuleReply) {
+	  Set<Long> setOfSelectedDisplayInSetting = new LinkedHashSet<>();
+	  Set<Long> setOfDeselectedDisplayInSetting = new LinkedHashSet<>();
+	  
+	  vesselRuleReply.getRulePlanList().stream().forEach(item->{
+		  Set<Long> selectedDisplayInSetting = item.getRulesList().stream().
+				  filter(rules->rules.getDisplayInSettings() && rules.getVesselRuleXId() != null && rules.getVesselRuleXId() != "")
+				  .map(id->Long.parseLong(id.getVesselRuleXId())).collect(Collectors.toSet());
+		  Set<Long> deselectedDisplayInSetting = item.getRulesList().stream().
+				  filter(rules->!rules.getDisplayInSettings() && rules.getVesselRuleXId() != null && rules.getVesselRuleXId() != "")
+				  .map(id->Long.parseLong(id.getVesselRuleXId())).collect(Collectors.toSet());
+		  if(selectedDisplayInSetting != null && selectedDisplayInSetting.size() > 0) {
+			  setOfSelectedDisplayInSetting.addAll(selectedDisplayInSetting);
+		  }
+		  if(deselectedDisplayInSetting != null && deselectedDisplayInSetting.size() > 0) {
+			  setOfDeselectedDisplayInSetting.addAll(deselectedDisplayInSetting);
+		  }
+	  });
+	  loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(true, setOfSelectedDisplayInSetting);
+	  loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(false, setOfDeselectedDisplayInSetting);
   }
 
   private void ruleMasterDropDownValidation(

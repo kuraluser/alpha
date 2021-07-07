@@ -143,7 +143,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       }
     } catch (GenericServiceException e) {
       e.printStackTrace();
-    }
+    } 
     return var;
   }
 
@@ -269,7 +269,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       e.printStackTrace();
       log.error("Failed to cast loading rates");
     }
-    return loadingRates;
+    return loadingRates; 
   }
 
   @Override
