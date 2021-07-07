@@ -208,7 +208,7 @@ class DischargeStudyServiceTest {
     entity.setId(2L);
     when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(new com.cpdss.loadablestudy.entity.Voyage());
-    
+
     when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
             anyLong(), any(Voyage.class), anyBoolean(), anyLong()))
         .thenReturn(createLoadableList());
@@ -305,5 +305,5 @@ class DischargeStudyServiceTest {
   private List<LoadableStudy> createLoadableList() {
 
     return Arrays.asList(new LoadableStudy());
-  } 
+  }
 }
