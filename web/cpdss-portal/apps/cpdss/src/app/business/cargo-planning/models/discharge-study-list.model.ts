@@ -269,3 +269,15 @@ export interface IPortCargo {
 
 
 
+/**
+ * Interface for Discharge Study list api response.
+ *
+ * @export
+ * @interface IDischargeStudiesResponse
+ */
+export interface IDischargeStudiesResponse {
+    responseStatus: IResponse;
+    loadableStudies: IDischargeStudy[]; //variable name is loadablestudies since it comes from backend in that name.
+}
+
+

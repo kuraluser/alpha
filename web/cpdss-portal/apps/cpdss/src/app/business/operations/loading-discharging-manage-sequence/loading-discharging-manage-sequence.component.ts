@@ -70,6 +70,11 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   async initiLoadingSequenceArray() {
     this.listData = await this.getDropdownData();
     this.listData.reasonForDelays = this.loadingSequences.reasonForDelays;
+    const initialDelay = this.loadingSequences.loadingDelays?.find(loadingDelay => !loadingDelay.cargoId && !loadingDelay.quantity)
+    if(initialDelay){
+      this.loadingSequences.loadingDelays = this.loadingSequences.loadingDelays?.filter(loadingDelay => loadingDelay?.cargoId && loadingDelay?.quantity);
+      this.loadingSequences.loadingDelays.unshift(initialDelay)
+    }
     const _loadingDelays = this.loadingSequences.loadingDelays?.map((loadingDelay) => {
       const loadingSequenceData = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, true, this.listData);
       if (!loadingDelay.cargoId && !loadingDelay.quantity) {

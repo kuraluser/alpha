@@ -125,7 +125,8 @@ export interface ILoadingMachinesInUses {
  * @interface ILoadingRates
  */
 export interface ILoadingRates {
-    initialLoadingRate: number;
+    initialLoadingRate?: number;
+    minLoadingRate: number;
     maxLoadingRate: number;
     reducedLoadingRate: number;
     minDeBallastingRate: number;
@@ -158,6 +159,7 @@ export interface IBerth {
     hoseConnections: string;
     maxLoa: string;
     maxDraft: string;
+    lineDisplacement: string;
 }
 
 /**

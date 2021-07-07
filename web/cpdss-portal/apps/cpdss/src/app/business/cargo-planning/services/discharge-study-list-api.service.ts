@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { IDischargeStudiesResponse } from '../models/discharge-study-list.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,9 @@ export class DischargeStudyListApiService {
   /**
    * Get discharge study list
    */
-   getDischargeStudies(vesselId: number, voyageId: number): Observable<any> {  //TODO - create model instead of any type when actual api is available.,This is the dummy api.
-    return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies 
+   getDischargeStudies(vesselId: number, voyageId: number): Observable<IDischargeStudiesResponse> { 
+     let  planType = 2  //pass this to indicate it is discharge study.
+     return this.commonApiService.get<IDischargeStudiesResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies?planType=${planType}
     `);
 
   }

@@ -229,8 +229,6 @@ export class RulesTableComponent implements OnInit, OnDestroy {
       for (let index = 0; index < this.rulesForm.controls.length; index++) {
         for (let j = 0; j < this.rulesForm.controls[index]['controls'].length; j++) {
           let controls = this.rulesForm.controls[index]['controls'][j];
-          for (let i in controls['controls']) {
-            if (i == 'inputs') {
               for (let t in controls["controls"]["inputs"].controls) {
                 if (this.rulesJson[this.data][index] && this.rulesJson["plan"][index]["rules"][j]) {
                   if (this.rulesJson[this.data][index]["rules"][j]["inputs"] && this.rulesJson["plan"][index]["rules"][j]["inputs"][t]) {
@@ -254,11 +252,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
                     this.rulesJson[this.data][index]["rules"][j].displayInSettings = controls["controls"]["displayInSettings"].value;
                   }
                 }
-              }
-            }
-
-          }
-
+              }         
         }
       }
       let postData = {
@@ -300,8 +294,8 @@ export class RulesTableComponent implements OnInit, OnDestroy {
 
         formGroup.addControl('enable', new FormControl(rule.enable))
         const formArray = new FormArray([])
-        if (rule?.inputs.length > 0) {
-          rule.inputs.forEach((input,inputIndex) => {           
+        if (rule?.inputs.length > 0) {   
+          rule.inputs.forEach((input,inputIndex) => {                 
             let value = null;
             if(input.type ==='String' || input.type==='Number' || input.type === 'number' || input.type==='Boolean')
             {
@@ -345,8 +339,8 @@ export class RulesTableComponent implements OnInit, OnDestroy {
               
             
             if (input.type === 'Number' || input.type == 'number') {
-              if (rule.numericScale !== 0 || rule?.numericPrecision != 0) {
-                validationArray.push(numberValidator((rule.numericPrecision - rule.numericScale), rule.numericScale))
+              if (rule.numericScale !== 0 || rule.numericPrecision != 0) {
+                validationArray.push(numberValidator(rule.numericScale,(rule.numericPrecision - rule.numericScale)))
               }
             }
             formArray.push(new FormControl(value, validationArray))
@@ -399,12 +393,16 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   * @returns {void}
   * @memberof RulesTableComponent
   */
-  disableForm() {
-    this.rules?.forEach((rule, ruleIndex) => {
+  disableForm() {    
+    this.rulesJson[this.selectedTab].forEach((element,index) => {
+      const temp: FormArray = <FormArray>this.rulesForm.at(index);
+      element.rules.forEach((rule,rowIndex) => {     
       if (rule?.isHardRule) {
-        this.rulesForm?.at(ruleIndex)?.disable()
+        temp?.at(rowIndex)?.disable()
       }
     })
+  }
+  )
   }
 
 
@@ -424,7 +422,12 @@ export class RulesTableComponent implements OnInit, OnDestroy {
    */
   convertIntoString(value: any, propertyName: any, convertFrom: any) {
     if (convertFrom == 'Array') {
-      return Array.prototype.map.call(value, s => s[propertyName]).toString();
+      if (value[0] != undefined) {
+        return Array.prototype.map.call(value, s => s[propertyName]).toString();
+      }
+      else {
+        return '';
+      }
     }
     else if (convertFrom == 'Object') {
       if (value != null)

@@ -1,3 +1,12 @@
+<div class="row pt-30 heading-border no-gutters mb-10">
+    <div class="col-md-6">
+        <h5 class="">{{'LOADING_INFORMATION_LOADING_RATES_HEADER' | translate}}</h5>
+    </div>
+    <div class="col-md-6 text-right" *ngIf="editMode">
+        <p-dropdown id="loading_rate_conversion_dropdown" [options]="conversionDropdown" [(ngModel)]="selectedConversion"
+        (onChange)="onConversionChange()" optionLabel="value" optionValue="value" resetFilterOnHide="true" ></p-dropdown>
+    </div>
+</div>
 
 <form [formGroup]="loadingRatesFormGroup" id="fg_load_discharge_details">
    
@@ -34,12 +43,12 @@
                     <label for="min_loading_rate"
                         class="col-5 no-left-padding">{{'LOADING_RATE_MIN_LOADING_RATE' | translate}}</label>
                     <div class="col error-icon-wrapper">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else initialLoadingRate"
-                        id="min_loading_rate" formControlName="initialLoadingRate"  placeholder="{{'LOADING_RATE_MIN_LOADING_RATE_PLACEHOLDER' | translate}}"
-                        (change)="onChange('initialLoadingRate')" [readonly]="false">
-                        <ng-template #initialLoadingRate><span>{{initialLoadingRate?.value}}</span></ng-template>
-                        <cpdss-portal-validation-error [errors]="fieldError('initialLoadingRate')"
-                            [errorMessages]="errorMesages?.initialLoadingRate"></cpdss-portal-validation-error>
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else minLoadingRate"
+                        id="min_loading_rate" formControlName="minLoadingRate"  placeholder="{{'LOADING_RATE_MIN_LOADING_RATE_PLACEHOLDER' | translate}}"
+                        (change)="onChange('minLoadingRate')" [readonly]="false">
+                        <ng-template #minLoadingRate><span>{{minLoadingRate?.value}}</span></ng-template>
+                        <cpdss-portal-validation-error [errors]="fieldError('minLoadingRate')"
+                            [errorMessages]="errorMesages?.minLoadingRate"></cpdss-portal-validation-error>
                     </div>
                 </div>
                 <div class="row form-group">

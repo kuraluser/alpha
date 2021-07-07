@@ -51,7 +51,8 @@ export class PlanSidePanelComponent implements OnInit {
         "maxManifoldHeight": 2.0000,
         "regulationAndRestriction": "2.0000",
         "maxLoa": null,
-        "maxDraft": null
+        "maxDraft": null,
+        "lineDisplacement": null
       }
     ]
   }

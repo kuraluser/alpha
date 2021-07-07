@@ -4,3 +4,7 @@
     width: 100%;
     grid-template-columns: 330px calc(100% - 330px);
 }
+.rules-content-wrapper{
+    height: 98%;
+    overflow-y: auto;
+}

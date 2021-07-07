@@ -48763,6 +48763,7 @@ public final class VesselInfo {
               ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
               : responseStatus_;
         }
+        return this;
       }
       /** <code>.ResponseStatus responseStatus = 1;</code> */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -49015,6 +49016,7 @@ public final class VesselInfo {
         } else {
           return vesselPumpBuilder_.getMessageList();
         }
+        return this;
       }
       /** <code>repeated .VesselPump vesselPump = 3;</code> */
       public int getVesselPumpCount() {
@@ -50768,6 +50770,39 @@ public final class VesselInfo {
         return vesselId_;
       }
       /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long vesselId_;
+      /**
+       * <code>int64 vesselId = 2;</code>
+       *
+       * @return The vesselId.
+       */
+      public long getVesselId() {
+        return vesselId_;
+      }
+      /**
        * <code>int64 vesselId = 2;</code>
        *
        * @param value The vesselId to set.
@@ -51728,9 +51763,20 @@ public final class VesselInfo {
         onChanged();
         return this;
       }
+
+      private long sectionId_;
+      /**
+       * <code>int64 sectionId = 2;</code>
+       *
+       * @return The sectionId.
+       */
+      public long getSectionId() {
+        return sectionId_;
+      }
       /**
        * <code>int64 vesselId = 1;</code>
        *
+       * @param value The sectionId to set.
        * @return This builder for chaining.
        */
       public Builder clearVesselId() {
@@ -58281,9 +58327,20 @@ public final class VesselInfo {
         onChanged();
         return this;
       }
+
+      private long vesselXid_;
       /**
        * <code>int64 vesselXid = 23;</code>
        *
+       * @return The vesselXid.
+       */
+      public long getVesselXid() {
+        return vesselXid_;
+      }
+      /**
+       * <code>int64 vesselXid = 23;</code>
+       *
+       * @param value The vesselXid to set.
        * @return This builder for chaining.
        */
       public Builder clearVesselXid() {

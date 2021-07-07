@@ -149,6 +149,8 @@ export class RulesComponent implements OnInit {
    */
   triggerSaveChanges() {
     this.rulesService.save.next();   
+    this.onClose()
+    
   }
 
  
