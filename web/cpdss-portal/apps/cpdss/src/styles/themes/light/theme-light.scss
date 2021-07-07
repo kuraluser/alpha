@@ -1401,3 +1401,7 @@ header{
 .download-icon{
   background: url($images-theme + 'download-icon.png') no-repeat center center;
 }
+
+.sub-head-color{
+  color: $text-secondary;
+}

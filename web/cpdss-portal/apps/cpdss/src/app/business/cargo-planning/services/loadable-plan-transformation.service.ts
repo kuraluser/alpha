@@ -50,6 +50,7 @@ export class LoadablePlanTransformationService {
       { field: 'calculatedTrimPlanned', header: 'ETA_ETD_TRIM' },
       { field: 'bm', header: 'ETA_ETD_BM' },
       { field: 'sf', header: 'ETA_ETD_SF' },
+      { field: 'list', header: 'ETA_ETD_LIST'},
       { field: 'cargoPlannedTotal', header: 'ETA_ETD_CARGO' },
       { field: 'plannedFOTotal', header: 'ETA_ETD_FO' },
       { field: 'plannedDOTotal', header: 'ETA_ETD_DO' },
@@ -567,6 +568,7 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.ballastPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.ballastPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.sf = synopticalRecord.sf ? this.decimalConvertion(_decimalPipe, synopticalRecord.sf , '1.2-2') : '0.00';
     _synopticalRecord.bm = synopticalRecord.bm ? this.decimalConvertion(_decimalPipe, synopticalRecord.bm , '1.2-2') : '0.00';
+    _synopticalRecord.list = synopticalRecord.list ? this.decimalConvertion(_decimalPipe, synopticalRecord.list , '1.1-1') : '0.0';
 
     _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.2-2') + 'm';
     _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.2-2') + 'm';

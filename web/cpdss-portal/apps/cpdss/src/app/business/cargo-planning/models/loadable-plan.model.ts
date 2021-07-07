@@ -272,6 +272,7 @@ export interface ISynopticalRecordArrangeModel {
     ballastPlanned: string;
     sf: number;
     bm: number;
+    list: number;
 }
 
 /**
