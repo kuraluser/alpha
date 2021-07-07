@@ -260,7 +260,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -1089,25 +1088,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CommonErrorCodes.E_HTTP_BAD_REQUEST,
                 HttpStatusCode.BAD_REQUEST);
           }
-            VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
-            vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
-            vesselRuleBuilder.setVesselId(request.getVesselId());
-            vesselRuleBuilder.setIsNoDefaultRule(true);
-            VesselRuleReply vesselRuleReply =
-                this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
-                    vesselRuleBuilder.build());
-            if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
-              throw new GenericServiceException(
-                  "failed to get loadable study rule Details against vessel ",
-                  vesselRuleReply.getResponseStatus().getCode(),
-                  HttpStatusCode.valueOf(
-                      Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
-            } 
-            updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
-            listOfExistingLSRules =
-                    loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
-                        loadableStudy.get(), request.getVesselId(), true);
-          
+          VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+          vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
+          vesselRuleBuilder.setVesselId(request.getVesselId());
+          vesselRuleBuilder.setIsNoDefaultRule(true);
+          VesselRuleReply vesselRuleReply =
+              this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+          if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+            throw new GenericServiceException(
+                "failed to get loadable study rule Details against vessel ",
+                vesselRuleReply.getResponseStatus().getCode(),
+                HttpStatusCode.valueOf(
+                    Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+          }
+          updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
+          listOfExistingLSRules =
+              loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
+                  loadableStudy.get(), request.getVesselId(), true);
         }
       }
 
@@ -14141,7 +14138,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       lStudyRulesList, ruleId, rulePlanBuider, builder, vesselRuleReply);
                 });
       } else {
-    	log.info("Fetch default loadable study rules : ");
+        log.info("Fetch default loadable study rules : ");
         vesselRuleReply
             .getRulePlanList()
             .forEach(
@@ -14149,7 +14146,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   builder.addRulePlan(rulePlans);
                 });
       }
-    
+
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -14165,27 +14162,43 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
+
   private void updateDisplayInSettingsInLoadableStudyRules(VesselRuleReply vesselRuleReply) {
-	  Set<Long> setOfSelectedDisplayInSetting = new LinkedHashSet<>();
-	  Set<Long> setOfDeselectedDisplayInSetting = new LinkedHashSet<>();
-	  
-	  vesselRuleReply.getRulePlanList().stream().forEach(item->{
-		  Set<Long> selectedDisplayInSetting = item.getRulesList().stream().
-				  filter(rules->rules.getDisplayInSettings() && rules.getVesselRuleXId() != null && rules.getVesselRuleXId() != "")
-				  .map(id->Long.parseLong(id.getVesselRuleXId())).collect(Collectors.toSet());
-		  Set<Long> deselectedDisplayInSetting = item.getRulesList().stream().
-				  filter(rules->!rules.getDisplayInSettings() && rules.getVesselRuleXId() != null && rules.getVesselRuleXId() != "")
-				  .map(id->Long.parseLong(id.getVesselRuleXId())).collect(Collectors.toSet());
-		  if(selectedDisplayInSetting != null && selectedDisplayInSetting.size() > 0) {
-			  setOfSelectedDisplayInSetting.addAll(selectedDisplayInSetting);
-		  }
-		  if(deselectedDisplayInSetting != null && deselectedDisplayInSetting.size() > 0) {
-			  setOfDeselectedDisplayInSetting.addAll(deselectedDisplayInSetting);
-		  }
-	  });
-	  loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(true, setOfSelectedDisplayInSetting);
-	  loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(false, setOfDeselectedDisplayInSetting);
+    Set<Long> setOfSelectedDisplayInSetting = new LinkedHashSet<>();
+    Set<Long> setOfDeselectedDisplayInSetting = new LinkedHashSet<>();
+
+    vesselRuleReply.getRulePlanList().stream()
+        .forEach(
+            item -> {
+              Set<Long> selectedDisplayInSetting =
+                  item.getRulesList().stream()
+                      .filter(
+                          rules ->
+                              rules.getDisplayInSettings()
+                                  && rules.getVesselRuleXId() != null
+                                  && rules.getVesselRuleXId() != "")
+                      .map(id -> Long.parseLong(id.getVesselRuleXId()))
+                      .collect(Collectors.toSet());
+              Set<Long> deselectedDisplayInSetting =
+                  item.getRulesList().stream()
+                      .filter(
+                          rules ->
+                              !rules.getDisplayInSettings()
+                                  && rules.getVesselRuleXId() != null
+                                  && rules.getVesselRuleXId() != "")
+                      .map(id -> Long.parseLong(id.getVesselRuleXId()))
+                      .collect(Collectors.toSet());
+              if (selectedDisplayInSetting != null && selectedDisplayInSetting.size() > 0) {
+                setOfSelectedDisplayInSetting.addAll(selectedDisplayInSetting);
+              }
+              if (deselectedDisplayInSetting != null && deselectedDisplayInSetting.size() > 0) {
+                setOfDeselectedDisplayInSetting.addAll(deselectedDisplayInSetting);
+              }
+            });
+    loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(
+        true, setOfSelectedDisplayInSetting);
+    loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(
+        false, setOfDeselectedDisplayInSetting);
   }
 
   private void ruleMasterDropDownValidation(

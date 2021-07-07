@@ -6,7 +6,6 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyRules;
 import java.util.List;
 import java.util.Set;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,9 +25,11 @@ public interface LoadableStudyRuleRepository
   @Modifying
   @Query("UPDATE LoadableStudyRules SET isActive = false WHERE id IN (:id)")
   int updateLoadbleStudyRulesStatus(@Param("id") List<Long> id);
-  
+
   @Modifying
-  @Query("UPDATE LoadableStudyRules SET displayInSettings = (:displayInSettings) WHERE vesselRuleXId IN (:vesselRuleXId)")
-  int updateDisplayInSettingInLoadbleStudyRules(@Param("displayInSettings") Boolean displayInSettings,
-		  @Param("vesselRuleXId") Set<Long> vesselRuleXId);
+  @Query(
+      "UPDATE LoadableStudyRules SET displayInSettings = (:displayInSettings) WHERE vesselRuleXId IN (:vesselRuleXId)")
+  int updateDisplayInSettingInLoadbleStudyRules(
+      @Param("displayInSettings") Boolean displayInSettings,
+      @Param("vesselRuleXId") Set<Long> vesselRuleXId);
 }
