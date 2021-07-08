@@ -413,7 +413,7 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudyPortList() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
@@ -421,7 +421,7 @@ class LoadableStudyServiceTest {
         .thenReturn(this.generatePortRotationReply(false).build());
     PortRotationResponse response =
         this.loadableStudyService.getLoadableStudyPortRotationList(
-            1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE);
+            1L, 1L, 1L, Common.PLANNING_TYPE.LOADABLE_STUDY, CORRELATION_ID_HEADER_VALUE);
     assertAll(
         () ->
             assertEquals(
@@ -436,7 +436,7 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudyPortListFailureScenario() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenCallRealMethod();
     PortRotationReply.Builder reply = this.generatePortRotationReply(false);
     reply.setResponseStatus(
@@ -454,7 +454,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadableStudyPortRotationList(
-                    1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
+                    1L, 1L, 1L, Common.PLANNING_TYPE.DISCHARGE_STUDY, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
@@ -464,7 +464,7 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudyPortListWithEmptyData() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenCallRealMethod();
     PortRotationReply.Builder reply = this.generatePortRotationReply(true);
     Mockito.when(
@@ -474,7 +474,7 @@ class LoadableStudyServiceTest {
 
     PortRotationResponse response =
         this.loadableStudyService.getLoadableStudyPortRotationList(
-            1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE);
+            1L, 1L, 1L, Common.PLANNING_TYPE.LOADABLE_STUDY, CORRELATION_ID_HEADER_VALUE);
     assertAll(
         () ->
             assertEquals(

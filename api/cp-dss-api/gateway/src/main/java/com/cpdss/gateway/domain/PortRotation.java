@@ -4,6 +4,7 @@ package com.cpdss.gateway.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -56,4 +57,8 @@ public class PortRotation {
   private Long portTimezoneId = 0l;
 
   private String type;
+
+  private Long dischargeStudyId;
+
+  private List<CargoNomination> cargoNominationList;
 }

@@ -6,6 +6,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
@@ -37,7 +38,7 @@ public class DischargePlanController {
   /**
    * Delete port rotation by id
    *
-   * @param id
+   * @param dischargeStudyId
    * @param headers
    * @return
    * @throws CommonRestException
@@ -375,6 +376,40 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when saving on hand quantities", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/cargoByPort")
+  public DischargeStudyCargoResponse getDischargeStudyCargoByVoyage(
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long vesselId,
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long voyageId,
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargeStudyId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeStudyService.getDischargeStudyCargoByVoyage(
+          vesselId, voyageId, dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching getDischargeStudyByVoyage", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error fetching getDischargeStudyByVoyage", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
