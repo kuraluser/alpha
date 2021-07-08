@@ -46,4 +46,5 @@ public class LoadableStudiesConstants {
   public static final Long CONFIRMED_STATUS_ID = 2L;
   public static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   public static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
+  public static final String VOYAGE_EXISTS = "VOYAGE_EXISTS";
 }

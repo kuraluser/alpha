@@ -387,6 +387,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired SynopticService synopticService;
   @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
   @Autowired LoadableStudyRuleRepository loadableStudyRuleRepository;
+  @Autowired LoadablePatternService loadablePatternService;
 
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
@@ -632,51 +633,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public void saveVoyage(VoyageRequest request, StreamObserver<VoyageReply> responseObserver) {
     VoyageReply reply = null;
     try {
-      // validation for duplicate voyages
-      if (!voyageRepository
-          .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
-              request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
-          .isEmpty()) {
-        reply =
-            VoyageReply.newBuilder()
-                .setResponseStatus(
-                    StatusReply.newBuilder()
-                        .setStatus(FAILED)
-                        .setMessage(VOYAGEEXISTS)
-                        .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS))
-                .build();
-      } else {
-
-        Voyage voyage = new Voyage();
-        voyage.setIsActive(true);
-        voyage.setCompanyXId(request.getCompanyId());
-        voyage.setVesselXId(request.getVesselId());
-        voyage.setVoyageNo(request.getVoyageNo());
-        voyage.setCaptainXId(request.getCaptainId());
-        voyage.setChiefOfficerXId(request.getChiefOfficerId());
-        voyage.setVoyageStartDate(
-            !StringUtils.isEmpty(request.getStartDate())
-                ? LocalDateTime.from(
-                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getStartDate()))
-                : null);
-        voyage.setVoyageEndDate(
-            !StringUtils.isEmpty(request.getEndDate())
-                ? LocalDateTime.from(
-                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
-                : null);
-        voyage.setStartTimezoneId((long) request.getStartTimezoneId());
-        voyage.setEndTimezoneId((long) request.getEndTimezoneId());
-        voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
-        voyage = voyageRepository.save(voyage);
-        // when Db save is complete we return to client a success message
-        reply =
-            VoyageReply.newBuilder()
-                .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
-                .setVoyageId(voyage.getId())
-                .build();
-      }
+      reply = voyageService.saveVoyage(request);
     } catch (Exception e) {
-
       log.error("Error in saving Voyage ", e);
       reply =
           VoyageReply.newBuilder()
@@ -733,134 +691,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(loadableQuantityReply);
       responseObserver.onCompleted();
-    }
-  }
-
-  private void copyRequestLQToEntity(
-      LoadableQuantityRequest loadableQuantityRequest, LoadableQuantity loadableQuantity) {
-    loadableQuantity.setConstant(
-        StringUtils.isEmpty(loadableQuantityRequest.getConstant())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getConstant()));
-    loadableQuantity.setDeadWeight(
-        StringUtils.isEmpty(loadableQuantityRequest.getDwt())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getDwt()));
-
-    loadableQuantity.setDisplacementAtDraftRestriction(
-        StringUtils.isEmpty(loadableQuantityRequest.getDisplacmentDraftRestriction())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getDisplacmentDraftRestriction()));
-    loadableQuantity.setDistanceFromLastPort(
-        StringUtils.isEmpty(loadableQuantityRequest.getDistanceFromLastPort())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
-
-    loadableQuantity.setEstimatedDOOnBoard(
-        StringUtils.isEmpty(loadableQuantityRequest.getEstDOOnBoard())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
-
-    loadableQuantity.setEstimatedFOOnBoard(
-        StringUtils.isEmpty(loadableQuantityRequest.getEstFOOnBoard())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
-    loadableQuantity.setEstimatedFWOnBoard(
-        StringUtils.isEmpty(loadableQuantityRequest.getEstFreshWaterOnBoard())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
-    loadableQuantity.setEstimatedSagging(
-        StringUtils.isEmpty(loadableQuantityRequest.getEstSagging())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getEstSagging()));
-
-    loadableQuantity.setEstimatedSeaDensity(
-        StringUtils.isEmpty(loadableQuantityRequest.getEstSeaDensity())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getEstSeaDensity()));
-
-    loadableQuantity.setLightWeight(
-        StringUtils.isEmpty(loadableQuantityRequest.getVesselLightWeight())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
-
-    loadableQuantity.setOtherIfAny(
-        StringUtils.isEmpty(loadableQuantityRequest.getOtherIfAny())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
-    loadableQuantity.setSaggingDeduction(
-        StringUtils.isEmpty(loadableQuantityRequest.getSaggingDeduction())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
-
-    loadableQuantity.setSgCorrection(
-        StringUtils.isEmpty(loadableQuantityRequest.getSgCorrection())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getSgCorrection()));
-
-    loadableQuantity.setTotalQuantity(
-        StringUtils.isEmpty(loadableQuantityRequest.getTotalQuantity())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
-    loadableQuantity.setTpcatDraft(
-        StringUtils.isEmpty(loadableQuantityRequest.getTpc())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getTpc()));
-
-    loadableQuantity.setVesselAverageSpeed(
-        StringUtils.isEmpty(loadableQuantityRequest.getVesselAverageSpeed())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getVesselAverageSpeed()));
-
-    loadableQuantity.setPortId(
-        StringUtils.isEmpty(loadableQuantityRequest.getPortId())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getPortId()));
-    loadableQuantity.setBoilerWaterOnBoard(
-        StringUtils.isEmpty(loadableQuantityRequest.getBoilerWaterOnBoard())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getBoilerWaterOnBoard()));
-    loadableQuantity.setBallast(
-        StringUtils.isEmpty(loadableQuantityRequest.getBallast())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getBallast()));
-    loadableQuantity.setRunningHours(
-        StringUtils.isEmpty(loadableQuantityRequest.getRunningHours())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getRunningHours()));
-    loadableQuantity.setRunningDays(
-        StringUtils.isEmpty(loadableQuantityRequest.getRunningDays())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getRunningDays()));
-    loadableQuantity.setFoConsumptionInSZ(
-        StringUtils.isEmpty(loadableQuantityRequest.getFoConInSZ())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getFoConInSZ()));
-    loadableQuantity.setDraftRestriction(
-        StringUtils.isEmpty(loadableQuantityRequest.getDraftRestriction())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getDraftRestriction()));
-
-    loadableQuantity.setSubTotal(
-        StringUtils.isEmpty(loadableQuantityRequest.getSubTotal())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getSubTotal()));
-    loadableQuantity.setFoConsumptionPerDay(
-        StringUtils.isEmpty(loadableQuantityRequest.getFoConsumptionPerDay())
-            ? null
-            : new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
-    loadableQuantity.setIsActive(true);
-
-    if (loadableQuantityRequest.getPortRotationId() > 0) {
-      log.info(
-          "Save Loadable Quantity, port rotation id : {}",
-          loadableQuantityRequest.getPortRotationId());
-      long id = loadableQuantityRequest.getPortRotationId();
-      LoadableStudyPortRotation lsPortRot =
-          loadableStudyPortRotationRepository.findByIdAndIsActive(id, true);
-      if (lsPortRot != null) {
-        loadableQuantity.setLoadableStudyPortRotation(lsPortRot);
-      }
     }
   }
 
@@ -1029,7 +859,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableStudyDetail request, StreamObserver<LoadableStudyReply> responseObserver) {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
     LoadableStudy entity = null;
-    // VesselRuleReply vesselRuleReply = null;
     try {
 
       this.voyageService.checkIfVoyageClosed(request.getVoyageId());
@@ -1045,7 +874,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity = loadableStudy.get();
 
-        this.isPatternGeneratedOrConfirmed(entity);
+        loadablePatternService.isPatternGeneratedOrConfirmed(entity);
         List<LoadableQuantity> loadableQuantity =
             this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
                 loadableStudy.get().getId(), true);
@@ -1235,85 +1064,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   });
           loadableStudyRuleRepository.saveAll(listOfLSRules);
         }
-        /*  if (vesselRuleReply != null && vesselRuleReply.getRulePlanList().size() > 0) {
-          log.info("Rules has mapped against particular vessel");
-          List<LoadableStudyRules> listOfLSRules = new ArrayList<LoadableStudyRules>();
-          vesselRuleReply.getRulePlanList().stream()
-              .forEach(
-                  ruleList -> {
-                    ruleList
-                        .getRulesList()
-                        .forEach(
-                            vesselRule -> {
-                              LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
-                              loadableStudyRules.setLoadableStudy(currentLoableStudy);
-                              Optional.ofNullable(vesselRule.getVesselRuleXId())
-                                  .ifPresent(
-                                      item ->
-                                          loadableStudyRules.setVesselRuleXId(
-                                              Long.parseLong(item)));
-                              Optional.ofNullable(request.getVesselId())
-                                  .ifPresent(item -> loadableStudyRules.setVesselXId(item));
-
-                              if (vesselRule.getRuleType() != null
-                                  && vesselRule
-                                      .getRuleType()
-                                      .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
-                                loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
-                              }
-                              if (vesselRule.getRuleType() != null
-                                  && vesselRule
-                                      .getRuleType()
-                                      .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
-                                loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
-                              }
-                              Optional.ofNullable(vesselRule.getDisplayInSettings())
-                                  .ifPresent(loadableStudyRules::setDisplayInSettings);
-                              Optional.ofNullable(vesselRule.getEnable())
-                                  .ifPresent(loadableStudyRules::setIsEnable);
-                              Optional.ofNullable(vesselRule.getIsHardRule())
-                                  .ifPresent(loadableStudyRules::setIsHardRule);
-                              Optional.ofNullable(vesselRule.getNumericPrecision())
-                                  .ifPresent(loadableStudyRules::setNumericPrecision);
-                              Optional.ofNullable(vesselRule.getNumericScale())
-                                  .ifPresent(loadableStudyRules::setNumericScale);
-                              Optional.ofNullable(vesselRule.getRuleTemplateId())
-                                  .ifPresent(
-                                      item ->
-                                          loadableStudyRules.setParentRuleXId(
-                                              Long.parseLong(item)));
-                              loadableStudyRules.setIsActive(true);
-                              List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
-                              vesselRule.getInputsList().stream()
-                                  .forEach(
-                                      vesselRuleInput -> {
-                                        LoadableStudyRuleInput loadableStudyRuleInput =
-                                            new LoadableStudyRuleInput();
-                                        loadableStudyRuleInput.setLoadableStudyRuleXId(
-                                            loadableStudyRules);
-                                        Optional.ofNullable(vesselRuleInput.getPrefix())
-                                            .ifPresent(loadableStudyRuleInput::setPrefix);
-                                        Optional.ofNullable(vesselRuleInput.getDefaultValue())
-                                            .ifPresent(loadableStudyRuleInput::setDefaultValue);
-                                        Optional.ofNullable(vesselRuleInput.getType())
-                                            .ifPresent(loadableStudyRuleInput::setTypeValue);
-                                        Optional.ofNullable(vesselRuleInput.getMax())
-                                            .ifPresent(loadableStudyRuleInput::setMaxValue);
-                                        Optional.ofNullable(vesselRuleInput.getMin())
-                                            .ifPresent(loadableStudyRuleInput::setMinValue);
-                                        Optional.ofNullable(vesselRuleInput.getSuffix())
-                                            .ifPresent(loadableStudyRuleInput::setSuffix);
-                                        Optional.ofNullable(vesselRuleInput.getIsMandatory())
-                                            .ifPresent(loadableStudyRuleInput::setIsMandatory);
-                                        loadableStudyRuleInput.setIsActive(true);
-                                        lisOfLsRulesInput.add(loadableStudyRuleInput);
-                                      });
-                              loadableStudyRules.setLoadableStudyRuleInputs(lisOfLsRulesInput);
-                              listOfLSRules.add(loadableStudyRules);
-                            });
-                  });
-          loadableStudyRuleRepository.saveAll(listOfLSRules);
-        }*/
       }
       replyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -1467,7 +1217,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       LoadableStudy loadableStudyRecord = loadableStudy.get();
       this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
-      this.isPatternGeneratedOrConfirmed(loadableStudy.get());
+      loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudy.get());
 
       CargoNomination cargoNomination = null;
       List<Long> existingCargoPortIds = null;
@@ -2318,7 +2068,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
       }
       if (!request.getIsLandingPage()) {
-        this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
+        loadablePatternService.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
       }
       entity =
           this.loadableStudyPortRotationRepository.save(
@@ -2373,7 +2123,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
-      this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
+      loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
       loadableStudy.setDischargeCargoNominationId(request.getCargoNominationId());
       loadableStudy.setIsDischargePortsComplete(request.getIsDischargingPortsComplete());
@@ -2690,7 +2440,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       this.voyageService.checkIfVoyageClosed(entity.getVoyage().getId());
 
-      this.isPatternGeneratedOrConfirmed(entity);
+      loadablePatternService.isPatternGeneratedOrConfirmed(entity);
 
       if (null != entity.getLoadableStudyStatus()
           && LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID.equals(
@@ -2820,7 +2570,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
-      this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
+      loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
       if (null != loadableStudy.getLoadableStudyStatus()
           && LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID.equals(
@@ -3270,7 +3020,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setPortXId(portRotation.getPortXId());
       }
       this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
-      this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
+      loadablePatternService.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
       entity = this.buildOnHandQuantityEntity(entity, request);
 
@@ -4840,7 +4590,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
-      this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
+      loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
 
       if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
         // for existing commingle cargo find missing ids in request and delete them
@@ -7742,7 +7492,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
       }
       this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
-      this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
+      loadablePatternService.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
       this.buildOnBoardQuantityEntity(entity, request);
       entity = this.onBoardQuantityRepository.save(entity);
@@ -10717,7 +10467,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
+      loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
 
       LoadableStudy entity = loadableStudyOpt.get();
@@ -13507,22 +13257,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  public void isPatternGeneratedOrConfirmed(LoadableStudy loadableStudy)
-      throws GenericServiceException {
-    List<LoadablePattern> generatedPatterns =
-        this.loadablePatternRepository.findLoadablePatterns(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
-    List<LoadablePattern> confirmedPatterns =
-        this.loadablePatternRepository.findLoadablePatterns(
-            CONFIRMED_STATUS_ID, loadableStudy, true);
-    if (!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty()) {
-      throw new GenericServiceException(
-          "Save/Edit/Delte not allowed for plan generated /confirmed loadable study",
-          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-          HttpStatusCode.BAD_REQUEST);
-    }
-  }
-
   private void validateSaveSynopticalOhqData(
       OnHandQuantity ohqEntity,
       SynopticalTable entity,
@@ -13620,7 +13354,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           HttpStatusCode.BAD_REQUEST);
     }
     this.voyageService.checkIfVoyageClosed(entityOpt.get().getVoyage().getId());
-    this.isPatternGeneratedOrConfirmed(entityOpt.get());
+    loadablePatternService.isPatternGeneratedOrConfirmed(entityOpt.get());
   }
 
   void validateSynopticalVesselData(

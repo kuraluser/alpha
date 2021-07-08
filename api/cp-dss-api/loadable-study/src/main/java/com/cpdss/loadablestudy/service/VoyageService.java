@@ -12,12 +12,17 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+
+import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * Master Service for Voyage Related Operations
@@ -31,6 +36,8 @@ public class VoyageService {
   @Autowired private VoyageRepository voyageRepository;
 
   @Autowired private LoadablePatternRepository loadablePatternRepository;
+
+  @Autowired private VoyageStatusRepository voyageStatusRepository;
 
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
@@ -158,4 +165,58 @@ public class VoyageService {
           HttpStatusCode.BAD_REQUEST);
     }
   }
+
+  /**
+   * Save Voyage
+   * @param request
+   * @return
+   */
+  LoadableStudy.VoyageReply saveVoyage(LoadableStudy.VoyageRequest request){
+    LoadableStudy.VoyageReply reply = null;
+    // validation for duplicate voyages
+    if (!voyageRepository
+            .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
+                    request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
+            .isEmpty()) {
+      reply =
+              LoadableStudy.VoyageReply.newBuilder()
+                      .setResponseStatus(
+                              LoadableStudy.StatusReply.newBuilder()
+                                      .setStatus(FAILED)
+                                      .setMessage(VOYAGE_EXISTS)
+                                      .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS))
+                      .build();
+    } else {
+
+      Voyage voyage = new Voyage();
+      voyage.setIsActive(true);
+      voyage.setCompanyXId(request.getCompanyId());
+      voyage.setVesselXId(request.getVesselId());
+      voyage.setVoyageNo(request.getVoyageNo());
+      voyage.setCaptainXId(request.getCaptainId());
+      voyage.setChiefOfficerXId(request.getChiefOfficerId());
+      voyage.setVoyageStartDate(
+              !StringUtils.isEmpty(request.getStartDate())
+                      ? LocalDateTime.from(
+                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getStartDate()))
+                      : null);
+      voyage.setVoyageEndDate(
+              !StringUtils.isEmpty(request.getEndDate())
+                      ? LocalDateTime.from(
+                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
+                      : null);
+      voyage.setStartTimezoneId((long) request.getStartTimezoneId());
+      voyage.setEndTimezoneId((long) request.getEndTimezoneId());
+      voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
+      voyage = voyageRepository.save(voyage);
+      // when Db save is complete we return to client a success message
+      reply =
+              LoadableStudy.VoyageReply.newBuilder()
+                      .setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
+                      .setVoyageId(voyage.getId())
+                      .build();
+    }
+    return reply;
+  }
+
 }
