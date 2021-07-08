@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -426,7 +427,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortList(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenReturn(new PortRotationResponse());
     this.mockMvc
         .perform(
@@ -446,7 +447,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListServiceException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenThrow(
             new GenericServiceException(
                 "test", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST));
@@ -468,7 +469,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListRuntimeException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(

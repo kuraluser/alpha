@@ -2,30 +2,25 @@
 package com.cpdss.gateway.service;
 
 import static java.lang.String.valueOf;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
-import com.cpdss.common.generated.dischargestudy.DischargeStudyServiceGrpc.DischargeStudyServiceBlockingStub;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.domain.BillOfLadding;
-import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
-import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
-import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
-import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
-import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
-import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationResponse;
-import java.util.ArrayList;
-import java.util.Optional;
+import com.cpdss.gateway.domain.DischargeStudy.*;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -40,8 +35,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class DischargeStudyService {
 
-  @GrpcClient("dischargeStudyService")
-  private DischargeStudyServiceBlockingStub dischargeStudyGrpcService;
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -76,7 +72,7 @@ public class DischargeStudyService {
           LoadingInformationSynopticalRequest.newBuilder();
       requestBuilder.setLoadablePatternId(patternReply.getPattern().getLoadablePatternId());
       LoadingInformationSynopticalReply grpcReply =
-          this.getDischargeStudyByVoyage(requestBuilder.build());
+          loadingInfoServiceBlockingStub.getLoadigInformationByVoyage(requestBuilder.build());
       if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Failed to fetch getDischargeStudyByVoyage",
@@ -94,8 +90,9 @@ public class DischargeStudyService {
       if (!SUCCESS.equals(loadableCommingleDetailsReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Failed to fetch getDischargeStudyByVoyage",
-            grpcReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+            loadableCommingleDetailsReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(
+                Integer.valueOf(loadableCommingleDetailsReply.getResponseStatus().getCode())));
       }
       dischargeStudyResponse.setLoadableQuantityCommingleCargoDetails(
           new ArrayList<LoadableQuantityCommingleCargoDetails>());
@@ -136,11 +133,6 @@ public class DischargeStudyService {
     return dischargeStudyResponse;
   }
 
-  public LoadingInformationSynopticalReply getDischargeStudyByVoyage(
-      LoadingInformationSynopticalRequest request) {
-    return this.dischargeStudyGrpcService.getDischargeStudyByVoyage(request);
-  }
-
   public PortRotationResponse getDischargeStudyPortDataByVoyage(
       Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
       throws GenericServiceException {
@@ -148,7 +140,11 @@ public class DischargeStudyService {
 
     response =
         loadableStudyService.getLoadableStudyPortRotationList(
-            vesselId, voyageId, dischargeStudyId, correlationId);
+            vesselId,
+            voyageId,
+            dischargeStudyId,
+            Common.PLANNING_TYPE.DISCHARGE_STUDY,
+            correlationId);
     return response;
   }
 
@@ -292,5 +288,98 @@ public class DischargeStudyService {
   public OnHandQuantityResponse saveOnHandQuantity(OnHandQuantity request, String correlationId)
       throws GenericServiceException {
     return this.loadableStudyService.saveOnHandQuantity(request, correlationId);
+  }
+
+  public DischargeStudyCargoResponse getDischargeStudyCargoByVoyage(
+      Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info(
+        "Inside getDischargeStudyCargoByVoyage gateway service with correlationId : "
+            + correlationId);
+    LoadableStudy.PortRotationRequest portRotationRequest =
+        LoadableStudy.PortRotationRequest.newBuilder().setLoadableStudyId(dischargeStudyId).build();
+    LoadableStudy.PortRotationReply portRotationReply =
+        loadableStudyService.getPortRotation(portRotationRequest);
+    if (!SUCCESS.equals(portRotationReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Port Rotation",
+          portRotationReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(portRotationReply.getResponseStatus().getCode())));
+    }
+    LoadableStudy.CargoNominationRequest cargoNominationRequest =
+        LoadableStudy.CargoNominationRequest.newBuilder()
+            .setLoadableStudyId(dischargeStudyId)
+            .build();
+    LoadableStudy.CargoNominationReply cargoNominationReply =
+        loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+    if (!SUCCESS.equals(cargoNominationReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Port Rotation",
+          cargoNominationReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(cargoNominationReply.getResponseStatus().getCode())));
+    }
+    DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
+    response.setDischargeStudyId(dischargeStudyId);
+    response.setPortList(new ArrayList<>());
+    buildDischargeStudyCargoResponse(response, portRotationReply, cargoNominationReply);
+
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private void buildDischargeStudyCargoResponse(
+      DischargeStudyCargoResponse response,
+      LoadableStudy.PortRotationReply portRotationReply,
+      LoadableStudy.CargoNominationReply grpcReply) {
+
+    Map<Long, List<LoadableStudy.CargoNominationDetail>> portIdsToCargoNominationMap =
+        grpcReply.getCargoNominationsList().stream()
+            .flatMap(
+                cargoNomination ->
+                    cargoNomination.getLoadingPortDetailsList().stream()
+                        .map(port -> new AbstractMap.SimpleEntry<>(cargoNomination, port)))
+            .collect(
+                Collectors.groupingBy(
+                    cargoNomination -> cargoNomination.getValue().getPortId(),
+                    Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
+
+    portRotationReply
+        .getPortsList()
+        .forEach(
+            port -> {
+              PortRotation portRotation = new PortRotation();
+              portRotation.setPortId(port.getPortId());
+              portRotation.setId(port.getId());
+              portRotation.setMaxDraft(
+                  (isEmpty(port.getMaxDraft()) || port.getMaxDraft().equals("null"))
+                      ? null
+                      : new BigDecimal(port.getMaxDraft()));
+              portRotation.setCargoNominationList(new ArrayList<>());
+              if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
+                List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
+                    portIdsToCargoNominationMap.get(port.getPortId());
+                buildCargoNomination(cargoNominationDetailList, portRotation);
+              }
+              response.getPortList().add(portRotation);
+            });
+  }
+
+  private void buildCargoNomination(
+      List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList,
+      PortRotation portRotation) {
+    cargoNominationDetailList.stream()
+        .forEach(
+            cargoNominationDetail -> {
+              CargoNomination cargoNomination = new CargoNomination();
+              cargoNomination.setId(cargoNominationDetail.getId());
+              cargoNomination.setPriority(cargoNominationDetail.getPriority());
+              cargoNomination.setColor(cargoNominationDetail.getColor());
+              cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+              cargoNomination.setAbbreviation(cargoNominationDetail.getAbbreviation());
+              cargoNomination.setQuantity(new BigDecimal(cargoNominationDetail.getQuantity()));
+              portRotation.getCargoNominationList().add(cargoNomination);
+            });
   }
 }

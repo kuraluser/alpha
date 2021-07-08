@@ -2100,6 +2100,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
             Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
+            ofNullable(cargoNomination.getQuantity())
+                .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
               cargoNomination
@@ -2788,6 +2790,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
                 builder.setPortId(port.getPortXId());
                 builder.setId(port.getId());
+                builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
                 portRotationReplyBuilder.addPorts(builder);
               });
           portRotationReplyBuilder

@@ -3,6 +3,7 @@ package com.cpdss.gateway.controller;
 
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoError;
@@ -437,7 +438,11 @@ public class LoadableStudyController {
     try {
       log.info("loadableStudyPortList: {}", getClientIp());
       return this.loadableStudyService.getLoadableStudyPortRotationList(
-          vesselId, voyageId, loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId,
+          voyageId,
+          loadableStudyId,
+          Common.PLANNING_TYPE.LOADABLE_STUDY,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when list loadable study - ports", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

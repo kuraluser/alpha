@@ -2,13 +2,12 @@
 package com.cpdss.vesselinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
 
 /** @author ravi.r */
 @Entity
@@ -48,5 +47,4 @@ public class BendingMomentType4 extends EntityDoc {
   @JoinColumn(name = "vessel_xid", referencedColumnName = "id")
   @ManyToOne
   private Vessel vessel;
-
 }

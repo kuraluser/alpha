@@ -888,11 +888,16 @@ public class LoadableStudyService {
    * @param vesselId - the vessle id
    * @param voyageId - the voyage id
    * @param loadableStudyId - the loadable study id
+   * @param planningType
    * @return {@link PortResponse}
    * @throws GenericServiceException
    */
   public PortRotationResponse getLoadableStudyPortRotationList(
-      Long vesselId, Long voyageId, Long loadableStudyId, String correlationId)
+      Long vesselId,
+      Long voyageId,
+      Long loadableStudyId,
+      Common.PLANNING_TYPE planningType,
+      String correlationId)
       throws GenericServiceException {
     PortRotationResponse response = new PortRotationResponse();
     PortRotationReply grpcReply =
@@ -915,7 +920,9 @@ public class LoadableStudyService {
       port.setPortId(0 == portDetail.getPortId() ? null : portDetail.getPortId());
       port.setBerthId(0 == portDetail.getBerthId() ? null : portDetail.getBerthId());
       port.setPortOrder(0 == portDetail.getPortOrder() ? null : portDetail.getPortOrder());
-      port.setLoadableStudyId(loadableStudyId);
+      if (planningType.equals(Common.PLANNING_TYPE.DISCHARGE_STUDY))
+        port.setDischargeStudyId(loadableStudyId);
+      else port.setLoadableStudyId(loadableStudyId);
       port.setOperationId(0 == portDetail.getOperationId() ? null : portDetail.getOperationId());
       port.setPortTimezoneId(
           0 == portDetail.getPortTimezoneId() ? null : portDetail.getPortTimezoneId());
@@ -4994,13 +5001,13 @@ public class LoadableStudyService {
         stabilityConditions.setCalculatedDraftFwdActual(
             synopticalRecord.get().getCalculatedDraftFwdActual());
         stabilityConditions.setCalculatedTrimPlanned(
-                synopticalRecord.get().getCalculatedTrimPlanned());
+            synopticalRecord.get().getCalculatedTrimPlanned());
         stabilityConditions.setCalculatedDraftAftPlanned(
-                synopticalRecord.get().getCalculatedDraftAftPlanned());
+            synopticalRecord.get().getCalculatedDraftAftPlanned());
         stabilityConditions.setCalculatedDraftFwdPlanned(
-                synopticalRecord.get().getCalculatedDraftFwdPlanned());
+            synopticalRecord.get().getCalculatedDraftFwdPlanned());
         stabilityConditions.setCalculatedDraftMidPlanned(
-                synopticalRecord.get().getCalculatedDraftMidPlanned());
+            synopticalRecord.get().getCalculatedDraftMidPlanned());
         stabilityConditions.setFinalDraftAft(synopticalRecord.get().getFinalDraftAft());
         stabilityConditions.setFinalDraftMid(synopticalRecord.get().getFinalDraftMid());
         stabilityConditions.setFinalDraftFwd(synopticalRecord.get().getFinalDraftFwd());
