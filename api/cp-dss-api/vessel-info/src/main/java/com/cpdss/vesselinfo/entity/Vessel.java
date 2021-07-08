@@ -192,4 +192,7 @@ public class Vessel extends EntityDoc {
 
   @Column(name = "min_load_rate")
   private BigDecimal minLoadRate;
+
+  @Column(name = "bm_sf_model_type")
+  private Integer bm_sf_model_type;
 }
