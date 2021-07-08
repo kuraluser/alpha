@@ -4,17 +4,17 @@ package com.cpdss.gateway.service;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail;
-import com.cpdss.common.generated.LoadableStudy.DischargeStudyReply;
-import com.cpdss.common.generated.LoadableStudy.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.dischargestudy.DischargeStudyServiceGrpc.DischargeStudyServiceBlockingStub;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
@@ -22,6 +22,8 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import java.util.ArrayList;
@@ -46,6 +48,10 @@ public class DischargeStudyService {
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
+
+  @GrpcClient("loadableStudyService")
+  private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
+      dischargeStudyOperationServiceBlockingStub;
 
   @Autowired LoadableStudyService loadableStudyService;
 
@@ -211,8 +217,7 @@ public class DischargeStudyService {
 
   public LoadableStudyResponse saveDischargeStudy(
       DischargeStudyRequest request, String correlationId) throws GenericServiceException {
-    com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.Builder builder =
-        DischargeStudyDetail.newBuilder();
+    DischargeStudyDetail.Builder builder = DischargeStudyDetail.newBuilder();
 
     Optional.ofNullable(request.getName()).ifPresent(builder::setName);
     Optional.ofNullable(request.getEnquiryDetails()).ifPresent(builder::setEnquiryDetails);
@@ -233,20 +238,20 @@ public class DischargeStudyService {
   }
 
   private DischargeStudyReply saveDischargeStudy(DischargeStudyDetail dischargeStudyDetail) {
-    return this.loadableStudyServiceBlockingStub.saveDischargeStudy(dischargeStudyDetail);
+    return this.dischargeStudyOperationServiceBlockingStub.saveDischargeStudy(dischargeStudyDetail);
   }
 
   private UpdateDischargeStudyReply updateDischargeStudy(
       DischargeStudyDetail dischargeStudyDetail) {
-    return this.loadableStudyServiceBlockingStub.updateDischargeStudy(dischargeStudyDetail);
+    return this.dischargeStudyOperationServiceBlockingStub.updateDischargeStudy(
+        dischargeStudyDetail);
   }
 
   public DischargeStudyUpdateResponse updateDischargeStudy(
       @Valid DischargeStudyRequest request, String correlationId, Long dischargeStudyId)
       throws GenericServiceException {
 
-    com.cpdss.common.generated.LoadableStudy.DischargeStudyDetail.Builder builder =
-        DischargeStudyDetail.newBuilder();
+    DischargeStudyDetail.Builder builder = DischargeStudyDetail.newBuilder();
 
     Optional.ofNullable(request.getName()).ifPresent(builder::setName);
     Optional.ofNullable(request.getEnquiryDetails()).ifPresent(builder::setEnquiryDetails);
@@ -287,6 +292,35 @@ public class DischargeStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     return loadableStudyService.buildOnHandQuantityResponse(grpcReply, correlationId);
+  }
+
+  public DischargeStudyResponse deleteDischargeStudy(Long dischargeStudyId, String correlationId)
+      throws GenericServiceException {
+
+    com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest.Builder
+        builder =
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
+                .newBuilder();
+
+    Optional.ofNullable(dischargeStudyId).ifPresent(builder::setDischargeStudyId);
+
+    DischargeStudyReply reply = this.deleteDischargeStudy(builder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to delete discharge study",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+    }
+    DischargeStudyResponse response = new DischargeStudyResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private DischargeStudyReply deleteDischargeStudy(
+      com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
+          dischargeStudyRequest) {
+    return dischargeStudyOperationServiceBlockingStub.deleteDischargeStudy(dischargeStudyRequest);
   }
 
   public OnHandQuantityResponse saveOnHandQuantity(OnHandQuantity request, String correlationId)

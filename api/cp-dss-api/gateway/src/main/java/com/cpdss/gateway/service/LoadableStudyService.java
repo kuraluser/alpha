@@ -4994,13 +4994,13 @@ public class LoadableStudyService {
         stabilityConditions.setCalculatedDraftFwdActual(
             synopticalRecord.get().getCalculatedDraftFwdActual());
         stabilityConditions.setCalculatedTrimPlanned(
-                synopticalRecord.get().getCalculatedTrimPlanned());
+            synopticalRecord.get().getCalculatedTrimPlanned());
         stabilityConditions.setCalculatedDraftAftPlanned(
-                synopticalRecord.get().getCalculatedDraftAftPlanned());
+            synopticalRecord.get().getCalculatedDraftAftPlanned());
         stabilityConditions.setCalculatedDraftFwdPlanned(
-                synopticalRecord.get().getCalculatedDraftFwdPlanned());
+            synopticalRecord.get().getCalculatedDraftFwdPlanned());
         stabilityConditions.setCalculatedDraftMidPlanned(
-                synopticalRecord.get().getCalculatedDraftMidPlanned());
+            synopticalRecord.get().getCalculatedDraftMidPlanned());
         stabilityConditions.setFinalDraftAft(synopticalRecord.get().getFinalDraftAft());
         stabilityConditions.setFinalDraftMid(synopticalRecord.get().getFinalDraftMid());
         stabilityConditions.setFinalDraftFwd(synopticalRecord.get().getFinalDraftFwd());
