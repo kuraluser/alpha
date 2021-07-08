@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
+
 /**
  * Master Service for Loadable Pattern
  *
@@ -21,10 +24,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class LoadablePatternService {
-
-    private static final Long CONFIRMED_STATUS_ID = 2L;
-
-    private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
 
     @Autowired private LoadablePatternRepository loadablePatternRepository;
 
