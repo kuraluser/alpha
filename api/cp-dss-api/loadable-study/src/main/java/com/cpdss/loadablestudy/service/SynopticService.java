@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.service.LoadableStudyService.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -11,6 +12,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
@@ -18,12 +20,14 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -219,5 +223,54 @@ public class SynopticService {
       this.synopticalTableRepository.save(table);
     } else
       throw new Exception("Cannot find synoptical table with id " + request.getSynopticalTableId());
+  }
+
+  /**
+   * Builds the port info in synoptical table
+   * @param entity
+   * @param requestedOperationId
+   * @param requestedPortId
+   */
+  public void buildPortsInfoSynopticalTable(
+          LoadableStudyPortRotation entity, Long requestedOperationId, Long requestedPortId) {
+    // build ports information to update synoptical table
+    if (requestedOperationId != 0
+            && !StringUtils.isEmpty(
+            com.cpdss.loadablestudy.domain.CargoOperation.getOperation(requestedOperationId))) {
+      List<SynopticalTable> synopticalTableEntityList = new ArrayList<>();
+      if (CARGO_OPERATION_ARR_DEP_SYNOPTICAL.contains(requestedOperationId)) {
+        buildSynopticalTableRecord(
+                requestedPortId, entity, synopticalTableEntityList, SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL);
+        buildSynopticalTableRecord(
+                requestedPortId, entity, synopticalTableEntityList, SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
+      }
+      if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
+        entity.getSynopticalTable().addAll(synopticalTableEntityList);
+      } else {
+        entity.setSynopticalTable(synopticalTableEntityList);
+      }
+    }
+  }
+
+  /**
+   * Builds the synoptical table records
+   *
+   * @param portId
+   * @param entity
+   * @param synopticalTableList
+   * @param portStage
+   */
+  private void buildSynopticalTableRecord(
+          Long portId,
+          LoadableStudyPortRotation entity,
+          List<SynopticalTable> synopticalTableList,
+          String portStage) {
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setLoadableStudyPortRotation(entity);
+    synopticalTable.setLoadableStudyXId(entity.getLoadableStudy().getId());
+    synopticalTable.setOperationType(portStage);
+    synopticalTable.setPortXid(0 == portId ? null : portId);
+    synopticalTable.setIsActive(true);
+    synopticalTableList.add(synopticalTable);
   }
 }

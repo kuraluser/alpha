@@ -396,11 +396,11 @@ public class LoadableQuantityService {
   /**
    * save Loadable Quantity
    * @param loadableQuantityRequest
+   * @param loadableQuantityReply
    * @return
    * @throws GenericServiceException
    */
-  com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest) throws GenericServiceException {
-    com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply loadableQuantityReply = null;
+  com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.Builder saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest, com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.Builder loadableQuantityReply) throws GenericServiceException {
     LoadableQuantity loadableQuantity = null;
     Optional<LoadableStudy> loadableStudy =
             loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
@@ -423,15 +423,13 @@ public class LoadableQuantityService {
       this.copyRequestLQToEntity(loadableQuantityRequest, loadableQuantity);
       loadableQuantity = loadableQuantityRepository.save(loadableQuantity);
       // when Db save is complete we return to client a success message
-      loadableQuantityReply =
-              com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.newBuilder()
+      loadableQuantityReply
                       .setResponseStatus(com.cpdss.common.generated.LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
                       .setLoadableQuantityId(loadableQuantity.getId())
                       .build();
     } else {
       log.info("INVALID_LOADABLE_STUDY {} - ", loadableQuantityRequest.getLoadableStudyId());
-      loadableQuantityReply =
-              com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.newBuilder()
+      loadableQuantityReply
                       .setResponseStatus(
                               com.cpdss.common.generated.LoadableStudy.StatusReply.newBuilder()
                                       .setStatus(FAILED)
@@ -568,6 +566,21 @@ public class LoadableQuantityService {
       if (lsPortRot != null) {
         loadableQuantity.setLoadableStudyPortRotation(lsPortRot);
       }
+    }
+  }
+
+  void saveLQuantity(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request, Optional<LoadableStudy> loadableStudy){
+    List<LoadableQuantity> loadableQuantity =
+            this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+                    loadableStudy.get().getId(), true);
+    if (null != loadableQuantity && !loadableQuantity.isEmpty()) {
+      loadableQuantity
+              .get(0)
+              .setDraftRestriction(
+                      StringUtils.isEmpty(request.getDraftMark())
+                              ? null
+                              : new BigDecimal(request.getDraftMark()));
+      this.loadableQuantityRepository.save(loadableQuantity.get(0));
     }
   }
 

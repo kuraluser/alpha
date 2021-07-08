@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
+import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
@@ -11,16 +12,22 @@ import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,6 +45,11 @@ public class VoyageService {
   @Autowired private LoadablePatternRepository loadablePatternRepository;
 
   @Autowired private VoyageStatusRepository voyageStatusRepository;
+
+  @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+
+  @Value("${loadablestudy.voyage.day.difference}")
+  private String dayDifference;
 
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
@@ -169,23 +181,20 @@ public class VoyageService {
   /**
    * Save Voyage
    * @param request
+   * @param builder
    * @return
    */
-  LoadableStudy.VoyageReply saveVoyage(LoadableStudy.VoyageRequest request){
-    LoadableStudy.VoyageReply reply = null;
+  LoadableStudy.VoyageReply.Builder saveVoyage(LoadableStudy.VoyageRequest request, LoadableStudy.VoyageReply.Builder builder){
     // validation for duplicate voyages
     if (!voyageRepository
             .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
                     request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
             .isEmpty()) {
-      reply =
-              LoadableStudy.VoyageReply.newBuilder()
-                      .setResponseStatus(
-                              LoadableStudy.StatusReply.newBuilder()
-                                      .setStatus(FAILED)
-                                      .setMessage(VOYAGE_EXISTS)
-                                      .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS))
-                      .build();
+      builder.setResponseStatus(
+              LoadableStudy.StatusReply.newBuilder()
+                      .setStatus(SUCCESS)
+                      .setMessage(SUCCESS).setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS)
+              .build());
     } else {
 
       Voyage voyage = new Voyage();
@@ -210,13 +219,80 @@ public class VoyageService {
       voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
       voyage = voyageRepository.save(voyage);
       // when Db save is complete we return to client a success message
-      reply =
-              LoadableStudy.VoyageReply.newBuilder()
-                      .setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
-                      .setVoyageId(voyage.getId())
-                      .build();
+      builder.setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
+              .setVoyageId(voyage.getId())
+              .build();
     }
-    return reply;
+    return builder;
   }
 
+
+  public LoadableStudy.VoyageListReply.Builder getVoyagesByVessel(LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder) {
+    List<Voyage> entityList =
+            this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(
+                    request.getVesselId(), true);
+    for (Voyage entity : entityList) {
+      LoadableStudy.VoyageDetail.Builder detailbuilder = LoadableStudy.VoyageDetail.newBuilder();
+      detailbuilder.setId(entity.getId());
+      detailbuilder.setVoyageNumber(entity.getVoyageNo());
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+      Optional.ofNullable(entity.getActualEndDate())
+              .ifPresent(
+                      actualEndDate -> detailbuilder.setActualEndDate(formatter.format(actualEndDate)));
+      Optional.ofNullable(entity.getActualStartDate())
+              .ifPresent(
+                      actualStartDate ->
+                              detailbuilder.setActualStartDate(formatter.format(actualStartDate)));
+      Optional.ofNullable(entity.getVoyageStartDate())
+              .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
+      ofNullable(entity.getVoyageEndDate())
+              .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
+      detailbuilder.setStatus(
+              entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
+      Optional.ofNullable(entity.getVoyageStatus())
+              .ifPresent(status -> detailbuilder.setStatusId(status.getId()));
+      // fetch the confirmed loadable study for active voyages
+      if (entity.getVoyageStatus() != null
+              && (STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())
+              || STATUS_CLOSE.equalsIgnoreCase(entity.getVoyageStatus().getName()))) {
+        Stream<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyStream =
+                ofNullable(entity.getLoadableStudies())
+                        .map(Collection::stream)
+                        .orElseGet(Stream::empty);
+        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
+                loadableStudyStream
+                        .filter(
+                                loadableStudyElement ->
+                                        (loadableStudyElement.getLoadableStudyStatus() != null
+                                                && STATUS_CONFIRMED.equalsIgnoreCase(
+                                                loadableStudyElement.getLoadableStudyStatus().getName())))
+                        .findFirst();
+
+        if (loadableStudy.isPresent()) {
+          detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
+          Long noOfDays = this.getNumberOfDays(loadableStudy.get());
+          Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
+        }
+      }
+      builder.addVoyages(detailbuilder.build());
+    }
+    builder.setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).build());
+    return builder;
+  }
+
+  private Long getNumberOfDays(com.cpdss.loadablestudy.entity.LoadableStudy entity) {
+    LoadableStudyPortRotation lastPort =
+            this.loadableStudyPortRotationRepository
+                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(entity, true);
+    Long daysBetween = null;
+
+    if (null != lastPort && null != lastPort.getEtd()) {
+
+      daysBetween = ChronoUnit.DAYS.between(LocalDate.now(), lastPort.getEtd().toLocalDate());
+    }
+    if (null != daysBetween && daysBetween <= Long.parseLong(dayDifference)) {
+      return daysBetween;
+    }
+    return null;
+  }
 }

@@ -2111,7 +2111,7 @@ class LoadableStudyServiceTest {
     return loadableQuantities;
   }
 
-  /** @return List<LoadableStudyPortRotation> */
+  /** @return List<LoadableStudyPortRotationService> */
   private List<LoadableStudyPortRotation> prepareLoadableStudyPortRotationDetails() {
     List<LoadableStudyPortRotation> loadableStudyPortRotations =
         new ArrayList<LoadableStudyPortRotation>();
