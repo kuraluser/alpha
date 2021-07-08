@@ -706,48 +706,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantityRequest loadableQuantityRequest,
       StreamObserver<LoadableQuantityReply> responseObserver) {
     LoadableQuantityReply loadableQuantityReply = null;
-    LoadableQuantity loadableQuantity = null;
     try {
-      Optional<LoadableStudy> loadableStudy =
-          loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
-      if (loadableStudy.isPresent()) {
-        this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
-
-        // One Loadable Quantity Record For One LS
-        List<LoadableQuantity> lqs =
-            loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
-                loadableStudy.get().getId(), true);
-        if (lqs.isEmpty()) {
-          loadableQuantity = new LoadableQuantity();
-        } else {
-          loadableQuantity = lqs.stream().findFirst().get();
-        }
-        // Code for Find By Id, removed.
-        log.info("Save Loadable Quantity, for Id {}", loadableQuantity.getId());
-
-        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
-        this.isPatternGeneratedOrConfirmed(loadableQuantity.getLoadableStudyXId());
-        this.copyRequestLQToEntity(loadableQuantityRequest, loadableQuantity);
-        loadableQuantity = loadableQuantityRepository.save(loadableQuantity);
-
-        // when Db save is complete we return to client a success message
-        loadableQuantityReply =
-            LoadableQuantityReply.newBuilder()
-                .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
-                .setLoadableQuantityId(loadableQuantity.getId())
-                .build();
-      } else {
-        log.info("INVALID_LOADABLE_STUDY {} - ", loadableQuantityRequest.getLoadableStudyId());
-        loadableQuantityReply =
-            LoadableQuantityReply.newBuilder()
-                .setResponseStatus(
-                    StatusReply.newBuilder()
-                        .setStatus(FAILED)
-                        .setMessage(INVALID_LOADABLE_QUANTITY)
-                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
-                        .setStatusCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
-                .build();
-      }
+      loadableQuantityReply =  loadableQuantityService.saveLoadableQuantity(loadableQuantityRequest);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable quantity", e);
       loadableQuantityReply =
