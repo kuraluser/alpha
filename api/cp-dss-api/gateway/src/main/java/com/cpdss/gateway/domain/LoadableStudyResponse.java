@@ -22,4 +22,8 @@ public class LoadableStudyResponse {
   private List<LoadableStudy> loadableStudies;
 
   private Long loadableStudyId;
+
+  private List<LoadableStudy> dischargeStudies;
+
+  private Long dischargeStudyId;
 }
