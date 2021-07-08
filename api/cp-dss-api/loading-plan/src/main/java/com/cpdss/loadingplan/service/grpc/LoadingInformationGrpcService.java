@@ -15,6 +15,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.Utils;
 import com.cpdss.loadingplan.domain.LoadingInfoResponse;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
@@ -107,6 +108,7 @@ public class LoadingInformationGrpcService
       LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
     LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
     try {
+      log.info("Save Loading Info Request : {}", Utils.toJson(request));
       log.info("Saving Loading Information for id {}", request.getLoadingDetail().getId());
       LoadingInfoResponse response = this.loadingInformationService.saveLoadingInformation(request);
       buildLoadingInfoSaveResponse(builder, response);

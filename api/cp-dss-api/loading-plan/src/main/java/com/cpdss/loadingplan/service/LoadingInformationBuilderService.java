@@ -9,11 +9,15 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class LoadingInformationBuilderService {
 
@@ -204,5 +208,89 @@ public class LoadingInformationBuilderService {
       toppingOffs.add(builder.build());
     }
     return toppingOffs;
+  }
+
+  public LoadingInformation buildLoadingInfoFromRpcMessage(
+      LoadingPlanModels.LoadingInformation source, LoadingInformation target) {
+
+    // Set Loading Details
+    if (source.getLoadingDetail() != null) {
+      log.info("Save Loading info, Set Loading Details");
+
+      if (!source.getLoadingDetail().getStartTime().isEmpty())
+        target.setStartTime(
+            LocalTime.from(TIME_FORMATTER.parse(source.getLoadingDetail().getStartTime())));
+
+      if (!source.getLoadingDetail().getTrimAllowed().getFinalTrim().isEmpty())
+        target.setFinalTrim(
+            new BigDecimal(source.getLoadingDetail().getTrimAllowed().getFinalTrim()));
+
+      if (!source.getLoadingDetail().getTrimAllowed().getInitialTrim().isEmpty())
+        target.setInitialTrim(
+            new BigDecimal(source.getLoadingDetail().getTrimAllowed().getInitialTrim()));
+
+      if (!source.getLoadingDetail().getTrimAllowed().getMaximumTrim().isEmpty())
+        target.setMaximumTrim(
+            new BigDecimal(source.getLoadingDetail().getTrimAllowed().getMaximumTrim()));
+    }
+
+    // Set Loading Rates
+    if (source.getLoadingRate() != null) {
+      log.info("Save Loading Info, Set Loading Rates");
+
+      if (!source.getLoadingRate().getLineContentRemaining().isEmpty())
+        target.setLineContentRemaining(
+            new BigDecimal(source.getLoadingRate().getLineContentRemaining()));
+
+      if (!source.getLoadingRate().getMaxDeBallastingRate().isEmpty())
+        target.setMaxDeBallastRate(
+            new BigDecimal(source.getLoadingRate().getMaxDeBallastingRate()));
+
+      if (!source.getLoadingRate().getMaxLoadingRate().isEmpty())
+        target.setMaxLoadingRate(new BigDecimal(source.getLoadingRate().getMaxLoadingRate()));
+
+      if (!source.getLoadingRate().getMinDeBallastingRate().isEmpty())
+        target.setMinDeBallastRate(
+            new BigDecimal(source.getLoadingRate().getMinDeBallastingRate()));
+
+      if (!source.getLoadingRate().getReducedLoadingRate().isEmpty())
+        target.setReducedLoadingRate(
+            new BigDecimal(source.getLoadingRate().getReducedLoadingRate()));
+
+      if (!source.getLoadingRate().getMinLoadingRate().isEmpty())
+        target.setMinLoadingRate(new BigDecimal(source.getLoadingRate().getMinLoadingRate()));
+
+      if (!source.getLoadingRate().getInitialLoadingRate().isEmpty())
+        target.setInitialLoadingRate(
+            new BigDecimal(source.getLoadingRate().getInitialLoadingRate()));
+
+      if (!source.getLoadingRate().getNoticeTimeRateReduction().isEmpty())
+        target.setNoticeTimeForRateReduction(
+            Integer.valueOf(source.getLoadingRate().getNoticeTimeRateReduction()));
+
+      if (!source.getLoadingRate().getNoticeTimeStopLoading().isEmpty())
+        target.setNoticeTimeForStopLoading(
+            Integer.valueOf(source.getLoadingRate().getNoticeTimeStopLoading()));
+    }
+
+    // Need proper test
+    if (source.getLoadingStage() != null) {
+      log.info("Save Loading Info, Set Loading Stages");
+
+      if (source.getLoadingStage().getTrackGradeSwitch())
+        target.setTrackGradeSwitch(source.getLoadingStage().getTrackGradeSwitch());
+
+      if (source.getLoadingStage().getTrackStartEndStage())
+        target.setTrackStartEndStage(source.getLoadingStage().getTrackStartEndStage());
+    }
+
+    // Need proper test
+    if (source.getLoadingBerthsCount() > 0) {
+      target.setIsLoadingInfoComplete(true);
+    } else {
+      target.setIsLoadingInfoComplete(false);
+    }
+
+    return target;
   }
 }

@@ -232,7 +232,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingDetail().getId());
     if (loadingInformationOpt.isPresent()) {
       LoadingInformation loadingInformation = loadingInformationOpt.get();
-      buildLoadingInformation(request, loadingInformation);
+      // buildLoadingInformation(request, loadingInformation);
+
+      informationBuilderService.buildLoadingInfoFromRpcMessage(request, loadingInformation);
+
       loadingInformationRepository.save(loadingInformation);
       loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList(), loadingInformation);
       loadingDelayService.saveLoadingDelayList(request.getLoadingDelays(), loadingInformation);
