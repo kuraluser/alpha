@@ -18,4 +18,8 @@ public class StabilityConditions {
   private BigDecimal calculatedDraftAftActual;
   private BigDecimal calculatedDraftMidActual;
   private BigDecimal calculatedTrimActual;
+  private BigDecimal calculatedDraftFwdPlanned;
+  private BigDecimal calculatedDraftAftPlanned;
+  private BigDecimal calculatedDraftMidPlanned;
+  private BigDecimal calculatedTrimPlanned;
 }
