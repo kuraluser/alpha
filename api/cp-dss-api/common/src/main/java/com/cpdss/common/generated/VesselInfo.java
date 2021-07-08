@@ -2895,6 +2895,18 @@ public final class VesselInfo {
      */
     com.google.protobuf.ByteString
         getMinLoadingRateBytes();
+
+    /**
+     * <code>string bmSfModelType = 44;</code>
+     * @return The bmSfModelType.
+     */
+    java.lang.String getBmSfModelType();
+    /**
+     * <code>string bmSfModelType = 44;</code>
+     * @return The bytes for bmSfModelType.
+     */
+    com.google.protobuf.ByteString
+        getBmSfModelTypeBytes();
   }
   /**
    * Protobuf type {@code VesselDetail}
@@ -2947,6 +2959,7 @@ public final class VesselInfo {
       centerTankLoadingRate_ = "";
       maxLoadingRate_ = "";
       minLoadingRate_ = "";
+      bmSfModelType_ = "";
     }
 
     @java.lang.Override
@@ -3234,6 +3247,12 @@ public final class VesselInfo {
               java.lang.String s = input.readStringRequireUtf8();
 
               minLoadingRate_ = s;
+              break;
+            }
+            case 354: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              bmSfModelType_ = s;
               break;
             }
             default: {
@@ -4688,6 +4707,42 @@ public final class VesselInfo {
       }
     }
 
+    public static final int BMSFMODELTYPE_FIELD_NUMBER = 44;
+    private volatile java.lang.Object bmSfModelType_;
+    /**
+     * <code>string bmSfModelType = 44;</code>
+     * @return The bmSfModelType.
+     */
+    public java.lang.String getBmSfModelType() {
+      java.lang.Object ref = bmSfModelType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        bmSfModelType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string bmSfModelType = 44;</code>
+     * @return The bytes for bmSfModelType.
+     */
+    public com.google.protobuf.ByteString
+        getBmSfModelTypeBytes() {
+      java.lang.Object ref = bmSfModelType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        bmSfModelType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4830,6 +4885,9 @@ public final class VesselInfo {
       }
       if (!getMinLoadingRateBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 43, minLoadingRate_);
+      }
+      if (!getBmSfModelTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 44, bmSfModelType_);
       }
       unknownFields.writeTo(output);
     }
@@ -4975,6 +5033,9 @@ public final class VesselInfo {
       if (!getMinLoadingRateBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(43, minLoadingRate_);
       }
+      if (!getBmSfModelTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(44, bmSfModelType_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -5076,6 +5137,8 @@ public final class VesselInfo {
           .equals(other.getMaxLoadingRate())) return false;
       if (!getMinLoadingRate()
           .equals(other.getMinLoadingRate())) return false;
+      if (!getBmSfModelType()
+          .equals(other.getBmSfModelType())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5180,6 +5243,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getMaxLoadingRate().hashCode();
       hash = (37 * hash) + MINLOADINGRATE_FIELD_NUMBER;
       hash = (53 * hash) + getMinLoadingRate().hashCode();
+      hash = (37 * hash) + BMSFMODELTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getBmSfModelType().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5404,6 +5469,8 @@ public final class VesselInfo {
 
         minLoadingRate_ = "";
 
+        bmSfModelType_ = "";
+
         return this;
       }
 
@@ -5482,6 +5549,7 @@ public final class VesselInfo {
         result.centerTankLoadingRate_ = centerTankLoadingRate_;
         result.maxLoadingRate_ = maxLoadingRate_;
         result.minLoadingRate_ = minLoadingRate_;
+        result.bmSfModelType_ = bmSfModelType_;
         onBuilt();
         return result;
       }
@@ -5717,6 +5785,10 @@ public final class VesselInfo {
         }
         if (!other.getMinLoadingRate().isEmpty()) {
           minLoadingRate_ = other.minLoadingRate_;
+          onChanged();
+        }
+        if (!other.getBmSfModelType().isEmpty()) {
+          bmSfModelType_ = other.bmSfModelType_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -8947,6 +9019,82 @@ public final class VesselInfo {
   checkByteStringIsUtf8(value);
         
         minLoadingRate_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object bmSfModelType_ = "";
+      /**
+       * <code>string bmSfModelType = 44;</code>
+       * @return The bmSfModelType.
+       */
+      public java.lang.String getBmSfModelType() {
+        java.lang.Object ref = bmSfModelType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          bmSfModelType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string bmSfModelType = 44;</code>
+       * @return The bytes for bmSfModelType.
+       */
+      public com.google.protobuf.ByteString
+          getBmSfModelTypeBytes() {
+        java.lang.Object ref = bmSfModelType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          bmSfModelType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string bmSfModelType = 44;</code>
+       * @param value The bmSfModelType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBmSfModelType(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        bmSfModelType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string bmSfModelType = 44;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBmSfModelType() {
+        
+        bmSfModelType_ = getDefaultInstance().getBmSfModelType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string bmSfModelType = 44;</code>
+       * @param value The bytes for bmSfModelType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBmSfModelTypeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        bmSfModelType_ = value;
         onChanged();
         return this;
       }
@@ -19552,6 +19700,9152 @@ public final class VesselInfo {
 
   }
 
+  public interface BendingMomentType2OrBuilder extends
+      // @@protoc_insertion_point(interface_extends:BendingMomentType2)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    java.lang.String getFrameNumber();
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    com.google.protobuf.ByteString
+        getFrameNumberBytes();
+
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The displacement.
+     */
+    java.lang.String getDisplacement();
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The bytes for displacement.
+     */
+    com.google.protobuf.ByteString
+        getDisplacementBytes();
+
+    /**
+     * <code>string buay = 4;</code>
+     * @return The buay.
+     */
+    java.lang.String getBuay();
+    /**
+     * <code>string buay = 4;</code>
+     * @return The bytes for buay.
+     */
+    com.google.protobuf.ByteString
+        getBuayBytes();
+
+    /**
+     * <code>string difft = 5;</code>
+     * @return The difft.
+     */
+    java.lang.String getDifft();
+    /**
+     * <code>string difft = 5;</code>
+     * @return The bytes for difft.
+     */
+    com.google.protobuf.ByteString
+        getDifftBytes();
+
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The corrt.
+     */
+    java.lang.String getCorrt();
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The bytes for corrt.
+     */
+    com.google.protobuf.ByteString
+        getCorrtBytes();
+
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The isActive.
+     */
+    java.lang.String getIsActive();
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The bytes for isActive.
+     */
+    com.google.protobuf.ByteString
+        getIsActiveBytes();
+  }
+  /**
+   * Protobuf type {@code BendingMomentType2}
+   */
+  public  static final class BendingMomentType2 extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:BendingMomentType2)
+      BendingMomentType2OrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use BendingMomentType2.newBuilder() to construct.
+    private BendingMomentType2(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private BendingMomentType2() {
+      frameNumber_ = "";
+      displacement_ = "";
+      buay_ = "";
+      difft_ = "";
+      corrt_ = "";
+      isActive_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new BendingMomentType2();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private BendingMomentType2(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              frameNumber_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              displacement_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              buay_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              difft_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              corrt_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              isActive_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType2_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType2_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.BendingMomentType2.class, com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int FRAMENUMBER_FIELD_NUMBER = 2;
+    private volatile java.lang.Object frameNumber_;
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    public java.lang.String getFrameNumber() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        frameNumber_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    public com.google.protobuf.ByteString
+        getFrameNumberBytes() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        frameNumber_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DISPLACEMENT_FIELD_NUMBER = 3;
+    private volatile java.lang.Object displacement_;
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The displacement.
+     */
+    public java.lang.String getDisplacement() {
+      java.lang.Object ref = displacement_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        displacement_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The bytes for displacement.
+     */
+    public com.google.protobuf.ByteString
+        getDisplacementBytes() {
+      java.lang.Object ref = displacement_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        displacement_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BUAY_FIELD_NUMBER = 4;
+    private volatile java.lang.Object buay_;
+    /**
+     * <code>string buay = 4;</code>
+     * @return The buay.
+     */
+    public java.lang.String getBuay() {
+      java.lang.Object ref = buay_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        buay_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string buay = 4;</code>
+     * @return The bytes for buay.
+     */
+    public com.google.protobuf.ByteString
+        getBuayBytes() {
+      java.lang.Object ref = buay_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        buay_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DIFFT_FIELD_NUMBER = 5;
+    private volatile java.lang.Object difft_;
+    /**
+     * <code>string difft = 5;</code>
+     * @return The difft.
+     */
+    public java.lang.String getDifft() {
+      java.lang.Object ref = difft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        difft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string difft = 5;</code>
+     * @return The bytes for difft.
+     */
+    public com.google.protobuf.ByteString
+        getDifftBytes() {
+      java.lang.Object ref = difft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        difft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CORRT_FIELD_NUMBER = 6;
+    private volatile java.lang.Object corrt_;
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The corrt.
+     */
+    public java.lang.String getCorrt() {
+      java.lang.Object ref = corrt_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        corrt_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The bytes for corrt.
+     */
+    public com.google.protobuf.ByteString
+        getCorrtBytes() {
+      java.lang.Object ref = corrt_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        corrt_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ISACTIVE_FIELD_NUMBER = 7;
+    private volatile java.lang.Object isActive_;
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The isActive.
+     */
+    public java.lang.String getIsActive() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        isActive_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The bytes for isActive.
+     */
+    public com.google.protobuf.ByteString
+        getIsActiveBytes() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        isActive_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, frameNumber_);
+      }
+      if (!getDisplacementBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, displacement_);
+      }
+      if (!getBuayBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, buay_);
+      }
+      if (!getDifftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, difft_);
+      }
+      if (!getCorrtBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, corrt_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, isActive_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, frameNumber_);
+      }
+      if (!getDisplacementBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, displacement_);
+      }
+      if (!getBuayBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, buay_);
+      }
+      if (!getDifftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, difft_);
+      }
+      if (!getCorrtBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, corrt_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, isActive_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.BendingMomentType2)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.BendingMomentType2 other = (com.cpdss.common.generated.VesselInfo.BendingMomentType2) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getFrameNumber()
+          .equals(other.getFrameNumber())) return false;
+      if (!getDisplacement()
+          .equals(other.getDisplacement())) return false;
+      if (!getBuay()
+          .equals(other.getBuay())) return false;
+      if (!getDifft()
+          .equals(other.getDifft())) return false;
+      if (!getCorrt()
+          .equals(other.getCorrt())) return false;
+      if (!getIsActive()
+          .equals(other.getIsActive())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + FRAMENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getFrameNumber().hashCode();
+      hash = (37 * hash) + DISPLACEMENT_FIELD_NUMBER;
+      hash = (53 * hash) + getDisplacement().hashCode();
+      hash = (37 * hash) + BUAY_FIELD_NUMBER;
+      hash = (53 * hash) + getBuay().hashCode();
+      hash = (37 * hash) + DIFFT_FIELD_NUMBER;
+      hash = (53 * hash) + getDifft().hashCode();
+      hash = (37 * hash) + CORRT_FIELD_NUMBER;
+      hash = (53 * hash) + getCorrt().hashCode();
+      hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+      hash = (53 * hash) + getIsActive().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.BendingMomentType2 prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code BendingMomentType2}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:BendingMomentType2)
+        com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType2_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType2_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.BendingMomentType2.class, com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.BendingMomentType2.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        frameNumber_ = "";
+
+        displacement_ = "";
+
+        buay_ = "";
+
+        difft_ = "";
+
+        corrt_ = "";
+
+        isActive_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType2_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2 getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.BendingMomentType2.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2 build() {
+        com.cpdss.common.generated.VesselInfo.BendingMomentType2 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2 buildPartial() {
+        com.cpdss.common.generated.VesselInfo.BendingMomentType2 result = new com.cpdss.common.generated.VesselInfo.BendingMomentType2(this);
+        result.id_ = id_;
+        result.frameNumber_ = frameNumber_;
+        result.displacement_ = displacement_;
+        result.buay_ = buay_;
+        result.difft_ = difft_;
+        result.corrt_ = corrt_;
+        result.isActive_ = isActive_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.BendingMomentType2) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.BendingMomentType2)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.BendingMomentType2 other) {
+        if (other == com.cpdss.common.generated.VesselInfo.BendingMomentType2.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getFrameNumber().isEmpty()) {
+          frameNumber_ = other.frameNumber_;
+          onChanged();
+        }
+        if (!other.getDisplacement().isEmpty()) {
+          displacement_ = other.displacement_;
+          onChanged();
+        }
+        if (!other.getBuay().isEmpty()) {
+          buay_ = other.buay_;
+          onChanged();
+        }
+        if (!other.getDifft().isEmpty()) {
+          difft_ = other.difft_;
+          onChanged();
+        }
+        if (!other.getCorrt().isEmpty()) {
+          corrt_ = other.corrt_;
+          onChanged();
+        }
+        if (!other.getIsActive().isEmpty()) {
+          isActive_ = other.isActive_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.BendingMomentType2 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.BendingMomentType2) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object frameNumber_ = "";
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The frameNumber.
+       */
+      public java.lang.String getFrameNumber() {
+        java.lang.Object ref = frameNumber_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          frameNumber_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The bytes for frameNumber.
+       */
+      public com.google.protobuf.ByteString
+          getFrameNumberBytes() {
+        java.lang.Object ref = frameNumber_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          frameNumber_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumber(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrameNumber() {
+        
+        frameNumber_ = getDefaultInstance().getFrameNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The bytes for frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumberBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object displacement_ = "";
+      /**
+       * <code>string displacement = 3;</code>
+       * @return The displacement.
+       */
+      public java.lang.String getDisplacement() {
+        java.lang.Object ref = displacement_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          displacement_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @return The bytes for displacement.
+       */
+      public com.google.protobuf.ByteString
+          getDisplacementBytes() {
+        java.lang.Object ref = displacement_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          displacement_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @param value The displacement to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacement(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        displacement_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDisplacement() {
+        
+        displacement_ = getDefaultInstance().getDisplacement();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @param value The bytes for displacement to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacementBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        displacement_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object buay_ = "";
+      /**
+       * <code>string buay = 4;</code>
+       * @return The buay.
+       */
+      public java.lang.String getBuay() {
+        java.lang.Object ref = buay_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          buay_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @return The bytes for buay.
+       */
+      public com.google.protobuf.ByteString
+          getBuayBytes() {
+        java.lang.Object ref = buay_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          buay_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @param value The buay to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBuay(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        buay_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBuay() {
+        
+        buay_ = getDefaultInstance().getBuay();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @param value The bytes for buay to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBuayBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        buay_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object difft_ = "";
+      /**
+       * <code>string difft = 5;</code>
+       * @return The difft.
+       */
+      public java.lang.String getDifft() {
+        java.lang.Object ref = difft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          difft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @return The bytes for difft.
+       */
+      public com.google.protobuf.ByteString
+          getDifftBytes() {
+        java.lang.Object ref = difft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          difft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @param value The difft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDifft(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        difft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDifft() {
+        
+        difft_ = getDefaultInstance().getDifft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @param value The bytes for difft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDifftBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        difft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object corrt_ = "";
+      /**
+       * <code>string corrt = 6;</code>
+       * @return The corrt.
+       */
+      public java.lang.String getCorrt() {
+        java.lang.Object ref = corrt_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          corrt_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @return The bytes for corrt.
+       */
+      public com.google.protobuf.ByteString
+          getCorrtBytes() {
+        java.lang.Object ref = corrt_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          corrt_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @param value The corrt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCorrt(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        corrt_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCorrt() {
+        
+        corrt_ = getDefaultInstance().getCorrt();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @param value The bytes for corrt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCorrtBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        corrt_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object isActive_ = "";
+      /**
+       * <code>string isActive = 7;</code>
+       * @return The isActive.
+       */
+      public java.lang.String getIsActive() {
+        java.lang.Object ref = isActive_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          isActive_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @return The bytes for isActive.
+       */
+      public com.google.protobuf.ByteString
+          getIsActiveBytes() {
+        java.lang.Object ref = isActive_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          isActive_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @param value The isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActive(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsActive() {
+        
+        isActive_ = getDefaultInstance().getIsActive();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @param value The bytes for isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActiveBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:BendingMomentType2)
+    }
+
+    // @@protoc_insertion_point(class_scope:BendingMomentType2)
+    private static final com.cpdss.common.generated.VesselInfo.BendingMomentType2 DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.BendingMomentType2();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType2 getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BendingMomentType2>
+        PARSER = new com.google.protobuf.AbstractParser<BendingMomentType2>() {
+      @java.lang.Override
+      public BendingMomentType2 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new BendingMomentType2(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<BendingMomentType2> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BendingMomentType2> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.BendingMomentType2 getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface BendingMomentType4OrBuilder extends
+      // @@protoc_insertion_point(interface_extends:BendingMomentType4)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    java.lang.String getFrameNumber();
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    com.google.protobuf.ByteString
+        getFrameNumberBytes();
+
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The trimM1.
+     */
+    java.lang.String getTrimM1();
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The bytes for trimM1.
+     */
+    com.google.protobuf.ByteString
+        getTrimM1Bytes();
+
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The trim0.
+     */
+    java.lang.String getTrim0();
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The bytes for trim0.
+     */
+    com.google.protobuf.ByteString
+        getTrim0Bytes();
+
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The trim1.
+     */
+    java.lang.String getTrim1();
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The bytes for trim1.
+     */
+    com.google.protobuf.ByteString
+        getTrim1Bytes();
+
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The trim2.
+     */
+    java.lang.String getTrim2();
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The bytes for trim2.
+     */
+    com.google.protobuf.ByteString
+        getTrim2Bytes();
+
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The trim3.
+     */
+    java.lang.String getTrim3();
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The bytes for trim3.
+     */
+    com.google.protobuf.ByteString
+        getTrim3Bytes();
+
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The trim4.
+     */
+    java.lang.String getTrim4();
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The bytes for trim4.
+     */
+    com.google.protobuf.ByteString
+        getTrim4Bytes();
+
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The trim5.
+     */
+    java.lang.String getTrim5();
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The bytes for trim5.
+     */
+    com.google.protobuf.ByteString
+        getTrim5Bytes();
+
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The isActive.
+     */
+    java.lang.String getIsActive();
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The bytes for isActive.
+     */
+    com.google.protobuf.ByteString
+        getIsActiveBytes();
+  }
+  /**
+   * Protobuf type {@code BendingMomentType4}
+   */
+  public  static final class BendingMomentType4 extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:BendingMomentType4)
+      BendingMomentType4OrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use BendingMomentType4.newBuilder() to construct.
+    private BendingMomentType4(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private BendingMomentType4() {
+      frameNumber_ = "";
+      trimM1_ = "";
+      trim0_ = "";
+      trim1_ = "";
+      trim2_ = "";
+      trim3_ = "";
+      trim4_ = "";
+      trim5_ = "";
+      isActive_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new BendingMomentType4();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private BendingMomentType4(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              frameNumber_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trimM1_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim0_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim1_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim2_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim3_ = s;
+              break;
+            }
+            case 66: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim4_ = s;
+              break;
+            }
+            case 74: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim5_ = s;
+              break;
+            }
+            case 82: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              isActive_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType4_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType4_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.BendingMomentType4.class, com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int FRAMENUMBER_FIELD_NUMBER = 2;
+    private volatile java.lang.Object frameNumber_;
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    public java.lang.String getFrameNumber() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        frameNumber_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    public com.google.protobuf.ByteString
+        getFrameNumberBytes() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        frameNumber_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_M1_FIELD_NUMBER = 3;
+    private volatile java.lang.Object trimM1_;
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The trimM1.
+     */
+    public java.lang.String getTrimM1() {
+      java.lang.Object ref = trimM1_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimM1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The bytes for trimM1.
+     */
+    public com.google.protobuf.ByteString
+        getTrimM1Bytes() {
+      java.lang.Object ref = trimM1_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trimM1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_0_FIELD_NUMBER = 4;
+    private volatile java.lang.Object trim0_;
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The trim0.
+     */
+    public java.lang.String getTrim0() {
+      java.lang.Object ref = trim0_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim0_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The bytes for trim0.
+     */
+    public com.google.protobuf.ByteString
+        getTrim0Bytes() {
+      java.lang.Object ref = trim0_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim0_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_1_FIELD_NUMBER = 5;
+    private volatile java.lang.Object trim1_;
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The trim1.
+     */
+    public java.lang.String getTrim1() {
+      java.lang.Object ref = trim1_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The bytes for trim1.
+     */
+    public com.google.protobuf.ByteString
+        getTrim1Bytes() {
+      java.lang.Object ref = trim1_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_2_FIELD_NUMBER = 6;
+    private volatile java.lang.Object trim2_;
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The trim2.
+     */
+    public java.lang.String getTrim2() {
+      java.lang.Object ref = trim2_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim2_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The bytes for trim2.
+     */
+    public com.google.protobuf.ByteString
+        getTrim2Bytes() {
+      java.lang.Object ref = trim2_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim2_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_3_FIELD_NUMBER = 7;
+    private volatile java.lang.Object trim3_;
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The trim3.
+     */
+    public java.lang.String getTrim3() {
+      java.lang.Object ref = trim3_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim3_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The bytes for trim3.
+     */
+    public com.google.protobuf.ByteString
+        getTrim3Bytes() {
+      java.lang.Object ref = trim3_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim3_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_4_FIELD_NUMBER = 8;
+    private volatile java.lang.Object trim4_;
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The trim4.
+     */
+    public java.lang.String getTrim4() {
+      java.lang.Object ref = trim4_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim4_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The bytes for trim4.
+     */
+    public com.google.protobuf.ByteString
+        getTrim4Bytes() {
+      java.lang.Object ref = trim4_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim4_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_5_FIELD_NUMBER = 9;
+    private volatile java.lang.Object trim5_;
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The trim5.
+     */
+    public java.lang.String getTrim5() {
+      java.lang.Object ref = trim5_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim5_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The bytes for trim5.
+     */
+    public com.google.protobuf.ByteString
+        getTrim5Bytes() {
+      java.lang.Object ref = trim5_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim5_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ISACTIVE_FIELD_NUMBER = 10;
+    private volatile java.lang.Object isActive_;
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The isActive.
+     */
+    public java.lang.String getIsActive() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        isActive_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The bytes for isActive.
+     */
+    public com.google.protobuf.ByteString
+        getIsActiveBytes() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        isActive_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, frameNumber_);
+      }
+      if (!getTrimM1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, trimM1_);
+      }
+      if (!getTrim0Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, trim0_);
+      }
+      if (!getTrim1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, trim1_);
+      }
+      if (!getTrim2Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, trim2_);
+      }
+      if (!getTrim3Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, trim3_);
+      }
+      if (!getTrim4Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, trim4_);
+      }
+      if (!getTrim5Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, trim5_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, isActive_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, frameNumber_);
+      }
+      if (!getTrimM1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, trimM1_);
+      }
+      if (!getTrim0Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, trim0_);
+      }
+      if (!getTrim1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, trim1_);
+      }
+      if (!getTrim2Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, trim2_);
+      }
+      if (!getTrim3Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, trim3_);
+      }
+      if (!getTrim4Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, trim4_);
+      }
+      if (!getTrim5Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, trim5_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, isActive_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.BendingMomentType4)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.BendingMomentType4 other = (com.cpdss.common.generated.VesselInfo.BendingMomentType4) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getFrameNumber()
+          .equals(other.getFrameNumber())) return false;
+      if (!getTrimM1()
+          .equals(other.getTrimM1())) return false;
+      if (!getTrim0()
+          .equals(other.getTrim0())) return false;
+      if (!getTrim1()
+          .equals(other.getTrim1())) return false;
+      if (!getTrim2()
+          .equals(other.getTrim2())) return false;
+      if (!getTrim3()
+          .equals(other.getTrim3())) return false;
+      if (!getTrim4()
+          .equals(other.getTrim4())) return false;
+      if (!getTrim5()
+          .equals(other.getTrim5())) return false;
+      if (!getIsActive()
+          .equals(other.getIsActive())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + FRAMENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getFrameNumber().hashCode();
+      hash = (37 * hash) + TRIM_M1_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimM1().hashCode();
+      hash = (37 * hash) + TRIM_0_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim0().hashCode();
+      hash = (37 * hash) + TRIM_1_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim1().hashCode();
+      hash = (37 * hash) + TRIM_2_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim2().hashCode();
+      hash = (37 * hash) + TRIM_3_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim3().hashCode();
+      hash = (37 * hash) + TRIM_4_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim4().hashCode();
+      hash = (37 * hash) + TRIM_5_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim5().hashCode();
+      hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+      hash = (53 * hash) + getIsActive().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.BendingMomentType4 prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code BendingMomentType4}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:BendingMomentType4)
+        com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType4_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType4_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.BendingMomentType4.class, com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.BendingMomentType4.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        frameNumber_ = "";
+
+        trimM1_ = "";
+
+        trim0_ = "";
+
+        trim1_ = "";
+
+        trim2_ = "";
+
+        trim3_ = "";
+
+        trim4_ = "";
+
+        trim5_ = "";
+
+        isActive_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentType4_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4 getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.BendingMomentType4.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4 build() {
+        com.cpdss.common.generated.VesselInfo.BendingMomentType4 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4 buildPartial() {
+        com.cpdss.common.generated.VesselInfo.BendingMomentType4 result = new com.cpdss.common.generated.VesselInfo.BendingMomentType4(this);
+        result.id_ = id_;
+        result.frameNumber_ = frameNumber_;
+        result.trimM1_ = trimM1_;
+        result.trim0_ = trim0_;
+        result.trim1_ = trim1_;
+        result.trim2_ = trim2_;
+        result.trim3_ = trim3_;
+        result.trim4_ = trim4_;
+        result.trim5_ = trim5_;
+        result.isActive_ = isActive_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.BendingMomentType4) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.BendingMomentType4)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.BendingMomentType4 other) {
+        if (other == com.cpdss.common.generated.VesselInfo.BendingMomentType4.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getFrameNumber().isEmpty()) {
+          frameNumber_ = other.frameNumber_;
+          onChanged();
+        }
+        if (!other.getTrimM1().isEmpty()) {
+          trimM1_ = other.trimM1_;
+          onChanged();
+        }
+        if (!other.getTrim0().isEmpty()) {
+          trim0_ = other.trim0_;
+          onChanged();
+        }
+        if (!other.getTrim1().isEmpty()) {
+          trim1_ = other.trim1_;
+          onChanged();
+        }
+        if (!other.getTrim2().isEmpty()) {
+          trim2_ = other.trim2_;
+          onChanged();
+        }
+        if (!other.getTrim3().isEmpty()) {
+          trim3_ = other.trim3_;
+          onChanged();
+        }
+        if (!other.getTrim4().isEmpty()) {
+          trim4_ = other.trim4_;
+          onChanged();
+        }
+        if (!other.getTrim5().isEmpty()) {
+          trim5_ = other.trim5_;
+          onChanged();
+        }
+        if (!other.getIsActive().isEmpty()) {
+          isActive_ = other.isActive_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.BendingMomentType4 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.BendingMomentType4) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object frameNumber_ = "";
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The frameNumber.
+       */
+      public java.lang.String getFrameNumber() {
+        java.lang.Object ref = frameNumber_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          frameNumber_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The bytes for frameNumber.
+       */
+      public com.google.protobuf.ByteString
+          getFrameNumberBytes() {
+        java.lang.Object ref = frameNumber_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          frameNumber_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumber(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrameNumber() {
+        
+        frameNumber_ = getDefaultInstance().getFrameNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The bytes for frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumberBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimM1_ = "";
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @return The trimM1.
+       */
+      public java.lang.String getTrimM1() {
+        java.lang.Object ref = trimM1_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimM1_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @return The bytes for trimM1.
+       */
+      public com.google.protobuf.ByteString
+          getTrimM1Bytes() {
+        java.lang.Object ref = trimM1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trimM1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @param value The trimM1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM1(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trimM1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimM1() {
+        
+        trimM1_ = getDefaultInstance().getTrimM1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @param value The bytes for trimM1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM1Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trimM1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim0_ = "";
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @return The trim0.
+       */
+      public java.lang.String getTrim0() {
+        java.lang.Object ref = trim0_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim0_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @return The bytes for trim0.
+       */
+      public com.google.protobuf.ByteString
+          getTrim0Bytes() {
+        java.lang.Object ref = trim0_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim0_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @param value The trim0 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim0(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim0_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim0() {
+        
+        trim0_ = getDefaultInstance().getTrim0();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @param value The bytes for trim0 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim0Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim0_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim1_ = "";
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @return The trim1.
+       */
+      public java.lang.String getTrim1() {
+        java.lang.Object ref = trim1_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim1_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @return The bytes for trim1.
+       */
+      public com.google.protobuf.ByteString
+          getTrim1Bytes() {
+        java.lang.Object ref = trim1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @param value The trim1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim1(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim1() {
+        
+        trim1_ = getDefaultInstance().getTrim1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @param value The bytes for trim1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim1Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim2_ = "";
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @return The trim2.
+       */
+      public java.lang.String getTrim2() {
+        java.lang.Object ref = trim2_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim2_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @return The bytes for trim2.
+       */
+      public com.google.protobuf.ByteString
+          getTrim2Bytes() {
+        java.lang.Object ref = trim2_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim2_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @param value The trim2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim2(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim2_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim2() {
+        
+        trim2_ = getDefaultInstance().getTrim2();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @param value The bytes for trim2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim2Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim2_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim3_ = "";
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @return The trim3.
+       */
+      public java.lang.String getTrim3() {
+        java.lang.Object ref = trim3_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim3_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @return The bytes for trim3.
+       */
+      public com.google.protobuf.ByteString
+          getTrim3Bytes() {
+        java.lang.Object ref = trim3_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim3_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @param value The trim3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim3(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim3_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim3() {
+        
+        trim3_ = getDefaultInstance().getTrim3();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @param value The bytes for trim3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim3Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim3_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim4_ = "";
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @return The trim4.
+       */
+      public java.lang.String getTrim4() {
+        java.lang.Object ref = trim4_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim4_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @return The bytes for trim4.
+       */
+      public com.google.protobuf.ByteString
+          getTrim4Bytes() {
+        java.lang.Object ref = trim4_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim4_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @param value The trim4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim4(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim4_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim4() {
+        
+        trim4_ = getDefaultInstance().getTrim4();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @param value The bytes for trim4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim4Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim4_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim5_ = "";
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @return The trim5.
+       */
+      public java.lang.String getTrim5() {
+        java.lang.Object ref = trim5_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim5_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @return The bytes for trim5.
+       */
+      public com.google.protobuf.ByteString
+          getTrim5Bytes() {
+        java.lang.Object ref = trim5_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim5_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @param value The trim5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim5(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim5_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim5() {
+        
+        trim5_ = getDefaultInstance().getTrim5();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @param value The bytes for trim5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim5Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim5_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object isActive_ = "";
+      /**
+       * <code>string isActive = 10;</code>
+       * @return The isActive.
+       */
+      public java.lang.String getIsActive() {
+        java.lang.Object ref = isActive_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          isActive_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @return The bytes for isActive.
+       */
+      public com.google.protobuf.ByteString
+          getIsActiveBytes() {
+        java.lang.Object ref = isActive_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          isActive_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @param value The isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActive(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsActive() {
+        
+        isActive_ = getDefaultInstance().getIsActive();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @param value The bytes for isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActiveBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:BendingMomentType4)
+    }
+
+    // @@protoc_insertion_point(class_scope:BendingMomentType4)
+    private static final com.cpdss.common.generated.VesselInfo.BendingMomentType4 DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.BendingMomentType4();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentType4 getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BendingMomentType4>
+        PARSER = new com.google.protobuf.AbstractParser<BendingMomentType4>() {
+      @java.lang.Override
+      public BendingMomentType4 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new BendingMomentType4(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<BendingMomentType4> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BendingMomentType4> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.BendingMomentType4 getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ShearingForceOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ShearingForce)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    java.lang.String getFrameNumber();
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    com.google.protobuf.ByteString
+        getFrameNumberBytes();
+
+    /**
+     * <code>string baseDraft = 3;</code>
+     * @return The baseDraft.
+     */
+    java.lang.String getBaseDraft();
+    /**
+     * <code>string baseDraft = 3;</code>
+     * @return The bytes for baseDraft.
+     */
+    com.google.protobuf.ByteString
+        getBaseDraftBytes();
+
+    /**
+     * <code>string baseValue = 4;</code>
+     * @return The baseValue.
+     */
+    java.lang.String getBaseValue();
+    /**
+     * <code>string baseValue = 4;</code>
+     * @return The bytes for baseValue.
+     */
+    com.google.protobuf.ByteString
+        getBaseValueBytes();
+
+    /**
+     * <code>string draftCorrection = 5;</code>
+     * @return The draftCorrection.
+     */
+    java.lang.String getDraftCorrection();
+    /**
+     * <code>string draftCorrection = 5;</code>
+     * @return The bytes for draftCorrection.
+     */
+    com.google.protobuf.ByteString
+        getDraftCorrectionBytes();
+
+    /**
+     * <code>string trimCorrection = 6;</code>
+     * @return The trimCorrection.
+     */
+    java.lang.String getTrimCorrection();
+    /**
+     * <code>string trimCorrection = 6;</code>
+     * @return The bytes for trimCorrection.
+     */
+    com.google.protobuf.ByteString
+        getTrimCorrectionBytes();
+  }
+  /**
+   * Protobuf type {@code ShearingForce}
+   */
+  public  static final class ShearingForce extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ShearingForce)
+      ShearingForceOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ShearingForce.newBuilder() to construct.
+    private ShearingForce(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ShearingForce() {
+      frameNumber_ = "";
+      baseDraft_ = "";
+      baseValue_ = "";
+      draftCorrection_ = "";
+      trimCorrection_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ShearingForce();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ShearingForce(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              frameNumber_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              baseDraft_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              baseValue_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              draftCorrection_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trimCorrection_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.ShearingForce.class, com.cpdss.common.generated.VesselInfo.ShearingForce.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int FRAMENUMBER_FIELD_NUMBER = 2;
+    private volatile java.lang.Object frameNumber_;
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    public java.lang.String getFrameNumber() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        frameNumber_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    public com.google.protobuf.ByteString
+        getFrameNumberBytes() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        frameNumber_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BASEDRAFT_FIELD_NUMBER = 3;
+    private volatile java.lang.Object baseDraft_;
+    /**
+     * <code>string baseDraft = 3;</code>
+     * @return The baseDraft.
+     */
+    public java.lang.String getBaseDraft() {
+      java.lang.Object ref = baseDraft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        baseDraft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string baseDraft = 3;</code>
+     * @return The bytes for baseDraft.
+     */
+    public com.google.protobuf.ByteString
+        getBaseDraftBytes() {
+      java.lang.Object ref = baseDraft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        baseDraft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BASEVALUE_FIELD_NUMBER = 4;
+    private volatile java.lang.Object baseValue_;
+    /**
+     * <code>string baseValue = 4;</code>
+     * @return The baseValue.
+     */
+    public java.lang.String getBaseValue() {
+      java.lang.Object ref = baseValue_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        baseValue_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string baseValue = 4;</code>
+     * @return The bytes for baseValue.
+     */
+    public com.google.protobuf.ByteString
+        getBaseValueBytes() {
+      java.lang.Object ref = baseValue_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        baseValue_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DRAFTCORRECTION_FIELD_NUMBER = 5;
+    private volatile java.lang.Object draftCorrection_;
+    /**
+     * <code>string draftCorrection = 5;</code>
+     * @return The draftCorrection.
+     */
+    public java.lang.String getDraftCorrection() {
+      java.lang.Object ref = draftCorrection_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        draftCorrection_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string draftCorrection = 5;</code>
+     * @return The bytes for draftCorrection.
+     */
+    public com.google.protobuf.ByteString
+        getDraftCorrectionBytes() {
+      java.lang.Object ref = draftCorrection_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        draftCorrection_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIMCORRECTION_FIELD_NUMBER = 6;
+    private volatile java.lang.Object trimCorrection_;
+    /**
+     * <code>string trimCorrection = 6;</code>
+     * @return The trimCorrection.
+     */
+    public java.lang.String getTrimCorrection() {
+      java.lang.Object ref = trimCorrection_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimCorrection_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trimCorrection = 6;</code>
+     * @return The bytes for trimCorrection.
+     */
+    public com.google.protobuf.ByteString
+        getTrimCorrectionBytes() {
+      java.lang.Object ref = trimCorrection_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trimCorrection_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, frameNumber_);
+      }
+      if (!getBaseDraftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, baseDraft_);
+      }
+      if (!getBaseValueBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, baseValue_);
+      }
+      if (!getDraftCorrectionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, draftCorrection_);
+      }
+      if (!getTrimCorrectionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, trimCorrection_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, frameNumber_);
+      }
+      if (!getBaseDraftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, baseDraft_);
+      }
+      if (!getBaseValueBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, baseValue_);
+      }
+      if (!getDraftCorrectionBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, draftCorrection_);
+      }
+      if (!getTrimCorrectionBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, trimCorrection_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.ShearingForce)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.ShearingForce other = (com.cpdss.common.generated.VesselInfo.ShearingForce) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getFrameNumber()
+          .equals(other.getFrameNumber())) return false;
+      if (!getBaseDraft()
+          .equals(other.getBaseDraft())) return false;
+      if (!getBaseValue()
+          .equals(other.getBaseValue())) return false;
+      if (!getDraftCorrection()
+          .equals(other.getDraftCorrection())) return false;
+      if (!getTrimCorrection()
+          .equals(other.getTrimCorrection())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + FRAMENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getFrameNumber().hashCode();
+      hash = (37 * hash) + BASEDRAFT_FIELD_NUMBER;
+      hash = (53 * hash) + getBaseDraft().hashCode();
+      hash = (37 * hash) + BASEVALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getBaseValue().hashCode();
+      hash = (37 * hash) + DRAFTCORRECTION_FIELD_NUMBER;
+      hash = (53 * hash) + getDraftCorrection().hashCode();
+      hash = (37 * hash) + TRIMCORRECTION_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimCorrection().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.ShearingForce prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ShearingForce}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ShearingForce)
+        com.cpdss.common.generated.VesselInfo.ShearingForceOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.ShearingForce.class, com.cpdss.common.generated.VesselInfo.ShearingForce.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.ShearingForce.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        frameNumber_ = "";
+
+        baseDraft_ = "";
+
+        baseValue_ = "";
+
+        draftCorrection_ = "";
+
+        trimCorrection_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForce getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.ShearingForce.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForce build() {
+        com.cpdss.common.generated.VesselInfo.ShearingForce result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForce buildPartial() {
+        com.cpdss.common.generated.VesselInfo.ShearingForce result = new com.cpdss.common.generated.VesselInfo.ShearingForce(this);
+        result.id_ = id_;
+        result.frameNumber_ = frameNumber_;
+        result.baseDraft_ = baseDraft_;
+        result.baseValue_ = baseValue_;
+        result.draftCorrection_ = draftCorrection_;
+        result.trimCorrection_ = trimCorrection_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.ShearingForce) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.ShearingForce)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.ShearingForce other) {
+        if (other == com.cpdss.common.generated.VesselInfo.ShearingForce.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getFrameNumber().isEmpty()) {
+          frameNumber_ = other.frameNumber_;
+          onChanged();
+        }
+        if (!other.getBaseDraft().isEmpty()) {
+          baseDraft_ = other.baseDraft_;
+          onChanged();
+        }
+        if (!other.getBaseValue().isEmpty()) {
+          baseValue_ = other.baseValue_;
+          onChanged();
+        }
+        if (!other.getDraftCorrection().isEmpty()) {
+          draftCorrection_ = other.draftCorrection_;
+          onChanged();
+        }
+        if (!other.getTrimCorrection().isEmpty()) {
+          trimCorrection_ = other.trimCorrection_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.ShearingForce parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.ShearingForce) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object frameNumber_ = "";
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The frameNumber.
+       */
+      public java.lang.String getFrameNumber() {
+        java.lang.Object ref = frameNumber_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          frameNumber_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The bytes for frameNumber.
+       */
+      public com.google.protobuf.ByteString
+          getFrameNumberBytes() {
+        java.lang.Object ref = frameNumber_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          frameNumber_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumber(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrameNumber() {
+        
+        frameNumber_ = getDefaultInstance().getFrameNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The bytes for frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumberBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object baseDraft_ = "";
+      /**
+       * <code>string baseDraft = 3;</code>
+       * @return The baseDraft.
+       */
+      public java.lang.String getBaseDraft() {
+        java.lang.Object ref = baseDraft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          baseDraft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string baseDraft = 3;</code>
+       * @return The bytes for baseDraft.
+       */
+      public com.google.protobuf.ByteString
+          getBaseDraftBytes() {
+        java.lang.Object ref = baseDraft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          baseDraft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string baseDraft = 3;</code>
+       * @param value The baseDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBaseDraft(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        baseDraft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string baseDraft = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBaseDraft() {
+        
+        baseDraft_ = getDefaultInstance().getBaseDraft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string baseDraft = 3;</code>
+       * @param value The bytes for baseDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBaseDraftBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        baseDraft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object baseValue_ = "";
+      /**
+       * <code>string baseValue = 4;</code>
+       * @return The baseValue.
+       */
+      public java.lang.String getBaseValue() {
+        java.lang.Object ref = baseValue_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          baseValue_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string baseValue = 4;</code>
+       * @return The bytes for baseValue.
+       */
+      public com.google.protobuf.ByteString
+          getBaseValueBytes() {
+        java.lang.Object ref = baseValue_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          baseValue_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string baseValue = 4;</code>
+       * @param value The baseValue to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBaseValue(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        baseValue_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string baseValue = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBaseValue() {
+        
+        baseValue_ = getDefaultInstance().getBaseValue();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string baseValue = 4;</code>
+       * @param value The bytes for baseValue to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBaseValueBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        baseValue_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object draftCorrection_ = "";
+      /**
+       * <code>string draftCorrection = 5;</code>
+       * @return The draftCorrection.
+       */
+      public java.lang.String getDraftCorrection() {
+        java.lang.Object ref = draftCorrection_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          draftCorrection_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string draftCorrection = 5;</code>
+       * @return The bytes for draftCorrection.
+       */
+      public com.google.protobuf.ByteString
+          getDraftCorrectionBytes() {
+        java.lang.Object ref = draftCorrection_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          draftCorrection_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string draftCorrection = 5;</code>
+       * @param value The draftCorrection to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftCorrection(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        draftCorrection_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftCorrection = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDraftCorrection() {
+        
+        draftCorrection_ = getDefaultInstance().getDraftCorrection();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftCorrection = 5;</code>
+       * @param value The bytes for draftCorrection to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftCorrectionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        draftCorrection_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimCorrection_ = "";
+      /**
+       * <code>string trimCorrection = 6;</code>
+       * @return The trimCorrection.
+       */
+      public java.lang.String getTrimCorrection() {
+        java.lang.Object ref = trimCorrection_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimCorrection_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trimCorrection = 6;</code>
+       * @return The bytes for trimCorrection.
+       */
+      public com.google.protobuf.ByteString
+          getTrimCorrectionBytes() {
+        java.lang.Object ref = trimCorrection_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trimCorrection_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trimCorrection = 6;</code>
+       * @param value The trimCorrection to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimCorrection(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trimCorrection_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimCorrection = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimCorrection() {
+        
+        trimCorrection_ = getDefaultInstance().getTrimCorrection();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimCorrection = 6;</code>
+       * @param value The bytes for trimCorrection to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimCorrectionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trimCorrection_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ShearingForce)
+    }
+
+    // @@protoc_insertion_point(class_scope:ShearingForce)
+    private static final com.cpdss.common.generated.VesselInfo.ShearingForce DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.ShearingForce();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ShearingForce getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ShearingForce>
+        PARSER = new com.google.protobuf.AbstractParser<ShearingForce>() {
+      @java.lang.Override
+      public ShearingForce parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ShearingForce(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ShearingForce> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ShearingForce> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.ShearingForce getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ShearingForceType2OrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ShearingForceType2)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    java.lang.String getFrameNumber();
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    com.google.protobuf.ByteString
+        getFrameNumberBytes();
+
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The displacement.
+     */
+    java.lang.String getDisplacement();
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The bytes for displacement.
+     */
+    com.google.protobuf.ByteString
+        getDisplacementBytes();
+
+    /**
+     * <code>string buay = 4;</code>
+     * @return The buay.
+     */
+    java.lang.String getBuay();
+    /**
+     * <code>string buay = 4;</code>
+     * @return The bytes for buay.
+     */
+    com.google.protobuf.ByteString
+        getBuayBytes();
+
+    /**
+     * <code>string difft = 5;</code>
+     * @return The difft.
+     */
+    java.lang.String getDifft();
+    /**
+     * <code>string difft = 5;</code>
+     * @return The bytes for difft.
+     */
+    com.google.protobuf.ByteString
+        getDifftBytes();
+
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The corrt.
+     */
+    java.lang.String getCorrt();
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The bytes for corrt.
+     */
+    com.google.protobuf.ByteString
+        getCorrtBytes();
+
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The isActive.
+     */
+    java.lang.String getIsActive();
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The bytes for isActive.
+     */
+    com.google.protobuf.ByteString
+        getIsActiveBytes();
+  }
+  /**
+   * Protobuf type {@code ShearingForceType2}
+   */
+  public  static final class ShearingForceType2 extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ShearingForceType2)
+      ShearingForceType2OrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ShearingForceType2.newBuilder() to construct.
+    private ShearingForceType2(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ShearingForceType2() {
+      frameNumber_ = "";
+      displacement_ = "";
+      buay_ = "";
+      difft_ = "";
+      corrt_ = "";
+      isActive_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ShearingForceType2();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ShearingForceType2(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              frameNumber_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              displacement_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              buay_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              difft_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              corrt_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              isActive_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType2_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType2_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.ShearingForceType2.class, com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int FRAMENUMBER_FIELD_NUMBER = 2;
+    private volatile java.lang.Object frameNumber_;
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    public java.lang.String getFrameNumber() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        frameNumber_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    public com.google.protobuf.ByteString
+        getFrameNumberBytes() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        frameNumber_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DISPLACEMENT_FIELD_NUMBER = 3;
+    private volatile java.lang.Object displacement_;
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The displacement.
+     */
+    public java.lang.String getDisplacement() {
+      java.lang.Object ref = displacement_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        displacement_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string displacement = 3;</code>
+     * @return The bytes for displacement.
+     */
+    public com.google.protobuf.ByteString
+        getDisplacementBytes() {
+      java.lang.Object ref = displacement_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        displacement_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BUAY_FIELD_NUMBER = 4;
+    private volatile java.lang.Object buay_;
+    /**
+     * <code>string buay = 4;</code>
+     * @return The buay.
+     */
+    public java.lang.String getBuay() {
+      java.lang.Object ref = buay_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        buay_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string buay = 4;</code>
+     * @return The bytes for buay.
+     */
+    public com.google.protobuf.ByteString
+        getBuayBytes() {
+      java.lang.Object ref = buay_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        buay_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DIFFT_FIELD_NUMBER = 5;
+    private volatile java.lang.Object difft_;
+    /**
+     * <code>string difft = 5;</code>
+     * @return The difft.
+     */
+    public java.lang.String getDifft() {
+      java.lang.Object ref = difft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        difft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string difft = 5;</code>
+     * @return The bytes for difft.
+     */
+    public com.google.protobuf.ByteString
+        getDifftBytes() {
+      java.lang.Object ref = difft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        difft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CORRT_FIELD_NUMBER = 6;
+    private volatile java.lang.Object corrt_;
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The corrt.
+     */
+    public java.lang.String getCorrt() {
+      java.lang.Object ref = corrt_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        corrt_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string corrt = 6;</code>
+     * @return The bytes for corrt.
+     */
+    public com.google.protobuf.ByteString
+        getCorrtBytes() {
+      java.lang.Object ref = corrt_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        corrt_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ISACTIVE_FIELD_NUMBER = 7;
+    private volatile java.lang.Object isActive_;
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The isActive.
+     */
+    public java.lang.String getIsActive() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        isActive_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string isActive = 7;</code>
+     * @return The bytes for isActive.
+     */
+    public com.google.protobuf.ByteString
+        getIsActiveBytes() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        isActive_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, frameNumber_);
+      }
+      if (!getDisplacementBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, displacement_);
+      }
+      if (!getBuayBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, buay_);
+      }
+      if (!getDifftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, difft_);
+      }
+      if (!getCorrtBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, corrt_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, isActive_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, frameNumber_);
+      }
+      if (!getDisplacementBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, displacement_);
+      }
+      if (!getBuayBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, buay_);
+      }
+      if (!getDifftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, difft_);
+      }
+      if (!getCorrtBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, corrt_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, isActive_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.ShearingForceType2)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.ShearingForceType2 other = (com.cpdss.common.generated.VesselInfo.ShearingForceType2) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getFrameNumber()
+          .equals(other.getFrameNumber())) return false;
+      if (!getDisplacement()
+          .equals(other.getDisplacement())) return false;
+      if (!getBuay()
+          .equals(other.getBuay())) return false;
+      if (!getDifft()
+          .equals(other.getDifft())) return false;
+      if (!getCorrt()
+          .equals(other.getCorrt())) return false;
+      if (!getIsActive()
+          .equals(other.getIsActive())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + FRAMENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getFrameNumber().hashCode();
+      hash = (37 * hash) + DISPLACEMENT_FIELD_NUMBER;
+      hash = (53 * hash) + getDisplacement().hashCode();
+      hash = (37 * hash) + BUAY_FIELD_NUMBER;
+      hash = (53 * hash) + getBuay().hashCode();
+      hash = (37 * hash) + DIFFT_FIELD_NUMBER;
+      hash = (53 * hash) + getDifft().hashCode();
+      hash = (37 * hash) + CORRT_FIELD_NUMBER;
+      hash = (53 * hash) + getCorrt().hashCode();
+      hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+      hash = (53 * hash) + getIsActive().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.ShearingForceType2 prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ShearingForceType2}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ShearingForceType2)
+        com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType2_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType2_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.ShearingForceType2.class, com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.ShearingForceType2.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        frameNumber_ = "";
+
+        displacement_ = "";
+
+        buay_ = "";
+
+        difft_ = "";
+
+        corrt_ = "";
+
+        isActive_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType2_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2 getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.ShearingForceType2.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2 build() {
+        com.cpdss.common.generated.VesselInfo.ShearingForceType2 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2 buildPartial() {
+        com.cpdss.common.generated.VesselInfo.ShearingForceType2 result = new com.cpdss.common.generated.VesselInfo.ShearingForceType2(this);
+        result.id_ = id_;
+        result.frameNumber_ = frameNumber_;
+        result.displacement_ = displacement_;
+        result.buay_ = buay_;
+        result.difft_ = difft_;
+        result.corrt_ = corrt_;
+        result.isActive_ = isActive_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.ShearingForceType2) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.ShearingForceType2)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.ShearingForceType2 other) {
+        if (other == com.cpdss.common.generated.VesselInfo.ShearingForceType2.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getFrameNumber().isEmpty()) {
+          frameNumber_ = other.frameNumber_;
+          onChanged();
+        }
+        if (!other.getDisplacement().isEmpty()) {
+          displacement_ = other.displacement_;
+          onChanged();
+        }
+        if (!other.getBuay().isEmpty()) {
+          buay_ = other.buay_;
+          onChanged();
+        }
+        if (!other.getDifft().isEmpty()) {
+          difft_ = other.difft_;
+          onChanged();
+        }
+        if (!other.getCorrt().isEmpty()) {
+          corrt_ = other.corrt_;
+          onChanged();
+        }
+        if (!other.getIsActive().isEmpty()) {
+          isActive_ = other.isActive_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.ShearingForceType2 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.ShearingForceType2) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object frameNumber_ = "";
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The frameNumber.
+       */
+      public java.lang.String getFrameNumber() {
+        java.lang.Object ref = frameNumber_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          frameNumber_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The bytes for frameNumber.
+       */
+      public com.google.protobuf.ByteString
+          getFrameNumberBytes() {
+        java.lang.Object ref = frameNumber_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          frameNumber_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumber(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrameNumber() {
+        
+        frameNumber_ = getDefaultInstance().getFrameNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The bytes for frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumberBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object displacement_ = "";
+      /**
+       * <code>string displacement = 3;</code>
+       * @return The displacement.
+       */
+      public java.lang.String getDisplacement() {
+        java.lang.Object ref = displacement_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          displacement_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @return The bytes for displacement.
+       */
+      public com.google.protobuf.ByteString
+          getDisplacementBytes() {
+        java.lang.Object ref = displacement_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          displacement_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @param value The displacement to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacement(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        displacement_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDisplacement() {
+        
+        displacement_ = getDefaultInstance().getDisplacement();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacement = 3;</code>
+       * @param value The bytes for displacement to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacementBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        displacement_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object buay_ = "";
+      /**
+       * <code>string buay = 4;</code>
+       * @return The buay.
+       */
+      public java.lang.String getBuay() {
+        java.lang.Object ref = buay_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          buay_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @return The bytes for buay.
+       */
+      public com.google.protobuf.ByteString
+          getBuayBytes() {
+        java.lang.Object ref = buay_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          buay_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @param value The buay to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBuay(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        buay_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBuay() {
+        
+        buay_ = getDefaultInstance().getBuay();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string buay = 4;</code>
+       * @param value The bytes for buay to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBuayBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        buay_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object difft_ = "";
+      /**
+       * <code>string difft = 5;</code>
+       * @return The difft.
+       */
+      public java.lang.String getDifft() {
+        java.lang.Object ref = difft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          difft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @return The bytes for difft.
+       */
+      public com.google.protobuf.ByteString
+          getDifftBytes() {
+        java.lang.Object ref = difft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          difft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @param value The difft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDifft(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        difft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDifft() {
+        
+        difft_ = getDefaultInstance().getDifft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string difft = 5;</code>
+       * @param value The bytes for difft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDifftBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        difft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object corrt_ = "";
+      /**
+       * <code>string corrt = 6;</code>
+       * @return The corrt.
+       */
+      public java.lang.String getCorrt() {
+        java.lang.Object ref = corrt_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          corrt_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @return The bytes for corrt.
+       */
+      public com.google.protobuf.ByteString
+          getCorrtBytes() {
+        java.lang.Object ref = corrt_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          corrt_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @param value The corrt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCorrt(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        corrt_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCorrt() {
+        
+        corrt_ = getDefaultInstance().getCorrt();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string corrt = 6;</code>
+       * @param value The bytes for corrt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCorrtBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        corrt_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object isActive_ = "";
+      /**
+       * <code>string isActive = 7;</code>
+       * @return The isActive.
+       */
+      public java.lang.String getIsActive() {
+        java.lang.Object ref = isActive_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          isActive_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @return The bytes for isActive.
+       */
+      public com.google.protobuf.ByteString
+          getIsActiveBytes() {
+        java.lang.Object ref = isActive_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          isActive_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @param value The isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActive(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsActive() {
+        
+        isActive_ = getDefaultInstance().getIsActive();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 7;</code>
+       * @param value The bytes for isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActiveBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ShearingForceType2)
+    }
+
+    // @@protoc_insertion_point(class_scope:ShearingForceType2)
+    private static final com.cpdss.common.generated.VesselInfo.ShearingForceType2 DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.ShearingForceType2();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType2 getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ShearingForceType2>
+        PARSER = new com.google.protobuf.AbstractParser<ShearingForceType2>() {
+      @java.lang.Override
+      public ShearingForceType2 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ShearingForceType2(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ShearingForceType2> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ShearingForceType2> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.ShearingForceType2 getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ShearingForceType4OrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ShearingForceType4)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    java.lang.String getFrameNumber();
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    com.google.protobuf.ByteString
+        getFrameNumberBytes();
+
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The trimM1.
+     */
+    java.lang.String getTrimM1();
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The bytes for trimM1.
+     */
+    com.google.protobuf.ByteString
+        getTrimM1Bytes();
+
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The trim0.
+     */
+    java.lang.String getTrim0();
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The bytes for trim0.
+     */
+    com.google.protobuf.ByteString
+        getTrim0Bytes();
+
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The trim1.
+     */
+    java.lang.String getTrim1();
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The bytes for trim1.
+     */
+    com.google.protobuf.ByteString
+        getTrim1Bytes();
+
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The trim2.
+     */
+    java.lang.String getTrim2();
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The bytes for trim2.
+     */
+    com.google.protobuf.ByteString
+        getTrim2Bytes();
+
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The trim3.
+     */
+    java.lang.String getTrim3();
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The bytes for trim3.
+     */
+    com.google.protobuf.ByteString
+        getTrim3Bytes();
+
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The trim4.
+     */
+    java.lang.String getTrim4();
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The bytes for trim4.
+     */
+    com.google.protobuf.ByteString
+        getTrim4Bytes();
+
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The trim5.
+     */
+    java.lang.String getTrim5();
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The bytes for trim5.
+     */
+    com.google.protobuf.ByteString
+        getTrim5Bytes();
+
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The isActive.
+     */
+    java.lang.String getIsActive();
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The bytes for isActive.
+     */
+    com.google.protobuf.ByteString
+        getIsActiveBytes();
+  }
+  /**
+   * Protobuf type {@code ShearingForceType4}
+   */
+  public  static final class ShearingForceType4 extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ShearingForceType4)
+      ShearingForceType4OrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ShearingForceType4.newBuilder() to construct.
+    private ShearingForceType4(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ShearingForceType4() {
+      frameNumber_ = "";
+      trimM1_ = "";
+      trim0_ = "";
+      trim1_ = "";
+      trim2_ = "";
+      trim3_ = "";
+      trim4_ = "";
+      trim5_ = "";
+      isActive_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ShearingForceType4();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ShearingForceType4(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              frameNumber_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trimM1_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim0_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim1_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim2_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim3_ = s;
+              break;
+            }
+            case 66: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim4_ = s;
+              break;
+            }
+            case 74: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              trim5_ = s;
+              break;
+            }
+            case 82: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              isActive_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType4_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType4_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.ShearingForceType4.class, com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int FRAMENUMBER_FIELD_NUMBER = 2;
+    private volatile java.lang.Object frameNumber_;
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The frameNumber.
+     */
+    public java.lang.String getFrameNumber() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        frameNumber_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string frameNumber = 2;</code>
+     * @return The bytes for frameNumber.
+     */
+    public com.google.protobuf.ByteString
+        getFrameNumberBytes() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        frameNumber_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_M1_FIELD_NUMBER = 3;
+    private volatile java.lang.Object trimM1_;
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The trimM1.
+     */
+    public java.lang.String getTrimM1() {
+      java.lang.Object ref = trimM1_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimM1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_m1 = 3;</code>
+     * @return The bytes for trimM1.
+     */
+    public com.google.protobuf.ByteString
+        getTrimM1Bytes() {
+      java.lang.Object ref = trimM1_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trimM1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_0_FIELD_NUMBER = 4;
+    private volatile java.lang.Object trim0_;
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The trim0.
+     */
+    public java.lang.String getTrim0() {
+      java.lang.Object ref = trim0_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim0_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_0 = 4;</code>
+     * @return The bytes for trim0.
+     */
+    public com.google.protobuf.ByteString
+        getTrim0Bytes() {
+      java.lang.Object ref = trim0_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim0_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_1_FIELD_NUMBER = 5;
+    private volatile java.lang.Object trim1_;
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The trim1.
+     */
+    public java.lang.String getTrim1() {
+      java.lang.Object ref = trim1_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_1 = 5;</code>
+     * @return The bytes for trim1.
+     */
+    public com.google.protobuf.ByteString
+        getTrim1Bytes() {
+      java.lang.Object ref = trim1_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_2_FIELD_NUMBER = 6;
+    private volatile java.lang.Object trim2_;
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The trim2.
+     */
+    public java.lang.String getTrim2() {
+      java.lang.Object ref = trim2_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim2_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_2 = 6;</code>
+     * @return The bytes for trim2.
+     */
+    public com.google.protobuf.ByteString
+        getTrim2Bytes() {
+      java.lang.Object ref = trim2_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim2_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_3_FIELD_NUMBER = 7;
+    private volatile java.lang.Object trim3_;
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The trim3.
+     */
+    public java.lang.String getTrim3() {
+      java.lang.Object ref = trim3_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim3_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_3 = 7;</code>
+     * @return The bytes for trim3.
+     */
+    public com.google.protobuf.ByteString
+        getTrim3Bytes() {
+      java.lang.Object ref = trim3_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim3_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_4_FIELD_NUMBER = 8;
+    private volatile java.lang.Object trim4_;
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The trim4.
+     */
+    public java.lang.String getTrim4() {
+      java.lang.Object ref = trim4_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim4_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_4 = 8;</code>
+     * @return The bytes for trim4.
+     */
+    public com.google.protobuf.ByteString
+        getTrim4Bytes() {
+      java.lang.Object ref = trim4_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim4_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM_5_FIELD_NUMBER = 9;
+    private volatile java.lang.Object trim5_;
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The trim5.
+     */
+    public java.lang.String getTrim5() {
+      java.lang.Object ref = trim5_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim5_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim_5 = 9;</code>
+     * @return The bytes for trim5.
+     */
+    public com.google.protobuf.ByteString
+        getTrim5Bytes() {
+      java.lang.Object ref = trim5_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trim5_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ISACTIVE_FIELD_NUMBER = 10;
+    private volatile java.lang.Object isActive_;
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The isActive.
+     */
+    public java.lang.String getIsActive() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        isActive_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string isActive = 10;</code>
+     * @return The bytes for isActive.
+     */
+    public com.google.protobuf.ByteString
+        getIsActiveBytes() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        isActive_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, frameNumber_);
+      }
+      if (!getTrimM1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, trimM1_);
+      }
+      if (!getTrim0Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, trim0_);
+      }
+      if (!getTrim1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, trim1_);
+      }
+      if (!getTrim2Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, trim2_);
+      }
+      if (!getTrim3Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, trim3_);
+      }
+      if (!getTrim4Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, trim4_);
+      }
+      if (!getTrim5Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, trim5_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, isActive_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, frameNumber_);
+      }
+      if (!getTrimM1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, trimM1_);
+      }
+      if (!getTrim0Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, trim0_);
+      }
+      if (!getTrim1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, trim1_);
+      }
+      if (!getTrim2Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, trim2_);
+      }
+      if (!getTrim3Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, trim3_);
+      }
+      if (!getTrim4Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, trim4_);
+      }
+      if (!getTrim5Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, trim5_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, isActive_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.ShearingForceType4)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.ShearingForceType4 other = (com.cpdss.common.generated.VesselInfo.ShearingForceType4) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getFrameNumber()
+          .equals(other.getFrameNumber())) return false;
+      if (!getTrimM1()
+          .equals(other.getTrimM1())) return false;
+      if (!getTrim0()
+          .equals(other.getTrim0())) return false;
+      if (!getTrim1()
+          .equals(other.getTrim1())) return false;
+      if (!getTrim2()
+          .equals(other.getTrim2())) return false;
+      if (!getTrim3()
+          .equals(other.getTrim3())) return false;
+      if (!getTrim4()
+          .equals(other.getTrim4())) return false;
+      if (!getTrim5()
+          .equals(other.getTrim5())) return false;
+      if (!getIsActive()
+          .equals(other.getIsActive())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + FRAMENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getFrameNumber().hashCode();
+      hash = (37 * hash) + TRIM_M1_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimM1().hashCode();
+      hash = (37 * hash) + TRIM_0_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim0().hashCode();
+      hash = (37 * hash) + TRIM_1_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim1().hashCode();
+      hash = (37 * hash) + TRIM_2_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim2().hashCode();
+      hash = (37 * hash) + TRIM_3_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim3().hashCode();
+      hash = (37 * hash) + TRIM_4_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim4().hashCode();
+      hash = (37 * hash) + TRIM_5_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim5().hashCode();
+      hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+      hash = (53 * hash) + getIsActive().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.ShearingForceType4 prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ShearingForceType4}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ShearingForceType4)
+        com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType4_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType4_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.ShearingForceType4.class, com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.ShearingForceType4.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        frameNumber_ = "";
+
+        trimM1_ = "";
+
+        trim0_ = "";
+
+        trim1_ = "";
+
+        trim2_ = "";
+
+        trim3_ = "";
+
+        trim4_ = "";
+
+        trim5_ = "";
+
+        isActive_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForceType4_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4 getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.ShearingForceType4.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4 build() {
+        com.cpdss.common.generated.VesselInfo.ShearingForceType4 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4 buildPartial() {
+        com.cpdss.common.generated.VesselInfo.ShearingForceType4 result = new com.cpdss.common.generated.VesselInfo.ShearingForceType4(this);
+        result.id_ = id_;
+        result.frameNumber_ = frameNumber_;
+        result.trimM1_ = trimM1_;
+        result.trim0_ = trim0_;
+        result.trim1_ = trim1_;
+        result.trim2_ = trim2_;
+        result.trim3_ = trim3_;
+        result.trim4_ = trim4_;
+        result.trim5_ = trim5_;
+        result.isActive_ = isActive_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.ShearingForceType4) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.ShearingForceType4)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.ShearingForceType4 other) {
+        if (other == com.cpdss.common.generated.VesselInfo.ShearingForceType4.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getFrameNumber().isEmpty()) {
+          frameNumber_ = other.frameNumber_;
+          onChanged();
+        }
+        if (!other.getTrimM1().isEmpty()) {
+          trimM1_ = other.trimM1_;
+          onChanged();
+        }
+        if (!other.getTrim0().isEmpty()) {
+          trim0_ = other.trim0_;
+          onChanged();
+        }
+        if (!other.getTrim1().isEmpty()) {
+          trim1_ = other.trim1_;
+          onChanged();
+        }
+        if (!other.getTrim2().isEmpty()) {
+          trim2_ = other.trim2_;
+          onChanged();
+        }
+        if (!other.getTrim3().isEmpty()) {
+          trim3_ = other.trim3_;
+          onChanged();
+        }
+        if (!other.getTrim4().isEmpty()) {
+          trim4_ = other.trim4_;
+          onChanged();
+        }
+        if (!other.getTrim5().isEmpty()) {
+          trim5_ = other.trim5_;
+          onChanged();
+        }
+        if (!other.getIsActive().isEmpty()) {
+          isActive_ = other.isActive_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.ShearingForceType4 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.ShearingForceType4) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object frameNumber_ = "";
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The frameNumber.
+       */
+      public java.lang.String getFrameNumber() {
+        java.lang.Object ref = frameNumber_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          frameNumber_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return The bytes for frameNumber.
+       */
+      public com.google.protobuf.ByteString
+          getFrameNumberBytes() {
+        java.lang.Object ref = frameNumber_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          frameNumber_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumber(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrameNumber() {
+        
+        frameNumber_ = getDefaultInstance().getFrameNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 2;</code>
+       * @param value The bytes for frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumberBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimM1_ = "";
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @return The trimM1.
+       */
+      public java.lang.String getTrimM1() {
+        java.lang.Object ref = trimM1_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimM1_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @return The bytes for trimM1.
+       */
+      public com.google.protobuf.ByteString
+          getTrimM1Bytes() {
+        java.lang.Object ref = trimM1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trimM1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @param value The trimM1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM1(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trimM1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimM1() {
+        
+        trimM1_ = getDefaultInstance().getTrimM1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_m1 = 3;</code>
+       * @param value The bytes for trimM1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM1Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trimM1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim0_ = "";
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @return The trim0.
+       */
+      public java.lang.String getTrim0() {
+        java.lang.Object ref = trim0_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim0_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @return The bytes for trim0.
+       */
+      public com.google.protobuf.ByteString
+          getTrim0Bytes() {
+        java.lang.Object ref = trim0_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim0_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @param value The trim0 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim0(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim0_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim0() {
+        
+        trim0_ = getDefaultInstance().getTrim0();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_0 = 4;</code>
+       * @param value The bytes for trim0 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim0Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim0_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim1_ = "";
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @return The trim1.
+       */
+      public java.lang.String getTrim1() {
+        java.lang.Object ref = trim1_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim1_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @return The bytes for trim1.
+       */
+      public com.google.protobuf.ByteString
+          getTrim1Bytes() {
+        java.lang.Object ref = trim1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @param value The trim1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim1(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim1() {
+        
+        trim1_ = getDefaultInstance().getTrim1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_1 = 5;</code>
+       * @param value The bytes for trim1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim1Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim2_ = "";
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @return The trim2.
+       */
+      public java.lang.String getTrim2() {
+        java.lang.Object ref = trim2_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim2_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @return The bytes for trim2.
+       */
+      public com.google.protobuf.ByteString
+          getTrim2Bytes() {
+        java.lang.Object ref = trim2_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim2_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @param value The trim2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim2(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim2_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim2() {
+        
+        trim2_ = getDefaultInstance().getTrim2();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_2 = 6;</code>
+       * @param value The bytes for trim2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim2Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim2_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim3_ = "";
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @return The trim3.
+       */
+      public java.lang.String getTrim3() {
+        java.lang.Object ref = trim3_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim3_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @return The bytes for trim3.
+       */
+      public com.google.protobuf.ByteString
+          getTrim3Bytes() {
+        java.lang.Object ref = trim3_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim3_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @param value The trim3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim3(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim3_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim3() {
+        
+        trim3_ = getDefaultInstance().getTrim3();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_3 = 7;</code>
+       * @param value The bytes for trim3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim3Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim3_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim4_ = "";
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @return The trim4.
+       */
+      public java.lang.String getTrim4() {
+        java.lang.Object ref = trim4_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim4_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @return The bytes for trim4.
+       */
+      public com.google.protobuf.ByteString
+          getTrim4Bytes() {
+        java.lang.Object ref = trim4_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim4_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @param value The trim4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim4(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim4_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim4() {
+        
+        trim4_ = getDefaultInstance().getTrim4();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_4 = 8;</code>
+       * @param value The bytes for trim4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim4Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim4_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim5_ = "";
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @return The trim5.
+       */
+      public java.lang.String getTrim5() {
+        java.lang.Object ref = trim5_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim5_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @return The bytes for trim5.
+       */
+      public com.google.protobuf.ByteString
+          getTrim5Bytes() {
+        java.lang.Object ref = trim5_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trim5_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @param value The trim5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim5(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        trim5_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim5() {
+        
+        trim5_ = getDefaultInstance().getTrim5();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim_5 = 9;</code>
+       * @param value The bytes for trim5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim5Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        trim5_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object isActive_ = "";
+      /**
+       * <code>string isActive = 10;</code>
+       * @return The isActive.
+       */
+      public java.lang.String getIsActive() {
+        java.lang.Object ref = isActive_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          isActive_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @return The bytes for isActive.
+       */
+      public com.google.protobuf.ByteString
+          getIsActiveBytes() {
+        java.lang.Object ref = isActive_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          isActive_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @param value The isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActive(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsActive() {
+        
+        isActive_ = getDefaultInstance().getIsActive();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 10;</code>
+       * @param value The bytes for isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActiveBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ShearingForceType4)
+    }
+
+    // @@protoc_insertion_point(class_scope:ShearingForceType4)
+    private static final com.cpdss.common.generated.VesselInfo.ShearingForceType4 DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.ShearingForceType4();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.ShearingForceType4 getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ShearingForceType4>
+        PARSER = new com.google.protobuf.AbstractParser<ShearingForceType4>() {
+      @java.lang.Override
+      public ShearingForceType4 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ShearingForceType4(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ShearingForceType4> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ShearingForceType4> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.ShearingForceType4 getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface BendingMomentShearingForceType3OrBuilder extends
+      // @@protoc_insertion_point(interface_extends:BendingMomentShearingForceType3)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string loadCondition = 2;</code>
+     * @return The loadCondition.
+     */
+    java.lang.String getLoadCondition();
+    /**
+     * <code>string loadCondition = 2;</code>
+     * @return The bytes for loadCondition.
+     */
+    com.google.protobuf.ByteString
+        getLoadConditionBytes();
+
+    /**
+     * <code>string frameNumber = 3;</code>
+     * @return The frameNumber.
+     */
+    java.lang.String getFrameNumber();
+    /**
+     * <code>string frameNumber = 3;</code>
+     * @return The bytes for frameNumber.
+     */
+    com.google.protobuf.ByteString
+        getFrameNumberBytes();
+
+    /**
+     * <code>string draftAp = 4;</code>
+     * @return The draftAp.
+     */
+    java.lang.String getDraftAp();
+    /**
+     * <code>string draftAp = 4;</code>
+     * @return The bytes for draftAp.
+     */
+    com.google.protobuf.ByteString
+        getDraftApBytes();
+
+    /**
+     * <code>string draftFp = 5;</code>
+     * @return The draftFp.
+     */
+    java.lang.String getDraftFp();
+    /**
+     * <code>string draftFp = 5;</code>
+     * @return The bytes for draftFp.
+     */
+    com.google.protobuf.ByteString
+        getDraftFpBytes();
+
+    /**
+     * <code>string bendingMoment = 6;</code>
+     * @return The bendingMoment.
+     */
+    java.lang.String getBendingMoment();
+    /**
+     * <code>string bendingMoment = 6;</code>
+     * @return The bytes for bendingMoment.
+     */
+    com.google.protobuf.ByteString
+        getBendingMomentBytes();
+
+    /**
+     * <code>string shearingForce = 7;</code>
+     * @return The shearingForce.
+     */
+    java.lang.String getShearingForce();
+    /**
+     * <code>string shearingForce = 7;</code>
+     * @return The bytes for shearingForce.
+     */
+    com.google.protobuf.ByteString
+        getShearingForceBytes();
+
+    /**
+     * <code>string isActive = 8;</code>
+     * @return The isActive.
+     */
+    java.lang.String getIsActive();
+    /**
+     * <code>string isActive = 8;</code>
+     * @return The bytes for isActive.
+     */
+    com.google.protobuf.ByteString
+        getIsActiveBytes();
+  }
+  /**
+   * <pre>
+   *bending_moment_shearing_force_type3
+   * </pre>
+   *
+   * Protobuf type {@code BendingMomentShearingForceType3}
+   */
+  public  static final class BendingMomentShearingForceType3 extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:BendingMomentShearingForceType3)
+      BendingMomentShearingForceType3OrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use BendingMomentShearingForceType3.newBuilder() to construct.
+    private BendingMomentShearingForceType3(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private BendingMomentShearingForceType3() {
+      loadCondition_ = "";
+      frameNumber_ = "";
+      draftAp_ = "";
+      draftFp_ = "";
+      bendingMoment_ = "";
+      shearingForce_ = "";
+      isActive_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new BendingMomentShearingForceType3();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private BendingMomentShearingForceType3(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              loadCondition_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              frameNumber_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              draftAp_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              draftFp_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              bendingMoment_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              shearingForce_ = s;
+              break;
+            }
+            case 66: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              isActive_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentShearingForceType3_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentShearingForceType3_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.class, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int LOADCONDITION_FIELD_NUMBER = 2;
+    private volatile java.lang.Object loadCondition_;
+    /**
+     * <code>string loadCondition = 2;</code>
+     * @return The loadCondition.
+     */
+    public java.lang.String getLoadCondition() {
+      java.lang.Object ref = loadCondition_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        loadCondition_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string loadCondition = 2;</code>
+     * @return The bytes for loadCondition.
+     */
+    public com.google.protobuf.ByteString
+        getLoadConditionBytes() {
+      java.lang.Object ref = loadCondition_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        loadCondition_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FRAMENUMBER_FIELD_NUMBER = 3;
+    private volatile java.lang.Object frameNumber_;
+    /**
+     * <code>string frameNumber = 3;</code>
+     * @return The frameNumber.
+     */
+    public java.lang.String getFrameNumber() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        frameNumber_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string frameNumber = 3;</code>
+     * @return The bytes for frameNumber.
+     */
+    public com.google.protobuf.ByteString
+        getFrameNumberBytes() {
+      java.lang.Object ref = frameNumber_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        frameNumber_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DRAFTAP_FIELD_NUMBER = 4;
+    private volatile java.lang.Object draftAp_;
+    /**
+     * <code>string draftAp = 4;</code>
+     * @return The draftAp.
+     */
+    public java.lang.String getDraftAp() {
+      java.lang.Object ref = draftAp_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        draftAp_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string draftAp = 4;</code>
+     * @return The bytes for draftAp.
+     */
+    public com.google.protobuf.ByteString
+        getDraftApBytes() {
+      java.lang.Object ref = draftAp_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        draftAp_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DRAFTFP_FIELD_NUMBER = 5;
+    private volatile java.lang.Object draftFp_;
+    /**
+     * <code>string draftFp = 5;</code>
+     * @return The draftFp.
+     */
+    public java.lang.String getDraftFp() {
+      java.lang.Object ref = draftFp_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        draftFp_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string draftFp = 5;</code>
+     * @return The bytes for draftFp.
+     */
+    public com.google.protobuf.ByteString
+        getDraftFpBytes() {
+      java.lang.Object ref = draftFp_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        draftFp_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BENDINGMOMENT_FIELD_NUMBER = 6;
+    private volatile java.lang.Object bendingMoment_;
+    /**
+     * <code>string bendingMoment = 6;</code>
+     * @return The bendingMoment.
+     */
+    public java.lang.String getBendingMoment() {
+      java.lang.Object ref = bendingMoment_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        bendingMoment_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string bendingMoment = 6;</code>
+     * @return The bytes for bendingMoment.
+     */
+    public com.google.protobuf.ByteString
+        getBendingMomentBytes() {
+      java.lang.Object ref = bendingMoment_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        bendingMoment_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SHEARINGFORCE_FIELD_NUMBER = 7;
+    private volatile java.lang.Object shearingForce_;
+    /**
+     * <code>string shearingForce = 7;</code>
+     * @return The shearingForce.
+     */
+    public java.lang.String getShearingForce() {
+      java.lang.Object ref = shearingForce_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        shearingForce_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string shearingForce = 7;</code>
+     * @return The bytes for shearingForce.
+     */
+    public com.google.protobuf.ByteString
+        getShearingForceBytes() {
+      java.lang.Object ref = shearingForce_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        shearingForce_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ISACTIVE_FIELD_NUMBER = 8;
+    private volatile java.lang.Object isActive_;
+    /**
+     * <code>string isActive = 8;</code>
+     * @return The isActive.
+     */
+    public java.lang.String getIsActive() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        isActive_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string isActive = 8;</code>
+     * @return The bytes for isActive.
+     */
+    public com.google.protobuf.ByteString
+        getIsActiveBytes() {
+      java.lang.Object ref = isActive_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        isActive_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getLoadConditionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, loadCondition_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, frameNumber_);
+      }
+      if (!getDraftApBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, draftAp_);
+      }
+      if (!getDraftFpBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, draftFp_);
+      }
+      if (!getBendingMomentBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, bendingMoment_);
+      }
+      if (!getShearingForceBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, shearingForce_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, isActive_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
+      if (!getLoadConditionBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, loadCondition_);
+      }
+      if (!getFrameNumberBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, frameNumber_);
+      }
+      if (!getDraftApBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, draftAp_);
+      }
+      if (!getDraftFpBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, draftFp_);
+      }
+      if (!getBendingMomentBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, bendingMoment_);
+      }
+      if (!getShearingForceBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, shearingForce_);
+      }
+      if (!getIsActiveBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, isActive_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 other = (com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getLoadCondition()
+          .equals(other.getLoadCondition())) return false;
+      if (!getFrameNumber()
+          .equals(other.getFrameNumber())) return false;
+      if (!getDraftAp()
+          .equals(other.getDraftAp())) return false;
+      if (!getDraftFp()
+          .equals(other.getDraftFp())) return false;
+      if (!getBendingMoment()
+          .equals(other.getBendingMoment())) return false;
+      if (!getShearingForce()
+          .equals(other.getShearingForce())) return false;
+      if (!getIsActive()
+          .equals(other.getIsActive())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + LOADCONDITION_FIELD_NUMBER;
+      hash = (53 * hash) + getLoadCondition().hashCode();
+      hash = (37 * hash) + FRAMENUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getFrameNumber().hashCode();
+      hash = (37 * hash) + DRAFTAP_FIELD_NUMBER;
+      hash = (53 * hash) + getDraftAp().hashCode();
+      hash = (37 * hash) + DRAFTFP_FIELD_NUMBER;
+      hash = (53 * hash) + getDraftFp().hashCode();
+      hash = (37 * hash) + BENDINGMOMENT_FIELD_NUMBER;
+      hash = (53 * hash) + getBendingMoment().hashCode();
+      hash = (37 * hash) + SHEARINGFORCE_FIELD_NUMBER;
+      hash = (53 * hash) + getShearingForce().hashCode();
+      hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+      hash = (53 * hash) + getIsActive().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     *bending_moment_shearing_force_type3
+     * </pre>
+     *
+     * Protobuf type {@code BendingMomentShearingForceType3}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:BendingMomentShearingForceType3)
+        com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentShearingForceType3_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentShearingForceType3_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.class, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        loadCondition_ = "";
+
+        frameNumber_ = "";
+
+        draftAp_ = "";
+
+        draftFp_ = "";
+
+        bendingMoment_ = "";
+
+        shearingForce_ = "";
+
+        isActive_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_BendingMomentShearingForceType3_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 build() {
+        com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 buildPartial() {
+        com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 result = new com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3(this);
+        result.id_ = id_;
+        result.loadCondition_ = loadCondition_;
+        result.frameNumber_ = frameNumber_;
+        result.draftAp_ = draftAp_;
+        result.draftFp_ = draftFp_;
+        result.bendingMoment_ = bendingMoment_;
+        result.shearingForce_ = shearingForce_;
+        result.isActive_ = isActive_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 other) {
+        if (other == com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getLoadCondition().isEmpty()) {
+          loadCondition_ = other.loadCondition_;
+          onChanged();
+        }
+        if (!other.getFrameNumber().isEmpty()) {
+          frameNumber_ = other.frameNumber_;
+          onChanged();
+        }
+        if (!other.getDraftAp().isEmpty()) {
+          draftAp_ = other.draftAp_;
+          onChanged();
+        }
+        if (!other.getDraftFp().isEmpty()) {
+          draftFp_ = other.draftFp_;
+          onChanged();
+        }
+        if (!other.getBendingMoment().isEmpty()) {
+          bendingMoment_ = other.bendingMoment_;
+          onChanged();
+        }
+        if (!other.getShearingForce().isEmpty()) {
+          shearingForce_ = other.shearingForce_;
+          onChanged();
+        }
+        if (!other.getIsActive().isEmpty()) {
+          isActive_ = other.isActive_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object loadCondition_ = "";
+      /**
+       * <code>string loadCondition = 2;</code>
+       * @return The loadCondition.
+       */
+      public java.lang.String getLoadCondition() {
+        java.lang.Object ref = loadCondition_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          loadCondition_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string loadCondition = 2;</code>
+       * @return The bytes for loadCondition.
+       */
+      public com.google.protobuf.ByteString
+          getLoadConditionBytes() {
+        java.lang.Object ref = loadCondition_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          loadCondition_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string loadCondition = 2;</code>
+       * @param value The loadCondition to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadCondition(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        loadCondition_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadCondition = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadCondition() {
+        
+        loadCondition_ = getDefaultInstance().getLoadCondition();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadCondition = 2;</code>
+       * @param value The bytes for loadCondition to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadConditionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        loadCondition_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object frameNumber_ = "";
+      /**
+       * <code>string frameNumber = 3;</code>
+       * @return The frameNumber.
+       */
+      public java.lang.String getFrameNumber() {
+        java.lang.Object ref = frameNumber_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          frameNumber_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 3;</code>
+       * @return The bytes for frameNumber.
+       */
+      public com.google.protobuf.ByteString
+          getFrameNumberBytes() {
+        java.lang.Object ref = frameNumber_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          frameNumber_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string frameNumber = 3;</code>
+       * @param value The frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumber(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrameNumber() {
+        
+        frameNumber_ = getDefaultInstance().getFrameNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string frameNumber = 3;</code>
+       * @param value The bytes for frameNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrameNumberBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        frameNumber_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object draftAp_ = "";
+      /**
+       * <code>string draftAp = 4;</code>
+       * @return The draftAp.
+       */
+      public java.lang.String getDraftAp() {
+        java.lang.Object ref = draftAp_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          draftAp_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string draftAp = 4;</code>
+       * @return The bytes for draftAp.
+       */
+      public com.google.protobuf.ByteString
+          getDraftApBytes() {
+        java.lang.Object ref = draftAp_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          draftAp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string draftAp = 4;</code>
+       * @param value The draftAp to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftAp(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        draftAp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftAp = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDraftAp() {
+        
+        draftAp_ = getDefaultInstance().getDraftAp();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftAp = 4;</code>
+       * @param value The bytes for draftAp to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftApBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        draftAp_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object draftFp_ = "";
+      /**
+       * <code>string draftFp = 5;</code>
+       * @return The draftFp.
+       */
+      public java.lang.String getDraftFp() {
+        java.lang.Object ref = draftFp_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          draftFp_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string draftFp = 5;</code>
+       * @return The bytes for draftFp.
+       */
+      public com.google.protobuf.ByteString
+          getDraftFpBytes() {
+        java.lang.Object ref = draftFp_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          draftFp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string draftFp = 5;</code>
+       * @param value The draftFp to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftFp(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        draftFp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftFp = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDraftFp() {
+        
+        draftFp_ = getDefaultInstance().getDraftFp();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftFp = 5;</code>
+       * @param value The bytes for draftFp to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftFpBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        draftFp_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object bendingMoment_ = "";
+      /**
+       * <code>string bendingMoment = 6;</code>
+       * @return The bendingMoment.
+       */
+      public java.lang.String getBendingMoment() {
+        java.lang.Object ref = bendingMoment_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          bendingMoment_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string bendingMoment = 6;</code>
+       * @return The bytes for bendingMoment.
+       */
+      public com.google.protobuf.ByteString
+          getBendingMomentBytes() {
+        java.lang.Object ref = bendingMoment_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          bendingMoment_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string bendingMoment = 6;</code>
+       * @param value The bendingMoment to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBendingMoment(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        bendingMoment_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string bendingMoment = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBendingMoment() {
+        
+        bendingMoment_ = getDefaultInstance().getBendingMoment();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string bendingMoment = 6;</code>
+       * @param value The bytes for bendingMoment to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBendingMomentBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        bendingMoment_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object shearingForce_ = "";
+      /**
+       * <code>string shearingForce = 7;</code>
+       * @return The shearingForce.
+       */
+      public java.lang.String getShearingForce() {
+        java.lang.Object ref = shearingForce_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          shearingForce_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string shearingForce = 7;</code>
+       * @return The bytes for shearingForce.
+       */
+      public com.google.protobuf.ByteString
+          getShearingForceBytes() {
+        java.lang.Object ref = shearingForce_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          shearingForce_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string shearingForce = 7;</code>
+       * @param value The shearingForce to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShearingForce(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        shearingForce_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shearingForce = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearShearingForce() {
+        
+        shearingForce_ = getDefaultInstance().getShearingForce();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shearingForce = 7;</code>
+       * @param value The bytes for shearingForce to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShearingForceBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        shearingForce_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object isActive_ = "";
+      /**
+       * <code>string isActive = 8;</code>
+       * @return The isActive.
+       */
+      public java.lang.String getIsActive() {
+        java.lang.Object ref = isActive_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          isActive_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 8;</code>
+       * @return The bytes for isActive.
+       */
+      public com.google.protobuf.ByteString
+          getIsActiveBytes() {
+        java.lang.Object ref = isActive_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          isActive_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string isActive = 8;</code>
+       * @param value The isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActive(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsActive() {
+        
+        isActive_ = getDefaultInstance().getIsActive();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string isActive = 8;</code>
+       * @param value The bytes for isActive to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsActiveBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        isActive_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:BendingMomentShearingForceType3)
+    }
+
+    // @@protoc_insertion_point(class_scope:BendingMomentShearingForceType3)
+    private static final com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BendingMomentShearingForceType3>
+        PARSER = new com.google.protobuf.AbstractParser<BendingMomentShearingForceType3>() {
+      @java.lang.Override
+      public BendingMomentShearingForceType3 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new BendingMomentShearingForceType3(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<BendingMomentShearingForceType3> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BendingMomentShearingForceType3> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface SelectableParameterOrBuilder extends
       // @@protoc_insertion_point(interface_extends:SelectableParameter)
       com.google.protobuf.MessageOrBuilder {
@@ -26853,6 +36147,126 @@ public final class VesselInfo {
      */
     com.cpdss.common.generated.VesselInfo.InnerBulkHeadSFOrBuilder getInnerBulkHeadSFOrBuilder(
         int index);
+
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType2> 
+        getBendingMomentType2List();
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.BendingMomentType2 getBendingMomentType2(int index);
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    int getBendingMomentType2Count();
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder> 
+        getBendingMomentType2OrBuilderList();
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder getBendingMomentType2OrBuilder(
+        int index);
+
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType4> 
+        getBendingMomentType4List();
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.BendingMomentType4 getBendingMomentType4(int index);
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    int getBendingMomentType4Count();
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder> 
+        getBendingMomentType4OrBuilderList();
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder getBendingMomentType4OrBuilder(
+        int index);
+
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType2> 
+        getShearingForceType2List();
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.ShearingForceType2 getShearingForceType2(int index);
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    int getShearingForceType2Count();
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder> 
+        getShearingForceType2OrBuilderList();
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder getShearingForceType2OrBuilder(
+        int index);
+
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType4> 
+        getShearingForceType4List();
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.ShearingForceType4 getShearingForceType4(int index);
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    int getShearingForceType4Count();
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder> 
+        getShearingForceType4OrBuilderList();
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder getShearingForceType4OrBuilder(
+        int index);
+
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3> 
+        getBendingMomentShearingForce3List();
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 getBendingMomentShearingForce3(int index);
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    int getBendingMomentShearingForce3Count();
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder> 
+        getBendingMomentShearingForce3OrBuilderList();
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder getBendingMomentShearingForce3OrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code BMAndSF}
@@ -26874,6 +36288,11 @@ public final class VesselInfo {
       minMaxValuesForBMAndSf_ = java.util.Collections.emptyList();
       stationValues_ = java.util.Collections.emptyList();
       innerBulkHeadSF_ = java.util.Collections.emptyList();
+      bendingMomentType2_ = java.util.Collections.emptyList();
+      bendingMomentType4_ = java.util.Collections.emptyList();
+      shearingForceType2_ = java.util.Collections.emptyList();
+      shearingForceType4_ = java.util.Collections.emptyList();
+      bendingMomentShearingForce3_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -26970,6 +36389,51 @@ public final class VesselInfo {
                   input.readMessage(com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF.parser(), extensionRegistry));
               break;
             }
+            case 66: {
+              if (!((mutable_bitField0_ & 0x00000080) != 0)) {
+                bendingMomentType2_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.BendingMomentType2>();
+                mutable_bitField0_ |= 0x00000080;
+              }
+              bendingMomentType2_.add(
+                  input.readMessage(com.cpdss.common.generated.VesselInfo.BendingMomentType2.parser(), extensionRegistry));
+              break;
+            }
+            case 74: {
+              if (!((mutable_bitField0_ & 0x00000100) != 0)) {
+                bendingMomentType4_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.BendingMomentType4>();
+                mutable_bitField0_ |= 0x00000100;
+              }
+              bendingMomentType4_.add(
+                  input.readMessage(com.cpdss.common.generated.VesselInfo.BendingMomentType4.parser(), extensionRegistry));
+              break;
+            }
+            case 82: {
+              if (!((mutable_bitField0_ & 0x00000200) != 0)) {
+                shearingForceType2_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.ShearingForceType2>();
+                mutable_bitField0_ |= 0x00000200;
+              }
+              shearingForceType2_.add(
+                  input.readMessage(com.cpdss.common.generated.VesselInfo.ShearingForceType2.parser(), extensionRegistry));
+              break;
+            }
+            case 90: {
+              if (!((mutable_bitField0_ & 0x00000400) != 0)) {
+                shearingForceType4_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.ShearingForceType4>();
+                mutable_bitField0_ |= 0x00000400;
+              }
+              shearingForceType4_.add(
+                  input.readMessage(com.cpdss.common.generated.VesselInfo.ShearingForceType4.parser(), extensionRegistry));
+              break;
+            }
+            case 98: {
+              if (!((mutable_bitField0_ & 0x00000800) != 0)) {
+                bendingMomentShearingForce3_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3>();
+                mutable_bitField0_ |= 0x00000800;
+              }
+              bendingMomentShearingForce3_.add(
+                  input.readMessage(com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.parser(), extensionRegistry));
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -27005,6 +36469,21 @@ public final class VesselInfo {
         }
         if (((mutable_bitField0_ & 0x00000040) != 0)) {
           innerBulkHeadSF_ = java.util.Collections.unmodifiableList(innerBulkHeadSF_);
+        }
+        if (((mutable_bitField0_ & 0x00000080) != 0)) {
+          bendingMomentType2_ = java.util.Collections.unmodifiableList(bendingMomentType2_);
+        }
+        if (((mutable_bitField0_ & 0x00000100) != 0)) {
+          bendingMomentType4_ = java.util.Collections.unmodifiableList(bendingMomentType4_);
+        }
+        if (((mutable_bitField0_ & 0x00000200) != 0)) {
+          shearingForceType2_ = java.util.Collections.unmodifiableList(shearingForceType2_);
+        }
+        if (((mutable_bitField0_ & 0x00000400) != 0)) {
+          shearingForceType4_ = java.util.Collections.unmodifiableList(shearingForceType4_);
+        }
+        if (((mutable_bitField0_ & 0x00000800) != 0)) {
+          bendingMomentShearingForce3_ = java.util.Collections.unmodifiableList(bendingMomentShearingForce3_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -27268,6 +36747,181 @@ public final class VesselInfo {
       return innerBulkHeadSF_.get(index);
     }
 
+    public static final int BENDINGMOMENTTYPE2_FIELD_NUMBER = 8;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType2> bendingMomentType2_;
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType2> getBendingMomentType2List() {
+      return bendingMomentType2_;
+    }
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder> 
+        getBendingMomentType2OrBuilderList() {
+      return bendingMomentType2_;
+    }
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    public int getBendingMomentType2Count() {
+      return bendingMomentType2_.size();
+    }
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.BendingMomentType2 getBendingMomentType2(int index) {
+      return bendingMomentType2_.get(index);
+    }
+    /**
+     * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder getBendingMomentType2OrBuilder(
+        int index) {
+      return bendingMomentType2_.get(index);
+    }
+
+    public static final int BENDINGMOMENTTYPE4_FIELD_NUMBER = 9;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType4> bendingMomentType4_;
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType4> getBendingMomentType4List() {
+      return bendingMomentType4_;
+    }
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder> 
+        getBendingMomentType4OrBuilderList() {
+      return bendingMomentType4_;
+    }
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    public int getBendingMomentType4Count() {
+      return bendingMomentType4_.size();
+    }
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.BendingMomentType4 getBendingMomentType4(int index) {
+      return bendingMomentType4_.get(index);
+    }
+    /**
+     * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder getBendingMomentType4OrBuilder(
+        int index) {
+      return bendingMomentType4_.get(index);
+    }
+
+    public static final int SHEARINGFORCETYPE2_FIELD_NUMBER = 10;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType2> shearingForceType2_;
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType2> getShearingForceType2List() {
+      return shearingForceType2_;
+    }
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder> 
+        getShearingForceType2OrBuilderList() {
+      return shearingForceType2_;
+    }
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    public int getShearingForceType2Count() {
+      return shearingForceType2_.size();
+    }
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.ShearingForceType2 getShearingForceType2(int index) {
+      return shearingForceType2_.get(index);
+    }
+    /**
+     * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder getShearingForceType2OrBuilder(
+        int index) {
+      return shearingForceType2_.get(index);
+    }
+
+    public static final int SHEARINGFORCETYPE4_FIELD_NUMBER = 11;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType4> shearingForceType4_;
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType4> getShearingForceType4List() {
+      return shearingForceType4_;
+    }
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder> 
+        getShearingForceType4OrBuilderList() {
+      return shearingForceType4_;
+    }
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    public int getShearingForceType4Count() {
+      return shearingForceType4_.size();
+    }
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.ShearingForceType4 getShearingForceType4(int index) {
+      return shearingForceType4_.get(index);
+    }
+    /**
+     * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder getShearingForceType4OrBuilder(
+        int index) {
+      return shearingForceType4_.get(index);
+    }
+
+    public static final int BENDINGMOMENTSHEARINGFORCE3_FIELD_NUMBER = 12;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3> bendingMomentShearingForce3_;
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3> getBendingMomentShearingForce3List() {
+      return bendingMomentShearingForce3_;
+    }
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder> 
+        getBendingMomentShearingForce3OrBuilderList() {
+      return bendingMomentShearingForce3_;
+    }
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    public int getBendingMomentShearingForce3Count() {
+      return bendingMomentShearingForce3_.size();
+    }
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 getBendingMomentShearingForce3(int index) {
+      return bendingMomentShearingForce3_.get(index);
+    }
+    /**
+     * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+     */
+    public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder getBendingMomentShearingForce3OrBuilder(
+        int index) {
+      return bendingMomentShearingForce3_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -27302,6 +36956,21 @@ public final class VesselInfo {
       }
       for (int i = 0; i < innerBulkHeadSF_.size(); i++) {
         output.writeMessage(7, innerBulkHeadSF_.get(i));
+      }
+      for (int i = 0; i < bendingMomentType2_.size(); i++) {
+        output.writeMessage(8, bendingMomentType2_.get(i));
+      }
+      for (int i = 0; i < bendingMomentType4_.size(); i++) {
+        output.writeMessage(9, bendingMomentType4_.get(i));
+      }
+      for (int i = 0; i < shearingForceType2_.size(); i++) {
+        output.writeMessage(10, shearingForceType2_.get(i));
+      }
+      for (int i = 0; i < shearingForceType4_.size(); i++) {
+        output.writeMessage(11, shearingForceType4_.get(i));
+      }
+      for (int i = 0; i < bendingMomentShearingForce3_.size(); i++) {
+        output.writeMessage(12, bendingMomentShearingForce3_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -27340,6 +37009,26 @@ public final class VesselInfo {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(7, innerBulkHeadSF_.get(i));
       }
+      for (int i = 0; i < bendingMomentType2_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(8, bendingMomentType2_.get(i));
+      }
+      for (int i = 0; i < bendingMomentType4_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(9, bendingMomentType4_.get(i));
+      }
+      for (int i = 0; i < shearingForceType2_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(10, shearingForceType2_.get(i));
+      }
+      for (int i = 0; i < shearingForceType4_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(11, shearingForceType4_.get(i));
+      }
+      for (int i = 0; i < bendingMomentShearingForce3_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(12, bendingMomentShearingForce3_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -27369,6 +37058,16 @@ public final class VesselInfo {
           .equals(other.getStationValuesList())) return false;
       if (!getInnerBulkHeadSFList()
           .equals(other.getInnerBulkHeadSFList())) return false;
+      if (!getBendingMomentType2List()
+          .equals(other.getBendingMomentType2List())) return false;
+      if (!getBendingMomentType4List()
+          .equals(other.getBendingMomentType4List())) return false;
+      if (!getShearingForceType2List()
+          .equals(other.getShearingForceType2List())) return false;
+      if (!getShearingForceType4List()
+          .equals(other.getShearingForceType4List())) return false;
+      if (!getBendingMomentShearingForce3List()
+          .equals(other.getBendingMomentShearingForce3List())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -27407,6 +37106,26 @@ public final class VesselInfo {
       if (getInnerBulkHeadSFCount() > 0) {
         hash = (37 * hash) + INNERBULKHEADSF_FIELD_NUMBER;
         hash = (53 * hash) + getInnerBulkHeadSFList().hashCode();
+      }
+      if (getBendingMomentType2Count() > 0) {
+        hash = (37 * hash) + BENDINGMOMENTTYPE2_FIELD_NUMBER;
+        hash = (53 * hash) + getBendingMomentType2List().hashCode();
+      }
+      if (getBendingMomentType4Count() > 0) {
+        hash = (37 * hash) + BENDINGMOMENTTYPE4_FIELD_NUMBER;
+        hash = (53 * hash) + getBendingMomentType4List().hashCode();
+      }
+      if (getShearingForceType2Count() > 0) {
+        hash = (37 * hash) + SHEARINGFORCETYPE2_FIELD_NUMBER;
+        hash = (53 * hash) + getShearingForceType2List().hashCode();
+      }
+      if (getShearingForceType4Count() > 0) {
+        hash = (37 * hash) + SHEARINGFORCETYPE4_FIELD_NUMBER;
+        hash = (53 * hash) + getShearingForceType4List().hashCode();
+      }
+      if (getBendingMomentShearingForce3Count() > 0) {
+        hash = (37 * hash) + BENDINGMOMENTSHEARINGFORCE3_FIELD_NUMBER;
+        hash = (53 * hash) + getBendingMomentShearingForce3List().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -27543,6 +37262,11 @@ public final class VesselInfo {
           getMinMaxValuesForBMAndSfFieldBuilder();
           getStationValuesFieldBuilder();
           getInnerBulkHeadSFFieldBuilder();
+          getBendingMomentType2FieldBuilder();
+          getBendingMomentType4FieldBuilder();
+          getShearingForceType2FieldBuilder();
+          getShearingForceType4FieldBuilder();
+          getBendingMomentShearingForce3FieldBuilder();
         }
       }
       @java.lang.Override
@@ -27589,6 +37313,36 @@ public final class VesselInfo {
           bitField0_ = (bitField0_ & ~0x00000040);
         } else {
           innerBulkHeadSFBuilder_.clear();
+        }
+        if (bendingMomentType2Builder_ == null) {
+          bendingMomentType2_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+        } else {
+          bendingMomentType2Builder_.clear();
+        }
+        if (bendingMomentType4Builder_ == null) {
+          bendingMomentType4_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000100);
+        } else {
+          bendingMomentType4Builder_.clear();
+        }
+        if (shearingForceType2Builder_ == null) {
+          shearingForceType2_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000200);
+        } else {
+          shearingForceType2Builder_.clear();
+        }
+        if (shearingForceType4Builder_ == null) {
+          shearingForceType4_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000400);
+        } else {
+          shearingForceType4Builder_.clear();
+        }
+        if (bendingMomentShearingForce3Builder_ == null) {
+          bendingMomentShearingForce3_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000800);
+        } else {
+          bendingMomentShearingForce3Builder_.clear();
         }
         return this;
       }
@@ -27679,6 +37433,51 @@ public final class VesselInfo {
           result.innerBulkHeadSF_ = innerBulkHeadSF_;
         } else {
           result.innerBulkHeadSF_ = innerBulkHeadSFBuilder_.build();
+        }
+        if (bendingMomentType2Builder_ == null) {
+          if (((bitField0_ & 0x00000080) != 0)) {
+            bendingMomentType2_ = java.util.Collections.unmodifiableList(bendingMomentType2_);
+            bitField0_ = (bitField0_ & ~0x00000080);
+          }
+          result.bendingMomentType2_ = bendingMomentType2_;
+        } else {
+          result.bendingMomentType2_ = bendingMomentType2Builder_.build();
+        }
+        if (bendingMomentType4Builder_ == null) {
+          if (((bitField0_ & 0x00000100) != 0)) {
+            bendingMomentType4_ = java.util.Collections.unmodifiableList(bendingMomentType4_);
+            bitField0_ = (bitField0_ & ~0x00000100);
+          }
+          result.bendingMomentType4_ = bendingMomentType4_;
+        } else {
+          result.bendingMomentType4_ = bendingMomentType4Builder_.build();
+        }
+        if (shearingForceType2Builder_ == null) {
+          if (((bitField0_ & 0x00000200) != 0)) {
+            shearingForceType2_ = java.util.Collections.unmodifiableList(shearingForceType2_);
+            bitField0_ = (bitField0_ & ~0x00000200);
+          }
+          result.shearingForceType2_ = shearingForceType2_;
+        } else {
+          result.shearingForceType2_ = shearingForceType2Builder_.build();
+        }
+        if (shearingForceType4Builder_ == null) {
+          if (((bitField0_ & 0x00000400) != 0)) {
+            shearingForceType4_ = java.util.Collections.unmodifiableList(shearingForceType4_);
+            bitField0_ = (bitField0_ & ~0x00000400);
+          }
+          result.shearingForceType4_ = shearingForceType4_;
+        } else {
+          result.shearingForceType4_ = shearingForceType4Builder_.build();
+        }
+        if (bendingMomentShearingForce3Builder_ == null) {
+          if (((bitField0_ & 0x00000800) != 0)) {
+            bendingMomentShearingForce3_ = java.util.Collections.unmodifiableList(bendingMomentShearingForce3_);
+            bitField0_ = (bitField0_ & ~0x00000800);
+          }
+          result.bendingMomentShearingForce3_ = bendingMomentShearingForce3_;
+        } else {
+          result.bendingMomentShearingForce3_ = bendingMomentShearingForce3Builder_.build();
         }
         onBuilt();
         return result;
@@ -27907,6 +37706,136 @@ public final class VesselInfo {
                    getInnerBulkHeadSFFieldBuilder() : null;
             } else {
               innerBulkHeadSFBuilder_.addAllMessages(other.innerBulkHeadSF_);
+            }
+          }
+        }
+        if (bendingMomentType2Builder_ == null) {
+          if (!other.bendingMomentType2_.isEmpty()) {
+            if (bendingMomentType2_.isEmpty()) {
+              bendingMomentType2_ = other.bendingMomentType2_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+            } else {
+              ensureBendingMomentType2IsMutable();
+              bendingMomentType2_.addAll(other.bendingMomentType2_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.bendingMomentType2_.isEmpty()) {
+            if (bendingMomentType2Builder_.isEmpty()) {
+              bendingMomentType2Builder_.dispose();
+              bendingMomentType2Builder_ = null;
+              bendingMomentType2_ = other.bendingMomentType2_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+              bendingMomentType2Builder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getBendingMomentType2FieldBuilder() : null;
+            } else {
+              bendingMomentType2Builder_.addAllMessages(other.bendingMomentType2_);
+            }
+          }
+        }
+        if (bendingMomentType4Builder_ == null) {
+          if (!other.bendingMomentType4_.isEmpty()) {
+            if (bendingMomentType4_.isEmpty()) {
+              bendingMomentType4_ = other.bendingMomentType4_;
+              bitField0_ = (bitField0_ & ~0x00000100);
+            } else {
+              ensureBendingMomentType4IsMutable();
+              bendingMomentType4_.addAll(other.bendingMomentType4_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.bendingMomentType4_.isEmpty()) {
+            if (bendingMomentType4Builder_.isEmpty()) {
+              bendingMomentType4Builder_.dispose();
+              bendingMomentType4Builder_ = null;
+              bendingMomentType4_ = other.bendingMomentType4_;
+              bitField0_ = (bitField0_ & ~0x00000100);
+              bendingMomentType4Builder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getBendingMomentType4FieldBuilder() : null;
+            } else {
+              bendingMomentType4Builder_.addAllMessages(other.bendingMomentType4_);
+            }
+          }
+        }
+        if (shearingForceType2Builder_ == null) {
+          if (!other.shearingForceType2_.isEmpty()) {
+            if (shearingForceType2_.isEmpty()) {
+              shearingForceType2_ = other.shearingForceType2_;
+              bitField0_ = (bitField0_ & ~0x00000200);
+            } else {
+              ensureShearingForceType2IsMutable();
+              shearingForceType2_.addAll(other.shearingForceType2_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.shearingForceType2_.isEmpty()) {
+            if (shearingForceType2Builder_.isEmpty()) {
+              shearingForceType2Builder_.dispose();
+              shearingForceType2Builder_ = null;
+              shearingForceType2_ = other.shearingForceType2_;
+              bitField0_ = (bitField0_ & ~0x00000200);
+              shearingForceType2Builder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getShearingForceType2FieldBuilder() : null;
+            } else {
+              shearingForceType2Builder_.addAllMessages(other.shearingForceType2_);
+            }
+          }
+        }
+        if (shearingForceType4Builder_ == null) {
+          if (!other.shearingForceType4_.isEmpty()) {
+            if (shearingForceType4_.isEmpty()) {
+              shearingForceType4_ = other.shearingForceType4_;
+              bitField0_ = (bitField0_ & ~0x00000400);
+            } else {
+              ensureShearingForceType4IsMutable();
+              shearingForceType4_.addAll(other.shearingForceType4_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.shearingForceType4_.isEmpty()) {
+            if (shearingForceType4Builder_.isEmpty()) {
+              shearingForceType4Builder_.dispose();
+              shearingForceType4Builder_ = null;
+              shearingForceType4_ = other.shearingForceType4_;
+              bitField0_ = (bitField0_ & ~0x00000400);
+              shearingForceType4Builder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getShearingForceType4FieldBuilder() : null;
+            } else {
+              shearingForceType4Builder_.addAllMessages(other.shearingForceType4_);
+            }
+          }
+        }
+        if (bendingMomentShearingForce3Builder_ == null) {
+          if (!other.bendingMomentShearingForce3_.isEmpty()) {
+            if (bendingMomentShearingForce3_.isEmpty()) {
+              bendingMomentShearingForce3_ = other.bendingMomentShearingForce3_;
+              bitField0_ = (bitField0_ & ~0x00000800);
+            } else {
+              ensureBendingMomentShearingForce3IsMutable();
+              bendingMomentShearingForce3_.addAll(other.bendingMomentShearingForce3_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.bendingMomentShearingForce3_.isEmpty()) {
+            if (bendingMomentShearingForce3Builder_.isEmpty()) {
+              bendingMomentShearingForce3Builder_.dispose();
+              bendingMomentShearingForce3Builder_ = null;
+              bendingMomentShearingForce3_ = other.bendingMomentShearingForce3_;
+              bitField0_ = (bitField0_ & ~0x00000800);
+              bendingMomentShearingForce3Builder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getBendingMomentShearingForce3FieldBuilder() : null;
+            } else {
+              bendingMomentShearingForce3Builder_.addAllMessages(other.bendingMomentShearingForce3_);
             }
           }
         }
@@ -29619,6 +39548,1206 @@ public final class VesselInfo {
         }
         return innerBulkHeadSFBuilder_;
       }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType2> bendingMomentType2_ =
+        java.util.Collections.emptyList();
+      private void ensureBendingMomentType2IsMutable() {
+        if (!((bitField0_ & 0x00000080) != 0)) {
+          bendingMomentType2_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.BendingMomentType2>(bendingMomentType2_);
+          bitField0_ |= 0x00000080;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.BendingMomentType2, com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder> bendingMomentType2Builder_;
+
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType2> getBendingMomentType2List() {
+        if (bendingMomentType2Builder_ == null) {
+          return java.util.Collections.unmodifiableList(bendingMomentType2_);
+        } else {
+          return bendingMomentType2Builder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public int getBendingMomentType2Count() {
+        if (bendingMomentType2Builder_ == null) {
+          return bendingMomentType2_.size();
+        } else {
+          return bendingMomentType2Builder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2 getBendingMomentType2(int index) {
+        if (bendingMomentType2Builder_ == null) {
+          return bendingMomentType2_.get(index);
+        } else {
+          return bendingMomentType2Builder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder setBendingMomentType2(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType2 value) {
+        if (bendingMomentType2Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentType2IsMutable();
+          bendingMomentType2_.set(index, value);
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder setBendingMomentType2(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder builderForValue) {
+        if (bendingMomentType2Builder_ == null) {
+          ensureBendingMomentType2IsMutable();
+          bendingMomentType2_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder addBendingMomentType2(com.cpdss.common.generated.VesselInfo.BendingMomentType2 value) {
+        if (bendingMomentType2Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentType2IsMutable();
+          bendingMomentType2_.add(value);
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder addBendingMomentType2(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType2 value) {
+        if (bendingMomentType2Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentType2IsMutable();
+          bendingMomentType2_.add(index, value);
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder addBendingMomentType2(
+          com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder builderForValue) {
+        if (bendingMomentType2Builder_ == null) {
+          ensureBendingMomentType2IsMutable();
+          bendingMomentType2_.add(builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder addBendingMomentType2(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder builderForValue) {
+        if (bendingMomentType2Builder_ == null) {
+          ensureBendingMomentType2IsMutable();
+          bendingMomentType2_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder addAllBendingMomentType2(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType2> values) {
+        if (bendingMomentType2Builder_ == null) {
+          ensureBendingMomentType2IsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, bendingMomentType2_);
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder clearBendingMomentType2() {
+        if (bendingMomentType2Builder_ == null) {
+          bendingMomentType2_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public Builder removeBendingMomentType2(int index) {
+        if (bendingMomentType2Builder_ == null) {
+          ensureBendingMomentType2IsMutable();
+          bendingMomentType2_.remove(index);
+          onChanged();
+        } else {
+          bendingMomentType2Builder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder getBendingMomentType2Builder(
+          int index) {
+        return getBendingMomentType2FieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder getBendingMomentType2OrBuilder(
+          int index) {
+        if (bendingMomentType2Builder_ == null) {
+          return bendingMomentType2_.get(index);  } else {
+          return bendingMomentType2Builder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder> 
+           getBendingMomentType2OrBuilderList() {
+        if (bendingMomentType2Builder_ != null) {
+          return bendingMomentType2Builder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(bendingMomentType2_);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder addBendingMomentType2Builder() {
+        return getBendingMomentType2FieldBuilder().addBuilder(
+            com.cpdss.common.generated.VesselInfo.BendingMomentType2.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder addBendingMomentType2Builder(
+          int index) {
+        return getBendingMomentType2FieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.VesselInfo.BendingMomentType2.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .BendingMomentType2 bendingMomentType2 = 8;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder> 
+           getBendingMomentType2BuilderList() {
+        return getBendingMomentType2FieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.BendingMomentType2, com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder> 
+          getBendingMomentType2FieldBuilder() {
+        if (bendingMomentType2Builder_ == null) {
+          bendingMomentType2Builder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.BendingMomentType2, com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentType2OrBuilder>(
+                  bendingMomentType2_,
+                  ((bitField0_ & 0x00000080) != 0),
+                  getParentForChildren(),
+                  isClean());
+          bendingMomentType2_ = null;
+        }
+        return bendingMomentType2Builder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType4> bendingMomentType4_ =
+        java.util.Collections.emptyList();
+      private void ensureBendingMomentType4IsMutable() {
+        if (!((bitField0_ & 0x00000100) != 0)) {
+          bendingMomentType4_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.BendingMomentType4>(bendingMomentType4_);
+          bitField0_ |= 0x00000100;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.BendingMomentType4, com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder> bendingMomentType4Builder_;
+
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType4> getBendingMomentType4List() {
+        if (bendingMomentType4Builder_ == null) {
+          return java.util.Collections.unmodifiableList(bendingMomentType4_);
+        } else {
+          return bendingMomentType4Builder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public int getBendingMomentType4Count() {
+        if (bendingMomentType4Builder_ == null) {
+          return bendingMomentType4_.size();
+        } else {
+          return bendingMomentType4Builder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4 getBendingMomentType4(int index) {
+        if (bendingMomentType4Builder_ == null) {
+          return bendingMomentType4_.get(index);
+        } else {
+          return bendingMomentType4Builder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder setBendingMomentType4(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType4 value) {
+        if (bendingMomentType4Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentType4IsMutable();
+          bendingMomentType4_.set(index, value);
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder setBendingMomentType4(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder builderForValue) {
+        if (bendingMomentType4Builder_ == null) {
+          ensureBendingMomentType4IsMutable();
+          bendingMomentType4_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder addBendingMomentType4(com.cpdss.common.generated.VesselInfo.BendingMomentType4 value) {
+        if (bendingMomentType4Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentType4IsMutable();
+          bendingMomentType4_.add(value);
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder addBendingMomentType4(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType4 value) {
+        if (bendingMomentType4Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentType4IsMutable();
+          bendingMomentType4_.add(index, value);
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder addBendingMomentType4(
+          com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder builderForValue) {
+        if (bendingMomentType4Builder_ == null) {
+          ensureBendingMomentType4IsMutable();
+          bendingMomentType4_.add(builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder addBendingMomentType4(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder builderForValue) {
+        if (bendingMomentType4Builder_ == null) {
+          ensureBendingMomentType4IsMutable();
+          bendingMomentType4_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder addAllBendingMomentType4(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType4> values) {
+        if (bendingMomentType4Builder_ == null) {
+          ensureBendingMomentType4IsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, bendingMomentType4_);
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder clearBendingMomentType4() {
+        if (bendingMomentType4Builder_ == null) {
+          bendingMomentType4_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000100);
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public Builder removeBendingMomentType4(int index) {
+        if (bendingMomentType4Builder_ == null) {
+          ensureBendingMomentType4IsMutable();
+          bendingMomentType4_.remove(index);
+          onChanged();
+        } else {
+          bendingMomentType4Builder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder getBendingMomentType4Builder(
+          int index) {
+        return getBendingMomentType4FieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder getBendingMomentType4OrBuilder(
+          int index) {
+        if (bendingMomentType4Builder_ == null) {
+          return bendingMomentType4_.get(index);  } else {
+          return bendingMomentType4Builder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder> 
+           getBendingMomentType4OrBuilderList() {
+        if (bendingMomentType4Builder_ != null) {
+          return bendingMomentType4Builder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(bendingMomentType4_);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder addBendingMomentType4Builder() {
+        return getBendingMomentType4FieldBuilder().addBuilder(
+            com.cpdss.common.generated.VesselInfo.BendingMomentType4.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder addBendingMomentType4Builder(
+          int index) {
+        return getBendingMomentType4FieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.VesselInfo.BendingMomentType4.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .BendingMomentType4 bendingMomentType4 = 9;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder> 
+           getBendingMomentType4BuilderList() {
+        return getBendingMomentType4FieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.BendingMomentType4, com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder> 
+          getBendingMomentType4FieldBuilder() {
+        if (bendingMomentType4Builder_ == null) {
+          bendingMomentType4Builder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.BendingMomentType4, com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentType4OrBuilder>(
+                  bendingMomentType4_,
+                  ((bitField0_ & 0x00000100) != 0),
+                  getParentForChildren(),
+                  isClean());
+          bendingMomentType4_ = null;
+        }
+        return bendingMomentType4Builder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType2> shearingForceType2_ =
+        java.util.Collections.emptyList();
+      private void ensureShearingForceType2IsMutable() {
+        if (!((bitField0_ & 0x00000200) != 0)) {
+          shearingForceType2_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.ShearingForceType2>(shearingForceType2_);
+          bitField0_ |= 0x00000200;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.ShearingForceType2, com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder, com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder> shearingForceType2Builder_;
+
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType2> getShearingForceType2List() {
+        if (shearingForceType2Builder_ == null) {
+          return java.util.Collections.unmodifiableList(shearingForceType2_);
+        } else {
+          return shearingForceType2Builder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public int getShearingForceType2Count() {
+        if (shearingForceType2Builder_ == null) {
+          return shearingForceType2_.size();
+        } else {
+          return shearingForceType2Builder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2 getShearingForceType2(int index) {
+        if (shearingForceType2Builder_ == null) {
+          return shearingForceType2_.get(index);
+        } else {
+          return shearingForceType2Builder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder setShearingForceType2(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType2 value) {
+        if (shearingForceType2Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureShearingForceType2IsMutable();
+          shearingForceType2_.set(index, value);
+          onChanged();
+        } else {
+          shearingForceType2Builder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder setShearingForceType2(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder builderForValue) {
+        if (shearingForceType2Builder_ == null) {
+          ensureShearingForceType2IsMutable();
+          shearingForceType2_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          shearingForceType2Builder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder addShearingForceType2(com.cpdss.common.generated.VesselInfo.ShearingForceType2 value) {
+        if (shearingForceType2Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureShearingForceType2IsMutable();
+          shearingForceType2_.add(value);
+          onChanged();
+        } else {
+          shearingForceType2Builder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder addShearingForceType2(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType2 value) {
+        if (shearingForceType2Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureShearingForceType2IsMutable();
+          shearingForceType2_.add(index, value);
+          onChanged();
+        } else {
+          shearingForceType2Builder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder addShearingForceType2(
+          com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder builderForValue) {
+        if (shearingForceType2Builder_ == null) {
+          ensureShearingForceType2IsMutable();
+          shearingForceType2_.add(builderForValue.build());
+          onChanged();
+        } else {
+          shearingForceType2Builder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder addShearingForceType2(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder builderForValue) {
+        if (shearingForceType2Builder_ == null) {
+          ensureShearingForceType2IsMutable();
+          shearingForceType2_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          shearingForceType2Builder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder addAllShearingForceType2(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType2> values) {
+        if (shearingForceType2Builder_ == null) {
+          ensureShearingForceType2IsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, shearingForceType2_);
+          onChanged();
+        } else {
+          shearingForceType2Builder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder clearShearingForceType2() {
+        if (shearingForceType2Builder_ == null) {
+          shearingForceType2_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000200);
+          onChanged();
+        } else {
+          shearingForceType2Builder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public Builder removeShearingForceType2(int index) {
+        if (shearingForceType2Builder_ == null) {
+          ensureShearingForceType2IsMutable();
+          shearingForceType2_.remove(index);
+          onChanged();
+        } else {
+          shearingForceType2Builder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder getShearingForceType2Builder(
+          int index) {
+        return getShearingForceType2FieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder getShearingForceType2OrBuilder(
+          int index) {
+        if (shearingForceType2Builder_ == null) {
+          return shearingForceType2_.get(index);  } else {
+          return shearingForceType2Builder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder> 
+           getShearingForceType2OrBuilderList() {
+        if (shearingForceType2Builder_ != null) {
+          return shearingForceType2Builder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(shearingForceType2_);
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder addShearingForceType2Builder() {
+        return getShearingForceType2FieldBuilder().addBuilder(
+            com.cpdss.common.generated.VesselInfo.ShearingForceType2.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder addShearingForceType2Builder(
+          int index) {
+        return getShearingForceType2FieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.VesselInfo.ShearingForceType2.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .ShearingForceType2 shearingForceType2 = 10;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder> 
+           getShearingForceType2BuilderList() {
+        return getShearingForceType2FieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.ShearingForceType2, com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder, com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder> 
+          getShearingForceType2FieldBuilder() {
+        if (shearingForceType2Builder_ == null) {
+          shearingForceType2Builder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.ShearingForceType2, com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder, com.cpdss.common.generated.VesselInfo.ShearingForceType2OrBuilder>(
+                  shearingForceType2_,
+                  ((bitField0_ & 0x00000200) != 0),
+                  getParentForChildren(),
+                  isClean());
+          shearingForceType2_ = null;
+        }
+        return shearingForceType2Builder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType4> shearingForceType4_ =
+        java.util.Collections.emptyList();
+      private void ensureShearingForceType4IsMutable() {
+        if (!((bitField0_ & 0x00000400) != 0)) {
+          shearingForceType4_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.ShearingForceType4>(shearingForceType4_);
+          bitField0_ |= 0x00000400;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.ShearingForceType4, com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder, com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder> shearingForceType4Builder_;
+
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType4> getShearingForceType4List() {
+        if (shearingForceType4Builder_ == null) {
+          return java.util.Collections.unmodifiableList(shearingForceType4_);
+        } else {
+          return shearingForceType4Builder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public int getShearingForceType4Count() {
+        if (shearingForceType4Builder_ == null) {
+          return shearingForceType4_.size();
+        } else {
+          return shearingForceType4Builder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4 getShearingForceType4(int index) {
+        if (shearingForceType4Builder_ == null) {
+          return shearingForceType4_.get(index);
+        } else {
+          return shearingForceType4Builder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder setShearingForceType4(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType4 value) {
+        if (shearingForceType4Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureShearingForceType4IsMutable();
+          shearingForceType4_.set(index, value);
+          onChanged();
+        } else {
+          shearingForceType4Builder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder setShearingForceType4(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder builderForValue) {
+        if (shearingForceType4Builder_ == null) {
+          ensureShearingForceType4IsMutable();
+          shearingForceType4_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          shearingForceType4Builder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder addShearingForceType4(com.cpdss.common.generated.VesselInfo.ShearingForceType4 value) {
+        if (shearingForceType4Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureShearingForceType4IsMutable();
+          shearingForceType4_.add(value);
+          onChanged();
+        } else {
+          shearingForceType4Builder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder addShearingForceType4(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType4 value) {
+        if (shearingForceType4Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureShearingForceType4IsMutable();
+          shearingForceType4_.add(index, value);
+          onChanged();
+        } else {
+          shearingForceType4Builder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder addShearingForceType4(
+          com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder builderForValue) {
+        if (shearingForceType4Builder_ == null) {
+          ensureShearingForceType4IsMutable();
+          shearingForceType4_.add(builderForValue.build());
+          onChanged();
+        } else {
+          shearingForceType4Builder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder addShearingForceType4(
+          int index, com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder builderForValue) {
+        if (shearingForceType4Builder_ == null) {
+          ensureShearingForceType4IsMutable();
+          shearingForceType4_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          shearingForceType4Builder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder addAllShearingForceType4(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType4> values) {
+        if (shearingForceType4Builder_ == null) {
+          ensureShearingForceType4IsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, shearingForceType4_);
+          onChanged();
+        } else {
+          shearingForceType4Builder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder clearShearingForceType4() {
+        if (shearingForceType4Builder_ == null) {
+          shearingForceType4_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000400);
+          onChanged();
+        } else {
+          shearingForceType4Builder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public Builder removeShearingForceType4(int index) {
+        if (shearingForceType4Builder_ == null) {
+          ensureShearingForceType4IsMutable();
+          shearingForceType4_.remove(index);
+          onChanged();
+        } else {
+          shearingForceType4Builder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder getShearingForceType4Builder(
+          int index) {
+        return getShearingForceType4FieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder getShearingForceType4OrBuilder(
+          int index) {
+        if (shearingForceType4Builder_ == null) {
+          return shearingForceType4_.get(index);  } else {
+          return shearingForceType4Builder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder> 
+           getShearingForceType4OrBuilderList() {
+        if (shearingForceType4Builder_ != null) {
+          return shearingForceType4Builder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(shearingForceType4_);
+        }
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder addShearingForceType4Builder() {
+        return getShearingForceType4FieldBuilder().addBuilder(
+            com.cpdss.common.generated.VesselInfo.ShearingForceType4.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder addShearingForceType4Builder(
+          int index) {
+        return getShearingForceType4FieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.VesselInfo.ShearingForceType4.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .ShearingForceType4 shearingForceType4 = 11;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder> 
+           getShearingForceType4BuilderList() {
+        return getShearingForceType4FieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.ShearingForceType4, com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder, com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder> 
+          getShearingForceType4FieldBuilder() {
+        if (shearingForceType4Builder_ == null) {
+          shearingForceType4Builder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.ShearingForceType4, com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder, com.cpdss.common.generated.VesselInfo.ShearingForceType4OrBuilder>(
+                  shearingForceType4_,
+                  ((bitField0_ & 0x00000400) != 0),
+                  getParentForChildren(),
+                  isClean());
+          shearingForceType4_ = null;
+        }
+        return shearingForceType4Builder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3> bendingMomentShearingForce3_ =
+        java.util.Collections.emptyList();
+      private void ensureBendingMomentShearingForce3IsMutable() {
+        if (!((bitField0_ & 0x00000800) != 0)) {
+          bendingMomentShearingForce3_ = new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3>(bendingMomentShearingForce3_);
+          bitField0_ |= 0x00000800;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder> bendingMomentShearingForce3Builder_;
+
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3> getBendingMomentShearingForce3List() {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          return java.util.Collections.unmodifiableList(bendingMomentShearingForce3_);
+        } else {
+          return bendingMomentShearingForce3Builder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public int getBendingMomentShearingForce3Count() {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          return bendingMomentShearingForce3_.size();
+        } else {
+          return bendingMomentShearingForce3Builder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 getBendingMomentShearingForce3(int index) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          return bendingMomentShearingForce3_.get(index);
+        } else {
+          return bendingMomentShearingForce3Builder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder setBendingMomentShearingForce3(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 value) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentShearingForce3IsMutable();
+          bendingMomentShearingForce3_.set(index, value);
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder setBendingMomentShearingForce3(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder builderForValue) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          ensureBendingMomentShearingForce3IsMutable();
+          bendingMomentShearingForce3_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder addBendingMomentShearingForce3(com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 value) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentShearingForce3IsMutable();
+          bendingMomentShearingForce3_.add(value);
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder addBendingMomentShearingForce3(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3 value) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBendingMomentShearingForce3IsMutable();
+          bendingMomentShearingForce3_.add(index, value);
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder addBendingMomentShearingForce3(
+          com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder builderForValue) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          ensureBendingMomentShearingForce3IsMutable();
+          bendingMomentShearingForce3_.add(builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder addBendingMomentShearingForce3(
+          int index, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder builderForValue) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          ensureBendingMomentShearingForce3IsMutable();
+          bendingMomentShearingForce3_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder addAllBendingMomentShearingForce3(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3> values) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          ensureBendingMomentShearingForce3IsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, bendingMomentShearingForce3_);
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder clearBendingMomentShearingForce3() {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          bendingMomentShearingForce3_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000800);
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public Builder removeBendingMomentShearingForce3(int index) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          ensureBendingMomentShearingForce3IsMutable();
+          bendingMomentShearingForce3_.remove(index);
+          onChanged();
+        } else {
+          bendingMomentShearingForce3Builder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder getBendingMomentShearingForce3Builder(
+          int index) {
+        return getBendingMomentShearingForce3FieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder getBendingMomentShearingForce3OrBuilder(
+          int index) {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          return bendingMomentShearingForce3_.get(index);  } else {
+          return bendingMomentShearingForce3Builder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder> 
+           getBendingMomentShearingForce3OrBuilderList() {
+        if (bendingMomentShearingForce3Builder_ != null) {
+          return bendingMomentShearingForce3Builder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(bendingMomentShearingForce3_);
+        }
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder addBendingMomentShearingForce3Builder() {
+        return getBendingMomentShearingForce3FieldBuilder().addBuilder(
+            com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder addBendingMomentShearingForce3Builder(
+          int index) {
+        return getBendingMomentShearingForce3FieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder> 
+           getBendingMomentShearingForce3BuilderList() {
+        return getBendingMomentShearingForce3FieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder> 
+          getBendingMomentShearingForce3FieldBuilder() {
+        if (bendingMomentShearingForce3Builder_ == null) {
+          bendingMomentShearingForce3Builder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder, com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3OrBuilder>(
+                  bendingMomentShearingForce3_,
+                  ((bitField0_ & 0x00000800) != 0),
+                  getParentForChildren(),
+                  isClean());
+          bendingMomentShearingForce3_ = null;
+        }
+        return bendingMomentShearingForce3Builder_;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -30894,1233 +42023,6 @@ public final class VesselInfo {
 
     @java.lang.Override
     public com.cpdss.common.generated.VesselInfo.BendingMoment getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface ShearingForceOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ShearingForce)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>int64 id = 1;</code>
-     * @return The id.
-     */
-    long getId();
-
-    /**
-     * <code>string frameNumber = 2;</code>
-     * @return The frameNumber.
-     */
-    java.lang.String getFrameNumber();
-    /**
-     * <code>string frameNumber = 2;</code>
-     * @return The bytes for frameNumber.
-     */
-    com.google.protobuf.ByteString
-        getFrameNumberBytes();
-
-    /**
-     * <code>string baseDraft = 3;</code>
-     * @return The baseDraft.
-     */
-    java.lang.String getBaseDraft();
-    /**
-     * <code>string baseDraft = 3;</code>
-     * @return The bytes for baseDraft.
-     */
-    com.google.protobuf.ByteString
-        getBaseDraftBytes();
-
-    /**
-     * <code>string baseValue = 4;</code>
-     * @return The baseValue.
-     */
-    java.lang.String getBaseValue();
-    /**
-     * <code>string baseValue = 4;</code>
-     * @return The bytes for baseValue.
-     */
-    com.google.protobuf.ByteString
-        getBaseValueBytes();
-
-    /**
-     * <code>string draftCorrection = 5;</code>
-     * @return The draftCorrection.
-     */
-    java.lang.String getDraftCorrection();
-    /**
-     * <code>string draftCorrection = 5;</code>
-     * @return The bytes for draftCorrection.
-     */
-    com.google.protobuf.ByteString
-        getDraftCorrectionBytes();
-
-    /**
-     * <code>string trimCorrection = 6;</code>
-     * @return The trimCorrection.
-     */
-    java.lang.String getTrimCorrection();
-    /**
-     * <code>string trimCorrection = 6;</code>
-     * @return The bytes for trimCorrection.
-     */
-    com.google.protobuf.ByteString
-        getTrimCorrectionBytes();
-  }
-  /**
-   * Protobuf type {@code ShearingForce}
-   */
-  public  static final class ShearingForce extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:ShearingForce)
-      ShearingForceOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use ShearingForce.newBuilder() to construct.
-    private ShearingForce(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private ShearingForce() {
-      frameNumber_ = "";
-      baseDraft_ = "";
-      baseValue_ = "";
-      draftCorrection_ = "";
-      trimCorrection_ = "";
-    }
-
-    @java.lang.Override
-    @SuppressWarnings({"unused"})
-    protected java.lang.Object newInstance(
-        UnusedPrivateParameter unused) {
-      return new ShearingForce();
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private ShearingForce(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-
-              id_ = input.readInt64();
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              frameNumber_ = s;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              baseDraft_ = s;
-              break;
-            }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              baseValue_ = s;
-              break;
-            }
-            case 42: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              draftCorrection_ = s;
-              break;
-            }
-            case 50: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              trimCorrection_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              com.cpdss.common.generated.VesselInfo.ShearingForce.class, com.cpdss.common.generated.VesselInfo.ShearingForce.Builder.class);
-    }
-
-    public static final int ID_FIELD_NUMBER = 1;
-    private long id_;
-    /**
-     * <code>int64 id = 1;</code>
-     * @return The id.
-     */
-    public long getId() {
-      return id_;
-    }
-
-    public static final int FRAMENUMBER_FIELD_NUMBER = 2;
-    private volatile java.lang.Object frameNumber_;
-    /**
-     * <code>string frameNumber = 2;</code>
-     * @return The frameNumber.
-     */
-    public java.lang.String getFrameNumber() {
-      java.lang.Object ref = frameNumber_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        frameNumber_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string frameNumber = 2;</code>
-     * @return The bytes for frameNumber.
-     */
-    public com.google.protobuf.ByteString
-        getFrameNumberBytes() {
-      java.lang.Object ref = frameNumber_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        frameNumber_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int BASEDRAFT_FIELD_NUMBER = 3;
-    private volatile java.lang.Object baseDraft_;
-    /**
-     * <code>string baseDraft = 3;</code>
-     * @return The baseDraft.
-     */
-    public java.lang.String getBaseDraft() {
-      java.lang.Object ref = baseDraft_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        baseDraft_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string baseDraft = 3;</code>
-     * @return The bytes for baseDraft.
-     */
-    public com.google.protobuf.ByteString
-        getBaseDraftBytes() {
-      java.lang.Object ref = baseDraft_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        baseDraft_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int BASEVALUE_FIELD_NUMBER = 4;
-    private volatile java.lang.Object baseValue_;
-    /**
-     * <code>string baseValue = 4;</code>
-     * @return The baseValue.
-     */
-    public java.lang.String getBaseValue() {
-      java.lang.Object ref = baseValue_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        baseValue_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string baseValue = 4;</code>
-     * @return The bytes for baseValue.
-     */
-    public com.google.protobuf.ByteString
-        getBaseValueBytes() {
-      java.lang.Object ref = baseValue_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        baseValue_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int DRAFTCORRECTION_FIELD_NUMBER = 5;
-    private volatile java.lang.Object draftCorrection_;
-    /**
-     * <code>string draftCorrection = 5;</code>
-     * @return The draftCorrection.
-     */
-    public java.lang.String getDraftCorrection() {
-      java.lang.Object ref = draftCorrection_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        draftCorrection_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string draftCorrection = 5;</code>
-     * @return The bytes for draftCorrection.
-     */
-    public com.google.protobuf.ByteString
-        getDraftCorrectionBytes() {
-      java.lang.Object ref = draftCorrection_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        draftCorrection_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int TRIMCORRECTION_FIELD_NUMBER = 6;
-    private volatile java.lang.Object trimCorrection_;
-    /**
-     * <code>string trimCorrection = 6;</code>
-     * @return The trimCorrection.
-     */
-    public java.lang.String getTrimCorrection() {
-      java.lang.Object ref = trimCorrection_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        trimCorrection_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string trimCorrection = 6;</code>
-     * @return The bytes for trimCorrection.
-     */
-    public com.google.protobuf.ByteString
-        getTrimCorrectionBytes() {
-      java.lang.Object ref = trimCorrection_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        trimCorrection_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (id_ != 0L) {
-        output.writeInt64(1, id_);
-      }
-      if (!getFrameNumberBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, frameNumber_);
-      }
-      if (!getBaseDraftBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, baseDraft_);
-      }
-      if (!getBaseValueBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, baseValue_);
-      }
-      if (!getDraftCorrectionBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, draftCorrection_);
-      }
-      if (!getTrimCorrectionBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, trimCorrection_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (id_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, id_);
-      }
-      if (!getFrameNumberBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, frameNumber_);
-      }
-      if (!getBaseDraftBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, baseDraft_);
-      }
-      if (!getBaseValueBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, baseValue_);
-      }
-      if (!getDraftCorrectionBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, draftCorrection_);
-      }
-      if (!getTrimCorrectionBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, trimCorrection_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.ShearingForce)) {
-        return super.equals(obj);
-      }
-      com.cpdss.common.generated.VesselInfo.ShearingForce other = (com.cpdss.common.generated.VesselInfo.ShearingForce) obj;
-
-      if (getId()
-          != other.getId()) return false;
-      if (!getFrameNumber()
-          .equals(other.getFrameNumber())) return false;
-      if (!getBaseDraft()
-          .equals(other.getBaseDraft())) return false;
-      if (!getBaseValue()
-          .equals(other.getBaseValue())) return false;
-      if (!getDraftCorrection()
-          .equals(other.getDraftCorrection())) return false;
-      if (!getTrimCorrection()
-          .equals(other.getTrimCorrection())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getId());
-      hash = (37 * hash) + FRAMENUMBER_FIELD_NUMBER;
-      hash = (53 * hash) + getFrameNumber().hashCode();
-      hash = (37 * hash) + BASEDRAFT_FIELD_NUMBER;
-      hash = (53 * hash) + getBaseDraft().hashCode();
-      hash = (37 * hash) + BASEVALUE_FIELD_NUMBER;
-      hash = (53 * hash) + getBaseValue().hashCode();
-      hash = (37 * hash) + DRAFTCORRECTION_FIELD_NUMBER;
-      hash = (53 * hash) + getDraftCorrection().hashCode();
-      hash = (37 * hash) + TRIMCORRECTION_FIELD_NUMBER;
-      hash = (53 * hash) + getTrimCorrection().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.ShearingForce prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code ShearingForce}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ShearingForce)
-        com.cpdss.common.generated.VesselInfo.ShearingForceOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                com.cpdss.common.generated.VesselInfo.ShearingForce.class, com.cpdss.common.generated.VesselInfo.ShearingForce.Builder.class);
-      }
-
-      // Construct using com.cpdss.common.generated.VesselInfo.ShearingForce.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        id_ = 0L;
-
-        frameNumber_ = "";
-
-        baseDraft_ = "";
-
-        baseValue_ = "";
-
-        draftCorrection_ = "";
-
-        trimCorrection_ = "";
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return com.cpdss.common.generated.VesselInfo.internal_static_ShearingForce_descriptor;
-      }
-
-      @java.lang.Override
-      public com.cpdss.common.generated.VesselInfo.ShearingForce getDefaultInstanceForType() {
-        return com.cpdss.common.generated.VesselInfo.ShearingForce.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public com.cpdss.common.generated.VesselInfo.ShearingForce build() {
-        com.cpdss.common.generated.VesselInfo.ShearingForce result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public com.cpdss.common.generated.VesselInfo.ShearingForce buildPartial() {
-        com.cpdss.common.generated.VesselInfo.ShearingForce result = new com.cpdss.common.generated.VesselInfo.ShearingForce(this);
-        result.id_ = id_;
-        result.frameNumber_ = frameNumber_;
-        result.baseDraft_ = baseDraft_;
-        result.baseValue_ = baseValue_;
-        result.draftCorrection_ = draftCorrection_;
-        result.trimCorrection_ = trimCorrection_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.cpdss.common.generated.VesselInfo.ShearingForce) {
-          return mergeFrom((com.cpdss.common.generated.VesselInfo.ShearingForce)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.ShearingForce other) {
-        if (other == com.cpdss.common.generated.VesselInfo.ShearingForce.getDefaultInstance()) return this;
-        if (other.getId() != 0L) {
-          setId(other.getId());
-        }
-        if (!other.getFrameNumber().isEmpty()) {
-          frameNumber_ = other.frameNumber_;
-          onChanged();
-        }
-        if (!other.getBaseDraft().isEmpty()) {
-          baseDraft_ = other.baseDraft_;
-          onChanged();
-        }
-        if (!other.getBaseValue().isEmpty()) {
-          baseValue_ = other.baseValue_;
-          onChanged();
-        }
-        if (!other.getDraftCorrection().isEmpty()) {
-          draftCorrection_ = other.draftCorrection_;
-          onChanged();
-        }
-        if (!other.getTrimCorrection().isEmpty()) {
-          trimCorrection_ = other.trimCorrection_;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.cpdss.common.generated.VesselInfo.ShearingForce parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.cpdss.common.generated.VesselInfo.ShearingForce) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private long id_ ;
-      /**
-       * <code>int64 id = 1;</code>
-       * @return The id.
-       */
-      public long getId() {
-        return id_;
-      }
-      /**
-       * <code>int64 id = 1;</code>
-       * @param value The id to set.
-       * @return This builder for chaining.
-       */
-      public Builder setId(long value) {
-        
-        id_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 id = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearId() {
-        
-        id_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object frameNumber_ = "";
-      /**
-       * <code>string frameNumber = 2;</code>
-       * @return The frameNumber.
-       */
-      public java.lang.String getFrameNumber() {
-        java.lang.Object ref = frameNumber_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          frameNumber_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string frameNumber = 2;</code>
-       * @return The bytes for frameNumber.
-       */
-      public com.google.protobuf.ByteString
-          getFrameNumberBytes() {
-        java.lang.Object ref = frameNumber_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          frameNumber_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string frameNumber = 2;</code>
-       * @param value The frameNumber to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFrameNumber(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        frameNumber_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string frameNumber = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFrameNumber() {
-        
-        frameNumber_ = getDefaultInstance().getFrameNumber();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string frameNumber = 2;</code>
-       * @param value The bytes for frameNumber to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFrameNumberBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        frameNumber_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object baseDraft_ = "";
-      /**
-       * <code>string baseDraft = 3;</code>
-       * @return The baseDraft.
-       */
-      public java.lang.String getBaseDraft() {
-        java.lang.Object ref = baseDraft_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          baseDraft_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string baseDraft = 3;</code>
-       * @return The bytes for baseDraft.
-       */
-      public com.google.protobuf.ByteString
-          getBaseDraftBytes() {
-        java.lang.Object ref = baseDraft_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          baseDraft_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string baseDraft = 3;</code>
-       * @param value The baseDraft to set.
-       * @return This builder for chaining.
-       */
-      public Builder setBaseDraft(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        baseDraft_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string baseDraft = 3;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearBaseDraft() {
-        
-        baseDraft_ = getDefaultInstance().getBaseDraft();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string baseDraft = 3;</code>
-       * @param value The bytes for baseDraft to set.
-       * @return This builder for chaining.
-       */
-      public Builder setBaseDraftBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        baseDraft_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object baseValue_ = "";
-      /**
-       * <code>string baseValue = 4;</code>
-       * @return The baseValue.
-       */
-      public java.lang.String getBaseValue() {
-        java.lang.Object ref = baseValue_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          baseValue_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string baseValue = 4;</code>
-       * @return The bytes for baseValue.
-       */
-      public com.google.protobuf.ByteString
-          getBaseValueBytes() {
-        java.lang.Object ref = baseValue_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          baseValue_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string baseValue = 4;</code>
-       * @param value The baseValue to set.
-       * @return This builder for chaining.
-       */
-      public Builder setBaseValue(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        baseValue_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string baseValue = 4;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearBaseValue() {
-        
-        baseValue_ = getDefaultInstance().getBaseValue();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string baseValue = 4;</code>
-       * @param value The bytes for baseValue to set.
-       * @return This builder for chaining.
-       */
-      public Builder setBaseValueBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        baseValue_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object draftCorrection_ = "";
-      /**
-       * <code>string draftCorrection = 5;</code>
-       * @return The draftCorrection.
-       */
-      public java.lang.String getDraftCorrection() {
-        java.lang.Object ref = draftCorrection_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          draftCorrection_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string draftCorrection = 5;</code>
-       * @return The bytes for draftCorrection.
-       */
-      public com.google.protobuf.ByteString
-          getDraftCorrectionBytes() {
-        java.lang.Object ref = draftCorrection_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          draftCorrection_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string draftCorrection = 5;</code>
-       * @param value The draftCorrection to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDraftCorrection(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        draftCorrection_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string draftCorrection = 5;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearDraftCorrection() {
-        
-        draftCorrection_ = getDefaultInstance().getDraftCorrection();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string draftCorrection = 5;</code>
-       * @param value The bytes for draftCorrection to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDraftCorrectionBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        draftCorrection_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object trimCorrection_ = "";
-      /**
-       * <code>string trimCorrection = 6;</code>
-       * @return The trimCorrection.
-       */
-      public java.lang.String getTrimCorrection() {
-        java.lang.Object ref = trimCorrection_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          trimCorrection_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string trimCorrection = 6;</code>
-       * @return The bytes for trimCorrection.
-       */
-      public com.google.protobuf.ByteString
-          getTrimCorrectionBytes() {
-        java.lang.Object ref = trimCorrection_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          trimCorrection_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string trimCorrection = 6;</code>
-       * @param value The trimCorrection to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTrimCorrection(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        trimCorrection_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string trimCorrection = 6;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearTrimCorrection() {
-        
-        trimCorrection_ = getDefaultInstance().getTrimCorrection();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string trimCorrection = 6;</code>
-       * @param value The bytes for trimCorrection to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTrimCorrectionBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        trimCorrection_ = value;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:ShearingForce)
-    }
-
-    // @@protoc_insertion_point(class_scope:ShearingForce)
-    private static final com.cpdss.common.generated.VesselInfo.ShearingForce DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.ShearingForce();
-    }
-
-    public static com.cpdss.common.generated.VesselInfo.ShearingForce getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<ShearingForce>
-        PARSER = new com.google.protobuf.AbstractParser<ShearingForce>() {
-      @java.lang.Override
-      public ShearingForce parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new ShearingForce(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<ShearingForce> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<ShearingForce> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.cpdss.common.generated.VesselInfo.ShearingForce getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -63090,6 +72992,36 @@ public final class VesselInfo {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_VesselAlgoReply_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_BendingMomentType2_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BendingMomentType2_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_BendingMomentType4_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BendingMomentType4_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ShearingForce_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ShearingForce_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ShearingForceType2_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ShearingForceType2_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ShearingForceType4_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ShearingForceType4_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_BendingMomentShearingForceType3_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BendingMomentShearingForceType3_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_SelectableParameter_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -63129,11 +73061,6 @@ public final class VesselInfo {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_BendingMoment_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ShearingForce_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_ShearingForce_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_CalculationSheet_descriptor;
   private static final 
@@ -63280,7 +73207,7 @@ public final class VesselInfo {
       "tConditionId\030\003 \001(\003\022\024\n\014draftExtreme\030\004 \001(\t" +
       "\022\026\n\016tankCategories\030\005 \003(\003\">\n\016LoadLineDeta" +
       "il\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\022\n\ndraftMar" +
-      "ks\030\003 \003(\t\"\237\010\n\014VesselDetail\022\n\n\002id\030\001 \001(\003\022\014\n" +
+      "ks\030\003 \003(\t\"\266\010\n\014VesselDetail\022\n\n\002id\030\001 \001(\003\022\014\n" +
       "\004name\030\002 \001(\t\022\021\n\tcaptainId\030\003 \001(\003\022\026\n\016cheifO" +
       "fficerId\030\004 \001(\003\022\021\n\timoNumber\030\005 \001(\t\022\014\n\004fla" +
       "g\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\"\n\tloadLines\030" +
@@ -63306,195 +73233,223 @@ public final class VesselInfo {
       "\030& \001(\010\022\036\n\026homogeneousLoadingRate\030\' \001(\t\022\033" +
       "\n\023wingTankLoadingRate\030( \001(\t\022\035\n\025centerTan" +
       "kLoadingRate\030) \001(\t\022\026\n\016maxLoadingRate\030* \001" +
-      "(\t\022\026\n\016minLoadingRate\030+ \001(\t\"\276\001\n\035VesselLoa" +
-      "dableQuantityDetails\022#\n\033displacmentDraft" +
-      "Restriction\030\001 \001(\t\022\031\n\021vesselLightWeight\030\002" +
-      " \001(\t\022\020\n\010constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\022\013\n\003d" +
-      "wt\030\005 \001(\t\022\032\n\022draftConditionName\030\006 \001(\t\022\025\n\r" +
-      "hasLoadicator\030\007 \001(\010\"\274\004\n\020VesselTankDetail" +
-      "\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003" +
-      "\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004" +
-      " \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNu" +
-      "mberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fillC" +
-      "apacityCubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\nis" +
-      "SlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010he" +
-      "ightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\021\n\ttankG" +
-      "roup\030\016 \001(\005\022\013\n\003lcg\030\017 \001(\t\022\013\n\003vcg\030\020 \001(\t\022\013\n\003" +
-      "tcg\030\021 \001(\t\022\025\n\rcoatingTypeId\030\022 \001(\003\022\022\n\ntank" +
-      "TypeId\030\023 \001(\003\022\030\n\020fullCapacityCubm\030\024 \001(\t\022\022" +
-      "\n\ncolourCode\030\025 \001(\t\022\035\n\025tankCategoryShortN" +
-      "ame\030\026 \001(\t\022\024\n\014showInOhqObq\030\027 \001(\010\022\030\n\020tankD" +
-      "isplayOrder\030\030 \001(\005\022\034\n\024tankPositionCategor" +
-      "y\030\031 \001(\t\022\031\n\021isLoadicatorUsing\030\032 \001(\010\"\327\001\n\013V" +
-      "esselReply\022\020\n\010vesselId\030\001 \001(\003\022&\n\013vesselTa" +
-      "nks\030\002 \003(\0132\021.VesselTankDetail\022\'\n\016response" +
-      "Status\030\003 \001(\0132\017.ResponseStatus\022\036\n\007vessels" +
-      "\030\004 \003(\0132\r.VesselDetail\022E\n\035vesselLoadableQ" +
-      "uantityDetails\030\005 \001(\0132\036.VesselLoadableQua" +
-      "ntityDetails\"%\n\021VesselAlgoRequest\022\020\n\010ves" +
-      "selId\030\001 \001(\003\"\275\003\n\017VesselAlgoReply\022#\n\014vesse" +
-      "lDetail\030\001 \001(\0132\r.VesselDetail\0223\n\024vesselDr" +
-      "aftCondition\030\002 \003(\0132\025.VesselDraftConditio" +
-      "n\022+\n\020vesselTankDetail\030\003 \003(\0132\021.VesselTank" +
-      "Detail\022)\n\017hydrostaticData\030\004 \003(\0132\020.Hydros" +
-      "taticData\022%\n\rvesselTankTCG\030\005 \003(\0132\016.Vesse" +
-      "lTankTCG\022\031\n\007bMAndSF\030\006 \001(\0132\010.BMAndSF\022\'\n\016r" +
-      "esponseStatus\030\007 \001(\0132\017.ResponseStatus\022%\n\r" +
-      "ullageDetails\030\010 \003(\0132\016.UllageDetails\0223\n\024u" +
-      "llageTrimCorrection\030\t \003(\0132\025.UllageTrimCo" +
-      "rrection\0221\n\023selectableParameter\030\n \003(\0132\024." +
-      "SelectableParameter\"L\n\023SelectableParamet" +
-      "er\022\024\n\014paramterName\030\001 \001(\t\022\037\n\006values\030\002 \003(\013" +
-      "2\017.ParameterValue\"-\n\016ParameterValue\022\014\n\004t" +
-      "ype\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"r\n\rUllageDetail" +
-      "s\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageD" +
-      "epth\030\003 \001(\t\022\034\n\024evenKeelCapacityCubm\030\004 \001(\t" +
-      "\022\022\n\nsoundDepth\030\005 \001(\t\"\236\001\n\024VesselDraftCond" +
-      "ition\022\n\n\002id\030\001 \001(\003\022\030\n\020draftConditionId\030\002 " +
-      "\001(\003\022\r\n\005depth\030\003 \001(\t\022\021\n\tfreeboard\030\004 \001(\t\022\024\n" +
-      "\014draftExtreme\030\005 \001(\t\022\024\n\014displacement\030\006 \001(" +
-      "\t\022\022\n\ndeadWeight\030\007 \001(\t\"\253\001\n\017HydrostaticDat" +
-      "a\022\n\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 \001(\t\022\r\n\005draft\030\003 \001" +
-      "(\t\022\024\n\014displacement\030\004 \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n" +
-      "\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003" +
-      "lkm\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030\013 \001(\t\"u\n\rV" +
-      "esselTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003" +
-      "\022\020\n\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001(\t\022\013\n\003lcg\030\005" +
-      " \001(\t\022\013\n\003vcg\030\006 \001(\t\022\017\n\007inertia\030\007 \001(\t\"\316\002\n\007B" +
-      "MAndSF\022%\n\rbendingMoment\030\001 \003(\0132\016.BendingM" +
-      "oment\022%\n\rshearingForce\030\002 \003(\0132\016.ShearingF" +
-      "orce\022+\n\020calculationSheet\030\003 \003(\0132\021.Calcula" +
-      "tionSheet\022=\n\031calculationSheetTankGroup\030\004" +
-      " \003(\0132\032.CalculationSheetTankGroup\0227\n\026minM" +
-      "axValuesForBMAndSf\030\005 \003(\0132\027.MinMaxValuesF" +
-      "orBMAndSf\022%\n\rstationValues\030\006 \003(\0132\016.Stati" +
-      "onValues\022)\n\017InnerBulkHeadSF\030\007 \003(\0132\020.Inne" +
-      "rBulkHeadSF\"\207\001\n\rBendingMoment\022\n\n\002id\030\001 \001(" +
-      "\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(" +
-      "\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCorrection\030" +
-      "\005 \001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"\207\001\n\rSheari" +
-      "ngForce\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t" +
-      "\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027" +
-      "\n\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorrectio" +
-      "n\030\006 \001(\t\"c\n\020CalculationSheet\022\n\n\002id\030\001 \001(\003\022" +
-      "\021\n\ttankGroup\030\002 \001(\005\022\016\n\006tankId\030\003 \001(\003\022\023\n\013we" +
-      "ightRatio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n\031Calculat" +
-      "ionSheetTankGroup\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGro" +
-      "up\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumber\030\004 \001" +
-      "(\t\"u\n\026MinMaxValuesForBMAndSf\022\n\n\002id\030\001 \001(\003" +
-      "\022\023\n\013frameNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001(\t\022\r\n\005" +
-      "maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030\006 \001(" +
-      "\t\"\205\001\n\rStationValues\022\023\n\013stationFrom\030\001 \001(\t" +
-      "\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017frameNumberFrom\030\003" +
-      " \001(\t\022\025\n\rframeNumberTo\030\004 \001(\t\022\020\n\010distance\030" +
-      "\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHeadSF\022\023\n" +
-      "\013frameNumber\030\001 \001(\t\022\021\n\tforeAlpha\030\002 \001(\t\022\035\n" +
-      "\025foreCenterCargoTankId\030\003 \001(\003\022\016\n\006foreC1\030\004" +
-      " \001(\t\022\027\n\017foreWingTankIds\030\005 \001(\t\022\016\n\006foreC2\030" +
-      "\006 \001(\t\022\030\n\020foreBallastTanks\030\007 \001(\t\022\016\n\006foreC" +
-      "3\030\010 \001(\t\022\030\n\020foreBWCorrection\030\t \001(\t\022\016\n\006for" +
-      "eC4\030\n \001(\t\022\030\n\020foreMaxAllowence\030\013 \001(\t\022\030\n\020f" +
-      "oreMinAllowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022\020\n\010aft" +
-      "Alpha\030\016 \001(\t\022\034\n\024aftCenterCargoTankId\030\017 \001(" +
-      "\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftWingTankIds\030\021 \001(\t" +
-      "\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023 \001(\t" +
-      "\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025 \001(\t" +
-      "\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence\030\027 \001" +
-      "(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t\"\200\002\n\024Ullage" +
-      "TrimCorrection\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001" +
-      "(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\016\n\006trimM1\030\004 \001(\t\022" +
-      "\016\n\006trimM2\030\005 \001(\t\022\016\n\006trimM3\030\006 \001(\t\022\016\n\006trimM" +
-      "4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n\005trim0\030\t \001(\t\022\r" +
-      "\n\005trim1\030\n \001(\t\022\r\n\005trim2\030\013 \001(\t\022\r\n\005trim3\030\014 " +
-      "\001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005trim5\030\016 \001(\t\022\r\n\005tri" +
-      "m6\030\017 \001(\t\"$\n\021VesselTankRequest\022\017\n\007tankIds" +
-      "\030\001 \003(\003\"`\n\017VesselTankOrder\022\020\n\010tankName\030\001 " +
-      "\001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tshortName\030\003 \001(\t\022\030" +
-      "\n\020tankDisplayOrder\030\004 \001(\005\"h\n\022VesselTankRe" +
-      "sponse\022)\n\017vesselTankOrder\030\001 \003(\0132\020.Vessel" +
-      "TankOrder\022\'\n\016responseStatus\030\002 \001(\0132\017.Resp" +
-      "onseStatus\"#\n\017VesselIdRequest\022\020\n\010vesselI" +
-      "d\030\001 \001(\003\"`\n\020VesselIdResponse\022#\n\014vesselDet" +
-      "ail\030\001 \001(\0132\r.VesselDetail\022\'\n\016responseStat" +
-      "us\030\002 \001(\0132\017.ResponseStatus\"8\n\020VesselDWTRe" +
-      "quest\022\020\n\010vesselId\030\001 \001(\003\022\022\n\ndraftValue\030\002 " +
-      "\001(\t\"t\n\021VesselDWTResponse\022\020\n\010vesselId\030\001 \001" +
-      "(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n\tdwtResult\030\003 \001(\t" +
-      "\022\'\n\016responseStatus\030\004 \001(\0132\017.ResponseStatu" +
-      "s\"\242\001\n\023VesselPumpsResponse\022\'\n\016responseSta" +
-      "tus\030\001 \001(\0132\017.ResponseStatus\022\033\n\010pumpType\030\002" +
-      " \003(\0132\t.PumpType\022\037\n\nvesselPump\030\003 \003(\0132\013.Ve" +
-      "sselPump\022$\n\rvesselDetails\030\004 \001(\0132\r.Vessel" +
-      "Detail\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002" +
-      " \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010vessel" +
-      "Id\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pumpName" +
-      "\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCapacity" +
-      "\030\006 \001(\t\"o\n\021VesselRuleRequest\022\020\n\010vesselId\030" +
-      "\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003" +
-      "(\0132\n.RulePlans\022\027\n\017isNoDefaultRule\030\004 \001(\010\"" +
-      "\347\001\n\017VesselRuleReply\022\'\n\016responseStatus\030\001 " +
-      "\001(\0132\017.ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n" +
-      ".RulePlans\022)\n\017cargoTankMaster\030\003 \003(\0132\020.Ca" +
-      "rgoTankMaster\0229\n\027ruleDropDownValueMaster" +
-      "\030\004 \003(\0132\030.RuleDropDownValueMaster\022\'\n\016rule" +
-      "TypeMaster\030\005 \003(\0132\017.RuleTypeMaster\"\260\001\n\030Ve" +
-      "sselValveSequenceReply\022\'\n\016responseStatus" +
-      "\030\001 \001(\0132\017.ResponseStatus\0220\n\022vvSequenceEnt" +
-      "ities\030\002 \003(\0132\024.VesselValveSequence\0229\n\023vvE" +
-      "ducationEntities\030\003 \003(\0132\034.VesselValveEduc" +
-      "ationProcess\"\255\004\n\023VesselValveSequence\022\n\n\002" +
-      "id\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010\022\022\n\npipel" +
-      "ineId\030\003 \001(\005\022\025\n\rpipelineColor\030\004 \001(\t\022\024\n\014pi" +
-      "pelineName\030\005 \001(\t\022\024\n\014pipelineType\030\006 \001(\t\022\026" +
-      "\n\016sequenceNumber\030\007 \001(\t\022\033\n\023sequenceOperat" +
-      "ionId\030\010 \001(\005\022\035\n\025sequenceOperationName\030\t \001" +
-      "(\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n\020sequenceTy" +
-      "peName\030\013 \001(\t\022\037\n\027sequenceVesselMappingId\030" +
-      "\014 \001(\005\022\025\n\rtankShortName\030\r \001(\t\022\025\n\rvalveCat" +
-      "egory\030\016 \001(\t\022\027\n\017valveCategoryId\030\017 \001(\005\022\023\n\013" +
-      "valveNumber\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013" +
-      "valveTypeId\030\022 \001(\005\022\025\n\rvalveTypeName\030\023 \001(\t" +
-      "\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesselTankXid\030\025 " +
-      "\001(\005\022\034\n\024vesselValveMappingId\030\026 \001(\005\022\021\n\tves" +
-      "selXid\030\027 \001(\003\"\261\001\n\033VesselValveEducationPro" +
-      "cess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n" +
-      "\016sequenceNumber\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022" +
-      "\023\n\013valveNumber\030\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022" +
-      "\037\n\027eductionProcessMasterId\030\007 \001(\005\"+\n\027Load" +
-      "ingInfoRulesRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n" +
-      "\025LoadingInfoRulesReply\022\025\n\005rules\030\001 \003(\0132\006." +
-      "Rules\022\'\n\016responseStatus\030\002 \001(\0132\017.Response" +
-      "Status\"0\n\017CargoTankMaster\022\n\n\002id\030\001 \001(\003\022\021\n" +
-      "\tshortName\030\002 \001(\t\"L\n\027RuleDropDownValueMas" +
-      "ter\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ruleTe" +
-      "mplateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n\n\002id\030\001" +
-      " \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n\021VesselInfoSer" +
-      "vice\0228\n\026GetAllVesselsByCompany\022\016.VesselR" +
-      "equest\032\014.VesselReply\"\000\0226\n\024GetVesselDetai" +
-      "lsById\022\016.VesselRequest\032\014.VesselReply\"\000\0220" +
-      "\n\016GetVesselTanks\022\016.VesselRequest\032\014.Vesse" +
-      "lReply\"\000\0225\n\023GetVesselCargoTanks\022\016.Vessel" +
-      "Request\032\014.VesselReply\"\000\022A\n\027GetVesselDeta" +
-      "ilsForAlgo\022\022.VesselAlgoRequest\032\020.VesselA" +
-      "lgoReply\"\000\022C\n!GetVesselDetailForSynoptic" +
-      "alTable\022\016.VesselRequest\032\014.VesselReply\"\000\022" +
-      ";\n\031GetVesselDetailByVesselId\022\016.VesselReq" +
-      "uest\032\014.VesselReply\"\000\022A\n\025GetVesselInfoByP" +
-      "aging\022\030.VesselRequestWithPaging\032\014.Vessel" +
-      "Reply\"\000\022C\n\026GetVesselInfoBytankIds\022\022.Vess" +
-      "elTankRequest\032\023.VesselTankResponse\"\000\022C\n\032" +
-      "GetDWTFromVesselByVesselId\022\021.VesselDWTRe" +
-      "quest\032\022.VesselDWTResponse\022@\n\027GetVesselIn" +
-      "foByVesselId\022\020.VesselIdRequest\032\021.VesselI" +
-      "dResponse\"\000\022D\n\030GetVesselPumpsByVesselId\022" +
-      "\020.VesselIdRequest\032\024.VesselPumpsResponse\"" +
-      "\000\022H\n\036GetRulesByVesselIdAndSectionId\022\022.Ve" +
-      "sselRuleRequest\032\020.VesselRuleReply\"\000\022E\n\026G" +
-      "etVesselValveSequence\022\016.VesselRequest\032\031." +
-      "VesselValveSequenceReply\"\000\022I\n\023GetLoading" +
-      "InfoRules\022\030.LoadingInfoRulesRequest\032\026.Lo" +
-      "adingInfoRulesReply\"\000B\036\n\032com.cpdss.commo" +
-      "n.generatedP\000b\006proto3"
+      "(\t\022\026\n\016minLoadingRate\030+ \001(\t\022\025\n\rbmSfModelT" +
+      "ype\030, \001(\t\"\276\001\n\035VesselLoadableQuantityDeta" +
+      "ils\022#\n\033displacmentDraftRestriction\030\001 \001(\t" +
+      "\022\031\n\021vesselLightWeight\030\002 \001(\t\022\020\n\010constant\030" +
+      "\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\022\013\n\003dwt\030\005 \001(\t\022\032\n\022draft" +
+      "ConditionName\030\006 \001(\t\022\025\n\rhasLoadicator\030\007 \001" +
+      "(\010\"\274\004\n\020VesselTankDetail\022\016\n\006tankId\030\001 \001(\003\022" +
+      "\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020tankCategoryN" +
+      "ame\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n\017frameNumb" +
+      "erFrom\030\005 \001(\t\022\025\n\rframeNumberTo\030\006 \001(\t\022\021\n\ts" +
+      "hortName\030\007 \001(\t\022\030\n\020fillCapacityCubm\030\010 \001(\t" +
+      "\022\017\n\007density\030\t \001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n" +
+      "\nheightFrom\030\013 \001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\tt" +
+      "ankOrder\030\r \001(\005\022\021\n\ttankGroup\030\016 \001(\005\022\013\n\003lcg" +
+      "\030\017 \001(\t\022\013\n\003vcg\030\020 \001(\t\022\013\n\003tcg\030\021 \001(\t\022\025\n\rcoat" +
+      "ingTypeId\030\022 \001(\003\022\022\n\ntankTypeId\030\023 \001(\003\022\030\n\020f" +
+      "ullCapacityCubm\030\024 \001(\t\022\022\n\ncolourCode\030\025 \001(" +
+      "\t\022\035\n\025tankCategoryShortName\030\026 \001(\t\022\024\n\014show" +
+      "InOhqObq\030\027 \001(\010\022\030\n\020tankDisplayOrder\030\030 \001(\005" +
+      "\022\034\n\024tankPositionCategory\030\031 \001(\t\022\031\n\021isLoad" +
+      "icatorUsing\030\032 \001(\010\"\327\001\n\013VesselReply\022\020\n\010ves" +
+      "selId\030\001 \001(\003\022&\n\013vesselTanks\030\002 \003(\0132\021.Vesse" +
+      "lTankDetail\022\'\n\016responseStatus\030\003 \001(\0132\017.Re" +
+      "sponseStatus\022\036\n\007vessels\030\004 \003(\0132\r.VesselDe" +
+      "tail\022E\n\035vesselLoadableQuantityDetails\030\005 " +
+      "\001(\0132\036.VesselLoadableQuantityDetails\"%\n\021V" +
+      "esselAlgoRequest\022\020\n\010vesselId\030\001 \001(\003\"\275\003\n\017V" +
+      "esselAlgoReply\022#\n\014vesselDetail\030\001 \001(\0132\r.V" +
+      "esselDetail\0223\n\024vesselDraftCondition\030\002 \003(" +
+      "\0132\025.VesselDraftCondition\022+\n\020vesselTankDe" +
+      "tail\030\003 \003(\0132\021.VesselTankDetail\022)\n\017hydrost" +
+      "aticData\030\004 \003(\0132\020.HydrostaticData\022%\n\rvess" +
+      "elTankTCG\030\005 \003(\0132\016.VesselTankTCG\022\031\n\007bMAnd" +
+      "SF\030\006 \001(\0132\010.BMAndSF\022\'\n\016responseStatus\030\007 \001" +
+      "(\0132\017.ResponseStatus\022%\n\rullageDetails\030\010 \003" +
+      "(\0132\016.UllageDetails\0223\n\024ullageTrimCorrecti" +
+      "on\030\t \003(\0132\025.UllageTrimCorrection\0221\n\023selec" +
+      "tableParameter\030\n \003(\0132\024.SelectableParamet" +
+      "er\"\211\001\n\022BendingMomentType2\022\n\n\002id\030\001 \001(\003\022\023\n" +
+      "\013frameNumber\030\002 \001(\t\022\024\n\014displacement\030\003 \001(\t" +
+      "\022\014\n\004buay\030\004 \001(\t\022\r\n\005difft\030\005 \001(\t\022\r\n\005corrt\030\006" +
+      " \001(\t\022\020\n\010isActive\030\007 \001(\t\"\270\001\n\022BendingMoment" +
+      "Type4\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\017" +
+      "\n\007trim_m1\030\003 \001(\t\022\016\n\006trim_0\030\004 \001(\t\022\016\n\006trim_" +
+      "1\030\005 \001(\t\022\016\n\006trim_2\030\006 \001(\t\022\016\n\006trim_3\030\007 \001(\t\022" +
+      "\016\n\006trim_4\030\010 \001(\t\022\016\n\006trim_5\030\t \001(\t\022\020\n\010isAct" +
+      "ive\030\n \001(\t\"\207\001\n\rShearingForce\022\n\n\002id\030\001 \001(\003\022" +
+      "\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022" +
+      "\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005 " +
+      "\001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"\211\001\n\022Shearing" +
+      "ForceType2\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 " +
+      "\001(\t\022\024\n\014displacement\030\003 \001(\t\022\014\n\004buay\030\004 \001(\t\022" +
+      "\r\n\005difft\030\005 \001(\t\022\r\n\005corrt\030\006 \001(\t\022\020\n\010isActiv" +
+      "e\030\007 \001(\t\"\270\001\n\022ShearingForceType4\022\n\n\002id\030\001 \001" +
+      "(\003\022\023\n\013frameNumber\030\002 \001(\t\022\017\n\007trim_m1\030\003 \001(\t" +
+      "\022\016\n\006trim_0\030\004 \001(\t\022\016\n\006trim_1\030\005 \001(\t\022\016\n\006trim" +
+      "_2\030\006 \001(\t\022\016\n\006trim_3\030\007 \001(\t\022\016\n\006trim_4\030\010 \001(\t" +
+      "\022\016\n\006trim_5\030\t \001(\t\022\020\n\010isActive\030\n \001(\t\"\273\001\n\037B" +
+      "endingMomentShearingForceType3\022\n\n\002id\030\001 \001" +
+      "(\003\022\025\n\rloadCondition\030\002 \001(\t\022\023\n\013frameNumber" +
+      "\030\003 \001(\t\022\017\n\007draftAp\030\004 \001(\t\022\017\n\007draftFp\030\005 \001(\t" +
+      "\022\025\n\rbendingMoment\030\006 \001(\t\022\025\n\rshearingForce" +
+      "\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\t\"L\n\023SelectablePa" +
+      "rameter\022\024\n\014paramterName\030\001 \001(\t\022\037\n\006values\030" +
+      "\002 \003(\0132\017.ParameterValue\"-\n\016ParameterValue" +
+      "\022\014\n\004type\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"r\n\rUllageD" +
+      "etails\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ul" +
+      "lageDepth\030\003 \001(\t\022\034\n\024evenKeelCapacityCubm\030" +
+      "\004 \001(\t\022\022\n\nsoundDepth\030\005 \001(\t\"\236\001\n\024VesselDraf" +
+      "tCondition\022\n\n\002id\030\001 \001(\003\022\030\n\020draftCondition" +
+      "Id\030\002 \001(\003\022\r\n\005depth\030\003 \001(\t\022\021\n\tfreeboard\030\004 \001" +
+      "(\t\022\024\n\014draftExtreme\030\005 \001(\t\022\024\n\014displacement" +
+      "\030\006 \001(\t\022\022\n\ndeadWeight\030\007 \001(\t\"\253\001\n\017Hydrostat" +
+      "icData\022\n\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 \001(\t\022\r\n\005draf" +
+      "t\030\003 \001(\t\022\024\n\014displacement\030\004 \001(\t\022\013\n\003lcb\030\005 \001" +
+      "(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm\030\010 \001(" +
+      "\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030\013 \001(\t" +
+      "\"u\n\rVesselTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030" +
+      "\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001(\t\022\013\n\003" +
+      "lcg\030\005 \001(\t\022\013\n\003vcg\030\006 \001(\t\022\017\n\007inertia\030\007 \001(\t\"" +
+      "\331\004\n\007BMAndSF\022%\n\rbendingMoment\030\001 \003(\0132\016.Ben" +
+      "dingMoment\022%\n\rshearingForce\030\002 \003(\0132\016.Shea" +
+      "ringForce\022+\n\020calculationSheet\030\003 \003(\0132\021.Ca" +
+      "lculationSheet\022=\n\031calculationSheetTankGr" +
+      "oup\030\004 \003(\0132\032.CalculationSheetTankGroup\0227\n" +
+      "\026minMaxValuesForBMAndSf\030\005 \003(\0132\027.MinMaxVa" +
+      "luesForBMAndSf\022%\n\rstationValues\030\006 \003(\0132\016." +
+      "StationValues\022)\n\017InnerBulkHeadSF\030\007 \003(\0132\020" +
+      ".InnerBulkHeadSF\022/\n\022bendingMomentType2\030\010" +
+      " \003(\0132\023.BendingMomentType2\022/\n\022bendingMome" +
+      "ntType4\030\t \003(\0132\023.BendingMomentType4\022/\n\022sh" +
+      "earingForceType2\030\n \003(\0132\023.ShearingForceTy" +
+      "pe2\022/\n\022shearingForceType4\030\013 \003(\0132\023.Sheari" +
+      "ngForceType4\022E\n\033bendingMomentShearingFor" +
+      "ce3\030\014 \003(\0132 .BendingMomentShearingForceTy" +
+      "pe3\"\207\001\n\rBendingMoment\022\n\n\002id\030\001 \001(\003\022\023\n\013fra" +
+      "meNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbas" +
+      "eValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005 \001(\t\022\026\n" +
+      "\016trimCorrection\030\006 \001(\t\"c\n\020CalculationShee" +
+      "t\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006tank" +
+      "Id\030\003 \001(\003\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030\005 \001" +
+      "(\t\"\\\n\031CalculationSheetTankGroup\022\n\n\002id\030\001 " +
+      "\001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013f" +
+      "rameNumber\030\004 \001(\t\"u\n\026MinMaxValuesForBMAnd" +
+      "Sf\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r\n\005m" +
+      "inBm\030\003 \001(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t" +
+      "\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013sta" +
+      "tionFrom\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017fra" +
+      "meNumberFrom\030\003 \001(\t\022\025\n\rframeNumberTo\030\004 \001(" +
+      "\t\022\020\n\010distance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017Inne" +
+      "rBulkHeadSF\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tfore" +
+      "Alpha\030\002 \001(\t\022\035\n\025foreCenterCargoTankId\030\003 \001" +
+      "(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n\017foreWingTankIds\030\005 " +
+      "\001(\t\022\016\n\006foreC2\030\006 \001(\t\022\030\n\020foreBallastTanks\030" +
+      "\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorrectio" +
+      "n\030\t \001(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxAllowe" +
+      "nce\030\013 \001(\t\022\030\n\020foreMinAllowence\030\014 \001(\t\022\n\n\002i" +
+      "d\030\r \001(\003\022\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftCenterCa" +
+      "rgoTankId\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftWin" +
+      "gTankIds\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBall" +
+      "astTanks\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCo" +
+      "rrection\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxF" +
+      "lAllowence\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030\030 " +
+      "\001(\t\"\200\002\n\024UllageTrimCorrection\022\n\n\002id\030\001 \001(\003" +
+      "\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\016\n" +
+      "\006trimM1\030\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006trimM3\030" +
+      "\006 \001(\t\022\016\n\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n" +
+      "\005trim0\030\t \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2\030\013 \001" +
+      "(\t\022\r\n\005trim3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005trim" +
+      "5\030\016 \001(\t\022\r\n\005trim6\030\017 \001(\t\"$\n\021VesselTankRequ" +
+      "est\022\017\n\007tankIds\030\001 \003(\003\"`\n\017VesselTankOrder\022" +
+      "\020\n\010tankName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tsho" +
+      "rtName\030\003 \001(\t\022\030\n\020tankDisplayOrder\030\004 \001(\005\"h" +
+      "\n\022VesselTankResponse\022)\n\017vesselTankOrder\030" +
+      "\001 \003(\0132\020.VesselTankOrder\022\'\n\016responseStatu" +
+      "s\030\002 \001(\0132\017.ResponseStatus\"#\n\017VesselIdRequ" +
+      "est\022\020\n\010vesselId\030\001 \001(\003\"`\n\020VesselIdRespons" +
+      "e\022#\n\014vesselDetail\030\001 \001(\0132\r.VesselDetail\022\'" +
+      "\n\016responseStatus\030\002 \001(\0132\017.ResponseStatus\"" +
+      "8\n\020VesselDWTRequest\022\020\n\010vesselId\030\001 \001(\003\022\022\n" +
+      "\ndraftValue\030\002 \001(\t\"t\n\021VesselDWTResponse\022\020" +
+      "\n\010vesselId\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n\td" +
+      "wtResult\030\003 \001(\t\022\'\n\016responseStatus\030\004 \001(\0132\017" +
+      ".ResponseStatus\"\242\001\n\023VesselPumpsResponse\022" +
+      "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus" +
+      "\022\033\n\010pumpType\030\002 \003(\0132\t.PumpType\022\037\n\nvesselP" +
+      "ump\030\003 \003(\0132\013.VesselPump\022$\n\rvesselDetails\030" +
+      "\004 \001(\0132\r.VesselDetail\"$\n\010PumpType\022\n\n\002id\030\001" +
+      " \001(\003\022\014\n\004name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001" +
+      " \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001" +
+      "(\003\022\020\n\010pumpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024" +
+      "\n\014pumpCapacity\030\006 \001(\t\"o\n\021VesselRuleReques" +
+      "t\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034" +
+      "\n\010rulePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefa" +
+      "ultRule\030\004 \001(\010\"\347\001\n\017VesselRuleReply\022\'\n\016res" +
+      "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\010ru" +
+      "lePlan\030\002 \003(\0132\n.RulePlans\022)\n\017cargoTankMas" +
+      "ter\030\003 \003(\0132\020.CargoTankMaster\0229\n\027ruleDropD" +
+      "ownValueMaster\030\004 \003(\0132\030.RuleDropDownValue" +
+      "Master\022\'\n\016ruleTypeMaster\030\005 \003(\0132\017.RuleTyp" +
+      "eMaster\"\260\001\n\030VesselValveSequenceReply\022\'\n\016" +
+      "responseStatus\030\001 \001(\0132\017.ResponseStatus\0220\n" +
+      "\022vvSequenceEntities\030\002 \003(\0132\024.VesselValveS" +
+      "equence\0229\n\023vvEducationEntities\030\003 \003(\0132\034.V" +
+      "esselValveEducationProcess\"\255\004\n\023VesselVal" +
+      "veSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValve\030" +
+      "\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineCol" +
+      "or\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipeli" +
+      "neType\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t\022\033\n\023" +
+      "sequenceOperationId\030\010 \001(\005\022\035\n\025sequenceOpe" +
+      "rationName\030\t \001(\t\022\026\n\016sequenceTypeId\030\n \001(\005" +
+      "\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027sequenceVe" +
+      "sselMappingId\030\014 \001(\005\022\025\n\rtankShortName\030\r \001" +
+      "(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017valveCatego" +
+      "ryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tvalve" +
+      "Side\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rvalve" +
+      "TypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rve" +
+      "sselTankXid\030\025 \001(\005\022\034\n\024vesselValveMappingI" +
+      "d\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselVal" +
+      "veEducationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013educto" +
+      "rName\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010s" +
+      "tepName\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\ted" +
+      "uctorId\030\006 \001(\005\022\037\n\027eductionProcessMasterId" +
+      "\030\007 \001(\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010ves" +
+      "selId\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005" +
+      "rules\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 " +
+      "\001(\0132\017.ResponseStatus\"0\n\017CargoTankMaster\022" +
+      "\n\n\002id\030\001 \001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDr" +
+      "opDownValueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002" +
+      " \001(\t\022\026\n\016ruleTemplateId\030\003 \001(\003\".\n\016RuleType" +
+      "Master\022\n\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n" +
+      "\021VesselInfoService\0228\n\026GetAllVesselsByCom" +
+      "pany\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024" +
+      "GetVesselDetailsById\022\016.VesselRequest\032\014.V" +
+      "esselReply\"\000\0220\n\016GetVesselTanks\022\016.VesselR" +
+      "equest\032\014.VesselReply\"\000\0225\n\023GetVesselCargo" +
+      "Tanks\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n" +
+      "\027GetVesselDetailsForAlgo\022\022.VesselAlgoReq" +
+      "uest\032\020.VesselAlgoReply\"\000\022C\n!GetVesselDet" +
+      "ailForSynopticalTable\022\016.VesselRequest\032\014." +
+      "VesselReply\"\000\022;\n\031GetVesselDetailByVessel" +
+      "Id\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\025Ge" +
+      "tVesselInfoByPaging\022\030.VesselRequestWithP" +
+      "aging\032\014.VesselReply\"\000\022C\n\026GetVesselInfoBy" +
+      "tankIds\022\022.VesselTankRequest\032\023.VesselTank" +
+      "Response\"\000\022C\n\032GetDWTFromVesselByVesselId" +
+      "\022\021.VesselDWTRequest\032\022.VesselDWTResponse\022" +
+      "@\n\027GetVesselInfoByVesselId\022\020.VesselIdReq" +
+      "uest\032\021.VesselIdResponse\"\000\022D\n\030GetVesselPu" +
+      "mpsByVesselId\022\020.VesselIdRequest\032\024.Vessel" +
+      "PumpsResponse\"\000\022H\n\036GetRulesByVesselIdAnd" +
+      "SectionId\022\022.VesselRuleRequest\032\020.VesselRu" +
+      "leReply\"\000\022E\n\026GetVesselValveSequence\022\016.Ve" +
+      "sselRequest\032\031.VesselValveSequenceReply\"\000" +
+      "\022I\n\023GetLoadingInfoRules\022\030.LoadingInfoRul" +
+      "esRequest\032\026.LoadingInfoRulesReply\"\000B\036\n\032c" +
+      "om.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -63524,7 +73479,7 @@ public final class VesselInfo {
     internal_static_VesselDetail_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselDetail_descriptor,
-        new java.lang.String[] { "Id", "Name", "CaptainId", "CheifOfficerId", "ImoNumber", "Flag", "Charterer", "LoadLines", "Code", "PortOfRegistry", "Builder", "OfficialNumber", "SignalLetter", "NavigationAreaId", "TypeOfShip", "RegisterLength", "LengthOverall", "LengthBetweenPerpendiculars", "BreadthMolded", "DepthMolded", "DesignedLoaddraft", "DraftFullLoadSummer", "ThicknessOfUpperDeckStringerPlate", "ThicknessOfKeelplate", "Deadweight", "Lightweight", "Lcg", "KeelToMastHeight", "DeadweightConstant", "ProvisionalConstant", "DeadweightConstantLcg", "ProvisionalConstantLcg", "GrossTonnage", "NetTonnage", "DeadweightConstantTcg", "FrameSpace3L", "FrameSpace7L", "HasLoadicator", "HomogeneousLoadingRate", "WingTankLoadingRate", "CenterTankLoadingRate", "MaxLoadingRate", "MinLoadingRate", });
+        new java.lang.String[] { "Id", "Name", "CaptainId", "CheifOfficerId", "ImoNumber", "Flag", "Charterer", "LoadLines", "Code", "PortOfRegistry", "Builder", "OfficialNumber", "SignalLetter", "NavigationAreaId", "TypeOfShip", "RegisterLength", "LengthOverall", "LengthBetweenPerpendiculars", "BreadthMolded", "DepthMolded", "DesignedLoaddraft", "DraftFullLoadSummer", "ThicknessOfUpperDeckStringerPlate", "ThicknessOfKeelplate", "Deadweight", "Lightweight", "Lcg", "KeelToMastHeight", "DeadweightConstant", "ProvisionalConstant", "DeadweightConstantLcg", "ProvisionalConstantLcg", "GrossTonnage", "NetTonnage", "DeadweightConstantTcg", "FrameSpace3L", "FrameSpace7L", "HasLoadicator", "HomogeneousLoadingRate", "WingTankLoadingRate", "CenterTankLoadingRate", "MaxLoadingRate", "MinLoadingRate", "BmSfModelType", });
     internal_static_VesselLoadableQuantityDetails_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_VesselLoadableQuantityDetails_fieldAccessorTable = new
@@ -63555,212 +73510,242 @@ public final class VesselInfo {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselAlgoReply_descriptor,
         new java.lang.String[] { "VesselDetail", "VesselDraftCondition", "VesselTankDetail", "HydrostaticData", "VesselTankTCG", "BMAndSF", "ResponseStatus", "UllageDetails", "UllageTrimCorrection", "SelectableParameter", });
-    internal_static_SelectableParameter_descriptor =
+    internal_static_BendingMomentType2_descriptor =
       getDescriptor().getMessageTypes().get(9);
+    internal_static_BendingMomentType2_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_BendingMomentType2_descriptor,
+        new java.lang.String[] { "Id", "FrameNumber", "Displacement", "Buay", "Difft", "Corrt", "IsActive", });
+    internal_static_BendingMomentType4_descriptor =
+      getDescriptor().getMessageTypes().get(10);
+    internal_static_BendingMomentType4_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_BendingMomentType4_descriptor,
+        new java.lang.String[] { "Id", "FrameNumber", "TrimM1", "Trim0", "Trim1", "Trim2", "Trim3", "Trim4", "Trim5", "IsActive", });
+    internal_static_ShearingForce_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_ShearingForce_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ShearingForce_descriptor,
+        new java.lang.String[] { "Id", "FrameNumber", "BaseDraft", "BaseValue", "DraftCorrection", "TrimCorrection", });
+    internal_static_ShearingForceType2_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_ShearingForceType2_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ShearingForceType2_descriptor,
+        new java.lang.String[] { "Id", "FrameNumber", "Displacement", "Buay", "Difft", "Corrt", "IsActive", });
+    internal_static_ShearingForceType4_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_ShearingForceType4_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ShearingForceType4_descriptor,
+        new java.lang.String[] { "Id", "FrameNumber", "TrimM1", "Trim0", "Trim1", "Trim2", "Trim3", "Trim4", "Trim5", "IsActive", });
+    internal_static_BendingMomentShearingForceType3_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_BendingMomentShearingForceType3_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_BendingMomentShearingForceType3_descriptor,
+        new java.lang.String[] { "Id", "LoadCondition", "FrameNumber", "DraftAp", "DraftFp", "BendingMoment", "ShearingForce", "IsActive", });
+    internal_static_SelectableParameter_descriptor =
+      getDescriptor().getMessageTypes().get(15);
     internal_static_SelectableParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_SelectableParameter_descriptor,
         new java.lang.String[] { "ParamterName", "Values", });
     internal_static_ParameterValue_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_ParameterValue_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ParameterValue_descriptor,
         new java.lang.String[] { "Type", "Value", });
     internal_static_UllageDetails_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(17);
     internal_static_UllageDetails_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_UllageDetails_descriptor,
         new java.lang.String[] { "Id", "TankId", "UllageDepth", "EvenKeelCapacityCubm", "SoundDepth", });
     internal_static_VesselDraftCondition_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(18);
     internal_static_VesselDraftCondition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselDraftCondition_descriptor,
         new java.lang.String[] { "Id", "DraftConditionId", "Depth", "Freeboard", "DraftExtreme", "Displacement", "DeadWeight", });
     internal_static_HydrostaticData_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_HydrostaticData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_HydrostaticData_descriptor,
         new java.lang.String[] { "Id", "Trim", "Draft", "Displacement", "Lcb", "Lcf", "Vcb", "Tkm", "Lkm", "Mtc", "Tpc", });
     internal_static_VesselTankTCG_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_VesselTankTCG_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselTankTCG_descriptor,
         new java.lang.String[] { "Id", "TankId", "Capacity", "Tcg", "Lcg", "Vcg", "Inertia", });
     internal_static_BMAndSF_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_BMAndSF_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_BMAndSF_descriptor,
-        new java.lang.String[] { "BendingMoment", "ShearingForce", "CalculationSheet", "CalculationSheetTankGroup", "MinMaxValuesForBMAndSf", "StationValues", "InnerBulkHeadSF", });
+        new java.lang.String[] { "BendingMoment", "ShearingForce", "CalculationSheet", "CalculationSheetTankGroup", "MinMaxValuesForBMAndSf", "StationValues", "InnerBulkHeadSF", "BendingMomentType2", "BendingMomentType4", "ShearingForceType2", "ShearingForceType4", "BendingMomentShearingForce3", });
     internal_static_BendingMoment_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(22);
     internal_static_BendingMoment_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_BendingMoment_descriptor,
         new java.lang.String[] { "Id", "FrameNumber", "BaseDraft", "BaseValue", "DraftCorrection", "TrimCorrection", });
-    internal_static_ShearingForce_descriptor =
-      getDescriptor().getMessageTypes().get(17);
-    internal_static_ShearingForce_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_ShearingForce_descriptor,
-        new java.lang.String[] { "Id", "FrameNumber", "BaseDraft", "BaseValue", "DraftCorrection", "TrimCorrection", });
     internal_static_CalculationSheet_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(23);
     internal_static_CalculationSheet_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_CalculationSheet_descriptor,
         new java.lang.String[] { "Id", "TankGroup", "TankId", "WeightRatio", "Lcg", });
     internal_static_CalculationSheetTankGroup_descriptor =
-      getDescriptor().getMessageTypes().get(19);
+      getDescriptor().getMessageTypes().get(24);
     internal_static_CalculationSheetTankGroup_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_CalculationSheetTankGroup_descriptor,
         new java.lang.String[] { "Id", "TankGroup", "Lcg", "FrameNumber", });
     internal_static_MinMaxValuesForBMAndSf_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(25);
     internal_static_MinMaxValuesForBMAndSf_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_MinMaxValuesForBMAndSf_descriptor,
         new java.lang.String[] { "Id", "FrameNumber", "MinBm", "MaxBm", "MinSf", "MaxSf", });
     internal_static_StationValues_descriptor =
-      getDescriptor().getMessageTypes().get(21);
+      getDescriptor().getMessageTypes().get(26);
     internal_static_StationValues_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_StationValues_descriptor,
         new java.lang.String[] { "StationFrom", "StationTo", "FrameNumberFrom", "FrameNumberTo", "Distance", "Id", });
     internal_static_InnerBulkHeadSF_descriptor =
-      getDescriptor().getMessageTypes().get(22);
+      getDescriptor().getMessageTypes().get(27);
     internal_static_InnerBulkHeadSF_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerBulkHeadSF_descriptor,
         new java.lang.String[] { "FrameNumber", "ForeAlpha", "ForeCenterCargoTankId", "ForeC1", "ForeWingTankIds", "ForeC2", "ForeBallastTanks", "ForeC3", "ForeBWCorrection", "ForeC4", "ForeMaxAllowence", "ForeMinAllowence", "Id", "AftAlpha", "AftCenterCargoTankId", "AftC1", "AftWingTankIds", "AftC2", "AftBallastTanks", "AftC3", "AftBWCorrection", "AftC4", "AftMaxFlAllowence", "AftMinFlAllowence", });
     internal_static_UllageTrimCorrection_descriptor =
-      getDescriptor().getMessageTypes().get(23);
+      getDescriptor().getMessageTypes().get(28);
     internal_static_UllageTrimCorrection_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_UllageTrimCorrection_descriptor,
         new java.lang.String[] { "Id", "TankId", "UllageDepth", "TrimM1", "TrimM2", "TrimM3", "TrimM4", "TrimM5", "Trim0", "Trim1", "Trim2", "Trim3", "Trim4", "Trim5", "Trim6", });
     internal_static_VesselTankRequest_descriptor =
-      getDescriptor().getMessageTypes().get(24);
+      getDescriptor().getMessageTypes().get(29);
     internal_static_VesselTankRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselTankRequest_descriptor,
         new java.lang.String[] { "TankIds", });
     internal_static_VesselTankOrder_descriptor =
-      getDescriptor().getMessageTypes().get(25);
+      getDescriptor().getMessageTypes().get(30);
     internal_static_VesselTankOrder_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselTankOrder_descriptor,
         new java.lang.String[] { "TankName", "TankId", "ShortName", "TankDisplayOrder", });
     internal_static_VesselTankResponse_descriptor =
-      getDescriptor().getMessageTypes().get(26);
+      getDescriptor().getMessageTypes().get(31);
     internal_static_VesselTankResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselTankResponse_descriptor,
         new java.lang.String[] { "VesselTankOrder", "ResponseStatus", });
     internal_static_VesselIdRequest_descriptor =
-      getDescriptor().getMessageTypes().get(27);
+      getDescriptor().getMessageTypes().get(32);
     internal_static_VesselIdRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselIdRequest_descriptor,
         new java.lang.String[] { "VesselId", });
     internal_static_VesselIdResponse_descriptor =
-      getDescriptor().getMessageTypes().get(28);
+      getDescriptor().getMessageTypes().get(33);
     internal_static_VesselIdResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselIdResponse_descriptor,
         new java.lang.String[] { "VesselDetail", "ResponseStatus", });
     internal_static_VesselDWTRequest_descriptor =
-      getDescriptor().getMessageTypes().get(29);
+      getDescriptor().getMessageTypes().get(34);
     internal_static_VesselDWTRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselDWTRequest_descriptor,
         new java.lang.String[] { "VesselId", "DraftValue", });
     internal_static_VesselDWTResponse_descriptor =
-      getDescriptor().getMessageTypes().get(30);
+      getDescriptor().getMessageTypes().get(35);
     internal_static_VesselDWTResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselDWTResponse_descriptor,
         new java.lang.String[] { "VesselId", "CompanyId", "DwtResult", "ResponseStatus", });
     internal_static_VesselPumpsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(31);
+      getDescriptor().getMessageTypes().get(36);
     internal_static_VesselPumpsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselPumpsResponse_descriptor,
         new java.lang.String[] { "ResponseStatus", "PumpType", "VesselPump", "VesselDetails", });
     internal_static_PumpType_descriptor =
-      getDescriptor().getMessageTypes().get(32);
+      getDescriptor().getMessageTypes().get(37);
     internal_static_PumpType_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_PumpType_descriptor,
         new java.lang.String[] { "Id", "Name", });
     internal_static_VesselPump_descriptor =
-      getDescriptor().getMessageTypes().get(33);
+      getDescriptor().getMessageTypes().get(38);
     internal_static_VesselPump_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselPump_descriptor,
         new java.lang.String[] { "Id", "VesselId", "PumpTypeId", "PumpName", "PumpCode", "PumpCapacity", });
     internal_static_VesselRuleRequest_descriptor =
-      getDescriptor().getMessageTypes().get(34);
+      getDescriptor().getMessageTypes().get(39);
     internal_static_VesselRuleRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselRuleRequest_descriptor,
         new java.lang.String[] { "VesselId", "SectionId", "RulePlan", "IsNoDefaultRule", });
     internal_static_VesselRuleReply_descriptor =
-      getDescriptor().getMessageTypes().get(35);
+      getDescriptor().getMessageTypes().get(40);
     internal_static_VesselRuleReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselRuleReply_descriptor,
         new java.lang.String[] { "ResponseStatus", "RulePlan", "CargoTankMaster", "RuleDropDownValueMaster", "RuleTypeMaster", });
     internal_static_VesselValveSequenceReply_descriptor =
-      getDescriptor().getMessageTypes().get(36);
+      getDescriptor().getMessageTypes().get(41);
     internal_static_VesselValveSequenceReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselValveSequenceReply_descriptor,
         new java.lang.String[] { "ResponseStatus", "VvSequenceEntities", "VvEducationEntities", });
     internal_static_VesselValveSequence_descriptor =
-      getDescriptor().getMessageTypes().get(37);
+      getDescriptor().getMessageTypes().get(42);
     internal_static_VesselValveSequence_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselValveSequence_descriptor,
         new java.lang.String[] { "Id", "IsCommonValve", "PipelineId", "PipelineColor", "PipelineName", "PipelineType", "SequenceNumber", "SequenceOperationId", "SequenceOperationName", "SequenceTypeId", "SequenceTypeName", "SequenceVesselMappingId", "TankShortName", "ValveCategory", "ValveCategoryId", "ValveNumber", "ValveSide", "ValveTypeId", "ValveTypeName", "VesselName", "VesselTankXid", "VesselValveMappingId", "VesselXid", });
     internal_static_VesselValveEducationProcess_descriptor =
-      getDescriptor().getMessageTypes().get(38);
+      getDescriptor().getMessageTypes().get(43);
     internal_static_VesselValveEducationProcess_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VesselValveEducationProcess_descriptor,
         new java.lang.String[] { "Id", "EductorName", "SequenceNumber", "StepName", "ValveNumber", "EductorId", "EductionProcessMasterId", });
     internal_static_LoadingInfoRulesRequest_descriptor =
-      getDescriptor().getMessageTypes().get(39);
+      getDescriptor().getMessageTypes().get(44);
     internal_static_LoadingInfoRulesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoadingInfoRulesRequest_descriptor,
         new java.lang.String[] { "VesselId", });
     internal_static_LoadingInfoRulesReply_descriptor =
-      getDescriptor().getMessageTypes().get(40);
+      getDescriptor().getMessageTypes().get(45);
     internal_static_LoadingInfoRulesReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoadingInfoRulesReply_descriptor,
         new java.lang.String[] { "Rules", "ResponseStatus", });
     internal_static_CargoTankMaster_descriptor =
-      getDescriptor().getMessageTypes().get(41);
+      getDescriptor().getMessageTypes().get(46);
     internal_static_CargoTankMaster_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_CargoTankMaster_descriptor,
         new java.lang.String[] { "Id", "ShortName", });
     internal_static_RuleDropDownValueMaster_descriptor =
-      getDescriptor().getMessageTypes().get(42);
+      getDescriptor().getMessageTypes().get(47);
     internal_static_RuleDropDownValueMaster_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_RuleDropDownValueMaster_descriptor,
         new java.lang.String[] { "Id", "Value", "RuleTemplateId", });
     internal_static_RuleTypeMaster_descriptor =
-      getDescriptor().getMessageTypes().get(43);
+      getDescriptor().getMessageTypes().get(48);
     internal_static_RuleTypeMaster_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_RuleTypeMaster_descriptor,

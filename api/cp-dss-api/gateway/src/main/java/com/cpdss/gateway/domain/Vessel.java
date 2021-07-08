@@ -94,4 +94,6 @@ public class Vessel {
   private String frameSpace7l;
 
   private Boolean hasLoadicator;
+
+  private String bmSfModelType;
 }
