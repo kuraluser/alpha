@@ -109,6 +109,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   errorMessage: IAlgoError[];
   isServiceWorkerCallActive = false;
   isRuleModalVisible:boolean = false;
+  dischargingPortData: any = [];
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -284,6 +285,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     if (!this.dischargingPorts) {
       this.dischargingPorts = [];
+      this.dischargingPortData = null;
+    } else {
+      this.dischargingPortData = this.dischargingPorts[0];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
 
@@ -576,15 +580,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async onDischargePortChange(event) {
-    let isPortSelected;
-    this.dischargingPorts.map((dischargingPort, index) => { if (dischargingPort.id === event.itemValue.id) { isPortSelected = index } });
-    if (isPortSelected >= 0) {
-      this.dischargingPorts.splice(isPortSelected, 1);
-      this.updatingDischargingPort();
-    } else if (this.dischargingPorts.length < 5) {
-      this.dischargingPorts.push(event.itemValue);
-      this.updatingDischargingPort();
-    }
+    this.dischargingPorts = [event?.value];
+    this.updatingDischargingPort();
     this.loadableStudyDetailsTransformationService.setPortValidity(false);
   }
 
@@ -831,9 +828,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.dischargeCargos.push(_cargo);
       }
     });
-    if (this.selectedDischargeCargo) {
-      this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
-    }
+      this.selectedDischargeCargo = this.dischargeCargos?.find(cargo => cargo?.id === this.selectedLoadableStudy?.dischargingCargoId)
   }
 
 
@@ -910,8 +905,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       return this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
-    }
-    else {
+    } else {
       const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
       const data: ISubTotal = {
         dwt: dwt,
@@ -968,7 +962,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (loadableQuantityResult.responseStatus.status === "200") {
       this.ngxSpinnerService.hide();
       let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
-      let databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
+      let databaseTotQty = this.sliceToTwoDecimalPoint(Number(loadableQuantityResult.loadableQuantity.totalQuantity).toString(), 2);
       if (calculatedTotQty === databaseTotQty) {
         this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
       } else {

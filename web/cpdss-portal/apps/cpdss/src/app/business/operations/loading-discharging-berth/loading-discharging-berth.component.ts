@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBerth } from '../models/loading-information.model';
 import { LoadingDischargingBerthTransformationService } from './loading-discharging-berth-transformation.service';
@@ -77,12 +77,13 @@ export class LoadingDischargingBerthComponent implements OnInit {
       airDraftLimitation: this.fb.control('', [numberValidator(4, 2)]),
       maxManifoldHeight: this.fb.control('', [numberValidator(4, 2)]),
       regulationAndRestriction: this.fb.control('', [Validators.maxLength(500)]),
-      itemsToBeAgreedWith: '',
+      itemsToBeAgreedWith: this.fb.control('', [Validators.maxLength(500)]),
       loadingInfoId: '',
       maxShpChannel: '',
       loadingBerthId: 0,
       maxLoa: '',
       maxDraft: '',
+      lineDisplacement: this.fb.control('', [numberValidator(3, 4)])
     });
     this.berthDetailsForm.disable();
     this.initFormArray();
@@ -134,7 +135,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   change(field) {
     if (this.berthDetailsForm.value[field]) {
       this.selectedBerths.map((berth) => {
-        if (berth.berthId === this.berthDetailsForm.value.id) {
+        if (berth.berthId === this.berthDetailsForm.value.berthId) {
           berth[field] = this.berthDetailsForm.value[field];
         }
         return berth;
@@ -202,7 +203,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   setBerthDetails(berthInfo: IBerth) {
     this.berthDetailsForm.enable();
     this.berthDetailsForm.patchValue({
-      id: berthInfo.berthId,
+      berthId: berthInfo.berthId,
       portId: berthInfo.portId,
       berthName: berthInfo.berthName,
       maxShipDepth: berthInfo.maxShipDepth,
@@ -216,7 +217,8 @@ export class LoadingDischargingBerthComponent implements OnInit {
       maxShpChannel: berthInfo.maxShpChannel,
       loadingBerthId: berthInfo.loadingBerthId ? berthInfo.loadingBerthId : 0,
       maxLoa: berthInfo.maxLoa,
-      maxDraft: berthInfo.maxDraft
+      maxDraft: berthInfo.maxDraft,
+      lineDisplacement: berthInfo.lineDisplacement
     });
   }
 
@@ -259,6 +261,19 @@ export class LoadingDischargingBerthComponent implements OnInit {
   field(formGroupIndex: number, formControlName: string): FormControl {
     const formControl = <FormControl>(<FormArray>this.berthForm.get('berth')).at(formGroupIndex).get(formControlName);
     return formControl;
+  }
+
+   /**
+   *Method to check for field errors
+   *
+   * @param {string} formControlName
+   * @param {number} indexOfFormgroup
+   * @return {ValidationErrors}
+   * @memberof LoadingDischargingBerthComponent
+   */
+   fieldError(formControlName: string): ValidationErrors {
+    const formControl = <FormControl>this.berthDetailsForm.get(formControlName);
+    return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
 
 

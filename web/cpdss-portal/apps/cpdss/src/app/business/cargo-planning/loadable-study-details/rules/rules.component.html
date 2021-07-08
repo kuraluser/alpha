@@ -1,42 +1,30 @@
-<p-dialog [(visible)]="visible" (onHide)="onClose()">
+<p-dialog [(visible)]="visible" styleClass="rules-pop-up" header=" {{'RULES' | translate }}" [closable]="true" [draggable]="false" [modal]="true" (onHide)="onClose()">
 <div class="container-fluid">
+    
     <div class="row">
         <div class="col">
-            <h5 class="main-head inline-block">{{'RULES' | translate }}</h5>
-            <span class="ml-20 mr-10">
-                {{'Vessel' | translate }}</span>
-            <p-dropdown  [options]="rulesService.vessels" [(ngModel)]="selectedVessel"
-               optionLabel="name" [filter]="true"
-            placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' }}" (onChange)="onVesselSelected($event)"
-                resetFilterOnHide="true">
-            </p-dropdown>
-            </div>
-            <div class="col text-right">
-                <button class="btn btn-main" *ngIf="formChanges"  id ="cancelBtn" (click)="cancelChanges()">{{'RULES_CANCEL' | translate}}</button>
-            </div>
-            <div class="col text-right">
-                <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()">{{'RULES_SAVE' | translate}}</button>
-            </div>
-    </div>
-    <div class="row">
-        <div class="col-10">
-        
-        </div>
-        <div class="col-2">
             
-        </div>
+            
+            </div>
+            
     </div>
+    
    
     <div *ngIf="rulesService.vessels">
-        <div class="pl-30">
-            <div class="pl-10">
                 <cpdss-portal-rules-table *ngIf="rulesJson" [rulesJson]="rulesJson"  [displaySettings]="false"
                  [rulesService]="rulesService" [isCancelChanges]="isCancelChanges"
                   (isSaveClicked)="saveChanges($event)"
                   (formChanges)="updateCancelChangesButton($event)">
                 </cpdss-portal-rules-table>
-            </div>
-        </div>
     </div>
 </div>
+<p-footer>
+    <div class="row">
+      <div class="col text-right">
+        <button class="btn btn-main mr-10" *ngIf="formChanges"  id ="cancelBtn" (click)="cancelChanges()">{{'RULES_CANCEL' | translate}}</button>
+                <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()">{{'RULES_SAVE' | translate}}</button>
+      </div>
+    </div>
+
+  </p-footer>
 </p-dialog>

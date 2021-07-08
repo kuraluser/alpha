@@ -11,6 +11,9 @@ import com.cpdss.common.generated.Common.Rules;
 import com.cpdss.common.generated.Common.RulesInputs;
 import com.cpdss.common.generated.VesselInfo.BMAndSF;
 import com.cpdss.common.generated.VesselInfo.BendingMoment;
+import com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3;
+import com.cpdss.common.generated.VesselInfo.BendingMomentType2;
+import com.cpdss.common.generated.VesselInfo.BendingMomentType4;
 import com.cpdss.common.generated.VesselInfo.CalculationSheet;
 import com.cpdss.common.generated.VesselInfo.CalculationSheetTankGroup;
 import com.cpdss.common.generated.VesselInfo.HydrostaticData;
@@ -22,6 +25,8 @@ import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
 import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.SelectableParameter;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
+import com.cpdss.common.generated.VesselInfo.ShearingForceType2;
+import com.cpdss.common.generated.VesselInfo.ShearingForceType4;
 import com.cpdss.common.generated.VesselInfo.StationValues;
 import com.cpdss.common.generated.VesselInfo.UllageDetails;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
@@ -109,8 +114,17 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private HydrostaticTableRepository hydrostaticTableRepository;
   @Autowired private VesselDraftConditionRepository vesselDraftConditionRepository;
   @Autowired private VesselTankTcgRepository vesselTankTcgRepository;
+
   @Autowired private BendingMomentRepository bendingMomentRepository;
   @Autowired private ShearingForceRepository shearingForceRepository;
+  @Autowired private BendingMomentRepositoryType2 bendingMomentRepositoryType2;
+  @Autowired private ShearingForceRepositoryType2 shearingForceRepositoryType2;
+  @Autowired private BendingMomentRepositoryType4 bendingMomentRepositoryType4;
+  @Autowired private ShearingForceRepositoryType4 shearingForceRepositoryType4;
+
+  @Autowired
+  private BendingMomentShearingForceRepositoryType3 bendingMomentShearingForceRepositoryType3;
+
   @Autowired private CalculationSheetRepository calculationSheetRepository;
   @Autowired private CalculationSheetTankgroupRepository calculationSheetTankgroupRepository;
   @Autowired private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
@@ -484,23 +498,84 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 });
 
         BMAndSF.Builder bMAndSFBuilder = BMAndSF.newBuilder();
-        bendingMomentRepository
-            .findByVessel(vessel)
-            .forEach(
-                bendingMoment -> {
-                  BendingMoment.Builder bendingMomentBuilder = BendingMoment.newBuilder();
-                  bMAndSFBuilder.addBendingMoment(
-                      createBendingMoment(bendingMoment, bendingMomentBuilder));
-                });
+        if (vessel != null
+            && vessel.getBm_sf_model_type() != null
+            && vessel.getBm_sf_model_type() != 0) {
 
-        shearingForceRepository
-            .findByVessel(vessel)
-            .forEach(
-                shearingForce -> {
-                  ShearingForce.Builder shearingForceBuilder = ShearingForce.newBuilder();
-                  bMAndSFBuilder.addShearingForce(
-                      createShearingForce(shearingForce, shearingForceBuilder));
-                });
+          if (vessel.getBm_sf_model_type() == 1) {
+            bendingMomentRepository
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMoment -> {
+                      BendingMoment.Builder bendingMomentBuilder = BendingMoment.newBuilder();
+                      bMAndSFBuilder.addBendingMoment(
+                          createBendingMoment(bendingMoment, bendingMomentBuilder));
+                    });
+
+            shearingForceRepository
+                .findByVessel(vessel)
+                .forEach(
+                    shearingForce -> {
+                      ShearingForce.Builder shearingForceBuilder = ShearingForce.newBuilder();
+                      bMAndSFBuilder.addShearingForce(
+                          createShearingForce(shearingForce, shearingForceBuilder));
+                    });
+          }
+          if (vessel.getBm_sf_model_type() == 2) {
+            bendingMomentRepositoryType2
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMomentType2 -> {
+                      BendingMomentType2.Builder bendingMomentBuilder =
+                          BendingMomentType2.newBuilder();
+                      bMAndSFBuilder.addBendingMomentType2(
+                          createBendingMomentType2(bendingMomentType2, bendingMomentBuilder));
+                    });
+
+            shearingForceRepositoryType2
+                .findByVessel(vessel)
+                .forEach(
+                    shearingForceType2 -> {
+                      ShearingForceType2.Builder shearingForceBuilder =
+                          ShearingForceType2.newBuilder();
+                      bMAndSFBuilder.addShearingForceType2(
+                          createShearingForce2(shearingForceType2, shearingForceBuilder));
+                    });
+          }
+          if (vessel.getBm_sf_model_type() == 4) {
+            bendingMomentRepositoryType4
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMomentType4 -> {
+                      BendingMomentType4.Builder bendingMomentBuilder =
+                          BendingMomentType4.newBuilder();
+                      bMAndSFBuilder.addBendingMomentType4(
+                          createBendingMomentType4(bendingMomentType4, bendingMomentBuilder));
+                    });
+
+            shearingForceRepositoryType4
+                .findByVessel(vessel)
+                .forEach(
+                    shearingForceType4 -> {
+                      ShearingForceType4.Builder shearingForceBuilder =
+                          ShearingForceType4.newBuilder();
+                      bMAndSFBuilder.addShearingForceType4(
+                          createShearingForceType4(shearingForceType4, shearingForceBuilder));
+                    });
+          }
+          if (vessel.getBm_sf_model_type() == 4) {
+            bendingMomentShearingForceRepositoryType3
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMomentShearingForceType3 -> {
+                      BendingMomentShearingForceType3.Builder bendingMomentBuilder =
+                          BendingMomentShearingForceType3.newBuilder();
+                      bMAndSFBuilder.addBendingMomentShearingForce3(
+                          createBendingMomentShearingForce3(
+                              bendingMomentShearingForceType3, bendingMomentBuilder));
+                    });
+          }
+        }
 
         calculationSheetRepository
             .findByVessel(vessel)
@@ -917,6 +992,83 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   }
 
   /**
+   * @param shearingForce
+   * @param shearingForceBuilder
+   * @return ShearingForce
+   */
+  private ShearingForceType2 createShearingForce2(
+      com.cpdss.vesselinfo.entity.ShearingForceType2 shearingForce,
+      com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder shearingForceBuilder) {
+
+    Optional.ofNullable(shearingForce.getDisplacement())
+        .ifPresent(
+            displacement -> shearingForceBuilder.setDisplacement(String.valueOf(displacement)));
+
+    Optional.ofNullable(shearingForce.getFrameNumber())
+        .ifPresent(frameNumber -> shearingForceBuilder.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(shearingForce.getBuay())
+        .ifPresent(buay -> shearingForceBuilder.setBuay(String.valueOf(buay)));
+
+    Optional.ofNullable(shearingForce.getDifft())
+        .ifPresent(baseValue -> shearingForceBuilder.setDifft(String.valueOf(baseValue)));
+
+    Optional.ofNullable(shearingForce.getCorrt())
+        .ifPresent(
+            draftCorrection -> shearingForceBuilder.setCorrt(String.valueOf(draftCorrection)));
+
+    Optional.ofNullable(shearingForce.getIsActive())
+        .ifPresent(isActive -> shearingForceBuilder.setIsActive(String.valueOf(isActive)));
+
+    return shearingForceBuilder.build();
+  }
+
+  /**
+   * @param shearingForce
+   * @param shearingForceBuilder
+   * @return ShearingForce
+   */
+  private ShearingForceType4 createShearingForceType4(
+      com.cpdss.vesselinfo.entity.ShearingForceType4 shearingForce,
+      com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder shearingForceBuilder) {
+
+    Optional.ofNullable(shearingForce.getFrameNumber())
+        .ifPresent(frameNumber -> shearingForceBuilder.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(shearingForce.getTrim_m1())
+        .ifPresent(trim_m1 -> shearingForceBuilder.setTrimM1(String.valueOf(trim_m1)));
+
+    Optional.ofNullable(shearingForce.getTrim_1())
+        .ifPresent(trim1 -> shearingForceBuilder.setTrim1(String.valueOf(trim1)));
+    Optional.ofNullable(shearingForce.getTrim_3())
+        .ifPresent(trim2 -> shearingForceBuilder.setTrim1(String.valueOf(trim2)));
+    Optional.ofNullable(shearingForce.getTrim_3())
+        .ifPresent(trim3 -> shearingForceBuilder.setTrim2(String.valueOf(trim3)));
+    Optional.ofNullable(shearingForce.getTrim_4())
+        .ifPresent(trim4 -> shearingForceBuilder.setTrim3(String.valueOf(trim4)));
+    Optional.ofNullable(shearingForce.getTrim_5())
+        .ifPresent(trim5 -> shearingForceBuilder.setTrim4(String.valueOf(trim5)));
+
+    return shearingForceBuilder.build();
+  }
+
+  /**
+   * @param type3
+   * @param shearingForceBuilder
+   * @return ShearingForce
+   */
+  private BendingMomentShearingForceType3 createBendingMomentShearingForce3(
+      com.cpdss.vesselinfo.entity.BendingMomentShearingForceType3 type3,
+      com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder
+          shearingForceBuilder) {
+
+    Optional.ofNullable(type3.getFrameNumber())
+        .ifPresent(frameNumber -> shearingForceBuilder.setFrameNumber(String.valueOf(frameNumber)));
+
+    return shearingForceBuilder.build();
+  }
+
+  /**
    * @param bendingMoment
    * @param bendingMomentBuilder
    * @return BendingMoment
@@ -941,6 +1093,85 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 bendingMomentBuilder.setTrimCorrection(String.valueOf(trimCorrection)));
     return bendingMomentBuilder.build();
   }
+
+  /**
+   * @param bendingMomentBuildertype2
+   * @param bendingMoment
+   * @return BendingMoment
+   */
+  private com.cpdss.common.generated.VesselInfo.BendingMomentType2 createBendingMomentType2(
+      com.cpdss.vesselinfo.entity.BendingMomentType2 bendingMoment,
+      com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder bendingMomentBuildertype2) {
+
+    Optional.ofNullable(bendingMoment.getDisplacement())
+        .ifPresent(
+            displacement ->
+                bendingMomentBuildertype2.setDisplacement(String.valueOf(displacement)));
+
+    Optional.ofNullable(bendingMoment.getFrameNumber())
+        .ifPresent(
+            frameNumber -> bendingMomentBuildertype2.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(bendingMoment.getBuay())
+        .ifPresent(buay -> bendingMomentBuildertype2.setBuay(String.valueOf(buay)));
+
+    Optional.ofNullable(bendingMoment.getDifft())
+        .ifPresent(baseValue -> bendingMomentBuildertype2.setDifft(String.valueOf(baseValue)));
+
+    Optional.ofNullable(bendingMoment.getCorrt())
+        .ifPresent(
+            draftCorrection -> bendingMomentBuildertype2.setCorrt(String.valueOf(draftCorrection)));
+
+    Optional.ofNullable(bendingMoment.getIsActive())
+        .ifPresent(isActive -> bendingMomentBuildertype2.setIsActive(String.valueOf(isActive)));
+
+    return bendingMomentBuildertype2.build();
+  }
+
+  /**
+   * @param bendingMoment
+   * @return BendingMoment
+   */
+  private com.cpdss.common.generated.VesselInfo.BendingMomentType4 createBendingMomentType4(
+      com.cpdss.vesselinfo.entity.BendingMomentType4 bendingMoment,
+      com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder bendingMomentBuildertype4) {
+
+    Optional.ofNullable(bendingMoment.getFrameNumber())
+        .ifPresent(
+            frameNumber -> bendingMomentBuildertype4.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(bendingMoment.getTrim_m1())
+        .ifPresent(trim_m1 -> bendingMomentBuildertype4.setTrimM1(String.valueOf(trim_m1)));
+
+    Optional.ofNullable(bendingMoment.getTrim_1())
+        .ifPresent(trim1 -> bendingMomentBuildertype4.setTrim1(String.valueOf(trim1)));
+    Optional.ofNullable(bendingMoment.getTrim_3())
+        .ifPresent(trim2 -> bendingMomentBuildertype4.setTrim1(String.valueOf(trim2)));
+    Optional.ofNullable(bendingMoment.getTrim_3())
+        .ifPresent(trim3 -> bendingMomentBuildertype4.setTrim2(String.valueOf(trim3)));
+    Optional.ofNullable(bendingMoment.getTrim_4())
+        .ifPresent(trim4 -> bendingMomentBuildertype4.setTrim3(String.valueOf(trim4)));
+    Optional.ofNullable(bendingMoment.getTrim_5())
+        .ifPresent(trim5 -> bendingMomentBuildertype4.setTrim4(String.valueOf(trim5)));
+
+    Optional.ofNullable(bendingMomentBuildertype4.getIsActive())
+        .ifPresent(isActive -> bendingMomentBuildertype4.setIsActive(String.valueOf(isActive)));
+
+    return bendingMomentBuildertype4.build();
+  }
+
+  /*
+   * int64 id = 1;
+  string frameNumber = 2;
+  string trim_m1 = 3;
+  string trim_0 = 4;
+  string trim_1 = 5;
+  string trim_2 = 6;
+  string trim_3 = 7;
+  string trim_4 = 8;
+  string trim_5 = 9;
+  string isActive = 10;
+   * */
 
   /**
    * @param vesselTankTcg
@@ -1101,6 +1332,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     Optional.ofNullable(vessel.getTypeOfShip())
         .ifPresent(typeOfShip -> vesselDetailBuilder.setTypeOfShip(typeOfShip));
 
+    Optional.ofNullable(vessel.getBm_sf_model_type())
+        .ifPresent(bmModelType -> vesselDetailBuilder.setBmSfModelType(bmModelType.toString()));
+
     Optional.ofNullable(vessel.getRegisterLength())
         .ifPresent(
             registerLength ->
@@ -1222,6 +1456,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             .ifPresent(builder::setDraftConditionName);
         Optional.ofNullable(vesselDetails.getConstant())
             .ifPresent(constant -> builder.setConstant(constant.toString()));
+        Optional.ofNullable(vesselDetails.getHasLoadicator())
+            .ifPresent(hasLoadicator -> builder.setHasLoadicator(hasLoadicator));
       }
       replyBuilder.setVesselLoadableQuantityDetails(builder.build());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -1459,6 +1695,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .ifPresent(item -> builder.setDeadweightConstant(item.toString()));
           Optional.ofNullable(vesselDetails.getProvisionalConstant())
               .ifPresent(item -> builder.setProvisionalConstant(item.toString()));
+          Optional.ofNullable(vesselDetails.getMaxLoadRate())
+              .ifPresent(v -> builder.setMaxLoadingRate(v.toString()));
+          Optional.ofNullable(vesselDetails.getMinLoadRate())
+              .ifPresent(v -> builder.setMinLoadingRate(v.toString()));
           replyBuilder.setVesselDetail(builder.build());
           replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
         }

@@ -10,22 +10,22 @@ service VesselInfoService {
 
 	rpc GetAllVesselsByCompany (VesselRequest) returns (VesselReply) {
 	}
-	
+
 	rpc GetVesselDetailsById (VesselRequest) returns (VesselReply) {
 	}
-	
+
 	rpc GetVesselTanks (VesselRequest) returns (VesselReply) {
 	}
-	
+
 	rpc GetVesselCargoTanks (VesselRequest) returns (VesselReply) {
 	}
-	
+
 	rpc GetVesselDetailsForAlgo (VesselAlgoRequest) returns (VesselAlgoReply) {
 	}
-	
+
 	rpc GetVesselDetailForSynopticalTable(VesselRequest) returns (VesselReply) {
 	}
-	
+
 	rpc GetVesselDetailByVesselId(VesselRequest) returns (VesselReply) {
 	}
 
@@ -107,6 +107,9 @@ message VesselDetail {
   string homogeneousLoadingRate = 39;
   string wingTankLoadingRate = 40;
   string centerTankLoadingRate = 41;
+  string maxLoadingRate = 42;
+	string minLoadingRate = 43;
+	string bmSfModelType = 44;
 }
 
 message VesselLoadableQuantityDetails {
@@ -116,6 +119,7 @@ message VesselLoadableQuantityDetails {
 	string tpc = 4;
 	string dwt = 5;
 	string draftConditionName = 6;
+	bool hasLoadicator = 7;
 }
 
 message VesselTankDetail{
@@ -170,7 +174,73 @@ message VesselReply {
 		repeated UllageDetails ullageDetails = 8;
 		repeated UllageTrimCorrection ullageTrimCorrection = 9;
 		repeated SelectableParameter selectableParameter = 10;
-	}
+}
+
+message BendingMomentType2 {
+	int64 id = 1;
+	string frameNumber = 2;
+	string displacement = 3;
+	string buay = 4;
+	string difft = 5;
+	string corrt = 6;
+	string isActive = 7;
+}
+
+message BendingMomentType4 {
+	int64 id = 1;
+	string frameNumber = 2;
+	string trim_m1 = 3;
+	string trim_0 = 4;
+	string trim_1 = 5;
+	string trim_2 = 6;
+	string trim_3 = 7;
+	string trim_4 = 8;
+	string trim_5 = 9;
+	string isActive = 10;
+}
+
+message ShearingForce {
+	int64 id = 1;
+	string frameNumber = 2;
+	string baseDraft = 3;
+	string baseValue = 4;
+	string draftCorrection = 5;
+	string trimCorrection = 6;
+}
+
+message ShearingForceType2 {
+	int64 id = 1;
+	string frameNumber = 2;
+	string displacement = 3;
+	string buay = 4;
+	string difft = 5;
+	string corrt = 6;
+	string isActive = 7;
+}
+
+message ShearingForceType4 {
+	int64 id = 1;
+	string frameNumber = 2;
+	string trim_m1 = 3;
+	string trim_0 = 4;
+	string trim_1 = 5;
+	string trim_2 = 6;
+	string trim_3 = 7;
+	string trim_4 = 8;
+	string trim_5 = 9;
+	string isActive = 10;
+}
+
+message BendingMomentShearingForceType3 {  //bending_moment_shearing_force_type3
+	int64 id = 1;
+	string loadCondition = 2;
+	string frameNumber = 3;
+	string draftAp = 4;
+	string draftFp = 5;
+	string bendingMoment = 6;
+	string shearingForce = 7;
+	string isActive = 8;
+}
 	
 	message SelectableParameter {
 		string paramterName = 1;
@@ -213,42 +283,38 @@ message VesselReply {
 		string tpc = 11;
 	}
 
-	message VesselTankTCG {
-		int64 id = 1;
-		int64 tankId = 2;
-		string capacity = 3;
-		string tcg = 4;
-		string lcg = 5;
-		string vcg = 6;
-		string inertia = 7;
-	}
-		
-	message BMAndSF {
-		repeated BendingMoment bendingMoment = 1;
-		repeated ShearingForce shearingForce = 2;
-		repeated CalculationSheet calculationSheet = 3;
-		repeated CalculationSheetTankGroup calculationSheetTankGroup = 4;
-		repeated MinMaxValuesForBMAndSf minMaxValuesForBMAndSf = 5;
-		repeated StationValues stationValues = 6;
-		repeated InnerBulkHeadSF InnerBulkHeadSF = 7;
-	}
-		
-	message BendingMoment {
+message VesselTankTCG {
+	int64 id = 1;
+	int64 tankId = 2;
+	string capacity = 3;
+	string tcg = 4;
+	string lcg = 5;
+	string vcg = 6;
+	string inertia = 7;
+}
+
+message BMAndSF {
+	repeated BendingMoment bendingMoment = 1;
+	repeated ShearingForce shearingForce = 2;
+	repeated CalculationSheet calculationSheet = 3;
+	repeated CalculationSheetTankGroup calculationSheetTankGroup = 4;
+	repeated MinMaxValuesForBMAndSf minMaxValuesForBMAndSf = 5;
+	repeated StationValues stationValues = 6;
+	repeated InnerBulkHeadSF InnerBulkHeadSF = 7;
+	repeated BendingMomentType2 bendingMomentType2 = 8;
+	repeated BendingMomentType4 bendingMomentType4 = 9;
+	repeated ShearingForceType2 shearingForceType2 = 10;
+	repeated ShearingForceType4 shearingForceType4 = 11;
+	repeated BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;
+}
+
+message BendingMoment {
 	int64 id = 1;
 	string frameNumber = 2;
 	string baseDraft = 3;
 	string baseValue = 4;
 	string draftCorrection = 5;
 	string trimCorrection = 6;
-	}
-		
-	message ShearingForce {
-		int64 id = 1;
-		string frameNumber = 2;
- 		string baseDraft = 3;
-  		string baseValue = 4;
- 		string draftCorrection = 5;
-  		string trimCorrection = 6;
 	}
 		
 	message CalculationSheet {

@@ -44,7 +44,7 @@
                             <td *ngIf="rowData.inputs.length>0">
                                 <ng-container *ngFor="let input of rowData.inputs; let inputIndex = index">
 
-                                    <span *ngIf="input?.type" class="mr-10">{{input.prefix}}</span>
+                                    <span *ngIf="input?.type" class="mr-5">{{input.prefix}}</span>
                                     <span *ngIf="!input?.type">{{input.prefix}}</span>
                                     <ng-container *ngIf="input?.type=='Boolean'">
                                         <label class="radio-custom">{{'RULES_TRUE' | translate}}

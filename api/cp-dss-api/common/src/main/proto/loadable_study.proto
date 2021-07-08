@@ -1131,6 +1131,7 @@ message SynopticalRecord{
 	repeated SynopticalBallastRecord ballast = 38;
 	int64 portRotationId = 39;
 	int64 portTimezoneId = 40;
+	bool hasLoadicator = 41;
 }
 
 message SynopticalCargoRecord{

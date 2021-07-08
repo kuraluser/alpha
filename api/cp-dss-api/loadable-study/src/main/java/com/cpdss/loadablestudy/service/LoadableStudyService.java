@@ -283,6 +283,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1121,34 +1122,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CommonErrorCodes.E_HTTP_BAD_REQUEST,
                 HttpStatusCode.BAD_REQUEST);
           }
+          VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+          vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
+          vesselRuleBuilder.setVesselId(request.getVesselId());
+          vesselRuleBuilder.setIsNoDefaultRule(true);
+          VesselRuleReply vesselRuleReply =
+              this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+          if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+            throw new GenericServiceException(
+                "failed to get loadable study rule Details against vessel ",
+                vesselRuleReply.getResponseStatus().getCode(),
+                HttpStatusCode.valueOf(
+                    Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+          }
+          updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
           listOfExistingLSRules =
               loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
                   loadableStudy.get(), request.getVesselId(), true);
-          /*  if (listOfExistingLSRules.size() == 0) {
-            VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
-            vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
-            vesselRuleBuilder.setVesselId(request.getVesselId());
-            vesselRuleBuilder.setIsNoDefaultRule(true);
-            vesselRuleReply =
-                this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
-                    vesselRuleBuilder.build());
-            if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
-              throw new GenericServiceException(
-                  "failed to get loadable study rule Details against vessel ",
-                  vesselRuleReply.getResponseStatus().getCode(),
-                  HttpStatusCode.valueOf(
-                      Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
-            } else {
-              if (vesselRuleReply.getRulePlanList() == null
-                  || vesselRuleReply.getRulePlanList().size() == 0) {
-                throw new GenericServiceException(
-                    " Rules does not mapped against particular vessel ",
-                    CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                    HttpStatusCode.BAD_REQUEST);
-              }
-              log.info("Rules has mapped against particular vessel");
-            }
-          }*/
         }
       }
 
@@ -1686,6 +1676,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       // Set port ordering after updation
       this.setPortOrdering(loadableStudy);
     }
+
+    AtomicLong newPortOrder = new AtomicLong(0);
+    loadableStudyPortRotations.forEach(
+        portRotation -> {
+          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+        });
+
+    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
   private void setPortOrdering(LoadableStudy loadableStudy) {
@@ -7700,7 +7698,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * find voyage history for previous voyage
    *
-   * @param voyage
    * @return
    */
   private List<CargoHistory> findCargoHistoryForPrvsVoyage(Voyage voyage) {
@@ -8849,6 +8846,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(item -> builder.setDisplacementPlanned(valueOf(item)));
     ofNullable(synopticalEntity.getDisplacementActual())
         .ifPresent(item -> builder.setDisplacementActual(valueOf(item)));
+    ofNullable(vesselLoadableQuantityDetails.getHasLoadicator())
+        .ifPresent(item -> builder.setHasLoadicator(item));
   }
 
   /**
@@ -10481,14 +10480,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantity lq, List<LoadableStudyPortRotation> newPrList) {
     if (lq != null && lq.getLoadableStudyPortRotation() != null) {
       LoadableStudyPortRotation pr = lq.getLoadableStudyPortRotation();
-      Optional<LoadableStudyPortRotation> portRotaionIdToAdd =
-          newPrList.stream()
-              .filter(
-                  var ->
-                      (pr.getPortXId().equals(var.getPortXId()))
-                          && (pr.getOperation().getId().equals(var.getOperation().getId())))
-              .findFirst();
-      lq.setLoadableStudyPortRotation(portRotaionIdToAdd.get());
+      if (pr.isActive()) {
+        Optional<LoadableStudyPortRotation> portRotaionIdToAdd =
+            newPrList.stream()
+                .filter(
+                    var ->
+                        (pr.getPortXId().equals(var.getPortXId()))
+                            && (pr.getOperation().getId().equals(var.getOperation().getId())))
+                .findFirst();
+        lq.setLoadableStudyPortRotation(portRotaionIdToAdd.get());
+      }
     }
   }
 
@@ -11907,14 +11908,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .cargoCode(stowageDetails.getCargoAbbreviation())
                 // TODO ullage for commingle is empty check and set value
                 .ullage(
-                    Float.parseFloat(
+                    Double.parseDouble(
                         stowageDetails.getRdgUllage().isEmpty()
                             ? "0.0"
                             : stowageDetails.getRdgUllage()))
-                .loadedPercentage((float) (Math.round(fillingPercentage * 100.0) / 100.0))
-                .shipsNBbls(obsBbsValue)
-                .shipsMt(Float.parseFloat(stowageDetails.getWeight()))
-                .shipsKlAt15C(klValue);
+                .loadedPercentage((Math.round(fillingPercentage * 100.0) / 100.0))
+                .shipsNBbls(Double.parseDouble(Float.toString(obsBbsValue)))
+                .shipsMt(Double.parseDouble(stowageDetails.getWeight()))
+                .shipsKlAt15C(Double.parseDouble(Float.toString(klValue)));
           } else {
             //            Set default color to white if no stowage details found
             vesselTanksTableBuilder.colorCode(WHITE_COLOR_CODE);
@@ -12234,7 +12235,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     float kl15CTotal = 0F;
     float ltTotal = 0F;
     float diffBblsTotal = 0F;
-    float diffPercentageTotal = 0F;
+    double diffPercentageTotal = 0;
 
     //    Get cargo nominations
     List<CargosTable> cargosTableList = new ArrayList<>();
@@ -12316,7 +12317,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               0F,
               ConversionUnit.LT);
-      float diffPercentage = diffBbls / cargoNominationValue;
+      double diffPercentage =
+          Double.parseDouble(Float.toString(diffBbls))
+              / Double.parseDouble(Float.toString(cargoNominationValue));
 
       //      Calculate totals
       cargoNominationTotal += cargoNominationValue;
@@ -12342,12 +12345,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CargosTable.builder()
               .cargoCode(loadableQuantityCargoDetails.getCargoAbbreviation())
               .loadingPort(portReply.getName())
-              .api(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()))
+              .api(Double.parseDouble(loadableQuantityCargoDetails.getEstimatedAPI()))
               .temp(
                   loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
                       ? 0
                       : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
-              .cargoNomination(cargoNominationValue)
+              .cargoNomination(Double.parseDouble(Float.toString(cargoNominationValue)))
               .tolerance(
                   String.format(
                       "+%s %% / -%s %%",
@@ -12357,12 +12360,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadableQuantityCargoDetails.getMinTolerence().isEmpty()
                           ? 0.00
                           : loadableQuantityCargoDetails.getMinTolerence()))
-              .nBbls(nBblsValue)
-              .mt(shipsFigureMtTotal)
-              .kl15C(kl15CValue)
-              .lt(ltValue)
+              .nBbls(Double.parseDouble(Float.toString(nBblsValue)))
+              .mt(Double.parseDouble(Float.toString(shipsFigureMtTotal)))
+              .kl15C(Double.parseDouble(Float.toString(kl15CValue)))
+              .lt(Double.parseDouble(Float.toString(ltValue)))
               .colorCode(loadableQuantityCargoDetails.getColorCode())
-              .diffBbls(diffBbls)
+              .diffBbls(Double.parseDouble(Float.toString(diffBbls)))
               .diffPercentage(diffPercentage)
               .build();
 
@@ -12370,12 +12373,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
-        .cargoNominationTotal(cargoNominationTotal)
-        .nBblsTotal(nBblsTotal)
-        .mtTotal(mtTotal)
-        .kl15CTotal(kl15CTotal)
-        .ltTotal(ltTotal)
-        .diffBblsTotal(diffBblsTotal)
+        .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationTotal)))
+        .nBblsTotal(Double.parseDouble(Float.toString(nBblsTotal)))
+        .mtTotal(Double.parseDouble(Float.toString(mtTotal)))
+        .kl15CTotal(Double.parseDouble(Float.toString(kl15CTotal)))
+        .ltTotal(Double.parseDouble(Float.toString(ltTotal)))
+        .diffBblsTotal(Double.parseDouble(Float.toString(diffBblsTotal)))
         .diffPercentageTotal(diffPercentageTotal)
         .build();
   }
@@ -13224,6 +13227,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     buildCargoToppingOffSequence(builder, loadablePattern, portRotation);
   }
 
+  /** Fetch the api and temp history for cargo and port ids if available */
   private void buildCargoToppingOffSequence(
       LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
       LoadablePattern loadablePattern,
@@ -14133,6 +14137,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 });
         loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
       }
+      updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
       List<Long> ruleListId =
           vesselRuleReply.getRulePlanList().stream()
               .flatMap(rulesList -> rulesList.getRulesList().stream())
@@ -14186,6 +14191,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private void updateDisplayInSettingsInLoadableStudyRules(VesselRuleReply vesselRuleReply) {
+    Set<Long> setOfSelectedDisplayInSetting = new LinkedHashSet<>();
+    Set<Long> setOfDeselectedDisplayInSetting = new LinkedHashSet<>();
+
+    vesselRuleReply.getRulePlanList().stream()
+        .forEach(
+            item -> {
+              Set<Long> selectedDisplayInSetting =
+                  item.getRulesList().stream()
+                      .filter(
+                          rules ->
+                              rules.getDisplayInSettings()
+                                  && rules.getVesselRuleXId() != null
+                                  && rules.getVesselRuleXId() != "")
+                      .map(id -> Long.parseLong(id.getVesselRuleXId()))
+                      .collect(Collectors.toSet());
+              Set<Long> deselectedDisplayInSetting =
+                  item.getRulesList().stream()
+                      .filter(
+                          rules ->
+                              !rules.getDisplayInSettings()
+                                  && rules.getVesselRuleXId() != null
+                                  && rules.getVesselRuleXId() != "")
+                      .map(id -> Long.parseLong(id.getVesselRuleXId()))
+                      .collect(Collectors.toSet());
+              if (selectedDisplayInSetting != null && selectedDisplayInSetting.size() > 0) {
+                setOfSelectedDisplayInSetting.addAll(selectedDisplayInSetting);
+              }
+              if (deselectedDisplayInSetting != null && deselectedDisplayInSetting.size() > 0) {
+                setOfDeselectedDisplayInSetting.addAll(deselectedDisplayInSetting);
+              }
+            });
+    loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(
+        true, setOfSelectedDisplayInSetting);
+    loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(
+        false, setOfDeselectedDisplayInSetting);
   }
 
   private void ruleMasterDropDownValidation(
