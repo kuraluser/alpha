@@ -2,10 +2,8 @@
 package com.cpdss.vesselinfo.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.vesselinfo.entity.BendingMomentType2;
 import com.cpdss.vesselinfo.entity.BendingMomentType4;
 import com.cpdss.vesselinfo.entity.Vessel;
-
 import java.util.List;
 
 /** @Author ravi.r */

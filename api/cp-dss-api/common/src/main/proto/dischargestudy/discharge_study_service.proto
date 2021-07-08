@@ -12,4 +12,3 @@ service DischargeStudyService {
   rpc getDischargeStudyByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
   
 }
-
