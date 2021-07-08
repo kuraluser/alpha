@@ -36,6 +36,38 @@ public class DischargePlanController {
   @Autowired private DischargeStudyService dischargeStudyService;
 
   /**
+   * Delete port rotation by id
+   *
+   * @param dischargeStudyId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @DeleteMapping(
+      value = "/discharge-studies/{dischargeStudyId}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public DischargeStudyResponse deleteDischargeStudy(
+      @PathVariable Long dischargeStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("dischargeStudy: {}");
+      return this.dischargeStudyService.deleteDischargeStudy(
+          dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when deleting port rotation", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when deleting port rotation", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
    * Save discharge study
    *
    * @param vesselId - the vessel id for which discharge study is created
@@ -78,7 +110,13 @@ public class DischargePlanController {
           e);
     }
   }
-
+  /**
+   * @param dischargeStudyId discharge study id to update
+   * @param request values to update in discharge study
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
   @PutMapping(
       value = "/discharge-studies/{dischargeStudyId}",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,

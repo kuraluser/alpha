@@ -20,14 +20,12 @@ public final class DischargeStudyServiceOuterClass {
     java.lang.String[] descriptorData = {
       "\n,dischargestudy/discharge_study_service"
           + ".proto\032\014common.proto\032&loading_plan/loadi"
-          + "ng_plan_models.proto2\344\001\n\025DischargeStudyS"
+          + "ng_plan_models.proto2\200\001\n\025DischargeStudyS"
           + "ervice\022g\n\031getDischargeStudyByVoyage\022$.Lo"
           + "adingInformationSynopticalRequest\032\".Load"
-          + "ingInformationSynopticalReply\"\000\022b\n\036getDi"
-          + "schargeStudyCargoByVoyage\022\032.LoadingInfor"
-          + "mationRequest\032\".LoadingInformationSynopt"
-          + "icalReply\"\000B-\n)com.cpdss.common.generate"
-          + "d.dischargestudyP\000b\006proto3"
+          + "ingInformationSynopticalReply\"\000B-\n)com.c"
+          + "pdss.common.generated.dischargestudyP\000b\006"
+          + "proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

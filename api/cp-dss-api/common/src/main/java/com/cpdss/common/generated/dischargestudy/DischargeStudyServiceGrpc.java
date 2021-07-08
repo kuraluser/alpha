@@ -84,67 +84,6 @@ public final class DischargeStudyServiceGrpc {
     return getGetDischargeStudyByVoyageMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-              .LoadingInformationSynopticalReply>
-      getGetDischargeStudyCargoByVoyageMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "getDischargeStudyCargoByVoyage",
-      requestType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest.class,
-      responseType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-              .LoadingInformationSynopticalReply.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-              .LoadingInformationSynopticalReply>
-      getGetDischargeStudyCargoByVoyageMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                .LoadingInformationSynopticalReply>
-        getGetDischargeStudyCargoByVoyageMethod;
-    if ((getGetDischargeStudyCargoByVoyageMethod =
-            DischargeStudyServiceGrpc.getGetDischargeStudyCargoByVoyageMethod)
-        == null) {
-      synchronized (DischargeStudyServiceGrpc.class) {
-        if ((getGetDischargeStudyCargoByVoyageMethod =
-                DischargeStudyServiceGrpc.getGetDischargeStudyCargoByVoyageMethod)
-            == null) {
-          DischargeStudyServiceGrpc.getGetDischargeStudyCargoByVoyageMethod =
-              getGetDischargeStudyCargoByVoyageMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .LoadingInformationRequest,
-                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .LoadingInformationSynopticalReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "getDischargeStudyCargoByVoyage"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .LoadingInformationRequest.getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .LoadingInformationSynopticalReply.getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new DischargeStudyServiceMethodDescriptorSupplier(
-                              "getDischargeStudyCargoByVoyage"))
-                      .build();
-        }
-      }
-    }
-    return getGetDischargeStudyCargoByVoyageMethod;
-  }
-
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyServiceStub> factory =
@@ -201,16 +140,6 @@ public final class DischargeStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetDischargeStudyByVoyageMethod(), responseObserver);
     }
 
-    /** */
-    public void getDischargeStudyCargoByVoyage(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                    .LoadingInformationSynopticalReply>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getGetDischargeStudyCargoByVoyageMethod(), responseObserver);
-    }
-
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -223,15 +152,6 @@ public final class DischargeStudyServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInformationSynopticalReply>(
                       this, METHODID_GET_DISCHARGE_STUDY_BY_VOYAGE)))
-          .addMethod(
-              getGetDischargeStudyCargoByVoyageMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingInformationRequest,
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingInformationSynopticalReply>(
-                      this, METHODID_GET_DISCHARGE_STUDY_CARGO_BY_VOYAGE)))
           .build();
     }
   }
@@ -263,19 +183,6 @@ public final class DischargeStudyServiceGrpc {
           request,
           responseObserver);
     }
-
-    /** */
-    public void getDischargeStudyCargoByVoyage(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                    .LoadingInformationSynopticalReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetDischargeStudyCargoByVoyageMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
   }
 
   /** */
@@ -301,16 +208,6 @@ public final class DischargeStudyServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetDischargeStudyByVoyageMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels
-            .LoadingInformationSynopticalReply
-        getDischargeStudyCargoByVoyage(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
-                request) {
-      return blockingUnaryCall(
-          getChannel(), getGetDischargeStudyCargoByVoyageMethod(), getCallOptions(), request);
     }
   }
 
@@ -339,22 +236,9 @@ public final class DischargeStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetDischargeStudyByVoyageMethod(), getCallOptions()), request);
     }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                .LoadingInformationSynopticalReply>
-        getDischargeStudyCargoByVoyage(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
-                request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetDischargeStudyCargoByVoyageMethod(), getCallOptions()),
-          request);
-    }
   }
 
   private static final int METHODID_GET_DISCHARGE_STUDY_BY_VOYAGE = 0;
-  private static final int METHODID_GET_DISCHARGE_STUDY_CARGO_BY_VOYAGE = 1;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -377,15 +261,6 @@ public final class DischargeStudyServiceGrpc {
           serviceImpl.getDischargeStudyByVoyage(
               (com.cpdss.common.generated.loading_plan.LoadingPlanModels
                       .LoadingInformationSynopticalRequest)
-                  request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingInformationSynopticalReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_DISCHARGE_STUDY_CARGO_BY_VOYAGE:
-          serviceImpl.getDischargeStudyCargoByVoyage(
-              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest)
                   request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
@@ -458,7 +333,6 @@ public final class DischargeStudyServiceGrpc {
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new DischargeStudyServiceFileDescriptorSupplier())
                       .addMethod(getGetDischargeStudyByVoyageMethod())
-                      .addMethod(getGetDischargeStudyCargoByVoyageMethod())
                       .build();
         }
       }
