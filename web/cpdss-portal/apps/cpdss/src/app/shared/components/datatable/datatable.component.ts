@@ -117,6 +117,8 @@ export class DatatableComponent implements OnInit {
 
   @Input() scrollable = true;
 
+  @Input() showHeader = true;
+
   @Input()
   set loading(loading: boolean) {
     this._loading = loading;
@@ -357,6 +359,26 @@ export class DatatableComponent implements OnInit {
         rowData[prevField].isEditMode = !control.valid;
       }
       rowData[col.field].isEditMode = true;
+    }
+  }
+  
+  /**
+   * Handler for cell tab on focus event
+   * @param event
+   * @param rowData
+   * @param rowIndex
+   * @param col
+   * @param colIndex
+   */
+  onFocusKeyDown(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
+    const nextField = this.columns[colIndex + 1];
+    if(event.keyCode === 9 && !event.shiftKey && nextField.fieldType === 'DATETIME') {
+      const id = `${nextField.field}_${rowIndex}input`;
+      setTimeout(() => {
+        if(document.getElementById(id) !== document.activeElement && this.value[rowIndex][nextField.field].isEditMode) {
+          document.getElementById(id).focus();
+        }
+      },250)
     }
   }
 
@@ -718,7 +740,7 @@ export class DatatableComponent implements OnInit {
   onDateRangeSelect(event, formGroupIndex: number, col, rowData: Object) {
     const formControlName: string = col.field;
     const formControl = this.field(formGroupIndex, formControlName);
-    if (formControl?.value[0] && formControl?.value[1]) {
+    if (formControl?.value && formControl?.value[0] && formControl?.value[1]) {
       if (formControl?.value[0]?.toDateString() === formControl?.value[1]?.toDateString()) {
         formControl.setErrors({ 'datesEqual': true });
       } else {
@@ -732,7 +754,7 @@ export class DatatableComponent implements OnInit {
         this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
       }
     }
-    else if (formControl?.value[0] && !formControl?.value[1]) {
+    else if (formControl?.value && formControl?.value[0] && !formControl?.value[1]) {
       formControl.setErrors({ 'toDate': true });
     }
   }
@@ -836,7 +858,7 @@ export class DatatableComponent implements OnInit {
       this.filteredValue.forEach(row => {
         if (row[col.field]) {
           const value = row[col.field].value ?? 0;
-          total += value
+          total += Number(value)
         }
       })
       return total;

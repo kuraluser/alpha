@@ -8,7 +8,7 @@ const routes: Routes = [
     path: '',
     component: CargoPlanningComponent,
     children: [
-      { path: '', redirectTo: 'loadable-study-list', pathMatch: 'full' },
+   
       {
         path: 'loadable-study-list',
         loadChildren: () => import('./loadable-study-list/loadable-study-list.module').then(m => m.LoadableStudyListModule)
@@ -28,6 +28,18 @@ const routes: Routes = [
       {
         path: 'cargo-history',
         loadChildren: () => import('./cargo-history/cargo-history.module').then(m => m.CargoHistoryModule)
+      },
+      {
+        path: 'discharge-study-list',
+        loadChildren: () => import('./discharge-study-list/discharge-study-list.module').then(m => m.DischargeStudyListModule)
+      },
+      {
+        path: 'discharge-study-details/:vesselId/:voyageId/:dischargeStudyId',
+        loadChildren: () => import('./discharge-study-details/discharge-study-details.module').then(m => m.DischargeStudyDetailsModule)
+      },
+      {
+        path: 'discharge-study-plan/:vesselId/:voyageId/:dischargeStudyId',
+        loadChildren: () => import('./discharge-study-view-plan/discharge-study-view-plan.module').then(m => m.DischargeStudyViewPlanModule)
       }
     ]
   },

@@ -48,7 +48,7 @@ public class LoadablePlanService {
               .ifPresent(diffPercentage -> builder.setDifferencePercentage(diffPercentage));
           Optional.ofNullable(lpq.getEstimatedApi())
               .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
-          Optional.ofNullable(lpq.getEstimatedTemperature())
+          Optional.ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   estimatedTemperature ->
                       builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
@@ -113,6 +113,7 @@ public class LoadablePlanService {
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
           Optional.ofNullable(lpcd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+          Optional.ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
@@ -129,6 +130,7 @@ public class LoadablePlanService {
 
           Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(stowageBuilder::setRdgUllage);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(stowageBuilder::setTankName);
+          Optional.ofNullable(lpcd.getTankShortName()).ifPresent(stowageBuilder::setTankShortName);
           Optional.ofNullable(lpcd.getTankId()).ifPresent(stowageBuilder::setTankId);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(stowageBuilder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);

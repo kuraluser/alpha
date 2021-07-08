@@ -5,15 +5,28 @@ import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.Common.RuleDropDownMaster;
+import com.cpdss.common.generated.Common.RulePlans;
+import com.cpdss.common.generated.Common.Rules;
+import com.cpdss.common.generated.Common.RulesInputs;
 import com.cpdss.common.generated.VesselInfo.BMAndSF;
 import com.cpdss.common.generated.VesselInfo.BendingMoment;
+import com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3;
+import com.cpdss.common.generated.VesselInfo.BendingMomentType2;
+import com.cpdss.common.generated.VesselInfo.BendingMomentType4;
 import com.cpdss.common.generated.VesselInfo.CalculationSheet;
 import com.cpdss.common.generated.VesselInfo.CalculationSheetTankGroup;
 import com.cpdss.common.generated.VesselInfo.HydrostaticData;
 import com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
+import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
+import com.cpdss.common.generated.VesselInfo.ParameterValue;
+import com.cpdss.common.generated.VesselInfo.SelectableParameter;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
+import com.cpdss.common.generated.VesselInfo.ShearingForceType2;
+import com.cpdss.common.generated.VesselInfo.ShearingForceType4;
 import com.cpdss.common.generated.VesselInfo.StationValues;
 import com.cpdss.common.generated.VesselInfo.UllageDetails;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
@@ -24,6 +37,8 @@ import com.cpdss.common.generated.VesselInfo.VesselIdResponse;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
+import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfo.VesselTankOrder;
 import com.cpdss.common.generated.VesselInfo.VesselTankRequest;
@@ -32,37 +47,34 @@ import com.cpdss.common.generated.VesselInfo.VesselTankTCG;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.vesselinfo.domain.CargoTankMaster;
+import com.cpdss.vesselinfo.domain.RuleMasterData;
+import com.cpdss.vesselinfo.domain.TypeValue;
 import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.domain.VesselInfo;
+import com.cpdss.vesselinfo.domain.VesselRule;
 import com.cpdss.vesselinfo.domain.VesselTankDetails;
 import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
 import com.cpdss.vesselinfo.entity.DraftCondition;
 import com.cpdss.vesselinfo.entity.HydrostaticTable;
 import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
 import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
+import com.cpdss.vesselinfo.entity.RuleTemplate;
+import com.cpdss.vesselinfo.entity.RuleTemplateInput;
+import com.cpdss.vesselinfo.entity.RuleType;
+import com.cpdss.vesselinfo.entity.RuleVesselDropDownValues;
+import com.cpdss.vesselinfo.entity.RuleVesselMapping;
+import com.cpdss.vesselinfo.entity.RuleVesselMappingInput;
 import com.cpdss.vesselinfo.entity.TankCategory;
 import com.cpdss.vesselinfo.entity.UllageTableData;
 import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
+import com.cpdss.vesselinfo.entity.VesselFlowRate;
 import com.cpdss.vesselinfo.entity.VesselTank;
 import com.cpdss.vesselinfo.entity.VesselTankTcg;
-import com.cpdss.vesselinfo.repository.BendingMomentRepository;
-import com.cpdss.vesselinfo.repository.CalculationSheetRepository;
-import com.cpdss.vesselinfo.repository.CalculationSheetTankgroupRepository;
-import com.cpdss.vesselinfo.repository.HydrostaticTableRepository;
-import com.cpdss.vesselinfo.repository.InnerBulkHeadValuesRepository;
-import com.cpdss.vesselinfo.repository.MinMaxValuesForBmsfRepository;
-import com.cpdss.vesselinfo.repository.ShearingForceRepository;
-import com.cpdss.vesselinfo.repository.StationValuesRepository;
-import com.cpdss.vesselinfo.repository.TankCategoryRepository;
-import com.cpdss.vesselinfo.repository.UllageTableDataRepository;
-import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
-import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
-import com.cpdss.vesselinfo.repository.VesselRepository;
-import com.cpdss.vesselinfo.repository.VesselTankRepository;
-import com.cpdss.vesselinfo.repository.VesselTankTcgRepository;
+import com.cpdss.vesselinfo.repository.*;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -70,6 +82,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,6 +94,8 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Vessel info grpc service class
@@ -99,15 +114,33 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private HydrostaticTableRepository hydrostaticTableRepository;
   @Autowired private VesselDraftConditionRepository vesselDraftConditionRepository;
   @Autowired private VesselTankTcgRepository vesselTankTcgRepository;
+
   @Autowired private BendingMomentRepository bendingMomentRepository;
   @Autowired private ShearingForceRepository shearingForceRepository;
+  @Autowired private BendingMomentRepositoryType2 bendingMomentRepositoryType2;
+  @Autowired private ShearingForceRepositoryType2 shearingForceRepositoryType2;
+  @Autowired private BendingMomentRepositoryType4 bendingMomentRepositoryType4;
+  @Autowired private ShearingForceRepositoryType4 shearingForceRepositoryType4;
+
+  @Autowired
+  private BendingMomentShearingForceRepositoryType3 bendingMomentShearingForceRepositoryType3;
+
   @Autowired private CalculationSheetRepository calculationSheetRepository;
   @Autowired private CalculationSheetTankgroupRepository calculationSheetTankgroupRepository;
   @Autowired private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
   @Autowired private StationValuesRepository stationValuesRepository;
   @Autowired private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
   @Autowired private UllageTableDataRepository ullageTableDataRepository;
+  @Autowired private VesselFlowRateRepository vesselFlowRateRepository;
   @Autowired HydrostaticService hydrostaticService;
+  @Autowired VesselPumpService vesselPumpService;
+  @Autowired RuleTypeRepository ruleTypeRepository;
+  @Autowired RuleTemplateRepository ruleTemplateRepository;
+  @Autowired RuleVesselMappingRepository ruleVesselMappingRepository;
+  @Autowired RuleVesselMappingInputRespository ruleVesselMappingInputRespository;
+  @Autowired VesselValveSequenceRepository vesselValveSequenceRepository;
+  @Autowired RuleTemplateInputRepository ruleTemplateInputRepository;
+  @Autowired RuleVesselDropDownValuesRepository ruleVesselDropDownValuesRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -465,23 +498,84 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 });
 
         BMAndSF.Builder bMAndSFBuilder = BMAndSF.newBuilder();
-        bendingMomentRepository
-            .findByVessel(vessel)
-            .forEach(
-                bendingMoment -> {
-                  BendingMoment.Builder bendingMomentBuilder = BendingMoment.newBuilder();
-                  bMAndSFBuilder.addBendingMoment(
-                      createBendingMoment(bendingMoment, bendingMomentBuilder));
-                });
+        if (vessel != null
+            && vessel.getBm_sf_model_type() != null
+            && vessel.getBm_sf_model_type() != 0) {
 
-        shearingForceRepository
-            .findByVessel(vessel)
-            .forEach(
-                shearingForce -> {
-                  ShearingForce.Builder shearingForceBuilder = ShearingForce.newBuilder();
-                  bMAndSFBuilder.addShearingForce(
-                      createShearingForce(shearingForce, shearingForceBuilder));
-                });
+          if (vessel.getBm_sf_model_type() == 1) {
+            bendingMomentRepository
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMoment -> {
+                      BendingMoment.Builder bendingMomentBuilder = BendingMoment.newBuilder();
+                      bMAndSFBuilder.addBendingMoment(
+                          createBendingMoment(bendingMoment, bendingMomentBuilder));
+                    });
+
+            shearingForceRepository
+                .findByVessel(vessel)
+                .forEach(
+                    shearingForce -> {
+                      ShearingForce.Builder shearingForceBuilder = ShearingForce.newBuilder();
+                      bMAndSFBuilder.addShearingForce(
+                          createShearingForce(shearingForce, shearingForceBuilder));
+                    });
+          }
+          if (vessel.getBm_sf_model_type() == 2) {
+            bendingMomentRepositoryType2
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMomentType2 -> {
+                      BendingMomentType2.Builder bendingMomentBuilder =
+                          BendingMomentType2.newBuilder();
+                      bMAndSFBuilder.addBendingMomentType2(
+                          createBendingMomentType2(bendingMomentType2, bendingMomentBuilder));
+                    });
+
+            shearingForceRepositoryType2
+                .findByVessel(vessel)
+                .forEach(
+                    shearingForceType2 -> {
+                      ShearingForceType2.Builder shearingForceBuilder =
+                          ShearingForceType2.newBuilder();
+                      bMAndSFBuilder.addShearingForceType2(
+                          createShearingForce2(shearingForceType2, shearingForceBuilder));
+                    });
+          }
+          if (vessel.getBm_sf_model_type() == 4) {
+            bendingMomentRepositoryType4
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMomentType4 -> {
+                      BendingMomentType4.Builder bendingMomentBuilder =
+                          BendingMomentType4.newBuilder();
+                      bMAndSFBuilder.addBendingMomentType4(
+                          createBendingMomentType4(bendingMomentType4, bendingMomentBuilder));
+                    });
+
+            shearingForceRepositoryType4
+                .findByVessel(vessel)
+                .forEach(
+                    shearingForceType4 -> {
+                      ShearingForceType4.Builder shearingForceBuilder =
+                          ShearingForceType4.newBuilder();
+                      bMAndSFBuilder.addShearingForceType4(
+                          createShearingForceType4(shearingForceType4, shearingForceBuilder));
+                    });
+          }
+          if (vessel.getBm_sf_model_type() == 4) {
+            bendingMomentShearingForceRepositoryType3
+                .findByVessel(vessel)
+                .forEach(
+                    bendingMomentShearingForceType3 -> {
+                      BendingMomentShearingForceType3.Builder bendingMomentBuilder =
+                          BendingMomentShearingForceType3.newBuilder();
+                      bMAndSFBuilder.addBendingMomentShearingForce3(
+                          createBendingMomentShearingForce3(
+                              bendingMomentShearingForceType3, bendingMomentBuilder));
+                    });
+          }
+        }
 
         calculationSheetRepository
             .findByVessel(vessel)
@@ -549,6 +643,16 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             }
           }
         }
+
+        vesselFlowRateRepository
+            .findByVessel(vessel)
+            .forEach(
+                flowRate -> {
+                  SelectableParameter.Builder selectableBuilder = SelectableParameter.newBuilder();
+                  replyBuilder.addSelectableParameter(
+                      selectableParameterBuilder(flowRate, selectableBuilder));
+                });
+
         replyBuilder.setBMAndSF(bMAndSFBuilder);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
@@ -564,6 +668,48 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private SelectableParameter selectableParameterBuilder(
+      VesselFlowRate flowRate,
+      com.cpdss.common.generated.VesselInfo.SelectableParameter.Builder selectableBuilder) {
+    Optional.ofNullable(flowRate.getFlowRateParameter())
+        .ifPresent(
+            flowRateName -> selectableBuilder.setParamterName(flowRateName.getFlowRateParameter()));
+    Optional.ofNullable(flowRate.getFlowRateOne())
+        .ifPresent(
+            flowRateOne -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateOne));
+              parameterBuilder.setType(1);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateSix())
+        .ifPresent(
+            flowRateSix -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateSix));
+              parameterBuilder.setType(6);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateSeven())
+        .ifPresent(
+            flowRateSeven -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateSeven));
+              parameterBuilder.setType(7);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+    Optional.ofNullable(flowRate.getFlowRateTwelve())
+        .ifPresent(
+            flowRateTwelve -> {
+              ParameterValue.Builder parameterBuilder = ParameterValue.newBuilder();
+              parameterBuilder.setValue(String.valueOf(flowRateTwelve));
+              parameterBuilder.setType(12);
+              selectableBuilder.addValues(parameterBuilder.build());
+            });
+
+    return selectableBuilder.build();
   }
 
   /**
@@ -846,6 +992,83 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   }
 
   /**
+   * @param shearingForce
+   * @param shearingForceBuilder
+   * @return ShearingForce
+   */
+  private ShearingForceType2 createShearingForce2(
+      com.cpdss.vesselinfo.entity.ShearingForceType2 shearingForce,
+      com.cpdss.common.generated.VesselInfo.ShearingForceType2.Builder shearingForceBuilder) {
+
+    Optional.ofNullable(shearingForce.getDisplacement())
+        .ifPresent(
+            displacement -> shearingForceBuilder.setDisplacement(String.valueOf(displacement)));
+
+    Optional.ofNullable(shearingForce.getFrameNumber())
+        .ifPresent(frameNumber -> shearingForceBuilder.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(shearingForce.getBuay())
+        .ifPresent(buay -> shearingForceBuilder.setBuay(String.valueOf(buay)));
+
+    Optional.ofNullable(shearingForce.getDifft())
+        .ifPresent(baseValue -> shearingForceBuilder.setDifft(String.valueOf(baseValue)));
+
+    Optional.ofNullable(shearingForce.getCorrt())
+        .ifPresent(
+            draftCorrection -> shearingForceBuilder.setCorrt(String.valueOf(draftCorrection)));
+
+    Optional.ofNullable(shearingForce.getIsActive())
+        .ifPresent(isActive -> shearingForceBuilder.setIsActive(String.valueOf(isActive)));
+
+    return shearingForceBuilder.build();
+  }
+
+  /**
+   * @param shearingForce
+   * @param shearingForceBuilder
+   * @return ShearingForce
+   */
+  private ShearingForceType4 createShearingForceType4(
+      com.cpdss.vesselinfo.entity.ShearingForceType4 shearingForce,
+      com.cpdss.common.generated.VesselInfo.ShearingForceType4.Builder shearingForceBuilder) {
+
+    Optional.ofNullable(shearingForce.getFrameNumber())
+        .ifPresent(frameNumber -> shearingForceBuilder.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(shearingForce.getTrim_m1())
+        .ifPresent(trim_m1 -> shearingForceBuilder.setTrimM1(String.valueOf(trim_m1)));
+
+    Optional.ofNullable(shearingForce.getTrim_1())
+        .ifPresent(trim1 -> shearingForceBuilder.setTrim1(String.valueOf(trim1)));
+    Optional.ofNullable(shearingForce.getTrim_3())
+        .ifPresent(trim2 -> shearingForceBuilder.setTrim1(String.valueOf(trim2)));
+    Optional.ofNullable(shearingForce.getTrim_3())
+        .ifPresent(trim3 -> shearingForceBuilder.setTrim2(String.valueOf(trim3)));
+    Optional.ofNullable(shearingForce.getTrim_4())
+        .ifPresent(trim4 -> shearingForceBuilder.setTrim3(String.valueOf(trim4)));
+    Optional.ofNullable(shearingForce.getTrim_5())
+        .ifPresent(trim5 -> shearingForceBuilder.setTrim4(String.valueOf(trim5)));
+
+    return shearingForceBuilder.build();
+  }
+
+  /**
+   * @param type3
+   * @param shearingForceBuilder
+   * @return ShearingForce
+   */
+  private BendingMomentShearingForceType3 createBendingMomentShearingForce3(
+      com.cpdss.vesselinfo.entity.BendingMomentShearingForceType3 type3,
+      com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3.Builder
+          shearingForceBuilder) {
+
+    Optional.ofNullable(type3.getFrameNumber())
+        .ifPresent(frameNumber -> shearingForceBuilder.setFrameNumber(String.valueOf(frameNumber)));
+
+    return shearingForceBuilder.build();
+  }
+
+  /**
    * @param bendingMoment
    * @param bendingMomentBuilder
    * @return BendingMoment
@@ -872,6 +1095,85 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   }
 
   /**
+   * @param bendingMomentBuildertype2
+   * @param bendingMoment
+   * @return BendingMoment
+   */
+  private com.cpdss.common.generated.VesselInfo.BendingMomentType2 createBendingMomentType2(
+      com.cpdss.vesselinfo.entity.BendingMomentType2 bendingMoment,
+      com.cpdss.common.generated.VesselInfo.BendingMomentType2.Builder bendingMomentBuildertype2) {
+
+    Optional.ofNullable(bendingMoment.getDisplacement())
+        .ifPresent(
+            displacement ->
+                bendingMomentBuildertype2.setDisplacement(String.valueOf(displacement)));
+
+    Optional.ofNullable(bendingMoment.getFrameNumber())
+        .ifPresent(
+            frameNumber -> bendingMomentBuildertype2.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(bendingMoment.getBuay())
+        .ifPresent(buay -> bendingMomentBuildertype2.setBuay(String.valueOf(buay)));
+
+    Optional.ofNullable(bendingMoment.getDifft())
+        .ifPresent(baseValue -> bendingMomentBuildertype2.setDifft(String.valueOf(baseValue)));
+
+    Optional.ofNullable(bendingMoment.getCorrt())
+        .ifPresent(
+            draftCorrection -> bendingMomentBuildertype2.setCorrt(String.valueOf(draftCorrection)));
+
+    Optional.ofNullable(bendingMoment.getIsActive())
+        .ifPresent(isActive -> bendingMomentBuildertype2.setIsActive(String.valueOf(isActive)));
+
+    return bendingMomentBuildertype2.build();
+  }
+
+  /**
+   * @param bendingMoment
+   * @return BendingMoment
+   */
+  private com.cpdss.common.generated.VesselInfo.BendingMomentType4 createBendingMomentType4(
+      com.cpdss.vesselinfo.entity.BendingMomentType4 bendingMoment,
+      com.cpdss.common.generated.VesselInfo.BendingMomentType4.Builder bendingMomentBuildertype4) {
+
+    Optional.ofNullable(bendingMoment.getFrameNumber())
+        .ifPresent(
+            frameNumber -> bendingMomentBuildertype4.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(bendingMoment.getTrim_m1())
+        .ifPresent(trim_m1 -> bendingMomentBuildertype4.setTrimM1(String.valueOf(trim_m1)));
+
+    Optional.ofNullable(bendingMoment.getTrim_1())
+        .ifPresent(trim1 -> bendingMomentBuildertype4.setTrim1(String.valueOf(trim1)));
+    Optional.ofNullable(bendingMoment.getTrim_3())
+        .ifPresent(trim2 -> bendingMomentBuildertype4.setTrim1(String.valueOf(trim2)));
+    Optional.ofNullable(bendingMoment.getTrim_3())
+        .ifPresent(trim3 -> bendingMomentBuildertype4.setTrim2(String.valueOf(trim3)));
+    Optional.ofNullable(bendingMoment.getTrim_4())
+        .ifPresent(trim4 -> bendingMomentBuildertype4.setTrim3(String.valueOf(trim4)));
+    Optional.ofNullable(bendingMoment.getTrim_5())
+        .ifPresent(trim5 -> bendingMomentBuildertype4.setTrim4(String.valueOf(trim5)));
+
+    Optional.ofNullable(bendingMomentBuildertype4.getIsActive())
+        .ifPresent(isActive -> bendingMomentBuildertype4.setIsActive(String.valueOf(isActive)));
+
+    return bendingMomentBuildertype4.build();
+  }
+
+  /*
+   * int64 id = 1;
+  string frameNumber = 2;
+  string trim_m1 = 3;
+  string trim_0 = 4;
+  string trim_1 = 5;
+  string trim_2 = 6;
+  string trim_3 = 7;
+  string trim_4 = 8;
+  string trim_5 = 9;
+  string isActive = 10;
+   * */
+
+  /**
    * @param vesselTankTcg
    * @param vesselTankTcgBuilder
    * @return VesselTankTCG
@@ -886,6 +1188,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         .ifPresent(tankId -> vesselTankTcgBuilder.setTankId(tankId));
     Optional.ofNullable(vesselTankTcg.getTcg())
         .ifPresent(tcg -> vesselTankTcgBuilder.setTcg(String.valueOf(tcg)));
+    Optional.ofNullable(vesselTankTcg.getLcg())
+        .ifPresent(lcg -> vesselTankTcgBuilder.setLcg(String.valueOf(lcg)));
+    Optional.ofNullable(vesselTankTcg.getVcg())
+        .ifPresent(vcg -> vesselTankTcgBuilder.setVcg(String.valueOf(vcg)));
+    Optional.ofNullable(vesselTankTcg.getInertia())
+        .ifPresent(inertia -> vesselTankTcgBuilder.setInertia(String.valueOf(inertia)));
     return vesselTankTcgBuilder.build();
   }
 
@@ -1024,6 +1332,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     Optional.ofNullable(vessel.getTypeOfShip())
         .ifPresent(typeOfShip -> vesselDetailBuilder.setTypeOfShip(typeOfShip));
 
+    Optional.ofNullable(vessel.getBm_sf_model_type())
+        .ifPresent(bmModelType -> vesselDetailBuilder.setBmSfModelType(bmModelType.toString()));
+
     Optional.ofNullable(vessel.getRegisterLength())
         .ifPresent(
             registerLength ->
@@ -1145,6 +1456,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             .ifPresent(builder::setDraftConditionName);
         Optional.ofNullable(vesselDetails.getConstant())
             .ifPresent(constant -> builder.setConstant(constant.toString()));
+        Optional.ofNullable(vesselDetails.getHasLoadicator())
+            .ifPresent(hasLoadicator -> builder.setHasLoadicator(hasLoadicator));
       }
       replyBuilder.setVesselLoadableQuantityDetails(builder.build());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -1382,6 +1695,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .ifPresent(item -> builder.setDeadweightConstant(item.toString()));
           Optional.ofNullable(vesselDetails.getProvisionalConstant())
               .ifPresent(item -> builder.setProvisionalConstant(item.toString()));
+          Optional.ofNullable(vesselDetails.getMaxLoadRate())
+              .ifPresent(v -> builder.setMaxLoadingRate(v.toString()));
+          Optional.ofNullable(vesselDetails.getMinLoadRate())
+              .ifPresent(v -> builder.setMinLoadingRate(v.toString()));
           replyBuilder.setVesselDetail(builder.build());
           replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
         }
@@ -1396,6 +1713,610 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getVesselPumpsByVesselId(
+      com.cpdss.common.generated.VesselInfo.VesselIdRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.VesselPumpsResponse> responseObserver) {
+    com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder builder =
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.newBuilder();
+    try {
+      this.vesselPumpService.getVesselPumpsAndTypes(builder, request.getVesselId());
+    } catch (Exception e) {
+      log.error("Exception in Vessel Pump and Type Getter", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /** To retrieve vessel rule based on vessel id OR To save rule for vessel */
+  @Override
+  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
+  public void getRulesByVesselIdAndSectionId(
+      VesselRuleRequest request, StreamObserver<VesselRuleReply> responseObserver) {
+    com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder =
+        com.cpdss.common.generated.VesselInfo.VesselRuleReply.newBuilder();
+    try {
+      Vessel vessel = vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
+      if (null == vessel) {
+        log.error("Vessel does not exist in saving rule");
+        throw new GenericServiceException(
+            "Vessel with given id does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      // Fetch master records
+      List<RuleVesselDropDownValues> listOfDropDownValue =
+          ruleVesselDropDownValuesRepository.findByIsActive(true);
+      List<CargoTankMaster> cargoTankMaster =
+          vesselTankRepository.findCargoTankMaster(request.getVesselId(), true);
+      List<RuleType> ruleTypeList = ruleTypeRepository.findByIsActive(true);
+      if (!CollectionUtils.isEmpty(request.getRulePlanList())) {
+        log.info("To save rule against vessel");
+
+        List<RuleTemplate> ruleTemplateList = ruleTemplateRepository.findByIsActive(true);
+        List<RuleVesselMapping> ruleVesselMappingList = new ArrayList<>();
+        request
+            .getRulePlanList()
+            .forEach(
+                rulePlans -> {
+                  rulePlans
+                      .getRulesList()
+                      .forEach(
+                          rule -> {
+                            RuleVesselMapping ruleVesselMapping = new RuleVesselMapping();
+                            if (rule.getId() != null && rule.getId().trim() != "") {
+                              Optional<RuleVesselMapping> rVesselMapping =
+                                  ruleVesselMappingRepository.findById(Long.valueOf(rule.getId()));
+                              if (rVesselMapping.isPresent()) {
+                                ruleVesselMapping = rVesselMapping.get();
+                              }
+                            }
+                            ruleVesselMapping.setIsActive(true);
+                            Optional.ofNullable(rule.getDisplayInSettings())
+                                .ifPresent(ruleVesselMapping::setDisplayInSettings);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(ruleVesselMapping::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(ruleVesselMapping::setNumericScale);
+                            Optional.ofNullable(rule.getEnable())
+                                .ifPresent(ruleVesselMapping::setIsEnable);
+                            Optional.ofNullable(rule.getIsHardRule())
+                                .ifPresent(ruleVesselMapping::setIsHardRule);
+                            ruleVesselMapping.setVessel(vessel);
+                            if (!CollectionUtils.isEmpty(ruleTypeList)
+                                && rule.getRuleType() != null
+                                && rule.getRuleType().trim() != "") {
+                              ruleTypeList.stream()
+                                  .filter(
+                                      rType ->
+                                          rType.getRuleType().equalsIgnoreCase(rule.getRuleType()))
+                                  .findAny()
+                                  .ifPresent(ruleVesselMapping::setRuleType);
+                            }
+                            if (!CollectionUtils.isEmpty(ruleTemplateList)
+                                && rule.getRuleTemplateId() != null
+                                && rule.getRuleTemplateId().trim() != "") {
+                              ruleTemplateList.stream()
+                                  .filter(
+                                      rTemplate ->
+                                          rTemplate.getId()
+                                              == Long.parseLong(rule.getRuleTemplateId()))
+                                  .findAny()
+                                  .ifPresent(ruleVesselMapping::setRuleTemplate);
+                            }
+                            List<RuleVesselMappingInput> ruleVesselMappingInputList =
+                                new ArrayList<>();
+                            for (RulesInputs input : rule.getInputsList()) {
+                              RuleVesselMappingInput ruleTemplateInput =
+                                  new RuleVesselMappingInput();
+                              if (input.getId() != null && input.getId().trim() != "") {
+                                Optional<RuleVesselMappingInput> rTemplateInput =
+                                    ruleVesselMappingInputRespository.findById(
+                                        Long.valueOf(input.getId()));
+                                if (rTemplateInput.isPresent()) {
+                                  ruleTemplateInput = rTemplateInput.get();
+                                }
+                              }
+                              Optional.ofNullable(input.getDefaultValue())
+                                  .ifPresent(ruleTemplateInput::setDefaultValue);
+                              Optional.ofNullable(input.getMax())
+                                  .ifPresent(ruleTemplateInput::setMaxValue);
+                              Optional.ofNullable(input.getMin())
+                                  .ifPresent(ruleTemplateInput::setMinValue);
+                              Optional.ofNullable(input.getSuffix())
+                                  .ifPresent(ruleTemplateInput::setSuffix);
+                              Optional.ofNullable(input.getPrefix())
+                                  .ifPresent(ruleTemplateInput::setPrefix);
+                              Optional.ofNullable(input.getType())
+                                  .ifPresent(ruleTemplateInput::setTypeValue);
+                              Optional.ofNullable(input.getIsMandatory())
+                                  .ifPresent(ruleTemplateInput::setIsMandatory);
+
+                              try {
+                                if (input.getType() != null
+                                    && (input
+                                            .getType()
+                                            .trim()
+                                            .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                                        || input
+                                            .getType()
+                                            .trim()
+                                            .equalsIgnoreCase(TypeValue.MULTISELECT.getType()))
+                                    && input.getDefaultValue() != null
+                                    && input.getDefaultValue().trim() != "") {
+                                  if (input.getSuffix() != null
+                                      && input.getPrefix() != null
+                                      && input
+                                          .getSuffix()
+                                          .trim()
+                                          .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
+                                      && input
+                                          .getPrefix()
+                                          .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
+
+                                    this.ruleMasterDropDownValidation(
+                                        listOfDropDownValue,
+                                        cargoTankMaster,
+                                        true,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  } else {
+                                    this.ruleMasterDropDownValidation(
+                                        listOfDropDownValue,
+                                        cargoTankMaster,
+                                        false,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  }
+                                }
+                              } catch (GenericServiceException e) {
+                                throw new RuntimeException(
+                                    "Master rule drop down value does not exist");
+                              }
+                              ruleTemplateInput.setIsActive(true);
+                              ruleTemplateInput.setRuleVesselMapping(ruleVesselMapping);
+                              ruleVesselMappingInputList.add(ruleTemplateInput);
+                            }
+                            ruleVesselMapping.setRuleVesselMappingInput(ruleVesselMappingInputList);
+                            ruleVesselMappingList.add(ruleVesselMapping);
+                          });
+                });
+        ruleVesselMappingRepository.saveAll(ruleVesselMappingList);
+      }
+      // Fetch default or vessel rule
+      List<VesselRule> vesselRuleList =
+          vesselRepository.findVesselRuleByVesselIdAndSectionId(
+              request.getVesselId(), request.getSectionId());
+      //        List<VesselRuleMappingVessel> vesselRuleMappingVessel =
+      //            vesselRepository.findVesselInRuleVesselMapping(request.getVesselId(), true,
+      // true);
+      if (vesselRuleList != null && vesselRuleList.size() > 0) {
+        if (!request.getIsNoDefaultRule()) {
+          log.info("Fetch vessel rule1");
+          buildReponseForVesselRules(
+              builder, vesselRuleList, true, false, listOfDropDownValue, cargoTankMaster);
+        } else {
+          log.info("Fetch vessel rule2");
+          buildReponseForVesselRules(
+              builder, vesselRuleList, false, true, listOfDropDownValue, cargoTankMaster);
+        }
+      } else {
+        if (!request.getIsNoDefaultRule()) {
+          log.info("Fetch default rule template");
+          vesselRuleList = vesselRepository.findRuleTemplateForNoVessel(request.getSectionId());
+          buildReponseForVesselRules(
+              builder, vesselRuleList, false, false, listOfDropDownValue, cargoTankMaster);
+        }
+      }
+      buildCargoTankMaster(builder, cargoTankMaster);
+      buildRuleTypeMasterMaster(builder, listOfDropDownValue);
+      buildRuleTypeMaster(builder, ruleTypeList);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when save or get vessel rule", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+      log.error("Exception in save or get vessel rule", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void buildRuleTypeMaster(
+      com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
+      List<RuleType> ruleTypeList) {
+    com.cpdss.common.generated.VesselInfo.RuleTypeMaster.Builder ruleTypeBuilder =
+        com.cpdss.common.generated.VesselInfo.RuleTypeMaster.newBuilder();
+    ruleTypeList.forEach(
+        rule -> {
+          Optional.ofNullable(rule.getId()).ifPresent(ruleTypeBuilder::setId);
+          Optional.ofNullable(rule.getRuleType()).ifPresent(ruleTypeBuilder::setRuleType);
+          builder.addRuleTypeMaster(ruleTypeBuilder.build());
+        });
+  }
+
+  private void buildRuleTypeMasterMaster(
+      com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
+      List<RuleVesselDropDownValues> listOfDropDownValue) {
+    com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder rBuilder =
+        com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.newBuilder();
+    listOfDropDownValue.forEach(
+        dropDownValue -> {
+          Optional.ofNullable(dropDownValue.getId()).ifPresent(rBuilder::setId);
+          Optional.ofNullable(dropDownValue.getDropDownValue()).ifPresent(rBuilder::setValue);
+          Optional.ofNullable(dropDownValue.getRuleTemplateXid())
+              .ifPresent(rBuilder::setRuleTemplateId);
+          builder.addRuleDropDownValueMaster(rBuilder.build());
+        });
+  }
+
+  private void buildCargoTankMaster(
+      com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
+      List<CargoTankMaster> cargoTankMaster) {
+    com.cpdss.common.generated.VesselInfo.CargoTankMaster.Builder cargoBuider =
+        com.cpdss.common.generated.VesselInfo.CargoTankMaster.newBuilder();
+    cargoTankMaster.forEach(
+        cargoTank -> {
+          Optional.ofNullable(cargoTank.getId()).ifPresent(cargoBuider::setId);
+          Optional.ofNullable(cargoTank.getValue()).ifPresent(cargoBuider::setShortName);
+          builder.addCargoTankMaster(cargoBuider.build());
+        });
+  }
+
+  private void ruleMasterDropDownValidation(
+      List<RuleVesselDropDownValues> listOfDropDownValue,
+      List<CargoTankMaster> cargoTankMaster,
+      boolean isCargoTankMaster,
+      RulesInputs input,
+      RuleVesselMappingInput ruleTemplateInput,
+      Rules rule)
+      throws GenericServiceException {
+    String value = "";
+    List<RuleVesselDropDownValues> filterMasterByRule =
+        listOfDropDownValue.stream()
+            .filter(
+                rDropDown ->
+                    rDropDown.getRuleTemplateXid() != null
+                        && rule.getRuleTemplateId() != null
+                        && rDropDown
+                            .getRuleTemplateXid()
+                            .equals(Long.parseLong(rule.getRuleTemplateId().trim())))
+            .collect(Collectors.toList());
+    if (input.getDefaultValue().contains(",")) {
+      String[] masterIds = input.getDefaultValue().split(",");
+      for (int id = 0; id < masterIds.length; id++) {
+        int finalId = id;
+        if (isCargoTankMaster) {
+          if (cargoTankMaster.stream()
+              .map(CargoTankMaster::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        } else {
+          if (filterMasterByRule.stream()
+              .map(RuleVesselDropDownValues::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        }
+      }
+      ruleTemplateInput.setDefaultValue(value);
+    } else {
+      if (isCargoTankMaster) {
+        if (!cargoTankMaster.stream()
+            .map(CargoTankMaster::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Cargo master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      } else {
+        if (!filterMasterByRule.stream()
+            .map(RuleVesselDropDownValues::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Rulemaster master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      }
+      ruleTemplateInput.setDefaultValue(input.getDefaultValue());
+    }
+  }
+
+  private void buildReponseForVesselRules(
+      com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
+      List<VesselRule> vesselRuleList,
+      boolean isDisplayId,
+      boolean isDisplayVesselRuleXId,
+      List<RuleVesselDropDownValues> listOfDropDownValue,
+      List<CargoTankMaster> cargoTankMaster) {
+    Map<String, List<VesselRule>> groupByHeader =
+        vesselRuleList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    VesselRule::getHeader, LinkedHashMap::new, Collectors.toList()));
+    groupByHeader.forEach(
+        (header, v) -> {
+          RulePlans.Builder rulePlanBuider = RulePlans.newBuilder();
+          Optional.ofNullable(header).ifPresent(item -> rulePlanBuider.setHeader(item));
+          Map<Long, List<VesselRule>> groupByRuleTemplateId =
+              v.stream()
+                  .collect(
+                      Collectors.groupingBy(
+                          VesselRule::getTemplateId, LinkedHashMap::new, Collectors.toList()));
+          groupByRuleTemplateId.forEach(
+              (key, value) -> {
+                RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
+                Rules.Builder rulesBuilder = Rules.newBuilder();
+                for (int id = 0; id < value.size(); id++) {
+                  Optional.ofNullable(value.get(id).getTemplateInputDefaultValue())
+                      .ifPresent(item -> ruleInput.setDefaultValue(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputPrefix())
+                      .ifPresent(item -> ruleInput.setPrefix(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputMinValue())
+                      .ifPresent(item -> ruleInput.setMin(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputMaxValue())
+                      .ifPresent(item -> ruleInput.setMax(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputTypeValue())
+                      .ifPresent(item -> ruleInput.setType(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputSuffix())
+                      .ifPresent(item -> ruleInput.setSuffix(item));
+                  Optional.ofNullable(value.get(id).getTemplateInputSuffix())
+                      .ifPresent(item -> ruleInput.setSuffix(item));
+                  Optional.ofNullable(value.get(id).getIsMandatory())
+                      .ifPresent(ruleInput::setIsMandatory);
+                  if (value.get(id).getTemplateInputTypeValue() != null
+                      && value
+                          .get(id)
+                          .getTemplateInputTypeValue()
+                          .equalsIgnoreCase(TypeValue.BOOLEAN.getType())
+                      && (value.get(id).getTemplateInputDefaultValue() == null
+                          || !value
+                              .get(id)
+                              .getTemplateInputDefaultValue()
+                              .trim()
+                              .equalsIgnoreCase("true"))) {
+                    ruleInput.setDefaultValue("false");
+                  }
+                  if (value.get(id).getTemplateInputTypeValue() != null
+                      && (value
+                              .get(id)
+                              .getTemplateInputTypeValue()
+                              .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                          || value
+                              .get(id)
+                              .getTemplateInputTypeValue()
+                              .equalsIgnoreCase(TypeValue.MULTISELECT.getType()))) {
+                    RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
+                    if (value.get(id).getTemplateInputSuffix() != null
+                        && value.get(id).getTemplateInputPrefix() != null
+                        && value
+                            .get(id)
+                            .getTemplateInputSuffix()
+                            .trim()
+                            .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
+                        && value
+                            .get(id)
+                            .getTemplateInputPrefix()
+                            .trim()
+                            .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
+                      cargoTankMaster.forEach(
+                          cargoTank -> {
+                            Optional.ofNullable(cargoTank.getId())
+                                .ifPresent(ruleDropDownMaster::setId);
+                            Optional.ofNullable(cargoTank.getValue())
+                                .ifPresent(ruleDropDownMaster::setValue);
+                            ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+                          });
+                    } else {
+                      Optional<Long> ruleTempId;
+                      if (isDisplayId || isDisplayVesselRuleXId) {
+                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateId());
+                      } else {
+                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateFId());
+                      }
+                      if (ruleTempId.isPresent()) {
+                        List<RuleVesselDropDownValues> filterMasterByRule =
+                            listOfDropDownValue.stream()
+                                .filter(
+                                    rDropDown ->
+                                        rDropDown.getRuleTemplateXid() != null
+                                            && ruleTempId.get() != null
+                                            && rDropDown
+                                                .getRuleTemplateXid()
+                                                .equals(ruleTempId.get()))
+                                .collect(Collectors.toList());
+                        filterMasterByRule.forEach(
+                            masterDropDownRule -> {
+                              Optional.ofNullable(masterDropDownRule.getId())
+                                  .ifPresent(ruleDropDownMaster::setId);
+                              Optional.ofNullable(masterDropDownRule.getDropDownValue())
+                                  .ifPresent(ruleDropDownMaster::setValue);
+                              ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+                            });
+                      }
+                    }
+                  }
+                  if (isDisplayId) {
+                    Optional.ofNullable(value.get(id).getTemplateInputId())
+                        .ifPresent(item -> ruleInput.setId(String.valueOf(item)));
+                  }
+                  rulesBuilder.addInputs(ruleInput.build());
+                  if (id == value.size() - 1) {
+                    Optional.ofNullable(value.get(id).getNumericPrecision())
+                        .ifPresent(item -> rulesBuilder.setNumericPrecision(item));
+                    Optional.ofNullable(value.get(id).getNumericScale())
+                        .ifPresent(item -> rulesBuilder.setNumericScale(item));
+                    Optional.ofNullable(value.get(id).getTemplateIsEnable())
+                        .ifPresent(item -> rulesBuilder.setEnable(item));
+                    Optional.ofNullable(value.get(id).getTemplateDisplayInSettings())
+                        .ifPresent(item -> rulesBuilder.setDisplayInSettings(item));
+                    Optional.ofNullable(value.get(id).getTemplateId())
+                        .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));
+                    if (isDisplayId) {
+                      Optional.ofNullable(value.get(id).getId())
+                          .ifPresent(item -> rulesBuilder.setId(String.valueOf(item)));
+                    }
+                    Optional.ofNullable(value.get(id).getTemplateRuleType())
+                        .ifPresent(item -> rulesBuilder.setRuleType(item));
+                    Optional.ofNullable(value.get(id).getIsHardRule())
+                        .ifPresent(item -> rulesBuilder.setIsHardRule(item));
+                    if (value.get(id).getIsHardRule() == null) {
+                      rulesBuilder.setIsHardRule(false);
+                    }
+                    if (isDisplayVesselRuleXId) {
+                      Optional.ofNullable(value.get(id).getId())
+                          .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
+                    }
+                    rulePlanBuider.addRules(rulesBuilder.build());
+                  }
+                }
+              });
+          builder.addRulePlan(rulePlanBuider.build());
+        });
+  }
+
+  @Autowired VesselValveEducationProcessRepository educationProcessRepository;
+
+  @Override
+  public void getVesselValveSequence(
+      VesselRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
+          responseObserver) {
+    com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply.Builder builder =
+        com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply.newBuilder();
+    try {
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      builder.addAllVvSequenceEntities(
+          vesselPumpService.buildVesselValveSeqMessage(vesselValveSequenceRepository.findAll()));
+      builder.addAllVvEducationEntities(
+          vesselPumpService.buildVesselValveEducator(educationProcessRepository.findAll()));
+    } catch (Exception e) {
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadingInfoRules(
+      LoadingInfoRulesRequest request, StreamObserver<LoadingInfoRulesReply> responseObserver) {
+    LoadingInfoRulesReply.Builder builder = LoadingInfoRulesReply.newBuilder();
+    try {
+      List<RuleVesselMapping> vesselRules =
+          this.ruleVesselMappingRepository.findLoadingInfoRulesByVesselId(request.getVesselId());
+      if (!vesselRules.isEmpty()) {
+        vesselRules.forEach(
+            vesselRule -> {
+              Rules.Builder ruleBuilder = Rules.newBuilder();
+              Optional.ofNullable(vesselRule.getId())
+                  .ifPresent(id -> ruleBuilder.setId(String.valueOf(id)));
+              List<RuleVesselMappingInput> inputs =
+                  this.ruleVesselMappingInputRespository.findByRuleVesselMappingAndIsActive(
+                      vesselRule, true);
+              inputs.forEach(
+                  input -> {
+                    RulesInputs.Builder inputBuilder = RulesInputs.newBuilder();
+                    Optional.ofNullable(input.getPrefix()).ifPresent(inputBuilder::setPrefix);
+                    Optional.ofNullable(input.getSuffix()).ifPresent(inputBuilder::setSuffix);
+                    Optional.ofNullable(input.getDefaultValue())
+                        .ifPresent(inputBuilder::setDefaultValue);
+                    ruleBuilder.addInputs(inputBuilder.build());
+                  });
+              builder.addRules(ruleBuilder.build());
+            });
+      } else {
+        List<RuleTemplate> templateRules = this.ruleTemplateRepository.findLoadingInfoRules();
+        templateRules.forEach(
+            templateRule -> {
+              Rules.Builder ruleBuilder = Rules.newBuilder();
+              Optional.ofNullable(templateRule.getId())
+                  .ifPresent(id -> ruleBuilder.setId(String.valueOf(id)));
+              List<RuleTemplateInput> inputs =
+                  this.ruleTemplateInputRepository.findByRuleTemplateAndIsActive(
+                      templateRule, true);
+              inputs.forEach(
+                  input -> {
+                    RulesInputs.Builder inputBuilder = RulesInputs.newBuilder();
+                    Optional.ofNullable(input.getPrefix()).ifPresent(inputBuilder::setPrefix);
+                    Optional.ofNullable(input.getSuffix()).ifPresent(inputBuilder::setSuffix);
+                    Optional.ofNullable(input.getDefaultValue())
+                        .ifPresent(inputBuilder::setDefaultValue);
+                    ruleBuilder.addInputs(inputBuilder.build());
+                  });
+              builder.addRules(ruleBuilder.build());
+            });
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }

@@ -16,4 +16,6 @@ public class VoyageActionRequest {
   private String actualStartDate;
 
   private String actualEndDate;
+
+  private Long vesselId;
 }

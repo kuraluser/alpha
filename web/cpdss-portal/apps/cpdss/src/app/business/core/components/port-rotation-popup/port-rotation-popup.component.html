@@ -9,7 +9,7 @@
         <div class="row" *ngIf="portLoaded">
             <div class="col-sm-12 text-right">
                 <button type="button" class="btn btn-main" (click)="savePort()"
-                    id="port-rotation-up-save" [disabled]="!portsForm.valid">{{'PORT_ROTATION_POPUP_SAVE_BUTTON' |
+                    id="port-rotation-up-save" [disabled]="!enableSaveButton || portsForm.invalid">{{'PORT_ROTATION_POPUP_SAVE_BUTTON' |
                     translate}}</button>
 
             </div>

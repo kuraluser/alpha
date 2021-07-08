@@ -2,6 +2,7 @@
 package com.cpdss.loadicatorintegration.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -86,4 +87,7 @@ public class StowagePlan extends EntityDoc {
 
   @OneToMany(mappedBy = "stowagePlan", cascade = CascadeType.ALL)
   private Set<CargoData> cargoData;
+
+  @Column(name = "seawater")
+  private BigDecimal seaWater;
 }

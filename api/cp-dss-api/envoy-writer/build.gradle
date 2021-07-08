@@ -1,12 +1,10 @@
-//Environment variables
 ext{
     dbHost = System.getenv('DB_HOST') ?: ""
     dbName = System.getenv('DB_NAME') ?: ""
     dbUser = System.getenv('DB_USER') ?: ""
     dbPassword = System.getenv('DB_PASSWORD') ?: ""
     grpcPort = System.getenv('GRPC_PORT') ?: ""
-	algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
-	hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+	salt = System.getenv('SALT') ?: ""
 }
 
 appConfig {
@@ -17,6 +15,18 @@ appConfig {
   persistence = 'springData'
   dataBase = 'postgres'
   devTools = 'y'
+docker {
+    imageName = 'cpdss-envoy-writer'
+    containerName = 'envoy-writer-container'
+    networkName = 'cpdss-network'
+    swarm {
+      serviceName = 'envoy-writer-service'
+      swarmMode = REPLICATED_MODE
+      replicas = 1
+      rollbackOnUpdateFailure = true
+    }
+    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'SALT': salt]
+  }
 }
 
 dependencies {

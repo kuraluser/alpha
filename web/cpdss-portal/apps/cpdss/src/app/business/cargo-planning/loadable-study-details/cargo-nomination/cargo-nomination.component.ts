@@ -7,7 +7,7 @@ import { LoadableStudyDetailsTransformationService } from '../../services/loadab
 import { cargoNominationColorValidator } from '../../directives/validator/cargo-nomination-color.directive'
 import { cargoNominationLoadingPortValidator } from '../../directives/validator/cargo-nomination-loading-port.directive'
 import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
-import { numberValidator } from '../../directives/validator/number-validator.directive'
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -16,7 +16,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IPortsDetailsResponse, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 import { QuantityDecimalFormatPipe } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 
@@ -78,11 +78,10 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       let value = _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
       value = this.loadableStudyDetailsApiService.updateQuantityByUnit(value, unitFrom, unitTo, _cargoNomination.api.value, _cargoNomination.temperature.value)
       this.totalQuantity += value;
-      _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(this.totalQuantity);
-    this.updatePriorityDropdown(this.loadableStudyDetailsApiService.cargoNominations.length);
+    this.updatePriorityDropdown();
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 
@@ -254,6 +253,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
     if (event.field === 'loadingPorts' || event.field === 'quantity') {
       if (event.data?.cargo?.value) {
+        const portsResponse: IPortsDetailsResponse = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
+        const loadableStudyPorts: number[] = portsResponse?.portList ? portsResponse.portList.map( port => (port.portId)) : [];
         const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
         event.data.cargo.value.ports = result?.ports;
         this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
@@ -263,7 +264,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
           originalEvent: event.originalEvent,
           rowData: event.data,
           rowIndex: event.index,
-          ports: event.data?.cargo?.value?.ports
+          ports: event.data?.cargo?.value?.ports,
+          loadableStudyPorts: loadableStudyPorts
         }
         this.openLoadingPopup = true;
       }
@@ -341,6 +343,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   async updateCargoNominationsDetails(valueIndex: number, event: ICargoNominationEvent) {
+    const fromGroup = this.row(event.index);
     if (event.field === 'cargo') {
       this.cargoNominations[valueIndex]['abbreviation'].value = event.data.cargo.value.abbreviation;
       this.cargoNominations[valueIndex]['api'].value = event.data.cargo.value.api;
@@ -368,9 +371,10 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.cargoNominations[valueIndex]['temperature'].value = result.temperature;
     }
     if (!event.data?.isAdd) {
-      if (this.cargoNominationForm.valid) {
+      if (fromGroup.valid) {
         this.ngxSpinnerService.show();
         event.data.processing = true;
+        this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
         this.updateCommingleButton(true);
         const row = this.cargoNominations[event.index];
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
@@ -386,7 +390,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         }
         this.ngxSpinnerService.hide();
       } else {
-        const fromGroup = this.row(event.index);
         const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
         invalidFormControls.forEach((key) => {
           this.cargoNominations[valueIndex][key].isEditMode = true;
@@ -408,7 +411,31 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   updateFormValidity() {
     const formArray = (<FormArray>this.cargoNominationForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, index) => {
-      if (row.invalid && row.touched) {
+      const _row = this.cargoNominations[index];
+      if (row.invalid && row.touched && !_row.isAdd) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
+        invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
+        });
+        if (row.valid) {
+          this.ngxSpinnerService.show();
+          _row.processing = true;
+          this.updateCommingleButton(true);
+          this.updateRowByUnit(_row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
+          const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(_row), this.vesselId, this.voyageId, this.loadableStudyId, true);
+          this.updateRowByUnit(_row, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
+          if (res) {
+            for (const key in this.cargoNominations[index]) {
+              if (this.cargoNominations[index].hasOwnProperty(key) && this.cargoNominations[index][key].hasOwnProperty('_isEditMode')) {
+                this.cargoNominations[index][key].isEditMode = false;
+              }
+            }
+            this.cargoNominations = [...this.cargoNominations];
+          }
+          this.ngxSpinnerService.hide();
+        }
+      } else if (row.invalid) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
           const formControl = this.field(index, key);
@@ -536,12 +563,10 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @param {number} count
    * @memberof CargoNominationComponent
    */
-  private updatePriorityDropdown(count: number) {
+  private updatePriorityDropdown(): void {
     this.listData.priorityList = [];
-    if (count) {
-      for (let index = 1; index <= count; index++) {
-        this.listData.priorityList.push({ label: index.toString(), value: index })
-      }
+    for (let index = 1; index <= 7; index++) {
+      this.listData.priorityList.push({ label: index.toString(), value: index })
     }
   }
 
@@ -552,7 +577,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   private addCargoNomination(cargoNomination: ICargoNomination = null) {
-    cargoNomination = cargoNomination ?? <ICargoNomination>{ id: 0, priority: null, color: null, cargoId: null, abbreviation: null, quantity: null, segregationId: 1, loadingPorts: null };
+    cargoNomination = cargoNomination ?? <ICargoNomination>{ id: 0, priority: 1, color: null, cargoId: null, abbreviation: null, quantity: null, segregationId: 1, loadingPorts: null };
     const _cargoNomination = this.loadableStudyDetailsTransformationService.getCargoNominationAsValueObject(cargoNomination, true, this.listData);
     this.cargoNominations = [...this.cargoNominations, _cargoNomination];
     const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
@@ -666,6 +691,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   private swMessageHandler = async (event) => {
     const translationKeys = await this.translateService.get(['CARGONOMINATION_UPDATE_ERROR', 'CARGONOMINATION_UPDATE_STATUS_ERROR', 'CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL']).toPromise();
     if (event?.data?.type === 'cargo_nomination_sync_finished') {
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
       const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.cargoNominations[index].processing = false;
@@ -680,7 +706,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-107') {
-        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL'], life: 10000, closable: false, sticky: false });
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL'], life: 10000, closable: true, sticky: false });
         this.getCargoNominations();
       }
       if (event?.data?.status === '401' && event?.data?.errorCode === '210') {

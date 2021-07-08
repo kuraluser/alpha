@@ -19,4 +19,6 @@ public class VesselDetails {
   private String draftConditionName;
 
   private BigDecimal constant;
+
+  private Boolean hasLoadicator;
 }

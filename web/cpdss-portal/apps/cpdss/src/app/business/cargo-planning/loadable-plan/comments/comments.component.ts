@@ -38,7 +38,6 @@ export class CommentsComponent implements OnInit {
   @Input() voyageId: number;
   @Input() loadablePatternId: number;
   @Input() enableSubmit: boolean;
-  @Input() validateAndSaveProcessing: boolean;
 
   @Input() set commentsDetails(value: ILoadablePlanCommentsDetails[]) {
     this._commentsDetails = value && this.showCommentedDateTimeInUTC(value);
@@ -64,7 +63,7 @@ export class CommentsComponent implements OnInit {
   get isVoyageClosed(): boolean {
     return this._isVoyageClosed;
   }
-  
+
 
   private _commentsDetails: ILoadablePlanCommentsDetails[];
   private _loadablePatternValidationStatus: number;
@@ -74,6 +73,7 @@ export class CommentsComponent implements OnInit {
   public commentForm: FormGroup;
   public formError: boolean;
   public isPermissionAvaliable: boolean;
+  public validateAndSaveProcessing: boolean;
   public errorMessages = {
     'maxlength': 'LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH',
     'whitespace': 'COMMENTS_REQUIRED'
@@ -103,14 +103,16 @@ export class CommentsComponent implements OnInit {
     this.commentForm = this.fb.group({
       comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.maxLength(100) , whiteSpaceValidator]]
     })
-
+    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
+      this.validateAndSaveProcessing = value.validateAndSaveProcessing;
+    });
   }
 
   /**
    * add new comments
   */
   async submitComments() {
-    if (this.commentForm.valid) {
+    if (this.commentForm.valid && !this.isVoyageClosed) {
       const translationKeys = await this.translateService.get(['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS', 'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS']).toPromise();
       const comments: ISaveComment = {
         comment: this.commentForm.controls['comment'].value
@@ -130,6 +132,10 @@ export class CommentsComponent implements OnInit {
       }
     } else {
       this.formError = true;
+      const translationKeys = await this.translateService.get(['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL', 'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL_DETAILS']).toPromise();
+      if(this.isVoyageClosed) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL'], detail: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL_DETAILS'] });
+      }
     }
   }
 
@@ -146,7 +152,7 @@ export class CommentsComponent implements OnInit {
   }
 
   /**
-  * Get form control of comments form 
+  * Get form control of comments form
   *
   * @param {string} formControlName
   * @returns {FormControl}
@@ -170,7 +176,7 @@ export class CommentsComponent implements OnInit {
   }
 
     /**
-   * Trim blank space 
+   * Trim blank space
    * @param {string} formControlName
    * @memberof CommentsComponent
    */

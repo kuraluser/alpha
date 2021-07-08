@@ -28,8 +28,32 @@ public class BerthInfo extends EntityDoc {
   @Column(name = "maximum_draft")
   private BigDecimal maximumDraft;
 
+  @Column(name = "max_ship_depth")
+  private BigDecimal maxShipDepth;
+
+  @Column(name = "max_ship_channel")
+  private BigDecimal maxShipChannel;
+
+  @Column(name = "is_active")
+  private Boolean isActive;
+
+  @Column(name = "maximum_loa")
+  private BigDecimal maximumLoa;
+
+  @Column(name = "maximum_dwt")
+  private BigDecimal maximumDwt;
+
   @Column(name = "air_draft")
   private BigDecimal airDraft;
+
+  @Column(name = "terminal")
+  private String terminal;
+
+  @Column(name = "berth_order")
+  private Long berthOrder;
+
+  @Column(name = "line_content_displacement")
+  private BigDecimal lineDisplacement;
 
   @ManyToOne
   @JoinColumn(name = "port_xid")

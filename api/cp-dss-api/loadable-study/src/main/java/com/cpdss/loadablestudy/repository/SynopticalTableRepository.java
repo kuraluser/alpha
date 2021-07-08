@@ -26,6 +26,9 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActive(
       Long loadableStudyXId, boolean isActive);
 
+  public List<SynopticalTable> findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
+      Long loadableStudyXId, Long portRotationId, boolean isActive);
+
   @Query(
       "SELECT ST FROM SynopticalTable ST WHERE ST.loadableStudyXId = ?1 AND ST.isActive = ?2 ORDER BY ST.loadableStudyPortRotation.portOrder, ST.operationType")
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
@@ -61,6 +64,10 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
   @Modifying
   @Query("Update SynopticalTable set isActive = false where loadableStudyPortRotation.id = ?1")
   public void deleteByPortRotationId(Long id);
+
+  @Query(
+      "from SynopticalTable st where st.loadableStudyPortRotation.id = ?1 and st.isActive = true")
+  List<SynopticalTable> findAllByPortRotationId(Long id);
 
   @Query("FROM SynopticalTable ST WHERE ST.loadableStudyPortRotation in ?1 AND ST.isActive = ?2")
   public List<SynopticalTable> findByLoadableStudyPortRotationAndIsActive(

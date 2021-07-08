@@ -69,4 +69,7 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "filling_ratio")
   private String fillingRatio;
+
+  @Column(name = "cargo_nomination_temperature")
+  private BigDecimal cargoNominationTemperature;
 }

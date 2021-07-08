@@ -1,8 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoadingRateComponent } from './loading-rate.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+
+import { TranslateModule } from '@ngx-translate/core';
+
+import { LoadingRateComponent } from './loading-rate.component';
+
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
+import { DropdownModule } from 'primeng/dropdown';
 
 /**
  * Module for loading rate module
@@ -16,7 +22,10 @@ import { NumberDirectiveModule } from '../../../shared/directives/number-directi
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NumberDirectiveModule
+    TranslateModule,
+    ValidationErrorModule,
+    NumberDirectiveModule,
+    DropdownModule
   ],
   exports: [LoadingRateComponent]
 })

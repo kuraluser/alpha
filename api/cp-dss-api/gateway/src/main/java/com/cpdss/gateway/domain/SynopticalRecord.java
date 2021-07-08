@@ -76,4 +76,7 @@ public class SynopticalRecord {
   private BigDecimal list;
   private List<SynopticalCargoBallastRecord> ballast;
   private Long portTimezoneId;
+  private BigDecimal bm;
+  private BigDecimal sf;
+  private Boolean hasLoadicator;
 }

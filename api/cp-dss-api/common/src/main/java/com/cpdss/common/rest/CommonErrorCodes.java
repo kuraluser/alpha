@@ -35,6 +35,7 @@ public interface CommonErrorCodes {
   String E_CPDSS_ALREADY_REQUESTED = "112";
   String E_CPDSS_REJECTION_COUNT_EXCEEDED = "113";
   String E_CPDSS_TASK_SCHEDULE_CREATE_ERROR = "125";
+  String E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY = "114";
 
   String E_CPDSS_PASSWORD_POLICIES_VIOLATION_1 =
       "120"; // Password cannot contain first name or last name
@@ -47,4 +48,5 @@ public interface CommonErrorCodes {
 
   //  5XX – Server Error
   String E_CPDSS_LS_INVALID_LQ = "521";
+  String E_CPDSS_NO_ACTIVE_VOYAGE_FOUND = "522";
 }

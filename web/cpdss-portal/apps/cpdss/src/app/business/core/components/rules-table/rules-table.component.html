@@ -1,0 +1,112 @@
+<form>
+   
+    <div class="content-outer-rule" *ngIf="rulesService?.vessels ">
+        <div class="sidebar  relative" *ngIf="rulesJson&&rulesJson[data]?.length>0">   
+            <div class="sidebar-content">
+                <p>{{'RULES_LIST' | translate}}</p>
+                <ul class="list-unstyled sidebar-menu">                    
+                    <li *ngFor="let header of rulesJson[this.selectedTab] let i=index" (click)="setIndex(i)" [ngClass]="{'active': selectedIndex === i}">
+                        <a>{{header.header | translate}}<span *ngIf="error && error[i]" class="error-icon ml-10">!</span></a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="pl-30">
+            <div class="pl-10 table-rules pt-15" *ngIf="rulesJson ">
+                <p-table *ngIf="rules?.length && rulesJson[data].length>0 ; else empty" [columns]="columns" [value]="rules"
+                    dataKey="header" id="rules-table" styleClass="body-header-row-span-table">
+                    <ng-template pTemplate="colgroup">
+                        <colgroup >
+                            <col class="column-checkbox" *ngIf="displaySettings">
+                            <col>
+                            <col class="column-dropdown">
+                            <col class="column-checkbox">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns let-rowData>
+                        <tr>
+                            <th *ngFor="let column of columns">{{column.header  |translate}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+                        <tr>
+
+                            <td class="text-center" *ngIf="displaySettings" >
+                                <label class="checkbox-custom" >
+                                    <input type="checkbox"  [formControl]="getControl('displayInSettings',rowIndex)" >
+                                    <span class="checkmark" ></span>
+                                </label>
+                            </td>
+
+                                                         
+
+                            <td *ngIf="rowData.inputs.length>0">
+                                <ng-container *ngFor="let input of rowData.inputs; let inputIndex = index">
+
+                                    <span *ngIf="input?.type" class="mr-5">{{input.prefix}}</span>
+                                    <span *ngIf="!input?.type">{{input.prefix}}</span>
+                                    <ng-container *ngIf="input?.type=='Boolean'">
+                                        <label class="radio-custom">{{'RULES_TRUE' | translate}}
+                                            <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="true" (change)="checkForFormValueChanges()" >
+                                            <span class="checkmark"></span>
+                                        </label>
+
+                                        
+                                        
+                                            <label class="radio-custom">{{'RULES_FALSE' | translate}}
+                                        <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="false" (change)="checkForFormValueChanges()">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </ng-container>
+
+                                    <div class="error-icon-wrapper" *ngIf="input?.type">
+                                        <input *ngIf="input?.type=='string'" [id]="rowIndex + 'input' + inputIndex"
+                                            class="form-control"
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)"
+                                            (blur)="checkForFormValueChanges()"
+                                            >
+                                            <input *ngIf="input?.type=='Number' || input?.type=='number'" type="text" cpdssPortalNumberDecimal [id]="rowIndex + 'input' + inputIndex"
+                                            class="form-control"
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)"
+                                            (blur)="checkForFormValueChanges()"
+                                            >   
+                                            <cpdss-portal-validation-error *ngIf="input?.type" [errors]="fieldError('inputs',rowIndex,inputIndex)"
+                                                [errorMessages]="errorMessages">
+                                            </cpdss-portal-validation-error>
+                                            <p-multiSelect *ngIf="input.type==='MultiSelect' && input.ruleDropDownMaster!='null'"
+                                                [options]="input.ruleDropDownMaster" optionLabel="value" [formControl]="getControl('inputs',rowIndex,inputIndex)">
+                                            </p-multiSelect>
+                                            <p-dropdown *ngIf="input.type==='Dropdown'" [options]="input.ruleDropDownMaster" styleClass="form-control"
+                                                [formControl]="getControl('inputs',rowIndex,inputIndex)" optionLabel="value" resetFilterOnHide="true">
+                                            </p-dropdown>
+                                    </div>
+                                    {{input.suffix}}
+                                </ng-container>
+                            </td>
+                            <td>
+                                <p-dropdown [id]="'rule_type' + rowIndex " [options]="ruleTypes"
+                                    styleClass="form-control" [formControl]="getControl('ruleType',rowIndex)"
+                                    (onChange)="onRuleTypeSelected($event)" optionLabel="value" 
+                                    resetFilterOnHide="true"  ></p-dropdown>
+                            </td>
+                            
+                            <td class="text-center">
+                                <p-inputSwitch [id]="'enable' + rowIndex" [formControl]="getControl('enable',rowIndex)" (onChange)="checkForFormValueChanges()">
+                                </p-inputSwitch>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+<ng-template #empty>
+    {{'NO_RECORDS_FOUND' | translate}}
+</ng-template>

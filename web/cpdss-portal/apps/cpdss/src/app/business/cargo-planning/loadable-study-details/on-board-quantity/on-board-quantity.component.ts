@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@ang
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
@@ -272,7 +272,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   private initOBQFormGroup(obqTankDetail: IPortOBQTankDetailValueObject) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal();
     const quantity = this.loadableStudyDetailsTransformationService.convertToNumber(this.quantityDecimalFormatPipe.transform(obqTankDetail.quantity.value));
-    
+
     return this.fb.group({
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
@@ -319,6 +319,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
     if (formGroup.valid && formGroup.controls.api.value && formGroup.controls.quantity.value) {
       event.data.processing = true;
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.obqForm.controls.dataTable.valid);
@@ -334,8 +335,8 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.obqForm.controls.api.setValue(Number(formGroup.controls.api.value));
-    this.obqForm.controls.quantity.setValue(Number(formGroup.controls.quantity.value));
+    this.obqForm.controls.api.setValue(!isNaN(formGroup.controls.api.value) ? Number(formGroup.controls.api.value) : formGroup.controls.api.value);
+    this.obqForm.controls.quantity.setValue(!isNaN(formGroup.controls.quantity.value) ? Number(formGroup.controls.quantity.value) : formGroup.controls.quantity.value);
     this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     this.ngxSpinnerService.hide();
   }
@@ -396,6 +397,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   private swMessageHandler = async (event) => {
     const translationKeys = await this.translateService.get(['OBQ_UPDATE_ERROR', 'OBQ_UPDATE_STATUS_ERROR']).toPromise();
     if (event?.data?.type === 'obq_sync_finished') {
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
       const index = this.selectedPortOBQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.selectedPortOBQTankDetails[index].processing = false;
@@ -599,7 +601,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
         obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value, '', -1);
         obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value) : 0;
-        
+
         const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, QUANTITY_UNIT.OBSKL, obqTankDetail?.api?.value, obqTankDetail?.temperature);
         obqTankDetail.volume = volume ?? 0;
 

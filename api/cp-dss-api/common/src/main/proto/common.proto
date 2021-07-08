@@ -9,3 +9,64 @@ message ResponseStatus {
 	string code = 3;
 	int32 httpStatusCode = 4;
 }
+
+enum PLANNING_TYPE {
+		VALUE_A = 0;
+		LOADABLE_STUDY = 1;
+		DISCHARGE_STUDY = 2;
+}
+
+message BillOfLadding{
+  int64 id = 1;
+  int64 portId = 2;
+  int64 cargoNominationId = 3;
+  string quantityBbls = 4;
+  string quantityMt = 5;
+  string quantityKl = 6;
+  string api = 7;
+  string temperature = 8;
+  string cargoColor = 9;
+  string cargoName = 10;
+  string cargoAbbrevation = 11;
+	repeated int64 loadingPort = 12;
+  int64 cargoId = 13;
+
+}
+
+message RulePlans{
+	string header = 1;
+	repeated Rules rules = 2;
+}
+	
+message Rules{
+	 string id = 1;
+	 bool enable = 2; 
+	 bool disable = 3;
+	 bool displayInSettings = 4;
+	 string ruleType = 5;
+	 repeated RulesInputs inputs = 6;
+	 string ruleTemplateId = 7;
+	 string vesselRuleXId = 8;
+	 bool isHardRule = 9;
+	 int64 numericPrecision = 10;
+	 int64 numericScale = 11;
+}
+	
+message RulesInputs{
+	 string prefix = 1;
+	 string defaultValue = 2;
+	 string type = 3;
+	 string max = 4;
+	 string min = 5;
+	 string value = 6;
+	 string suffix = 7;
+	 string id = 8;
+	 repeated RuleDropDownMaster ruleDropDownMaster = 9;
+	 bool isMandatory = 10;
+}
+
+message RuleDropDownMaster{
+     int64 id = 1;
+     string value = 2;
+}
+

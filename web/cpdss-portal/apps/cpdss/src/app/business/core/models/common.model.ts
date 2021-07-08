@@ -288,6 +288,20 @@ export interface IPortsDetailsResponse {
 }
 
 /**
+ * Interface for Ports api response
+ *
+ * @export 
+ * @interface IDischargePortsDetailsResponse
+ */
+ export interface IDischargePortsDetailsResponse {
+    responseStatus: IResponseStatus;
+    portList: IDischargeStudyPortList[];
+    operations: IOperations[];
+    portId?: number;
+    lastModifiedPortId?: number;
+}
+
+/**
  * Interface for port
  *
  * @export
@@ -318,6 +332,37 @@ export interface IPortList {
     etdActual?: string;
     isPortsComplete?: boolean;
 }
+
+/**
+ * Interface for port
+ *
+ * @export
+ * @interface IDischargeStudyPortList
+ */
+ export interface IDischargeStudyPortList {
+    id: number;
+    portOrder: number;
+    dischargeStudyId: number;
+    portId: number;
+    portTimezoneId?: number;
+    operationId: number;
+    seaWaterDensity: any;
+    distanceBetweenPorts: number;
+    timeOfStay: number;
+    maxDraft: number;
+    maxAirDraft: number;
+    eta: string;
+    etd: string;
+    isDelete?: boolean;
+    isAdd?: boolean;
+    storeKey?: number;
+    vesselId?: number;
+    voyageId?: number;
+    etaActual?: string;
+    etdActual?: string;
+    isPortsComplete?: boolean;
+}
+
 
 /**
  * ENUM for voyage status
@@ -356,6 +401,23 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING = 4,
     PLAN_ALGO_PROCESSING_COMPETED = 5,
     PLAN_NO_SOLUTION = 6,
+    PLAN_LOADICATOR_CHECKING = 7,
+    PLAN_ERROR = 11
+}
+
+/**
+ * ENUM for Discharge Study Status ID
+ *
+ * @export
+ * @enum {number}
+ */
+ export enum DISCHARGE_STUDY_STATUS {
+    PLAN_PENDING = 1,
+    PLAN_CONFIRMED = 2,
+    PLAN_GENERATED = 3,
+    PLAN_ALGO_PROCESSING = 4,
+    PLAN_ALGO_PROCESSING_COMPETED = 5,
+    PLAN_NO_SOLUTION = 6,
     PLAN_ERROR = 11
 }
 
@@ -372,7 +434,8 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING = "ALGO Processing Started",
     PLAN_ALGO_PROCESSING_COMPETED = "ALGO Processing Completed",
     PLAN_NO_SOLUTION = "No Plan Available",
-    PLAN_ERROR = "Plan Error"
+    PLAN_LOADICATOR_CHECKING = "Loadicator Processing Started",
+    PLAN_ERROR = "Error Occured"
 }
 
 /**
@@ -428,6 +491,7 @@ export interface IEditPortRotation{
     isFocused?: boolean;
     portDate?: string;
     portTime?: string;
+    operation?: string;
 }
 
 /**
@@ -438,6 +502,8 @@ export interface IEditPortRotation{
     operationType: string;
     portId?: number;
     portRotationId?: number;
+    operationId?: number;
+    name?: string;
 }
 
 /**
@@ -486,3 +552,97 @@ export class NewVoyageResponseModel implements IResponse {
     errorHeading: string,
     errorDetails: string[]
  }
+
+
+ /**
+ * Interface for cargo tanks
+ *
+ * @export
+ * @interface IShipCargoTank
+ * @extends {ITank}
+ */
+export interface IShipCargoTank extends ITank {
+    id: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    frameNumberFrom: number;
+    frameNumberTo: number;
+    shortName: string;
+    heightFrom?: number;
+    heightTo?: number;
+    fillCapcityCubm?: number;
+    fullCapacityCubm?: string;
+    density: number;
+    group: number;
+    order: number;
+    slopTank: boolean;
+    commodity?: ICargoQuantities;
+    gridColumn?: string;
+    percentageFilled?: string;
+    fillingRatio?: string;
+}
+
+/**
+ * Interface for cargo quantites model
+ * @export
+ * @interface ICargoQuantities
+ */
+export interface ICargoQuantities {
+    fillingRatio?: any;
+    tankId: number;
+    tankName: string;
+    actualWeight: number;
+    plannedWeight: number;
+    capacity: number;
+    abbreviation: string;
+    cargoId: number;
+    colorCode: string;
+    correctedUllage: number;
+    difference?: number;
+    isPositive?: boolean;
+    quantity?: number;
+    volume?: number;
+    api?: number;
+    percentageFilled?: string;
+    isCommingle?: boolean;
+    isCommingleCargo?: boolean;
+    temperature?:any;
+}
+
+/**
+ * Interface for loadable quality
+ *
+ * @export
+ * @interface ILoadableQuantityCargo
+ */
+ export interface ILoadableQuantityCargo {
+    id: number,
+    grade: string,
+    estimatedAPI: string,
+    estimatedTemp: string,
+    orderBblsdbs: string,
+    orderBbls60f: string,
+    orderQuantity?: string,
+    maxLoadingRate?: string,
+    orderedQuantity: string,
+    minTolerence: string,
+    maxTolerence: string,
+    loadableBblsdbs: string,
+    loadableBbls60f: string,
+    loadableLT: string,
+    loadableMT: string,
+    loadableKL: string,
+    differencePercentage: string,
+    differencePercentageValue?: number;
+    differenceColor: string
+    cargoId?: number;
+    apiTemp?: string;
+    minMaxTolerance?: string;
+    slopQuantity?: number;
+    timeRequiredForLoading?: string;
+    loadingPorts?: string[];
+    loadingPort?: string;
+    cargoAbbreviation?: string;
+    cargoNominationId? : number;
+}

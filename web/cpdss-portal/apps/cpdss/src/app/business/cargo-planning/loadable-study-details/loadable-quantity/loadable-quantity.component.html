@@ -43,7 +43,7 @@
                         </div>
 
                     </div>
-                    <div class="row form-group" *ngIf="caseNo == 3">
+                    <div class="row form-group" >
                         <label for="loadable_quantity_displacement"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DISPLACEMENT' | translate}}</label>
                         <div class="col pt-5">
@@ -52,7 +52,7 @@
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                     </div>
-                    <div class="row form-group" *ngIf="caseNo === 3">
+                    <div class="row form-group" >
                         <label for="loadable_quantity_lwt" class="col col-form-label">{{'LOADABLE_QUANTITY_LWT' |
                             translate}}</label>
                         <div class="col pt-5">
@@ -71,6 +71,7 @@
                         </div>
                         <div class="col unit-column strong sub-heading-size">{{'LOADABLE_QUANTITY_UNIT_MT' | translate
                             }}</div>
+                            <div class="col error-column text-center"></div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_tpc" class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' |
@@ -80,8 +81,9 @@
 
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_TONNE' | translate }}</div>
+                        <div class="col error-column text-center"></div>
                     </div>
-                    <div class="row form-group" *ngIf="caseNo === 3">
+                    <div class="row form-group">
                         <label for="loadable_quantity_sea_water_density"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
                         <div class="col pt-5">
@@ -99,7 +101,7 @@
                                 [errorMessages]="errorMesages.estSeaDensity"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group" *ngIf="caseNo === 3">
+                    <div class="row form-group" >
                         <label for="loadable_quantity_sg_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
                         <div class="col pt-5">
@@ -227,6 +229,7 @@
                                 '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column text-center"></div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_others" class="col col-form-label">{{'LOADABLE_QUANTITY_OTHERS' |
@@ -261,7 +264,7 @@
                     </div>
                     <div class="row form-group no-border sub-heading-size strong text-secondary" *ngIf="caseNo !== 1">
                         <div class="col text-uppercase col-form-label">{{'LOADABLE_QUANTITY' | translate}}</div>
-                        <label id="loadable_quantity_totalQuantity" class="col ">{{getControlLabel('totalQuantity') |
+                        <label id="loadable_quantity_totalQuantity" class="col pt-5">{{getControlLabel('totalQuantity') |
                             number : '1.2-2'}}</label>
                         <div class="col unit-column ">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column">
@@ -276,9 +279,9 @@
                                 {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoDwt">
                                 {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNodisplacement && caseNo === 3">
+                            <div class="text-danger" *ngIf="isNodisplacement">
                                 {{'LOADABLE_QUANTITY_DISPLACEMENT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoLwt && caseNo === 3">
+                            <div class="text-danger" *ngIf="isNoLwt">
                                 {{'LOADABLE_QUANTITY_LWT_REQUIRED' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoConstant">
                                 {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>

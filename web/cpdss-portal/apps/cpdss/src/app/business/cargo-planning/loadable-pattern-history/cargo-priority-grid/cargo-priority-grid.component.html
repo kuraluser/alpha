@@ -25,8 +25,7 @@
             </ng-template>
             <ng-template pTemplate="footer">
                 <tr class="p-selectable-row">
-                    <td *ngIf="showTotalDifference"></td>
-                    <td>{{totalHeader | translate}}
+                    <td class="text-right" [colSpan]="showTotalDifference? 2: 1">{{totalHeader | translate}}
                       <span *ngIf="hasCommingle" class="inline-block ml-5 v-middle pointer pi pi-info-circle"
                         pTooltip="{{ 'CARGO_PRIORITY_GRID_FOOTER_TOTAL_COMMINGLE_INFO' | translate}}" tooltipPosition="top"></span>
                     </td>

@@ -1,0 +1,31 @@
+<div class="row no-gutters">
+    <div class="col heading-border pt-30">
+        <div class="row">
+            <div class="col ">
+                <h5>
+                    {{'LOADING_INFORMATION_MANAGE_SEQUENCE_HEADER' | translate }}
+
+                </h5>
+            </div>
+            <div class="col text-right">
+                <label class="checkbox-custom mt-5 pr-10">{{'LOADING_INFORMATION_ADD_INITIAL_DELAY_CHECK_LABEL' | translate}}
+                    <input type="checkbox" [(ngModel)]="addInitialDelay" (change)="onAddInitialDelay()">
+                    <span class="checkmark"></span>
+                </label>
+
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                    (click)="addLoadingSequence()">{{'LOADING_INFORMATION_ADD_BUTTON_LABEL'
+                    | translate }}</a>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col ml-30 pt-20">
+        <cpdss-portal-datatable *ngIf="columns && loadingSequenceForm" [tableId]="'loading-sequence'" [form]="loadingSequenceForm"
+            [columns]="columns" [value]="loadingDelays" [editMode]="editMode" [listData]="listData"
+            (editComplete)="onEditComplete($event)" (buttonClick)="onDelete($event)"></cpdss-portal-datatable>
+    </div>
+</div>

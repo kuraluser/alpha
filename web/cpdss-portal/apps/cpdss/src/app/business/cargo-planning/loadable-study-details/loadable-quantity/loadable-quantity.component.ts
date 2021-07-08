@@ -5,7 +5,7 @@ import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
-import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { Dropdown } from 'primeng/dropdown';
-import { TimeZoneTransformationService } from 'apps/cpdss/src/app/shared/services/time-zone-conversion/time-zone-transformation.service';
+import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  *  popup for loadable quantity
@@ -144,8 +144,11 @@ export class LoadableQuantityComponent implements OnInit {
         constant: ['', [Validators.required, numberValidator(2)]],
         others: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         subTotal: ['', numberValidator(2, 7)],
-        totalQuantity: ['', numberValidator(2, 7)]
-
+        totalQuantity: ['', numberValidator(2, 7)],
+        estSeaDensity: ['', [Validators.required, numberValidator(4, 1), Validators.min(0)]],
+        sgCorrection: ['', [Validators.required, numberValidator(5, 7)]],
+        displacement: [''],
+        lwt: ['']
       });
 
       if (this.caseNo === 1) {
@@ -155,12 +158,6 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantityForm.addControl('runningDays', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('foConday', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('foConsInSz', this.fb.control('', [Validators.required, numberValidator(5, 7), Validators.min(0)]));
-      }
-      if (this.caseNo === 3) {
-        this.loadableQuantityForm.addControl('displacement', this.fb.control(''));
-        this.loadableQuantityForm.addControl('lwt', this.fb.control(''));
-        this.loadableQuantityForm.addControl('estSeaDensity', this.fb.control('', [Validators.required, numberValidator(4, 1), Validators.min(0)]));
-        this.loadableQuantityForm.addControl('sgCorrection', this.fb.control('', [Validators.required, numberValidator(5, 7)]));
       }
 
       this.getLoadableQuantityData();
@@ -210,7 +207,11 @@ export class LoadableQuantityComponent implements OnInit {
     this.loadableQuantityForm.controls.others.setValue(this.loadableQuantity.otherIfAny === '' ? 0 : this.loadableQuantity.otherIfAny);
     this.loadableQuantityForm.controls.subTotal.setValue(this.loadableQuantity.subTotal);
     this.loadableQuantityForm.controls.totalQuantity.setValue(this.loadableQuantity.totalQuantity);
-
+    this.loadableQuantityForm.controls.estSeaDensity.setValue(this.loadableQuantity.estSeaDensity);
+    this.loadableQuantityForm.controls.sgCorrection.setValue(this.loadableQuantity.sgCorrection);
+    this.loadableQuantityForm.controls.displacement.setValue(this.loadableQuantity.displacmentDraftRestriction);
+    this.loadableQuantityForm.controls.lwt.setValue(this.loadableQuantity.vesselLightWeight);
+    this.getSgCorrectionOnChange();
     if (this.caseNo === 1) {
       this.loadableQuantityForm.controls.distanceInSummerzone.setValue(this.loadableQuantity.distanceFromLastPort);
       this.loadableQuantityForm.controls.speedInSz.setValue(this.loadableQuantity.vesselAverageSpeed);
@@ -221,18 +222,11 @@ export class LoadableQuantityComponent implements OnInit {
 
       this.getRunningHoursOnLoad();
       this.getRunningDaysOnLoad();
-      this.getSubTotal();
-    }
-    else if (this.caseNo === 3) {
-      this.loadableQuantityForm.controls.displacement.setValue(this.loadableQuantity.displacmentDraftRestriction);
-      this.loadableQuantityForm.controls.lwt.setValue(this.loadableQuantity.vesselLightWeight);
-      this.loadableQuantityForm.controls.estSeaDensity.setValue(this.loadableQuantity.estSeaDensity);
-      this.loadableQuantityForm.controls.sgCorrection.setValue(this.loadableQuantity.sgCorrection);
-
       this.getDWT();
       this.getSubTotal();
     }
     else {
+       this.getDWT();
       this.getSubTotal();
     }
 
@@ -257,8 +251,12 @@ export class LoadableQuantityComponent implements OnInit {
           loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
+          displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
+          vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,
           dwt: this.loadableQuantityForm.controls.dwt.value,
           tpc: this.loadableQuantityForm.controls.tpc.value,
+          estSeaDensity: this.loadableQuantityForm.controls.estSeaDensity.value,
+          sgCorrection: this.loadableQuantityForm.controls.sgCorrection.value,
           estSagging: this.loadableQuantityForm.controls.estimateSag.value,
           saggingDeduction: this.loadableQuantityForm.controls.safCorrection.value,
           estFOOnBoard: this.loadableQuantityForm.controls.foOnboard.value,
@@ -285,8 +283,12 @@ export class LoadableQuantityComponent implements OnInit {
           loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
+          displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
+          vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,
           dwt: this.loadableQuantityForm.controls.dwt.value,
           tpc: this.loadableQuantityForm.controls.tpc.value,
+          estSeaDensity: this.loadableQuantityForm.controls.estSeaDensity.value,
+          sgCorrection: this.loadableQuantityForm.controls.sgCorrection.value,
           estSagging: this.loadableQuantityForm.controls.estimateSag.value,
           saggingDeduction: this.loadableQuantityForm.controls.safCorrection.value,
           estFOOnBoard: this.loadableQuantityForm.controls.foOnboard.value,
@@ -439,25 +441,6 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getSubTotal() {
     let subTotal = 0;
-    if (this.caseNo === 1 || this.caseNo === 2) {
-      const data: ISubTotal = {
-        dwt: this.loadableQuantityForm.get('dwt').value,
-        sagCorrection: this.loadableQuantityForm.get('safCorrection').value,
-        foOnboard: this.loadableQuantityForm.get('foOnboard').value,
-        doOnboard: this.loadableQuantityForm.get('doOnboard').value,
-        freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
-        boilerWaterOnboard: this.loadableQuantityForm.get('boilerWaterOnboard').value,
-        ballast: this.loadableQuantityForm.get('ballast').value,
-        constant: this.loadableQuantityForm.get('constant').value,
-        others: this.loadableQuantityForm.get('others').value
-      }
-      subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
-      this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
-
-
-      this.getTotalLoadableQuantity();
-    }
-    else {
       const data: ISubTotal = {
         dwt: this.loadableQuantityForm.get('dwt').value,
         sagCorrection: this.loadableQuantityForm.get('safCorrection').value,
@@ -473,7 +456,6 @@ export class LoadableQuantityComponent implements OnInit {
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
       this.getTotalLoadableQuantity();
-    }
   }
 
   /**

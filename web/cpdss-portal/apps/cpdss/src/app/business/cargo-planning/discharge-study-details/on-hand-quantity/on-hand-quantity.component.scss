@@ -1,0 +1,65 @@
+.tank-wrapper-ohq {
+    width: 500px;
+    max-width: 500px;
+    padding-right: 23px;
+}
+
+.port-list {
+    li {
+        margin-right: 30px;
+        padding: 0px 5px;
+        border-radius: 3px;
+        position: relative;
+        margin-left: 2px;
+        cursor: pointer;
+        &:after {
+            content: "";
+            position: absolute;
+            right: -15px;
+            top: 5px;
+            width: 14px;
+            height: 11px;
+        }
+
+        &:last-child,
+        &:only-child {
+            &:after {
+                display: none;
+            }
+        }
+        &.active {
+            margin-right: 30px;
+
+            &:after {
+                right: -32px;
+            }
+            .error-icon {
+                position: absolute;
+                top: 5px;
+                right: -14px;
+            }
+        }
+    }
+
+}
+
+.content-outer-ohq {
+    display: grid;
+    grid-template-columns: calc(100% - 500px) 500px;
+    height: calc(100vh - 220px);
+}
+
+@media (max-width: 1440px) {
+    .tank-wrapper-ohq {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .content-outer-ohq {
+        grid-template-columns: calc(100% - 370px) 370px;
+    }
+}
+.tank-ohq-outer{
+    overflow-y: auto;
+    overflow-x: hidden;
+}

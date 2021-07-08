@@ -54,6 +54,8 @@ export interface IDataTableColumn {
     fieldHeaderTooltipText?: string;
     unit?: string;
     numberType?: string;
+    maskFormat?: string;
+    badgeColorField?: string;
 }
 
 /**
@@ -94,7 +96,9 @@ export enum DATATABLE_FIELD_TYPE {
   DATETIME = 'DATETIME',
   COLOR = 'COLOR',
   TIME = "TIME",
-  BUTTON = 'BUTTON'
+  BUTTON = 'BUTTON',
+  MASK = 'MASK',
+  BADGE = 'BADGE'
 }
 
 /**
@@ -250,5 +254,6 @@ export enum DATATABLE_BUTTON {
     RESETPASSWORD = 'RESET PASSWORD',
     START_VOYAGE = "Start",
     STOP_VOYAGE = "Stop",
-    SAVE_BUTTON = 'Save'
+    SAVE_BUTTON = 'Save',
+    DELETE_BUTTON = 'Delete'
 }

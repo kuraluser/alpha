@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IDataTableColumn , DATATABLE_FIELD_TYPE  } from '../../../shared/components/datatable/datatable.model';
-import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { IDataTableColumn, DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
+import { ICargoConditions, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-// import { ICargoConditions, ICargoQuantities } from '../models/voyage-status.model';
+import { ICargoQuantities } from '../../core/models/common.model';
 import { LoadingDischargingCargoDetailsTableTransformationService } from './loading-discharging-cargo-details-table-transformation.service';
 
 @Component({
@@ -21,15 +21,17 @@ import { LoadingDischargingCargoDetailsTableTransformationService } from './load
  */
 export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
 
-  @Input() cargoConditions: any[];
+  @Input() cargoConditions: ICargoConditions[];
 
-  @Input() get cargoQuantities(): any[] {
+  @Input() get cargoQuantities(): ICargoQuantities[] {
     return this._cargoQuantities;
   }
 
-  set cargoQuantities(cargoQuantities: any[]) {
+  set cargoQuantities(cargoQuantities: ICargoQuantities[]) {
     this._cargoQuantities = cargoQuantities;
-    this.setCargoDetails();
+    if(cargoQuantities){
+      this.setCargoDetails();
+    }
   }
 
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
@@ -37,9 +39,9 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   }
 
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
-    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit??AppConfigurationService.settings.baseUnit;
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
-    this.convertQuantityToSelectedUnit();    
+    this.convertQuantityToSelectedUnit();
   }
 
   columns: IDataTableColumn[];
@@ -50,7 +52,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   isTotalPositive = true;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   readonly fieldType = DATATABLE_FIELD_TYPE;
-  
+
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoQuantities: any[];
   constructor(
@@ -61,7 +63,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   /**
    * Component lifecycle ngOnit
    *
-   * @memberof CargoDetailsComponent
+   * @memberof LoadingDischargingCargoDetailsTableComponent
    */
   ngOnInit(): void {
     this.columns = this.loadingDischargingCargoDetailsTableTransformationService.getColumnFields();
@@ -70,21 +72,24 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   /**
    * Set cargo details for grid
    *
-   * @memberof CargoDetailsComponent
+   * @memberof LoadingDischargingCargoDetailsTableComponent
    */
   setCargoDetails() {
-    this.newCargoList = this.cargoConditions.map(itm => ({
-      ...this.cargoQuantities.find((item) => item.cargoId === itm.id),
+    this.newCargoList = this.cargoConditions?.map(itm => ({
+      ...this.cargoQuantities?.find((item) => item.abbreviation === itm.abbreviation),
       ...itm
     }));
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
-    this.convertQuantityToSelectedUnit();
+    if(this.currentQuantitySelectedUnit){
+      this.convertQuantityToSelectedUnit();
+    }
+
   }
 
   /**
    * Method to convert quantity to selected unit
    *
-   * @memberof CargoDetailsComponent
+   * @memberof LoadingDischargingCargoDetailsTableComponent
    */
   convertQuantityToSelectedUnit() {
     this.totalPlanned = 0;

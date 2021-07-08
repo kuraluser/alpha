@@ -62,9 +62,25 @@ public class LoadableQuantityService {
       LoadableQuantityResponse.Builder builder, Long loadableStudyId, Long portRotationId)
       throws GenericServiceException {
 
-    Optional<LoadableQuantity> loadableQuantity =
+    Optional<LoadableQuantity> loadableQuantity;
+    loadableQuantity =
         loadableQuantityRepository.findByLSIdAndPortRotationId(
             loadableStudyId, portRotationId, true);
+
+    // If portRotationId is -1 then it will fetch value for synoptical table page
+    // otherwise fetch value for cargo nomination page
+    if (!loadableQuantity.isPresent() && portRotationId == -1) {
+      List<LoadableQuantity> lQuantity =
+          loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+      if (!lQuantity.isEmpty()) {
+        loadableQuantity = lQuantity.stream().findFirst();
+        portRotationId = loadableQuantity.get().getLoadableStudyPortRotation().getId();
+        log.info("Get Loadable Quantity for Synoptic Table, PR Id {}", portRotationId);
+      }
+    }
+
+    // make final for lambda expressions
+    final Long portRotationFinalVal = portRotationId;
 
     Optional<LoadableStudy> loadableStudy =
         loadableStudyRepository.findByIdAndIsActive(loadableStudyId, true);
@@ -85,6 +101,8 @@ public class LoadableQuantityService {
     String draftRestriction1 = "";
     String seaWaterDensity = "";
     String dwtValue = "";
+
+    List<BigDecimal> minDraftValue = new ArrayList<>();
 
     if (portRotationId == 0) {
       // GRPC call to Vessel Info
@@ -107,8 +125,12 @@ public class LoadableQuantityService {
         log.info(
             "Loadable Quantity, Port Rotation Operation Type - {}",
             portRotation.getOperation().getId());
-        draftRestriction1 =
-            portRotation.getMaxDraft() != null ? String.valueOf(portRotation.getMaxDraft()) : "";
+        minDraftValue.add(portRotation.getMaxDraft());
+        minDraftValue.add(loadableStudy.get().getDraftMark());
+        Optional<BigDecimal> minVal =
+            minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
+        log.info("Minimum draft value among 2 {}", minVal.get());
+        draftRestriction1 = minVal.isPresent() ? String.valueOf(minVal.get()) : "";
         seaWaterDensity =
             portRotation.getSeaWaterDensity() != null
                 ? String.valueOf(portRotation.getSeaWaterDensity())
@@ -133,7 +155,7 @@ public class LoadableQuantityService {
                         null != ohq.getFuelTypeXId()
                             && null != ohq.getPortRotation()
                             && ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
-                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getPortRotation().getId().equals(portRotationFinalVal)
                             && ohq.getIsActive())
                 .map(
                     isLoadingPort
@@ -147,7 +169,7 @@ public class LoadableQuantityService {
                         null != ohq.getFuelTypeXId()
                             && null != ohq.getPortRotation()
                             && ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
-                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getPortRotation().getId().equals(portRotationFinalVal)
                             && ohq.getIsActive())
                 .map(
                     isLoadingPort
@@ -161,7 +183,7 @@ public class LoadableQuantityService {
                         null != ohq.getFuelTypeXId()
                             && null != ohq.getPortRotation()
                             && ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getPortRotation().getId().equals(portRotationFinalVal)
                             && ohq.getIsActive())
                 .map(
                     isLoadingPort
@@ -174,7 +196,7 @@ public class LoadableQuantityService {
                     ohq ->
                         ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
                             && null != ohq.getPortRotation()
-                            && ohq.getPortRotation().getId().equals(portRotationId)
+                            && ohq.getPortRotation().getId().equals(portRotationFinalVal)
                             && ohq.getIsActive())
                 .map(
                     isLoadingPort
@@ -217,11 +239,18 @@ public class LoadableQuantityService {
     LocalDateTime maxOne = Collections.max(lastUpdateTimeList);
     lastUpdatedTime = formatter.format(maxOne);
 
+    BigDecimal displacement = BigDecimal.ZERO;
+    if (!dwtValue.isEmpty() && !dwtValue.isBlank()) {
+      String stringVal1 = vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight();
+      log.info("Vessel Light weight is {}", stringVal1);
+      BigDecimal lWeight = stringVal1.isEmpty() ? BigDecimal.ZERO : new BigDecimal(stringVal1);
+      displacement = lWeight.add(new BigDecimal(dwtValue));
+    }
+
     if (!loadableQuantity.isPresent()) {
       com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest =
           com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.newBuilder()
-              .setDisplacmentDraftRestriction(
-                  vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction())
+              .setDisplacmentDraftRestriction(displacement.toString())
               .setVesselLightWeight(
                   vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight())
               .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
@@ -248,14 +277,7 @@ public class LoadableQuantityService {
       loadableQuantityRequest.setLastUpdatedTime(lastUpdatedTime);
       loadableQuantityRequest.setPortRotationId(portRotationId);
       loadableQuantityRequest.setId(loadableQuantity.get().getId());
-      if (Optional.ofNullable(loadableQuantity.get().getDisplacementAtDraftRestriction())
-          .isPresent()) {
-        loadableQuantityRequest.setDisplacmentDraftRestriction(
-            loadableQuantity.get().getDisplacementAtDraftRestriction().toString());
-      } else {
-        loadableQuantityRequest.setDisplacmentDraftRestriction(
-            vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction());
-      }
+      loadableQuantityRequest.setDisplacmentDraftRestriction(displacement.toString());
       Optional.ofNullable(loadableQuantity.get().getConstant())
           .ifPresent(cons -> loadableQuantityRequest.setConstant(cons.toString()));
       Optional.ofNullable(loadableQuantity.get().getDistanceFromLastPort())

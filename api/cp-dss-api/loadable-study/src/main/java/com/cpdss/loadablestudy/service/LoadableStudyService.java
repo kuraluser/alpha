@@ -6,12 +6,20 @@ import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.Common.RuleDropDownMaster;
+import com.cpdss.common.generated.Common.RulePlans;
+import com.cpdss.common.generated.Common.Rules;
+import com.cpdss.common.generated.Common.RulesInputs;
+import com.cpdss.common.generated.EnvoyReader;
+import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
+import com.cpdss.common.generated.EnvoyWriter;
+import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
@@ -41,6 +49,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails;
@@ -110,17 +119,28 @@ import com.cpdss.common.generated.Loadicator.OtherTankInfo;
 import com.cpdss.common.generated.Loadicator.StowageDetails;
 import com.cpdss.common.generated.Loadicator.StowagePlan;
 import com.cpdss.common.generated.LoadicatorServiceGrpc.LoadicatorServiceBlockingStub;
+import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfo.CargoTankMaster;
+import com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
+import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.CargoToppingOffSequence;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
@@ -146,6 +166,8 @@ import com.cpdss.loadablestudy.domain.OperationsTable;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.PortOperationTable;
 import com.cpdss.loadablestudy.domain.PortOperationsTableTitles;
+import com.cpdss.loadablestudy.domain.RuleMasterSection;
+import com.cpdss.loadablestudy.domain.RuleType;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.domain.SheetCoordinates;
 import com.cpdss.loadablestudy.domain.StowagePlanTableTitles;
@@ -155,8 +177,43 @@ import com.cpdss.loadablestudy.domain.UllageUpdateResponse;
 import com.cpdss.loadablestudy.domain.VesselPlanTable;
 import com.cpdss.loadablestudy.domain.VesselPlanTableTitles;
 import com.cpdss.loadablestudy.domain.VesselTanksTable;
-import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
+import com.cpdss.loadablestudy.entity.ApiTempHistory;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
+import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.JsonData;
+import com.cpdss.loadablestudy.entity.JsonType;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
+import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComments;
+import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.LoadableStudyRuleInput;
+import com.cpdss.loadablestudy.entity.LoadableStudyRules;
+import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
+import com.cpdss.loadablestudy.entity.OnBoardQuantity;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
+import com.cpdss.loadablestudy.entity.StabilityParameters;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageHistory;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
@@ -170,6 +227,7 @@ import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
@@ -185,6 +243,8 @@ import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleInputRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
@@ -205,7 +265,11 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import io.grpc.stub.StreamObserver;
 import java.awt.*;
+import java.awt.Color;
 import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -223,12 +287,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -260,6 +326,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -321,6 +388,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired private AlgoErrorsRepository algoErrorsRepository;
   @Autowired private StabilityParameterRepository stabilityParameterRepository;
+  @Autowired VoyageService voyageService;
+  @Autowired SynopticService synopticService;
+  @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+  @Autowired LoadableStudyRuleRepository loadableStudyRuleRepository;
 
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
@@ -356,6 +427,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private LoadablePlanService loadablePlanService;
 
+  @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
@@ -382,6 +455,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
   private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
       10L;
+  private static final Long LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID = 11L;
   private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
   private static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
@@ -528,6 +602,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceBlockingStub loadingPlanService;
+
   private static final Long LOADABLE_STUDY_REQUEST = 1L;
   private static final Long LOADABLE_STUDY_LOADICATOR_REQUEST = 3L;
   private static final Long LOADABLE_STUDY_LOADICATOR_RESPONSE = 4L;
@@ -632,7 +709,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudy> loadableStudy =
           loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
       if (loadableStudy.isPresent()) {
-        this.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
+        this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
 
         // One Loadable Quantity Record For One LS
         List<LoadableQuantity> lqs =
@@ -844,9 +921,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository
-              .findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
-                  request.getVesselId(), voyageOpt.get(), true);
+          this.loadableStudyRepository.findAllLoadableStudy(
+              request.getVesselId(), voyageOpt.get(), request.getPlanningTypeValue());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
@@ -855,7 +931,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         builder.setLastEdited(dateTimeFormatter.format(entity.getLastModifiedDateTime()));
         builder.setId(entity.getId());
         builder.setName(entity.getName());
-        ofNullable(entity.getDischargeCargoId()).ifPresent(builder::setDischargingCargoId);
+        ofNullable(entity.getDischargeCargoNominationId())
+            .ifPresent(builder::setDischargingCargoId);
         builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDateTime()));
         ofNullable(entity.getDuplicatedFrom())
             .ifPresent(
@@ -985,14 +1062,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param {@link StreamObserver}
    */
   @Override
+  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
   public void saveLoadableStudy(
       LoadableStudyDetail request, StreamObserver<LoadableStudyReply> responseObserver) {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
     LoadableStudy entity = null;
+    // VesselRuleReply vesselRuleReply = null;
     try {
 
-      this.checkIfVoyageClosed(request.getVoyageId());
-
+      this.voyageService.checkIfVoyageClosed(request.getVoyageId());
+      List<LoadableStudyRules> listOfExistingLSRules = null;
       if (request.getId() != 0) {
         Optional<LoadableStudy> loadableStudy =
             this.loadableStudyRepository.findByIdAndIsActive(request.getId(), true);
@@ -1023,7 +1102,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         // entity.setIsObqComplete(request.getIsObqComplete());
         // entity.setIsDischargePortsComplete(request.getIsDischargingPortComplete());
       } else {
-
         entity = new LoadableStudy();
         if (request.getDuplicatedFromId() == 0) {
           this.checkIfVoyageActive(request.getVoyageId());
@@ -1032,6 +1110,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           entity.setIsOhqComplete(false);
           entity.setIsObqComplete(true);
           entity.setIsDischargePortsComplete(false);
+        } else {
+          log.info("Duplicate Loadble Study Creating" + request.getDuplicatedFromId());
+          Optional<LoadableStudy> loadableStudy =
+              this.loadableStudyRepository.findByIdAndIsActive(request.getDuplicatedFromId(), true);
+          if (!loadableStudy.isPresent()) {
+            throw new GenericServiceException(
+                "Loadable study with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+          VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+          vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
+          vesselRuleBuilder.setVesselId(request.getVesselId());
+          vesselRuleBuilder.setIsNoDefaultRule(true);
+          VesselRuleReply vesselRuleReply =
+              this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+          if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+            throw new GenericServiceException(
+                "failed to get loadable study rule Details against vessel ",
+                vesselRuleReply.getResponseStatus().getCode(),
+                HttpStatusCode.valueOf(
+                    Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+          }
+          updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
+          listOfExistingLSRules =
+              loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
+                  loadableStudy.get(), request.getVesselId(), true);
         }
       }
 
@@ -1107,11 +1212,153 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
       entity = this.loadableStudyRepository.save(entity);
       this.checkDuplicatedFromAndCloneEntity(request, entity);
+      final LoadableStudy currentLoableStudy = entity;
+      // save rules against saved loadable study(If duplicated LS)
+      if (request.getDuplicatedFromId() != 0) {
+        if (listOfExistingLSRules != null && listOfExistingLSRules.size() > 0) {
+          log.info("Existing loadble rules has value ");
+          List<LoadableStudyRules> listOfLSRules = new ArrayList<LoadableStudyRules>();
+          listOfExistingLSRules.stream()
+              .forEach(
+                  lsRules -> {
+                    LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
+                    loadableStudyRules.setLoadableStudy(currentLoableStudy);
+                    Optional.ofNullable(lsRules.getVesselRuleXId())
+                        .ifPresent(item -> loadableStudyRules.setVesselRuleXId(item));
+                    Optional.ofNullable(request.getVesselId())
+                        .ifPresent(item -> loadableStudyRules.setVesselXId(item));
+                    Optional.ofNullable(lsRules.getRuleTypeXId())
+                        .ifPresent(item -> loadableStudyRules.setRuleTypeXId(item));
+                    Optional.ofNullable(lsRules.getDisplayInSettings())
+                        .ifPresent(loadableStudyRules::setDisplayInSettings);
+                    Optional.ofNullable(lsRules.getIsEnable())
+                        .ifPresent(loadableStudyRules::setIsEnable);
+                    Optional.ofNullable(lsRules.getIsHardRule())
+                        .ifPresent(loadableStudyRules::setIsHardRule);
+                    Optional.ofNullable(lsRules.getIsActive())
+                        .ifPresent(loadableStudyRules::setIsActive);
+                    Optional.ofNullable(lsRules.getNumericPrecision())
+                        .ifPresent(loadableStudyRules::setNumericPrecision);
+                    Optional.ofNullable(lsRules.getNumericScale())
+                        .ifPresent(loadableStudyRules::setNumericScale);
+                    Optional.ofNullable(lsRules.getParentRuleXId())
+                        .ifPresent(loadableStudyRules::setParentRuleXId);
+                    List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
+                    lsRules.getLoadableStudyRuleInputs().stream()
+                        .forEach(
+                            lsRulesInput -> {
+                              LoadableStudyRuleInput loadableStudyRuleInput =
+                                  new LoadableStudyRuleInput();
+                              loadableStudyRuleInput.setLoadableStudyRuleXId(loadableStudyRules);
+                              Optional.ofNullable(lsRulesInput.getPrefix())
+                                  .ifPresent(loadableStudyRuleInput::setPrefix);
+                              Optional.ofNullable(lsRulesInput.getDefaultValue())
+                                  .ifPresent(loadableStudyRuleInput::setDefaultValue);
+                              Optional.ofNullable(lsRulesInput.getTypeValue())
+                                  .ifPresent(loadableStudyRuleInput::setTypeValue);
+                              Optional.ofNullable(lsRulesInput.getMaxValue())
+                                  .ifPresent(loadableStudyRuleInput::setMaxValue);
+                              Optional.ofNullable(lsRulesInput.getMinValue())
+                                  .ifPresent(loadableStudyRuleInput::setMinValue);
+                              Optional.ofNullable(lsRulesInput.getSuffix())
+                                  .ifPresent(loadableStudyRuleInput::setSuffix);
+                              Optional.ofNullable(lsRulesInput.getIsActive())
+                                  .ifPresent(loadableStudyRuleInput::setIsActive);
+                              Optional.ofNullable(lsRulesInput.getIsMandatory())
+                                  .ifPresent(loadableStudyRuleInput::setIsMandatory);
+                              lisOfLsRulesInput.add(loadableStudyRuleInput);
+                            });
+                    loadableStudyRules.setLoadableStudyRuleInputs(lisOfLsRulesInput);
+                    listOfLSRules.add(loadableStudyRules);
+                  });
+          loadableStudyRuleRepository.saveAll(listOfLSRules);
+        }
+        /*  if (vesselRuleReply != null && vesselRuleReply.getRulePlanList().size() > 0) {
+          log.info("Rules has mapped against particular vessel");
+          List<LoadableStudyRules> listOfLSRules = new ArrayList<LoadableStudyRules>();
+          vesselRuleReply.getRulePlanList().stream()
+              .forEach(
+                  ruleList -> {
+                    ruleList
+                        .getRulesList()
+                        .forEach(
+                            vesselRule -> {
+                              LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
+                              loadableStudyRules.setLoadableStudy(currentLoableStudy);
+                              Optional.ofNullable(vesselRule.getVesselRuleXId())
+                                  .ifPresent(
+                                      item ->
+                                          loadableStudyRules.setVesselRuleXId(
+                                              Long.parseLong(item)));
+                              Optional.ofNullable(request.getVesselId())
+                                  .ifPresent(item -> loadableStudyRules.setVesselXId(item));
+
+                              if (vesselRule.getRuleType() != null
+                                  && vesselRule
+                                      .getRuleType()
+                                      .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
+                                loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
+                              }
+                              if (vesselRule.getRuleType() != null
+                                  && vesselRule
+                                      .getRuleType()
+                                      .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
+                                loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
+                              }
+                              Optional.ofNullable(vesselRule.getDisplayInSettings())
+                                  .ifPresent(loadableStudyRules::setDisplayInSettings);
+                              Optional.ofNullable(vesselRule.getEnable())
+                                  .ifPresent(loadableStudyRules::setIsEnable);
+                              Optional.ofNullable(vesselRule.getIsHardRule())
+                                  .ifPresent(loadableStudyRules::setIsHardRule);
+                              Optional.ofNullable(vesselRule.getNumericPrecision())
+                                  .ifPresent(loadableStudyRules::setNumericPrecision);
+                              Optional.ofNullable(vesselRule.getNumericScale())
+                                  .ifPresent(loadableStudyRules::setNumericScale);
+                              Optional.ofNullable(vesselRule.getRuleTemplateId())
+                                  .ifPresent(
+                                      item ->
+                                          loadableStudyRules.setParentRuleXId(
+                                              Long.parseLong(item)));
+                              loadableStudyRules.setIsActive(true);
+                              List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
+                              vesselRule.getInputsList().stream()
+                                  .forEach(
+                                      vesselRuleInput -> {
+                                        LoadableStudyRuleInput loadableStudyRuleInput =
+                                            new LoadableStudyRuleInput();
+                                        loadableStudyRuleInput.setLoadableStudyRuleXId(
+                                            loadableStudyRules);
+                                        Optional.ofNullable(vesselRuleInput.getPrefix())
+                                            .ifPresent(loadableStudyRuleInput::setPrefix);
+                                        Optional.ofNullable(vesselRuleInput.getDefaultValue())
+                                            .ifPresent(loadableStudyRuleInput::setDefaultValue);
+                                        Optional.ofNullable(vesselRuleInput.getType())
+                                            .ifPresent(loadableStudyRuleInput::setTypeValue);
+                                        Optional.ofNullable(vesselRuleInput.getMax())
+                                            .ifPresent(loadableStudyRuleInput::setMaxValue);
+                                        Optional.ofNullable(vesselRuleInput.getMin())
+                                            .ifPresent(loadableStudyRuleInput::setMinValue);
+                                        Optional.ofNullable(vesselRuleInput.getSuffix())
+                                            .ifPresent(loadableStudyRuleInput::setSuffix);
+                                        Optional.ofNullable(vesselRuleInput.getIsMandatory())
+                                            .ifPresent(loadableStudyRuleInput::setIsMandatory);
+                                        loadableStudyRuleInput.setIsActive(true);
+                                        lisOfLsRulesInput.add(loadableStudyRuleInput);
+                                      });
+                              loadableStudyRules.setLoadableStudyRuleInputs(lisOfLsRulesInput);
+                              listOfLSRules.add(loadableStudyRules);
+                            });
+                  });
+          loadableStudyRuleRepository.saveAll(listOfLSRules);
+        }*/
+      }
       replyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
           .setId(entity.getId());
 
     } catch (GenericServiceException e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("GenericServiceException when saving loadable study", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -1122,6 +1369,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .build());
       this.deleteFiles(entity);
     } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       log.error("Error saving loadable study", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -1186,8 +1434,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void validateLoadableStudyName(Voyage voyage, LoadableStudyDetail request)
       throws GenericServiceException {
     LoadableStudy duplicate =
-        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActive(
-            voyage, request.getName(), true);
+        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
+            voyage, request.getName(), true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
     if ((request.getId() == 0 && null != duplicate)
         || (null != duplicate && request.getId() != duplicate.getId().longValue())) {
       throw new GenericServiceException(
@@ -1256,7 +1504,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudy loadableStudyRecord = loadableStudy.get();
-      this.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudy.get());
 
       CargoNomination cargoNomination = null;
@@ -1274,6 +1522,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         cargoNomination = existingCargoNomination.get();
+
+        if (existingCargoNomination.get().getCargoXId()
+            != request.getCargoNominationDetail().getCargoId()) {
+          this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXIdAndCargoXId(
+              loadableStudyRecord.getId(), existingCargoNomination.get().getCargoXId());
+        }
+
         if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
           existingCargoPortIds =
               cargoNomination.getCargoNominationPortDetails().stream()
@@ -1375,6 +1630,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     loadableStudy, existingPortId);
                 synopticalTableRepository.deleteSynopticalPorts(
                     loadableStudy.getId(), existingPortId);
+                onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+                    loadableStudy, existingPortId);
               }
             });
       }
@@ -1405,11 +1662,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
+      this.loadableStudyPortRotationRepository
+          .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+          .forEach(
+              portRotation -> {
+                portRotation.setIsPortRotationOhqComplete(false);
+              });
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
-
+      loadableStudy.setIsPortsComplete(false);
+      this.loadableStudyRepository.save(loadableStudy);
       // Set port ordering after updation
       this.setPortOrdering(loadableStudy);
     }
+
+    AtomicLong newPortOrder = new AtomicLong(0);
+    loadableStudyPortRotations.forEach(
+        portRotation -> {
+          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+        });
+
+    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
   private void setPortOrdering(LoadableStudy loadableStudy) {
@@ -1417,28 +1689,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             loadableStudy, true);
 
-    for (int rep = 0; rep < loadableStudyPortRotations.size(); rep++) {
-      for (int index = 0; index < loadableStudyPortRotations.size(); index++) {
-        try {
-          if ((loadableStudyPortRotations.get(index).getOperation().getId() == 2L
-                  && loadableStudyPortRotations.get(index + 1).getOperation().getId() == 1L)
-              && (loadableStudyPortRotations.get(index).getPortOrder()
-                  < loadableStudyPortRotations.get(index + 1).getPortOrder())) {
-            Long tempOrder = loadableStudyPortRotations.get(index).getPortOrder();
-            loadableStudyPortRotations
-                .get(index)
-                .setPortOrder(loadableStudyPortRotations.get(index + 1).getPortOrder());
-            loadableStudyPortRotations.get(index + 1).setPortOrder(tempOrder);
-            loadableStudyPortRotations =
-                loadableStudyPortRotations.stream()
-                    .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
-                    .collect(Collectors.toList());
+    for (LoadableStudyPortRotation portRotation : loadableStudyPortRotations) {
+      if (portRotation.getOperation().getId() == 1L) {
+        Integer loc = loadableStudyPortRotations.indexOf(portRotation);
+        for (int index = 0; index <= loc; index++) {
+          LoadableStudyPortRotation portAbove = loadableStudyPortRotations.get(index);
+          if (portAbove.getOperation().getId().equals(2L)) {
+            loadableStudyPortRotations.remove(portRotation);
+            loadableStudyPortRotations.add(index, portRotation);
           }
-        } catch (IndexOutOfBoundsException e) {
-          break;
         }
       }
     }
+
+    Optional<LoadableStudyPortRotation> lastPortRotationOpt =
+        loadableStudyPortRotations.stream()
+            .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+            .findFirst();
+
+    if (lastPortRotationOpt.isPresent()
+        && !lastPortRotationOpt.get().getOperation().getId().equals(2L)) {
+      Optional<LoadableStudyPortRotation> lastDischargePortOpt =
+          loadableStudyPortRotations.stream()
+              .filter(portRotation -> portRotation.getOperation().getId().equals(2L))
+              .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+              .findFirst();
+      if (lastDischargePortOpt.isPresent()) {
+        Integer index = loadableStudyPortRotations.indexOf(lastPortRotationOpt.get());
+        loadableStudyPortRotations.remove(lastDischargePortOpt.get());
+        loadableStudyPortRotations.add(index, lastDischargePortOpt.get());
+      }
+    }
+
+    AtomicLong newPortOrder = new AtomicLong(0);
+    loadableStudyPortRotations.forEach(
+        portRotation -> {
+          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+        });
+
     this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
@@ -1844,6 +2132,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
             Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
+            ofNullable(cargoNomination.getQuantity())
+                .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
               cargoNomination
@@ -2042,7 +2332,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       if (!request.getIsLandingPage()) {
-        this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+        this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       }
       LoadableStudyPortRotation entity = null;
       boolean portEdited = false;
@@ -2120,10 +2410,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
-      loadableStudy.setDischargeCargoId(request.getDischargingCargoId());
+      loadableStudy.setDischargeCargoNominationId(request.getCargoNominationId());
       loadableStudy.setIsDischargePortsComplete(request.getIsDischargingPortsComplete());
       this.loadableStudyRepository.save(loadableStudy);
 
@@ -2135,6 +2425,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       for (LoadableStudyPortRotation portRotation : dischargingPorts) {
         if (!request.getDischargingPortIdsList().contains(portRotation.getPortXId())) {
           portRotation.setActive(false);
+          onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+              loadableStudy, portRotation.getPortXId());
           List<SynopticalTable> synopticalEntities = portRotation.getSynopticalTable();
           if (null != synopticalEntities && !synopticalEntities.isEmpty()) {
             synopticalEntities.forEach(entity -> entity.setIsActive(false));
@@ -2164,6 +2456,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             && !CollectionUtils.isEmpty(portReply.getPortsList())) {
           dischargingPorts =
               this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
+          this.loadableStudyPortRotationRepository
+              .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+              .forEach(
+                  portRotation -> {
+                    portRotation.setIsPortRotationOhqComplete(false);
+                  });
+          loadableStudy.setIsPortsComplete(false);
+          this.loadableStudyRepository.save(loadableStudy);
           this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
         }
       }
@@ -2347,7 +2647,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               existingCargoNomination.get().getLoadableStudyXId());
       if (loadableStudyOpt.isPresent()) {
         LoadableStudy loadableStudy = loadableStudyOpt.get();
-        loadableStudy.setDischargeCargoId(null);
+        loadableStudy.setDischargeCargoNominationId(null);
         this.loadableStudyRepository.save(loadableStudy);
       }
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
@@ -2426,7 +2726,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       LoadableStudy entity = entityOpt.get();
 
-      this.checkIfVoyageClosed(entity.getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(entity.getVoyage().getId());
 
       this.isPatternGeneratedOrConfirmed(entity);
 
@@ -2440,6 +2740,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       entity.setActive(false);
       this.loadableStudyRepository.save(entity);
+      List<LoadableStudyRules> listOfLSRules =
+          loadableStudyRuleRepository.findByLoadableStudyAndIsActive(entity, true);
+      if (listOfLSRules != null && listOfLSRules.size() > 0) {
+        List<Long> rulesInputId =
+            listOfLSRules.stream()
+                .flatMap(lsRules -> lsRules.getLoadableStudyRuleInputs().stream())
+                .map(LoadableStudyRuleInput::getId)
+                .collect(Collectors.toList());
+        loadableStudyRuleInputRepository.updateLoadbleStudyRulesInputStatus(rulesInputId);
+        List<Long> rulesId =
+            listOfLSRules.stream().map(LoadableStudyRules::getId).collect(Collectors.toList());
+        loadableStudyRuleRepository.updateLoadbleStudyRulesStatus(rulesId);
+      }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);
@@ -2509,6 +2822,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
                 builder.setPortId(port.getPortXId());
                 builder.setId(port.getId());
+                builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
                 portRotationReplyBuilder.addPorts(builder);
               });
           portRotationReplyBuilder
@@ -2543,7 +2857,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       LoadableStudy loadableStudy = loadableStudyOpt.get();
       if (null != loadableStudy.getLoadableStudyStatus()
@@ -2563,13 +2877,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudyPortRotation entity = entityOpt.get();
-      if (null != entity.getOperation()
-          && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
-              || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
-        throw new GenericServiceException(
-            "Cannot delete loading/discharging ports",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
+      if (loadableStudy.getPlanningTypeXId() != null
+          && loadableStudy.getPlanningTypeXId().equals(Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE)) {
+        if (null != entity.getOperation()
+            && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
+                || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
+          throw new GenericServiceException(
+              "Cannot delete loading/discharging ports",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
       }
       entity.setActive(false);
       // delete ports from synoptical table
@@ -2602,10 +2919,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  /** Get on hand quantity */
   @Override
   public void getOnHandQuantity(
       OnHandQuantityRequest request, StreamObserver<OnHandQuantityReply> responseObserver) {
+    log.info("getOnHandQuantity");
     OnHandQuantityReply.Builder replyBuilder = OnHandQuantityReply.newBuilder();
     try {
 
@@ -2630,106 +2947,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
-      Voyage previousVoyage =
-          this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  loadableStudyOpt.get().getVoyage().getVoyageStartDate(),
-                  loadableStudyOpt.get().getVoyage().getVesselXId(),
-                  true,
-                  voyageStatus);
-
-      VesselReply vesselReply = this.getOhqTanks(request);
       List<OnHandQuantity> onHandQuantities =
           this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
               loadableStudyOpt.get(), portRotation, true);
-      Optional<LoadableStudy> confirmedLoadableStudyOpt =
-          this.loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-              previousVoyage, CONFIRMED_STATUS_ID, true);
-
-      List<OnHandQuantity> onHandQuantityList = null;
-      if (confirmedLoadableStudyOpt.isPresent()) {
-
-        LoadableStudyPortRotation lastDischargingPortPortRotation =
-            this.loadableStudyPortRotationRepository
-                .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
-                    confirmedLoadableStudyOpt.get(),
-                    this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
-                    true);
-
-        onHandQuantityList =
-            this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                confirmedLoadableStudyOpt.get(), lastDischargingPortPortRotation, true);
-
-        if (onHandQuantities.isEmpty() && !onHandQuantityList.isEmpty()) {
-
-          Long portOrder = portRotation.getPortOrder();
-          List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
-
-          List<LoadableStudyPortRotation> portRotationList =
-              this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                  loadableStudyOpt.get().getId(), true);
-          if (null != portRotationList && !portRotationList.isEmpty()) {
-            int index =
-                IntStream.range(0, portRotationList.size())
-                    .filter(i -> portRotationList.get(i).getId().equals(portRotation.getId()))
-                    .findFirst()
-                    .orElse(-1);
-            if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
-              boolean ohqComplete = true;
-              List<Long> fuelTypes = new ArrayList<Long>();
-              for (OnHandQuantity onHandQuantity : onHandQuantityList) {
-                if (ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
-                  fuelTypes.add(onHandQuantity.getFuelTypeXId());
-                  BigDecimal total = new BigDecimal(0);
-                  for (OnHandQuantity ohq : onHandQuantityList) {
-                    if (ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
-                      total = total.add(ohq.getDepartureQuantity());
-                    }
-                  }
-                  if (total.compareTo(new BigDecimal(0)) <= 0) {
-                    ohqComplete = false;
-                  }
-                }
-                entityManager.detach(onHandQuantity);
-                onHandQuantity.setId(null);
-                onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
-                onHandQuantity.setActualArrivalQuantity(null);
-                onHandQuantity.setActualDepartureQuantity(null);
-                onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
-                onHandQuantity.setPortXId(portRotation.getPortXId());
-                onHandQuantity.setPortRotation(portRotation);
-                OnHandQuantities.add(onHandQuantity);
-              }
-              portRotation.setIsPortRotationOhqComplete(ohqComplete);
-            } else {
-
-              LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
-              portRotation.setIsPortRotationOhqComplete(
-                  previousPortPortRotation.getIsPortRotationOhqComplete());
-              this.loadableStudyPortRotationRepository.save(portRotation);
-              onHandQuantityList =
-                  this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                      loadableStudyOpt.get(), previousPortPortRotation, true);
-              onHandQuantityList.forEach(
-                  onHandQuantity -> {
-                    entityManager.detach(onHandQuantity);
-                    onHandQuantity.setId(null);
-                    onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
-                    onHandQuantity.setActualArrivalQuantity(null);
-                    onHandQuantity.setActualDepartureQuantity(null);
-                    onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
-                    onHandQuantity.setPortXId(portRotation.getPortXId());
-                    onHandQuantity.setPortRotation(portRotation);
-                    OnHandQuantities.add(onHandQuantity);
-                  });
-            }
-            this.onHandQuantityRepository.saveAll(OnHandQuantities);
-            onHandQuantities =
-                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                    loadableStudyOpt.get(), portRotation, true);
-          }
-        }
+      VesselReply vesselReply = this.getOhqTanks(request);
+      if (onHandQuantities.isEmpty()) {
+        this.populateOnHandQuantityData(loadableStudyOpt, portRotation);
       }
+      onHandQuantities =
+          this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+              loadableStudyOpt.get(), portRotation, true);
 
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
         if (!tankDetail.getShowInOhqObq()
@@ -2774,9 +3001,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(qty.getPortRotation())
               .ifPresent(item -> detailBuilder.setPortId(item.getPortXId()));
         } else {
-          if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
+          if (onHandQuantities != null && !onHandQuantities.isEmpty()) {
             Optional<OnHandQuantity> ohqQtyOpt =
-                onHandQuantityList.stream()
+                onHandQuantities.stream()
                     .filter(
                         entity ->
                             entity.getFuelTypeXId().equals(tankDetail.getTankCategoryId())
@@ -2821,6 +3048,105 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void populateOnHandQuantityData(
+      Optional<LoadableStudy> loadableStudyOpt, LoadableStudyPortRotation portRotation) {
+    VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+    Voyage previousVoyage =
+        this.voyageRepository
+            .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                loadableStudyOpt.get().getVoyage().getVesselXId(), true, voyageStatus);
+
+    Optional<LoadableStudy> confirmedLoadableStudyOpt =
+        this.loadableStudyRepository
+            .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+                previousVoyage,
+                CONFIRMED_STATUS_ID,
+                true,
+                Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+
+    List<OnHandQuantity> onHandQuantityList = null;
+    if (confirmedLoadableStudyOpt.isPresent()) {
+
+      LoadableStudyPortRotation lastDischargingPortPortRotation =
+          this.loadableStudyPortRotationRepository
+              .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
+                  confirmedLoadableStudyOpt.get(),
+                  this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
+                  true);
+
+      onHandQuantityList =
+          this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+              confirmedLoadableStudyOpt.get(), lastDischargingPortPortRotation, true);
+
+      if (!onHandQuantityList.isEmpty()) {
+
+        Long portOrder = portRotation.getPortOrder();
+        List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
+
+        List<LoadableStudyPortRotation> portRotationList =
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+                loadableStudyOpt.get().getId(), true);
+        if (null != portRotationList && !portRotationList.isEmpty()) {
+          int index =
+              IntStream.range(0, portRotationList.size())
+                  .filter(i -> portRotationList.get(i).getId().equals(portRotation.getId()))
+                  .findFirst()
+                  .orElse(-1);
+          if (portOrder.equals(portRotationList.get(0).getPortOrder())) {
+            boolean ohqComplete = true;
+            List<Long> fuelTypes = new ArrayList<Long>();
+            for (OnHandQuantity onHandQuantity : onHandQuantityList) {
+              if (ohqComplete && !fuelTypes.contains(onHandQuantity.getFuelTypeXId())) {
+                fuelTypes.add(onHandQuantity.getFuelTypeXId());
+                BigDecimal total = new BigDecimal(0);
+                for (OnHandQuantity ohq : onHandQuantityList) {
+                  if (ohq.getFuelTypeXId() == onHandQuantity.getFuelTypeXId()) {
+                    total = total.add(ohq.getDepartureQuantity());
+                  }
+                }
+                if (total.compareTo(new BigDecimal(0)) <= 0) {
+                  ohqComplete = false;
+                }
+              }
+              entityManager.detach(onHandQuantity);
+              onHandQuantity.setId(null);
+              onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
+              onHandQuantity.setActualArrivalQuantity(null);
+              onHandQuantity.setActualDepartureQuantity(null);
+              onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
+              onHandQuantity.setPortXId(portRotation.getPortXId());
+              onHandQuantity.setPortRotation(portRotation);
+              OnHandQuantities.add(onHandQuantity);
+            }
+            portRotation.setIsPortRotationOhqComplete(ohqComplete);
+          } else {
+
+            LoadableStudyPortRotation previousPortPortRotation = portRotationList.get(index - 1);
+            portRotation.setIsPortRotationOhqComplete(
+                previousPortPortRotation.getIsPortRotationOhqComplete());
+            this.loadableStudyPortRotationRepository.save(portRotation);
+            onHandQuantityList =
+                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+                    loadableStudyOpt.get(), previousPortPortRotation, true);
+            onHandQuantityList.forEach(
+                onHandQuantity -> {
+                  entityManager.detach(onHandQuantity);
+                  onHandQuantity.setId(null);
+                  onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
+                  onHandQuantity.setActualArrivalQuantity(null);
+                  onHandQuantity.setActualDepartureQuantity(null);
+                  onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
+                  onHandQuantity.setPortXId(portRotation.getPortXId());
+                  onHandQuantity.setPortRotation(portRotation);
+                  OnHandQuantities.add(onHandQuantity);
+                });
+          }
+          this.onHandQuantityRepository.saveAll(OnHandQuantities);
+        }
+      }
     }
   }
 
@@ -2981,7 +3307,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setPortRotation(portRotation);
         entity.setPortXId(portRotation.getPortXId());
       }
-      this.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
       entity = this.buildOnHandQuantityEntity(entity, request);
@@ -3131,8 +3457,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-          LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
+
       if (request.getLoadablePlanDetailsList().isEmpty()) {
         log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
@@ -3151,6 +3476,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 lpd -> {
                   LoadablePattern loadablePattern =
                       saveloadablePattern(lpd, loadableStudyOpt.get());
+
+                  saveConstrains(lpd, loadablePattern);
                   Optional<LoadablePlanPortWiseDetails> lppwdOptional =
                       lpd.getLoadablePlanPortWiseDetailsList().stream()
                           .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
@@ -3178,15 +3505,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         loadablePattern);
                   }
 
+                  AtomicInteger displayOrder = new AtomicInteger(0);
                   saveLoadableQuantityCommingleCargoPortwiseDetails(
-                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
                   saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
-                  saveLoadablePlanStowageDetails(loadablePattern, lpd);
+                  saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePattern, lpd);
                 });
         if (request.getHasLodicator()) {
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
           this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
         } else {
 
@@ -3207,6 +3537,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(
             false, request.getLoadableStudyId());
         saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadableStudyOpt.get().getId());
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, request.getProcesssId(), true);
       }
 
       builder
@@ -3266,15 +3600,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
                     loadablePattern);
               }
-
+              AtomicInteger displayOrder = new AtomicInteger(0);
               saveLoadableQuantityCommingleCargoPortwiseDetails(
-                  lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+                  lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
               saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
-              saveLoadablePlanStowageDetails(loadablePattern, lpd);
+              saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
               saveLoadablePlanBallastDetails(loadablePattern, lpd);
               saveStabilityParameterForNonLodicator(
                   request.getHasLodicator(), loadablePattern, lpd);
             });
+  }
+
+  /**
+   * @param lpd
+   * @param loadablePattern void
+   */
+  private void saveConstrains(LoadablePlanDetails lpd, LoadablePattern loadablePattern) {
+    if (!lpd.getConstraintsList().isEmpty()) {
+      lpd.getConstraintsList()
+          .forEach(
+              constrains -> {
+                LoadablePlanConstraints constraints = new LoadablePlanConstraints();
+                constraints.setConstraintsData(constrains);
+                constraints.setIsActive(true);
+                constraints.setLoadablePattern(loadablePattern);
+                loadablePlanConstraintsRespository.save(constraints);
+              });
+    }
   }
 
   private void saveStabilityParameterForNonLodicator(
@@ -3337,6 +3689,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           isEmpty(stabilityParameter.getTrim())
               ? null
               : new BigDecimal(stabilityParameter.getTrim()));
+      synopticalTableLoadicatorData.setBendingMoment(
+          isEmpty(stabilityParameter.getBendinMoment())
+              ? null
+              : new BigDecimal(stabilityParameter.getBendinMoment()));
+      synopticalTableLoadicatorData.setShearingForce(
+          isEmpty(stabilityParameter.getShearForce())
+              ? null
+              : new BigDecimal(stabilityParameter.getShearForce()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
@@ -3348,7 +3708,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private void saveLoadableQuantityCommingleCargoPortwiseDetails(
       List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList,
-      LoadablePattern loadablePattern) {
+      LoadablePattern loadablePattern,
+      AtomicInteger displayOrder) {
 
     loadablePlanPortWiseDetailsList.forEach(
         it -> {
@@ -3357,14 +3718,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               it.getPortRotationId(),
               SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
               it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
-              loadablePattern);
+              loadablePattern,
+              displayOrder);
 
           saveLodableQtyCommingleCargoPortData(
               it.getPortId(),
               it.getPortRotationId(),
               SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
               it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
-              loadablePattern);
+              loadablePattern,
+              displayOrder);
         });
   }
 
@@ -3373,7 +3736,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       long portRotationXid,
       String operationType,
       List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
-      LoadablePattern loadablePattern) {
+      LoadablePattern loadablePattern,
+      AtomicInteger displayOrder) {
 
     if (Optional.ofNullable(loadableQuantityCommingleCargoDetailsList).isPresent()) {
 
@@ -3407,12 +3771,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .cargo1NominationId(it.getCargo1NominationId())
                     .cargo2NominationId(it.getCargo2NominationId())
                     .portRotationXid(portRotationXid)
+                    .tankName(it.getTankShortName())
                     // .actualQuantity(it.getActualQuantity()!=  null ? new
                     // BigDecimal(it.getActualQuantity()): null)
                     .build();
 
             loadablePlanCommingleDetailsPortwiseRepository.save(
                 loadablePlanComminglePortwiseDetails);
+
+            if (operationType.equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
+              it.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(toppingSequence.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setDisplayOrder(displayOrder.incrementAndGet());
+                        lpctos.setPortRotationXId(portRotationXid);
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
+                      });
+            }
           });
     }
   }
@@ -3512,9 +3894,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * @param loadablePattern
    * @param lpd void
+   * @param displayOrder
    */
   private void saveLoadablePlanStowageDetails(
-      LoadablePattern loadablePattern, LoadablePlanDetails lpd) {
+      LoadablePattern loadablePattern, LoadablePlanDetails lpd, AtomicInteger displayOrder) {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
@@ -3551,6 +3934,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             portRotationid,
                             loadablePattern);
                       });
+              saveCargoToppingOffList(lppwd, loadablePattern, displayOrder);
+            });
+  }
+
+  private void saveCargoToppingOffList(
+      LoadablePlanPortWiseDetails lppwd,
+      LoadablePattern loadablePattern,
+      AtomicInteger displayOrder) {
+    lppwd
+        .getDepartureCondition()
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            lqcd -> {
+              lqcd.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(toppingSequence.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setDisplayOrder(displayOrder.incrementAndGet());
+                        lpctos.setPortRotationXId(lppwd.getPortRotationId());
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
+                      });
             });
   }
 
@@ -3586,6 +3996,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? new BigDecimal(lpsd.getCorrectedUllage())
             : null);
     loadablePatternCargoDetails.setCargoNominationId(lpsd.getCargoNominationId());
+    loadablePatternCargoDetails.setCargoNominationTemperature(
+        new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
@@ -3641,6 +4053,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
+          loadablePlanStowageDetails.setCargoNominationTemperature(
+              new BigDecimal(lpsd.getCargoNominationTemperature()));
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
@@ -3702,7 +4116,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
       loadablePlanCommingleDetails.setCargo2NominationId(
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
+      loadablePlanCommingleDetails.setTankShortName(
+          loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
+      loadableQuantityCommingleCargoDetailsList
+          .get(i)
+          .getToppingOffSequencesList()
+          .forEach(
+              toppingSequence -> {
+                LoadablePatternCargoToppingOffSequence lpctos =
+                    new LoadablePatternCargoToppingOffSequence();
+                lpctos.setCargoXId(toppingSequence.getCargoId());
+                lpctos.setTankXId(toppingSequence.getTankId());
+                lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                lpctos.setLoadablePattern(loadablePattern);
+                lpctos.setIsActive(true);
+                toppingOffSequenceRepository.save(lpctos);
+              });
     }
   }
 
@@ -3734,7 +4164,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
+              loadablePlanQuantity.setCargoNominationTemperature(
+                  new BigDecimal(lqcd.getCargoNominationTemperature()));
+              loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
+              lqcd.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(lqcd.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
+                      });
             });
   }
 
@@ -3814,8 +4259,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
-        updateloadablestudystatus(request);
         saveLoadicatorResults(request);
+        updateloadablestudystatus(request);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
@@ -4006,8 +4451,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         boolean status = this.validateLoadableStudyForConfimPlan(loadableStudy.get());
         builder.setConfirmPlanEligibility(status);
-        com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePatternBuilder =
-            com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
         List<LoadablePattern> loadablePatterns =
             loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
                 loadableStudy.get(), true);
@@ -4018,6 +4461,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             loadableStudy.get().getId());
         loadablePatterns.forEach(
             loadablePattern -> {
+              com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder
+                  loadablePatternBuilder =
+                      com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
               loadablePatternBuilder.setLoadablePatternId(loadablePattern.getId());
               ofNullable(loadableStudy.get().getName()).ifPresent(builder::setLoadableStudyName);
               DateTimeFormatter dateTimeFormatter =
@@ -4027,9 +4473,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .ifPresent(builder::setLoadablePatternCreatedDate);
               ofNullable(loadablePattern.getLoadableStudyStatus())
                   .ifPresent(loadablePatternBuilder::setLoadableStudyStatusId);
-              if (stowageDetailsTempRepository
-                  .findByLoadablePatternAndIsActive(loadablePattern, true)
-                  .isEmpty()) loadablePatternBuilder.setValidated(true);
+              //              if (stowageDetailsTempRepository
+              //                  .findByLoadablePatternAndIsActive(loadablePattern, true)
+              //                  .isEmpty()) loadablePatternBuilder.setValidated(true);
               ofNullable(loadablePattern.getCaseNumber())
                   .ifPresent(loadablePatternBuilder::setCaseNumber);
               List<LoadablePatternAlgoStatus> patternStatus =
@@ -4038,6 +4484,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               if (!patternStatus.isEmpty()) {
                 loadablePatternBuilder.setLoadablePatternStatusId(
                     patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
+              }
+
+              if (!patternStatus.isEmpty()) {
+                if (stowageDetailsTempRepository
+                        .findByLoadablePatternAndIsActive(loadablePattern, true)
+                        .isEmpty()
+                    || VALIDATED_CONDITIONS.contains(
+                        loadablePatternBuilder.getLoadablePatternStatusId())) {
+                  loadablePatternBuilder.setValidated(true);
+                }
+              } else {
+                if (stowageDetailsTempRepository
+                    .findByLoadablePatternAndIsActive(loadablePattern, true)
+                    .isEmpty()) {
+                  loadablePatternBuilder.setValidated(true);
+                }
               }
 
               loadablePatternBuilder.setStabilityParameters(
@@ -4244,7 +4706,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
           ofNullable(lpq.getEstimatedApi())
               .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
-          Optional.ofNullable(lpq.getEstimatedTemperature())
+          Optional.ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   temp -> loadablePatternCargoDetailsBuilder.setTemperature(String.valueOf(temp)));
 
@@ -4298,8 +4760,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
           Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(builder::setFillingRatio);
 
+          Optional.ofNullable(lpcd.getFillingRatio()).ifPresent(builder::setFillingRatioOrginal);
+          Optional.ofNullable(lpcd.getCorrectedUllage())
+              .ifPresent(builder::setCorrectedUllageOrginal);
+          Optional.ofNullable(lpcd.getCorrectionFactor())
+              .ifPresent(builder::setCorrectionFactorOrginal);
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllageOrginal);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setWeightOrginal);
+
           Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(builder::setRdgUllage);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
+          Optional.ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
           Optional.ofNullable(lpcd.getTankId()).ifPresent(builder::setTankId);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setWeight);
@@ -4419,7 +4890,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
 
       if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
@@ -4464,6 +4935,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 });
         // save all entities
         this.commingleCargoRepository.saveAll(commingleEntities);
+      } else {
+        List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoEntityList =
+            this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+                request.getLoadableStudyId(), true);
+        List<Long> existingCommingleCargoIds = null;
+        if (!commingleCargoEntityList.isEmpty()) {
+          existingCommingleCargoIds =
+              commingleCargoEntityList.stream()
+                  .map(com.cpdss.loadablestudy.entity.CommingleCargo::getId)
+                  .collect(Collectors.toList());
+        }
+        if (!CollectionUtils.isEmpty(existingCommingleCargoIds)) {
+          commingleCargoRepository.deleteCommingleCargo(existingCommingleCargoIds);
+        }
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
@@ -4582,7 +5067,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       UllageUpdateResponse algoResponse =
           this.callAlgoUllageUpdateApi(
               this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
-      this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
+      if (!request.getUpdateUllageForLoadingPlan()) {
+        this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
+      }
       replyBuilder.setLoadablePlanStowageDetails(
           this.buildUpdateUllageReply(algoResponse, request));
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -4600,7 +5087,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception while recalculating volume")
+              .setMessage(e.getMessage())
               .setStatus(FAILED)
               .build());
     } finally {
@@ -5212,11 +5699,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
     } catch (Exception e) {
-      log.error("Exception when fetching get Loadable Pattern Details", e);
+      log.error("Exception in update ullage", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception when fetching Loadable Pattern Commingle Details")
+              .setMessage("Exception while recalculating volume")
               .setStatus(FAILED)
               .build());
     } finally {
@@ -5226,8 +5713,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
-   * @param loadablePatternComingleDetails void
-   * @param builder
+   * Build upadate ullage reply
+   *
+   * @param algoResponse
+   * @param request
+   * @return
    */
   private void buildLoadablePatternComingleDetails(
       LoadablePlanCommingleDetails loadablePlanCommingleDetails,
@@ -5331,9 +5821,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePatternOpt.get());
                   }
+                  AtomicInteger displayOrder = new AtomicInteger(0);
                   saveLoadableQuantityCommingleCargoPortwiseDetails(
-                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePatternOpt.get());
-                  saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd);
+                      lpd.getLoadablePlanPortWiseDetailsList(),
+                      loadablePatternOpt.get(),
+                      displayOrder);
+                  saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd, displayOrder);
                   saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
                   saveStabilityParameterForNonLodicator(
                       request.getHasLodicator(), loadablePatternOpt.get(), lpd);
@@ -5343,9 +5836,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePatternOpt.get().getLoadableStudy(),
               request.getProcesssId(),
               request.getLoadablePatternId());
+        } else {
+          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
         }
-        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
 
       builder
@@ -5441,8 +5935,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudy> loadableStudyOpt =
           loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (loadableStudyOpt.isPresent()) {
-        this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+        this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
         this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
+        this.validateLoadableStudyWithCommingle(loadableStudyOpt.get());
         ModelMapper modelMapper = new ModelMapper();
         com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
             new com.cpdss.loadablestudy.domain.LoadableStudy();
@@ -5483,7 +5978,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
                 load.setLoadableStudyId(request.getLoadableStudyId());
                 saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
-
         */
         /* AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
@@ -5545,6 +6039,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /** @param loadableStudy void */
+  private void validateLoadableStudyWithCommingle(LoadableStudy loadableStudy)
+      throws GenericServiceException {
+    List<CargoNomination> cargoNominations =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudy.getId(), true);
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
+        commingleCargoRepository.findByLoadableStudyXIdAndPurposeXidAndIsActive(
+            loadableStudy.getId(), 2L, true);
+    if (!cargoNominations.isEmpty() && !commingleCargos.isEmpty()) {
+      BigDecimal cargoSum =
+          cargoNominations.stream().map(CargoNomination::getQuantity).reduce(BigDecimal::add).get();
+      BigDecimal commingleCargoSum =
+          commingleCargos.stream()
+              .map(com.cpdss.loadablestudy.entity.CommingleCargo::getQuantity)
+              .reduce(BigDecimal::add)
+              .get();
+      if (commingleCargoSum.compareTo(cargoSum) == 1) {
+        log.info("commingle quanity is gerater for LS - {}", loadableStudy.getId());
+        throw new GenericServiceException(
+            "Commingle quanity is gerater for LS - {}" + loadableStudy.getId(),
+            CommonErrorCodes.E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
     }
   }
 
@@ -5715,12 +6235,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param loadableStudyOpt
    * @param loadableStudy
    * @param modelMapper void
+   * @throws GenericServiceException
    */
   private void buildLoadableStudy(
       Long loadableStudyId,
       LoadableStudy loadableStudyOpt,
       com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
-      ModelMapper modelMapper) {
+      ModelMapper modelMapper)
+      throws GenericServiceException {
     buildLoadableStuydDetails(Optional.of(loadableStudyOpt), loadableStudy);
     buildCargoNominationDetails(loadableStudyId, loadableStudy, modelMapper);
     buildCommingleCargoDetails(loadableStudyOpt.getId(), loadableStudy, modelMapper);
@@ -5730,6 +6252,469 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     buildOnHandQuantityDetails(loadableStudyOpt, loadableStudy, modelMapper);
     buildOnBoardQuantityDetails(loadableStudyOpt, loadableStudy, modelMapper);
     buildportRotationDetails(loadableStudyOpt, loadableStudy);
+    buildLoadableStudyRuleDetails(loadableStudyOpt, loadableStudy, modelMapper);
+  }
+
+  /**
+   * @param loadableStudyOpt
+   * @param loadableStudy
+   * @param modelMapper
+   * @throws GenericServiceException
+   * @throws
+   */
+  private void buildLoadableStudyRuleDetails(
+      LoadableStudy loadableStudyOpt,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper)
+      throws GenericServiceException {
+    List<com.cpdss.loadablestudy.domain.RulePlans> listOfLSRulesPlan = new ArrayList<>();
+    List<LoadableStudyRules> loadableStudyRulesList =
+        loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
+            loadableStudyOpt, loadableStudyOpt.getVesselXId(), true);
+    VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+    vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
+    vesselRuleBuilder.setVesselId(loadableStudyOpt.getVesselXId());
+    vesselRuleBuilder.setIsNoDefaultRule(true);
+    VesselRuleReply vesselRuleReply =
+        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+    if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get loadable study rule Details against vessel ",
+          vesselRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+    } else {
+      if (loadableStudyRulesList.size() > 0) {
+        log.info("Fetch particular loadable study rules");
+        vesselRuleReply
+            .getRulePlanList()
+            .forEach(
+                rulePlans -> {
+                  com.cpdss.loadablestudy.domain.RulePlans rulePlan =
+                      new com.cpdss.loadablestudy.domain.RulePlans();
+                  Optional.ofNullable(rulePlans.getHeader())
+                      .ifPresent(item -> rulePlan.setHeader(item));
+                  List<Long> ruleId =
+                      rulePlans.getRulesList().stream()
+                          .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
+                          .collect(Collectors.toList());
+                  List<LoadableStudyRules> lStudyRulesList =
+                      loadableStudyRulesList.stream()
+                          .filter(lRuleList -> ruleId.contains(lRuleList.getVesselRuleXId()))
+                          .collect(Collectors.toList());
+                  List<com.cpdss.loadablestudy.domain.Rules> ruleList = new ArrayList<>();
+                  for (int ruleIndex = 0; ruleIndex < lStudyRulesList.size(); ruleIndex++) {
+                    if (lStudyRulesList.get(ruleIndex).getIsEnable() != null
+                        && lStudyRulesList.get(ruleIndex).getIsEnable()) {
+                      com.cpdss.loadablestudy.domain.Rules rules =
+                          new com.cpdss.loadablestudy.domain.Rules();
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsEnable())
+                          .ifPresent(item -> rules.setEnable(item));
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getDisplayInSettings())
+                          .ifPresent(item -> rules.setDisplayInSettings(item));
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getId())
+                          .ifPresent(item -> rules.setId(String.valueOf(item)));
+                      if (lStudyRulesList.get(ruleIndex).getRuleTypeXId() != null
+                          && lStudyRulesList
+                              .get(ruleIndex)
+                              .getRuleTypeXId()
+                              .equals(RuleType.ABSOLUTE.getId())) {
+                        rules.setRuleType(RuleType.ABSOLUTE.getRuleType());
+                      }
+                      if (lStudyRulesList.get(ruleIndex).getRuleTypeXId() != null
+                          && lStudyRulesList
+                              .get(ruleIndex)
+                              .getRuleTypeXId()
+                              .equals(RuleType.PREFERABLE.getId())) {
+                        rules.setRuleType(RuleType.PREFERABLE.getRuleType());
+                      }
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsHardRule())
+                          .ifPresent(item -> rules.setIsHardRule(item));
+                      if (lStudyRulesList.get(ruleIndex).getIsHardRule() == null) {
+                        rules.setIsHardRule(false);
+                      }
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXId())
+                          .ifPresent(item -> rules.setVesselRuleXId(String.valueOf(item)));
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getParentRuleXId())
+                          .ifPresent(item -> rules.setRuleTemplateId(String.valueOf(item)));
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericPrecision())
+                          .ifPresent(item -> rules.setNumericPrecision(item));
+                      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericScale())
+                          .ifPresent(item -> rules.setNumericScale(item));
+                      List<com.cpdss.loadablestudy.domain.RulesInputs> ruleInputList =
+                          new ArrayList<>();
+                      for (int inputIndex = 0;
+                          inputIndex
+                              < lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().size();
+                          inputIndex++) {
+                        com.cpdss.loadablestudy.domain.RulesInputs ruleInput =
+                            new com.cpdss.loadablestudy.domain.RulesInputs();
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getDefaultValue())
+                            .filter(item -> item != null && item.trim().length() != 0)
+                            .ifPresent(item -> ruleInput.setDefaultValue(item));
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getPrefix())
+                            .filter(item -> item != null && item.trim().length() != 0)
+                            .ifPresent(item -> ruleInput.setPrefix(item));
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getMinValue())
+                            .filter(item -> item != null && item.trim().length() != 0)
+                            .ifPresent(item -> ruleInput.setMin(item));
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getMaxValue())
+                            .filter(item -> item != null && item.trim().length() != 0)
+                            .ifPresent(item -> ruleInput.setMax(item));
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getTypeValue())
+                            .filter(item -> item != "" && item.trim().length() != 0)
+                            .ifPresent(item -> ruleInput.setType(item));
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getSuffix())
+                            .filter(item -> item != "" && item.trim().length() != 0)
+                            .ifPresent(item -> ruleInput.setSuffix(item));
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getId())
+                            .ifPresent(item -> ruleInput.setId(String.valueOf(item)));
+                        Optional.ofNullable(
+                                lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getIsMandatory())
+                            .ifPresent(ruleInput::setIsMandatory);
+                        if (lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getTypeValue()
+                                != null
+                            && lStudyRulesList
+                                .get(ruleIndex)
+                                .getLoadableStudyRuleInputs()
+                                .get(inputIndex)
+                                .getTypeValue()
+                                .equalsIgnoreCase(
+                                    com.cpdss.loadablestudy.domain.TypeValue.BOOLEAN.getType())
+                            && lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getDefaultValue()
+                                == null) {
+                          ruleInput.setDefaultValue("false");
+                        }
+                        if (lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getTypeValue()
+                                != null
+                            && (lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getTypeValue()
+                                    .trim()
+                                    .equalsIgnoreCase(
+                                        com.cpdss.loadablestudy.domain.TypeValue.DROPDOWN.getType())
+                                || lStudyRulesList
+                                    .get(ruleIndex)
+                                    .getLoadableStudyRuleInputs()
+                                    .get(inputIndex)
+                                    .getTypeValue()
+                                    .trim()
+                                    .equalsIgnoreCase(
+                                        com.cpdss.loadablestudy.domain.TypeValue.MULTISELECT
+                                            .getType()))) {
+                          List<com.cpdss.loadablestudy.domain.RuleDropDownMaster>
+                              ruleDropDownMasterList = new ArrayList<>();
+                          if (lStudyRulesList
+                                      .get(ruleIndex)
+                                      .getLoadableStudyRuleInputs()
+                                      .get(inputIndex)
+                                      .getSuffix()
+                                  != null
+                              && lStudyRulesList
+                                      .get(ruleIndex)
+                                      .getLoadableStudyRuleInputs()
+                                      .get(inputIndex)
+                                      .getPrefix()
+                                  != null
+                              && lStudyRulesList
+                                  .get(ruleIndex)
+                                  .getLoadableStudyRuleInputs()
+                                  .get(inputIndex)
+                                  .getSuffix()
+                                  .trim()
+                                  .equalsIgnoreCase(
+                                      com.cpdss.loadablestudy.domain.RuleMasterData.CargoTank
+                                          .getSuffix())
+                              && lStudyRulesList
+                                  .get(ruleIndex)
+                                  .getLoadableStudyRuleInputs()
+                                  .get(inputIndex)
+                                  .getPrefix()
+                                  .trim()
+                                  .equalsIgnoreCase(
+                                      com.cpdss.loadablestudy.domain.RuleMasterData.CargoTank
+                                          .getPrefix())) {
+                            vesselRuleReply
+                                .getCargoTankMasterList()
+                                .forEach(
+                                    cargoTank -> {
+                                      com.cpdss.loadablestudy.domain.RuleDropDownMaster
+                                          ruleDropDownMaster =
+                                              new com.cpdss.loadablestudy.domain
+                                                  .RuleDropDownMaster();
+                                      Optional.ofNullable(cargoTank.getId())
+                                          .ifPresent(ruleDropDownMaster::setId);
+                                      Optional.ofNullable(cargoTank.getShortName())
+                                          .ifPresent(ruleDropDownMaster::setValue);
+                                      ruleDropDownMasterList.add(ruleDropDownMaster);
+                                    });
+                          } else {
+                            Optional<Long> ruleTempId =
+                                Optional.ofNullable(
+                                    lStudyRulesList.get(ruleIndex).getParentRuleXId());
+                            if (ruleTempId.isPresent()) {
+                              List<RuleDropDownValueMaster> filterMasterByRule =
+                                  vesselRuleReply.getRuleDropDownValueMasterList().stream()
+                                      .filter(
+                                          rDropDown ->
+                                              rDropDown.getRuleTemplateId() != 0
+                                                  && ruleTempId.get() != null
+                                                  && rDropDown.getRuleTemplateId()
+                                                      == ruleTempId.get())
+                                      .collect(Collectors.toList());
+                              filterMasterByRule.forEach(
+                                  masterDropDownRule -> {
+                                    com.cpdss.loadablestudy.domain.RuleDropDownMaster
+                                        ruleDropDownMaster =
+                                            new com.cpdss.loadablestudy.domain.RuleDropDownMaster();
+                                    Optional.ofNullable(masterDropDownRule.getId())
+                                        .ifPresent(ruleDropDownMaster::setId);
+                                    Optional.ofNullable(masterDropDownRule.getValue())
+                                        .ifPresent(ruleDropDownMaster::setValue);
+                                    ruleDropDownMasterList.add(ruleDropDownMaster);
+                                  });
+                            }
+                          }
+                          ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
+                        }
+                        ruleInputList.add(ruleInput);
+                      }
+                      rules.setInputs(ruleInputList);
+                      ruleList.add(rules);
+                    }
+                  }
+                  rulePlan.setRules(ruleList);
+                  listOfLSRulesPlan.add(rulePlan);
+                });
+      } else {
+        if (vesselRuleReply.getRulePlanList().size() > 0) {
+          log.info("Fetch default vessel rules");
+          vesselRuleReply
+              .getRulePlanList()
+              .forEach(
+                  rulePlans -> {
+                    com.cpdss.loadablestudy.domain.RulePlans rulePlan =
+                        new com.cpdss.loadablestudy.domain.RulePlans();
+                    Optional.ofNullable(rulePlans.getHeader())
+                        .ifPresent(item -> rulePlan.setHeader(item));
+                    List<com.cpdss.loadablestudy.domain.Rules> rList = new ArrayList<>();
+                    rulePlans
+                        .getRulesList()
+                        .forEach(
+                            rules -> {
+                              if (rules.getEnable()) {
+                                com.cpdss.loadablestudy.domain.Rules rule =
+                                    new com.cpdss.loadablestudy.domain.Rules();
+                                Optional.ofNullable(rules.getEnable())
+                                    .ifPresent(item -> rule.setEnable(item));
+                                Optional.ofNullable(rules.getDisplayInSettings())
+                                    .ifPresent(item -> rule.setDisplayInSettings(item));
+                                Optional.ofNullable(rules.getId())
+                                    .filter(item -> item != "")
+                                    .ifPresent(item -> rule.setId(String.valueOf(item)));
+                                Optional.ofNullable(rules.getRuleType())
+                                    .ifPresent(item -> rule.setRuleType(item));
+                                Optional.ofNullable(rule.getIsHardRule())
+                                    .ifPresent(item -> rule.setIsHardRule(item));
+                                Optional.ofNullable(rules.getRuleTemplateId())
+                                    .ifPresent(
+                                        item -> rule.setRuleTemplateId(String.valueOf(item)));
+                                Optional.ofNullable(rules.getNumericPrecision())
+                                    .ifPresent(item -> rule.setNumericPrecision(item));
+                                Optional.ofNullable(rules.getNumericScale())
+                                    .ifPresent(item -> rule.setNumericScale(item));
+                                List<com.cpdss.loadablestudy.domain.RulesInputs> rInputList =
+                                    new ArrayList<>();
+                                rules
+                                    .getInputsList()
+                                    .forEach(
+                                        inputs -> {
+                                          com.cpdss.loadablestudy.domain.RulesInputs ruleInput =
+                                              new com.cpdss.loadablestudy.domain.RulesInputs();
+                                          Optional.ofNullable(inputs.getDefaultValue())
+                                              .filter(item -> item != "")
+                                              .ifPresent(item -> ruleInput.setDefaultValue(item));
+                                          Optional.ofNullable(inputs.getPrefix())
+                                              .filter(item -> item != "")
+                                              .ifPresent(item -> ruleInput.setPrefix(item));
+                                          Optional.ofNullable(inputs.getMin())
+                                              .filter(item -> item != "")
+                                              .ifPresent(item -> ruleInput.setMin(item));
+                                          Optional.ofNullable(inputs.getMax())
+                                              .filter(item -> item != "")
+                                              .ifPresent(item -> ruleInput.setMax(item));
+                                          Optional.ofNullable(inputs.getType())
+                                              .filter(item -> item != "")
+                                              .ifPresent(item -> ruleInput.setType(item));
+                                          Optional.ofNullable(inputs.getSuffix())
+                                              .filter(item -> item != "")
+                                              .ifPresent(item -> ruleInput.setSuffix(item));
+                                          Optional.ofNullable(inputs.getId())
+                                              .filter(item -> item != "")
+                                              .ifPresent(
+                                                  item -> ruleInput.setId(String.valueOf(item)));
+                                          Optional.ofNullable(inputs.getIsMandatory())
+                                              .ifPresent(ruleInput::setIsMandatory);
+                                          if (inputs.getType() != null
+                                              && inputs
+                                                  .getType()
+                                                  .equalsIgnoreCase(
+                                                      com.cpdss.loadablestudy.domain.TypeValue
+                                                          .BOOLEAN
+                                                          .getType())
+                                              && inputs.getDefaultValue() == null) {
+                                            ruleInput.setDefaultValue("false");
+                                          }
+                                          if (inputs.getType() != null
+                                              && (inputs
+                                                      .getType()
+                                                      .trim()
+                                                      .equalsIgnoreCase(
+                                                          com.cpdss.loadablestudy.domain.TypeValue
+                                                              .DROPDOWN
+                                                              .getType())
+                                                  || inputs
+                                                      .getType()
+                                                      .trim()
+                                                      .equalsIgnoreCase(
+                                                          com.cpdss.loadablestudy.domain.TypeValue
+                                                              .MULTISELECT
+                                                              .getType()))) {
+                                            List<com.cpdss.loadablestudy.domain.RuleDropDownMaster>
+                                                ruleDropDownMasterList = new ArrayList<>();
+                                            if (inputs.getSuffix() != null
+                                                && inputs.getPrefix() != null
+                                                && inputs
+                                                    .getSuffix()
+                                                    .trim()
+                                                    .equalsIgnoreCase(
+                                                        com.cpdss.loadablestudy.domain
+                                                            .RuleMasterData.CargoTank.getSuffix())
+                                                && inputs
+                                                    .getPrefix()
+                                                    .trim()
+                                                    .equalsIgnoreCase(
+                                                        com.cpdss.loadablestudy.domain
+                                                            .RuleMasterData.CargoTank
+                                                            .getPrefix())) {
+                                              vesselRuleReply
+                                                  .getCargoTankMasterList()
+                                                  .forEach(
+                                                      cargoTank -> {
+                                                        com.cpdss.loadablestudy.domain
+                                                                .RuleDropDownMaster
+                                                            ruleDropDownMaster =
+                                                                new com.cpdss.loadablestudy.domain
+                                                                    .RuleDropDownMaster();
+                                                        Optional.ofNullable(cargoTank.getId())
+                                                            .ifPresent(ruleDropDownMaster::setId);
+                                                        Optional.ofNullable(
+                                                                cargoTank.getShortName())
+                                                            .ifPresent(
+                                                                ruleDropDownMaster::setValue);
+                                                        ruleDropDownMasterList.add(
+                                                            ruleDropDownMaster);
+                                                      });
+                                            } else {
+                                              Optional<Long> ruleTempId =
+                                                  Optional.ofNullable(
+                                                      Long.parseLong(rules.getRuleTemplateId()));
+                                              if (ruleTempId.isPresent()) {
+                                                List<RuleDropDownValueMaster> filterMasterByRule =
+                                                    vesselRuleReply.getRuleDropDownValueMasterList()
+                                                        .stream()
+                                                        .filter(
+                                                            rDropDown ->
+                                                                rDropDown.getRuleTemplateId() != 0
+                                                                    && ruleTempId.get() != null
+                                                                    && rDropDown.getRuleTemplateId()
+                                                                        == ruleTempId.get())
+                                                        .collect(Collectors.toList());
+                                                filterMasterByRule.forEach(
+                                                    masterDropDownRule -> {
+                                                      com.cpdss.loadablestudy.domain
+                                                              .RuleDropDownMaster
+                                                          ruleDropDownMaster =
+                                                              new com.cpdss.loadablestudy.domain
+                                                                  .RuleDropDownMaster();
+                                                      Optional.ofNullable(
+                                                              masterDropDownRule.getId())
+                                                          .ifPresent(ruleDropDownMaster::setId);
+                                                      Optional.ofNullable(
+                                                              masterDropDownRule.getValue())
+                                                          .ifPresent(ruleDropDownMaster::setValue);
+                                                      ruleDropDownMasterList.add(
+                                                          ruleDropDownMaster);
+                                                    });
+                                              }
+                                            }
+                                            ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
+                                          }
+                                          rInputList.add(ruleInput);
+                                        });
+                                rule.setInputs(rInputList);
+                                rList.add(rule);
+                              }
+                            });
+                    rulePlan.setRules(rList);
+                    listOfLSRulesPlan.add(rulePlan);
+                  });
+        }
+      }
+      loadableStudy.setLoadableStudyRuleList(listOfLSRulesPlan);
+    }
   }
 
   /**
@@ -5748,6 +6733,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void getLoadicatorData(
       LoadicatorDataRequest request, StreamObserver<LoadicatorDataReply> responseObserver) {
     log.info("Inside getLoadicatorData service");
@@ -5800,9 +6786,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
             loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-                algoResponse.getProcessId(),
-                true);
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
           }
         } else {
           if (algoResponse.getFeedbackLoop()) {
@@ -5826,14 +6810,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 algoResponse.getFeedbackLoopCount(),
                 LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
             this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-            loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-                LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
-                algoResponse.getProcessId(),
-                true);
+            loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+                LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
           }
         }
       } else {
         this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
             algoResponse.getProcessId(),
@@ -6053,17 +7037,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? null
             : new BigDecimal(result.getCalculatedTrimPlanned()));
     entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    entity.setBendingMoment(isEmpty(result.getBm()) ? null : new BigDecimal(result.getBm()));
+    entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
+    entity.setHog(isEmpty(result.getHog()) ? null : new BigDecimal(result.getHog()));
     return entity;
   }
 
   /**
    * @param request
    * @param loadicator void
+   * @throws GenericServiceException
    */
   private void buildLoadicatorUrlRequest(
-      LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator) {
+      LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator)
+      throws GenericServiceException {
     loadicator.setProcessId(request.getProcessId());
     loadicator.setLoadicatorPatternDetails(new ArrayList<>());
+
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    Optional<LoadableStudy> loadableStudyOpt =
+        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (loadableStudyOpt.isPresent()) {
+      ModelMapper modelMapper = new ModelMapper();
+      buildLoadableStudy(
+          request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+    }
+
     if (request.getIsPattern()) {
       com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails patternDetails =
           request.getLoadicatorPatternDetails(0);
@@ -6073,6 +7073,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       pattern.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
       pattern.setLdIntactStability(
           this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(
+              patternDetails.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        loadableStudy.setFeedbackLoop(
+            Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoop()).isPresent()
+                ? loadablePatternOpt.get().getFeedbackLoop()
+                : false);
+        loadableStudy.setFeedbackLoopCount(
+            Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoopCount()).isPresent()
+                ? loadablePatternOpt.get().getFeedbackLoopCount()
+                : 0);
+      }
       loadicator.setLoadicatorPatternDetail(pattern);
     } else {
       request
@@ -6087,16 +7100,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
                 loadicator.getLoadicatorPatternDetails().add(patterns);
               });
-    }
-
-    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.domain.LoadableStudy();
-    Optional<LoadableStudy> loadableStudyOpt =
-        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-    if (loadableStudyOpt.isPresent()) {
-      ModelMapper modelMapper = new ModelMapper();
-      buildLoadableStudy(
-          request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
     }
 
     loadicator.setLoadableStudy(loadableStudy);
@@ -6229,6 +7232,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           trim.setTrimValue(ldTrim.getTrimValue());
           trim.setPortId(ldTrim.getPortId());
           trim.setSynopticalId(ldTrim.getSynopticalId());
+          trim.setHog(ldTrim.getHogSag());
           ldTrims.add(trim);
         });
 
@@ -6318,15 +7322,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         onHandQuantity -> {
           com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
               new com.cpdss.loadablestudy.domain.OnHandQuantity();
-          onHandQuantityDto.setArrivalQuantity(String.valueOf(onHandQuantity.getArrivalQuantity()));
-          onHandQuantityDto.setDepartureQuantity(
-              String.valueOf(onHandQuantity.getDepartureQuantity()));
-          onHandQuantityDto.setArrivalVolume(String.valueOf(onHandQuantity.getArrivalVolume()));
-          onHandQuantityDto.setDepartureVolume(String.valueOf(onHandQuantity.getDepartureVolume()));
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+          onHandQuantityDto =
+              modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
+          onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
           onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
           onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
-          onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
-          onHandQuantityDto.setId(onHandQuantity.getId());
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
   }
@@ -6542,6 +7543,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           cargoNominationDto =
               modelMapper.map(
                   cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
+          CargoRequest.Builder cargoReq = CargoRequest.newBuilder();
+          cargoReq.setCargoId(cargoNomination.getCargoXId());
+          com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
+              this.getCargoInfoById(cargoReq.build());
+          if (cargoDetailReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+            log.info("Fetched cargo info of cargo with id {}", cargoNomination.getCargoXId());
+            cargoNominationDto.setIsCondensateCargo(
+                cargoDetailReply.getCargoDetail().getIsCondensateCargo());
+            cargoNominationDto.setIsHrvpCargo(cargoDetailReply.getCargoDetail().getIsHrvpCargo());
+          } else {
+            log.error(
+                "Could not fetch cargo info of cargo with id {}", cargoNomination.getCargoXId());
+          }
           loadableStudy.getCargoNomination().add(cargoNominationDto);
         });
   }
@@ -6594,13 +7608,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       loadableStudy.setLoadOnTop(false);
     }
-    Optional<Long> dischargeCargoId = ofNullable(loadableStudyOpt.get().getDischargeCargoId());
+    Optional<Long> dischargeCargoId =
+        ofNullable(loadableStudyOpt.get().getDischargeCargoNominationId());
     if (dischargeCargoId.isPresent() && dischargeCargoId.get().equals(new Long(0))) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else if (!dischargeCargoId.isPresent()) {
       loadableStudy.setCargoToBeDischargeFirstId(null);
     } else {
       loadableStudy.setCargoToBeDischargeFirstId(dischargeCargoId.get());
+    }
+
+    if (Optional.ofNullable(loadableStudyOpt.get().getFeedbackLoop()).isPresent()) {
+      loadableStudy.setFeedbackLoop(loadableStudyOpt.get().getFeedbackLoop());
+    } else {
+      loadableStudy.setFeedbackLoop(false);
+    }
+
+    if (Optional.ofNullable(loadableStudyOpt.get().getFeedbackLoopCount()).isPresent()) {
+      loadableStudy.setFeedbackLoopCount(loadableStudyOpt.get().getFeedbackLoopCount());
+    } else {
+      loadableStudy.setFeedbackLoopCount(0);
     }
   }
 
@@ -6736,11 +7763,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  currentVoyage.getVoyageStartDate(),
-                  currentVoyage.getVesselXId(),
-                  true,
-                  voyageStatus);
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  currentVoyage.getVesselXId(), true, voyageStatus);
       if (previousVoyage != null) {
         Optional<LoadableStudyStatus> confimredLSStatus =
             loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
@@ -6790,7 +7814,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * find voyage history for previous voyage
    *
-   * @param voyage
    * @return
    */
   private List<CargoHistory> findCargoHistoryForPrvsVoyage(Voyage voyage) {
@@ -6800,8 +7823,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-                  voyage.getVoyageStartDate(), voyage.getVesselXId(), true, voyageStatus);
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  voyage.getVesselXId(), true, voyageStatus);
       if (null == previousVoyage) {
         log.error("Could not find previous voyage of {}", voyage.getVoyageNo());
       } else {
@@ -6871,7 +7894,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
       }
-      this.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
       this.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
       this.buildOnBoardQuantityEntity(entity, request);
@@ -6984,7 +8007,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
 
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
 
       Optional<LoadablePattern> patternOpt = Optional.empty();
       if (request.getLoadablePatternId() > 0) {
@@ -7681,6 +8704,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<OnBoardQuantity> obqEntities =
           this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
               loadableStudy, firstPortId, true);
+      // populating ohq data if its empty
+      portRotations.forEach(
+          portRotation -> {
+            List<OnHandQuantity> ohqPortEntities =
+                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+                    loadableStudy, portRotation, true);
+            if (ohqPortEntities.isEmpty()) {
+              this.populateOnHandQuantityData(Optional.of(loadableStudy), portRotation);
+            }
+          });
       // fething entire ohq entities based on loadable study
       List<OnHandQuantity> ohqEntities =
           this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
@@ -7851,6 +8884,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .ifPresent(item -> dataBuilder.setCalculatedTrimPlanned(valueOf(item)));
       this.setFinalDraftValues(dataBuilder, loadicatorData);
       ofNullable(loadicatorData.getList()).ifPresent(list -> dataBuilder.setList(valueOf(list)));
+      ofNullable(loadicatorData.getBendingMoment())
+          .ifPresent(bm -> dataBuilder.setBendingMoment(valueOf(bm)));
+      ofNullable(loadicatorData.getShearingForce())
+          .ifPresent(sf -> dataBuilder.setShearingForce(valueOf(sf)));
       builder.setLoadicatorData(dataBuilder.build());
       ofNullable(loadicatorData.getBallastActual())
           .ifPresent(item -> builder.setBallastActual(valueOf(item)));
@@ -7925,6 +8962,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(item -> builder.setDisplacementPlanned(valueOf(item)));
     ofNullable(synopticalEntity.getDisplacementActual())
         .ifPresent(item -> builder.setDisplacementActual(valueOf(item)));
+    ofNullable(vesselLoadableQuantityDetails.getHasLoadicator())
+        .ifPresent(item -> builder.setHasLoadicator(item));
   }
 
   /**
@@ -8061,6 +9100,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .filter(cargo -> cargo.getTankId().equals(tank.getTankId()))
                 .findAny();
         if (tankDataOpt.isPresent()) {
+          ofNullable(tankDataOpt.get().getCargoNominationId())
+              .ifPresent(v -> cargoBuilder.setCargoNominationId(v));
+          ofNullable(tankDataOpt.get().getId()).ifPresent(v -> cargoBuilder.setLpCargoDetailId(v));
           ofNullable(tankDataOpt.get().getPlannedQuantity())
               .ifPresent(item -> cargoBuilder.setPlannedWeight(valueOf(item)));
           ofNullable(tankDataOpt.get().getActualQuantity())
@@ -8767,28 +9809,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       VesselInfo.VesselTankResponse vesselReplyCommingle) {
     loadablePlanCommingleDetails.forEach(
         lpcd -> {
-          LoadableQuantityCommingleCargoDetails.Builder builder =
-              LoadableQuantityCommingleCargoDetails.newBuilder();
-          ofNullable(lpcd.getId()).ifPresent(builder::setId);
-          ofNullable(lpcd.getApi()).ifPresent(builder::setApi);
-          ofNullable(lpcd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
-          ofNullable(lpcd.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
-          ofNullable(lpcd.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
-          ofNullable(lpcd.getCargo1Kl()).ifPresent(builder::setCargo1KL);
-          ofNullable(lpcd.getCargo1Lt()).ifPresent(builder::setCargo1LT);
-          ofNullable(lpcd.getCargo1Mt()).ifPresent(builder::setCargo1MT);
-          ofNullable(lpcd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
-          ofNullable(lpcd.getCargo2Abbreviation()).ifPresent(builder::setCargo2Abbreviation);
-          ofNullable(lpcd.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
-          ofNullable(lpcd.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
-          ofNullable(lpcd.getCargo2Kl()).ifPresent(builder::setCargo2KL);
-          ofNullable(lpcd.getCargo2Lt()).ifPresent(builder::setCargo2LT);
-          ofNullable(lpcd.getCargo2Mt()).ifPresent(builder::setCargo2MT);
-          ofNullable(lpcd.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
-          ofNullable(lpcd.getGrade()).ifPresent(builder::setGrade);
-          ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
-          ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
-          ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
+          LoadableQuantityCommingleCargoDetails.Builder builder = getCommingleCargoBuilder(lpcd);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
@@ -8805,13 +9826,52 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
           Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(stowageBuilder::setRdgUllage);
           Optional.ofNullable(lpcd.getTankName()).ifPresent(stowageBuilder::setTankName);
+          Optional.ofNullable(lpcd.getTankShortName()).ifPresent(stowageBuilder::setTankShortName);
           Optional.ofNullable(lpcd.getTankId()).ifPresent(stowageBuilder::setTankId);
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(stowageBuilder::setTemperature);
           Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeight);
           stowageBuilder.setIsCommingle(true);
+
+          Optional.ofNullable(lpcd.getCorrectedUllage())
+              .ifPresent(stowageBuilder::setCorrectedUllageOrginal);
+          Optional.ofNullable(lpcd.getCorrectionFactor())
+              .ifPresent(stowageBuilder::setCorrectionFactorOrginal);
+          Optional.ofNullable(lpcd.getFillingRatio())
+              .ifPresent(stowageBuilder::setFillingRatioOrginal);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(stowageBuilder::setWeightOrginal);
+          Optional.ofNullable(lpcd.getRdgUllage()).ifPresent(stowageBuilder::setRdgUllageOrginal);
+
           addTankShortName(vesselReplyCommingle, lpcd.getTankId(), stowageBuilder);
           replyBuilder.addLoadablePlanStowageDetails(stowageBuilder);
         });
+  }
+
+  private LoadableQuantityCommingleCargoDetails.Builder getCommingleCargoBuilder(
+      LoadablePlanCommingleDetails lpcd) {
+    LoadableQuantityCommingleCargoDetails.Builder builder =
+        LoadableQuantityCommingleCargoDetails.newBuilder();
+    ofNullable(lpcd.getId()).ifPresent(builder::setId);
+    ofNullable(lpcd.getApi()).ifPresent(builder::setApi);
+    ofNullable(lpcd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
+    ofNullable(lpcd.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
+    ofNullable(lpcd.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
+    ofNullable(lpcd.getCargo1Kl()).ifPresent(builder::setCargo1KL);
+    ofNullable(lpcd.getCargo1Lt()).ifPresent(builder::setCargo1LT);
+    ofNullable(lpcd.getCargo1Mt()).ifPresent(builder::setCargo1MT);
+    ofNullable(lpcd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
+    ofNullable(lpcd.getCargo2Abbreviation()).ifPresent(builder::setCargo2Abbreviation);
+    ofNullable(lpcd.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
+    ofNullable(lpcd.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
+    ofNullable(lpcd.getCargo2Kl()).ifPresent(builder::setCargo2KL);
+    ofNullable(lpcd.getCargo2Lt()).ifPresent(builder::setCargo2LT);
+    ofNullable(lpcd.getCargo2Mt()).ifPresent(builder::setCargo2MT);
+    ofNullable(lpcd.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
+    ofNullable(lpcd.getGrade()).ifPresent(builder::setGrade);
+    ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
+    ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
+    ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
+    ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+    return builder;
   }
 
   private void addTankShortName(
@@ -8856,10 +9916,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getRdgUllage()).ifPresent(builder::setRdgUllage);
           Optional.ofNullable(lpsd.getTankname()).ifPresent(builder::setTankName);
           Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
-          Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
+          Optional.ofNullable(lpsd.getCargoNominationTemperature())
+              .ifPresent(temp -> builder.setTemperature(valueOf(temp)));
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
           Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
-
           Optional.ofNullable(lpsd.getCorrectedUllage())
               .ifPresent(builder::setCorrectedUllageOrginal);
           Optional.ofNullable(lpsd.getCorrectionFactor())
@@ -8926,7 +9986,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       builder.setDifferencePercentage(String.valueOf(diffPercentage)));
           ofNullable(lpq.getEstimatedApi())
               .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
-          ofNullable(lpq.getEstimatedTemperature())
+          ofNullable(lpq.getCargoNominationTemperature())
               .ifPresent(
                   estimatedTemperature ->
                       builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
@@ -8945,6 +10005,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           Optional.of(lpq.getCargoColor()).ifPresent(builder::setColorCode);
           Optional.of(lpq.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
+          Optional.ofNullable(lpq.getTimeRequiredForLoading())
+              .ifPresent(builder::setTimeRequiredForLoading);
           Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
@@ -9298,7 +10360,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       try {
 
         List<CargoNomination> cargoNominationList =
-            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
                 request.getDuplicatedFromId(), true);
         Map<Long, Long> cargoNominationIdMap = new HashMap<>();
         if (!cargoNominationList.isEmpty()) {
@@ -9355,7 +10417,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
-        entity.setDischargeCargoId(loadableStudyOpt.get().getDischargeCargoId());
+        entity.setDischargeCargoNominationId(
+            loadableStudyOpt.get().getDischargeCargoNominationId());
         entity.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
         entity.setIsCargoNominationComplete(loadableStudyOpt.get().getIsCargoNominationComplete());
         entity.setIsDischargePortsComplete(loadableStudyOpt.get().getIsDischargePortsComplete());
@@ -9533,14 +10596,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantity lq, List<LoadableStudyPortRotation> newPrList) {
     if (lq != null && lq.getLoadableStudyPortRotation() != null) {
       LoadableStudyPortRotation pr = lq.getLoadableStudyPortRotation();
-      Optional<LoadableStudyPortRotation> portRotaionIdToAdd =
-          newPrList.stream()
-              .filter(
-                  var ->
-                      (pr.getPortXId().equals(var.getPortXId()))
-                          && (pr.getOperation().getId().equals(var.getOperation().getId())))
-              .findFirst();
-      lq.setLoadableStudyPortRotation(portRotaionIdToAdd.get());
+      if (pr.isActive()) {
+        Optional<LoadableStudyPortRotation> portRotaionIdToAdd =
+            newPrList.stream()
+                .filter(
+                    var ->
+                        (pr.getPortXId().equals(var.getPortXId()))
+                            && (pr.getOperation().getId().equals(var.getOperation().getId())))
+                .findFirst();
+        lq.setLoadableStudyPortRotation(portRotaionIdToAdd.get());
+      }
     }
   }
 
@@ -9597,7 +10662,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
       // validates the input port rotation list for valid ids
       List<LoadableStudyPortRotation> existingPortRotationList = new ArrayList<>();
       if (!CollectionUtils.isEmpty(request.getPortRotationDetailsList())) {
@@ -9806,7 +10871,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
-      this.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
 
       LoadableStudy entity = loadableStudyOpt.get();
       entity.setLoadOnTop(request.getLoadOnTop());
@@ -9853,12 +10918,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.loadablePatternRepository.findByLoadableStudyAndIsActive(
                 loadableStudyEntity, true);
         loadicatorRequestBuilder.setIsPattern(false);
+        loadicatorRequestBuilder.setLoadableStudyId(loadableStudyEntity.getId());
       } else {
         Optional<LoadablePattern> lpOpt =
             this.loadablePatternRepository.findByIdAndIsActive(patternId, true);
         loadablePatterns =
             lpOpt.isPresent() ? new ArrayList<LoadablePattern>(Arrays.asList(lpOpt.get())) : null;
         loadicatorRequestBuilder.setIsPattern(true);
+        loadicatorRequestBuilder.setLoadablePatternId(lpOpt.get().getId());
       }
       if (null == loadablePatterns) {
         throw new GenericServiceException(
@@ -10010,6 +11077,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (portDetail.isPresent()) {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
     }
+    Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation().getSeaWaterDensity())
+        .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
     stowagePlanBuilder.setSynopticalId(synopticalEntity.getId());
   }
 
@@ -10046,6 +11115,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 patternCargo, stowagePlanBuilder, cargoReply, vesselReply);
           }
         });
+    AtomicInteger commingleCount = new AtomicInteger(0);
     List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails>
         synopticalWiseCommingleList =
             loadablePatternCommingleCargoDetails.stream()
@@ -10059,8 +11129,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .collect(Collectors.toList());
     synopticalWiseCommingleList.forEach(
         patternCmomingleCargo -> {
-          this.buildLoadicatorStowagePlanDetailsForCommingleCargo(
-              patternCmomingleCargo, stowagePlanBuilder, cargoReply, vesselReply);
+          if (stowagePlanBuilder.getStowageId()
+              == patternCmomingleCargo.getLoadablePattern().getId()) {
+            this.buildLoadicatorStowagePlanDetailsForCommingleCargo(
+                patternCmomingleCargo, stowagePlanBuilder, cargoReply, vesselReply, commingleCount);
+          }
         });
   }
 
@@ -10068,7 +11141,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadablePlanComminglePortwiseDetails patternCmomingleCargo,
       com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
       CargoReply cargoReply,
-      VesselReply vesselReply) {
+      VesselReply vesselReply,
+      AtomicInteger commingleCount) {
     StowageDetails.Builder stowageDetailsBuilder = StowageDetails.newBuilder();
     Optional.ofNullable(patternCmomingleCargo.getTankId())
         .ifPresent(stowageDetailsBuilder::setTankId);
@@ -10104,14 +11178,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional.ofNullable(tankDetail.get().getShortName())
           .ifPresent(stowageDetailsBuilder::setShortName);
     }
-    Optional<CargoDetail> cargoDetail =
-        cargoReply.getCargosList().stream()
-            .filter(c -> Long.valueOf(c.getId()).equals(patternCmomingleCargo.getId()))
-            .findAny();
-    if (cargoDetail.isPresent()) {
-      Optional.ofNullable(cargoDetail.get().getCrudeType())
-          .ifPresent(stowageDetailsBuilder::setCargoName);
-    }
+    //    Optional<CargoDetail> cargoDetail =
+    //        cargoReply.getCargosList().stream()
+    //            .filter(c -> Long.valueOf(c.getId()).equals(patternCmomingleCargo.getId()))
+    //            .findAny();
+    //    if (cargoDetail.isPresent()) {
+    //      Optional.ofNullable(cargoDetail.get().getCrudeType())
+    //          .ifPresent(stowageDetailsBuilder::setCargoName);
+    //    }
+    stowageDetailsBuilder.setCargoName("COM" + commingleCount.incrementAndGet());
     stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
   }
 
@@ -10188,8 +11263,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     synopticalWiseList =
         synopticalWiseList.stream()
             .filter(
+                cargo ->
+                    synopticalEntity
+                        .getLoadableStudyPortRotation()
+                        .getId()
+                        .equals(cargo.getPortRotationId()))
+            .filter(
                 distinctByKeys(
-                    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getCargoId))
+                    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getAbbreviation))
             .collect(Collectors.toList());
     synopticalWiseList.forEach(
         patternCargo ->
@@ -10205,11 +11286,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getId()
                             .equals(cargo.getPortRotationXid())
                         && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
+            .filter(
+                distinctByKeys(
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
+                        ::getCargo1Abbreviation,
+                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
+                        ::getCargo2Abbreviation))
             .collect(Collectors.toList());
+    AtomicInteger commingleCount = new AtomicInteger(0);
     synopticalWiseCommingleList.forEach(
         commingleCargo ->
             stowagePlanBuilder.addAllCargoInfo(
-                this.buildLoadicatorCargoDetails(commingleCargo, cargoReply)));
+                this.buildLoadicatorCargoDetails(commingleCargo, cargoReply, commingleCount)));
   }
 
   /**
@@ -10220,11 +11308,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return
    */
   private List<CargoInfo> buildLoadicatorCargoDetails(
-      LoadablePlanComminglePortwiseDetails commingleCargo, CargoReply cargoReply) {
+      LoadablePlanComminglePortwiseDetails commingleCargo,
+      CargoReply cargoReply,
+      AtomicInteger commingleCount) {
     List<CargoInfo> list = new ArrayList<>();
     CargoInfo.Builder cargoBuilder = CargoInfo.newBuilder();
-    Optional.ofNullable(String.valueOf(commingleCargo.getCargo1Abbreviation()))
-        .ifPresent(cargoBuilder::setCargoAbbrev);
+    cargoBuilder.setCargoAbbrev("COM" + commingleCount.incrementAndGet());
     Optional.ofNullable(String.valueOf(commingleCargo.getApi())).ifPresent(cargoBuilder::setApi);
     Optional.ofNullable(String.valueOf(commingleCargo.getTemperature()))
         .ifPresent(cargoBuilder::setStandardTemp);
@@ -10232,17 +11321,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (null != commingleCargo.getLoadablePattern()) {
       cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
     }
-    list.add(cargoBuilder.build());
-    cargoBuilder = CargoInfo.newBuilder();
-    Optional.ofNullable(String.valueOf(commingleCargo.getCargo2Abbreviation()))
-        .ifPresent(cargoBuilder::setCargoAbbrev);
-    Optional.ofNullable(String.valueOf(commingleCargo.getApi())).ifPresent(cargoBuilder::setApi);
-    Optional.ofNullable(String.valueOf(commingleCargo.getTemperature()))
-        .ifPresent(cargoBuilder::setStandardTemp);
-    Optional.ofNullable(commingleCargo.getPortId()).ifPresent(cargoBuilder::setPortId);
-    if (null != commingleCargo.getLoadablePattern()) {
-      cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
-    }
+    //    list.add(cargoBuilder.build());
+    //    cargoBuilder = CargoInfo.newBuilder();
+    //    Optional.ofNullable(String.valueOf(commingleCargo.getCargo2Abbreviation()))
+    //        .ifPresent(cargoBuilder::setCargoAbbrev);
+    //
+    // Optional.ofNullable(String.valueOf(commingleCargo.getApi())).ifPresent(cargoBuilder::setApi);
+    //    Optional.ofNullable(String.valueOf(commingleCargo.getTemperature()))
+    //        .ifPresent(cargoBuilder::setStandardTemp);
+    //    Optional.ofNullable(commingleCargo.getPortId()).ifPresent(cargoBuilder::setPortId);
+    //    if (null != commingleCargo.getLoadablePattern()) {
+    //      cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
+    //    }
     list.add(cargoBuilder.build());
     return list;
   }
@@ -10291,8 +11381,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         && synopticalEntity.getOperationType().equals(ballast.getOperationType()))
             .collect(Collectors.toList());
     synopticalWiseList.forEach(
-        patternBallast ->
-            this.buildLoadicatorBallastDetails(patternBallast, stowagePlanBuilder, vesselReply));
+        patternBallast -> {
+          if (stowagePlanBuilder.getStowageId() == patternBallast.getLoadablePatternId()) {
+            this.buildLoadicatorBallastDetails(patternBallast, stowagePlanBuilder, vesselReply);
+          }
+        });
   }
 
   /**
@@ -10533,6 +11626,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             voyageRepository
                 .findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
                     true, request.getVesselId());
+        entityList = entityList.stream().distinct().collect(Collectors.toList());
       }
       for (Voyage entity : entityList) {
         VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
@@ -10666,6 +11760,184 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * Method to build port operations table
+   *
+   * @param loadableStudyId loadable study id value
+   * @param loadablePatterId loadable pattern id value
+   * @return PortOperationTable object
+   */
+  public PortOperationTable buildPortOperationsTable(long loadableStudyId, long loadablePatterId)
+      throws GenericServiceException {
+
+    //    Get loadable study port rotation details
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    ModelMapper modelMapper = new ModelMapper();
+    buildLoadableStudyPortRotationDetails(loadableStudyId, loadableStudy, modelMapper);
+
+    //    Get loadable study details
+    LoadableStudy loadableStudyDetails =
+        loadableStudyRepository
+            .findByIdAndIsActive(loadableStudyId, true)
+            .orElseThrow(
+                () ->
+                    new GenericServiceException(
+                        String.format(
+                            "Loadable study details not found for LoadableStudyId: %d",
+                            loadableStudyId),
+                        CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                        HttpStatusCode.BAD_REQUEST));
+
+    //    Get port rotation details
+    buildportRotationDetails(loadableStudyDetails, loadableStudy);
+
+    // Get loadicator data detail
+    List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
+        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+            loadablePatterId, true);
+
+    //    Set OperationsTable details
+    List<OperationsTable> operationsTableList = new ArrayList<>();
+    for (com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portDetails :
+        loadableStudy.getLoadableStudyPortRotation()) {
+
+      //      Get port rotations
+      LoadableStudyPortRotation loadableStudyPortRotation =
+          loadableStudyDetails.getPortRotations().stream()
+              .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
+              .findFirst()
+              .orElse(new LoadableStudyPortRotation());
+      Optional<SynopticalTable> arrSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  arrSynopticRecord.get(), loadablePatterId, true);
+      Optional<SynopticalTable> depSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  depSynopticRecord.get(), loadablePatterId, true);
+      OperationsTable operationsTableData =
+          OperationsTable.builder()
+              .operation(loadableStudyPortRotation.getOperation().getName())
+              .portName(
+                  loadableStudy.getPortDetails().stream()
+                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                      .findFirst()
+                      .orElse(new PortDetails())
+                      .getName())
+              .eta(
+                  loadableStudyPortRotation.getEta() != null
+                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
+                          .format(loadableStudyPortRotation.getEta())
+                      : "")
+              .etd(
+                  loadableStudyPortRotation.getEtd() != null
+                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
+                          .format(loadableStudyPortRotation.getEtd())
+                      : "")
+              .country(
+                  loadableStudy.getPortDetails().stream()
+                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                      .findFirst()
+                      .orElse(new PortDetails())
+                      .getCountryName())
+              .laycanRange(
+                  String.format(
+                      "%s / %s",
+                      null != loadableStudyPortRotation.getLayCanFrom()
+                          ? loadableStudyPortRotation.getLayCanFrom()
+                          : "",
+                      null != loadableStudyPortRotation.getLayCanTo()
+                          ? loadableStudyPortRotation.getLayCanTo()
+                          : ""))
+              .arrFwdDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
+                      : "")
+              .depFwdDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                      ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
+                      : "")
+              .arrAftDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
+                      : "")
+              .depAftDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                      ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
+                      : "")
+              .arrDisplacement(
+                  arrSynopticRecord.get().getDisplacementPlanned() != null
+                      ? arrSynopticRecord.get().getDisplacementPlanned().toString()
+                      : "")
+              .depDisp(
+                  depSynopticRecord.get().getDisplacementPlanned() != null
+                      ? depSynopticRecord.get().getDisplacementPlanned().toString()
+                      : "")
+              .build();
+      operationsTableList.add(operationsTableData);
+    }
+    return PortOperationTable.builder().operationsTableList(operationsTableList).build();
+  }
+
+  /**
+   * Method to convert hexColorCode to Color object
+   *
+   * @param hexColorCode hex color code string
+   * @return Color object
+   */
+  private Color getColour(String hexColorCode) {
+    return Color.decode(hexColorCode);
+  }
+
+  /**
+   * Method to get contrast color for a given background color
+   *
+   * @param backgroundColor Color value of background
+   * @return Contrast Color object
+   */
+  private Color getContrastColor(Color backgroundColor) {
+    double lumaValue =
+        ((0.299 * backgroundColor.getRed())
+                + (0.587 * backgroundColor.getGreen())
+                + (0.114 * backgroundColor.getBlue()))
+            / 255;
+    //    Threshold set to 0.5 for lumaValue
+    return lumaValue > 0.5 ? Color.BLACK : Color.WHITE;
+  }
+
+  /**
+   * Method to convert to other values from Bbls value
+   *
+   * @param value value to be converted
+   * @param api api value
+   * @param temperature temperature value
+   * @param conversionUnit unit to be converted to
+   * @return value in the conversionUnit
+   */
+  public float convertFromBbls(
+      float value, float api, float temperature, ConversionUnit conversionUnit) {
+    float conversionConstant = getConversionConstant(conversionUnit, api, temperature);
+    switch (conversionUnit) {
+      case OBSBBLS:
+        return value / conversionConstant;
+      case MT:
+      case KL15C:
+      case LT:
+        return value * conversionConstant;
+      default:
+        throw new IllegalStateException("Unexpected value: " + conversionUnit);
+    }
+  }
+
+  /**
    * Method to build VesselPlanTable data
    *
    * @param vesselId vesselId value
@@ -10735,11 +12007,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 convertToBbls(
                     Float.parseFloat(stowageDetails.getWeight()),
                     Float.parseFloat(stowageDetails.getApi()),
-                    Float.parseFloat(stowageDetails.getTemperature()),
+                    stowageDetails.getTemperature().isEmpty()
+                        ? 0
+                        : Float.parseFloat(stowageDetails.getTemperature()),
                     ConversionUnit.MT);
             float klValue = convertFromBbls(obsBbsValue, 0F, 0F, ConversionUnit.KL15C);
-            float fillingPercentage =
-                klValue / Float.parseFloat(vesselTankDetail.getFullCapacityCubm()) * 100;
+            float fillingPercentage = Float.parseFloat(stowageDetails.getFillingRatioOrginal());
             // TODO Remove check if not necessary
             String colorCode =
                 stowageDetails.getColorCode().isEmpty()
@@ -10751,14 +12024,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .cargoCode(stowageDetails.getCargoAbbreviation())
                 // TODO ullage for commingle is empty check and set value
                 .ullage(
-                    Float.parseFloat(
+                    Double.parseDouble(
                         stowageDetails.getRdgUllage().isEmpty()
                             ? "0.0"
                             : stowageDetails.getRdgUllage()))
-                .loadedPercentage((float) (Math.round(fillingPercentage * 100.0) / 100.0))
-                .shipsNBbls(obsBbsValue)
-                .shipsMt(Float.parseFloat(stowageDetails.getWeight()))
-                .shipsKlAt15C(klValue);
+                .loadedPercentage((Math.round(fillingPercentage * 100.0) / 100.0))
+                .shipsNBbls(Double.parseDouble(Float.toString(obsBbsValue)))
+                .shipsMt(Double.parseDouble(stowageDetails.getWeight()))
+                .shipsKlAt15C(Double.parseDouble(Float.toString(klValue)));
           } else {
             //            Set default color to white if no stowage details found
             vesselTanksTableBuilder.colorCode(WHITE_COLOR_CODE);
@@ -11078,7 +12351,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     float kl15CTotal = 0F;
     float ltTotal = 0F;
     float diffBblsTotal = 0F;
-    float diffPercentageTotal = 0F;
+    double diffPercentageTotal = 0;
 
     //    Get cargo nominations
     List<CargosTable> cargosTableList = new ArrayList<>();
@@ -11130,7 +12403,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           convertToBbls(
               shipsFigureMtTotal,
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
-              Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
+              loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
+                  ? 0
+                  : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
               ConversionUnit.MT);
       float cargoNominationValue =
           cargoNominationDetails
@@ -11158,7 +12433,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               0F,
               ConversionUnit.LT);
-      float diffPercentage = diffBbls / cargoNominationValue;
+      double diffPercentage =
+          Double.parseDouble(Float.toString(diffBbls))
+              / Double.parseDouble(Float.toString(cargoNominationValue));
 
       //      Calculate totals
       cargoNominationTotal += cargoNominationValue;
@@ -11184,9 +12461,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CargosTable.builder()
               .cargoCode(loadableQuantityCargoDetails.getCargoAbbreviation())
               .loadingPort(portReply.getName())
-              .api(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()))
-              .temp(Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
-              .cargoNomination(cargoNominationValue)
+              .api(Double.parseDouble(loadableQuantityCargoDetails.getEstimatedAPI()))
+              .temp(
+                  loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
+                      ? 0
+                      : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
+              .cargoNomination(Double.parseDouble(Float.toString(cargoNominationValue)))
               .tolerance(
                   String.format(
                       "+%s %% / -%s %%",
@@ -11196,12 +12476,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadableQuantityCargoDetails.getMinTolerence().isEmpty()
                           ? 0.00
                           : loadableQuantityCargoDetails.getMinTolerence()))
-              .nBbls(nBblsValue)
-              .mt(shipsFigureMtTotal)
-              .kl15C(kl15CValue)
-              .lt(ltValue)
+              .nBbls(Double.parseDouble(Float.toString(nBblsValue)))
+              .mt(Double.parseDouble(Float.toString(shipsFigureMtTotal)))
+              .kl15C(Double.parseDouble(Float.toString(kl15CValue)))
+              .lt(Double.parseDouble(Float.toString(ltValue)))
               .colorCode(loadableQuantityCargoDetails.getColorCode())
-              .diffBbls(diffBbls)
+              .diffBbls(Double.parseDouble(Float.toString(diffBbls)))
               .diffPercentage(diffPercentage)
               .build();
 
@@ -11209,12 +12489,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
-        .cargoNominationTotal(cargoNominationTotal)
-        .nBblsTotal(nBblsTotal)
-        .mtTotal(mtTotal)
-        .kl15CTotal(kl15CTotal)
-        .ltTotal(ltTotal)
-        .diffBblsTotal(diffBblsTotal)
+        .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationTotal)))
+        .nBblsTotal(Double.parseDouble(Float.toString(nBblsTotal)))
+        .mtTotal(Double.parseDouble(Float.toString(mtTotal)))
+        .kl15CTotal(Double.parseDouble(Float.toString(kl15CTotal)))
+        .ltTotal(Double.parseDouble(Float.toString(ltTotal)))
+        .diffBblsTotal(Double.parseDouble(Float.toString(diffBblsTotal)))
         .diffPercentageTotal(diffPercentageTotal)
         .build();
   }
@@ -11471,114 +12751,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
-   * Method to build port operations table
-   *
-   * @param loadableStudyId loadable study id value
-   * @param loadablePatterId loadable pattern id value
-   * @return PortOperationTable object
-   */
-  public PortOperationTable buildPortOperationsTable(long loadableStudyId, long loadablePatterId)
-      throws GenericServiceException {
-
-    //    Get loadable study port rotation details
-    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.domain.LoadableStudy();
-    ModelMapper modelMapper = new ModelMapper();
-    buildLoadableStudyPortRotationDetails(loadableStudyId, loadableStudy, modelMapper);
-
-    //    Get loadable study details
-    LoadableStudy loadableStudyDetails =
-        loadableStudyRepository
-            .findByIdAndIsActive(loadableStudyId, true)
-            .orElseThrow(
-                () ->
-                    new GenericServiceException(
-                        String.format(
-                            "Loadable study details not found for LoadableStudyId: %d",
-                            loadableStudyId),
-                        CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                        HttpStatusCode.BAD_REQUEST));
-
-    //    Get port rotation details
-    buildportRotationDetails(loadableStudyDetails, loadableStudy);
-
-    // Get loadicator data detail
-    List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
-        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
-            loadablePatterId, true);
-
-    //    Set OperationsTable details
-    List<OperationsTable> operationsTableList = new ArrayList<>();
-    for (com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portDetails :
-        loadableStudy.getLoadableStudyPortRotation()) {
-
-      //      Get port rotations
-      LoadableStudyPortRotation loadableStudyPortRotation =
-          loadableStudyDetails.getPortRotations().stream()
-              .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
-              .findFirst()
-              .orElse(new LoadableStudyPortRotation());
-      Optional<SynopticalTable> arrSynopticRecord =
-          this.synopticalTableRepository
-              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
-                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
-      SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
-          this.synopticalTableLoadicatorDataRepository
-              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
-                  arrSynopticRecord.get(), loadablePatterId, true);
-      Optional<SynopticalTable> depSynopticRecord =
-          this.synopticalTableRepository
-              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
-                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
-      SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
-          this.synopticalTableLoadicatorDataRepository
-              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
-                  depSynopticRecord.get(), loadablePatterId, true);
-      OperationsTable operationsTableData =
-          OperationsTable.builder()
-              .operation(loadableStudyPortRotation.getOperation().getName())
-              .portName(
-                  loadableStudy.getPortDetails().stream()
-                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
-                      .findFirst()
-                      .orElse(new PortDetails())
-                      .getName())
-              .eta(
-                  DateTimeFormatter.ofPattern(ET_FORMAT).format(loadableStudyPortRotation.getEta()))
-              .etd(
-                  DateTimeFormatter.ofPattern(ET_FORMAT).format(loadableStudyPortRotation.getEtd()))
-              .country(
-                  loadableStudy.getPortDetails().stream()
-                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
-                      .findFirst()
-                      .orElse(new PortDetails())
-                      .getCountryName())
-              .laycanRange(
-                  String.format(
-                      "%s / %s",
-                      null != loadableStudyPortRotation.getLayCanFrom()
-                          ? loadableStudyPortRotation.getLayCanFrom()
-                          : "",
-                      null != loadableStudyPortRotation.getLayCanTo()
-                          ? loadableStudyPortRotation.getLayCanTo()
-                          : ""))
-              .arrFwdDraft(
-                  arrSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
-              .depFwdDraft(
-                  depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual().toString())
-              .arrAftDraft(
-                  arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
-              .depAftDraft(
-                  depSynopticalTableLoadicatorData.getCalculatedDraftAftActual().toString())
-              .arrDisplacement(arrSynopticRecord.get().getDisplacementPlanned().toString())
-              .depDisp(depSynopticRecord.get().getDisplacementPlanned().toString())
-              .build();
-      operationsTableList.add(operationsTableData);
-    }
-    return PortOperationTable.builder().operationsTableList(operationsTableList).build();
-  }
-
-  /**
    * @param spreadsheet XSSF spreadsheet object
    * @param portOperationTable PortOperationTable object
    * @param startRow Table start row
@@ -11778,32 +12950,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
-   * Method to convert hexColorCode to Color object
-   *
-   * @param hexColorCode hex color code string
-   * @return Color object
-   */
-  private Color getColour(String hexColorCode) {
-    return Color.decode(hexColorCode);
-  }
-
-  /**
-   * Method to get contrast color for a given background color
-   *
-   * @param backgroundColor Color value of background
-   * @return Contrast Color object
-   */
-  private Color getContrastColor(Color backgroundColor) {
-    double lumaValue =
-        ((0.299 * backgroundColor.getRed())
-                + (0.587 * backgroundColor.getGreen())
-                + (0.114 * backgroundColor.getBlue()))
-            / 255;
-    //    Threshold set to 0.5 for lumaValue
-    return lumaValue > 0.5 ? Color.BLACK : Color.WHITE;
-  }
-
-  /**
    * Method to convert other units to Bbls
    *
    * @param value value to be converted
@@ -11822,30 +12968,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       case KL15C:
       case LT:
         return value / conversionConstant;
-      default:
-        throw new IllegalStateException("Unexpected value: " + conversionUnit);
-    }
-  }
-
-  /**
-   * Method to convert to other values from Bbls value
-   *
-   * @param value value to be converted
-   * @param api api value
-   * @param temperature temperature value
-   * @param conversionUnit unit to be converted to
-   * @return value in the conversionUnit
-   */
-  public float convertFromBbls(
-      float value, float api, float temperature, ConversionUnit conversionUnit) {
-    float conversionConstant = getConversionConstant(conversionUnit, api, temperature);
-    switch (conversionUnit) {
-      case OBSBBLS:
-        return value / conversionConstant;
-      case MT:
-      case KL15C:
-      case LT:
-        return value * conversionConstant;
       default:
         throw new IllegalStateException("Unexpected value: " + conversionUnit);
     }
@@ -11955,6 +13077,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
       case PORT_OPERATIONS_VALUES:
+        setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
     }
     //    Set font color based on background color
@@ -12094,8 +13217,51 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualStartDate()))
                   : null);
         }
+        // Synchronizing with Loading Plan Microservice
+        loadableStudy.get().getPortRotations().stream()
+            .filter(portRotation -> portRotation.isActive())
+            .forEach(
+                portRotation -> {
+                  LoadingPlanSyncDetails.Builder builder = LoadingPlanSyncDetails.newBuilder();
+                  Optional<LoadablePattern> confirmedLoadablePatternOpt =
+                      this.loadablePatternRepository
+                          .findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+                              loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+                  if (confirmedLoadablePatternOpt.isPresent()) {
+                    buildLoadingPlanSyncDetails(
+                        builder,
+                        confirmedLoadablePatternOpt.get(),
+                        portRotation,
+                        request.getVoyageId());
+                    //                    LoadablePlanDetailsReply.Builder planDetailsReplyBuilder =
+                    //                        LoadablePlanDetailsReply.newBuilder();
+                    //                    try {
+                    //                      buildLoadablePlanDetails(
+                    //                          confirmedLoadablePatternOpt,
+                    // planDetailsReplyBuilder);
+                    //
+                    // builder.setLoadablePlanDetailsReply(planDetailsReplyBuilder);
+                    //                    } catch (GenericServiceException e) {
+                    //                      log.error(
+                    //                          "Could not build loadable plan details for loading
+                    // pattern "
+                    //                              + confirmedLoadablePatternOpt.get().getId());
+                    //                      e.printStackTrace();
+                    //                    }
+                  }
+                  LoadingPlanSyncReply loadablePlanSyncReply =
+                      this.loadingPlanSynchronization(builder.build());
+                  if (loadablePlanSyncReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+                    log.info(
+                        "Loading plan synchronization successful for loadable pattern "
+                            + confirmedLoadablePatternOpt.get().getId());
+                  } else {
+                    log.error(
+                        "Loading plan synchronization failed for loadable pattern "
+                            + confirmedLoadablePatternOpt.get().getId());
+                  }
+                });
       } else {
-
         Optional<VoyageStatus> status =
             this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
         if (!status.isPresent()) {
@@ -12168,6 +13334,99 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  private void buildLoadingPlanSyncDetails(
+      LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
+    buildLoadingInformationDetails(builder, loadablePattern, portRotation, voyageId);
+    buildCargoToppingOffSequence(builder, loadablePattern, portRotation);
+  }
+
+  /** Fetch the api and temp history for cargo and port ids if available */
+  private void buildCargoToppingOffSequence(
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation) {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
+        this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            loadablePattern.getId(), true);
+    this.toppingOffSequenceRepository.findByLoadablePatternAndIsActive(loadablePattern, true)
+        .stream()
+        .forEach(
+            toppingSequence -> {
+              CargoToppingOffSequence.Builder sequenceBuilder =
+                  CargoToppingOffSequence.newBuilder();
+              Optional.ofNullable(toppingSequence.getCargoXId())
+                  .ifPresent(sequenceBuilder::setCargoXId);
+              Optional.ofNullable(toppingSequence.getLoadablePattern().getId())
+                  .ifPresent(sequenceBuilder::setLoadablePatternId);
+              Optional.ofNullable(toppingSequence.getOrderNumber())
+                  .ifPresent(sequenceBuilder::setOrderNumber);
+              Optional.ofNullable(toppingSequence.getTankXId())
+                  .ifPresent(sequenceBuilder::setTankXId);
+              Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailOpt =
+                  loadablePatternCargoDetails.stream()
+                      .filter(
+                          details ->
+                              details.getPortRotationId().equals(portRotation.getId())
+                                  && details.getTankId().equals(sequenceBuilder.getTankXId()))
+                      .findAny();
+              if (cargoDetailOpt.isPresent()) {
+                Optional.ofNullable(cargoDetailOpt.get().getApi())
+                    .ifPresent(api -> sequenceBuilder.setApi(String.valueOf(api)));
+                Optional.ofNullable(cargoDetailOpt.get().getTemperature())
+                    .ifPresent(
+                        temperature -> sequenceBuilder.setTemperature(String.valueOf(temperature)));
+                Optional.ofNullable(cargoDetailOpt.get().getCorrectedUllage())
+                    .ifPresent(ullage -> sequenceBuilder.setUllage(String.valueOf(ullage)));
+                Optional.ofNullable(cargoDetailOpt.get().getPlannedQuantity())
+                    .ifPresent(weight -> sequenceBuilder.setWeight(String.valueOf(weight)));
+                Optional.ofNullable(cargoDetailOpt.get().getFillingRatio())
+                    .ifPresent(
+                        fillingRatio ->
+                            sequenceBuilder.setFillingRatio(String.valueOf(fillingRatio)));
+              }
+              Optional.ofNullable(toppingSequence.getDisplayOrder())
+                  .ifPresent(sequenceBuilder::setDisplayOrder);
+              Optional.ofNullable(toppingSequence.getPortRotationXId())
+                  .ifPresent(sequenceBuilder::setPortRotationId);
+              builder.addCargoToppingOffSequences(sequenceBuilder.build());
+            });
+  }
+
+  private void buildLoadingInformationDetails(
+      LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
+    builder.getLoadingInformationDetailBuilder().setLoadablePatternId(loadablePattern.getId());
+    builder.getLoadingInformationDetailBuilder().setPortId(portRotation.getPortXId());
+    builder.getLoadingInformationDetailBuilder().setVoyageId(voyageId);
+    Optional<SynopticalTable> synopticalTableOpt =
+        portRotation.getSynopticalTable().stream()
+            .filter(
+                synopticalTable ->
+                    synopticalTable.getIsActive()
+                        && synopticalTable
+                            .getOperationType()
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
+            .findFirst();
+    if (synopticalTableOpt.isPresent()) {
+      builder
+          .getLoadingInformationDetailBuilder()
+          .setSynopticalTableId(synopticalTableOpt.get().getId());
+      builder.getLoadingInformationDetailBuilder().setPortRotationId(portRotation.getId());
+    }
+    builder
+        .getLoadingInformationDetailBuilder()
+        .setVesselId(loadablePattern.getLoadableStudy().getVesselXId());
+  }
+
+  private LoadingPlanSyncReply loadingPlanSynchronization(LoadingPlanSyncDetails request) {
+    return this.loadingPlanService.loadingPlanSynchronization(request);
+  }
+
   /**
    * This operation can work async, Data is adding to Api-History Table
    *
@@ -12177,8 +13436,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   public void updateApiTempWithCargoNominations(Voyage voyage) {
     Optional<LoadableStudy> loadableStudy =
-        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-            voyage, CONFIRMED_STATUS_ID, true);
+        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+            voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
     if (loadableStudy.isPresent()) {
       log.info("Voyage Close, update api-temp - ls id {}", loadableStudy.get().getId());
       Optional<LoadablePattern> pattern =
@@ -12513,7 +13772,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    this.checkIfVoyageClosed(entityOpt.get().getVoyage().getId());
+    this.voyageService.checkIfVoyageClosed(entityOpt.get().getVoyage().getId());
     this.isPatternGeneratedOrConfirmed(entityOpt.get());
   }
 
@@ -12584,18 +13843,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.info(String.format("Saved %s JSON in database.", jsonTypeOpt.get().getTypeName()));
     } else {
       log.error("Cannot find JSON type in database.");
-    }
-  }
-
-  void checkIfVoyageClosed(Long voyageId) throws GenericServiceException {
-    Voyage voyage = this.voyageRepository.findByIdAndIsActive(voyageId, true);
-    if (null != voyage
-        && null != voyage.getVoyageStatus()
-        && voyage.getVoyageStatus().getId().equals(CLOSE_VOYAGE_STATUS)) {
-      throw new GenericServiceException(
-          "Save /Edit /Duplicate/Delete operations  not allowed for closed voyage",
-          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-          HttpStatusCode.BAD_REQUEST);
     }
   }
 
@@ -12755,6 +14002,793 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  @Override
+  public void getActiveVoyagesByVessel(
+      VoyageRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.ActiveVoyage.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.ActiveVoyage.newBuilder();
+    ResponseStatus.Builder repBuilder = ResponseStatus.newBuilder();
+    try {
+      if (request.getVesselId() > 0) {
+        // Fetch and build Voayge Response Object
+        this.voyageService.fetchActiveVoyageByVesselId(
+            builder, request.getVesselId(), ACTIVE_VOYAGE_STATUS);
+      }
+      repBuilder.setStatus(SUCCESS);
+      repBuilder.setHttpStatusCode(HttpStatusCode.OK.value());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to fetch active voyage for, Vessel Id {}", request.getVesselId());
+      repBuilder.setStatus(FAILED);
+      repBuilder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      repBuilder.setMessage(e.getMessage());
+    } finally {
+      builder.setResponseStatus(repBuilder.build());
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getSynopticDataForLoadingPlan(
+      com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.newBuilder();
+    ResponseStatus.Builder repBuilder = ResponseStatus.newBuilder();
+    try {
+      this.synopticService.fetchLoadingInformationSynopticDetails(request, builder, repBuilder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to Get Synoptic Record", request.getId());
+      repBuilder.setStatus(FAILED);
+      repBuilder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      repBuilder.setMessage(e.getMessage());
+    } finally {
+      builder.setResponseStatus(repBuilder.build());
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveLoadingInfoToSynopticData(
+      com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      this.synopticService.saveLoadingInformationToSynopticalTable(request);
+      builder.setStatus(SUCCESS);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to Get Synoptic Record ", request.getSynopticalTableId());
+      builder.setStatus(FAILED);
+      builder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      builder.setMessage(e.getMessage());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
+  public void getOrSaveRulesForLoadableStudy(
+      com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.newBuilder();
+    try {
+      if (!RuleMasterSection.Plan.getId().equals(request.getSectionId())) {
+        throw new GenericServiceException(
+            "Planning can be only fetched against loadble study not for loading or discharging module",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      Optional<LoadableStudy> loadableStudy =
+          loadableStudyRepository.findByIdAndIsActiveAndVesselXId(
+              request.getLoadableStudyId(), true, request.getVesselId());
+      if (!loadableStudy.isPresent()) {
+        log.error(
+            "Failed to get loadable study for get or save rule", request.getLoadableStudyId());
+        throw new GenericServiceException(
+            "Loadble study with given id does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+      vesselRuleBuilder.setSectionId(request.getSectionId());
+      vesselRuleBuilder.setVesselId(request.getVesselId());
+      vesselRuleBuilder.setIsNoDefaultRule(true);
+      VesselRuleReply vesselRuleReply =
+          this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+      if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "failed to get loadable study rule Details ",
+            vesselRuleReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+      }
+      if (!CollectionUtils.isEmpty(request.getRulePlanList())) {
+        log.info("save loadable study rules");
+        List<LoadableStudyRules> loadableStudyRulesList = new ArrayList<>();
+        request
+            .getRulePlanList()
+            .forEach(
+                rulePlans -> {
+                  rulePlans
+                      .getRulesList()
+                      .forEach(
+                          rule -> {
+                            LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
+                            if (rule.getId() != null && rule.getId().trim() != "") {
+                              Optional<LoadableStudyRules> rVesselMapping =
+                                  loadableStudyRuleRepository.findById(Long.valueOf(rule.getId()));
+                              if (rVesselMapping.isPresent()) {
+                                loadableStudyRules = rVesselMapping.get();
+                              }
+                            }
+                            loadableStudyRules.setLoadableStudy(loadableStudy.get());
+                            loadableStudyRules.setIsActive(true);
+                            Optional.ofNullable(rule.getDisplayInSettings())
+                                .ifPresent(loadableStudyRules::setDisplayInSettings);
+                            Optional.ofNullable(rule.getEnable())
+                                .ifPresent(loadableStudyRules::setIsEnable);
+                            Optional.ofNullable(rule.getIsHardRule())
+                                .ifPresent(loadableStudyRules::setIsHardRule);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(loadableStudyRules::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(loadableStudyRules::setNumericScale);
+                            LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
+                            Optional.ofNullable(rule.getRuleTemplateId())
+                                .ifPresent(
+                                    item ->
+                                        finalLoadableStudyRules.setParentRuleXId(
+                                            Long.parseLong(item)));
+                            loadableStudyRules.setVesselXId(request.getVesselId());
+
+                            if (rule.getRuleType() != null
+                                && rule.getRuleType()
+                                    .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
+                              loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
+                            }
+                            if (rule.getRuleType() != null
+                                && rule.getRuleType()
+                                    .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
+                              loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
+                            }
+                            Optional.ofNullable(rule.getVesselRuleXId())
+                                .ifPresent(
+                                    vesselRuleXId ->
+                                        finalLoadableStudyRules.setVesselRuleXId(
+                                            Long.parseLong(vesselRuleXId)));
+                            List<LoadableStudyRuleInput> ruleVesselMappingInputList =
+                                new ArrayList<>();
+                            for (Common.RulesInputs input : rule.getInputsList()) {
+                              LoadableStudyRuleInput ruleTemplateInput =
+                                  new LoadableStudyRuleInput();
+                              if (input.getId() != null && input.getId().trim() != "") {
+                                Optional<LoadableStudyRuleInput> rTemplateInput =
+                                    loadableStudyRuleInputRepository.findById(
+                                        Long.valueOf(input.getId()));
+                                if (rTemplateInput.isPresent()) {
+                                  ruleTemplateInput = rTemplateInput.get();
+                                }
+                              }
+                              Optional.ofNullable(input.getDefaultValue())
+                                  .ifPresent(ruleTemplateInput::setDefaultValue);
+                              Optional.ofNullable(input.getMax())
+                                  .ifPresent(ruleTemplateInput::setMaxValue);
+                              Optional.ofNullable(input.getMin())
+                                  .ifPresent(ruleTemplateInput::setMinValue);
+                              Optional.ofNullable(input.getSuffix())
+                                  .ifPresent(ruleTemplateInput::setSuffix);
+                              Optional.ofNullable(input.getPrefix())
+                                  .ifPresent(ruleTemplateInput::setPrefix);
+                              Optional.ofNullable(input.getType())
+                                  .ifPresent(ruleTemplateInput::setTypeValue);
+                              Optional.ofNullable(input.getIsMandatory())
+                                  .ifPresent(ruleTemplateInput::setIsMandatory);
+                              ruleTemplateInput.setIsActive(true);
+                              ruleTemplateInput.setLoadableStudyRuleXId(loadableStudyRules);
+                              try {
+                                if (input.getType() != null
+                                    && (input
+                                            .getType()
+                                            .trim()
+                                            .equalsIgnoreCase(
+                                                com.cpdss.loadablestudy.domain.TypeValue.DROPDOWN
+                                                    .getType())
+                                        || input
+                                            .getType()
+                                            .trim()
+                                            .equalsIgnoreCase(
+                                                com.cpdss.loadablestudy.domain.TypeValue.MULTISELECT
+                                                    .getType()))
+                                    && input.getDefaultValue() != null
+                                    && input.getDefaultValue().trim() != "") {
+                                  if (input.getSuffix() != null
+                                      && input.getPrefix() != null
+                                      && input
+                                          .getSuffix()
+                                          .trim()
+                                          .equalsIgnoreCase(
+                                              com.cpdss.loadablestudy.domain.RuleMasterData
+                                                  .CargoTank.getSuffix())
+                                      && input
+                                          .getPrefix()
+                                          .equalsIgnoreCase(
+                                              com.cpdss.loadablestudy.domain.RuleMasterData
+                                                  .CargoTank.getPrefix())) {
+
+                                    this.ruleMasterDropDownValidation(
+                                        vesselRuleReply.getRuleDropDownValueMasterList(),
+                                        vesselRuleReply.getCargoTankMasterList(),
+                                        true,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  } else {
+                                    this.ruleMasterDropDownValidation(
+                                        vesselRuleReply.getRuleDropDownValueMasterList(),
+                                        vesselRuleReply.getCargoTankMasterList(),
+                                        false,
+                                        input,
+                                        ruleTemplateInput,
+                                        rule);
+                                  }
+                                }
+                              } catch (GenericServiceException e) {
+                                throw new RuntimeException(
+                                    "Master rule drop down value does not exist");
+                              }
+                              ruleVesselMappingInputList.add(ruleTemplateInput);
+                            }
+                            loadableStudyRules.setLoadableStudyRuleInputs(
+                                ruleVesselMappingInputList);
+                            loadableStudyRulesList.add(loadableStudyRules);
+                          });
+                });
+        loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
+      }
+      updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
+      List<Long> ruleListId =
+          vesselRuleReply.getRulePlanList().stream()
+              .flatMap(rulesList -> rulesList.getRulesList().stream())
+              .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
+              .collect(Collectors.toList());
+      List<LoadableStudyRules> loadableStudyRulesList =
+          loadableStudyRuleRepository
+              .findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
+                  loadableStudy.get(), request.getVesselId(), true, ruleListId);
+      if (loadableStudyRulesList.size() > 0) {
+        log.info("Fetch  loadable study rules");
+        vesselRuleReply
+            .getRulePlanList()
+            .forEach(
+                rulePlans -> {
+                  RulePlans.Builder rulePlanBuider = RulePlans.newBuilder();
+                  Optional.ofNullable(rulePlans.getHeader())
+                      .ifPresent(item -> rulePlanBuider.setHeader(item));
+                  List<Long> ruleId =
+                      rulePlans.getRulesList().stream()
+                          .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
+                          .collect(Collectors.toList());
+                  List<LoadableStudyRules> lStudyRulesList =
+                      loadableStudyRulesList.stream()
+                          .filter(lRuleList -> ruleId.contains(lRuleList.getVesselRuleXId()))
+                          .collect(Collectors.toList());
+                  buildResponseForRules(
+                      lStudyRulesList, ruleId, rulePlanBuider, builder, vesselRuleReply);
+                });
+      } else {
+        log.info("Fetch default loadable study rules : ");
+        vesselRuleReply
+            .getRulePlanList()
+            .forEach(
+                rulePlans -> {
+                  builder.addRulePlan(rulePlans);
+                });
+      }
+
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+      log.error("Exception in save or get loadable study rule", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void updateDisplayInSettingsInLoadableStudyRules(VesselRuleReply vesselRuleReply) {
+    Set<Long> setOfSelectedDisplayInSetting = new LinkedHashSet<>();
+    Set<Long> setOfDeselectedDisplayInSetting = new LinkedHashSet<>();
+
+    vesselRuleReply.getRulePlanList().stream()
+        .forEach(
+            item -> {
+              Set<Long> selectedDisplayInSetting =
+                  item.getRulesList().stream()
+                      .filter(
+                          rules ->
+                              rules.getDisplayInSettings()
+                                  && rules.getVesselRuleXId() != null
+                                  && rules.getVesselRuleXId() != "")
+                      .map(id -> Long.parseLong(id.getVesselRuleXId()))
+                      .collect(Collectors.toSet());
+              Set<Long> deselectedDisplayInSetting =
+                  item.getRulesList().stream()
+                      .filter(
+                          rules ->
+                              !rules.getDisplayInSettings()
+                                  && rules.getVesselRuleXId() != null
+                                  && rules.getVesselRuleXId() != "")
+                      .map(id -> Long.parseLong(id.getVesselRuleXId()))
+                      .collect(Collectors.toSet());
+              if (selectedDisplayInSetting != null && selectedDisplayInSetting.size() > 0) {
+                setOfSelectedDisplayInSetting.addAll(selectedDisplayInSetting);
+              }
+              if (deselectedDisplayInSetting != null && deselectedDisplayInSetting.size() > 0) {
+                setOfDeselectedDisplayInSetting.addAll(deselectedDisplayInSetting);
+              }
+            });
+    loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(
+        true, setOfSelectedDisplayInSetting);
+    loadableStudyRuleRepository.updateDisplayInSettingInLoadbleStudyRules(
+        false, setOfDeselectedDisplayInSetting);
+  }
+
+  private void ruleMasterDropDownValidation(
+      List<RuleDropDownValueMaster> listOfDropDownValue,
+      List<CargoTankMaster> cargoTankMaster,
+      boolean isCargoTankMaster,
+      RulesInputs input,
+      LoadableStudyRuleInput ruleTemplateInput,
+      Rules rule)
+      throws GenericServiceException {
+    String value = "";
+    List<RuleDropDownValueMaster> filterMasterByRule =
+        listOfDropDownValue.stream()
+            .filter(
+                rDropDown ->
+                    rDropDown.getRuleTemplateId() != 0
+                        && rule.getRuleTemplateId() != null
+                        && rDropDown.getRuleTemplateId()
+                            == Long.parseLong(rule.getRuleTemplateId().trim()))
+            .collect(Collectors.toList());
+    if (input.getDefaultValue().contains(",")) {
+      String[] masterIds = input.getDefaultValue().split(",");
+      for (int id = 0; id < masterIds.length; id++) {
+        int finalId = id;
+        if (isCargoTankMaster) {
+          if (cargoTankMaster.stream()
+              .map(CargoTankMaster::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        } else {
+          if (filterMasterByRule.stream()
+              .map(RuleDropDownValueMaster::getId)
+              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
+              .findFirst()
+              .isPresent()) {
+            if (masterIds.length - 1 != id) {
+              value += masterIds[id] + ",";
+            } else {
+              value += masterIds[id];
+            }
+          } else {
+            throw new GenericServiceException(
+                "Rulemaster master with given id does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        }
+      }
+      ruleTemplateInput.setDefaultValue(value);
+    } else {
+      if (isCargoTankMaster) {
+        if (!cargoTankMaster.stream()
+            .map(CargoTankMaster::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Cargo master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      } else {
+        if (!filterMasterByRule.stream()
+            .map(RuleDropDownValueMaster::getId)
+            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
+            .findFirst()
+            .isPresent()) {
+          throw new GenericServiceException(
+              "Rulemaster master with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      }
+      ruleTemplateInput.setDefaultValue(input.getDefaultValue());
+    }
+  }
+
+  private void buildResponseForRules(
+      List<LoadableStudyRules> lStudyRulesList,
+      List<Long> ruleId,
+      com.cpdss.common.generated.Common.RulePlans.Builder rulePlanBuider,
+      com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder builder,
+      VesselRuleReply vesselRuleReply) {
+    for (int ruleIndex = 0; ruleIndex < lStudyRulesList.size(); ruleIndex++) {
+      Rules.Builder rulesBuilder = Rules.newBuilder();
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsEnable())
+          .ifPresent(item -> rulesBuilder.setEnable(item));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getDisplayInSettings())
+          .ifPresent(item -> rulesBuilder.setDisplayInSettings(item));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getId())
+          .ifPresent(item -> rulesBuilder.setId(String.valueOf(item)));
+      if (lStudyRulesList.get(ruleIndex).getRuleTypeXId() != null
+          && lStudyRulesList.get(ruleIndex).getRuleTypeXId().equals(RuleType.ABSOLUTE.getId())) {
+        rulesBuilder.setRuleType(RuleType.ABSOLUTE.getRuleType());
+      }
+      if (lStudyRulesList.get(ruleIndex).getRuleTypeXId() != null
+          && lStudyRulesList.get(ruleIndex).getRuleTypeXId().equals(RuleType.PREFERABLE.getId())) {
+        rulesBuilder.setRuleType(RuleType.PREFERABLE.getRuleType());
+      }
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getIsHardRule())
+          .ifPresent(item -> rulesBuilder.setIsHardRule(item));
+      if (lStudyRulesList.get(ruleIndex).getIsHardRule() == null) {
+        rulesBuilder.setIsHardRule(false);
+      }
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXId())
+          .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getParentRuleXId())
+          .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericPrecision())
+          .ifPresent(item -> rulesBuilder.setNumericPrecision(item));
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getNumericScale())
+          .ifPresent(item -> rulesBuilder.setNumericScale(item));
+      RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
+      for (int inputIndex = 0;
+          inputIndex < lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().size();
+          inputIndex++) {
+        RulesInputs.Builder finalRuleInput = ruleInput;
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getDefaultValue())
+            .ifPresent(item -> finalRuleInput.setDefaultValue(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getPrefix())
+            .ifPresent(item -> finalRuleInput.setPrefix(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getMinValue())
+            .ifPresent(item -> finalRuleInput.setMin(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getMaxValue())
+            .ifPresent(item -> finalRuleInput.setMax(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue())
+            .ifPresent(item -> finalRuleInput.setType(item));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getSuffix())
+            .ifPresent(item -> finalRuleInput.setSuffix(item));
+        Optional.ofNullable(
+                lStudyRulesList.get(ruleIndex).getLoadableStudyRuleInputs().get(inputIndex).getId())
+            .ifPresent(item -> finalRuleInput.setId(String.valueOf(item)));
+        Optional.ofNullable(
+                lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getIsMandatory())
+            .ifPresent(finalRuleInput::setIsMandatory);
+        if (lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue()
+                != null
+            && lStudyRulesList
+                .get(ruleIndex)
+                .getLoadableStudyRuleInputs()
+                .get(inputIndex)
+                .getTypeValue()
+                .equalsIgnoreCase(com.cpdss.loadablestudy.domain.TypeValue.BOOLEAN.getType())
+            && lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getDefaultValue()
+                == null) {
+          finalRuleInput.setDefaultValue("false");
+        }
+        if (lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue()
+                != null
+            && (lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue()
+                    .trim()
+                    .equalsIgnoreCase(com.cpdss.loadablestudy.domain.TypeValue.DROPDOWN.getType())
+                || lStudyRulesList
+                    .get(ruleIndex)
+                    .getLoadableStudyRuleInputs()
+                    .get(inputIndex)
+                    .getTypeValue()
+                    .trim()
+                    .equalsIgnoreCase(
+                        com.cpdss.loadablestudy.domain.TypeValue.MULTISELECT.getType()))) {
+          RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
+          if (lStudyRulesList
+                      .get(ruleIndex)
+                      .getLoadableStudyRuleInputs()
+                      .get(inputIndex)
+                      .getSuffix()
+                  != null
+              && lStudyRulesList
+                      .get(ruleIndex)
+                      .getLoadableStudyRuleInputs()
+                      .get(inputIndex)
+                      .getPrefix()
+                  != null
+              && lStudyRulesList
+                  .get(ruleIndex)
+                  .getLoadableStudyRuleInputs()
+                  .get(inputIndex)
+                  .getSuffix()
+                  .trim()
+                  .equalsIgnoreCase(
+                      com.cpdss.loadablestudy.domain.RuleMasterData.CargoTank.getSuffix())
+              && lStudyRulesList
+                  .get(ruleIndex)
+                  .getLoadableStudyRuleInputs()
+                  .get(inputIndex)
+                  .getPrefix()
+                  .trim()
+                  .equalsIgnoreCase(
+                      com.cpdss.loadablestudy.domain.RuleMasterData.CargoTank.getPrefix())) {
+            vesselRuleReply
+                .getCargoTankMasterList()
+                .forEach(
+                    cargoTank -> {
+                      Optional.ofNullable(cargoTank.getId()).ifPresent(ruleDropDownMaster::setId);
+                      Optional.ofNullable(cargoTank.getShortName())
+                          .ifPresent(ruleDropDownMaster::setValue);
+                      ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+                    });
+          } else {
+            Optional<Long> ruleTempId =
+                Optional.ofNullable(lStudyRulesList.get(ruleIndex).getParentRuleXId());
+            if (ruleTempId.isPresent()) {
+              List<RuleDropDownValueMaster> filterMasterByRule =
+                  vesselRuleReply.getRuleDropDownValueMasterList().stream()
+                      .filter(
+                          rDropDown ->
+                              rDropDown.getRuleTemplateId() != 0
+                                  && ruleTempId.get() != null
+                                  && rDropDown.getRuleTemplateId() == ruleTempId.get())
+                      .collect(Collectors.toList());
+              filterMasterByRule.forEach(
+                  masterDropDownRule -> {
+                    Optional.ofNullable(masterDropDownRule.getId())
+                        .ifPresent(ruleDropDownMaster::setId);
+                    Optional.ofNullable(masterDropDownRule.getValue())
+                        .ifPresent(ruleDropDownMaster::setValue);
+                    ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+                  });
+            }
+          }
+        }
+        rulesBuilder.addInputs(finalRuleInput.build());
+      }
+      rulePlanBuider.addRules(rulesBuilder.build());
+    }
+    builder.addRulePlan(rulePlanBuider);
+  }
+
+  @Override
+  public void getLoadablePatternDetailsJson(
+      LoadablePlanDetailsRequest request,
+      StreamObserver<LoadablePatternPortWiseDetailsJson> responseObserver) {
+    LoadablePatternPortWiseDetailsJson.Builder builder =
+        LoadablePatternPortWiseDetailsJson.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+            new LoadabalePatternValidateRequest();
+        buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
+        ObjectMapper mapper = new ObjectMapper();
+        builder.setLoadablePatternDetails(
+            mapper.writeValueAsString(
+                loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+        builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
+        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else throw new Exception("Cannot find loadable pattern");
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Failed to Get Pattern Details ", request.getLoadablePatternId());
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .setMessage(e.getMessage())
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadablePatternByVoyageAndStatus(
+      LoadableStudyRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.newBuilder();
+    try {
+      Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+
+      Optional<LoadableStudy> loadableStudy =
+          loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+              voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+      if (loadableStudy.isEmpty()) {
+        throw new GenericServiceException(
+            "Confirmed Loadable study does not exist",
+            CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      builder.setLoadableStudyId(loadableStudy.get().getId());
+      log.info("Confirmed Ls - ls id {}", loadableStudy.get().getId());
+      Optional<LoadablePattern> pattern =
+          loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+              loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+      if (pattern.isPresent()) {
+        com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePattern =
+            com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+        loadablePattern.setLoadablePatternId(pattern.get().getId());
+        builder.setPattern(loadablePattern.build());
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getCargoNominationByCargoNominationId(
+      CargoNominationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.newBuilder();
+    try {
+      CargoNomination cargoNomination =
+          this.cargoNominationRepository.getOne(request.getCargoNominationId());
+      if (cargoNomination != null) {
+        com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder cargoNom =
+            com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.newBuilder();
+        cargoNom.setId(cargoNomination.getId());
+        cargoNom.setAbbreviation(cargoNomination.getAbbreviation());
+        cargoNom.setColor(cargoNomination.getColor());
+        CargoRequest.Builder cargoReq = CargoRequest.newBuilder();
+        cargoReq.setCargoId(cargoNomination.getCargoXId());
+        com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
+            this.getCargoInfoById(cargoReq.build());
+        cargoNom.setCargoName(cargoDetailReply.getCargoDetail().getCrudeType());
+        cargoNom.setCargoId(cargoNomination.getCargoXId());
+        builder.setCargoNominationdetail(cargoNom);
+      }
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public com.cpdss.common.generated.CargoInfo.CargoDetailReply getCargoInfoById(
+      CargoRequest build) {
+    return cargoInfoGrpcService.getCargoInfoById(build);
+  }
+
+  @Override
+  public void getLoadableCommingleByPatternId(
+      LoadablePlanDetailsRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+          responseObserver) {
+
+    com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply.newBuilder();
+    try {
+
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+            this.loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+                loadablePatternOpt.get(), true);
+        LoadableQuantityCommingleCargoDetails.Builder loadableCommingle =
+            LoadableQuantityCommingleCargoDetails.newBuilder();
+        loadablePlanCommingleDetails.forEach(
+            lpcd -> {
+              LoadableQuantityCommingleCargoDetails.Builder loadableQtyCommCargo =
+                  getCommingleCargoBuilder(lpcd);
+              builder.addLoadableQuantityCommingleCargoDetails(loadableQtyCommCargo);
+            });
+        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else throw new Exception("Cannot find loadable pattern");
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
   @Autowired private LoadableStudyServiceShore loadableStudyServiceShore;
 
   public void saveLoadableStudyShore(Map<String, String> taskReqParams) {
@@ -12771,7 +14805,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableStudy loadableStudyEntity =
           loadableStudyServiceShore.setLoadablestudyShore(jsonResult, erReply.getMessageId());
       if (loadableStudyEntity != null) {
-        this.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
+        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.validateLoadableStudyWithLQ(loadableStudyEntity);
         ModelMapper modelMapper = new ModelMapper();
         com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =

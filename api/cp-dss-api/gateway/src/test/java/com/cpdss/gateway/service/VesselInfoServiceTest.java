@@ -59,7 +59,7 @@ public class VesselInfoServiceTest {
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
   void testGetVesselsDetails(boolean empty) throws GenericServiceException {
-    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString()))
+    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false))
         .thenCallRealMethod();
     VesselDraftCondition.Builder vesselDraftConditionBuilder = VesselDraftCondition.newBuilder();
     UllageDetails.Builder ullageBuilder = UllageDetails.newBuilder();
@@ -97,7 +97,7 @@ public class VesselInfoServiceTest {
                 .build());
 
     VesselDetailsResponse response =
-        this.vesselInfoService.getVesselsDetails(1L, CORRELATION_ID_HEADER_VALUE);
+        this.vesselInfoService.getVesselsDetails(1L, CORRELATION_ID_HEADER_VALUE, false);
     assertAll(
         () ->
             assertEquals(
@@ -130,7 +130,7 @@ public class VesselInfoServiceTest {
 
   @Test
   void testGetVesselsDetailsGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString()))
+    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false))
         .thenCallRealMethod();
     Mockito.when(this.vesselInfoService.getVesselsDetails(any(VesselAlgoRequest.class)))
         .thenReturn(
@@ -144,7 +144,7 @@ public class VesselInfoServiceTest {
     final GenericServiceException ex =
         assertThrows(
             GenericServiceException.class,
-            () -> this.vesselInfoService.getVesselsDetails(1L, CORRELATION_ID_HEADER_VALUE));
+            () -> this.vesselInfoService.getVesselsDetails(1L, CORRELATION_ID_HEADER_VALUE, false));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));

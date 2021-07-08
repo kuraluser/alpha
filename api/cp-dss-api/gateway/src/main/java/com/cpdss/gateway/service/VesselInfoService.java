@@ -4,41 +4,27 @@ package com.cpdss.gateway.service;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
+import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.BMAndSF;
-import com.cpdss.gateway.domain.BendingMoment;
-import com.cpdss.gateway.domain.CalculationSheet;
-import com.cpdss.gateway.domain.CalculationSheetTankGroup;
-import com.cpdss.gateway.domain.HydrostaticData;
-import com.cpdss.gateway.domain.InnerBulkHeadValues;
-import com.cpdss.gateway.domain.LoadLine;
-import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
-import com.cpdss.gateway.domain.ShearingForce;
-import com.cpdss.gateway.domain.StationValues;
-import com.cpdss.gateway.domain.UllageDetails;
-import com.cpdss.gateway.domain.UllageTrimCorrection;
-import com.cpdss.gateway.domain.Vessel;
-import com.cpdss.gateway.domain.VesselDetailsResponse;
-import com.cpdss.gateway.domain.VesselDraftCondition;
-import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.VesselTank;
-import com.cpdss.gateway.domain.VesselTankTCG;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.service.vesselinfo.VesselValveService;
+import com.cpdss.gateway.utility.Utility;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -59,6 +45,7 @@ public class VesselInfoService {
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @Autowired private UsersRepository usersRepository;
+  @Autowired VesselValveService vesselValveService;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -162,11 +149,11 @@ public class VesselInfoService {
 
   /**
    * @param vesselId
-   * @param first
+   * @param correlationId
    * @return VesselDetailsResponse
    */
-  public VesselDetailsResponse getVesselsDetails(Long vesselId, String correlationId)
-      throws GenericServiceException {
+  public VesselDetailsResponse getVesselsDetails(
+      Long vesselId, String correlationId, boolean enableValveSeq) throws GenericServiceException {
     VesselDetailsResponse vesselDetailsResponse = new VesselDetailsResponse();
     VesselAlgoRequest vesselAlgoRequest =
         VesselAlgoRequest.newBuilder().setVesselId(vesselId).build();
@@ -187,9 +174,32 @@ public class VesselInfoService {
         this.buildHydrostaticResponse(vesselAlgoReply, correlationId));
     vesselDetailsResponse.setVesselTankTCGs(
         this.buildVesselTankTcgResponse(vesselAlgoReply, correlationId));
+
     BMAndSF bmAndSF = new BMAndSF();
-    bmAndSF.setBendingMoment(this.createBendingMomentResponse(vesselAlgoReply, correlationId));
-    bmAndSF.setShearingForce(this.createShearingForceResponse(vesselAlgoReply, correlationId));
+
+    if (vesselAlgoReply.getVesselDetail().getBmSfModelType() != null
+        && vesselAlgoReply.getVesselDetail().getBmSfModelType().equals("2")) {
+      bmAndSF.setBendingMomentType2(
+          this.createBendingMomentResponseType2(vesselAlgoReply, correlationId));
+      bmAndSF.setShearingForceType2(
+          this.createShearingForceResponseType2(vesselAlgoReply, correlationId));
+    }
+    if (vesselAlgoReply.getVesselDetail().getBmSfModelType() != null
+        && vesselAlgoReply.getVesselDetail().getBmSfModelType().equals("4")) {
+      bmAndSF.setBendingMomentType4(
+          this.createBendingMomentResponseType4(vesselAlgoReply, correlationId));
+      bmAndSF.setShearingForceType4(
+          this.createShearingForceResponseType4(vesselAlgoReply, correlationId));
+    }
+    if (vesselAlgoReply.getVesselDetail().getBmSfModelType() != null
+        && vesselAlgoReply.getVesselDetail().getBmSfModelType().equals("3")) {
+      bmAndSF.setBendingMomentShearingForceType3(
+          this.createBendingMomentShearingForceType3(vesselAlgoReply, correlationId));
+    } else {
+      bmAndSF.setBendingMoment(this.createBendingMomentResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setShearingForce(this.createShearingForceResponse(vesselAlgoReply, correlationId));
+    }
+
     bmAndSF.setCalculationSheet(
         this.createCalculationSheetResponse(vesselAlgoReply, correlationId));
     bmAndSF.setCalculationSheetTankGroup(
@@ -204,7 +214,149 @@ public class VesselInfoService {
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     vesselDetailsResponse.setUllageTrimCorrections(
         this.buildUllageTrimCorrections(vesselAlgoReply));
+    vesselDetailsResponse.setSelectableParameter(this.buildSelectableParameters(vesselAlgoReply));
+    if (enableValveSeq)
+      vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData());
     return vesselDetailsResponse;
+  }
+
+  private Map<Object, Object> getVesselValveSequenceData() {
+    VesselInfo.VesselRequest.Builder builder = VesselInfo.VesselRequest.newBuilder();
+    VesselInfo.VesselValveSequenceReply reply =
+        this.vesselInfoGrpcService.getVesselValveSequence(builder.build());
+    if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      Map<Object, Object> response = new HashMap<>();
+      // Vessel Valve Sequence
+      response.putAll(
+          this.vesselValveService.buildVesselValveResponse(reply.getVvSequenceEntitiesList()));
+      // Vessel Eductor Process
+      response.put(
+          "eductionProcess",
+          this.vesselValveService.buildVesselValveEductorResponse(
+              reply.getVvEducationEntitiesList()));
+      log.info("Vessel Valve Sequence data size {}", response);
+      return response;
+    }
+    log.info("Vessel Valve Sequence data not found");
+    return null;
+  }
+
+  private List<SelectableParameter> buildSelectableParameters(VesselAlgoReply vesselAlgoReply) {
+    List<SelectableParameter> selectableParameters = new ArrayList<>();
+    for (com.cpdss.common.generated.VesselInfo.SelectableParameter dbValue :
+        vesselAlgoReply.getSelectableParameterList()) {
+      SelectableParameter parameter = new SelectableParameter();
+      parameter.setName(dbValue.getParamterName());
+      List<Parameter> parameterValues = new ArrayList<>();
+      if (dbValue.getValuesList() == null || dbValue.getValuesList().isEmpty()) {
+        parameterValues.add(createFlowRateParameter(1));
+        parameterValues.add(createFlowRateParameter(6));
+        parameterValues.add(createFlowRateParameter(7));
+        parameterValues.add(createFlowRateParameter(12));
+
+      } else {
+        for (ParameterValue value : dbValue.getValuesList()) {
+          Parameter flowrateValue = new Parameter();
+          flowrateValue.setType(value.getType());
+          flowrateValue.setValue(value.getValue());
+          parameterValues.add(flowrateValue);
+        }
+      }
+      parameter.setValues(parameterValues);
+      selectableParameters.add(parameter);
+    }
+    return selectableParameters;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<BendingMoment>
+   */
+  private List<BendingMomentType2> createBendingMomentResponseType2(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<BendingMomentType2> bendingMoments = new ArrayList<BendingMomentType2>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getBendingMomentType2List()
+        .forEach(
+            bendingMoment -> {
+              BendingMomentType2 bm = new BendingMomentType2();
+              bm.setId(bendingMoment.getId());
+              bm.setFrameNumber(bendingMoment.getFrameNumber());
+              bm.setId(bendingMoment.getId());
+              bm.setBuay(bendingMoment.getBuay());
+              bm.setCorrt(bendingMoment.getCorrt());
+              bm.setDisplacement(bendingMoment.getDisplacement());
+              bm.setIsActive(bendingMoment.getIsActive());
+              bendingMoments.add(bm);
+            });
+    return bendingMoments;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<BendingMoment>
+   */
+  private List<BendingMomentType4> createBendingMomentResponseType4(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<BendingMomentType4> bendingMoments = new ArrayList<BendingMomentType4>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getBendingMomentType4List()
+        .forEach(
+            bendingMoment -> {
+              BendingMomentType4 bm = new BendingMomentType4();
+              bm.setId(bendingMoment.getId());
+              bm.setFrameNumber(bendingMoment.getFrameNumber());
+              bm.setId(bendingMoment.getId());
+              bm.setTrim_m1(bendingMoment.getTrimM1());
+              bm.setTrim_0(bendingMoment.getTrim0());
+              bm.setTrim_1(bendingMoment.getTrim1());
+              bm.setTrim_2(bendingMoment.getTrim2());
+              bm.setTrim_3(bendingMoment.getTrim3());
+              bm.setTrim_4(bendingMoment.getTrim4());
+              bm.setTrim_5(bendingMoment.getTrim5());
+              bm.setIsActive(bendingMoment.getIsActive());
+              bendingMoments.add(bm);
+            });
+    return bendingMoments;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<BendingMoment>
+   */
+  private List<BendingMomentShearingForceType3> createBendingMomentShearingForceType3(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<BendingMomentShearingForceType3> bendingMoments =
+        new ArrayList<BendingMomentShearingForceType3>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getBendingMomentShearingForce3List()
+        .forEach(
+            bendingMoment -> {
+              BendingMomentShearingForceType3 bm = new BendingMomentShearingForceType3();
+              bm.setId(bendingMoment.getId());
+              bm.setFrameNumber(bendingMoment.getFrameNumber());
+              bm.setLoadCondition(bendingMoment.getLoadCondition());
+              bm.setDraftAp(bendingMoment.getDraftAp());
+              bm.setDraftFp(bendingMoment.getDraftFp());
+              bm.setBendingMoment(bendingMoment.getBendingMoment());
+              bm.setShearingForce(bendingMoment.getShearingForce());
+              bm.setIsActive(bendingMoment.getIsActive());
+              bendingMoments.add(bm);
+            });
+    return bendingMoments;
+  }
+
+  private Parameter createFlowRateParameter(int type) {
+    Parameter flowrateValue = new Parameter();
+    flowrateValue.setType(type);
+    flowrateValue.setValue("0");
+    return flowrateValue;
   }
 
   /**
@@ -431,6 +583,61 @@ public class VesselInfoService {
   /**
    * @param vesselAlgoReply
    * @param correlationId
+   * @return List<ShearingForce>
+   */
+  private List<ShearingForceType2> createShearingForceResponseType2(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<ShearingForceType2> shearingForces = new ArrayList<ShearingForceType2>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getShearingForceType2List()
+        .forEach(
+            shearingForce -> {
+              ShearingForceType2 sf = new ShearingForceType2();
+              sf.setId(shearingForce.getId());
+              sf.setFrameNumber(shearingForce.getFrameNumber());
+              sf.setDisplacement(shearingForce.getDisplacement());
+              sf.setBuay(shearingForce.getBuay());
+              sf.setDifft(shearingForce.getDifft());
+              sf.setCorrt(shearingForce.getCorrt());
+              sf.setIsActive(shearingForce.getIsActive());
+              shearingForces.add(sf);
+            });
+    return shearingForces;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<ShearingForce>
+   */
+  private List<ShearingForceType4> createShearingForceResponseType4(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<ShearingForceType4> shearingForces = new ArrayList<ShearingForceType4>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getShearingForceType4List()
+        .forEach(
+            shearingForce -> {
+              ShearingForceType4 sf = new ShearingForceType4();
+              sf.setId(shearingForce.getId());
+              sf.setFrameNumber(shearingForce.getFrameNumber());
+              sf.setTrim_m1(shearingForce.getTrimM1());
+              sf.setTrim_0(shearingForce.getTrim0());
+              sf.setTrim_1(shearingForce.getTrim1());
+              sf.setTrim_2(shearingForce.getTrim2());
+              sf.setTrim_3(shearingForce.getTrim3());
+              sf.setTrim_4(shearingForce.getTrim4());
+              sf.setTrim_5(shearingForce.getTrim5());
+              sf.setIsActive(shearingForce.getIsActive());
+              shearingForces.add(sf);
+            });
+    return shearingForces;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
    * @return List<BendingMoment>
    */
   private List<BendingMoment> createBendingMomentResponse(
@@ -471,6 +678,9 @@ public class VesselInfoService {
               tankTCG.setId(vesselTankTCG.getId());
               tankTCG.setTankId(vesselTankTCG.getTankId());
               tankTCG.setTcg(vesselTankTCG.getTcg());
+              tankTCG.setLcg(vesselTankTCG.getLcg());
+              tankTCG.setVcg(vesselTankTCG.getVcg());
+              tankTCG.setInertia(vesselTankTCG.getInertia());
               vesselTankTCGs.add(tankTCG);
             });
     return vesselTankTCGs;
@@ -614,6 +824,7 @@ public class VesselInfoService {
     vessel.setFrameSpace3l(vesselAlgoReply.getVesselDetail().getFrameSpace3L());
     vessel.setFrameSpace7l(vesselAlgoReply.getVesselDetail().getFrameSpace7L());
     vessel.setHasLoadicator(vesselAlgoReply.getVesselDetail().getHasLoadicator());
+    vessel.setBmSfModelType(vesselAlgoReply.getVesselDetail().getBmSfModelType());
     return vessel;
   }
 
@@ -623,5 +834,66 @@ public class VesselInfoService {
    */
   public VesselAlgoReply getVesselsDetails(VesselAlgoRequest vesselAlgoRequest) {
     return vesselInfoGrpcService.getVesselDetailsForAlgo(vesselAlgoRequest);
+  }
+
+  public VesselInfo.VesselPumpsResponse getVesselPumpsFromVesselInfo(Long vesselId) {
+    VesselInfo.VesselPumpsResponse response =
+        this.vesselInfoGrpcService.getVesselPumpsByVesselId(
+            VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build());
+    log.info("Vessel Info RPC call for Pump list, Vessel Id {}", vesselId);
+    if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
+      return response;
+    } else {
+      log.error("Vessel Info RPC call Failed, {}", response.getResponseStatus().getMessage());
+      return null;
+    }
+  }
+
+  /**
+   * To retrieve vessel rule OR To save rule for vessel
+   *
+   * @param vesselId
+   * @param sectionId
+   * @param vesselRuleRequest
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public RuleResponse getRulesByVesselIdAndSectionId(
+      Long vesselId,
+      Long sectionId,
+      com.cpdss.gateway.domain.RuleRequest vesselRuleRequest,
+      String correlationId)
+      throws GenericServiceException {
+    VesselRuleRequest.Builder vesselRuleBuilder = VesselRuleRequest.newBuilder();
+    vesselRuleBuilder.setSectionId(sectionId);
+    vesselRuleBuilder.setVesselId(vesselId);
+    vesselRuleBuilder.setIsNoDefaultRule(false);
+    Utility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, true);
+    VesselRuleReply vesselRuleReply =
+        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+    RuleResponse ruleResponse = new RuleResponse();
+    if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get or save Vessel rules ",
+          vesselRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+    }
+    ruleResponse.setPlan(Utility.buildAdminRulePlan(vesselRuleReply));
+    ruleResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return ruleResponse;
+  }
+
+  public VesselDetail getVesselInfoByVesselId(Long vesselId) {
+    VesselInfo.VesselIdRequest builder =
+        VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build();
+    VesselInfo.VesselIdResponse response = vesselInfoGrpcService.getVesselInfoByVesselId(builder);
+    if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.info("Fetched vessel details by vessel Id {}", vesselId);
+      return response.getVesselDetail();
+    }
+    log.info("No data found for vessel Id {}", vesselId);
+    return null;
   }
 }

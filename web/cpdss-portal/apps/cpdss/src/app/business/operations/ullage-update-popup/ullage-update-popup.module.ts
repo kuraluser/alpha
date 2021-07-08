@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UllageUpdatePopupComponent } from './ullage-update-popup.component';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
@@ -13,7 +14,9 @@ import { UllageUpdatePopupTransformationService } from './ullage-update-popup-tr
 import { TooltipModule } from 'primeng/tooltip';
 import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
+import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
  * Module for ullage update
@@ -25,7 +28,11 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
   declarations: [UllageUpdatePopupComponent],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     DialogModule,
+    ValidationErrorModule,
+    NumberDirectiveModule,
     CargoTankLayoutModule,
     TranslateModule,
     DatatableModule,
@@ -33,6 +40,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
     BallastLayoutModule,
     BunkeringLayoutModule,
     TooltipModule,
+    QuantityDecimalFormatPipeModule,
     QuantityPipeModule,
     DropdownModule
   ],

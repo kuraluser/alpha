@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InstructionCheckListComponent } from './instruction-check-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TreeTableModule } from 'primeng/treetable';
+import { TreeModule } from 'primeng/tree';
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
  * Module for instructions check list
@@ -14,7 +17,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TreeTableModule,
+    TreeModule,
+    TranslateModule
   ],
   exports: [InstructionCheckListComponent]
 })

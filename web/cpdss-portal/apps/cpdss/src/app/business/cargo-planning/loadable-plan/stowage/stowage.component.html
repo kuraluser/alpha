@@ -38,7 +38,7 @@
         </div>
         <div *ngIf="showGrid" class="row mb-15">
             <div class="col"  *ngIf="selectedTab === tankType.CARGO">
-                <div class="text-right mb-10" *ngIf="isEditable">
+                <div class="text-right mb-10" *ngIf="isEditable && !loadableStudyStatus">
                     <button class="btn btn-main mr-10" *ngIf="loadablePatternValidationStatus === validateAndSaveStatus.LOADABLE_PLAN_FAILED" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
                     <button class="btn btn-main mr-10" [hidden]="loadableStudyStatus" *ngIf="!buttonStatus" id="editmode_toggle_button" [disabled]="!isPermissionAvaliable || !cargoTankDetails?.length || isStowageEditable || validateAndSaveProcessing"
                         (click)="changeGridToEditMode()">{{'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL'| translate}}
@@ -67,6 +67,8 @@
                 [isPermissionAvaliable]="isPermissionAvaliable"
                 [loadableStudyStatus]="loadableStudyStatus"
                 [isStowageEditable]="isStowageEditable"
+                [stowageDataEditStatus]="stowageDataEditStatus" 
+                [validationPending]="validationPending"
                 (viewErrorMessage)="viewError($event)"
                 [loadablePatternValidationStatus]="loadablePatternValidationStatus"></cpdss-portal-ballast-stowage>
             </div>

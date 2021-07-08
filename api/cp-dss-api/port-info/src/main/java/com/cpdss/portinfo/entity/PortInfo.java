@@ -46,7 +46,7 @@ public class PortInfo extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @OneToMany(mappedBy = "portInfo")
+  @OneToMany(mappedBy = "portInfo", fetch = FetchType.EAGER)
   private Set<CargoPortMapping> cargoportmappingSet;
 
   @OneToMany(mappedBy = "portInfo", fetch = FetchType.EAGER)

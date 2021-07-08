@@ -1116,7 +1116,7 @@ input[type=number] {
   margin-right: 10px;
   .checkmark {
     position: absolute;
-    top: 0;
+    top: 2px;
     left: 0;
     height: 14px;
     width: 14px;
@@ -1155,7 +1155,7 @@ input[type=number] {
   margin-right: 10px;
   .checkmark {
     position: absolute;
-    top: 0;
+    top: 2px;
     left: 0;
     height: 14px;
     width: 14px;
@@ -1425,10 +1425,10 @@ td.sl div{
         }
       }
       .tank-name{
-        top: 0px!important;
+        top: 4px!important;
         text-align: left!important;
         margin-top: 0!important;
-        left: 11px;
+        left: 13px;
         width: calc(48% - 15px)!important;
       }
       .tank-commodity-name{
@@ -1551,9 +1551,13 @@ td.sl div{
     .rear-tank-ullage-and-percentage{
       position: absolute;
       top:50%;
-      left: 40%;;
+      left: 40%;
+      .tank-name{
+        width: auto!important;
+      }
       .tank-filling-percentage{
         position: static;
+        max-width: none;
       }
       .tank-commodity-ullage{
         display: none;
@@ -1803,6 +1807,22 @@ th .p-button.p-button-icon-only.p-button-rounded{
   display: none;
 }
 
+.selected {
+  & > .arrival {
+    padding-right: 0px;
+
+    & .carousel-card {
+      border-radius: 5px 0px 0px 5px;
+    }
+  }
+
+  & > .departure {
+    & .carousel-card {
+      border-radius: 0px 5px 5px 0px;
+    }
+  }
+}
+
 .w-150{
   width: 150px;
 }
@@ -1866,6 +1886,9 @@ height: 15px;
       top: 14px;
       left: 5px;
       bottom: auto;
+      right: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       }
       .tank-btn-rounded{
         margin-left: 5px;
@@ -1891,10 +1914,10 @@ height: 15px;
 
 .p-inputswitch .p-inputswitch-slider:before{
   width: 17px;
-  height: 10px;
-  left: 0px;
-  margin-top: -5px;
-  border-radius: 4px;
+  height: 8px;
+  left: 1px;
+  margin-top: -4px;
+  border-radius: 2px;
 }
 
 .p-inputswitch {
@@ -1913,8 +1936,6 @@ height: 15px;
 }
 
 .p-overlaypanel{
-  margin-left: -110px;
-    margin-top: -165px!important;
     &:after, &:before{
       display: none;
     }
@@ -1935,24 +1956,7 @@ height: 15px;
   }
 }
 
-  .p-overlaypanel.tank-tooltip.ballast-tooltip{
-    margin-top: -130px!important;
-    &.empty{
-      margin-top: -68px!important;
-    }
-  }
-  .p-overlaypanel.tank-tooltip.tank-ohq-tooltip{
-    margin-top: -130px!important;
-    &.empty{
-      margin-top: -68px!important;
-    }
-  }
-  .p-overlaypanel.tank-tooltip.tank-ohq-tooltip-rear{
-    margin-top: -115px!important;
-    &.empty{
-      margin-top: -68px!important;
-    }
-  }
+
 
 .tank-btn-rounded{
   height: 10px;
@@ -1971,11 +1975,6 @@ height: 15px;
       margin: auto;
       bottom: 100%;
       display: none;
-  }
-  &:hover{
-    &:after{
-    display: block;
-    }
   }
 }
 
@@ -2309,10 +2308,10 @@ tr:hover{
     margin-left: 2px;
   }
   .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
-    top: 0!important;
-    left: 12px!important;
-    margin-top: 0!important;
-    width: auto!important;
+    top: 3px !important;
+    left: 14px !important;
+    margin-top: 0 !important;
+    width: auto !important;
   }
   .tank-item-valign{
     position: absolute;
@@ -2323,6 +2322,10 @@ tr:hover{
     position: absolute;
     bottom: 5px;
     right: 5px;
+    left: 3px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .p-datatable table{
     table-layout: auto!important;
@@ -2489,12 +2492,15 @@ textarea{
     min-width: 100%!important;
     width: auto!important;
   }
-.p-confirm-dialog.p-dialog{ 
+.p-confirm-dialog.p-dialog{
   border-radius: 2px;
     .p-dialog-footer{
       border-top: 0;
     }
 
+}
+  .check-list-table .p-treetable-toggler {
+    visibility: hidden !important;
 }
 .p-dropdown-panel{
   max-width: 250px;
@@ -2507,6 +2513,15 @@ textarea{
  max-width: none; 
 }
 
+.sidebar-menu{
+  li{
+    a{
+    padding: 10px 5px;
+    display: block;
+    }
+  }
+}
+
 .calculated-column{
   width: 92px;
 }
@@ -2515,4 +2530,211 @@ textarea{
   width: 21px;
   height: 18px;
   vertical-align: bottom;
+}
+
+.column-dropdown, .column-checkbox{
+  width: 140px;
+}
+
+.loading-and-discharging-tab{
+  .tab-btn {
+    padding: 10px 15px;
+    text-transform: uppercase;
+    text-align: center;
+    border-radius: 5px;
+    min-width: 200px;
+    border-right: 0;
+    position: relative;
+    margin-right: 40px;
+    &:before{
+      width: 0;
+      height: 0;
+      content: "";
+      border-top: 30px solid #0000;
+      border-bottom: 30px solid #0000;
+      border-left: 24px solid #008000;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -33px;
+      margin: auto;
+    }
+    &:after{
+      width: 0;
+      height: 0;
+      content: "";
+      border-top: 30px solid #0000;
+      border-bottom: 30px solid #0000;
+      border-left: 24px solid #f8f8f8;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -31px;
+      margin: auto;
+    }
+    &:last-child{
+      margin-right: 0;
+      &:after, &:before{
+        display: none;
+      }
+    }
+  }
+}
+
+.tab-center-btn{
+  vertical-align: text-bottom;
+  margin-right: 10px;
+}
+.full-width-field.p-calendar{
+  display: flex;
+}
+
+.loading-discharging-tank-layout{
+  .tank-outer-pattern{
+    min-height: 200px;
+  }
+}
+
+.item-row-wrapper{
+  .row{
+      margin-bottom: 0;
+      padding:3px 0 1px;
+  }
+}
+
+.plus-icon{
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.row-divider{
+  padding:2px 0;
+}
+
+.download-icon{
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+.v-none{
+  vertical-align: unset !important;
+}
+
+.table-header-grade, .table-header-last{
+  width: 80px;
+}
+
+.table-rules{
+  input.form-control{
+    width: 83px;
+    margin-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
+  transform: translateX(1rem);
+}
+
+
+.loading-discharging-tank-layout{
+  .tank-btn-rounded{
+    margin-left: 2px;
+  }
+  .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
+    top: 3px !important;
+    left: 14px !important;
+    margin-top: 0 !important;
+    width: auto !important;
+  }
+  .tank-item-valign{
+    position: absolute;
+    left: 2px;
+    top: 13px;
+  }
+  .tank-filling-percentage{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+
+.table-column-flexible-wrapper{
+  .column-class{
+    width: auto!important;
+    &.re-order{
+      width: 50px!important;
+    }
+  }
+}
+
+.auto-layout{
+  table{
+    table-layout: auto!important;
+  }
+}
+.v-bottom{
+  vertical-align: bottom;
+}
+
+.v-t-bottom{
+  vertical-align: text-bottom;
+}
+.table-rules{
+  input.form-control{
+    width: 83px;
+    margin-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+  }
+  .error-icon-wrapper{
+    padding-right: 0;
+    position: relative;
+    .error-icon{
+      position: static!important;
+      margin-left: 3px;
+    }
+  }
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
+  transform: translateX(1rem);
+}
+
+
+.loading-discharging-tank-layout{
+  .tank-btn-rounded{
+    margin-left: 2px;
+  }
+  .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
+    top: 3px !important;
+    left: 14px !important;
+    margin-top: 0 !important;
+    width: auto !important;
+  }
+  .tank-item-valign{
+    position: absolute;
+    left: 2px;
+    top: 13px;
+  }
+  .tank-filling-percentage{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.rules-pop-up{
+  width: 90vw;
 }

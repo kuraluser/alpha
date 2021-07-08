@@ -11,13 +11,20 @@ service CargoInfoService {
 	}
 
 	rpc GetCargoInfoByPaging(CargoRequestWithPaging) returns (CargoReply){}
-}
 
+	rpc GetCargoInfoById (CargoRequest) returns (CargoDetailReply) {
+	}
+}
+message CargoDetailReply{
+	CargoDetail cargoDetail = 1;
+	ResponseStatus responseStatus = 2;
+}
 message CargoRequest {
 	int64 companyId = 1;
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
+	int64 cargoId = 5;
 }
 
 message CargoRequestWithPaging{
@@ -30,6 +37,8 @@ message CargoDetail {
 	string crudeType = 2;
 	string abbreviation = 3;
 	string api = 4;
+	bool isCondensateCargo = 5;
+	bool isHrvpCargo = 6;
 }
 
 message CargoReply {

@@ -1,0 +1,103 @@
+<div class="container-fluid discharge-study-wrapper">
+    <div class="row">
+        <div class="col vessel-info-wrapper">
+            <div class="row">
+                <div class="col">
+                    <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo">
+                    </cpdss-portal-vessel-info>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label class="col-form-label pr-10 text-uppercase">{{ 'DISCHARGE_STUDY_DETAILS_VOYAGE_DROPDOWN_LABEL' | translate }}</label>
+
+                    <p-dropdown id="voyage_dropdown" styleClass="dropdown-w-180" [options]="voyages"
+                        [(ngModel)]="selectedVoyage" filter="true" optionLabel="voyageNo"
+                        (onChange)="onVoyageChange($event)"
+                        resetFilterOnHide="true"></p-dropdown>
+                </div>
+            </div>
+        </div>
+        <div class="col cargo-nomiantion-tab text-center">
+            <a class="tab-btn"
+                [ngClass]="{'active': selectedTab === DISCHARGE_STUDY_DETAILS_TABS.CARGONOMINATION}"
+                (click)="onTabClick(DISCHARGE_STUDY_DETAILS_TABS.CARGONOMINATION)">{{'CARGO_NOMINATION' | translate}}
+                <div 
+                    class="pt-5">
+                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
+                </div>
+            </a>
+            <a class="tab-btn" 
+                [ngClass]="{'active': selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS}"
+                (click)="onTabClick(DISCHARGE_STUDY_DETAILS_TABS.PORTS)">{{'PORT' | translate}}
+                <div *ngIf="portsComplete else incomplete" class="pt-5">
+                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
+                </div>
+                <ng-template #incomplete>
+                    <div class="pt-5">
+                        <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+                    </div>
+                </ng-template>
+            </a>
+            <a class="tab-btn" 
+                [ngClass]="{'active': selectedTab === DISCHARGE_STUDY_DETAILS_TABS.OHQ}"
+                (click)="onTabClick(DISCHARGE_STUDY_DETAILS_TABS.OHQ)">{{'ON_HAND_QUANTITIES' | translate}}
+                <div class="pt-5" *ngIf="ohqComplete  else incomplete">
+                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
+                </div>
+                <ng-template #incomplete>
+                    <div class="pt-5">
+                        <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+                    </div>
+                </ng-template>
+            </a>
+            <a class="tab-btn"
+                [ngClass]="{'active': selectedTab === DISCHARGE_STUDY_DETAILS_TABS.DISCHARGE_STUDY}"
+                (click)="onTabClick(DISCHARGE_STUDY_DETAILS_TABS.DISCHARGE_STUDY)">{{'DISCHARGE_STUDY' | translate}}
+                <div class="pt-5" *ngIf="dischargeStudyComplete else incomplete">
+                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
+                </div>
+                <ng-template #incomplete>
+                    <div class="pt-5">
+                        <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+                    </div>
+                </ng-template>
+            </a>
+        </div>
+      
+        <div class="pr-15 text-right">
+            <button id="generate_plan" class="btn btn-main mr-10" 
+                >{{'DISCHARGE_STUDY_GENERATE_PLAN' | translate}}</button>
+                
+            <button id="view_plan" class="btn btn-main" >{{'DISCHARGE_STUDY_VIEW_PLAN' | translate }}</button>
+        </div>
+    </div>
+ 
+        <div class="pr-15 clearfix">
+            <ng-container *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS">
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                    [ngClass]="{'disabled': !dischargeStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
+                    (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|
+                    translate}}</a>
+            </ng-container>
+        </div>
+                <cpdss-portal-cargo-nomination
+                    *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.CARGONOMINATION && ports"
+                    [permission]="cargoNominationTabPermission" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
+                    [dischargeStudyId]="dischargeStudyId" 
+                    (cargoNominationUpdate)="cargoNominationUpdate($event)"  [ports]="ports"></cpdss-portal-cargo-nomination>
+                <cpdss-portal-ports
+                    *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS" [permission]="portsTabPermission" [voyage]="selectedVoyage"
+                    [vesselId]="vesselId" [voyageId]="voyageId" [dischargeStudyId]="dischargeStudyId" [dischargeStudy]="selectedDischargeStudy" >
+                </cpdss-portal-ports>
+                <cpdss-portal-on-hand-quantity
+                *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.OHQ" [voyage]="selectedVoyage"
+                [vesselId]="vesselId" [voyageId]="voyageId" [dischargeStudyId]="dischargeStudyId"
+                [permission]="ohqTabPermission" [dischargeStudy]="selectedDischargeStudy">
+            </cpdss-portal-on-hand-quantity>
+            <cpdss-portal-discharge-study  *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.DISCHARGE_STUDY" [voyage]="selectedVoyage"
+            [vesselId]="vesselId" [voyageId]="voyageId" [dischargeStudyId]="dischargeStudyId"
+            [permission]="ohqTabPermission" [dischargeStudy]="selectedDischargeStudy">
+            </cpdss-portal-discharge-study>
+</div>
+

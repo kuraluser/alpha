@@ -1,7 +1,7 @@
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { IResponseStatus, ValueObject , IResponse } from '../../../shared/models/common.model';
-import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
-import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from './cargo-planning.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableCargo, ILoadableQuantityCargo } from '../../core/models/common.model';
+import { ILoadablePlanSynopticalRecord } from './cargo-planning.model';
 
 
 /**
@@ -61,7 +61,8 @@ export interface ILoadableQuantityCommingleCargo {
     cargo1MT: string,
     cargo2MT: string,
     cargo1KL: string,
-    cargo2KL: string
+    cargo2KL: string,
+    tankShortName?: string
 }
 
 /**
@@ -88,6 +89,7 @@ export interface ICommingleCargoDispaly {
     cargoLT: string
     cargoMT: string,
     cargoKL: string,
+    tankShortName?: string
 }
 
 
@@ -138,6 +140,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     fullCapacityCubm: string;
     isCommingle?: boolean;
     tankShortName?: string;
+    cargoNominationId?: number;
 }
 
 /**
@@ -172,6 +175,7 @@ export interface ICargoTankDetailValueObject {
     fullCapacityCubm: string;
     tankShortName: string;
     isCommingle?: boolean;
+    cargoNominationId?: number;
 }
 
 /**
@@ -265,7 +269,10 @@ export interface ISynopticalRecordArrangeModel {
     finalDraftMid: string,
     calculatedTrimPlanned: string,
     cargoPlannedTotal: string,
-    ballastPlanned: string
+    ballastPlanned: string;
+    sf: number;
+    bm: number;
+    list: number;
 }
 
 /**
@@ -446,6 +453,7 @@ export enum VALIDATION_AND_SAVE_STATUS {
      cargoAbbreviation: string;
      minTolerence: number;
      maxTolerence: number;
+     cargoNominationId? : number;
  }
 
 

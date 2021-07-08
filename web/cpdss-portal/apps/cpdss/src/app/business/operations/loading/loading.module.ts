@@ -24,6 +24,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingInstructionComponent } from './loading-instruction/loading-instruction.component';
 import { ToppingOffTankTableModule } from './../topping-off-tank-table/topping-off-tank-table.module';
+import { CheckboxModule } from 'primeng/checkbox';
+import { LoadingInformationApiService } from '../services/loading-information-api.service';
+import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
+
 
 /**
  * Module for loading operation
@@ -59,8 +63,11 @@ import { ToppingOffTankTableModule } from './../topping-off-tank-table/topping-o
     DropdownModule,
     FormsModule,
     ReactiveFormsModule,
-    ToppingOffTankTableModule
+    ToppingOffTankTableModule,
+    CheckboxModule,
+    LoadingDischargingManageSequenceModule
 
-  ]
+  ],
+  providers: [LoadingInformationApiService],
 })
 export class LoadingModule { }

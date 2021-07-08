@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { ICargoTank, ITankOptions } from '../../../core/models/common.model';
+import { ICargoTank, ITankOptions, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { VALIDATION_AND_SAVE_STATUS } from '../../models/loadable-plan.model';
 
 /**
  * Component for pattern case
@@ -22,16 +23,20 @@ export class PatternCaseComponent implements OnInit {
 
   @Output() displayCommingleDetailPopup = new EventEmitter();
   @Output() displayPatternViewMorePopup = new EventEmitter();
+  @Output() viewPlan = new EventEmitter();
+  @Output() confirmPlanClick = new EventEmitter();
 
   @Input() index: number;
+  @Input() loadablePlanPermissionContext;
+  @Input() selectedVoyage;
 
   @Input()
-  set loadablePattern(loadablePattern: ILoadablePattern){
+  set loadablePattern(loadablePattern: ILoadablePattern) {
     this._loadablePattern = loadablePattern;
     this.loadablePatternDetailsId = loadablePattern?.loadablePatternId;
     this.updateTankLIst();
   }
-  get loadablePattern():ILoadablePattern{
+  get loadablePattern(): ILoadablePattern {
     return this._loadablePattern
   }
   @Input() tankList: ICargoTank[][];
@@ -40,7 +45,12 @@ export class PatternCaseComponent implements OnInit {
   tableCol: IDataTableColumn[];
   loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantity', commodityNameField: 'cargoAbbreviation', ullageField : 'rdgUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatioOrginal', weightField: 'weightOrginal', commodityNameField: 'cargoAbbreviation', ullageField: 'correctedUllageOrginal', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api' }
+
+  readonly VALIDATION_AND_SAVE_STATUS = VALIDATION_AND_SAVE_STATUS;
+  readonly LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
+  readonly VOYAGE_STATUS = VOYAGE_STATUS;
+
   constructor(private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService) { }
 
   /**
@@ -50,7 +60,7 @@ export class PatternCaseComponent implements OnInit {
    * @memberof PatternCaseComponent
    */
   ngOnInit(): void {
-    this.tableCol =  this.loadableStudyPatternTransformationService.getCargoPriorityGridCaseTableColumn();
+    this.tableCol = this.loadableStudyPatternTransformationService.getCargoPriorityGridCaseTableColumn();
     this.updateTankLIst();
   }
 
@@ -71,7 +81,7 @@ export class PatternCaseComponent implements OnInit {
       });
       return newGroup;
     })
-    this.cargoTankOptions.weightUnit  = <QUANTITY_UNIT>localStorage.getItem('unit');
+    this.cargoTankOptions.weightUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   }
 
   /**
@@ -87,12 +97,30 @@ export class PatternCaseComponent implements OnInit {
     this.displayCommingleDetailPopup.emit(commingleData)
   }
 
-   /**
-  * Method to show pattern view more pop up
+  /**
+ * Method to show pattern view more pop up
+ *
+ * @memberof PatternCaseComponent
+ */
+  patternViewMore(event) {
+    this.displayPatternViewMorePopup.emit(this.loadablePattern)
+  }
+
+  /**
+   * Method to view plan
+   *
+   * @memberof PatternCaseComponent
+   */
+  viewPlanInfo(pattern) {
+    this.viewPlan.emit(pattern);
+  }
+
+  /**
+  * Method to show confirmation pop up
   *
   * @memberof PatternCaseComponent
   */
-    patternViewMore(event) {
-      this.displayPatternViewMorePopup.emit(this.loadablePattern)
-    }
+  onConfirmPlanClick(event) {
+    this.confirmPlanClick.emit(event);
+  }
 }

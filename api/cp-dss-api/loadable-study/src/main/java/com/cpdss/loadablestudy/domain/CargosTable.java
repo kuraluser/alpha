@@ -10,15 +10,15 @@ import lombok.Data;
 public class CargosTable {
   private String cargoCode;
   private String loadingPort;
-  private float api;
-  private float temp;
-  private float cargoNomination;
+  private double api;
+  private double temp;
+  private double cargoNomination;
   private String tolerance;
-  private float nBbls;
-  private float mt;
-  private float kl15C;
-  private float lt;
-  private float diffBbls;
-  private float diffPercentage;
+  private double nBbls;
+  private double mt;
+  private double kl15C;
+  private double lt;
+  private double diffBbls;
+  private double diffPercentage;
   private String colorCode;
 }

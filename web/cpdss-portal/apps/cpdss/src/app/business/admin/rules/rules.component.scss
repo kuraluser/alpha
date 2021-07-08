@@ -1,0 +1,10 @@
+.content-outer-rule {
+    height: calc(100vh - 230px);
+    display: grid;
+    width: 100%;
+    grid-template-columns: 330px calc(100% - 330px);
+}
+.rules-content-wrapper{
+    height: 98%;
+    overflow-y: auto;
+}

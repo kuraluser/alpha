@@ -54,6 +54,7 @@ export class PortRotationPopupComponent implements OnInit {
   portEtaEtdPermission: IPermission;
   listData = <IPortAllDropdownData>{};
   portLoaded = false;
+  enableSaveButton: boolean = false;
 
   private _visible: boolean;
 
@@ -145,6 +146,7 @@ export class PortRotationPopupComponent implements OnInit {
       dataTable: this.fb.array([...portListArray])
     });
     this.portLoaded = true;
+    this.enableSaveButton = this.portsForm.valid ? true : false;
     this.ngxSpinnerService.hide()
   }
 
@@ -217,7 +219,7 @@ export class PortRotationPopupComponent implements OnInit {
     const required = isRequired ? [Validators.required] : []
     switch (key) {
       case 'eta':
-        return [...required, portDateRangeValidator, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
+        return [...required, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
       case 'etd':
         return [...required, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
       default:
@@ -283,6 +285,7 @@ export class PortRotationPopupComponent implements OnInit {
       control.markAsDirty();
       control.markAsTouched();
     }
+    this.enableSaveButton = this.portsForm.valid ? true : false;
   }
 
   /**
@@ -339,6 +342,7 @@ export class PortRotationPopupComponent implements OnInit {
  * @memberof PortRotationPopupComponent
  */
   async savePort() {
+    if(!this.portsForm.valid) { return; }
     this.ngxSpinnerService.show();
     const portSave: IEditPortRotationModel = { portList: [] };
     const saveportList = this.portRotationPopupTransformationService.getPortAsValue(this.portsDetails?.portList, this.ports);
