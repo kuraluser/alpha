@@ -8,23 +8,20 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.domain.CargoHistory;
+import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.repository.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +44,10 @@ public class VoyageService {
   @Autowired private VoyageStatusRepository voyageStatusRepository;
 
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+
+  @Autowired private VoyageHistoryRepository voyageHistoryRepository;
+
+  @Autowired private CargoHistoryRepository cargoHistoryRepository;
 
   @Value("${loadablestudy.voyage.day.difference}")
   private String dayDifference;
@@ -294,5 +295,39 @@ public class VoyageService {
       return daysBetween;
     }
     return null;
+  }
+
+  /**
+   * find voyage history for previous voyage
+   *
+   * @return
+   */
+  public List<CargoHistory> findCargoHistoryForPrvsVoyage(Voyage voyage) {
+    if (voyage.getVoyageStartDate() != null && voyage.getVoyageEndDate() != null) {
+
+      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+
+      Voyage previousVoyage =
+              this.voyageRepository
+                      .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                              voyage.getVesselXId(), true, voyageStatus);
+      if (null == previousVoyage) {
+        log.error("Could not find previous voyage of {}", voyage.getVoyageNo());
+      } else {
+        VoyageHistory voyageHistory =
+                this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(previousVoyage);
+        if (null == voyageHistory) {
+          log.error("Could not find voyage history for voyage: {}", previousVoyage.getVoyageNo());
+        } else {
+          return this.cargoHistoryRepository.findCargoHistory(
+                  previousVoyage.getId(), voyageHistory.getLoadingPortId());
+        }
+      }
+    } else {
+      log.error(
+              "Voyage start/end date for voyage {} not set and hence, cargo history cannot be fetched",
+              voyage.getVoyageNo());
+    }
+    return new ArrayList<>();
   }
 }

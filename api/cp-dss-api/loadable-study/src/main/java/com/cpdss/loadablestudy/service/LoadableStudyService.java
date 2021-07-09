@@ -12520,34 +12520,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         request.getLoadableStudyId(),
         request.getLoadablePatternId());
     try {
-      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
-          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-      CargoOperation cOp = this.cargoOperationRepository.getOne(LOADING_OPERATION_ID);
-      Long portRotationId = this.getLastPortRotationId(loadableStudy.get(), cOp);
-      LoadableStudyPortRotation lsPr = loadableStudyPortRotationRepository.getOne(portRotationId);
-      Pageable pageable = PageRequest.of(0, 10);
-      Page<SynopticalTable> synData =
-          synopticalTableRepository.findByloadableStudyPortRotation(lsPr, pageable);
-      Optional<SynopticalTable> synopticDEP =
-          synData.stream()
-              .filter(var1 -> (var1.getIsActive() && var1.getOperationType().equals("DEP")))
-              .findFirst();
-      log.info(
-          "Synoptic Table data id {}, for port rotation id {}",
-          synopticDEP.get().getId(),
-          lsPr.getId());
-      VesselReply vesselReply = this.getSynopticalTableVesselData(request, loadableStudy.get());
-      List<VesselTankDetail> sortedTankList = new ArrayList<>(vesselReply.getVesselTanksList());
-      buildSynopticalTableReply(
-          request,
-          Arrays.asList(synopticDEP.get()),
-          this.getSynopticalTablePortDetails(Arrays.asList(synopticDEP.get())),
-          this.getSynopticalTablePortRotations(loadableStudy.get()),
-          loadableStudy.get(),
-          sortedTankList,
-          vesselReply.getVesselLoadableQuantityDetails(),
-          replyBuilder);
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+      synopticService.getSynopticDataByLoadableStudyId(request, replyBuilder);
     } catch (Exception e) {
       log.error("Exception while fetch Synoptic data", e);
       replyBuilder.setResponseStatus(
