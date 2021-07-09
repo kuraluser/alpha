@@ -1,22 +1,14 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated.loading_plan;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
-/**
- */
+/** */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
     comments = "Source: loading_plan/loading_plan_service.proto")
@@ -27,288 +19,434 @@ public final class LoadingInformationServiceGrpc {
   public static final String SERVICE_NAME = "LoadingInformationService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation> getGetLoadingInformationMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+      getGetLoadingInformationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetLoadingInformation",
-      requestType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest.class,
-      responseType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation> getGetLoadingInformationMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation> getGetLoadingInformationMethod;
-    if ((getGetLoadingInformationMethod = LoadingInformationServiceGrpc.getGetLoadingInformationMethod) == null) {
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+      getGetLoadingInformationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+        getGetLoadingInformationMethod;
+    if ((getGetLoadingInformationMethod =
+            LoadingInformationServiceGrpc.getGetLoadingInformationMethod)
+        == null) {
       synchronized (LoadingInformationServiceGrpc.class) {
-        if ((getGetLoadingInformationMethod = LoadingInformationServiceGrpc.getGetLoadingInformationMethod) == null) {
-          LoadingInformationServiceGrpc.getGetLoadingInformationMethod = getGetLoadingInformationMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetLoadingInformation"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.getDefaultInstance()))
-              .setSchemaDescriptor(new LoadingInformationServiceMethodDescriptorSupplier("GetLoadingInformation"))
-              .build();
+        if ((getGetLoadingInformationMethod =
+                LoadingInformationServiceGrpc.getGetLoadingInformationMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getGetLoadingInformationMethod =
+              getGetLoadingInformationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformationRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadingInformation"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "GetLoadingInformation"))
+                      .build();
         }
       }
     }
     return getGetLoadingInformationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse> getSaveLoadingInformationMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInformationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveLoadingInformation",
-      requestType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
-      responseType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse> getSaveLoadingInformationMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse> getSaveLoadingInformationMethod;
-    if ((getSaveLoadingInformationMethod = LoadingInformationServiceGrpc.getSaveLoadingInformationMethod) == null) {
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInformationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        getSaveLoadingInformationMethod;
+    if ((getSaveLoadingInformationMethod =
+            LoadingInformationServiceGrpc.getSaveLoadingInformationMethod)
+        == null) {
       synchronized (LoadingInformationServiceGrpc.class) {
-        if ((getSaveLoadingInformationMethod = LoadingInformationServiceGrpc.getSaveLoadingInformationMethod) == null) {
-          LoadingInformationServiceGrpc.getSaveLoadingInformationMethod = getSaveLoadingInformationMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveLoadingInformation"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new LoadingInformationServiceMethodDescriptorSupplier("SaveLoadingInformation"))
-              .build();
+        if ((getSaveLoadingInformationMethod =
+                LoadingInformationServiceGrpc.getSaveLoadingInformationMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getSaveLoadingInformationMethod =
+              getSaveLoadingInformationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveLoadingInformation"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInfoSaveResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "SaveLoadingInformation"))
+                      .build();
         }
       }
     }
     return getSaveLoadingInformationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> getGetLoadigInformationByVoyageMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalReply>
+      getGetLoadigInformationByVoyageMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetLoadigInformationByVoyage",
-      requestType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest.class,
-      responseType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply.class,
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> getGetLoadigInformationByVoyageMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> getGetLoadigInformationByVoyageMethod;
-    if ((getGetLoadigInformationByVoyageMethod = LoadingInformationServiceGrpc.getGetLoadigInformationByVoyageMethod) == null) {
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .LoadingInformationSynopticalReply>
+      getGetLoadigInformationByVoyageMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalReply>
+        getGetLoadigInformationByVoyageMethod;
+    if ((getGetLoadigInformationByVoyageMethod =
+            LoadingInformationServiceGrpc.getGetLoadigInformationByVoyageMethod)
+        == null) {
       synchronized (LoadingInformationServiceGrpc.class) {
-        if ((getGetLoadigInformationByVoyageMethod = LoadingInformationServiceGrpc.getGetLoadigInformationByVoyageMethod) == null) {
-          LoadingInformationServiceGrpc.getGetLoadigInformationByVoyageMethod = getGetLoadigInformationByVoyageMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetLoadigInformationByVoyage"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply.getDefaultInstance()))
-              .setSchemaDescriptor(new LoadingInformationServiceMethodDescriptorSupplier("GetLoadigInformationByVoyage"))
-              .build();
+        if ((getGetLoadigInformationByVoyageMethod =
+                LoadingInformationServiceGrpc.getGetLoadigInformationByVoyageMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getGetLoadigInformationByVoyageMethod =
+              getGetLoadigInformationByVoyageMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformationSynopticalRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformationSynopticalReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadigInformationByVoyage"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformationSynopticalRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformationSynopticalReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "GetLoadigInformationByVoyage"))
+                      .build();
         }
       }
     }
     return getGetLoadigInformationByVoyageMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay> getUpdateUllageMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+      getUpdateUllageMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "UpdateUllage",
-      requestType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest.class,
-      responseType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay.class,
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+              .class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay> getUpdateUllageMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest, com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay> getUpdateUllageMethod;
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+      getUpdateUllageMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+        getUpdateUllageMethod;
     if ((getUpdateUllageMethod = LoadingInformationServiceGrpc.getUpdateUllageMethod) == null) {
       synchronized (LoadingInformationServiceGrpc.class) {
         if ((getUpdateUllageMethod = LoadingInformationServiceGrpc.getUpdateUllageMethod) == null) {
-          LoadingInformationServiceGrpc.getUpdateUllageMethod = getUpdateUllageMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest, com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "UpdateUllage"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay.getDefaultInstance()))
-              .setSchemaDescriptor(new LoadingInformationServiceMethodDescriptorSupplier("UpdateUllage"))
-              .build();
+          LoadingInformationServiceGrpc.getUpdateUllageMethod =
+              getUpdateUllageMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .UpdateUllageLoadingRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .UpdateUllageLoadingReplay>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "UpdateUllage"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UpdateUllageLoadingRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UpdateUllageLoadingReplay.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier("UpdateUllage"))
+                      .build();
         }
       }
     }
     return getUpdateUllageMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest,
-      com.cpdss.common.generated.Common.ResponseStatus> getGenerateLoadingPlanMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getGenerateLoadingPlanMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GenerateLoadingPlan",
-      requestType = com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest.class,
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest.class,
       responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest,
-      com.cpdss.common.generated.Common.ResponseStatus> getGenerateLoadingPlanMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest, com.cpdss.common.generated.Common.ResponseStatus> getGenerateLoadingPlanMethod;
-    if ((getGenerateLoadingPlanMethod = LoadingInformationServiceGrpc.getGenerateLoadingPlanMethod) == null) {
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getGenerateLoadingPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getGenerateLoadingPlanMethod;
+    if ((getGenerateLoadingPlanMethod = LoadingInformationServiceGrpc.getGenerateLoadingPlanMethod)
+        == null) {
       synchronized (LoadingInformationServiceGrpc.class) {
-        if ((getGenerateLoadingPlanMethod = LoadingInformationServiceGrpc.getGenerateLoadingPlanMethod) == null) {
-          LoadingInformationServiceGrpc.getGenerateLoadingPlanMethod = getGenerateLoadingPlanMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest, com.cpdss.common.generated.Common.ResponseStatus>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GenerateLoadingPlan"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()))
-              .setSchemaDescriptor(new LoadingInformationServiceMethodDescriptorSupplier("GenerateLoadingPlan"))
-              .build();
+        if ((getGenerateLoadingPlanMethod =
+                LoadingInformationServiceGrpc.getGenerateLoadingPlanMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getGenerateLoadingPlanMethod =
+              getGenerateLoadingPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInfoAlgoRequest,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GenerateLoadingPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInfoAlgoRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "GenerateLoadingPlan"))
+                      .build();
         }
       }
     }
     return getGenerateLoadingPlanMethod;
   }
 
-  /**
-   * Creates a new async stub that supports all call types for the service
-   */
+  /** Creates a new async stub that supports all call types for the service */
   public static LoadingInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceStub>() {
-        @java.lang.Override
-        public LoadingInformationServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new LoadingInformationServiceStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceStub>() {
+          @java.lang.Override
+          public LoadingInformationServiceStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new LoadingInformationServiceStub(channel, callOptions);
+          }
+        };
     return LoadingInformationServiceStub.newStub(factory, channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static LoadingInformationServiceBlockingStub newBlockingStub(
-      io.grpc.Channel channel) {
+  public static LoadingInformationServiceBlockingStub newBlockingStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceBlockingStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceBlockingStub>() {
-        @java.lang.Override
-        public LoadingInformationServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new LoadingInformationServiceBlockingStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceBlockingStub>() {
+          @java.lang.Override
+          public LoadingInformationServiceBlockingStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new LoadingInformationServiceBlockingStub(channel, callOptions);
+          }
+        };
     return LoadingInformationServiceBlockingStub.newStub(factory, channel);
   }
 
-  /**
-   * Creates a new ListenableFuture-style stub that supports unary calls on the service
-   */
-  public static LoadingInformationServiceFutureStub newFutureStub(
-      io.grpc.Channel channel) {
+  /** Creates a new ListenableFuture-style stub that supports unary calls on the service */
+  public static LoadingInformationServiceFutureStub newFutureStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceFutureStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceFutureStub>() {
-        @java.lang.Override
-        public LoadingInformationServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new LoadingInformationServiceFutureStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceFutureStub>() {
+          @java.lang.Override
+          public LoadingInformationServiceFutureStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new LoadingInformationServiceFutureStub(channel, callOptions);
+          }
+        };
     return LoadingInformationServiceFutureStub.newStub(factory, channel);
   }
 
-  /**
-   */
-  public static abstract class LoadingInformationServiceImplBase implements io.grpc.BindableService {
+  /** */
+  public abstract static class LoadingInformationServiceImplBase
+      implements io.grpc.BindableService {
 
-    /**
-     */
-    public void getLoadingInformation(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation> responseObserver) {
+    /** */
+    public void getLoadingInformation(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGetLoadingInformationMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void saveLoadingInformation(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse> responseObserver) {
+    /** */
+    public void saveLoadingInformation(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getSaveLoadingInformationMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void getLoadigInformationByVoyage(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver) {
+    /** */
+    public void getLoadigInformationByVoyage(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalReply>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGetLoadigInformationByVoyageMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void updateUllage(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay> responseObserver) {
+    /** */
+    public void updateUllage(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getUpdateUllageMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void generateLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
+    /** */
+    public void generateLoadingPlan(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGenerateLoadingPlanMethod(), responseObserver);
     }
 
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+    @java.lang.Override
+    public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getGetLoadingInformationMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>(
-                  this, METHODID_GET_LOADING_INFORMATION)))
+              getGetLoadingInformationMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>(
+                      this, METHODID_GET_LOADING_INFORMATION)))
           .addMethod(
-            getSaveLoadingInformationMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>(
-                  this, METHODID_SAVE_LOADING_INFORMATION)))
+              getSaveLoadingInformationMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>(this, METHODID_SAVE_LOADING_INFORMATION)))
           .addMethod(
-            getGetLoadigInformationByVoyageMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply>(
-                  this, METHODID_GET_LOADIG_INFORMATION_BY_VOYAGE)))
+              getGetLoadigInformationByVoyageMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationSynopticalRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationSynopticalReply>(
+                      this, METHODID_GET_LOADIG_INFORMATION_BY_VOYAGE)))
           .addMethod(
-            getUpdateUllageMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>(
-                  this, METHODID_UPDATE_ULLAGE)))
+              getUpdateUllageMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UpdateUllageLoadingRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UpdateUllageLoadingReplay>(this, METHODID_UPDATE_ULLAGE)))
           .addMethod(
-            getGenerateLoadingPlanMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest,
-                com.cpdss.common.generated.Common.ResponseStatus>(
-                  this, METHODID_GENERATE_LOADING_PLAN)))
+              getGenerateLoadingPlanMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoAlgoRequest,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_GENERATE_LOADING_PLAN)))
           .build();
     }
   }
 
-  /**
-   */
-  public static final class LoadingInformationServiceStub extends io.grpc.stub.AbstractAsyncStub<LoadingInformationServiceStub> {
+  /** */
+  public static final class LoadingInformationServiceStub
+      extends io.grpc.stub.AbstractAsyncStub<LoadingInformationServiceStub> {
     private LoadingInformationServiceStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -320,50 +458,73 @@ public final class LoadingInformationServiceGrpc {
       return new LoadingInformationServiceStub(channel, callOptions);
     }
 
-    /**
-     */
-    public void getLoadingInformation(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation> responseObserver) {
+    /** */
+    public void getLoadingInformation(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetLoadingInformationMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetLoadingInformationMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void saveLoadingInformation(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse> responseObserver) {
+    /** */
+    public void saveLoadingInformation(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getSaveLoadingInformationMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getSaveLoadingInformationMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void getLoadigInformationByVoyage(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver) {
+    /** */
+    public void getLoadigInformationByVoyage(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalReply>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetLoadigInformationByVoyageMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetLoadigInformationByVoyageMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void updateUllage(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay> responseObserver) {
+    /** */
+    public void updateUllage(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getUpdateUllageMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getUpdateUllageMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void generateLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
+    /** */
+    public void generateLoadingPlan(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGenerateLoadingPlanMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGenerateLoadingPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
   }
 
-  /**
-   */
-  public static final class LoadingInformationServiceBlockingStub extends io.grpc.stub.AbstractBlockingStub<LoadingInformationServiceBlockingStub> {
+  /** */
+  public static final class LoadingInformationServiceBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<LoadingInformationServiceBlockingStub> {
     private LoadingInformationServiceBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -375,45 +536,53 @@ public final class LoadingInformationServiceGrpc {
       return new LoadingInformationServiceBlockingStub(channel, callOptions);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation getLoadingInformation(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request) {
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
+        getLoadingInformation(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
+                request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadingInformationMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse saveLoadingInformation(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
+        saveLoadingInformation(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadingInformationMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply getLoadigInformationByVoyage(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest request) {
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .LoadingInformationSynopticalReply
+        getLoadigInformationByVoyage(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalRequest
+                request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadigInformationByVoyageMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay updateUllage(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getUpdateUllageMethod(), getCallOptions(), request);
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay
+        updateUllage(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+                request) {
+      return blockingUnaryCall(getChannel(), getUpdateUllageMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.Common.ResponseStatus generateLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request) {
+    /** */
+    public com.cpdss.common.generated.Common.ResponseStatus generateLoadingPlan(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request) {
       return blockingUnaryCall(
           getChannel(), getGenerateLoadingPlanMethod(), getCallOptions(), request);
     }
   }
 
-  /**
-   */
-  public static final class LoadingInformationServiceFutureStub extends io.grpc.stub.AbstractFutureStub<LoadingInformationServiceFutureStub> {
+  /** */
+  public static final class LoadingInformationServiceFutureStub
+      extends io.grpc.stub.AbstractFutureStub<LoadingInformationServiceFutureStub> {
     private LoadingInformationServiceFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -425,42 +594,53 @@ public final class LoadingInformationServiceGrpc {
       return new LoadingInformationServiceFutureStub(channel, callOptions);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation> getLoadingInformation(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+        getLoadingInformation(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
+                request) {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadingInformationMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse> saveLoadingInformation(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        saveLoadingInformation(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
       return futureUnaryCall(
           getChannel().newCall(getSaveLoadingInformationMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> getLoadigInformationByVoyage(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingInformationSynopticalReply>
+        getLoadigInformationByVoyage(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingInformationSynopticalRequest
+                request) {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadigInformationByVoyageMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay> updateUllage(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>
+        updateUllage(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
+                request) {
       return futureUnaryCall(
           getChannel().newCall(getUpdateUllageMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> generateLoadingPlan(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        generateLoadingPlan(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
+                request) {
       return futureUnaryCall(
           getChannel().newCall(getGenerateLoadingPlanMethod(), getCallOptions()), request);
     }
@@ -472,11 +652,11 @@ public final class LoadingInformationServiceGrpc {
   private static final int METHODID_UPDATE_ULLAGE = 3;
   private static final int METHODID_GENERATE_LOADING_PLAN = 4;
 
-  private static final class MethodHandlers<Req, Resp> implements
-      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
+  private static final class MethodHandlers<Req, Resp>
+      implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
     private final LoadingInformationServiceImplBase serviceImpl;
     private final int methodId;
 
@@ -490,24 +670,47 @@ public final class LoadingInformationServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GET_LOADING_INFORMATION:
-          serviceImpl.getLoadingInformation((com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>) responseObserver);
+          serviceImpl.getLoadingInformation(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>)
+                  responseObserver);
           break;
         case METHODID_SAVE_LOADING_INFORMATION:
-          serviceImpl.saveLoadingInformation((com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>) responseObserver);
+          serviceImpl.saveLoadingInformation(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>)
+                  responseObserver);
           break;
         case METHODID_GET_LOADIG_INFORMATION_BY_VOYAGE:
-          serviceImpl.getLoadigInformationByVoyage((com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply>) responseObserver);
+          serviceImpl.getLoadigInformationByVoyage(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingInformationSynopticalRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationSynopticalReply>)
+                  responseObserver);
           break;
         case METHODID_UPDATE_ULLAGE:
-          serviceImpl.updateUllage((com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingReplay>) responseObserver);
+          serviceImpl.updateUllage(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UpdateUllageLoadingReplay>)
+                  responseObserver);
           break;
         case METHODID_GENERATE_LOADING_PLAN:
-          serviceImpl.generateLoadingPlan((com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>) responseObserver);
+          serviceImpl.generateLoadingPlan(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -525,8 +728,9 @@ public final class LoadingInformationServiceGrpc {
     }
   }
 
-  private static abstract class LoadingInformationServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
+  private abstract static class LoadingInformationServiceBaseDescriptorSupplier
+      implements io.grpc.protobuf.ProtoFileDescriptorSupplier,
+          io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     LoadingInformationServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
@@ -568,14 +772,16 @@ public final class LoadingInformationServiceGrpc {
       synchronized (LoadingInformationServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
-          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-              .setSchemaDescriptor(new LoadingInformationServiceFileDescriptorSupplier())
-              .addMethod(getGetLoadingInformationMethod())
-              .addMethod(getSaveLoadingInformationMethod())
-              .addMethod(getGetLoadigInformationByVoyageMethod())
-              .addMethod(getUpdateUllageMethod())
-              .addMethod(getGenerateLoadingPlanMethod())
-              .build();
+          serviceDescriptor =
+              result =
+                  io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+                      .setSchemaDescriptor(new LoadingInformationServiceFileDescriptorSupplier())
+                      .addMethod(getGetLoadingInformationMethod())
+                      .addMethod(getSaveLoadingInformationMethod())
+                      .addMethod(getGetLoadigInformationByVoyageMethod())
+                      .addMethod(getUpdateUllageMethod())
+                      .addMethod(getGenerateLoadingPlanMethod())
+                      .build();
         }
       }
     }

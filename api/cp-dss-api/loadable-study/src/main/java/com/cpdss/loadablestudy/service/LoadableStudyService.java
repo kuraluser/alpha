@@ -96,7 +96,6 @@ import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
 import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
-import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
@@ -172,7 +171,6 @@ import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
 import com.cpdss.loadablestudy.entity.ApiTempHistory;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.JsonType;
@@ -275,7 +273,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -416,7 +413,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private LoadableStudyRuleService loadableStudyRuleService;
   @Autowired private CargoNominationService cargoNominationService;
-
 
   @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
 
@@ -622,12 +618,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.voyageService.saveVoyage(request, builder);
     } catch (Exception e) {
       log.error("Error in saving Voyage ", e);
-      builder.setResponseStatus(
-                  StatusReply.newBuilder()
-                      .setStatus(FAILED)
-                      .setMessage(FAILED)
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
-              .build();
+      builder
+          .setResponseStatus(
+              StatusReply.newBuilder()
+                  .setStatus(FAILED)
+                  .setMessage(FAILED)
+                  .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+          .build();
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
@@ -651,24 +648,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       loadableQuantityService.saveLoadableQuantity(loadableQuantityRequest, loadableQuantityReply);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable quantity", e);
-      loadableQuantityReply.
-              setResponseStatus(
-                  StatusReply.newBuilder()
-                      .setCode(e.getCode())
-                      .setMessage(e.getMessage())
-                      .setStatus(FAILED)
-                      .setStatusCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
-              .build();
+      loadableQuantityReply
+          .setResponseStatus(
+              StatusReply.newBuilder()
+                  .setCode(e.getCode())
+                  .setMessage(e.getMessage())
+                  .setStatus(FAILED)
+                  .setStatusCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+          .build();
     } catch (Exception e) {
       log.error("Error in saving loadable quantity ", e);
       loadableQuantityReply
-              .setResponseStatus(
-                  StatusReply.newBuilder()
-                      .setStatus(FAILED)
-                      .setMessage(FAILED)
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                      .setStatusCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
-              .build();
+          .setResponseStatus(
+              StatusReply.newBuilder()
+                  .setStatus(FAILED)
+                  .setMessage(FAILED)
+                  .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                  .setStatusCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+          .build();
     } finally {
       responseObserver.onNext(loadableQuantityReply.build());
       responseObserver.onCompleted();
@@ -951,7 +948,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       final LoadableStudy currentLoableStudy = entity;
       // save rules against saved loadable study(If duplicated LS)
       if (request.getDuplicatedFromId() != 0) {
-        loadableStudyRuleService.saveDuplicateLoadableStudyRules(listOfExistingLSRules, currentLoableStudy, request);
+        loadableStudyRuleService.saveDuplicateLoadableStudyRules(
+            listOfExistingLSRules, currentLoableStudy, request);
       }
       replyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -1215,7 +1213,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ValveSegregationRequest request, StreamObserver<ValveSegregationReply> responseObserver) {
     ValveSegregationReply.Builder reply = ValveSegregationReply.newBuilder();
     try {
-       cargoNominationService.getValveSegregation(request, reply);
+      cargoNominationService.getValveSegregation(request, reply);
     } catch (Exception e) {
       log.error("Error in getValveSegregation method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
@@ -1270,7 +1268,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity = new LoadableStudyPortRotation();
         entity.setLoadableStudy(loadableStudyOpt.get());
         // Add ports to synoptical table
-        synopticService.buildPortsInfoSynopticalTable(entity, request.getOperationId(), request.getPortId());
+        synopticService.buildPortsInfoSynopticalTable(
+            entity, request.getOperationId(), request.getPortId());
       } else {
         Optional<LoadableStudyPortRotation> portRoationOpt =
             this.loadableStudyPortRotationRepository.findById(request.getId());
@@ -1293,7 +1292,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               this.createPortRotationEntity(entity, request));
       if (portEdited) {
         this.synopticalTableRepository.deleteByPortRotationId(entity.getId());
-        synopticService.buildPortsInfoSynopticalTable(entity, request.getOperationId(), request.getPortId());
+        synopticService.buildPortsInfoSynopticalTable(
+            entity, request.getOperationId(), request.getPortId());
       }
       this.loadableStudyRepository.updateLoadableStudyIsPortsComplete(
           loadableStudyOpt.get().getId(), request.getIsPortsComplete());
@@ -1439,7 +1439,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableStudy loadableStudy,
       List<LoadableStudyPortRotation> dischargingPorts,
       List<Long> portIds) {
-    Long maxPortOrder = loadableStudyPortRotationService.findMaxPortOrderForLoadableStudy(loadableStudy);
+    Long maxPortOrder =
+        loadableStudyPortRotationService.findMaxPortOrderForLoadableStudy(loadableStudy);
     for (Long requestedPortId : portIds) {
       Optional<PortDetail> portOpt =
           portReply.getPortsList().stream()
@@ -1468,7 +1469,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         // add ports to synoptical table by reusing the function called by
         // port-rotation flow
-        synopticService.buildPortsInfoSynopticalTable(portRotationEntity, DISCHARGING_OPERATION_ID, port.getId());
+        synopticService.buildPortsInfoSynopticalTable(
+            portRotationEntity, DISCHARGING_OPERATION_ID, port.getId());
         dischargingPorts.add(portRotationEntity);
       }
     }
@@ -12698,7 +12700,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.newBuilder();
     try {
-       loadableStudyRuleService.getOrSaveRulesForLoadableStudy(request, builder);
+      loadableStudyRuleService.getOrSaveRulesForLoadableStudy(request, builder);
 
     } catch (Exception e) {
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

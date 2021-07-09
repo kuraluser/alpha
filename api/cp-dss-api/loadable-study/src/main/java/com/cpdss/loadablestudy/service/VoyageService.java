@@ -11,7 +11,6 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -181,20 +179,23 @@ public class VoyageService {
 
   /**
    * Save Voyage
+   *
    * @param request
    * @param builder
    * @return
    */
-  LoadableStudy.VoyageReply.Builder saveVoyage(LoadableStudy.VoyageRequest request, LoadableStudy.VoyageReply.Builder builder){
+  LoadableStudy.VoyageReply.Builder saveVoyage(
+      LoadableStudy.VoyageRequest request, LoadableStudy.VoyageReply.Builder builder) {
     // validation for duplicate voyages
     if (!voyageRepository
-            .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
-                    request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
-            .isEmpty()) {
+        .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
+            request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
+        .isEmpty()) {
       builder.setResponseStatus(
-              LoadableStudy.StatusReply.newBuilder()
-                      .setStatus(SUCCESS)
-                      .setMessage(SUCCESS).setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS)
+          LoadableStudy.StatusReply.newBuilder()
+              .setStatus(SUCCESS)
+              .setMessage(SUCCESS)
+              .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS)
               .build());
     } else {
 
@@ -206,68 +207,69 @@ public class VoyageService {
       voyage.setCaptainXId(request.getCaptainId());
       voyage.setChiefOfficerXId(request.getChiefOfficerId());
       voyage.setVoyageStartDate(
-              !StringUtils.isEmpty(request.getStartDate())
-                      ? LocalDateTime.from(
-                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getStartDate()))
-                      : null);
+          !StringUtils.isEmpty(request.getStartDate())
+              ? LocalDateTime.from(
+                  DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getStartDate()))
+              : null);
       voyage.setVoyageEndDate(
-              !StringUtils.isEmpty(request.getEndDate())
-                      ? LocalDateTime.from(
-                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
-                      : null);
+          !StringUtils.isEmpty(request.getEndDate())
+              ? LocalDateTime.from(
+                  DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
+              : null);
       voyage.setStartTimezoneId((long) request.getStartTimezoneId());
       voyage.setEndTimezoneId((long) request.getEndTimezoneId());
       voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
       voyage = voyageRepository.save(voyage);
       // when Db save is complete we return to client a success message
-      builder.setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
-              .setVoyageId(voyage.getId())
-              .build();
+      builder
+          .setResponseStatus(
+              LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
+          .setVoyageId(voyage.getId())
+          .build();
     }
     return builder;
   }
 
-
-  public LoadableStudy.VoyageListReply.Builder getVoyagesByVessel(LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder) {
+  public LoadableStudy.VoyageListReply.Builder getVoyagesByVessel(
+      LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder) {
     List<Voyage> entityList =
-            this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(
-                    request.getVesselId(), true);
+        this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(request.getVesselId(), true);
     for (Voyage entity : entityList) {
       LoadableStudy.VoyageDetail.Builder detailbuilder = LoadableStudy.VoyageDetail.newBuilder();
       detailbuilder.setId(entity.getId());
       detailbuilder.setVoyageNumber(entity.getVoyageNo());
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
       Optional.ofNullable(entity.getActualEndDate())
-              .ifPresent(
-                      actualEndDate -> detailbuilder.setActualEndDate(formatter.format(actualEndDate)));
+          .ifPresent(
+              actualEndDate -> detailbuilder.setActualEndDate(formatter.format(actualEndDate)));
       Optional.ofNullable(entity.getActualStartDate())
-              .ifPresent(
-                      actualStartDate ->
-                              detailbuilder.setActualStartDate(formatter.format(actualStartDate)));
+          .ifPresent(
+              actualStartDate ->
+                  detailbuilder.setActualStartDate(formatter.format(actualStartDate)));
       Optional.ofNullable(entity.getVoyageStartDate())
-              .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
+          .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
       ofNullable(entity.getVoyageEndDate())
-              .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
+          .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
       detailbuilder.setStatus(
-              entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
+          entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
       Optional.ofNullable(entity.getVoyageStatus())
-              .ifPresent(status -> detailbuilder.setStatusId(status.getId()));
+          .ifPresent(status -> detailbuilder.setStatusId(status.getId()));
       // fetch the confirmed loadable study for active voyages
       if (entity.getVoyageStatus() != null
-              && (STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())
+          && (STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())
               || STATUS_CLOSE.equalsIgnoreCase(entity.getVoyageStatus().getName()))) {
         Stream<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyStream =
-                ofNullable(entity.getLoadableStudies())
-                        .map(Collection::stream)
-                        .orElseGet(Stream::empty);
+            ofNullable(entity.getLoadableStudies())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty);
         Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
-                loadableStudyStream
-                        .filter(
-                                loadableStudyElement ->
-                                        (loadableStudyElement.getLoadableStudyStatus() != null
-                                                && STATUS_CONFIRMED.equalsIgnoreCase(
-                                                loadableStudyElement.getLoadableStudyStatus().getName())))
-                        .findFirst();
+            loadableStudyStream
+                .filter(
+                    loadableStudyElement ->
+                        (loadableStudyElement.getLoadableStudyStatus() != null
+                            && STATUS_CONFIRMED.equalsIgnoreCase(
+                                loadableStudyElement.getLoadableStudyStatus().getName())))
+                .findFirst();
 
         if (loadableStudy.isPresent()) {
           detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
@@ -283,8 +285,8 @@ public class VoyageService {
 
   private Long getNumberOfDays(com.cpdss.loadablestudy.entity.LoadableStudy entity) {
     LoadableStudyPortRotation lastPort =
-            this.loadableStudyPortRotationRepository
-                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(entity, true);
+        this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(entity, true);
     Long daysBetween = null;
 
     if (null != lastPort && null != lastPort.getEtd()) {
@@ -308,25 +310,25 @@ public class VoyageService {
       VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
 
       Voyage previousVoyage =
-              this.voyageRepository
-                      .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
-                              voyage.getVesselXId(), true, voyageStatus);
+          this.voyageRepository
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  voyage.getVesselXId(), true, voyageStatus);
       if (null == previousVoyage) {
         log.error("Could not find previous voyage of {}", voyage.getVoyageNo());
       } else {
         VoyageHistory voyageHistory =
-                this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(previousVoyage);
+            this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(previousVoyage);
         if (null == voyageHistory) {
           log.error("Could not find voyage history for voyage: {}", previousVoyage.getVoyageNo());
         } else {
           return this.cargoHistoryRepository.findCargoHistory(
-                  previousVoyage.getId(), voyageHistory.getLoadingPortId());
+              previousVoyage.getId(), voyageHistory.getLoadingPortId());
         }
       }
     } else {
       log.error(
-              "Voyage start/end date for voyage {} not set and hence, cargo history cannot be fetched",
-              voyage.getVoyageNo());
+          "Voyage start/end date for voyage {} not set and hence, cargo history cannot be fetched",
+          voyage.getVoyageNo());
     }
     return new ArrayList<>();
   }

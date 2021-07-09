@@ -236,7 +236,7 @@ public class LoadablePlanService {
     log.info("Port Rotation Ids From Loadable Plan Quantity, Size {}", lpPortRotationIds.size());
     if (!lpPortRotationIds.isEmpty()) { // all unique, because it fetch by distinct query
       for (Long id : lpPortRotationIds) {
-          LoadableStudyPortRotation lsPR = portRotationRepository.findByIdAndIsActive(id, true);
+        LoadableStudyPortRotation lsPR = portRotationRepository.findByIdAndIsActive(id, true);
         if (lsPR != null) {
           if (lsPR.getOperation().getId().equals(LOADING_OPERATION_ID)) {
             LoadableStudy.LoadingPortDetail.Builder a =

@@ -58,33 +58,32 @@ public class LoadableStudiesConstants {
   public static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
 
   public static final List<Long> CARGO_OPERATION_ARR_DEP_SYNOPTICAL =
-          Arrays.asList(
-                  LOADING_OPERATION_ID,
-                  DISCHARGING_OPERATION_ID,
-                  BUNKERING_OPERATION_ID,
-                  TRANSIT_OPERATION_ID,
-                  STS_LOADING_OPERATION_ID,
-                  STS_DISCHARGING_OPERATION_ID);
+      Arrays.asList(
+          LOADING_OPERATION_ID,
+          DISCHARGING_OPERATION_ID,
+          BUNKERING_OPERATION_ID,
+          TRANSIT_OPERATION_ID,
+          STS_LOADING_OPERATION_ID,
+          STS_DISCHARGING_OPERATION_ID);
 
   public static final List<Long> CARGO_TANK_CATEGORIES =
-          Arrays.asList(
-                  CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
 
   public static final List<Long> OHQ_TANK_CATEGORIES =
-          Arrays.asList(
-                  FRESH_WATER_TANK_CATEGORY_ID,
-                  FUEL_OIL_TANK_CATEGORY_ID,
-                  DIESEL_OIL_TANK_CATEGORY_ID,
-                  FUEL_VOID_TANK_CATEGORY_ID,
-                  FRESH_WATER_VOID_TANK_CATEGORY_ID);
+      Arrays.asList(
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          FUEL_VOID_TANK_CATEGORY_ID,
+          FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
   public static final List<Long> SYNOPTICAL_TABLE_TANK_CATEGORIES =
-          Arrays.asList(
-                  CARGO_TANK_CATEGORY_ID,
-                  CARGO_SLOP_TANK_CATEGORY_ID,
-                  FRESH_WATER_TANK_CATEGORY_ID,
-                  FUEL_OIL_TANK_CATEGORY_ID,
-                  DIESEL_OIL_TANK_CATEGORY_ID,
-                  BALLAST_TANK_CATEGORY_ID);
-
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID,
+          CARGO_SLOP_TANK_CATEGORY_ID,
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          BALLAST_TANK_CATEGORY_ID);
 }

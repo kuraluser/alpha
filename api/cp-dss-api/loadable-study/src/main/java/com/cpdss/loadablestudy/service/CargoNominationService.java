@@ -1,6 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static java.util.Optional.ofNullable;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
@@ -8,12 +12,10 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static java.util.Optional.ofNullable;
 
 /** @author arun.j */
 @Log4j2
@@ -143,14 +141,17 @@ public class CargoNominationService {
     return new HashSet<CargoNominationPortDetails>(Arrays.asList(portDetail));
   }
 
-  public LoadableStudy.CargoNominationReply.Builder saveCargoNomination(LoadableStudy.CargoNominationRequest request, LoadableStudy.CargoNominationReply.Builder cargoNominationReplyBuilder) throws GenericServiceException {
+  public LoadableStudy.CargoNominationReply.Builder saveCargoNomination(
+      LoadableStudy.CargoNominationRequest request,
+      LoadableStudy.CargoNominationReply.Builder cargoNominationReplyBuilder)
+      throws GenericServiceException {
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
-            this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+        this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     if (!loadableStudy.isPresent()) {
       throw new GenericServiceException(
-              "Loadable Study does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
+          "Loadable Study does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyRecord = loadableStudy.get();
     this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
@@ -160,34 +161,34 @@ public class CargoNominationService {
     List<Long> existingCargoPortIds = null;
     ApiTempHistory apiTempHistory = null;
     if (request.getCargoNominationDetail() != null
-            && request.getCargoNominationDetail().getId() != 0) {
+        && request.getCargoNominationDetail().getId() != 0) {
       Optional<CargoNomination> existingCargoNomination =
-              this.cargoNominationRepository.findByIdAndIsActive(
-                      request.getCargoNominationDetail().getId(), true);
+          this.cargoNominationRepository.findByIdAndIsActive(
+              request.getCargoNominationDetail().getId(), true);
       if (!existingCargoNomination.isPresent()) {
         throw new GenericServiceException(
-                "Cargo Nomination does not exist",
-                CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                HttpStatusCode.BAD_REQUEST);
+            "Cargo Nomination does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
       cargoNomination = existingCargoNomination.get();
 
       if (existingCargoNomination.get().getCargoXId()
-              != request.getCargoNominationDetail().getCargoId()) {
+          != request.getCargoNominationDetail().getCargoId()) {
         this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXIdAndCargoXId(
-                loadableStudyRecord.getId(), existingCargoNomination.get().getCargoXId());
+            loadableStudyRecord.getId(), existingCargoNomination.get().getCargoXId());
       }
 
       if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
         existingCargoPortIds =
-                cargoNomination.getCargoNominationPortDetails().stream()
-                        .map(CargoNominationPortDetails::getPortId)
-                        .collect(Collectors.toList());
+            cargoNomination.getCargoNominationPortDetails().stream()
+                .map(CargoNominationPortDetails::getPortId)
+                .collect(Collectors.toList());
       }
       cargoNomination = buildCargoNomination(cargoNomination, request, loadableStudyRecord);
       apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
     } else if (request.getCargoNominationDetail() != null
-            && request.getCargoNominationDetail().getId() == 0) {
+        && request.getCargoNominationDetail().getId() == 0) {
       cargoNomination = new CargoNomination();
       cargoNomination = buildCargoNomination(cargoNomination, request, loadableStudyRecord);
       apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
@@ -198,44 +199,46 @@ public class CargoNominationService {
     // validate if requested are already added as transit ports
     if (!cargoNomination.getCargoNominationPortDetails().isEmpty()) {
       List<Long> requestedPortIds =
-              cargoNomination.getCargoNominationPortDetails().stream()
-                      .map(CargoNominationPortDetails::getPortId)
-                      .collect(Collectors.toList());
+          cargoNomination.getCargoNominationPortDetails().stream()
+              .map(CargoNominationPortDetails::getPortId)
+              .collect(Collectors.toList());
       loadableStudyPortRotationService.validateTransitPorts(loadableStudyRecord, requestedPortIds);
     }
     // update loadable study level isCargoNominationComplete status
     if (request.getCargoNominationDetail() != null) {
       loadableStudyRecord.setIsCargoNominationComplete(
-              request.getCargoNominationDetail().getIsCargoNominationComplete());
+          request.getCargoNominationDetail().getIsCargoNominationComplete());
       this.loadableStudyRepository.save(loadableStudyRecord);
     }
 
     this.cargoNominationRepository.save(cargoNomination);
     this.apiTempHistoryRepository.save(apiTempHistory);
     this.updatePortRotationWithLoadingPorts(
-            loadableStudyRecord, cargoNomination, existingCargoPortIds);
+        loadableStudyRecord, cargoNomination, existingCargoPortIds);
     cargoNominationReplyBuilder
-            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS))
-            .setCargoNominationId((cargoNomination.getId() != null) ? cargoNomination.getId() : 0);
+        .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS))
+        .setCargoNominationId((cargoNomination.getId() != null) ? cargoNomination.getId() : 0);
     return cargoNominationReplyBuilder;
   }
 
   private CargoNomination buildCargoNomination(
-          CargoNomination cargoNomination, LoadableStudy.CargoNominationRequest request, com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy)
-          throws GenericServiceException {
+      CargoNomination cargoNomination,
+      LoadableStudy.CargoNominationRequest request,
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy)
+      throws GenericServiceException {
     if (!request.getCargoNominationDetail().getLoadingPortDetailsList().isEmpty()) {
       List<Long> requestedPortIds =
-              request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
-                      .map(LoadableStudy.LoadingPortDetail::getPortId)
-                      .collect(Collectors.toList());
+          request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
+              .map(LoadableStudy.LoadingPortDetail::getPortId)
+              .collect(Collectors.toList());
       List<Long> transitPorts =
-              this.loadableStudyPortRotationRepository.getTransitPorts(loadableStudy, requestedPortIds);
+          this.loadableStudyPortRotationRepository.getTransitPorts(loadableStudy, requestedPortIds);
       if (!CollectionUtils.isEmpty(transitPorts)) {
         throw new GenericServiceException(
-                "Ports exist as transit ports "
-                        + StringUtils.collectionToCommaDelimitedString(transitPorts),
-                CommonErrorCodes.E_CPDSS_TRANSIT_PORT_EXISTS,
-                HttpStatusCode.BAD_REQUEST);
+            "Ports exist as transit ports "
+                + StringUtils.collectionToCommaDelimitedString(transitPorts),
+            CommonErrorCodes.E_CPDSS_TRANSIT_PORT_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
       }
     }
     cargoNomination.setLoadableStudyXId(request.getCargoNominationDetail().getLoadableStudyId());
@@ -244,25 +247,25 @@ public class CargoNominationService {
     cargoNomination.setAbbreviation(request.getCargoNominationDetail().getAbbreviation());
     cargoNomination.setColor(request.getCargoNominationDetail().getColor());
     cargoNomination.setQuantity(
-            !StringUtils.isEmpty(request.getCargoNominationDetail().getQuantity())
-                    ? new BigDecimal(request.getCargoNominationDetail().getQuantity())
-                    : null);
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getQuantity())
+            ? new BigDecimal(request.getCargoNominationDetail().getQuantity())
+            : null);
     cargoNomination.setMaxTolerance(
-            !StringUtils.isEmpty(request.getCargoNominationDetail().getMaxTolerance())
-                    ? new BigDecimal(request.getCargoNominationDetail().getMaxTolerance())
-                    : null);
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getMaxTolerance())
+            ? new BigDecimal(request.getCargoNominationDetail().getMaxTolerance())
+            : null);
     cargoNomination.setMinTolerance(
-            !StringUtils.isEmpty(request.getCargoNominationDetail().getMinTolerance())
-                    ? new BigDecimal(request.getCargoNominationDetail().getMinTolerance())
-                    : null);
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getMinTolerance())
+            ? new BigDecimal(request.getCargoNominationDetail().getMinTolerance())
+            : null);
     cargoNomination.setApi(
-            !StringUtils.isEmpty(request.getCargoNominationDetail().getApiEst())
-                    ? new BigDecimal(request.getCargoNominationDetail().getApiEst())
-                    : null);
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getApiEst())
+            ? new BigDecimal(request.getCargoNominationDetail().getApiEst())
+            : null);
     cargoNomination.setTemperature(
-            !StringUtils.isEmpty(request.getCargoNominationDetail().getTempEst())
-                    ? new BigDecimal(request.getCargoNominationDetail().getTempEst())
-                    : null);
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getTempEst())
+            ? new BigDecimal(request.getCargoNominationDetail().getTempEst())
+            : null);
     cargoNomination.setSegregationXId(request.getCargoNominationDetail().getSegregationId());
     // activate the records to be saved
     cargoNomination.setIsActive(true);
@@ -272,21 +275,21 @@ public class CargoNominationService {
         cargoNomination.getCargoNominationPortDetails().clear();
       }
       Set<CargoNominationPortDetails> cargoNominationPortDetailsList =
-              request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
-                      .map(
-                              loadingPortDetail -> {
-                                CargoNominationPortDetails cargoNominationPortDetails =
-                                        new CargoNominationPortDetails();
-                                cargoNominationPortDetails.setCargoNomination(cargoNomination);
-                                cargoNominationPortDetails.setPortId(loadingPortDetail.getPortId());
-                                cargoNominationPortDetails.setQuantity(
-                                        !loadingPortDetail.getQuantity().isEmpty()
-                                                ? new BigDecimal(loadingPortDetail.getQuantity())
-                                                : null);
-                                cargoNominationPortDetails.setIsActive(true);
-                                return cargoNominationPortDetails;
-                              })
-                      .collect(Collectors.toSet());
+          request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
+              .map(
+                  loadingPortDetail -> {
+                    CargoNominationPortDetails cargoNominationPortDetails =
+                        new CargoNominationPortDetails();
+                    cargoNominationPortDetails.setCargoNomination(cargoNomination);
+                    cargoNominationPortDetails.setPortId(loadingPortDetail.getPortId());
+                    cargoNominationPortDetails.setQuantity(
+                        !loadingPortDetail.getQuantity().isEmpty()
+                            ? new BigDecimal(loadingPortDetail.getQuantity())
+                            : null);
+                    cargoNominationPortDetails.setIsActive(true);
+                    return cargoNominationPortDetails;
+                  })
+              .collect(Collectors.toSet());
       // clear any existing CargoNominationPortDetails otherwise create new
       if (cargoNomination.getCargoNominationPortDetails() != null) {
         cargoNomination.getCargoNominationPortDetails().addAll(cargoNominationPortDetailsList);
@@ -297,21 +300,23 @@ public class CargoNominationService {
     return cargoNomination;
   }
 
-  private ApiTempHistory buildApiTempHistory(CargoNomination cargoNomination, LoadableStudy.CargoNominationRequest request,
-          List<Long> existingCargoPortIds) {
+  private ApiTempHistory buildApiTempHistory(
+      CargoNomination cargoNomination,
+      LoadableStudy.CargoNominationRequest request,
+      List<Long> existingCargoPortIds) {
 
     Long portId = null;
     if (existingCargoPortIds != null && existingCargoPortIds.size() > 0) {
       portId = existingCargoPortIds.stream().findFirst().get();
     }
     return ApiTempHistory.builder()
-            .vesselId(request.getVesselId())
-            .cargoId(cargoNomination.getCargoXId())
-            .loadingPortId(portId != null ? portId : null)
-            .api(cargoNomination.getApi())
-            .isActive(true)
-            .temp(cargoNomination.getTemperature())
-            .build();
+        .vesselId(request.getVesselId())
+        .cargoId(cargoNomination.getCargoXId())
+        .loadingPortId(portId != null ? portId : null)
+        .api(cargoNomination.getApi())
+        .isActive(true)
+        .temp(cargoNomination.getTemperature())
+        .build();
   }
 
   /**
@@ -323,51 +328,52 @@ public class CargoNominationService {
    * @throws GenericServiceException
    */
   private void updatePortRotationWithLoadingPorts(
-          com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy, CargoNomination cargoNomination, List<Long> existingCargoPortIds)
-          throws GenericServiceException {
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
+      CargoNomination cargoNomination,
+      List<Long> existingCargoPortIds)
+      throws GenericServiceException {
     List<LoadableStudyPortRotation> loadableStudyPortRotations =
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
-                    loadableStudy, cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
+            loadableStudy, cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
     List<Long> requestedPortIds = null;
     List<Long> existingPortIds = null;
     if (!cargoNomination.getCargoNominationPortDetails().isEmpty()) {
       requestedPortIds =
-              cargoNomination.getCargoNominationPortDetails().stream()
-                      .map(CargoNominationPortDetails::getPortId)
-                      .collect(Collectors.toList());
+          cargoNomination.getCargoNominationPortDetails().stream()
+              .map(CargoNominationPortDetails::getPortId)
+              .collect(Collectors.toList());
     }
     if (!loadableStudyPortRotations.isEmpty()) {
       existingPortIds =
-              loadableStudyPortRotations.stream()
-                      .map(LoadableStudyPortRotation::getPortXId)
-                      .collect(Collectors.toList());
+          loadableStudyPortRotations.stream()
+              .map(LoadableStudyPortRotation::getPortXId)
+              .collect(Collectors.toList());
     }
     // remove existing cargo portIds from port rotation and synoptical if not
     // available in request
     if (!CollectionUtils.isEmpty(requestedPortIds)
-            && !CollectionUtils.isEmpty(existingCargoPortIds)) {
+        && !CollectionUtils.isEmpty(existingCargoPortIds)) {
       existingCargoPortIds.removeAll(requestedPortIds);
       if (!CollectionUtils.isEmpty(existingCargoPortIds)) {
         existingCargoPortIds.forEach(
-                existingPortId -> {
-                  Long otherCargoRefExistCount =
-                          this.cargoNominationRepository.getCountCargoNominationWithPortIds(
-                                  cargoNomination.getLoadableStudyXId(), cargoNomination, existingPortId);
-                  if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))) {
-                    loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
-                            loadableStudy, existingPortId);
-                    synopticalTableRepository.deleteSynopticalPorts(
-                            loadableStudy.getId(), existingPortId);
-                    onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
-                            loadableStudy, existingPortId);
-                  }
-                });
+            existingPortId -> {
+              Long otherCargoRefExistCount =
+                  this.cargoNominationRepository.getCountCargoNominationWithPortIds(
+                      cargoNomination.getLoadableStudyXId(), cargoNomination, existingPortId);
+              if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))) {
+                loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
+                    loadableStudy, existingPortId);
+                synopticalTableRepository.deleteSynopticalPorts(
+                    loadableStudy.getId(), existingPortId);
+                onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+                    loadableStudy, existingPortId);
+              }
+            });
       }
     }
 
     // Set port ordering after deletion
     loadableStudyPortRotationService.setPortOrdering(loadableStudy);
-
 
     // remove loading portIds from request which are already available in port
     // rotation for the
@@ -378,25 +384,26 @@ public class CargoNominationService {
     // fetch the specific ports attributes like waterDensity and draft values from
     // port master
     if (!CollectionUtils.isEmpty(requestedPortIds)) {
-      PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder = PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
+      PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder =
+          PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
       buildGetPortInfoByPortIdsRequest(reqBuilder, cargoNomination);
       PortInfo.PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
       if (portReply != null
-              && portReply.getResponseStatus() != null
-              && !SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
+          && portReply.getResponseStatus() != null
+          && !SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
-                "Error in calling port service",
-                CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                HttpStatusCode.INTERNAL_SERVER_ERROR);
+            "Error in calling port service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
       this.loadableStudyPortRotationRepository
-              .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
-              .forEach(
-                      portRotation -> {
-                        portRotation.setIsPortRotationOhqComplete(false);
-                      });
+          .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+          .forEach(
+              portRotation -> {
+                portRotation.setIsPortRotationOhqComplete(false);
+              });
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
       loadableStudy.setIsPortsComplete(false);
       this.loadableStudyRepository.save(loadableStudy);
@@ -406,9 +413,9 @@ public class CargoNominationService {
 
     AtomicLong newPortOrder = new AtomicLong(0);
     loadableStudyPortRotations.forEach(
-            portRotation -> {
-              portRotation.setPortOrder(newPortOrder.incrementAndGet());
-            });
+        portRotation -> {
+          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+        });
 
     this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
@@ -419,83 +426,90 @@ public class CargoNominationService {
    * @param cargoNomination
    */
   private void buildGetPortInfoByPortIdsRequest(
-          PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder, CargoNomination cargoNomination) {
+      PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder, CargoNomination cargoNomination) {
     // build fetch port details request object
     if (cargoNomination != null
-            && !CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+        && !CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
       cargoNomination
-              .getCargoNominationPortDetails()
-              .forEach(
-                      loadingPort -> {
-                        ofNullable(loadingPort.getPortId()).ifPresent(reqBuilder::addId);
-                      });
+          .getCargoNominationPortDetails()
+          .forEach(
+              loadingPort -> {
+                ofNullable(loadingPort.getPortId()).ifPresent(reqBuilder::addId);
+              });
     }
   }
 
   /**
    * Create Port rotation entities for each loading port from cargoNomination with pre-populate port
-   *    master attributes
+   * master attributes
+   *
    * @param loadableStudy
    * @param requestedPortIds
    * @param portReply
    */
   private void buildAndSaveLoadableStudyPortRotationEntities(
-          com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy, List<Long> requestedPortIds, PortInfo.PortReply portReply) {
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
+      List<Long> requestedPortIds,
+      PortInfo.PortReply portReply) {
     if (!CollectionUtils.isEmpty(requestedPortIds)
-            && portReply != null
-            && !CollectionUtils.isEmpty(portReply.getPortsList())) {
-      AtomicLong atomLong = new AtomicLong(loadableStudyPortRotationService.findMaxPortOrderForLoadableStudy(loadableStudy));
+        && portReply != null
+        && !CollectionUtils.isEmpty(portReply.getPortsList())) {
+      AtomicLong atomLong =
+          new AtomicLong(
+              loadableStudyPortRotationService.findMaxPortOrderForLoadableStudy(loadableStudy));
       List<LoadableStudyPortRotation> portRotationList = new ArrayList<>();
       requestedPortIds.stream()
-              .forEach(
-                      requestedPortId ->
-                              portReply.getPortsList().stream()
-                                      .filter(port -> Objects.equals(requestedPortId, port.getId()))
-                                      .forEach(
-                                              port -> {
-                                                LoadableStudyPortRotation portRotationEntity =
-                                                        new LoadableStudyPortRotation();
-                                                portRotationEntity.setLoadableStudy(loadableStudy);
-                                                portRotationEntity.setPortXId(port.getId());
-                                                portRotationEntity.setOperation(
-                                                        this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-                                                portRotationEntity.setSeaWaterDensity(
-                                                        !StringUtils.isEmpty(port.getWaterDensity())
-                                                                ? new BigDecimal(port.getWaterDensity())
-                                                                : null);
-                                                portRotationEntity.setMaxDraft(
-                                                        !StringUtils.isEmpty(port.getMaxDraft())
-                                                                ? new BigDecimal(port.getMaxDraft())
-                                                                : null);
-                                                portRotationEntity.setAirDraftRestriction(
-                                                        !StringUtils.isEmpty(port.getMaxAirDraft())
-                                                                ? new BigDecimal(port.getMaxAirDraft())
-                                                                : null);
-                                                portRotationEntity.setPortOrder(atomLong.incrementAndGet());
-                                                // add ports to synoptical table by reusing the function called by
-                                                // port-rotation flow
-                                                synopticService.buildPortsInfoSynopticalTable(
-                                                        portRotationEntity, LOADING_OPERATION_ID, port.getId());
-                                                portRotationList.add(portRotationEntity);
-                                              }));
+          .forEach(
+              requestedPortId ->
+                  portReply.getPortsList().stream()
+                      .filter(port -> Objects.equals(requestedPortId, port.getId()))
+                      .forEach(
+                          port -> {
+                            LoadableStudyPortRotation portRotationEntity =
+                                new LoadableStudyPortRotation();
+                            portRotationEntity.setLoadableStudy(loadableStudy);
+                            portRotationEntity.setPortXId(port.getId());
+                            portRotationEntity.setOperation(
+                                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+                            portRotationEntity.setSeaWaterDensity(
+                                !StringUtils.isEmpty(port.getWaterDensity())
+                                    ? new BigDecimal(port.getWaterDensity())
+                                    : null);
+                            portRotationEntity.setMaxDraft(
+                                !StringUtils.isEmpty(port.getMaxDraft())
+                                    ? new BigDecimal(port.getMaxDraft())
+                                    : null);
+                            portRotationEntity.setAirDraftRestriction(
+                                !StringUtils.isEmpty(port.getMaxAirDraft())
+                                    ? new BigDecimal(port.getMaxAirDraft())
+                                    : null);
+                            portRotationEntity.setPortOrder(atomLong.incrementAndGet());
+                            // add ports to synoptical table by reusing the function called by
+                            // port-rotation flow
+                            synopticService.buildPortsInfoSynopticalTable(
+                                portRotationEntity, LOADING_OPERATION_ID, port.getId());
+                            portRotationList.add(portRotationEntity);
+                          }));
       loadableStudyPortRotationRepository.saveAll(portRotationList);
     }
   }
 
-
-  public LoadableStudy.CargoNominationReply.Builder getCargoNominationById(LoadableStudy.CargoNominationRequest request, LoadableStudy.CargoNominationReply.Builder replyBuilder) throws GenericServiceException {
+  public LoadableStudy.CargoNominationReply.Builder getCargoNominationById(
+      LoadableStudy.CargoNominationRequest request,
+      LoadableStudy.CargoNominationReply.Builder replyBuilder)
+      throws GenericServiceException {
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
-            this.loadableStudyRepository.findById(request.getLoadableStudyId());
+        this.loadableStudyRepository.findById(request.getLoadableStudyId());
     if (!loadableStudyOpt.isPresent()) {
       throw new GenericServiceException(
-              "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+          "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
     }
     List<CargoNomination> cargoNominationList =
-            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
-                    request.getLoadableStudyId(), true);
+        this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
+            request.getLoadableStudyId(), true);
 
     List<ApiTempHistory> apiTempHistories =
-            apiTempHistoryRepository.findByOrderByCreatedDateTimeDesc();
+        apiTempHistoryRepository.findByOrderByCreatedDateTimeDesc();
 
     buildCargoNominationReply(cargoNominationList, apiTempHistories, replyBuilder);
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
@@ -503,149 +517,156 @@ public class CargoNominationService {
   }
 
   private void buildCargoNominationReply(
-          List<CargoNomination> cargoNominationList,
-          List<ApiTempHistory> apiTempHistoriesAll,
-          com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder
-                  cargoNominationReplyBuilder) {
+      List<CargoNomination> cargoNominationList,
+      List<ApiTempHistory> apiTempHistoriesAll,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder
+          cargoNominationReplyBuilder) {
     if (!CollectionUtils.isEmpty(cargoNominationList)) {
       cargoNominationList.forEach(
-              cargoNomination -> {
-                LoadableStudy.CargoNominationDetail.Builder builder = LoadableStudy.CargoNominationDetail.newBuilder();
-                ofNullable(cargoNomination.getId()).ifPresent(builder::setId);
-                ofNullable(cargoNomination.getLoadableStudyXId())
-                        .ifPresent(builder::setLoadableStudyId);
-                ofNullable(cargoNomination.getPriority()).ifPresent(builder::setPriority);
-                ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
-                ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
-                ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
-                Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
-                ofNullable(cargoNomination.getQuantity())
-                        .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
-                // build inner loadingPort details object
-                if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
-                  cargoNomination
-                          .getCargoNominationPortDetails()
-                          .forEach(
-                                  loadingPort -> {
-                                    LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
-                                            LoadableStudy.LoadingPortDetail.newBuilder();
-                                    ofNullable(loadingPort.getPortId())
-                                            .ifPresent(loadingPortDetailBuilder::setPortId);
-                                    ofNullable(loadingPort.getQuantity())
-                                            .ifPresent(
-                                                    quantity ->
-                                                            loadingPortDetailBuilder.setQuantity(String.valueOf(quantity)));
-                                    builder.addLoadingPortDetails(loadingPortDetailBuilder);
-                                  });
+          cargoNomination -> {
+            LoadableStudy.CargoNominationDetail.Builder builder =
+                LoadableStudy.CargoNominationDetail.newBuilder();
+            ofNullable(cargoNomination.getId()).ifPresent(builder::setId);
+            ofNullable(cargoNomination.getLoadableStudyXId())
+                .ifPresent(builder::setLoadableStudyId);
+            ofNullable(cargoNomination.getPriority()).ifPresent(builder::setPriority);
+            ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
+            ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
+            ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
+            Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
+            ofNullable(cargoNomination.getQuantity())
+                .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
+            // build inner loadingPort details object
+            if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+              cargoNomination
+                  .getCargoNominationPortDetails()
+                  .forEach(
+                      loadingPort -> {
+                        LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
+                            LoadableStudy.LoadingPortDetail.newBuilder();
+                        ofNullable(loadingPort.getPortId())
+                            .ifPresent(loadingPortDetailBuilder::setPortId);
+                        ofNullable(loadingPort.getQuantity())
+                            .ifPresent(
+                                quantity ->
+                                    loadingPortDetailBuilder.setQuantity(String.valueOf(quantity)));
+                        builder.addLoadingPortDetails(loadingPortDetailBuilder);
+                      });
+            }
+
+            if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+              CargoNominationPortDetails cargoNominationPortDetail =
+                  cargoNomination.getCargoNominationPortDetails().iterator().next();
+              if (cargoNomination.getCargoXId() != null
+                  && cargoNominationPortDetail.getPortId() != null) {
+
+                List<ApiTempHistory> apiTempHistories =
+                    apiTempHistoryRepository
+                        .findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
+                            cargoNominationPortDetail.getPortId(),
+                            cargoNomination.getCargoXId(),
+                            true);
+                if (!CollectionUtils.isEmpty(apiTempHistories)) {
+                  ApiTempHistory apiTempHistory = apiTempHistories.get(0);
+                  Optional.ofNullable(apiTempHistory.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(apiTempHistory.getTemp())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
                 }
+                Optional.ofNullable(cargoNomination.getApi())
+                    .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                Optional.ofNullable(cargoNomination.getTemperature())
+                    .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+              }
+            }
+            Optional.ofNullable(cargoNomination.getMaxTolerance())
+                .ifPresent(maxTolerance -> builder.setMaxTolerance(String.valueOf(maxTolerance)));
+            ofNullable(cargoNomination.getMinTolerance())
+                .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
+            ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
+            cargoNominationReplyBuilder.addCargoNominations(builder);
 
-                if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
-                  CargoNominationPortDetails cargoNominationPortDetail =
-                          cargoNomination.getCargoNominationPortDetails().iterator().next();
-                  if (cargoNomination.getCargoXId() != null
-                          && cargoNominationPortDetail.getPortId() != null) {
+            if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
 
-                    List<ApiTempHistory> apiTempHistories =
-                            apiTempHistoryRepository
-                                    .findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
-                                            cargoNominationPortDetail.getPortId(),
-                                            cargoNomination.getCargoXId(),
-                                            true);
-                    if (!CollectionUtils.isEmpty(apiTempHistories)) {
-                      ApiTempHistory apiTempHistory = apiTempHistories.get(0);
-                      Optional.ofNullable(apiTempHistory.getApi())
-                              .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                      Optional.ofNullable(apiTempHistory.getTemp())
-                              .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+              apiTempHistoriesAll.forEach(
+                  apiTempHistory -> {
+                    LoadableStudy.CargoHistoryDetail.Builder cargoBuilder =
+                        LoadableStudy.CargoHistoryDetail.newBuilder();
+
+                    Optional.ofNullable(apiTempHistory.getCargoId())
+                        .ifPresent(cargoBuilder::setCargoId);
+
+                    Optional.ofNullable(apiTempHistory.getVesselId())
+                        .ifPresent(cargoBuilder::setVesselId);
+
+                    Optional.ofNullable(apiTempHistory.getLoadingPortId())
+                        .ifPresent(cargoBuilder::setLoadingPortId);
+
+                    if (apiTempHistory.getApi() != null) {
+                      Optional.ofNullable(apiTempHistory.getApi().toString())
+                          .ifPresent(cargoBuilder::setApi);
                     }
-                    Optional.ofNullable(cargoNomination.getApi())
-                            .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
-                    Optional.ofNullable(cargoNomination.getTemperature())
-                            .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
-                  }
-                }
-                Optional.ofNullable(cargoNomination.getMaxTolerance())
-                        .ifPresent(maxTolerance -> builder.setMaxTolerance(String.valueOf(maxTolerance)));
-                ofNullable(cargoNomination.getMinTolerance())
-                        .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
-                ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
-                cargoNominationReplyBuilder.addCargoNominations(builder);
 
-                if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
+                    if (apiTempHistory.getTemp() != null) {
+                      Optional.ofNullable(apiTempHistory.getTemp().toString())
+                          .ifPresent(cargoBuilder::setTemperature);
+                    }
 
-                  apiTempHistoriesAll.forEach(
-                          apiTempHistory -> {
-                            LoadableStudy.CargoHistoryDetail.Builder cargoBuilder = LoadableStudy.CargoHistoryDetail.newBuilder();
-
-                            Optional.ofNullable(apiTempHistory.getCargoId())
-                                    .ifPresent(cargoBuilder::setCargoId);
-
-                            Optional.ofNullable(apiTempHistory.getVesselId())
-                                    .ifPresent(cargoBuilder::setVesselId);
-
-                            Optional.ofNullable(apiTempHistory.getLoadingPortId())
-                                    .ifPresent(cargoBuilder::setLoadingPortId);
-
-                            if (apiTempHistory.getApi() != null) {
-                              Optional.ofNullable(apiTempHistory.getApi().toString())
-                                      .ifPresent(cargoBuilder::setApi);
-                            }
-
-                            if (apiTempHistory.getTemp() != null) {
-                              Optional.ofNullable(apiTempHistory.getTemp().toString())
-                                      .ifPresent(cargoBuilder::setTemperature);
-                            }
-
-                            cargoNominationReplyBuilder.addCargoHistory(cargoBuilder);
-                          });
-                }
-              });
+                    cargoNominationReplyBuilder.addCargoHistory(cargoBuilder);
+                  });
+            }
+          });
     }
   }
 
-  public LoadableStudy.ValveSegregationReply.Builder getValveSegregation(LoadableStudy.ValveSegregationRequest request, LoadableStudy.ValveSegregationReply.Builder reply) {
+  public LoadableStudy.ValveSegregationReply.Builder getValveSegregation(
+      LoadableStudy.ValveSegregationRequest request,
+      LoadableStudy.ValveSegregationReply.Builder reply) {
     Iterable<CargoNominationValveSegregation> segregationsList =
-            valveSegregationRepository.findAll();
+        valveSegregationRepository.findAll();
     segregationsList.forEach(
-            segregation -> {
-              LoadableStudy.ValveSegregation.Builder segregationDetail = LoadableStudy.ValveSegregation.newBuilder();
-              if (segregation.getId() != null) {
-                segregationDetail.setId(segregation.getId());
-              }
-              if (!StringUtils.isEmpty(segregation.getName())) {
-                segregationDetail.setName(segregation.getName());
-              }
-              reply.addValveSegregation(segregationDetail);
-            });
+        segregation -> {
+          LoadableStudy.ValveSegregation.Builder segregationDetail =
+              LoadableStudy.ValveSegregation.newBuilder();
+          if (segregation.getId() != null) {
+            segregationDetail.setId(segregation.getId());
+          }
+          if (!StringUtils.isEmpty(segregation.getName())) {
+            segregationDetail.setName(segregation.getName());
+          }
+          reply.addValveSegregation(segregationDetail);
+        });
     Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
     responseStatus.setStatus(SUCCESS);
     reply.setResponseStatus(responseStatus);
     return reply;
   }
 
-  public LoadableStudy.CargoNominationReply.Builder deleteCargoNomination(LoadableStudy.CargoNominationRequest request, LoadableStudy.CargoNominationReply.Builder cargoNominationReplyBuilder) throws GenericServiceException {
+  public LoadableStudy.CargoNominationReply.Builder deleteCargoNomination(
+      LoadableStudy.CargoNominationRequest request,
+      LoadableStudy.CargoNominationReply.Builder cargoNominationReplyBuilder)
+      throws GenericServiceException {
     Optional<CargoNomination> existingCargoNomination =
-            this.cargoNominationRepository.findById(request.getCargoNominationId());
+        this.cargoNominationRepository.findById(request.getCargoNominationId());
     if (!existingCargoNomination.isPresent()) {
       throw new GenericServiceException(
-              "Cargo Nomination does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
+          "Cargo Nomination does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
     this.validateDeleteCargoNomination(existingCargoNomination.get());
 
     this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(
-            existingCargoNomination.get().getLoadableStudyXId());
+        existingCargoNomination.get().getLoadableStudyXId());
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
-            this.loadableStudyRepository.findById(
-                    existingCargoNomination.get().getLoadableStudyXId());
+        this.loadableStudyRepository.findById(existingCargoNomination.get().getLoadableStudyXId());
     if (loadableStudyOpt.isPresent()) {
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy = loadableStudyOpt.get();
       loadableStudy.setDischargeCargoNominationId(null);
       this.loadableStudyRepository.save(loadableStudy);
     }
     this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
-            request.getCargoNominationId());
+        request.getCargoNominationId());
     /*
      * delete respective loading ports from port rotation table if ports not
      * associated with any other cargo nomination belonging to the same loadable
@@ -653,27 +674,27 @@ public class CargoNominationService {
      */
     if (!existingCargoNomination.get().getCargoNominationPortDetails().isEmpty()) {
       List<Long> requestedPortIds =
-              existingCargoNomination.get().getCargoNominationPortDetails().stream()
-                      .map(CargoNominationPortDetails::getPortId)
-                      .collect(Collectors.toList());
+          existingCargoNomination.get().getCargoNominationPortDetails().stream()
+              .map(CargoNominationPortDetails::getPortId)
+              .collect(Collectors.toList());
       if (!CollectionUtils.isEmpty(requestedPortIds)) {
         requestedPortIds.forEach(
-                requestPortId -> {
-                  Long otherCargoRefExistCount =
-                          this.cargoNominationRepository.getCountCargoNominationWithPortIds(
-                                  existingCargoNomination.get().getLoadableStudyXId(),
-                                  existingCargoNomination.get(),
-                                  requestPortId);
-                  if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
-                          && loadableStudyOpt.isPresent()) {
-                    loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
-                            loadableStudyOpt.get(), requestPortId);
-                    synopticalTableRepository.deleteSynopticalPorts(
-                            loadableStudyOpt.get().getId(), requestPortId);
-                    onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
-                            loadableStudyOpt.get(), requestPortId);
-                  }
-                });
+            requestPortId -> {
+              Long otherCargoRefExistCount =
+                  this.cargoNominationRepository.getCountCargoNominationWithPortIds(
+                      existingCargoNomination.get().getLoadableStudyXId(),
+                      existingCargoNomination.get(),
+                      requestPortId);
+              if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
+                  && loadableStudyOpt.isPresent()) {
+                loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
+                    loadableStudyOpt.get(), requestPortId);
+                synopticalTableRepository.deleteSynopticalPorts(
+                    loadableStudyOpt.get().getId(), requestPortId);
+                onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+                    loadableStudyOpt.get(), requestPortId);
+              }
+            });
       }
     }
 
@@ -683,37 +704,40 @@ public class CargoNominationService {
     }
 
     this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
-    cargoNominationReplyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
+    cargoNominationReplyBuilder.setResponseStatus(
+        Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
     return cargoNominationReplyBuilder;
   }
 
   void validateDeleteCargoNomination(CargoNomination cargoNomination)
-          throws GenericServiceException {
+      throws GenericServiceException {
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> entityOpt =
-            this.loadableStudyRepository.findById(cargoNomination.getLoadableStudyXId());
+        this.loadableStudyRepository.findById(cargoNomination.getLoadableStudyXId());
     if (!entityOpt.isPresent()) {
       throw new GenericServiceException(
-              "Loadable study does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
+          "Loadable study does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
     this.voyageService.checkIfVoyageClosed(entityOpt.get().getVoyage().getId());
     loadablePatternService.isPatternGeneratedOrConfirmed(entityOpt.get());
   }
 
-  public LoadableStudy.CargoNominationDetailReply.Builder getCargoNominationByCargoNominationId(LoadableStudy.CargoNominationRequest request, LoadableStudy.CargoNominationDetailReply.Builder builder) {
+  public LoadableStudy.CargoNominationDetailReply.Builder getCargoNominationByCargoNominationId(
+      LoadableStudy.CargoNominationRequest request,
+      LoadableStudy.CargoNominationDetailReply.Builder builder) {
     CargoNomination cargoNomination =
-            this.cargoNominationRepository.getOne(request.getCargoNominationId());
+        this.cargoNominationRepository.getOne(request.getCargoNominationId());
     if (cargoNomination != null) {
       com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder cargoNom =
-              com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.newBuilder();
+          com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.newBuilder();
       cargoNom.setId(cargoNomination.getId());
       cargoNom.setAbbreviation(cargoNomination.getAbbreviation());
       cargoNom.setColor(cargoNomination.getColor());
       CargoInfo.CargoRequest.Builder cargoReq = CargoInfo.CargoRequest.newBuilder();
       cargoReq.setCargoId(cargoNomination.getCargoXId());
       com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
-              this.getCargoInfoById(cargoReq.build());
+          this.getCargoInfoById(cargoReq.build());
       cargoNom.setCargoName(cargoDetailReply.getCargoDetail().getCrudeType());
       cargoNom.setCargoId(cargoNomination.getCargoXId());
       builder.setCargoNominationdetail(cargoNom);
@@ -723,7 +747,7 @@ public class CargoNominationService {
   }
 
   public com.cpdss.common.generated.CargoInfo.CargoDetailReply getCargoInfoById(
-          CargoInfo.CargoRequest build) {
+      CargoInfo.CargoRequest build) {
     return cargoInfoGrpcService.getCargoInfoById(build);
   }
 }
