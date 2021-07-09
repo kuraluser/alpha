@@ -5,7 +5,6 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.scheduler.ExecuteTaskListener;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.service.CommunicationService;
-import com.cpdss.loadablestudy.service.LoadableStudyService;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

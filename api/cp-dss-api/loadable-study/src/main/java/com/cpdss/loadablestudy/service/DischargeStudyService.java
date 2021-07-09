@@ -67,6 +67,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      if (dischargeStudyRepository.existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
+          request.getName(), 2, voyage, true)) {
+        throw new GenericServiceException(
+            "name already exists",
+            CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       List<LoadableStudy> loadables =
           this.dischargeStudyRepository
               .findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
@@ -115,9 +123,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       builder.setId(savedDischargeStudy.getId());
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 
-    } catch (Exception e) {
+    } catch (GenericServiceException e) {
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
+    } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
     } finally {
       responseObserver.onNext(builder.build());
@@ -287,6 +304,16 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       detail.setName(updatedDischarge.getName());
       detail.setEnquiryDetails(updatedDischarge.getDetails());
       builder.setDischargeStudy(detail.build());
+    } catch (GenericServiceException e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
     } catch (Exception e) {
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       e.printStackTrace();

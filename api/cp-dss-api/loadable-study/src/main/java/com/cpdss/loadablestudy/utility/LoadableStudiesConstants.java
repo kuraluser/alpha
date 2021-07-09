@@ -47,6 +47,45 @@ public class LoadableStudiesConstants {
   public static final Long OPEN_VOYAGE_STATUS = 1L;
   public static final Long CONFIRMED_STATUS_ID = 2L;
   public static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
+  public static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
+  public static final String VOYAGE_EXISTS = "VOYAGE_EXISTS";
+  public static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
+  public static final String SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE = "DEP";
+  public static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
+  public static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
+  public static final Long CARGO_TANK_CATEGORY_ID = 1L;
+  public static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
+  public static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
+
+  public static final List<Long> CARGO_OPERATION_ARR_DEP_SYNOPTICAL =
+      Arrays.asList(
+          LOADING_OPERATION_ID,
+          DISCHARGING_OPERATION_ID,
+          BUNKERING_OPERATION_ID,
+          TRANSIT_OPERATION_ID,
+          STS_LOADING_OPERATION_ID,
+          STS_DISCHARGING_OPERATION_ID);
+
+  public static final List<Long> CARGO_TANK_CATEGORIES =
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
+
+  public static final List<Long> OHQ_TANK_CATEGORIES =
+      Arrays.asList(
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          FUEL_VOID_TANK_CATEGORY_ID,
+          FRESH_WATER_VOID_TANK_CATEGORY_ID);
+
+  public static final List<Long> SYNOPTICAL_TABLE_TANK_CATEGORIES =
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID,
+          CARGO_SLOP_TANK_CATEGORY_ID,
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          BALLAST_TANK_CATEGORY_ID);
   private static final Long LOAD_LINE_TROPICAL_TO_SUMMER_ID = 7L;
   private static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
   private static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
