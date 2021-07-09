@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.service.LoadableStudyService.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
@@ -13,6 +12,9 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.OperationsTable;
+import com.cpdss.loadablestudy.domain.PortDetails;
+import com.cpdss.loadablestudy.domain.PortOperationTable;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
@@ -27,6 +29,7 @@ import java.util.stream.IntStream;
 import javax.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -79,6 +82,8 @@ public class SynopticService {
   @Autowired private VoyageRepository voyageRepository;
 
   @Autowired private VoyageStatusRepository voyageStatusRepository;
+
+  @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -1265,5 +1270,134 @@ public class SynopticService {
     dataBuilder.setFinalDraftAft(valueOf(hog.add(calculatedDraftAft)));
     dataBuilder.setFinalDraftFwd(valueOf(hog.add(calculatedDraftFwd)));
     dataBuilder.setFinalDraftMid(valueOf(hog.add(calculatedDraftMid)));
+  }
+
+  /**
+   * Method to build port operations table
+   *
+   * @param loadableStudyId loadable study id value
+   * @param loadablePatterId loadable pattern id value
+   * @return PortOperationTable object
+   */
+  public PortOperationTable buildPortOperationsTable(long loadableStudyId, long loadablePatterId)
+      throws GenericServiceException {
+
+    //    Get loadable study port rotation details
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    ModelMapper modelMapper = new ModelMapper();
+    loadableStudyPortRotationService.buildLoadableStudyPortRotationDetails(
+        loadableStudyId, loadableStudy, modelMapper);
+
+    //    Get loadable study details
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyDetails =
+        loadableStudyRepository
+            .findByIdAndIsActive(loadableStudyId, true)
+            .orElseThrow(
+                () ->
+                    new GenericServiceException(
+                        String.format(
+                            "Loadable study details not found for LoadableStudyId: %d",
+                            loadableStudyId),
+                        CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                        HttpStatusCode.BAD_REQUEST));
+
+    //    Get port rotation details
+    loadableStudyPortRotationService.buildportRotationDetails(loadableStudyDetails, loadableStudy);
+
+    // Get loadicator data detail
+    List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
+        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+            loadablePatterId, true);
+
+    //    Set OperationsTable details
+    List<OperationsTable> operationsTableList = new ArrayList<>();
+    for (com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portDetails :
+        loadableStudy.getLoadableStudyPortRotation()) {
+
+      //      Get port rotations
+      LoadableStudyPortRotation loadableStudyPortRotation =
+          loadableStudyDetails.getPortRotations().stream()
+              .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
+              .findFirst()
+              .orElse(new LoadableStudyPortRotation());
+      Optional<SynopticalTable> arrSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  arrSynopticRecord.get(), loadablePatterId, true);
+      Optional<SynopticalTable> depSynopticRecord =
+          this.synopticalTableRepository
+              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+      SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
+          this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  depSynopticRecord.get(), loadablePatterId, true);
+      OperationsTable operationsTableData =
+          OperationsTable.builder()
+              .operation(loadableStudyPortRotation.getOperation().getName())
+              .portName(
+                  loadableStudy.getPortDetails().stream()
+                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                      .findFirst()
+                      .orElse(new PortDetails())
+                      .getName())
+              .eta(
+                  loadableStudyPortRotation.getEta() != null
+                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
+                          .format(loadableStudyPortRotation.getEta())
+                      : "")
+              .etd(
+                  loadableStudyPortRotation.getEtd() != null
+                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
+                          .format(loadableStudyPortRotation.getEtd())
+                      : "")
+              .country(
+                  loadableStudy.getPortDetails().stream()
+                      .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
+                      .findFirst()
+                      .orElse(new PortDetails())
+                      .getCountryName())
+              .laycanRange(
+                  String.format(
+                      "%s / %s",
+                      null != loadableStudyPortRotation.getLayCanFrom()
+                          ? loadableStudyPortRotation.getLayCanFrom()
+                          : "",
+                      null != loadableStudyPortRotation.getLayCanTo()
+                          ? loadableStudyPortRotation.getLayCanTo()
+                          : ""))
+              .arrFwdDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
+                      : "")
+              .depFwdDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                      ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
+                      : "")
+              .arrAftDraft(
+                  arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
+                      : "")
+              .depAftDraft(
+                  depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                      ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
+                      : "")
+              .arrDisplacement(
+                  arrSynopticRecord.get().getDisplacementPlanned() != null
+                      ? arrSynopticRecord.get().getDisplacementPlanned().toString()
+                      : "")
+              .depDisp(
+                  depSynopticRecord.get().getDisplacementPlanned() != null
+                      ? depSynopticRecord.get().getDisplacementPlanned().toString()
+                      : "")
+              .build();
+      operationsTableList.add(operationsTableData);
+    }
+    return PortOperationTable.builder().operationsTableList(operationsTableList).build();
   }
 }

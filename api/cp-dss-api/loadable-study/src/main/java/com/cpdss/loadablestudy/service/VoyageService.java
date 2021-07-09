@@ -5,7 +5,10 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoHistory;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,8 +51,21 @@ public class VoyageService {
 
   @Autowired private CargoHistoryRepository cargoHistoryRepository;
 
+  @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+
+  @Autowired private LoadableStudyRepository loadableStudyRepository;
+
+  @Autowired private CargoNominationRepository cargoNominationRepository;
+
+  @Autowired private ApiTempHistoryRepository apiTempHistoryRepository;
+
+  @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
+
   @Value("${loadablestudy.voyage.day.difference}")
   private String dayDifference;
+
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
 
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
@@ -331,5 +348,341 @@ public class VoyageService {
           voyage.getVoyageNo());
     }
     return new ArrayList<>();
+  }
+
+  void checkIfVoyageActive(Long voyageId) throws GenericServiceException {
+    Voyage voyage = this.voyageRepository.findByIdAndIsActive(voyageId, true);
+    if (null != voyage
+        && null != voyage.getVoyageStatus()
+        && voyage.getVoyageStatus().getId().equals(ACTIVE_VOYAGE_STATUS)) {
+      throw new GenericServiceException(
+          "Save not allowed for active voyage",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  public LoadableStudy.SaveVoyageStatusReply.Builder saveVoyageStatus(
+      LoadableStudy.SaveVoyageStatusRequest request,
+      LoadableStudy.SaveVoyageStatusReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Voyage voyageEntity = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+
+    if (null == voyageEntity) {
+      throw new GenericServiceException(
+          " Voyage does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    Stream<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyStream =
+        Optional.ofNullable(voyageEntity.getLoadableStudies())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty);
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
+        loadableStudyStream
+            .filter(
+                loadableStudyElement ->
+                    (loadableStudyElement.getLoadableStudyStatus() != null
+                        && STATUS_CONFIRMED.equalsIgnoreCase(
+                            loadableStudyElement.getLoadableStudyStatus().getName())))
+            .findFirst();
+
+    if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
+      List<Voyage> activeVoyage =
+          this.voyageRepository.findByVoyageStatusAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+      if (!activeVoyage.isEmpty()) {
+        throw new GenericServiceException(
+            "Active Voyage already exist",
+            CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      if (!loadableStudy.isPresent()) {
+        throw new GenericServiceException(
+            "Confirmed Loadable study does not exist",
+            CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      Optional<VoyageStatus> status =
+          this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+      if (!status.isPresent()) {
+        throw new GenericServiceException(
+            "Voyage status does not  exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      voyageEntity.setVoyageStatus(status.get());
+
+      if (request.getActualStartDate().isEmpty()) {
+        LoadableStudyPortRotation minPortOrderEntity =
+            this.loadableStudyPortRotationRepository
+                .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(loadableStudy.get(), true);
+
+        if (null != minPortOrderEntity) {
+          List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
+          if (!synopticalData.isEmpty()) {
+            Optional<SynopticalTable> synoptical =
+                synopticalData.stream()
+                    .filter(
+                        data ->
+                            data.getLoadableStudyPortRotation()
+                                    .getId()
+                                    .equals(minPortOrderEntity.getId())
+                                && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(data.getOperationType()))
+                    .findAny();
+            if (synoptical.isPresent()) {
+              voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
+            }
+          }
+        }
+      } else {
+        voyageEntity.setActualStartDate(
+            !StringUtils.isEmpty(request.getActualStartDate())
+                ? LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualStartDate()))
+                : null);
+      }
+      // Synchronizing with Loading Plan Microservice
+      loadableStudy.get().getPortRotations().stream()
+          .filter(portRotation -> portRotation.isActive())
+          .forEach(
+              portRotation -> {
+                LoadingPlanModels.LoadingPlanSyncDetails.Builder builder =
+                    LoadingPlanModels.LoadingPlanSyncDetails.newBuilder();
+                Optional<LoadablePattern> confirmedLoadablePatternOpt =
+                    this.loadablePatternRepository
+                        .findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+                            loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+                if (confirmedLoadablePatternOpt.isPresent()) {
+                  buildLoadingPlanSyncDetails(
+                      builder,
+                      confirmedLoadablePatternOpt.get(),
+                      portRotation,
+                      request.getVoyageId());
+                  //                    LoadablePlanDetailsReply.Builder planDetailsReplyBuilder =
+                  //                        LoadablePlanDetailsReply.newBuilder();
+                  //                    try {
+                  //                      buildLoadablePlanDetails(
+                  //                          confirmedLoadablePatternOpt,
+                  // planDetailsReplyBuilder);
+                  //
+                  // builder.setLoadablePlanDetailsReply(planDetailsReplyBuilder);
+                  //                    } catch (GenericServiceException e) {
+                  //                      log.error(
+                  //                          "Could not build loadable plan details for loading
+                  // pattern "
+                  //                              + confirmedLoadablePatternOpt.get().getId());
+                  //                      e.printStackTrace();
+                  //                    }
+                }
+                LoadingPlanModels.LoadingPlanSyncReply loadablePlanSyncReply =
+                    this.loadingPlanSynchronization(builder.build());
+                if (loadablePlanSyncReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+                  log.info(
+                      "Loading plan synchronization successful for loadable pattern "
+                          + confirmedLoadablePatternOpt.get().getId());
+                } else {
+                  log.error(
+                      "Loading plan synchronization failed for loadable pattern "
+                          + confirmedLoadablePatternOpt.get().getId());
+                }
+              });
+    } else {
+      Optional<VoyageStatus> status =
+          this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
+      if (!status.isPresent()) {
+        throw new GenericServiceException(
+            "Voyage status does not  exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      voyageEntity.setVoyageStatus(status.get());
+
+      if (request.getActualEndDate().isEmpty()) {
+        LoadableStudyPortRotation maxPortOrderEntity =
+            this.loadableStudyPortRotationRepository
+                .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(loadableStudy.get(), true);
+        if (maxPortOrderEntity != null) {
+          List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
+          if (!synopticalData.isEmpty()) {
+            Optional<SynopticalTable> synoptical =
+                synopticalData.stream()
+                    .filter(
+                        data ->
+                            data.getLoadableStudyPortRotation()
+                                    .getId()
+                                    .equals(maxPortOrderEntity.getId())
+                                && SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(
+                                    data.getOperationType()))
+                    .findAny();
+
+            if (synoptical.isPresent()) {
+              voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
+            }
+          }
+        }
+      } else {
+        voyageEntity.setActualEndDate(
+            !StringUtils.isEmpty(request.getActualEndDate())
+                ? LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
+                : null);
+      }
+    }
+    this.voyageRepository.save(voyageEntity);
+    try {
+      this.updateApiTempWithCargoNominations(voyageEntity);
+    } catch (Exception e) {
+      log.info("Voyage Close, update api-temp - Failed {} - {}", e.getMessage(), e);
+    }
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
+
+  private void buildLoadingPlanSyncDetails(
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
+    buildLoadingInformationDetails(builder, loadablePattern, portRotation, voyageId);
+    buildCargoToppingOffSequence(builder, loadablePattern, portRotation);
+  }
+
+  private LoadingPlanModels.LoadingPlanSyncReply loadingPlanSynchronization(
+      LoadingPlanModels.LoadingPlanSyncDetails request) {
+    return this.loadingPlanService.loadingPlanSynchronization(request);
+  }
+
+  /**
+   * This operation can work async, Data is adding to Api-History Table
+   *
+   * <p>Data means, the active loadable-pattern (cargo, port, api, temp etc)
+   *
+   * @param voyage -
+   */
+  public void updateApiTempWithCargoNominations(Voyage voyage) {
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
+        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+            voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+    if (loadableStudy.isPresent()) {
+      log.info("Voyage Close, update api-temp - ls id {}", loadableStudy.get().getId());
+      Optional<LoadablePattern> pattern =
+          loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+              loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+      if (pattern.isPresent()) {
+        log.info("Voyage Close, update api-temp - lp id {}", pattern.get().getId());
+        List<CargoNomination> nominations =
+            cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+                loadableStudy.get().getId(), true);
+        log.info("Voyage Close, cargo nomination size - {}", nominations.size());
+        for (CargoNomination nomi : nominations) {
+          for (CargoNominationPortDetails cnPd : nomi.getCargoNominationPortDetails()) {
+            ApiTempHistory apiHis =
+                this.buildApiTempHistoryByPortId(voyage.getVesselXId(), nomi, cnPd.getPortId());
+            this.saveApiTempWithPortDetails(apiHis);
+          }
+        }
+      }
+    }
+  }
+
+  private void buildLoadingInformationDetails(
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
+    builder.getLoadingInformationDetailBuilder().setLoadablePatternId(loadablePattern.getId());
+    builder.getLoadingInformationDetailBuilder().setPortId(portRotation.getPortXId());
+    builder.getLoadingInformationDetailBuilder().setVoyageId(voyageId);
+    Optional<SynopticalTable> synopticalTableOpt =
+        portRotation.getSynopticalTable().stream()
+            .filter(
+                synopticalTable ->
+                    synopticalTable.getIsActive()
+                        && synopticalTable
+                            .getOperationType()
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
+            .findFirst();
+    if (synopticalTableOpt.isPresent()) {
+      builder
+          .getLoadingInformationDetailBuilder()
+          .setSynopticalTableId(synopticalTableOpt.get().getId());
+      builder.getLoadingInformationDetailBuilder().setPortRotationId(portRotation.getId());
+    }
+    builder
+        .getLoadingInformationDetailBuilder()
+        .setVesselId(loadablePattern.getLoadableStudy().getVesselXId());
+  }
+
+  /** Fetch the api and temp history for cargo and port ids if available */
+  private void buildCargoToppingOffSequence(
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation) {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
+        this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            loadablePattern.getId(), true);
+    this.toppingOffSequenceRepository.findByLoadablePatternAndIsActive(loadablePattern, true)
+        .stream()
+        .forEach(
+            toppingSequence -> {
+              LoadingPlanModels.CargoToppingOffSequence.Builder sequenceBuilder =
+                  LoadingPlanModels.CargoToppingOffSequence.newBuilder();
+              Optional.ofNullable(toppingSequence.getCargoXId())
+                  .ifPresent(sequenceBuilder::setCargoXId);
+              Optional.ofNullable(toppingSequence.getLoadablePattern().getId())
+                  .ifPresent(sequenceBuilder::setLoadablePatternId);
+              Optional.ofNullable(toppingSequence.getOrderNumber())
+                  .ifPresent(sequenceBuilder::setOrderNumber);
+              Optional.ofNullable(toppingSequence.getTankXId())
+                  .ifPresent(sequenceBuilder::setTankXId);
+              Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailOpt =
+                  loadablePatternCargoDetails.stream()
+                      .filter(
+                          details ->
+                              details.getPortRotationId().equals(portRotation.getId())
+                                  && details.getTankId().equals(sequenceBuilder.getTankXId()))
+                      .findAny();
+              if (cargoDetailOpt.isPresent()) {
+                Optional.ofNullable(cargoDetailOpt.get().getApi())
+                    .ifPresent(api -> sequenceBuilder.setApi(String.valueOf(api)));
+                Optional.ofNullable(cargoDetailOpt.get().getTemperature())
+                    .ifPresent(
+                        temperature -> sequenceBuilder.setTemperature(String.valueOf(temperature)));
+                Optional.ofNullable(cargoDetailOpt.get().getCorrectedUllage())
+                    .ifPresent(ullage -> sequenceBuilder.setUllage(String.valueOf(ullage)));
+                Optional.ofNullable(cargoDetailOpt.get().getPlannedQuantity())
+                    .ifPresent(weight -> sequenceBuilder.setWeight(String.valueOf(weight)));
+                Optional.ofNullable(cargoDetailOpt.get().getFillingRatio())
+                    .ifPresent(
+                        fillingRatio ->
+                            sequenceBuilder.setFillingRatio(String.valueOf(fillingRatio)));
+              }
+              Optional.ofNullable(toppingSequence.getDisplayOrder())
+                  .ifPresent(sequenceBuilder::setDisplayOrder);
+              Optional.ofNullable(toppingSequence.getPortRotationXId())
+                  .ifPresent(sequenceBuilder::setPortRotationId);
+              builder.addCargoToppingOffSequences(sequenceBuilder.build());
+            });
+  }
+
+  public void saveApiTempWithPortDetails(ApiTempHistory apiTempHistory) {
+    apiTempHistoryRepository.save(apiTempHistory);
+    log.info("Voyage Close, new api-history - {}", apiTempHistory.getId());
+  }
+
+  private ApiTempHistory buildApiTempHistoryByPortId(
+      Long vesselId, CargoNomination cargoNomination, Long portId) {
+    return ApiTempHistory.builder()
+        .vesselId(vesselId)
+        .cargoId(cargoNomination.getCargoXId())
+        .loadingPortId(portId)
+        .loadedDate(cargoNomination.getLastModifiedDateTime())
+        .year(cargoNomination.getLastModifiedDateTime().getYear())
+        .month(cargoNomination.getLastModifiedDateTime().getMonth().getValue())
+        .date(cargoNomination.getLastModifiedDateTime().getDayOfMonth())
+        .api(cargoNomination.getApi())
+        .isActive(true)
+        .temp(cargoNomination.getTemperature())
+        .build();
   }
 }
