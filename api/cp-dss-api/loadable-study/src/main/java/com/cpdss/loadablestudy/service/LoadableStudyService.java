@@ -184,7 +184,6 @@ import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.JsonData;
-import com.cpdss.loadablestudy.entity.JsonType;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
@@ -223,8 +222,6 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
-import com.cpdss.loadablestudy.repository.JsonDataRepository;
-import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
@@ -255,7 +252,6 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
-import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -264,9 +260,8 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import io.grpc.stub.StreamObserver;
-import java.awt.*;
+
 import java.awt.Color;
-import java.io.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -422,8 +417,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @Autowired private ApiTempHistoryRepository apiTempHistoryRepository;
 
-  @Autowired private JsonDataRepository jsonDataRepository;
-  @Autowired private JsonTypeRepository jsonTypeRepository;
+
 
   @Autowired private LoadablePlanService loadablePlanService;
 
@@ -448,7 +442,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long STS_LOADING_OPERATION_ID = 5L;
   private static final Long STS_DISCHARGING_OPERATION_ID = 6L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
-  private static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 4L;
+
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
   private static final Long LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID = 7L;
   private static final Long LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_COMPLETED_ID = 8L;
@@ -583,7 +577,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long OPEN_VOYAGE_STATUS = 1L;
 
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
-
+  @Autowired private JsonDataService jsonDataService;
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -605,7 +599,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceBlockingStub loadingPlanService;
 
-  private static final Long LOADABLE_STUDY_REQUEST = 1L;
+
   private static final Long LOADABLE_STUDY_LOADICATOR_REQUEST = 3L;
   private static final Long LOADABLE_STUDY_LOADICATOR_RESPONSE = 4L;
   private static final Long LOADABLE_PATTERN_EDIT_REQUEST = 5L;
@@ -5283,7 +5277,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
         loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
         ObjectMapper objectMapper = new ObjectMapper();
-        this.saveJsonToDatabase(
+        this.jsonDataService.saveJsonToDatabase(
             request.getLoadablePatternId(),
             LOADABLE_PATTERN_EDIT_REQUEST,
             objectMapper.writeValueAsString(loadabalePatternValidateRequest));
@@ -5936,7 +5930,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (loadableStudyOpt.isPresent()) {
         this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
-        this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
+        this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyOpt.get());
         this.validateLoadableStudyWithCommingle(loadableStudyOpt.get());
         ModelMapper modelMapper = new ModelMapper();
         com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
@@ -5953,9 +5947,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 this.rootFolder + "/json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
             loadableStudy);
 
-        this.saveJsonToDatabase(
+        this.jsonDataService.saveJsonToDatabase(
             request.getLoadableStudyId(),
-            LOADABLE_STUDY_REQUEST,
+            LoadableStudiesConstants.LOADABLE_STUDY_REQUEST,
             objectMapper.writeValueAsString(loadableStudy));
         /** **Calling EW for communication server */
         // uncomment with communication service implementation
@@ -6116,26 +6110,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         });
   }
 
-  private void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
-    List<PortRotationIdAndPortId> ports =
-        loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(ls.getId(), true);
-    boolean valid = false;
-    for (PortRotationIdAndPortId port : ports) {
-      Optional<LoadableQuantity> lQs =
-          loadableQuantityRepository.findByLSIdAndPortRotationId(ls.getId(), port.getId(), true);
-      if (lQs.isPresent()) {
-        valid = true;
-        break;
-      }
-    }
-    if (!valid) {
-      log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
-      throw new GenericServiceException(
-          "No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
-          CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
-  }
+
 
   public void saveLoadablePatternDetails(
       String patternResultJson, AlgoResponseCommunication.Builder load) {
@@ -6157,7 +6132,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       updateProcessIdForLoadableStudy(
           patternResult.getProcesssId(),
           loadableStudyOpt.get(),
-          LOADABLE_STUDY_PROCESSING_STARTED_ID);
+          LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID);
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
           LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, patternResult.getProcesssId(), true);
       if (patternResult.getLoadablePlanDetailsList().isEmpty()) {
@@ -6237,7 +6212,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param modelMapper void
    * @throws GenericServiceException
    */
-  private void buildLoadableStudy(
+  public void buildLoadableStudy(
       Long loadableStudyId,
       LoadableStudy loadableStudyOpt,
       com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
@@ -6832,9 +6807,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ignoringUnknownFields()
               .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
           algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
-          Optional<JsonData> patternJson =
-              this.jsonDataRepository.findByJsonTypeXIdAndReferenceXId(
-                  LOADABLE_STUDY_RESULT_JSON_ID, loadableStudyOpt.get().getId());
+          Optional<JsonData> patternJson = this.jsonDataService.getJsonData(loadableStudyOpt.get().getId(),LOADABLE_STUDY_RESULT_JSON_ID);
           if (patternJson != null) {
             LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
                 LoadablePatternAlgoRequest.newBuilder();
@@ -6908,7 +6881,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
                     + ".json"),
             loadicator);
-        this.saveJsonToDatabase(
+        this.jsonDataService.saveJsonToDatabase(
             request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
             LOADABLE_PATTERN_EDIT_LOADICATOR_REQUEST,
             objectMapper.writeValueAsString(loadicator));
@@ -6917,7 +6890,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             new File(
                 this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
             loadicator);
-        this.saveJsonToDatabase(
+        this.jsonDataService.saveJsonToDatabase(
             request.getLoadableStudyId(),
             LOADABLE_STUDY_LOADICATOR_REQUEST,
             objectMapper.writeValueAsString(loadicator));
@@ -6946,7 +6919,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
                     + ".json"),
             response);
-        this.saveJsonToDatabase(
+        this.jsonDataService.saveJsonToDatabase(
             request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
             LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE,
             objectMapper.writeValueAsString(response));
@@ -6958,7 +6931,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     + request.getLoadableStudyId()
                     + ".json"),
             response);
-        this.saveJsonToDatabase(
+        this.jsonDataService.saveJsonToDatabase(
             request.getLoadableStudyId(),
             LOADABLE_STUDY_LOADICATOR_RESPONSE,
             objectMapper.writeValueAsString(response));
@@ -13811,7 +13784,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public void saveJson(JsonRequest request, StreamObserver<StatusReply> responseObserver) {
     StatusReply.Builder replyBuilder = StatusReply.newBuilder();
     try {
-      this.saveJsonToDatabase(request.getReferenceId(), request.getJsonTypeId(), request.getJson());
+      this.jsonDataService.saveJsonToDatabase(request.getReferenceId(), request.getJsonTypeId(), request.getJson());
       replyBuilder = StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS);
     } catch (Exception e) {
       log.error("Exception occured while trying to save JSON to database.", e);
@@ -13826,25 +13799,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  /**
-   * @param referenceId
-   * @param jsonTypeId
-   * @param json
-   */
-  public void saveJsonToDatabase(Long referenceId, Long jsonTypeId, String json) {
-    Optional<JsonType> jsonTypeOpt = jsonTypeRepository.findByIdAndIsActive(jsonTypeId, true);
-
-    if (jsonTypeOpt.isPresent()) {
-      JsonData jsonData = new JsonData();
-      jsonData.setReferenceXId(referenceId);
-      jsonData.setJsonTypeXId(jsonTypeOpt.get());
-      jsonData.setJsonData(json);
-      jsonDataRepository.save(jsonData);
-      log.info(String.format("Saved %s JSON in database.", jsonTypeOpt.get().getTypeName()));
-    } else {
-      log.error("Cannot find JSON type in database.");
-    }
-  }
 
   void checkIfVoyageActive(Long voyageId) throws GenericServiceException {
     Voyage voyage = this.voyageRepository.findByIdAndIsActive(voyageId, true);
@@ -14787,92 +14741,5 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
-  }
-
-  @Autowired private LoadableStudyServiceShore loadableStudyServiceShore;
-
-  public void saveLoadableStudyShore(Map<String, String> taskReqParams) {
-
-    try {
-      EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
-      if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to get Result from Communication Server",
-            erReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-      }
-      String jsonResult = erReply.getPatternResultJson();
-      LoadableStudy loadableStudyEntity =
-          loadableStudyServiceShore.setLoadablestudyShore(jsonResult, erReply.getMessageId());
-      if (loadableStudyEntity != null) {
-        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
-        this.validateLoadableStudyWithLQ(loadableStudyEntity);
-        ModelMapper modelMapper = new ModelMapper();
-        com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-            new com.cpdss.loadablestudy.domain.LoadableStudy();
-
-        buildLoadableStudy(
-            loadableStudyEntity.getId(), loadableStudyEntity, loadableStudy, modelMapper);
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        objectMapper.writeValue(
-            new File(
-                this.rootFolder
-                    + "/json/loadableStudyFromShip_"
-                    + loadableStudyEntity.getId()
-                    + ".json"),
-            loadableStudy);
-
-        this.saveJsonToDatabase(
-            loadableStudyEntity.getId(),
-            LOADABLE_STUDY_REQUEST,
-            objectMapper.writeValueAsString(loadableStudy));
-
-        AlgoResponse algoResponse =
-            restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
-        updateProcessIdForLoadableStudy(
-            algoResponse.getProcessId(), loadableStudyEntity, LOADABLE_STUDY_PROCESSING_STARTED_ID);
-
-        loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
-      }
-
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException when generating pattern", e);
-
-    } catch (ResourceAccessException e) {
-      log.info("Error calling ALGO ");
-
-    } catch (Exception e) {
-      log.error("Exception when when calling algo  ", e);
-    }
-  }
-
-  public void saveAlgoPatternFromShore(Map<String, String> taskReqParams) {
-    try {
-      EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
-      if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to get Result from Communication Server",
-            erReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-      }
-      String jsonResult = erReply.getPatternResultJson();
-      AlgoResponseCommunication.Builder load = AlgoResponseCommunication.newBuilder();
-      // load.setLoadableStudyId(request.getLoadableStudyId());
-      if (!jsonResult.isEmpty()) saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException when saving pattern", e);
-    }
-  }
-
-  private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
-      Map<String, String> taskReqParams) {
-    EnvoyReader.EnvoyReaderResultRequest.Builder request =
-        EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setMessageType(taskReqParams.get("messageType"));
-    request.setClientId(taskReqParams.get("ClientId"));
-    request.setShipId(taskReqParams.get("ShipId"));
-    return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 }

@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.tasks;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.scheduler.ExecuteTaskListener;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.service.CommunicationService;
 import com.cpdss.loadablestudy.service.LoadableStudyService;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 /** Task Listener service for executing scheduled tasks */
 @Service
 public class TaskListener implements ExecuteTaskListener {
-  @Autowired private LoadableStudyService loadableStudyService;
+  @Autowired private CommunicationService communicationService;
   /**
    * Task Listener
    *
@@ -27,9 +28,9 @@ public class TaskListener implements ExecuteTaskListener {
     System.out.println("Executing task " + taskName);
     if (taskName.contains("DOWNLOAD_RESULT_")) {
       if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.LOADABLESTUDY)))
-        loadableStudyService.saveLoadableStudyShore(taskReqParams);
+        communicationService.saveLoadableStudyShore(taskReqParams);
       else if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.ALGORESULT)))
-        loadableStudyService.saveAlgoPatternFromShore(taskReqParams);
+        communicationService.saveAlgoPatternFromShore(taskReqParams);
     }
   }
 }

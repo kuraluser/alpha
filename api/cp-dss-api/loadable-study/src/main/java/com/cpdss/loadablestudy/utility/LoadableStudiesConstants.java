@@ -58,4 +58,6 @@ public class LoadableStudiesConstants {
           LOAD_LINE_TROPICAL_TO_SUMMER_ID,
           LOAD_LINE_TROPICAL_TO_WINTER_ID,
           LOAD_LINE_SUMMER_TO_WINTER_ID);
+  public static final Long LOADABLE_STUDY_REQUEST = 1L;
+  public static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 4L;
 }
