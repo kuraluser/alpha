@@ -1398,32 +1398,36 @@ public class SynopticService {
     return PortOperationTable.builder().operationsTableList(operationsTableList).build();
   }
 
-    public void getSynopticalTable(LoadableStudy.SynopticalTableRequest request, LoadableStudy.SynopticalTableReply.Builder replyBuilder) throws GenericServiceException {
-      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
-              this.loadableStudyRepository.findById(request.getLoadableStudyId());
-      if (!loadableStudyOpt.isPresent()) {
-        throw new GenericServiceException(
-                "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
-      }
-      List<SynopticalTable> synopticalTableList =
-              this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
-                      request.getLoadableStudyId(), true);
-      if (!synopticalTableList.isEmpty()) {
-        VesselInfo.VesselReply vesselReply =
-                this.getSynopticalTableVesselData(request, loadableStudyOpt.get());
-        List<VesselInfo.VesselTankDetail> sortedTankList = new ArrayList<>(vesselReply.getVesselTanksList());
-        Collections.sort(
-                sortedTankList, Comparator.comparing(VesselInfo.VesselTankDetail::getTankDisplayOrder));
-        buildSynopticalTableReply(
-                request,
-                synopticalTableList,
-                this.getSynopticalTablePortDetails(synopticalTableList),
-                this.getSynopticalTablePortRotations(loadableStudyOpt.get()),
-                loadableStudyOpt.get(),
-                sortedTankList,
-                vesselReply.getVesselLoadableQuantityDetails(),
-                replyBuilder);
-      }
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+  public void getSynopticalTable(
+      LoadableStudy.SynopticalTableRequest request,
+      LoadableStudy.SynopticalTableReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+        this.loadableStudyRepository.findById(request.getLoadableStudyId());
+    if (!loadableStudyOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
     }
+    List<SynopticalTable> synopticalTableList =
+        this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
+            request.getLoadableStudyId(), true);
+    if (!synopticalTableList.isEmpty()) {
+      VesselInfo.VesselReply vesselReply =
+          this.getSynopticalTableVesselData(request, loadableStudyOpt.get());
+      List<VesselInfo.VesselTankDetail> sortedTankList =
+          new ArrayList<>(vesselReply.getVesselTanksList());
+      Collections.sort(
+          sortedTankList, Comparator.comparing(VesselInfo.VesselTankDetail::getTankDisplayOrder));
+      buildSynopticalTableReply(
+          request,
+          synopticalTableList,
+          this.getSynopticalTablePortDetails(synopticalTableList),
+          this.getSynopticalTablePortRotations(loadableStudyOpt.get()),
+          loadableStudyOpt.get(),
+          sortedTankList,
+          vesselReply.getVesselLoadableQuantityDetails(),
+          replyBuilder);
+    }
+    replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+  }
 }
