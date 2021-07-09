@@ -346,10 +346,6 @@ public class LoadingInformationAlgoRequestBuilderService {
     com.cpdss.loadingplan.domain.algo.LoadingRates loadingRates =
         new com.cpdss.loadingplan.domain.algo.LoadingRates();
     loadingRates.setId(loadingRate.getId());
-    loadingRates.setInitialLoadingRate(
-        StringUtils.isEmpty(loadingRate.getInitialLoadingRate())
-            ? null
-            : new BigDecimal(loadingRate.getInitialLoadingRate()));
     loadingRates.setLineContentRemaining(
         StringUtils.isEmpty(loadingRate.getLineContentRemaining())
             ? null
@@ -365,7 +361,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     loadingRates.setMinDeBallastingRate(
         StringUtils.isEmpty(loadingRate.getMinDeBallastingRate())
             ? null
-            : new BigDecimal(loadingRate.getInitialLoadingRate()));
+            : new BigDecimal(loadingRate.getMinDeBallastingRate()));
     loadingInfo.setLoadingRates(loadingRates);
   }
 
@@ -536,7 +532,7 @@ public class LoadingInformationAlgoRequestBuilderService {
               ld.setQuantity(
                   StringUtils.isEmpty(delay.getQuantity())
                       ? null
-                      : Long.valueOf(delay.getQuantity()));
+                      : new BigDecimal(delay.getQuantity()));
               ld.setReasonForDelayId(delay.getReasonForDelayId());
               loadingDelaysList.add(ld);
             });

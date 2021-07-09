@@ -53,7 +53,7 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var1.getMinDeBallastRate())
           .ifPresent(v -> builder.setMinDeBallastingRate(v.toString()));
       Optional.ofNullable(var1.getMaxDeBallastRate())
-          .ifPresent(v -> builder.setMinDeBallastingRate(v.toString()));
+          .ifPresent(v -> builder.setMaxDeBallastingRate(v.toString()));
       Optional.ofNullable(var1.getNoticeTimeForRateReduction())
           .ifPresent(v -> builder.setNoticeTimeRateReduction(v.toString()));
       Optional.ofNullable(var1.getNoticeTimeForStopLoading())
