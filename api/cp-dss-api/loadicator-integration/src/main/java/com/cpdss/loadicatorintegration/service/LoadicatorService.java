@@ -76,6 +76,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     com.cpdss.common.generated.Loadicator.LoadicatorReply.Builder replyBuilder =
         LoadicatorReply.newBuilder();
     try {
+      log.info("inside saveLoadicatorInfo");
       AtomicLong cargoId = new AtomicLong(0L);
       List<StowagePlan> stowagePlanList = new ArrayList<>();
       for (com.cpdss.common.generated.Loadicator.StowagePlan plan :

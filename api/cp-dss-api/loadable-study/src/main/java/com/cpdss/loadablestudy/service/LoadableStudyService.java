@@ -3472,13 +3472,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Long lastLoadingPort =
             getLastPort(
                 loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+        List<LoadablePattern> loadablePatterns = new ArrayList<LoadablePattern>();
         request
             .getLoadablePlanDetailsList()
             .forEach(
                 lpd -> {
                   LoadablePattern loadablePattern =
-                      saveloadablePattern(lpd, loadableStudyOpt.get());
-
+                      saveloadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator());
+                  loadablePatterns.add(loadablePattern);
                   saveConstrains(lpd, loadablePattern);
                   Optional<LoadablePlanPortWiseDetails> lppwdOptional =
                       lpd.getLoadablePlanPortWiseDetailsList().stream()
@@ -3519,7 +3520,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         if (request.getHasLodicator()) {
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
-          this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
+          this.saveLoadicatorInfo(
+              loadableStudyOpt.get(), request.getProcesssId(), 0L, loadablePatterns);
         } else {
 
           loadableStudyRepository.updateLoadableStudyStatus(
@@ -3565,49 +3567,50 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
   // uncomment with communication service implementation
   /*private void savePatternDtails(
-          LoadablePatternAlgoRequest request, Optional<LoadableStudy> loadableStudyOpt) {
-    Long lastLoadingPort =
-            getLastPort(
-                    loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-    request
-            .getLoadablePlanDetailsList()
-            .forEach(
-                    lpd -> {
-                      LoadablePattern loadablePattern = saveloadablePattern(lpd, loadableStudyOpt.get());
+           LoadablePatternAlgoRequest request, Optional<LoadableStudy> loadableStudyOpt) {
+     Long lastLoadingPort =
+             getLastPort(
+                     loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+                      List<LoadablePattern> loadablePatterns = new ArrayList<LoadablePattern>();
+     request
+             .getLoadablePlanDetailsList()
+             .forEach(
+                     lpd -> {
+                       LoadablePattern loadablePattern = saveloadablePattern(lpd, loadableStudyOpt.get());
+  loadablePatterns.add(loadablePattern);
+                       Optional<LoadablePlanPortWiseDetails> lppwdOptional =
+                               lpd.getLoadablePlanPortWiseDetailsList().stream()
+                                       .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
+                                       .findAny();
 
-                      Optional<LoadablePlanPortWiseDetails> lppwdOptional =
-                              lpd.getLoadablePlanPortWiseDetailsList().stream()
-                                      .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-                                      .findAny();
+                       if (lppwdOptional.isPresent()) {
+                         saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
+                         saveLoadablePlanCommingleCargo(
+                                 lppwdOptional
+                                         .get()
+                                         .getDepartureCondition()
+                                         .getLoadableQuantityCommingleCargoDetailsList(),
+                                 loadablePattern);
+                         saveLoadablePlanStowageDetails(
+                                 lppwdOptional.get().getDepartureCondition().getLoadablePlanStowageDetailsList(),
+                                 loadablePattern);
+                         saveLoadablePlanBallastDetails(
+                                 lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
+                                 loadablePattern);
+                       }
 
-                      if (lppwdOptional.isPresent()) {
-                        saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
-                        saveLoadablePlanCommingleCargo(
-                                lppwdOptional
-                                        .get()
-                                        .getDepartureCondition()
-                                        .getLoadableQuantityCommingleCargoDetailsList(),
-                                loadablePattern);
-                        saveLoadablePlanStowageDetails(
-                                lppwdOptional.get().getDepartureCondition().getLoadablePlanStowageDetailsList(),
-                                loadablePattern);
-                        saveLoadablePlanBallastDetails(
-                                lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
-                                loadablePattern);
-                      }
-
-                      saveLoadableQuantityCommingleCargoPortwiseDetails(
-                              lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
-                      saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
-                      saveLoadablePlanStowageDetails(loadablePattern, lpd);
-                      saveLoadablePlanBallastDetails(loadablePattern, lpd);
-                      saveStabilityParameterForNonLodicator(
-                              request.getHasLodicator(), loadablePattern, lpd);
-                    });
-    if (request.getHasLodicator()) {
-      this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L);
-    }
-  }*/
+                       saveLoadableQuantityCommingleCargoPortwiseDetails(
+                               lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+                       saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
+                       saveLoadablePlanStowageDetails(loadablePattern, lpd);
+                       saveLoadablePlanBallastDetails(loadablePattern, lpd);
+                       saveStabilityParameterForNonLodicator(
+                               request.getHasLodicator(), loadablePattern, lpd);
+                     });
+     if (request.getHasLodicator()) {
+       this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId(), 0L, loadablePatterns);
+     }
+   }*/
 
   /**
    * @param lpd
@@ -4175,12 +4178,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * @param lpd void
    * @param loadableStudy
+   * @param hasLoadicator
    */
   private LoadablePattern saveloadablePattern(
-      LoadablePlanDetails lpd, LoadableStudy loadableStudy) {
+      LoadablePlanDetails lpd, LoadableStudy loadableStudy, boolean hasLoadicator) {
     LoadablePattern loadablePattern = new LoadablePattern();
     loadablePattern.setCaseNumber(lpd.getCaseNumber());
-    loadablePattern.setIsActive(true);
+    if (hasLoadicator) {
+      loadablePattern.setIsActive(false);
+    } else {
+      loadablePattern.setIsActive(true);
+    }
+
     loadablePattern.setLoadableStudy(loadableStudy);
     loadablePattern.setLoadableStudyStatus(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
     Optional<LoadablePattern> lp =
@@ -5056,7 +5065,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       UllageUpdateResponse algoResponse =
           this.callAlgoUllageUpdateApi(
               this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
-      if (!request.getUpdateUllageForLoadingPlan()) {
+      if (!request.getUpdateUllageForLoadingPlan() && !algoResponse.getFillingRatio().equals("")) {
         this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
       }
       replyBuilder.setLoadablePlanStowageDetails(
@@ -5824,7 +5833,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.saveLoadicatorInfo(
               loadablePatternOpt.get().getLoadableStudy(),
               request.getProcesssId(),
-              request.getLoadablePatternId());
+              request.getLoadablePatternId(),
+              new ArrayList<LoadablePattern>());
         } else {
           loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
               LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
@@ -6886,6 +6896,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 result -> {
                   entities.add(
                       this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
+                  LoadablePattern loadablePattern =
+                      loadablePatternRepository.getOne(patternDetails.getLoadablePatternId());
+                  loadablePattern.setIsActive(true);
+                  loadablePatternRepository.save(loadablePattern);
                 });
       }
     }
@@ -10796,14 +10810,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param processId
    */
   public void saveLoadicatorInfo(
-      LoadableStudy loadableStudyEntity, String processId, Long patternId) {
+      LoadableStudy loadableStudyEntity,
+      String processId,
+      Long patternId,
+      List<LoadablePattern> loadablePatternsList) {
     LoadicatorRequest.Builder loadicatorRequestBuilder = LoadicatorRequest.newBuilder();
     try {
       List<LoadablePattern> loadablePatterns = null;
       if (patternId == 0) {
-        loadablePatterns =
-            this.loadablePatternRepository.findByLoadableStudyAndIsActive(
-                loadableStudyEntity, true);
+        loadablePatterns = loadablePatternsList;
         loadicatorRequestBuilder.setIsPattern(false);
         loadicatorRequestBuilder.setLoadableStudyId(loadableStudyEntity.getId());
       } else {
