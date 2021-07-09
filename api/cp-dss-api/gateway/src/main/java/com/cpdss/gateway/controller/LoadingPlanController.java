@@ -197,7 +197,7 @@ public class LoadingPlanController {
   }
 
   @GetMapping("/test1")
-  public String index(){
+  public String index() {
     return "hello world";
   }
 }

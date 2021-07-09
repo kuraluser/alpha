@@ -19,7 +19,7 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
 
   /*@Query(
   "select s from SynopticalTable s "
-      + "left outer join LoadableStudyPortRotation lp "
+      + "left outer join LoadableStudyPortRotationService lp "
       + "on s.loadableStudyXId=lp.loadableStudy.id and s.portXid=lp.portXId "
       + "where s.loadableStudyXId=?1 and s.isActive=true and lp.isActive=true "
       + "order by lp.portOrder, s.operationType")*/
