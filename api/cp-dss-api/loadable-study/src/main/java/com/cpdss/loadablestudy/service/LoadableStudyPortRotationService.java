@@ -11,6 +11,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -20,12 +21,15 @@ import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -267,5 +271,78 @@ public class LoadableStudyPortRotationService {
   public Long getLastPort(LoadableStudy loadableStudy, CargoOperation loading) {
     Object[] ob = getLastPortRotationData(loadableStudy, loading, true);
     return (long) ob[0];
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy
+   * @param modelMapper void
+   */
+  public void buildLoadableStudyPortRotationDetails(
+      long loadableStudyId,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(loadableStudyId, true);
+
+    loadableStudy.setLoadableStudyPortRotation(new ArrayList<>());
+    if (!loadableStudyPortRotations.isEmpty()) {
+      loadableStudyPortRotations.forEach(
+          loadableStudyPortRotation -> {
+            com.cpdss.loadablestudy.domain.LoadableStudyPortRotation loadableStudyPortRotationDto =
+                new com.cpdss.loadablestudy.domain.LoadableStudyPortRotation();
+            loadableStudyPortRotationDto =
+                modelMapper.map(
+                    loadableStudyPortRotation,
+                    com.cpdss.loadablestudy.domain.LoadableStudyPortRotation.class);
+            loadableStudyPortRotationDto.setMaxAirDraft(
+                loadableStudyPortRotation.getAirDraftRestriction());
+            loadableStudy.getLoadableStudyPortRotation().add(loadableStudyPortRotationDto);
+          });
+    }
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loadableStudyEntity void
+   */
+  public void buildportRotationDetails(
+      LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    PortInfo.GetPortInfoByPortIdsRequest.Builder portsBuilder =
+        PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
+    List<Long> portIds = this.getPortRoationPortIds(loadableStudyEntity);
+    portIds.forEach(
+        portId -> {
+          portsBuilder.addId(portId);
+        });
+
+    loadableStudy.setPortDetails(new ArrayList<PortDetails>());
+    PortInfo.PortReply portReply = getPortInfo(portsBuilder.build());
+    portReply
+        .getPortsList()
+        .forEach(
+            portList -> {
+              PortDetails portDetails = new PortDetails();
+              portDetails.setAverageTideHeight(portList.getAverageTideHeight());
+              portDetails.setCode(portList.getCode());
+              portDetails.setDensitySeaWater(portList.getWaterDensity());
+              portDetails.setId(portList.getId());
+              portDetails.setName(portList.getName());
+              portDetails.setTideHeight(portList.getTideHeight());
+              portDetails.setCountryName(portList.getCountryName());
+              loadableStudy.getPortDetails().add(portDetails);
+            });
+  }
+
+  public List<Long> getPortRoationPortIds(LoadableStudy loadableStudy) {
+    List<Long> portIds =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            loadableStudy, true);
+    return portIds.stream().distinct().collect(Collectors.toList());
+  }
+
+  public PortInfo.PortReply getPortInfo(PortInfo.GetPortInfoByPortIdsRequest build) {
+    return portInfoGrpcService.getPortInfoByPortIds(build);
   }
 }
