@@ -1,21 +1,19 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.loadablestudy.domain.LoadabalePatternDetails;
+import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
+import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails;
 import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import com.cpdss.loadablestudy.repository.*;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,23 @@ public class LoadablePlanService {
   @Autowired LoadablePatternCargoDetailsRepository lpCargoDetailsRepository;
 
   @Autowired LoadableStudyPortRotationRepository portRotationRepository;
+
+  @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+
+  @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
+
+  @Autowired private CargoOperationRepository cargoOperationRepository;
+
+  @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
+
+  @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+
+  @Autowired
+  private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
+
+  @Autowired
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -265,5 +280,337 @@ public class LoadablePlanService {
       }
     }
     return null;
+  }
+
+  /**
+   * @param loadablePattern
+   * @param loadabalePatternValidateRequest void
+   */
+  public void buildLoadablePlanPortWiseDetails(
+      LoadablePattern loadablePattern,
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
+    List<LoadableStudyPortRotation> entityList =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            loadablePattern.getLoadableStudy(), true);
+    Long lastLoadingRotationId =
+        loadableStudyPortRotationService.getLastPortRotationId(
+            loadablePattern.getLoadableStudy(),
+            this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+
+    Long lastLoadingPortId =
+        loadableStudyPortRotationService.getLastPort(
+            loadablePattern.getLoadableStudy(),
+            this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+
+    PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder =
+        PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
+    entityList.stream()
+        .map(LoadableStudyPortRotation::getPortXId)
+        .collect(Collectors.toList())
+        .forEach(
+            port -> {
+              reqBuilder.addId(port);
+            });
+    PortInfo.PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
+
+    List<com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails =
+        new ArrayList<LoadablePlanPortWiseDetails>();
+    entityList.stream()
+        .filter(portRotation -> !portRotation.getId().equals(lastLoadingRotationId))
+        .collect(Collectors.toList())
+        .forEach(
+            portRotate -> {
+              com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails portWiseDetails =
+                  new com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails();
+              portWiseDetails.setPortId(portRotate.getPortXId());
+              portWiseDetails.setPortRotationId(portRotate.getId());
+              portWiseDetails.setPortCode(
+                  portReply.getPortsList().stream()
+                      .filter(
+                          portDetail -> Objects.equals(portRotate.getPortXId(), portDetail.getId()))
+                      .findAny()
+                      .get()
+                      .getCode());
+              LoadabalePatternDetails arrivalCondition = new LoadabalePatternDetails();
+              LoadabalePatternDetails departureCondition = new LoadabalePatternDetails();
+
+              arrivalCondition.setLoadablePlanStowageDetails(
+                  addLoadablePatternsStowageDetails(
+                      loadablePatternCargoDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+              departureCondition.setLoadablePlanStowageDetails(
+                  addLoadablePatternsStowageDetails(
+                      loadablePatternCargoDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              arrivalCondition.setLoadablePlanBallastDetails(
+                  addLoadablePlanBallastDetails(
+                      loadablePlanStowageBallastDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+              departureCondition.setLoadablePlanBallastDetails(
+                  addLoadablePlanBallastDetails(
+                      loadablePlanStowageBallastDetailsRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              arrivalCondition.setLoadablePlanCommingleDetails(
+                  addLoadablePlanCommingleDetails(
+                      loadablePlanCommingleDetailsPortwiseRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              departureCondition.setLoadablePlanCommingleDetails(
+                  addLoadablePlanCommingleDetails(
+                      loadablePlanCommingleDetailsPortwiseRepository
+                          .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                              loadablePattern.getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                              true),
+                      false,
+                      loadablePattern.getId()));
+
+              portWiseDetails.setArrivalCondition(arrivalCondition);
+              portWiseDetails.setDepartureCondition(departureCondition);
+              loadablePlanPortWiseDetails.add(portWiseDetails);
+            });
+
+    com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails portWiseDetails =
+        new com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails();
+
+    portWiseDetails.setPortId(lastLoadingPortId);
+    portWiseDetails.setPortRotationId(lastLoadingRotationId);
+    portWiseDetails.setPortCode(
+        portReply.getPortsList().stream()
+            .filter(portDetail -> Objects.equals(lastLoadingPortId, portDetail.getId()))
+            .findAny()
+            .get()
+            .getCode());
+    LoadabalePatternDetails arrivalCondition = new LoadabalePatternDetails();
+    LoadabalePatternDetails departureCondition = new LoadabalePatternDetails();
+
+    arrivalCondition.setLoadablePlanStowageDetails(
+        addLoadablePatternsStowageDetails(
+            loadablePatternCargoDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                    true),
+            false,
+            loadablePattern.getId()));
+    departureCondition.setLoadablePlanStowageDetails(
+        addLoadablePatternsStowageDetails(
+            loadablePatternCargoDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                    true),
+            true,
+            loadablePattern.getId()));
+    arrivalCondition.setLoadablePlanBallastDetails(
+        addLoadablePlanBallastDetails(
+            loadablePlanStowageBallastDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                    true),
+            false,
+            loadablePattern.getId()));
+    departureCondition.setLoadablePlanBallastDetails(
+        addLoadablePlanBallastDetails(
+            loadablePlanStowageBallastDetailsRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                    true),
+            true,
+            loadablePattern.getId()));
+
+    arrivalCondition.setLoadablePlanCommingleDetails(
+        addLoadablePlanCommingleDetails(
+            loadablePlanCommingleDetailsPortwiseRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                    true),
+            false,
+            loadablePattern.getId()));
+    departureCondition.setLoadablePlanCommingleDetails(
+        addLoadablePlanCommingleDetails(
+            loadablePlanCommingleDetailsPortwiseRepository
+                .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                    loadablePattern.getId(),
+                    lastLoadingRotationId,
+                    SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                    true),
+            true,
+            loadablePattern.getId()));
+
+    portWiseDetails.setArrivalCondition(arrivalCondition);
+    portWiseDetails.setDepartureCondition(departureCondition);
+    loadablePlanPortWiseDetails.add(portWiseDetails);
+
+    loadabalePatternValidateRequest.setLoadablePlanPortWiseDetails(loadablePlanPortWiseDetails);
+  }
+
+  /**
+   * @param isLastPortDeparture
+   * @param loadablePatternCargoDetails
+   * @return List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+   */
+  private List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+      addLoadablePatternsStowageDetails(
+          List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails>
+              loadablePatternCargoDetails,
+          Boolean isLastPortDeparture,
+          Long loadablePatternId) {
+    List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails> stowageDetails =
+        new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>();
+    if (isLastPortDeparture) {
+      stowageDetailsTempRepository
+          .findByLoadablePlanStowageTempDetailsAndIsActive(loadablePatternId, true)
+          .forEach(
+              lpsd -> {
+                com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
+                    new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+                Object[] obA = (Object[]) lpsd;
+                details.setId((Long) obA[0]);
+                details.setCargoNominationId((Long) obA[1]);
+                details.setTankId((Long) obA[2]);
+                details.setQuantityMT(String.valueOf(obA[3]));
+                stowageDetails.add(details);
+              });
+    } else {
+
+      loadablePatternCargoDetails.forEach(
+          lpsd -> {
+            com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
+                new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+            details.setId(lpsd.getId());
+            details.setCargoNominationId(lpsd.getCargoNominationId());
+            details.setTankId(lpsd.getTankId());
+            details.setQuantityMT(String.valueOf(lpsd.getPlannedQuantity()));
+            stowageDetails.add(details);
+          });
+    }
+    return stowageDetails;
+  }
+
+  /**
+   * @param isLastPortDeparture
+   * @param loadablePatternId
+   * @return List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>
+   */
+  private List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>
+      addLoadablePlanBallastDetails(
+          List<LoadablePlanStowageBallastDetails> loadablePlanStowageBallastDetails,
+          Boolean isLastPortDeparture,
+          Long loadablePatternId) {
+    List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails> ballastDetails =
+        new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>();
+
+    if (isLastPortDeparture) {
+      stowageDetailsTempRepository
+          .findByLoadablePlanBallastTempDetailsAndIsActive(loadablePatternId, true)
+          .forEach(
+              lpsd -> {
+                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
+                    new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
+                Object[] obA = (Object[]) lpsd;
+                details.setId((Long) obA[0]);
+                details.setTankId((Long) obA[1]);
+                details.setQuantityMT(String.valueOf(obA[2]));
+                ballastDetails.add(details);
+              });
+    } else {
+      loadablePlanStowageBallastDetails.forEach(
+          lpsd -> {
+            com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
+                new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
+
+            details.setId(lpsd.getId());
+            details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
+            details.setTankId(lpsd.getTankXId());
+            ballastDetails.add(details);
+          });
+    }
+    return ballastDetails;
+  }
+
+  /**
+   * @param loadablePatternCommingleDetails
+   * @param isLastPortDeparture
+   * @param loadablePatternId
+   * @return
+   */
+  private List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+      addLoadablePlanCommingleDetails(
+          List<LoadablePlanComminglePortwiseDetails> loadablePatternCommingleDetails,
+          boolean isLastPortDeparture,
+          Long loadablePatternId) {
+    List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails> stowageDetails =
+        new ArrayList<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>();
+
+    // commenting the below code since commingle is not editing for last loading port as of now
+    /*
+     * if (isLastPortDeparture) { stowageDetailsTempRepository
+     * .findByLoadablePlanCommingleTempDetailsAndIsActive(loadablePatternId, true)
+     * .forEach( lpsd -> { com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails
+     * details = new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+     * Object[] obA = (Object[]) lpsd; details.setId((Long) obA[0]); //
+     * details.setCargoNominationId((Long) obA[1]); details.setTankId((Long)
+     * obA[1]); details.setQuantityMT(String.valueOf(obA[2]));
+     * stowageDetails.add(details); }); } else {
+     */
+
+    loadablePatternCommingleDetails.forEach(
+        lpsd -> {
+          com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails details =
+              new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+          details.setId(lpsd.getId());
+          // details.setCargoNominationId(lpsd.getCargoNominationId());
+          details.setTankId(lpsd.getTankId());
+          details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
+          details.setCargo1QuantityMT(lpsd.getCargo1Mt());
+          details.setCargo2QuantityMT(lpsd.getCargo2Mt());
+          details.setCargo1NominationId(lpsd.getCargo1NominationId());
+          details.setCargo2NominationId(lpsd.getCargo2NominationId());
+          stowageDetails.add(details);
+        });
+    // }
+    return stowageDetails;
   }
 }

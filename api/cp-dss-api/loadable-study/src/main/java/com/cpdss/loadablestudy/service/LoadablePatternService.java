@@ -8,11 +8,16 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +36,13 @@ public class LoadablePatternService {
 
   @Autowired private LoadablePatternRepository loadablePatternRepository;
 
+  @Autowired private LoadablePlanService loadablePlanService;
+
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
+
+  @Autowired private VoyageRepository voyageRepository;
+
+  @Autowired private LoadableStudyRepository loadableStudyRepository;
 
   /**
    * @param loadableStudy
@@ -103,6 +114,61 @@ public class LoadablePatternService {
     ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
     ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
     ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+    return builder;
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson.Builder
+      getLoadablePatternDetailsJson(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson.Builder
+              builder)
+          throws Exception {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (loadablePatternOpt.isPresent()) {
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+          new LoadabalePatternValidateRequest();
+      loadablePlanService.buildLoadablePlanPortWiseDetails(
+          loadablePatternOpt.get(), loadabalePatternValidateRequest);
+      ObjectMapper mapper = new ObjectMapper();
+      builder.setLoadablePatternDetails(
+          mapper.writeValueAsString(
+              loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+      builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
+      builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else throw new Exception("Cannot find loadable pattern");
+
+    return builder;
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.Builder
+      getLoadablePatternByVoyageAndStatus(
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.Builder builder)
+          throws GenericServiceException {
+    Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+
+    Optional<LoadableStudy> loadableStudy =
+        loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+            voyage, CONFIRMED_STATUS_ID, true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+    if (loadableStudy.isEmpty()) {
+      throw new GenericServiceException(
+          "Confirmed Loadable study does not exist",
+          CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    builder.setLoadableStudyId(loadableStudy.get().getId());
+    log.info("Confirmed Ls - ls id {}", loadableStudy.get().getId());
+    Optional<LoadablePattern> pattern =
+        loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+            loadableStudy.get(), CONFIRMED_STATUS_ID, true);
+    if (pattern.isPresent()) {
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePattern =
+          com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+      loadablePattern.setLoadablePatternId(pattern.get().getId());
+      builder.setPattern(loadablePattern.build());
+    }
+    builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return builder;
   }
 }
