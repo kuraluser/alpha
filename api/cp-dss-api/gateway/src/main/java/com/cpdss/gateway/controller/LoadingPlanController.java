@@ -195,4 +195,9 @@ public class LoadingPlanController {
           e);
     }
   }
+
+  @GetMapping("/test1")
+  public String index(){
+    return "hello world";
+  }
 }
