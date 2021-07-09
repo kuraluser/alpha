@@ -241,4 +241,31 @@ public class LoadableStudyPortRotationService {
       builder.setPortTimezoneId(reply.getPortsList().get(0).getTimezoneId());
     }
   }
+
+  /**
+   * @param loadableStudy
+   * @param loading
+   * @return Long - id
+   */
+  public Long getLastPortRotationId(LoadableStudy loadableStudy, CargoOperation loading) {
+    Object[] ob = getLastPortRotationData(loadableStudy, loading, true);
+    return (long) ob[1];
+  }
+
+  public Object[] getLastPortRotationData(
+      LoadableStudy loadableStudy, CargoOperation loading, boolean status) {
+    Object ob = loadableStudyPortRotationRepository.findLastPort(loadableStudy, loading, status);
+    Object[] obA = (Object[]) ob;
+    return obA;
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loading
+   * @return
+   */
+  public Long getLastPort(LoadableStudy loadableStudy, CargoOperation loading) {
+    Object[] ob = getLastPortRotationData(loadableStudy, loading, true);
+    return (long) ob[0];
+  }
 }
