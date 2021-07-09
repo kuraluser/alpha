@@ -1,14 +1,21 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoNominationOperationDetails;
+import com.cpdss.loadablestudy.domain.RuleMasterSection;
+import com.cpdss.loadablestudy.domain.RuleType;
+import com.cpdss.loadablestudy.domain.RulesInputs;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
@@ -42,6 +49,9 @@ public class LoadableStudyServiceShore {
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   @Autowired private CommingleCargoRepository commingleCargoRepository;
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
@@ -51,6 +61,8 @@ public class LoadableStudyServiceShore {
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
+  @Autowired private LoadableStudyRuleService loadableStudyRuleService;
+  @Autowired private LoadableStudyRuleRepository loadableStudyRuleRepository;
 
   public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
@@ -59,8 +71,7 @@ public class LoadableStudyServiceShore {
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
     Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyageNo());
-    loadableStudyEntity = checkIfLoadableStudyExist(loadableStudy.getName(), voyage);
-    if (null == loadableStudyEntity) {
+    if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
 
       try {
         ModelMapper modelMapper = new ModelMapper();
@@ -76,7 +87,8 @@ public class LoadableStudyServiceShore {
   private void saveLoadableStudyDataShore(
       LoadableStudy loadableStudyEntity,
       com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
-      ModelMapper modelMapper) {
+      ModelMapper modelMapper)
+      throws GenericServiceException {
 
     List<CommingleCargo> commingleEntities = new ArrayList<>();
     loadableStudy
@@ -270,6 +282,115 @@ public class LoadableStudyServiceShore {
       }
 
       this.loadableQuantityRepository.save(loadableQuantity);
+    }
+    if (!loadableStudy.getLoadableStudyRuleList().isEmpty()) {
+      VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
+          VesselInfo.VesselRuleRequest.newBuilder();
+      vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
+      vesselRuleBuilder.setVesselId(loadableStudyEntity.getVesselXId());
+      vesselRuleBuilder.setIsNoDefaultRule(true);
+      VesselInfo.VesselRuleReply vesselRuleReply =
+          this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+      if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "failed to get loadable study rule Details ",
+            vesselRuleReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+      }
+      List<LoadableStudyRules> loadableStudyRulesList = new ArrayList<>();
+      loadableStudy
+          .getLoadableStudyRuleList()
+          .forEach(
+              rulePlans -> {
+                rulePlans
+                    .getRules()
+                    .forEach(
+                        rule -> {
+                          LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
+
+                          loadableStudyRules.setLoadableStudy(loadableStudyEntity);
+                          loadableStudyRules.setIsActive(true);
+                          Optional.ofNullable(rule.getDisplayInSettings())
+                              .ifPresent(loadableStudyRules::setDisplayInSettings);
+                          Optional.ofNullable(rule.getEnable())
+                              .ifPresent(loadableStudyRules::setIsEnable);
+                          Optional.ofNullable(rule.getIsHardRule())
+                              .ifPresent(loadableStudyRules::setIsHardRule);
+                          Optional.ofNullable(rule.getNumericPrecision())
+                              .ifPresent(loadableStudyRules::setNumericPrecision);
+                          Optional.ofNullable(rule.getNumericScale())
+                              .ifPresent(loadableStudyRules::setNumericScale);
+                          LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
+                          Optional.ofNullable(rule.getRuleTemplateId())
+                              .ifPresent(
+                                  item ->
+                                      finalLoadableStudyRules.setParentRuleXId(
+                                          Long.parseLong(item)));
+                          loadableStudyRules.setVesselXId(loadableStudyEntity.getVesselXId());
+
+                          if (rule.getRuleType() != null
+                              && rule.getRuleType()
+                                  .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
+                            loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
+                          }
+                          if (rule.getRuleType() != null
+                              && rule.getRuleType()
+                                  .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
+                            loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
+                          }
+                          List<Common.Rules> rulesList =
+                              vesselRuleReply.getRulePlanList().stream()
+                                  .filter(
+                                      vesselRulePlan ->
+                                          rulePlans.getHeader().equals(vesselRulePlan.getHeader()))
+                                  .flatMap(rules -> rules.getRulesList().stream())
+                                  .collect(Collectors.toList());
+                          Optional<Common.Rules> vesselRule1 =
+                              rulesList.stream()
+                                  .filter(
+                                      vesselRule ->
+                                          vesselRule
+                                              .getRuleTemplateId()
+                                              .equals(loadableStudyRules.getParentRuleXId()))
+                                  .findFirst();
+                          loadableStudyRules.setVesselRuleXId(
+                              Long.valueOf(vesselRule1.get().getVesselRuleXId()));
+                          Optional.ofNullable(rule.getVesselRuleXId())
+                              .ifPresent(
+                                  vesselRuleXId ->
+                                      finalLoadableStudyRules.setVesselRuleXId(
+                                          Long.parseLong(vesselRuleXId)));
+                          List<LoadableStudyRuleInput> ruleVesselMappingInputList =
+                              new ArrayList<>();
+                          for (RulesInputs input : rule.getInputs()) {
+                            LoadableStudyRuleInput ruleTemplateInput = new LoadableStudyRuleInput();
+
+                            Optional.ofNullable(input.getDefaultValue())
+                                .ifPresent(ruleTemplateInput::setDefaultValue);
+                            Optional.ofNullable(input.getMax())
+                                .ifPresent(ruleTemplateInput::setMaxValue);
+                            Optional.ofNullable(input.getMin())
+                                .ifPresent(ruleTemplateInput::setMinValue);
+                            Optional.ofNullable(input.getSuffix())
+                                .ifPresent(ruleTemplateInput::setSuffix);
+                            Optional.ofNullable(input.getPrefix())
+                                .ifPresent(ruleTemplateInput::setPrefix);
+                            Optional.ofNullable(input.getType())
+                                .ifPresent(ruleTemplateInput::setTypeValue);
+                            Optional.ofNullable(input.getIsMandatory())
+                                .ifPresent(ruleTemplateInput::setIsMandatory);
+                            ruleTemplateInput.setIsActive(true);
+                            ruleTemplateInput.setLoadableStudyRuleXId(loadableStudyRules);
+                            Optional.ofNullable(input.getType())
+                                .ifPresent(ruleTemplateInput::setTypeValue);
+
+                            ruleVesselMappingInputList.add(ruleTemplateInput);
+                          }
+                          loadableStudyRules.setLoadableStudyRuleInputs(ruleVesselMappingInputList);
+                          loadableStudyRulesList.add(loadableStudyRules);
+                        });
+              });
+      loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
     }
   }
 
@@ -471,9 +592,10 @@ public class LoadableStudyServiceShore {
     return commingleCargoEntity;
   }
 
-  private LoadableStudy checkIfLoadableStudyExist(String name, Voyage voyage) {
-    LoadableStudy duplicate =
-        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActive(voyage, name, true);
+  private boolean checkIfLoadableStudyExist(String name, Voyage voyage) {
+    boolean duplicate =
+        this.loadableStudyRepository.existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
+            name, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, voyage, true);
     return duplicate;
   }
 
