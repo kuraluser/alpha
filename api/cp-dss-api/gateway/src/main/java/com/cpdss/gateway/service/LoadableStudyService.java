@@ -494,7 +494,12 @@ public class LoadableStudyService {
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
-    response.setLoadableStudies(list);
+    if (planningType == 2) {
+      response.setDischargeStudies(list);
+
+    } else {
+      response.setLoadableStudies(list);
+    }
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationdId));
     return response;

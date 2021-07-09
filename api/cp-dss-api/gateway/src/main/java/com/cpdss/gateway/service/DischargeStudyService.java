@@ -226,7 +226,7 @@ public class DischargeStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
-    response.setLoadableStudyId(reply.getId());
+    response.setDischargeStudyId(reply.getId());
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
