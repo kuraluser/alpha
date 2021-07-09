@@ -262,6 +262,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 : new BigDecimal(rateFromLoading.getLineContentRemaining()));
       }
 
+      // Shore Loading Rate
+      loadingRates.setShoreLoadingRate(
+          rateFromLoading.getShoreLoadingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(rateFromLoading.getShoreLoadingRate()));
+
       // Set Loading Info Id
       loadingRates.setId(rateFromLoading.getId());
       log.info("Loading Rates added from Loading plan Service");

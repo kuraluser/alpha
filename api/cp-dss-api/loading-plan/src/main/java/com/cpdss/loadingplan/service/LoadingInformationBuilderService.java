@@ -66,6 +66,8 @@ public class LoadingInformationBuilderService {
           .ifPresent(v -> builder.setLineContentRemaining(v.toString()));
       Optional.ofNullable(var1.getMinLoadingRate())
           .ifPresent(v -> builder.setMinLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getShoreLoadingRate())
+          .ifPresent(v -> builder.setShoreLoadingRate(v.toString()));
     }
     return builder.build();
   }

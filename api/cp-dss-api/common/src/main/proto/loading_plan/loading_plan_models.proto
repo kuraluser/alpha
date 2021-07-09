@@ -72,6 +72,7 @@ message LoadingRates{
   string noticeTimeStopLoading = 8;
   string lineContentRemaining = 9; // BA Clarification Pending
   string minLoadingRate = 10; // Not added in gateway
+  string shoreLoadingRate = 11;
 }
 
 message LoadingBerths{

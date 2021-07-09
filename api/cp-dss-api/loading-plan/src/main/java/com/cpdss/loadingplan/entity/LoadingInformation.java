@@ -115,4 +115,7 @@ public class LoadingInformation extends EntityDoc {
 
   @Column(name = "is_loading_information_complete")
   private Boolean isLoadingInfoComplete = false;
+
+  @Column(name = "shore_loading_rate")
+  private BigDecimal shoreLoadingRate;
 }

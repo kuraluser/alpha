@@ -65,9 +65,6 @@ public class LoadingInformationBuilderService {
       com.cpdss.gateway.domain.loadingplan.LoadingRates loadingRates, Long loadingInfoId) {
     LoadingRates.Builder builder = LoadingRates.newBuilder();
     Optional.ofNullable(loadingInfoId).ifPresent(builder::setId);
-    // remove this comment after confirm with shafeer
-    /*Optional.ofNullable(loadingRates.getInitialLoadingRate())
-    .ifPresent(initLoadRate -> builder.setInitialLoadingRate(String.valueOf(initLoadRate)));*/
     Optional.ofNullable(loadingRates.getLineContentRemaining())
         .ifPresent(lineContent -> builder.setLineContentRemaining(String.valueOf(lineContent)));
     Optional.ofNullable(loadingRates.getMaxDeBallastingRate())
@@ -86,6 +83,8 @@ public class LoadingInformationBuilderService {
             noticeTimeStop -> builder.setNoticeTimeStopLoading(String.valueOf(noticeTimeStop)));
     Optional.ofNullable(loadingRates.getReducedLoadingRate())
         .ifPresent(reducedRate -> builder.setReducedLoadingRate(String.valueOf(reducedRate)));
+    Optional.ofNullable(loadingRates.getShoreLoadingRate())
+        .ifPresent(v -> builder.setShoreLoadingRate(v.toString()));
     return builder.build();
   }
 
