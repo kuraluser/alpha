@@ -430,7 +430,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
             .forEach(
                 portRotation -> {
-                  portRotation.setIsPortRotationOhqComplete(false);
+                 // portRotation.setIsPortRotationOhqComplete(false);
                 });
         loadableStudy.setIsPortsComplete(false);
         this.loadableStudyRepository.save(loadableStudy);
