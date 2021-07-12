@@ -83,8 +83,8 @@ public class SynopticalTable extends EntityDoc {
   @Column(name = "port_xid")
   private Long portXid;
 
-//  @Column(name = "sea_water_sg")
-//  private BigDecimal specificGravity;
+  //  @Column(name = "sea_water_sg")
+  //  private BigDecimal specificGravity;
 
   @Column(name = "is_active")
   private Boolean isActive;

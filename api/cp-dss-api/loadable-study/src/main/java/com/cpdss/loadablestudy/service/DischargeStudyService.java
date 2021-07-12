@@ -10,6 +10,8 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceImplBase;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
@@ -17,28 +19,19 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischa
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.repository.*;
 import io.grpc.stub.StreamObserver;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 import lombok.extern.log4j.Log4j2;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /** @author arun.j */
 @Log4j2
@@ -54,6 +47,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private CargoNominationService cargoNominationService;
+  @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
+  @Autowired private LoadableStudyRepository loadableStudyRepository;
+  @Autowired private LoadablePatternService loadablePatternService;
+  @Autowired private CargoOperationRepository cargoOperationRepository;
+  @Autowired private SynopticService synopticService;
+
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
   @Override
   public void saveDischargeStudy(
@@ -365,5 +366,142 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder saveDischargingPorts(
+      com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Optional<LoadableStudy> loadableStudyOpt =
+        this.loadableStudyRepository.findById(request.getLoadableStudyId());
+    if (!loadableStudyOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable study does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+    loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
+    LoadableStudy loadableStudy = loadableStudyOpt.get();
+    loadableStudy.setDischargeCargoNominationId(request.getCargoNominationId());
+    loadableStudy.setIsDischargePortsComplete(request.getIsDischargingPortsComplete());
+    this.loadableStudyRepository.save(loadableStudy);
+
+    CargoOperation discharging = this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
+    List<LoadableStudyPortRotation> dischargingPorts =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
+            loadableStudyOpt.get(), discharging, true);
+    List<Long> portIds = new ArrayList<>(request.getDischargingPortIdsList());
+    for (LoadableStudyPortRotation portRotation : dischargingPorts) {
+      if (!request.getDischargingPortIdsList().contains(portRotation.getPortXId())) {
+        portRotation.setActive(false);
+        onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
+            loadableStudy, portRotation.getPortXId());
+        List<SynopticalTable> synopticalEntities = portRotation.getSynopticalTable();
+        if (null != synopticalEntities && !synopticalEntities.isEmpty()) {
+          synopticalEntities.forEach(entity -> entity.setIsActive(false));
+        }
+        portIds.remove(portRotation.getPortXId());
+      } else {
+        portIds.remove(portRotation.getPortXId());
+      }
+    }
+    if (!CollectionUtils.isEmpty(portIds)) {
+      // ports already added as transit cannot be again added as discharge ports
+      loadableStudyPortRotationService.validateTransitPorts(loadableStudyOpt.get(), portIds);
+      PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder =
+          PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
+      portIds.forEach(
+          port -> {
+            reqBuilder.addId(port);
+          });
+      PortInfo.PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
+      if (!SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in calling port service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+
+      if (!CollectionUtils.isEmpty(portIds) && !CollectionUtils.isEmpty(portReply.getPortsList())) {
+        dischargingPorts =
+            this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
+        this.loadableStudyPortRotationRepository
+            .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
+            .forEach(
+                portRotation -> {
+                  portRotation.setIsPortRotationOhqComplete(false);
+                });
+        loadableStudy.setIsPortsComplete(false);
+        this.loadableStudyRepository.save(loadableStudy);
+        this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
+      }
+    }
+
+    // Set port ordering after updation
+    loadableStudyPortRotationService.setPortOrdering(loadableStudy);
+
+    replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
+
+  /**
+   * Build discharging ports
+   *
+   * @param portReply
+   * @param loadableStudy
+   * @param dischargingPorts
+   * @param portIds
+   * @return
+   */
+  private List<LoadableStudyPortRotation> buildDischargingPorts(
+      PortInfo.PortReply portReply,
+      LoadableStudy loadableStudy,
+      List<LoadableStudyPortRotation> dischargingPorts,
+      List<Long> portIds) {
+    Long maxPortOrder =
+        loadableStudyPortRotationService.findMaxPortOrderForLoadableStudy(loadableStudy);
+    for (Long requestedPortId : portIds) {
+      Optional<PortInfo.PortDetail> portOpt =
+          portReply.getPortsList().stream()
+              .filter(portDetail -> Objects.equals(requestedPortId, portDetail.getId()))
+              .findAny();
+
+      if (portOpt.isPresent()) {
+        PortInfo.PortDetail port = portOpt.get();
+        LoadableStudyPortRotation portRotationEntity = new LoadableStudyPortRotation();
+        portRotationEntity.setLoadableStudy(loadableStudy);
+        portRotationEntity.setPortXId(port.getId());
+        portRotationEntity.setOperation(
+            this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID));
+        portRotationEntity.setSeaWaterDensity(
+            !StringUtils.isEmpty(port.getWaterDensity())
+                ? new BigDecimal(port.getWaterDensity())
+                : null);
+        portRotationEntity.setMaxDraft(
+            !StringUtils.isEmpty(port.getMaxDraft()) ? new BigDecimal(port.getMaxDraft()) : null);
+
+        portRotationEntity.setAirDraftRestriction(
+            !StringUtils.isEmpty(port.getMaxAirDraft())
+                ? new BigDecimal(port.getMaxAirDraft())
+                : null);
+        portRotationEntity.setPortOrder(++maxPortOrder);
+
+        // add ports to synoptical table by reusing the function called by
+        // port-rotation flow
+        synopticService.buildPortsInfoSynopticalTable(
+            portRotationEntity, DISCHARGING_OPERATION_ID, port.getId());
+        dischargingPorts.add(portRotationEntity);
+      }
+    }
+    return dischargingPorts;
+  }
+
+  /**
+   * @param build
+   * @return PortReply
+   */
+  public PortInfo.PortReply getPortInfo(PortInfo.GetPortInfoByPortIdsRequest build) {
+    return portInfoGrpcService.getPortInfoByPortIds(build);
   }
 }
