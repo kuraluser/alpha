@@ -168,4 +168,13 @@ public class LoadableStudiesConstants {
 
   public static final String BALLAST_TANK_COLOR_CODE = "#01717D";
   public static final long STOWAGE_STATUS = 1L;
+
+  public static final Long LOADABLE_STUDY_REQUEST = 1L;
+  public static final Long LOADABLE_STUDY_LOADICATOR_REQUEST = 3L;
+  public static final Long LOADABLE_STUDY_LOADICATOR_RESPONSE = 4L;
+  public static final Long LOADABLE_PATTERN_EDIT_REQUEST = 5L;
+  public static final Long LOADABLE_PATTERN_EDIT_LOADICATOR_REQUEST = 7L;
+  public static final Long LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE = 8L;
+
+  public static final String TYPE_DEPARTURE = "Departure";
 }

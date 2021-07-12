@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.service;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -16,10 +17,10 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -53,6 +54,14 @@ public class LoadableStudyPortRotationService {
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
 
   @Autowired private CargoOperationRepository cargoOperationRepository;
+
+  @Autowired private VoyageService voyageService;
+
+  @Autowired private SynopticService synopticService;
+
+  @Autowired private LoadablePatternService loadablePatternService;
+
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -344,5 +353,258 @@ public class LoadableStudyPortRotationService {
 
   public PortInfo.PortReply getPortInfo(PortInfo.GetPortInfoByPortIdsRequest build) {
     return portInfoGrpcService.getPortInfoByPortIds(build);
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder
+      saveLoadableStudyPortRotationList(
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+          com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder)
+          throws GenericServiceException {
+    Optional<LoadableStudy> loadableStudyOpt =
+        this.loadableStudyRepository.findById(request.getLoadableStudyId());
+    if (!loadableStudyOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable study does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+    // validates the input port rotation list for valid ids
+    List<LoadableStudyPortRotation> existingPortRotationList = new ArrayList<>();
+    if (!CollectionUtils.isEmpty(request.getPortRotationDetailsList())) {
+      for (com.cpdss.common.generated.LoadableStudy.PortRotationDetail requestPortRotation :
+          request.getPortRotationDetailsList()) {
+        Optional<LoadableStudyPortRotation> portRotation =
+            this.loadableStudyPortRotationRepository.findById(requestPortRotation.getId());
+        if (!portRotation.isPresent()) {
+          throw new GenericServiceException(
+              "Port rotation does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        existingPortRotationList.add(portRotation.get());
+      }
+    }
+    createPortRotationEntityList(existingPortRotationList, request);
+    if (!CollectionUtils.isEmpty(existingPortRotationList)) {
+      this.loadableStudyPortRotationRepository.saveAll(existingPortRotationList);
+    }
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
+
+  /*
+   * builds list of port rotation entities for bulk save
+   */
+  private List<LoadableStudyPortRotation> createPortRotationEntityList(
+      List<LoadableStudyPortRotation> existingPortRotationList,
+      com.cpdss.common.generated.LoadableStudy.PortRotationRequest portRotationRequest) {
+    if (!CollectionUtils.isEmpty(existingPortRotationList)
+        && !CollectionUtils.isEmpty(portRotationRequest.getPortRotationDetailsList())) {
+      existingPortRotationList.forEach(
+          entity ->
+              portRotationRequest.getPortRotationDetailsList().stream()
+                  .filter(requestPort -> requestPort.getId() == entity.getId().longValue())
+                  .forEach(request -> buildLoadableStudyPortRotationEntity(entity, request)));
+    }
+    return existingPortRotationList;
+  }
+
+  /*
+   * builds single entity from the request
+   */
+  public void buildLoadableStudyPortRotationEntity(
+      LoadableStudyPortRotation entity,
+      com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
+    entity.setAirDraftRestriction(
+        isEmpty(request.getMaxAirDraft()) ? null : new BigDecimal(request.getMaxAirDraft()));
+    entity.setBerthXId(0 == request.getBerthId() ? null : request.getBerthId());
+    entity.setPortXId(0 == request.getPortId() ? null : request.getPortId());
+    entity.setDistanceBetweenPorts(
+        isEmpty(request.getDistanceBetweenPorts())
+            ? null
+            : new BigDecimal(request.getDistanceBetweenPorts()));
+    entity.setMaxDraft(
+        isEmpty(request.getMaxDraft()) ? null : new BigDecimal(request.getMaxDraft()));
+    entity.setSeaWaterDensity(
+        isEmpty(request.getSeaWaterDensity())
+            ? null
+            : new BigDecimal(request.getSeaWaterDensity()));
+    entity.setTimeOfStay(
+        isEmpty(request.getTimeOfStay()) ? null : new BigDecimal(request.getTimeOfStay()));
+    entity.setEta(
+        isEmpty(request.getEta())
+            ? null
+            : LocalDateTime.from(
+                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT).parse(request.getEta())));
+    entity.setEtd(
+        isEmpty(request.getEtd())
+            ? null
+            : LocalDateTime.from(
+                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT).parse(request.getEtd())));
+    entity.setLayCanFrom(
+        isEmpty(request.getLayCanFrom())
+            ? null
+            : LocalDate.from(
+                DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).parse(request.getLayCanFrom())));
+    entity.setLayCanTo(
+        isEmpty(request.getLayCanTo())
+            ? null
+            : LocalDate.from(
+                DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).parse(request.getLayCanTo())));
+    entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
+    entity.setPortOrder(0 == request.getPortOrder() ? null : request.getPortOrder());
+    // update distance, etaActual, etdActual values in synoptical
+    if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
+      entity
+          .getSynopticalTable()
+          .forEach(
+              record -> {
+                record.setDistance(
+                    !StringUtils.isEmpty(request.getDistanceBetweenPorts())
+                        ? new BigDecimal(request.getDistanceBetweenPorts())
+                        : null);
+                String operationType = SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
+                if (TYPE_DEPARTURE.equals(request.getOperationType())) {
+                  operationType = SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+                }
+                if (record.getOperationType().equals(operationType)) {
+                  if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(record.getOperationType())) {
+                    record.setEtaActual(
+                        isEmpty(request.getEtaActual())
+                            ? null
+                            : LocalDateTime.from(
+                                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
+                                    .parse(request.getEtaActual())));
+                  } else {
+                    record.setEtdActual(
+                        isEmpty(request.getEtdActual())
+                            ? null
+                            : LocalDateTime.from(
+                                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
+                                    .parse(request.getEtdActual())));
+                  }
+                }
+              });
+    }
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder
+      saveLoadableStudyPortRotation(
+          com.cpdss.common.generated.LoadableStudy.PortRotationDetail request,
+          com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder)
+          throws GenericServiceException {
+    Optional<LoadableStudy> loadableStudyOpt =
+        this.loadableStudyRepository.findById(request.getLoadableStudyId());
+    if (!loadableStudyOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable study does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    if (!request.getIsLandingPage()) {
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+    }
+    LoadableStudyPortRotation entity = null;
+    boolean portEdited = false;
+    if (request.getId() == 0) {
+      entity = new LoadableStudyPortRotation();
+      entity.setLoadableStudy(loadableStudyOpt.get());
+      // Add ports to synoptical table
+      synopticService.buildPortsInfoSynopticalTable(
+          entity, request.getOperationId(), request.getPortId());
+    } else {
+      Optional<LoadableStudyPortRotation> portRoationOpt =
+          this.loadableStudyPortRotationRepository.findById(request.getId());
+      if (!portRoationOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Port rotation does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      entity = portRoationOpt.get();
+      if (!entity.getPortXId().equals(request.getPortId())) {
+        portEdited = true;
+      }
+    }
+    if (!request.getIsLandingPage()) {
+      loadablePatternService.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
+    }
+    entity =
+        this.loadableStudyPortRotationRepository.save(
+            this.createPortRotationEntity(entity, request));
+    if (portEdited) {
+      this.synopticalTableRepository.deleteByPortRotationId(entity.getId());
+      synopticService.buildPortsInfoSynopticalTable(
+          entity, request.getOperationId(), request.getPortId());
+    }
+    this.loadableStudyRepository.updateLoadableStudyIsPortsComplete(
+        loadableStudyOpt.get().getId(), request.getIsPortsComplete());
+
+    // set port order after update
+    // loadableStudyPortRotationService.setPortOrdering(loadableStudyOpt.get());
+
+    replyBuilder.setPortRotationId(entity.getId());
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
+
+  /**
+   * Create entity class from request
+   *
+   * @param entity
+   * @param request
+   * @return
+   */
+  private LoadableStudyPortRotation createPortRotationEntity(
+      LoadableStudyPortRotation entity,
+      com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
+    buildLoadableStudyPortRotationEntity(entity, request);
+    return entity;
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder
+      getPortRotationByLoadableStudyId(
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+          com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder
+              portRotationReplyBuilder) {
+    Optional<LoadableStudy> loadableStudy =
+        this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+
+    if (!loadableStudy.isPresent()) {
+      log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
+      portRotationReplyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(INVALID_LOADABLE_STUDY_ID)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+    } else {
+      List<LoadableStudyPortRotation> ports =
+          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+              loadableStudy.get(), true);
+      if (ports.isEmpty()) {
+        log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
+        portRotationReplyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_STUDY_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else {
+        ports.forEach(
+            port -> {
+              com.cpdss.common.generated.LoadableStudy.PortRotationDetail.Builder builder =
+                  com.cpdss.common.generated.LoadableStudy.PortRotationDetail.newBuilder();
+              builder.setPortId(port.getPortXId());
+              builder.setId(port.getId());
+              builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
+              portRotationReplyBuilder.addPorts(builder);
+            });
+        portRotationReplyBuilder
+            .setResponseStatus(
+                Common.ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
+            .build();
+      }
+    }
+    return portRotationReplyBuilder;
   }
 }

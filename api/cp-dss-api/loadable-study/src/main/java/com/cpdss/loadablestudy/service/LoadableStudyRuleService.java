@@ -69,7 +69,7 @@ public class LoadableStudyRuleService {
       throw new GenericServiceException(
           "failed to get loadable study rule Details against vessel ",
           vesselRuleReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
     }
     updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
     listOfExistingLSRules =
@@ -129,11 +129,11 @@ public class LoadableStudyRuleService {
                 LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
                 loadableStudyRules.setLoadableStudy(currentLoableStudy);
                 Optional.ofNullable(lsRules.getVesselRuleXId())
-                    .ifPresent(item -> loadableStudyRules.setVesselRuleXId(item));
+                    .ifPresent(loadableStudyRules::setVesselRuleXId);
                 Optional.ofNullable(request.getVesselId())
-                    .ifPresent(item -> loadableStudyRules.setVesselXId(item));
+                    .ifPresent(loadableStudyRules::setVesselXId);
                 Optional.ofNullable(lsRules.getRuleTypeXId())
-                    .ifPresent(item -> loadableStudyRules.setRuleTypeXId(item));
+                    .ifPresent(loadableStudyRules::setRuleTypeXId);
                 Optional.ofNullable(lsRules.getDisplayInSettings())
                     .ifPresent(loadableStudyRules::setDisplayInSettings);
                 Optional.ofNullable(lsRules.getIsEnable())
@@ -149,7 +149,8 @@ public class LoadableStudyRuleService {
                 Optional.ofNullable(lsRules.getParentRuleXId())
                     .ifPresent(loadableStudyRules::setParentRuleXId);
                 List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
-                lsRules.getLoadableStudyRuleInputs().stream()
+                lsRules
+                    .getLoadableStudyRuleInputs()
                     .forEach(
                         lsRulesInput -> {
                           LoadableStudyRuleInput loadableStudyRuleInput =
@@ -211,7 +212,7 @@ public class LoadableStudyRuleService {
       throw new GenericServiceException(
           "failed to get loadable study rule Details ",
           vesselRuleReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
     }
     if (!CollectionUtils.isEmpty(request.getRulePlanList())) {
       log.info("save loadable study rules");

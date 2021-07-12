@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.scheduler.ScheduledTaskRequest;
@@ -126,5 +128,40 @@ public class AlgoErrorService {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Algorithm Error For Loadable Study
+   *
+   * @param loadableStudy - Object
+   * @param replyBuilder - GRPC Object
+   */
+  public void buildLoadableStudyErrorDetails(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
+      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder replyBuilder) {
+
+    Optional<List<AlgoErrorHeading>> alogError =
+        algoErrorHeadingRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
+    if (alogError.isPresent()) {
+      log.info("Adding ALGO error");
+      for (AlgoErrorHeading errorHeading : alogError.get()) {
+        LoadableStudy.AlgoErrors.Builder errorBuilder = LoadableStudy.AlgoErrors.newBuilder();
+
+        Optional<List<com.cpdss.loadablestudy.entity.AlgoErrors>> algoError =
+            algoErrorsRepository.findByAlgoErrorHeadingAndIsActive(errorHeading, true);
+        if (algoError.isPresent()) {
+          List<String> res = new ArrayList<>();
+          res.addAll(
+              algoError.get().stream()
+                  .map(val -> val.getErrorMessage())
+                  .collect(Collectors.toList()));
+          errorBuilder.addAllErrorMessages(res);
+        }
+
+        errorBuilder.setErrorHeading(errorHeading.getErrorHeading());
+        replyBuilder.addAlgoErrors(errorBuilder);
+      }
+    }
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 }
