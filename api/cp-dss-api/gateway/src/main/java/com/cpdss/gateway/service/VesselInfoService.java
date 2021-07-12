@@ -19,18 +19,28 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.keycloak.KeycloakUser;
+import com.cpdss.gateway.domain.user.UserStatusValue;
+import com.cpdss.gateway.domain.user.UserType;
+import com.cpdss.gateway.entity.RoleUserMapping;
+import com.cpdss.gateway.entity.UserStatus;
 import com.cpdss.gateway.entity.Users;
+import com.cpdss.gateway.repository.RoleUserMappingRepository;
+import com.cpdss.gateway.repository.UserStatusRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
 import com.cpdss.gateway.utility.Utility;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Service class for vessel related operations
@@ -46,8 +56,13 @@ public class VesselInfoService {
 
   @Autowired private UsersRepository usersRepository;
   @Autowired VesselValveService vesselValveService;
+  @Autowired private RoleUserMappingRepository roleUserMappingRepository;
+  @Autowired private UserCachingService userCachingService;
+  @Autowired private KeycloakService keycloakService;
+  @Autowired private UserStatusRepository userStatusRepository;
 
   private static final String SUCCESS = "SUCCESS";
+  private static final String SHIP_URL_PREFIX = "/api/ship";
 
   /**
    * Get vessels by company
@@ -103,26 +118,59 @@ public class VesselInfoService {
       vessel.setCaptainId(grpcReply.getCaptainId());
       vessel.setChiefOfficerId(grpcReply.getCheifOfficerId());
       vessel.setCharterer(grpcReply.getCharterer());
-      Optional<Users> userOpt =
-          userList.stream().filter(item -> item.getId().equals(vessel.getCaptainId())).findAny();
-      if (!userOpt.isPresent()) {
-        throw new GenericServiceException(
-            "Captain info not found in database",
-            CommonErrorCodes.E_GEN_INTERNAL_ERR,
-            HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+      if (this.isShip()) {
+        Optional<Users> userOpt =
+            userList.stream().filter(item -> item.getId().equals(vessel.getCaptainId())).findAny();
+        if (!userOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Captain info not found in database",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+        vessel.setCaptainName(userOpt.get().getFirstName() + " " + userOpt.get().getLastName());
+        userOpt =
+            userList.stream()
+                .filter(item -> item.getId().equals(vessel.getChiefOfficerId()))
+                .findAny();
+        if (!userOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Chief officer info not found in database",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+        vessel.setChiefOfficerName(
+            userOpt.get().getFirstName() + " " + userOpt.get().getLastName());
+      } else {
+        List<User> shoreUsers = this.findUsers(UserType.CLOUD);
+        Optional<User> userOptCaptain =
+            shoreUsers.stream()
+                .filter(item -> item.getId().equals(vessel.getCaptainId()))
+                .findAny();
+        if (!userOptCaptain.isPresent()) {
+          throw new GenericServiceException(
+              "Captain info not found in database",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+        vessel.setCaptainName(
+            userOptCaptain.get().getFirstName() + " " + userOptCaptain.get().getLastName());
+        Optional<Users> userOptChiefOfficer =
+            userList.stream()
+                .filter(item -> item.getId().equals(vessel.getChiefOfficerId()))
+                .findAny();
+        if (!userOptChiefOfficer.isPresent()) {
+          throw new GenericServiceException(
+              "Chief officer info not found in database",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+        vessel.setChiefOfficerName(
+            userOptChiefOfficer.get().getFirstName()
+                + " "
+                + userOptChiefOfficer.get().getLastName());
       }
-      vessel.setCaptainName(userOpt.get().getFirstName() + " " + userOpt.get().getLastName());
-      userOpt =
-          userList.stream()
-              .filter(item -> item.getId().equals(vessel.getChiefOfficerId()))
-              .findAny();
-      if (!userOpt.isPresent()) {
-        throw new GenericServiceException(
-            "Chief officer info not found in database",
-            CommonErrorCodes.E_GEN_INTERNAL_ERR,
-            HttpStatusCode.INTERNAL_SERVER_ERROR);
-      }
-      vessel.setChiefOfficerName(userOpt.get().getFirstName() + " " + userOpt.get().getLastName());
+
       vessel.setLoadlines(new ArrayList<>());
       for (LoadLineDetail detail : grpcReply.getLoadLinesList()) {
         LoadLine loadLine = new LoadLine();
@@ -145,6 +193,94 @@ public class VesselInfoService {
    */
   public VesselReply getVesselsByCompany(VesselRequest request) {
     return this.vesselInfoGrpcService.getAllVesselsByCompany(request);
+  }
+
+  /**
+   * Method to find users
+   *
+   * @param userType UserType Ship/Cloud
+   * @return List of users
+   * @throws GenericServiceException Exception object
+   */
+  private List<User> findUsers(UserType userType) throws GenericServiceException {
+    List<User> userList = new ArrayList<>();
+    List<Users> users = new ArrayList<>();
+    UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
+    switch (userType) {
+      case SHIP:
+        users = this.usersRepository.findByIsActiveAndStatusOrderById(true, userStatus);
+        if (users != null && !users.isEmpty()) {
+          users.forEach(
+              userEntity -> {
+                User user = new User();
+                user.setId(userEntity.getId());
+                user.setFirstName(userEntity.getFirstName());
+                user.setLastName(userEntity.getLastName());
+                user.setUsername(userEntity.getUsername());
+                user.setDesignation(userEntity.getDesignation());
+                List<RoleUserMapping> mapping =
+                    this.roleUserMappingRepository.findByUsersAndIsActive(userEntity, true);
+                if (!mapping.isEmpty()) {
+                  user.setRole(mapping.get(0).getRoles().getName());
+                }
+                user.setDefaultUser(userEntity.getIsShipUser());
+                userList.add(user);
+              });
+        }
+        break;
+      case CLOUD:
+        // Get all keycloak users
+        KeycloakUser[] keycloakUsersList = keycloakService.getUsers();
+        List<String> keyCloakIds =
+            Arrays.stream(keycloakUsersList).map(KeycloakUser::getId).collect(Collectors.toList());
+
+        users =
+            this.usersRepository.findByKeycloakIdInAndStatusAndIsActiveOrderById(
+                keyCloakIds, userStatus, true);
+        users.forEach(
+            userEntity -> {
+              KeycloakUser keycloakUser = null;
+              try {
+                keycloakUser = userCachingService.getUser(userEntity.getKeycloakId());
+              } catch (GenericServiceException e) {
+                e.printStackTrace();
+              }
+              User user = new User();
+              user.setId(userEntity.getId());
+              user.setKeycloakId(keycloakUser.getId());
+              user.setFirstName(keycloakUser.getFirstName());
+              user.setLastName(keycloakUser.getLastName());
+              user.setUsername(keycloakUser.getUsername());
+              user.setDesignation(userEntity.getDesignation());
+              List<RoleUserMapping> mapping =
+                  this.roleUserMappingRepository.findByUsersAndIsActive(userEntity, true);
+              if (!mapping.isEmpty()) {
+                user.setRole(mapping.get(0).getRoles().getName());
+              }
+              user.setDefaultUser(userEntity.getIsShipUser());
+              userList.add(user);
+            });
+        break;
+      default:
+        throw new IllegalStateException("Unexpected value: " + userType);
+    }
+    return userList;
+  }
+
+  /**
+   * Identify ship or shore based on accessed url
+   *
+   * @return
+   */
+  public boolean isShip() {
+    if (null != RequestContextHolder.getRequestAttributes()) {
+      HttpServletRequest request =
+          ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+      if (null != request.getRequestURI()) {
+        return request.getRequestURI().indexOf(SHIP_URL_PREFIX) != -1;
+      }
+    }
+    return false;
   }
 
   /**
