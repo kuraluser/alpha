@@ -212,7 +212,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           dischargeSynoptical.setOthersPlanned(data.getOthersPlanned());
           dischargeSynoptical.setPortXid(data.getPortXid());
           dischargeSynoptical.setRunningHours(data.getRunningHours());
-          dischargeSynoptical.setSpecificGravity(data.getSpecificGravity());
           dischargeSynoptical.setSpeed(data.getSpeed());
           dischargeSynoptical.setTimeOfSunrise(data.getTimeOfSunrise());
           dischargeSynoptical.setTimeOfSunSet(data.getTimeOfSunSet());

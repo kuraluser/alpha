@@ -931,6 +931,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder replyBuilder =
         CargoNominationReply.newBuilder();
     try {
+      System.out.println("Here1");
       cargoNominationService.getCargoNominationById(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
@@ -6054,6 +6055,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       prEntity.setEtd(etaEtdEstimated);
     }
+    if(!isEmpty(record.getSpecificGravity())) {
+      prEntity.setSeaWaterDensity(new BigDecimal(record.getSpecificGravity()));
+    }
     this.loadableStudyPortRotationRepository.save(prEntity);
   }
 
@@ -6082,9 +6086,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(record.getTimeOfSunset())
             ? null
             : LocalTime.from(dtf.parse(record.getTimeOfSunset())));
-
-    entity.setSpecificGravity(
-        isEmpty(record.getSpecificGravity()) ? null : new BigDecimal(record.getSpecificGravity()));
     entity.setHwTideFrom(
         isEmpty(record.getHwTideFrom()) ? null : new BigDecimal(record.getHwTideFrom()));
     entity.setHwTideTo(isEmpty(record.getHwTideTo()) ? null : new BigDecimal(record.getHwTideTo()));
@@ -6832,11 +6833,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(time -> builder.setTimeOfSunrise(timeFormatter.format(time)));
     ofNullable(synopticalEntity.getTimeOfSunSet())
         .ifPresent(time -> builder.setTimeOfSunset(timeFormatter.format(time)));
-    // If specific port related data is available in synoptical table then replace
-    // the port master
-    // value
-    ofNullable(synopticalEntity.getSpecificGravity())
-        .ifPresent(sg -> builder.setSpecificGravity(valueOf(sg)));
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
     ofNullable(synopticalEntity.getHwTideFrom())
         .ifPresent(hwTideFrom -> builder.setHwTideFrom(String.valueOf(hwTideFrom)));
@@ -6933,6 +6929,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       if (null != portRotation.get().getPortOrder()) {
         builder.setPortOrder(portRotation.get().getPortOrder());
+      }
+      if (null != portRotation.get().getSeaWaterDensity()) {
+        builder.setSpecificGravity(portRotation.get().getSeaWaterDensity().toString());
       }
       builder.setPortRotationId(portRotation.get().getId());
     }
