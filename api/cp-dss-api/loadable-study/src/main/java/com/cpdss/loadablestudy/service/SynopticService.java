@@ -654,11 +654,6 @@ public class SynopticService {
         .ifPresent(time -> builder.setTimeOfSunrise(timeFormatter.format(time)));
     ofNullable(synopticalEntity.getTimeOfSunSet())
         .ifPresent(time -> builder.setTimeOfSunset(timeFormatter.format(time)));
-    // If specific port related data is available in synoptical table then replace
-    // the port master
-    // value
-    ofNullable(synopticalEntity.getSpecificGravity())
-        .ifPresent(sg -> builder.setSpecificGravity(valueOf(sg)));
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
     ofNullable(synopticalEntity.getHwTideFrom())
         .ifPresent(hwTideFrom -> builder.setHwTideFrom(String.valueOf(hwTideFrom)));
@@ -721,6 +716,9 @@ public class SynopticService {
       }
       if (null != portRotation.get().getPortOrder()) {
         builder.setPortOrder(portRotation.get().getPortOrder());
+      }
+      if (null != portRotation.get().getSeaWaterDensity()) {
+        builder.setSpecificGravity(portRotation.get().getSeaWaterDensity().toString());
       }
       builder.setPortRotationId(portRotation.get().getId());
     }

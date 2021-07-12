@@ -5330,6 +5330,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       prEntity.setEtd(etaEtdEstimated);
     }
+    if(!isEmpty(record.getSpecificGravity())) {
+      prEntity.setSeaWaterDensity(new BigDecimal(record.getSpecificGravity()));
+    }
     this.loadableStudyPortRotationRepository.save(prEntity);
   }
 
@@ -5358,9 +5361,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(record.getTimeOfSunset())
             ? null
             : LocalTime.from(dtf.parse(record.getTimeOfSunset())));
-
-    entity.setSpecificGravity(
-        isEmpty(record.getSpecificGravity()) ? null : new BigDecimal(record.getSpecificGravity()));
     entity.setHwTideFrom(
         isEmpty(record.getHwTideFrom()) ? null : new BigDecimal(record.getHwTideFrom()));
     entity.setHwTideTo(isEmpty(record.getHwTideTo()) ? null : new BigDecimal(record.getHwTideTo()));
