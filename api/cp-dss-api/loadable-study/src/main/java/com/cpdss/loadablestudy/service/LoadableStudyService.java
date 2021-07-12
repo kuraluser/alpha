@@ -5330,7 +5330,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       prEntity.setEtd(etaEtdEstimated);
     }
-    if(!isEmpty(record.getSpecificGravity())) {
+    if (!isEmpty(record.getSpecificGravity())) {
       prEntity.setSeaWaterDensity(new BigDecimal(record.getSpecificGravity()));
     }
     this.loadableStudyPortRotationRepository.save(prEntity);
