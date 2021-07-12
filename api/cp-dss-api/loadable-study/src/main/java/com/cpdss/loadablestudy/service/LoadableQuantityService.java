@@ -9,10 +9,7 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.LoadableQuantity;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -47,6 +44,10 @@ public class LoadableQuantityService {
   @Autowired private LoadablePatternService loadablePatternService;
 
   @Autowired LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+
+  @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
+
+  @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -590,5 +591,54 @@ public class LoadableQuantityService {
                   : new BigDecimal(request.getDraftMark()));
       this.loadableQuantityRepository.save(loadableQuantity.get(0));
     }
+  }
+
+  /**
+   * @param loadablePlanPortWiseDetails
+   * @return Consumer<? super LoadablePlanPortWiseDetails>
+   */
+  public void saveLoadableQuantity(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails
+          loadablePlanPortWiseDetails,
+      LoadablePattern loadablePattern) {
+    loadablePlanPortWiseDetails
+        .getDepartureCondition()
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            lqcd -> {
+              LoadablePlanQuantity loadablePlanQuantity = new LoadablePlanQuantity();
+              loadablePlanQuantity.setDifferencePercentage(lqcd.getDifferencePercentage());
+              loadablePlanQuantity.setEstimatedApi(new BigDecimal(lqcd.getEstimatedAPI()));
+              loadablePlanQuantity.setEstimatedTemperature(new BigDecimal(lqcd.getEstimatedTemp()));
+              loadablePlanQuantity.setCargoXId(lqcd.getCargoId());
+              loadablePlanQuantity.setIsActive(true);
+              loadablePlanQuantity.setLoadableMt(lqcd.getLoadableMT());
+              loadablePlanQuantity.setOrderQuantity(new BigDecimal(lqcd.getOrderedMT()));
+              loadablePlanQuantity.setLoadablePattern(loadablePattern);
+              loadablePlanQuantity.setCargoAbbreviation(lqcd.getCargoAbbreviation());
+              loadablePlanQuantity.setCargoColor(lqcd.getColorCode());
+              loadablePlanQuantity.setPriority(lqcd.getPriority());
+              loadablePlanQuantity.setLoadingOrder(lqcd.getLoadingOrder());
+              loadablePlanQuantity.setMinTolerence(lqcd.getMinTolerence());
+              loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
+              loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
+              loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
+              loadablePlanQuantity.setCargoNominationTemperature(
+                  new BigDecimal(lqcd.getCargoNominationTemperature()));
+              loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
+              loadablePlanQuantityRepository.save(loadablePlanQuantity);
+              lqcd.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(lqcd.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
+                      });
+            });
   }
 }
