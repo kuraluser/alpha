@@ -10,7 +10,7 @@ import lombok.Data;
 @JsonInclude(Include.NON_NULL)
 public class StabilityConditions {
   private BigDecimal list;
-  private BigDecimal hogSag;
+  private BigDecimal deflection;
   private BigDecimal finalDraftFwd;
   private BigDecimal finalDraftAft;
   private BigDecimal finalDraftMid;
