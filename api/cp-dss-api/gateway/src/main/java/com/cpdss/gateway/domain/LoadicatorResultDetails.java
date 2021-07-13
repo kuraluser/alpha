@@ -9,7 +9,7 @@ public class LoadicatorResultDetails {
   private Long synopticalId;
   private Long operationId;
   private Long portId;
-  private String hog; // deflection
+  private String deflection; // deflection
   private String calculatedDraftFwdPlanned;
   private String calculatedDraftMidPlanned;
   private String calculatedDraftAftPlanned;

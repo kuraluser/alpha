@@ -221,28 +221,10 @@ public class LoadingInformationAlgoRequestBuilderService {
         this.loadableStudyService.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
                 .setPatternId(entity.getLoadablePatternXId())
-                .setOperationType("ARR")
+                .setOperationType("DEP")
                 .setPortRotationId(entity.getPortRotationXId())
                 .setPortId(entity.getPortXId())
                 .build());
-
-    if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to fetch cargoVesselTankDetails from Loadable-Study MS",
-          response.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(response.getResponseStatus().getCode())));
-    }
-
-    if (response.getLoadableQuantityCargoDetailsList().isEmpty()) {
-      response =
-          this.loadableStudyService.getSynopticDataForLoadingPlan(
-              LoadableStudy.LoadingPlanIdRequest.newBuilder()
-                  .setPatternId(entity.getLoadablePatternXId())
-                  .setOperationType("DEP")
-                  .setPortRotationId(entity.getPortRotationXId())
-                  .setPortId(entity.getPortXId())
-                  .build());
-    }
 
     if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

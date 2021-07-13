@@ -251,7 +251,7 @@ message LoadicatorPatternDetailsResults {
 
 message LodicatorResultDetails {
 	int64 portId = 1;
-	string hog = 2;
+	string deflection = 2;
 	string calculatedDraftFwdPlanned = 3;
 	string calculatedDraftMidPlanned = 4;
 	string calculatedDraftAftPlanned = 5;
@@ -304,7 +304,7 @@ message LDtrim {
    int64 portId = 21;
    int64 stowagePlanId = 22;
    int64 synopticalId = 23;
-   string hogSag = 24;
+   string deflection = 24;
 }
 
 message LDStrength{
@@ -1198,7 +1198,7 @@ message SynopticalTableReply{
 }
 
 message SynopticalTableLoadicatorData{
-	string hogSag = 1;
+	string deflection = 1;
 	string finalDraftFwd = 2;
 	string finalDraftAft = 3;
 	string finalDraftMid = 4;

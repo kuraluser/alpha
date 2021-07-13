@@ -2212,9 +2212,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             !StringUtils.isEmpty(lrdl.getCalculatedTrimPlanned())
                                 ? new BigDecimal(lrdl.getCalculatedTrimPlanned())
                                 : null);
-                        loadicatorData.setHog(
-                            !StringUtils.isEmpty(lrdl.getHog())
-                                ? new BigDecimal(lrdl.getHog())
+                        loadicatorData.setDeflection(
+                            !StringUtils.isEmpty(lrdl.getDeflection())
+                                ? new BigDecimal(lrdl.getDeflection())
                                 : null);
                         loadicatorData.setList(
                             !StringUtils.isEmpty(lrdl.getList())
@@ -4026,7 +4026,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
     entity.setBendingMoment(isEmpty(result.getBm()) ? null : new BigDecimal(result.getBm()));
     entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
-    entity.setHog(isEmpty(result.getHog()) ? null : new BigDecimal(result.getHog()));
+    entity.setDeflection(
+        isEmpty(result.getDeflection()) ? null : new BigDecimal(result.getDeflection()));
     return entity;
   }
 
@@ -4219,7 +4220,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           trim.setTrimValue(ldTrim.getTrimValue());
           trim.setPortId(ldTrim.getPortId());
           trim.setSynopticalId(ldTrim.getSynopticalId());
-          trim.setHog(ldTrim.getHogSag());
+          trim.setDeflection(ldTrim.getDeflection());
           ldTrims.add(trim);
         });
 
@@ -5266,7 +5267,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.info(
           "Loadicator data does not exist for given synoptical record with id {}", record.getId());
     } else {
-      ldEntity.setHog(isEmpty(data.getHogSag()) ? null : new BigDecimal(data.getHogSag()));
+      ldEntity.setDeflection(
+          isEmpty(data.getDeflection()) ? null : new BigDecimal(data.getDeflection()));
       ldEntity.setCalculatedDraftFwdActual(
           isEmpty(data.getCalculatedDraftFwdActual())
               ? null
