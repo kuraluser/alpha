@@ -115,4 +115,8 @@ public class LoadingInformation extends EntityDoc {
 
   @Column(name = "is_loading_information_complete")
   private Boolean isLoadingInfoComplete = false;
+
+  @ManyToOne
+  @JoinColumn(name = "loading_status_xid")
+  private LoadingInformationStatus loadingInformationStatus;
 }
