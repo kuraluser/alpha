@@ -607,4 +607,57 @@ public class LoadableStudyPortRotationService {
     }
     return portRotationReplyBuilder;
   }
+
+  public com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder deletePortRotation(
+      com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Optional<LoadableStudy> loadableStudyOpt =
+        this.loadableStudyRepository.findById(request.getLoadableStudyId());
+    if (!loadableStudyOpt.isPresent() || !loadableStudyOpt.get().isActive()) {
+      throw new GenericServiceException(
+          "Loadable study does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+    loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
+    LoadableStudy loadableStudy = loadableStudyOpt.get();
+    if (null != loadableStudy.getLoadableStudyStatus()
+        && LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID.equals(
+            loadableStudy.getLoadableStudyStatus().getId())) {
+      throw new GenericServiceException(
+          "Cannot delete ports for loadable study with status - plan generated",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    Optional<LoadableStudyPortRotation> entityOpt =
+        this.loadableStudyPortRotationRepository.findById(request.getId());
+    if (!entityOpt.isPresent()) {
+      throw new GenericServiceException(
+          "port rotation does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    LoadableStudyPortRotation entity = entityOpt.get();
+    if (loadableStudy.getPlanningTypeXId() != null
+        && loadableStudy.getPlanningTypeXId().equals(Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE)) {
+      if (null != entity.getOperation()
+          && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
+              || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
+        throw new GenericServiceException(
+            "Cannot delete loading/discharging ports",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    }
+    entity.setActive(false);
+    // delete ports from synoptical table
+    if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
+      entity.getSynopticalTable().forEach(portRecord -> portRecord.setIsActive(false));
+    }
+    this.loadableStudyPortRotationRepository.save(entity);
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
 }

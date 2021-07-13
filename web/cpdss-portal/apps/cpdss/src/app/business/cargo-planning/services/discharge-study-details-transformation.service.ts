@@ -14,7 +14,7 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IPortAllDropdownData, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject , OPERATIONS } from '../models/cargo-planning.model';
+import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject , OPERATIONS } from '../models/cargo-planning.model';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode , ICargo } from '../../../shared/models/common.model';
 import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo ,} from '../models/discharge-study-list.model';
 import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS } from '../../core/models/common.model';
@@ -646,12 +646,12 @@ export class DischargeStudyDetailsTransformationService {
   /**
    * Method to convert ohq tank details to value object
    *
-   * @param {IPortOHQTankDetail} ohqTankDetail
+   * @param {IDischargePortPortOHQTankDetail} ohqTankDetail
    * @param {boolean} [isNewValue=true]
    * @returns {IPortOHQTankDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-   getOHQTankDetailsAsValueObject(ohqTankDetail: IPortOHQTankDetail, isNewValue = true): IPortOHQTankDetailValueObject {
+   getOHQTankDetailsAsValueObject(ohqTankDetail: IDischargeStudyPortOHQTankDetail, isNewValue = true): IPortOHQTankDetailValueObject {
     const _ohqTankDetail = <IPortOHQTankDetailValueObject>{};
     _ohqTankDetail.id = ohqTankDetail?.id;
     _ohqTankDetail.portRotationId = ohqTankDetail?.portRotationId;
@@ -689,8 +689,8 @@ export class DischargeStudyDetailsTransformationService {
    * @returns {IPortOHQTankDetail}
    * @memberof DischargeStudyDetailsTransformationService
    */
-  getOHQTankDetailAsValue(ohqTankDetail: IPortOHQTankDetailValueObject): IPortOHQTankDetail {
-    const _ohqTankDetail: IPortOHQTankDetail = <IPortOHQTankDetail>{};
+  getOHQTankDetailAsValue(ohqTankDetail: IPortOHQTankDetailValueObject): IDischargeStudyPortOHQTankDetail {
+    const _ohqTankDetail: IDischargeStudyPortOHQTankDetail = <IDischargeStudyPortOHQTankDetail>{};
     for (const key in ohqTankDetail) {
       if (Object.prototype.hasOwnProperty.call(ohqTankDetail, key)) {
         _ohqTankDetail[key] = ohqTankDetail[key]?.value ?? ohqTankDetail[key];

@@ -546,7 +546,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           loadableStudy.isDeletable = false;
           loadableStudy.isActionsEnabled = true;
         }
-        else if ([6, 1].includes(statusId)) {
+        else if ([6, 1, 11].includes(statusId)) {
           loadableStudy.isActionsEnabled = true;
           if (this.loadableStudyId === loadableStudyId) {
             this.selectedLoadableStudy = JSON.parse(JSON.stringify(loadableStudy));

@@ -283,6 +283,11 @@ export class RulesTableComponent implements OnInit, OnDestroy {
         errorMessageLesser = res['ADMIN_RULE_LESSER_THAN'];
       })
     this.rulesForm = new FormArray([]);
+    if (!this.displaySettings) {
+      this.rulesJson[this.selectedTab].forEach(element => {
+        element.rules = element.rules.filter(el => el.displayInSettings);
+      });
+    }
     this.rulesJson[this.selectedTab].forEach(element => {
       let formArrayTemp = new FormArray([])
       element.rules.forEach((rule,rowIndex) => {

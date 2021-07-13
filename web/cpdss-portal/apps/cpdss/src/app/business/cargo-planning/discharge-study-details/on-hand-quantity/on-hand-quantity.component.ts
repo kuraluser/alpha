@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@ang
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IPortOHQTankDetailEvent, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank, IPortOHQTankDetail } from '../../models/cargo-planning.model';
+import { IPortOHQTankDetailEvent, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank, IDischargeStudyPortOHQTankDetail } from '../../models/cargo-planning.model';
 import { DischargeStudyDetailsApiService } from '../../services/discharge-study-details-api.service';
 import { DischargeStudyDetailsTransformationService } from '../../services/discharge-study-details-transformation.service';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
@@ -12,10 +12,12 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { Observable, of } from 'rxjs';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { IDischargeStudy } from '../../models/discharge-study-list.model';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
+import { environment } from '../../../../../environments/environment';
+import { SecurityService } from '../../../../shared/services/security/security.service';
 
 /**
  * Compoent for OHQ tab
@@ -52,12 +54,12 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   @Input() permission: IPermission;
 
   @Input()
-  get loadableStudy() {
+  get dischargeStudy(): IDischargeStudy {
     return this._dischargeStudy;
   }
-  set dischargeStudy(value: LoadableStudy) {
+  set dischargeStudy(value: IDischargeStudy) {
     this._dischargeStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit)  && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
   }
 
   get selectedPortOHQTankDetails() {
@@ -139,7 +141,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   private _rearTanks: IBunkerTank[][];
   private _selectedTank: IPortOHQTankDetailValueObject;
   private _ohqForm: FormGroup;
-  private _dischargeStudy: LoadableStudy;
+  private _dischargeStudy: IDischargeStudy;
 
 
   constructor(private dischargeStudyDetailsApiService: DischargeStudyDetailsApiService,
@@ -177,7 +179,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   async getPortRotation() {
     this.ngxSpinnerService.show();
     this.ports = await this.dischargeStudyDetailsApiService.getPorts().toPromise();
-    const result = await this.dischargeStudyDetailsApiService.getOHQPortRotation(this.vesselId, this.voyageId, this.dischargeStudyId).toPromise();
+    const result = await this.dischargeStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.dischargeStudyId).toPromise();
     if (result?.portList) {
       this.ohqPorts = result?.portList?.map((ohqPort) => {
         return { ...this.ports?.find((port) => port.id === ohqPort.portId), id: ohqPort?.id, portId: ohqPort?.portId };
@@ -298,7 +300,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
    * @returns
    * @memberof OnHandQuantityComponent
    */
-  private initOHQFormGroup(ohqTankDetail: IPortOHQTankDetailValueObject, selectedPortOHQTankDetails: IPortOHQTankDetail[]) {
+  private initOHQFormGroup(ohqTankDetail: IPortOHQTankDetailValueObject, selectedPortOHQTankDetails: IDischargeStudyPortOHQTankDetail[]) {
     return this.fb.group({
       fuelTypeId: this.fb.control(ohqTankDetail.fuelTypeId),
       fuelTypeName: this.fb.control(ohqTankDetail.fuelTypeName, Validators.required),
@@ -320,6 +322,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const fromGroup = this.row(event.index);
     event.data.fullCapacity = event?.data?.fullCapacityCubm * event?.data?.density.value ?? 0;
+    const formControl = this.field(event?.index, event?.field);
 
     let dependentKeys = [];
     switch (event?.field) {
@@ -350,18 +353,18 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
         formControl2.updateValueAndValidity();
       }
     } else {
-      const formControl = this.field(event?.index, event?.field);
       event.data[event.field].value = 0;
       formControl.setValue(0);
-      formControl.updateValueAndValidity();
     }
 
     event.data.arrivalVolume = event?.data?.density?.value ? event?.data?.arrivalQuantity?.value / event?.data?.density?.value : 0;
     event.data.departureVolume = event?.data?.density?.value ? event?.data.departureQuantity?.value / event?.data?.density?.value : 0;
 
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
+    formControl.updateValueAndValidity();
     if (fromGroup.valid) {
       event.data.processing = true;
+      this.dischargeStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
       const _selectedPortOHQTankDetail = this.dischargeStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
       const res = await this.dischargeStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.dischargeStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
       if (res) {
@@ -376,9 +379,9 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     } else {
       for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
         if (this.selectedPortOHQTankDetails[valueIndex].hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
-          const formControl = this.field(event.index, key);
-          formControl.updateValueAndValidity();
-          this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = formControl.invalid;
+          const _formControl = this.field(event.index, key);
+          _formControl.updateValueAndValidity();
+          this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = _formControl.invalid;
         }
       }
       fromGroup.markAllAsTouched();
@@ -389,18 +392,18 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       if (row.invalid && row.touched) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
-          const formControl = this.field(index, key);
-          formControl.updateValueAndValidity();
+          const _formControl = this.field(index, key);
+          _formControl.updateValueAndValidity();
         });
         if (row.valid) {
           event.data.processing = true;
-          const _selectedPortOHQTankDetail = this.dischargeStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
+          const _selectedPortOHQTankDetail = this.dischargeStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[index]);
           const res = await this.dischargeStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.dischargeStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
           if (res) {
-            for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
-              if (this.selectedPortOHQTankDetails[valueIndex].hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
-                const formControl = this.field(index, key);
-                this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = formControl.invalid;
+            for (const key in this.selectedPortOHQTankDetails[index]) {
+              if (this.selectedPortOHQTankDetails[index].hasOwnProperty(key) && this.selectedPortOHQTankDetails[index][key]?.hasOwnProperty('_isEditMode')) {
+                const _formControl = this.field(index, key);
+                this.selectedPortOHQTankDetails[index][key].isEditMode = _formControl.invalid;
               }
             }
             this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
@@ -409,8 +412,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       } else if (row.invalid) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
-          const formControl = this.field(index, key);
-          formControl.updateValueAndValidity();
+          const _formControl = this.field(index, key);
+          _formControl.updateValueAndValidity();
         });
       }
     });
@@ -443,8 +446,14 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
    * @memberof OnHandQuantityComponent
    */
   private swMessageHandler = async (event) => {
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
+      this.globalErrorHandler.sessionOutMessage();
+    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
+      SecurityService.refreshToken(event?.data?.refreshedToken)
+    }
     const translationKeys = await this.translateService.get(['OHQ_UPDATE_ERROR', 'OHQ_UPDATE_STATUS_ERROR']).toPromise();
     if (event?.data?.type === 'ohq_sync_finished') {
+      this.dischargeStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
       const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.selectedPortOHQTankDetails[index].processing = false;

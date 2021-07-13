@@ -28,14 +28,14 @@
                 </div>
                 <div class="row form-group">
                     <label for="reduced_loading_rate"
-                        class="col-5 no-left-padding">{{'LOADING_RATE_REDUCED_LOADING_RATE' | translate}}</label>
+                        class="col-5 no-left-padding">{{'LOADING_RATE_SHORE_LOADING_RATE' | translate}}</label>
                     <div class="col error-icon-wrapper">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else reducedLoadingRef"
-                        id="reduced_loading_rate" formControlName="reducedLoadingRate"  placeholder="{{'LOADING_RATE_REDUCED_LOADING_RATE_PLACEHOLDER' | translate}}"
-                        (change)="onChange('reducedLoadingRate')" [readonly]="false">
-                        <ng-template #reducedLoadingRef><span>{{reducedLoadingRate?.value}}</span></ng-template>
-                        <cpdss-portal-validation-error [errors]="fieldError('reducedLoadingRate')"
-                        [errorMessages]="errorMesages?.reducedLoadingRate"></cpdss-portal-validation-error>
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else shoreLoadingRateRef"
+                        id="reduced_loading_rate" formControlName="shoreLoadingRate"  placeholder="{{'LOADING_RATE_SHORE_LOADING_RATE_PLACEHOLDER' | translate}}"
+                        (change)="onChange('shoreLoadingRate')" [readonly]="false">
+                        <ng-template #shoreLoadingRateRef><span>{{shoreLoadingRate?.value}}</span></ng-template>
+                        <cpdss-portal-validation-error [errors]="fieldError('shoreLoadingRate')"
+                        [errorMessages]="errorMesages?.shoreLoadingRate"></cpdss-portal-validation-error>
                     </div>
                      
                 </div>

@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
+import { DischargeStudyListApiService } from '../../../cargo-planning/services/discharge-study-list-api.service';
 import { DischargeStudyListTransformationApiService } from '../../../cargo-planning/services/discharge-study-list-transformation-api.service';
 
 
@@ -21,7 +24,10 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
 
   
   @Input() display;
-  @Output() displayPopup = new EventEmitter();
+  @Input() vesselInfoList;
+  @Input() selectedVoyage;
+  @Output() displayPopup = new EventEmitter();  
+  @Output() addedNewDischargeStudy = new EventEmitter<Object>();
   popUpHeader :any;
   @Input() isEdit;
   saveButtonLbl:string;
@@ -29,9 +35,14 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
   errors:any;
   errorMessages:any;
   @Input() selectedDischargeStudy;
+  @Input() dischargeStudyList;
 
-  constructor(private translateService: TranslateService,private formBuilder: FormBuilder,
-  private dischargeStudyListTransformationApiService : DischargeStudyListTransformationApiService) { }
+  constructor(
+    private messageService: MessageService,
+    private translateService: TranslateService,
+    private ngxSpinnerService: NgxSpinnerService,private formBuilder: FormBuilder,
+  private dischargeStudyListTransformationApiService : DischargeStudyListTransformationApiService,
+  private dischargeStudyApiService : DischargeStudyListApiService) { }
 
 
   /**
@@ -52,7 +63,30 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
    * @memberof NewDischargeStudyPopUpComponent
    */
   ngOnChanges(changes: SimpleChanges) {
+    if (changes?.selectedDischargeStudy &&changes.selectedDischargeStudy.currentValue!=null ) {
+      this.selectedDischargeStudy = changes.selectedDischargeStudy.currentValue
+    }
+    if(changes?.isEdit){
+      this.isEdit = changes.isEdit.currentValue;
+    }
    this.setPopUpHeader();
+   this.setFormValue();
+  }
+
+
+  /**
+   * Method to set form value
+   *
+   * @memberof NewDischargeStudyPopUpComponent
+   */
+  setFormValue() {
+    if (this.selectedDischargeStudy) {
+      this.dischargeStudyForm.controls.newDischargeStudyName.setValue(this.selectedDischargeStudy.name);
+      this.dischargeStudyForm.controls.enquiryDetails.setValue(this.selectedDischargeStudy.detail);
+    }
+    else{
+      this.dischargeStudyForm.reset();
+    }
   }
   
   /**
@@ -77,7 +111,6 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
       'newDischargeStudyName':['', [Validators.required]],
       'enquiryDetails': ['', [Validators.maxLength(1000)]],
     });
-    
   }
 
 
@@ -120,8 +153,59 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
    *
    * @memberof NewDischargeStudyPopUpComponent
    */
-  onClose()
+  closeDialogue()
   {
+    this.dischargeStudyForm.reset();
     this.displayPopup.emit(false);
+  }
+
+
+  /**Method to save/update discharge study */
+
+
+  public async saveOrUpdateDischargeStudy() {  
+    this.dischargeStudyForm.markAllAsTouched();
+    this.ngxSpinnerService.show();
+    let result;
+    if (this.dischargeStudyForm.valid) {
+      let newModel = {
+        name: this.dischargeStudyForm.value.newDischargeStudyName,
+        detail: this.dischargeStudyForm.value.enquiryDetails
+      }
+
+      const translationKeys = await this.translateService.get(['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST', 'DISCHARGE_STUDY_CREATE_SUCCESS', 'DISCHARGE_STUDY_CREATE_SUCCESS','DISCHARGE_STUDY_CREATED_SUCCESSFULLY', 'DISCHARGE_STUDY_CREATE_ERROR', 'DISCHARGE_STUDY_ALREADY_EXIST', 'DISCHARGE_STUDY_UPDATE_SUCCESS', 'DISCHARGE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
+      try {
+        if (!this.selectedDischargeStudy) {
+          result = await this.dischargeStudyApiService.saveOrUpdateDischargeStudy(this.vesselInfoList.id, this.selectedVoyage.id, newModel).toPromise();
+        }
+        else {
+
+          result = await this.dischargeStudyApiService.saveOrUpdateDischargeStudy(null, null, newModel, this.selectedDischargeStudy.id).toPromise();
+        }
+        if (result.responseStatus.status === "200") {
+          if (result?.dischargeStudyId) {
+            this.messageService.add({ severity: 'success', summary: translationKeys['DISCHARGE_STUDY_CREATE_SUCCESS'], detail: translationKeys['DISCHARGE_STUDY_CREATED_SUCCESSFULLY'] });
+            this.addedNewDischargeStudy.emit(result?.dischargeStudyId);
+          }
+          else {
+            this.messageService.add({ severity: 'success', summary: translationKeys['DISCHARGE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['DISCHARGE_STUDY_UPDATED_SUCCESSFULLY'] });
+            this.addedNewDischargeStudy.emit(result.dischargeStudy.id);
+          }
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_CREATED_SUCCESSFULLY'] });
+        }
+        this.ngxSpinnerService.hide();
+        this.closeDialogue();
+      }
+      catch (error) {
+        if (error.error.errorCode === 'ERR-RICO-105') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST'] });
+          this.ngxSpinnerService.hide();
+        }
+      }
+    }
+    this.selectedDischargeStudy = null;
+    this.ngxSpinnerService.hide();
   }
 }

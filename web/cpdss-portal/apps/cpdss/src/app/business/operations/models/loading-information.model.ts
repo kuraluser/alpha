@@ -125,16 +125,17 @@ export interface ILoadingMachinesInUses {
  * @interface ILoadingRates
  */
 export interface ILoadingRates {
+    id: number;
     initialLoadingRate?: number;
     minLoadingRate: number;
     maxLoadingRate: number;
-    reducedLoadingRate: number;
+    reducedLoadingRate?: number;
     minDeBallastingRate: number;
     maxDeBallastingRate: number;
     noticeTimeRateReduction: number;
     noticeTimeStopLoading: number;
     lineContentRemaining?: number;
-    id: number;
+    shoreLoadingRate: number;
 }
 
 /**

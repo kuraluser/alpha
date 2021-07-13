@@ -60,7 +60,7 @@ public class SynopticalRecord {
   private BigDecimal ballastPlannedTotal;
   private BigDecimal ballastActualTotal;
 
-  private BigDecimal hogSag;
+  private BigDecimal deflection;
   private BigDecimal finalDraftFwd;
   private BigDecimal finalDraftAft;
   private BigDecimal finalDraftMid;

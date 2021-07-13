@@ -1476,7 +1476,7 @@ class LoadableStudyServiceTest {
     lodicatorResultDetails.setCalculatedDraftFwdPlanned(LOADICATOR_DATA);
     lodicatorResultDetails.setCalculatedDraftMidPlanned(LOADICATOR_DATA);
     lodicatorResultDetails.setCalculatedTrimPlanned(LOADICATOR_DATA);
-    lodicatorResultDetails.setHog(LOADICATOR_DATA);
+    lodicatorResultDetails.setDeflection(LOADICATOR_DATA);
     lodicatorResultDetails.setList(LOADICATOR_DATA);
     lodicatorResultDetails.setPortId(1L);
     lodicatorResultDetails.setOperationId(1L);

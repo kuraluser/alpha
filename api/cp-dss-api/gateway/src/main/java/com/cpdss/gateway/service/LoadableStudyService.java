@@ -2952,8 +2952,8 @@ public class LoadableStudyService {
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
     SynopticalTableLoadicatorData proto = synopticalProtoRecord.getLoadicatorData();
-    synopticalRecord.setHogSag(
-        isEmpty(proto.getHogSag()) ? BigDecimal.ZERO : new BigDecimal(proto.getHogSag()));
+    synopticalRecord.setDeflection(
+        isEmpty(proto.getDeflection()) ? BigDecimal.ZERO : new BigDecimal(proto.getDeflection()));
     synopticalRecord.setFinalDraftFwd(
         isEmpty(proto.getFinalDraftFwd())
             ? BigDecimal.ZERO
@@ -3426,7 +3426,7 @@ public class LoadableStudyService {
                             lrd.getCalculatedDraftMidPlanned());
                         loadicatorResultsBuilder.setCalculatedTrimPlanned(
                             lrd.getCalculatedTrimPlanned());
-                        loadicatorResultsBuilder.setHog(lrd.getHog());
+                        loadicatorResultsBuilder.setDeflection(lrd.getDeflection());
                         loadicatorResultsBuilder.setList(lrd.getList());
                         loadicatorResultsBuilder.setPortId(lrd.getPortId());
                         loadicatorResultsBuilder.setOperationId(lrd.getOperationId());
@@ -4504,8 +4504,8 @@ public class LoadableStudyService {
       SynopticalRecord request) {
     SynopticalTableLoadicatorData.Builder loadicatorBuilder =
         SynopticalTableLoadicatorData.newBuilder();
-    Optional.ofNullable(request.getHogSag())
-        .ifPresent(item -> loadicatorBuilder.setHogSag(valueOf(item)));
+    Optional.ofNullable(request.getDeflection())
+        .ifPresent(item -> loadicatorBuilder.setDeflection(valueOf(item)));
     Optional.ofNullable(request.getCalculatedDraftFwdActual())
         .ifPresent(item -> loadicatorBuilder.setCalculatedDraftFwdActual(valueOf(item)));
     Optional.ofNullable(request.getCalculatedDraftAftActual())
@@ -4992,10 +4992,10 @@ public class LoadableStudyService {
         // build loadicator conditions
         StabilityConditions stabilityConditions = new StabilityConditions();
         stabilityConditions.setList(synopticalRecord.get().getList());
-        stabilityConditions.setHogSag(synopticalRecord.get().getHogSag());
-        BigDecimal hog = BigDecimal.ZERO;
-        if (null != synopticalRecord.get().getHogSag()) {
-          hog = synopticalRecord.get().getHogSag();
+        stabilityConditions.setDeflection(synopticalRecord.get().getDeflection());
+        BigDecimal deflection = BigDecimal.ZERO;
+        if (null != synopticalRecord.get().getDeflection()) {
+          deflection = synopticalRecord.get().getDeflection();
         }
         stabilityConditions.setCalculatedTrimActual(
             synopticalRecord.get().getCalculatedTrimActual());

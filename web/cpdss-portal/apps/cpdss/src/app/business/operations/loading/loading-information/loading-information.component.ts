@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingTransformationService } from '../../services/loading-transformation.service';
 import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 @Component({
   selector: 'cpdss-portal-loading-information',
   templateUrl: './loading-information.component.html',
@@ -53,7 +54,8 @@ export class LoadingInformationComponent implements OnInit {
     private globalErrorHandler: GlobalErrorHandler,
     private translateService: TranslateService,
     private messageService: MessageService,
-    private loadingTransformationService: LoadingTransformationService) { }
+    private loadingTransformationService: LoadingTransformationService,
+    private ngxSpinnerService: NgxSpinnerService) { }
 
   async ngOnInit(): Promise<void> {
     this.initSubscriptions();
@@ -90,6 +92,7 @@ export class LoadingInformationComponent implements OnInit {
 * @memberof LoadingInformationComponent
 */
   async getLoadingInformation() {
+    this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
       this.loadingInformationData = await this.loadingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
@@ -100,6 +103,7 @@ export class LoadingInformationComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE'], detail: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE'] });
       }
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**

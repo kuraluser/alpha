@@ -427,7 +427,7 @@ hr{
 
 .form-control:disabled, .form-control[readonly]{
   background: $text-area-bg;
-  color: $muted;
+  color: $text-secondary;
 }
 
 textarea.form-control:disabled, textarea.form-control[readonly]{

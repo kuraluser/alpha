@@ -10,7 +10,6 @@
             <div class="row">
                 <div class="col">
                     <label class="col-form-label pr-10 text-uppercase">{{ 'DISCHARGE_STUDY_DETAILS_VOYAGE_DROPDOWN_LABEL' | translate }}</label>
-
                     <p-dropdown id="voyage_dropdown" styleClass="dropdown-w-180" [options]="voyages"
                         [(ngModel)]="selectedVoyage" filter="true" optionLabel="voyageNo"
                         (onChange)="onVoyageChange($event)"
@@ -72,9 +71,18 @@
             <button id="view_plan" class="btn btn-main" >{{'DISCHARGE_STUDY_VIEW_PLAN' | translate }}</button>
         </div>
     </div>
- 
+    <div class="row">
+        <div class="col">
+            <label class="col-form-label pr-10 text-uppercase">{{ 'DISCHARGE_STUDY_LIST_DROPDOWN' | translate }}</label>
+
+            <p-dropdown id="discharge_study_dropdown" styleClass="dropdown-w-180" [options]="dischargeStudies"
+                [(ngModel)]="selectedDischargeStudy" filter="true" optionLabel="name"
+                (onChange)="onDischargeStudyChange($event)"
+                resetFilterOnHide="true"></p-dropdown>
+        </div>
+    </div>
         <div class="pr-15 clearfix">
-            <ng-container *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS">
+            <ng-container *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS && [VOYAGE_STATUS.ACTIVE].includes(selectedVoyage?.statusId)">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !dischargeStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
                     (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|

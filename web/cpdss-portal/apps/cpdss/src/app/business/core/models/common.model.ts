@@ -435,7 +435,7 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING_COMPETED = "ALGO Processing Completed",
     PLAN_NO_SOLUTION = "No Plan Available",
     PLAN_LOADICATOR_CHECKING = "Loadicator Processing Started",
-    PLAN_ERROR = "Error Occured"
+    PLAN_ERROR = "Error Occurred"
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { ConfirmationService, TreeNode } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 @Component({
@@ -16,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
  */
 export class InstructionCheckListComponent implements OnInit {
 
-
+  @ViewChild('editField') editElement : ElementRef;
   @Input() set instructionList(value: TreeNode[]) {
     this.instructionListData = [];
     this.instructionListData = value && [...this.setInstructionList(value)];
@@ -146,6 +146,9 @@ export class InstructionCheckListComponent implements OnInit {
     });
     this.textFieldLength = 500;
     this.instructionListData = [...this.instructionListData];
+    setTimeout(() => {
+      this.editElement.nativeElement.scrollIntoView();
+    });
   }
 
   /**
@@ -178,7 +181,42 @@ export class InstructionCheckListComponent implements OnInit {
     this.textFieldLength = 250;
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
-      window.scrollTo(0, document.body.scrollHeight);
+      this.editElement.nativeElement.scrollIntoView();
+    });
+  }
+
+  /**
+   * Add new instruction
+   *
+   * @memberof InstructionCheckListComponent
+   */
+  addNewInstruction(){
+    let isEditActive = false;
+    this.instructionListData.map(item => {
+      if (item.data.editable) {
+        isEditActive = true;
+      }
+    });
+    if (isEditActive) { return; }
+    this.instructionListData.push(
+      {
+        label: '',
+        expanded: true,
+        children: [],
+        data: {
+          label: '',
+          editable: true,
+          userCreated: true,
+          id: new Date().getTime(),
+          addFlag: true,
+          type: 2
+        },
+      }
+    )
+    this.textFieldLength = 500;
+    this.instructionListData = [...this.instructionListData];
+    setTimeout(() => {
+      this.editElement.nativeElement.scrollIntoView();
     });
   }
 
