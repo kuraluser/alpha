@@ -3,7 +3,9 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.utils.EntityDoc;
+import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -129,4 +131,10 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "message_uuid")
   private String messageUUID;
+
+  @Column(name = "communication_status")
+  private String communicationStatus = CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId();
+
+  @Column(name = "communication_send_date_time", columnDefinition = "TIMESTAMP")
+  private LocalDateTime communicationDateTime;
 }

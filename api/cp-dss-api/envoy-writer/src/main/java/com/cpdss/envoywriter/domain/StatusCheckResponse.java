@@ -9,4 +9,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatusCheckResponse {
   private String statusCode;
+  private String eventUploadStatus;
+  private String eventDownloadStatus;
 }

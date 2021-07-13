@@ -1305,6 +1305,32 @@ public final class EnvoyWriter {
      * @return The bytes for statusCode.
      */
     com.google.protobuf.ByteString getStatusCodeBytes();
+
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The eventUploadStatus.
+     */
+    java.lang.String getEventUploadStatus();
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The bytes for eventUploadStatus.
+     */
+    com.google.protobuf.ByteString getEventUploadStatusBytes();
+
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The eventDownloadStatus.
+     */
+    java.lang.String getEventDownloadStatus();
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The bytes for eventDownloadStatus.
+     */
+    com.google.protobuf.ByteString getEventDownloadStatusBytes();
   }
   /** Protobuf type {@code WriterReply} */
   public static final class WriterReply extends com.google.protobuf.GeneratedMessageV3
@@ -1322,6 +1348,8 @@ public final class EnvoyWriter {
       shipId_ = "";
       message_ = "";
       statusCode_ = "";
+      eventUploadStatus_ = "";
+      eventDownloadStatus_ = "";
     }
 
     @java.lang.Override
@@ -1396,6 +1424,20 @@ public final class EnvoyWriter {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 statusCode_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                eventUploadStatus_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                eventDownloadStatus_ = s;
                 break;
               }
             default:
@@ -1595,6 +1637,76 @@ public final class EnvoyWriter {
       }
     }
 
+    public static final int EVENTUPLOADSTATUS_FIELD_NUMBER = 6;
+    private volatile java.lang.Object eventUploadStatus_;
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The eventUploadStatus.
+     */
+    public java.lang.String getEventUploadStatus() {
+      java.lang.Object ref = eventUploadStatus_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        eventUploadStatus_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The bytes for eventUploadStatus.
+     */
+    public com.google.protobuf.ByteString getEventUploadStatusBytes() {
+      java.lang.Object ref = eventUploadStatus_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        eventUploadStatus_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EVENTDOWNLOADSTATUS_FIELD_NUMBER = 7;
+    private volatile java.lang.Object eventDownloadStatus_;
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The eventDownloadStatus.
+     */
+    public java.lang.String getEventDownloadStatus() {
+      java.lang.Object ref = eventDownloadStatus_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        eventDownloadStatus_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The bytes for eventDownloadStatus.
+     */
+    public com.google.protobuf.ByteString getEventDownloadStatusBytes() {
+      java.lang.Object ref = eventDownloadStatus_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        eventDownloadStatus_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1624,6 +1736,12 @@ public final class EnvoyWriter {
       if (!getStatusCodeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, statusCode_);
       }
+      if (!getEventUploadStatusBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, eventUploadStatus_);
+      }
+      if (!getEventDownloadStatusBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, eventDownloadStatus_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1647,6 +1765,12 @@ public final class EnvoyWriter {
       }
       if (!getStatusCodeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, statusCode_);
+      }
+      if (!getEventUploadStatusBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, eventUploadStatus_);
+      }
+      if (!getEventDownloadStatusBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, eventDownloadStatus_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1672,6 +1796,8 @@ public final class EnvoyWriter {
       if (!getShipId().equals(other.getShipId())) return false;
       if (!getMessage().equals(other.getMessage())) return false;
       if (!getStatusCode().equals(other.getStatusCode())) return false;
+      if (!getEventUploadStatus().equals(other.getEventUploadStatus())) return false;
+      if (!getEventDownloadStatus().equals(other.getEventDownloadStatus())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1695,6 +1821,10 @@ public final class EnvoyWriter {
       hash = (53 * hash) + getMessage().hashCode();
       hash = (37 * hash) + STATUSCODE_FIELD_NUMBER;
       hash = (53 * hash) + getStatusCode().hashCode();
+      hash = (37 * hash) + EVENTUPLOADSTATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getEventUploadStatus().hashCode();
+      hash = (37 * hash) + EVENTDOWNLOADSTATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getEventDownloadStatus().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1846,6 +1976,10 @@ public final class EnvoyWriter {
 
         statusCode_ = "";
 
+        eventUploadStatus_ = "";
+
+        eventDownloadStatus_ = "";
+
         return this;
       }
 
@@ -1881,6 +2015,8 @@ public final class EnvoyWriter {
         result.shipId_ = shipId_;
         result.message_ = message_;
         result.statusCode_ = statusCode_;
+        result.eventUploadStatus_ = eventUploadStatus_;
+        result.eventDownloadStatus_ = eventDownloadStatus_;
         onBuilt();
         return result;
       }
@@ -1950,6 +2086,14 @@ public final class EnvoyWriter {
         }
         if (!other.getStatusCode().isEmpty()) {
           statusCode_ = other.statusCode_;
+          onChanged();
+        }
+        if (!other.getEventUploadStatus().isEmpty()) {
+          eventUploadStatus_ = other.eventUploadStatus_;
+          onChanged();
+        }
+        if (!other.getEventDownloadStatus().isEmpty()) {
+          eventDownloadStatus_ = other.eventDownloadStatus_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -2405,6 +2549,158 @@ public final class EnvoyWriter {
         return this;
       }
 
+      private java.lang.Object eventUploadStatus_ = "";
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @return The eventUploadStatus.
+       */
+      public java.lang.String getEventUploadStatus() {
+        java.lang.Object ref = eventUploadStatus_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          eventUploadStatus_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @return The bytes for eventUploadStatus.
+       */
+      public com.google.protobuf.ByteString getEventUploadStatusBytes() {
+        java.lang.Object ref = eventUploadStatus_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          eventUploadStatus_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @param value The eventUploadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventUploadStatus(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        eventUploadStatus_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEventUploadStatus() {
+
+        eventUploadStatus_ = getDefaultInstance().getEventUploadStatus();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @param value The bytes for eventUploadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventUploadStatusBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        eventUploadStatus_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object eventDownloadStatus_ = "";
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @return The eventDownloadStatus.
+       */
+      public java.lang.String getEventDownloadStatus() {
+        java.lang.Object ref = eventDownloadStatus_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          eventDownloadStatus_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @return The bytes for eventDownloadStatus.
+       */
+      public com.google.protobuf.ByteString getEventDownloadStatusBytes() {
+        java.lang.Object ref = eventDownloadStatus_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          eventDownloadStatus_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @param value The eventDownloadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventDownloadStatus(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        eventDownloadStatus_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEventDownloadStatus() {
+
+        eventDownloadStatus_ = getDefaultInstance().getEventDownloadStatus();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @param value The bytes for eventDownloadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventDownloadStatusBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        eventDownloadStatus_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2477,15 +2773,16 @@ public final class EnvoyWriter {
       "\n\022envoy_writer.proto\032\014common.proto\"v\n\022En"
           + "voyWriterRequest\022\023\n\013jsonPayload\030\001 \001(\t\022\023\n"
           + "\013messageType\030\002 \001(\t\022\020\n\010clientId\030\003 \001(\t\022\021\n\t"
-          + "imoNumber\030\004 \001(\t\022\021\n\tmessageId\030\005 \001(\t\"~\n\013Wr"
-          + "iterReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
-          + "onseStatus\022\021\n\tmessageId\030\002 \001(\t\022\016\n\006shipId\030"
-          + "\003 \001(\t\022\017\n\007message\030\004 \001(\t\022\022\n\nstatusCode\030\005 \001"
-          + "(\t2\207\001\n\022EnvoyWriterService\022=\n\026GetCommunic"
-          + "ationServer\022\023.EnvoyWriterRequest\032\014.Write"
-          + "rReply\"\000\0222\n\013StatusCheck\022\023.EnvoyWriterReq"
-          + "uest\032\014.WriterReply\"\000B\036\n\032com.cpdss.common"
-          + ".generatedP\000b\006proto3"
+          + "imoNumber\030\004 \001(\t\022\021\n\tmessageId\030\005 \001(\t\"\266\001\n\013W"
+          + "riterReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res"
+          + "ponseStatus\022\021\n\tmessageId\030\002 \001(\t\022\016\n\006shipId"
+          + "\030\003 \001(\t\022\017\n\007message\030\004 \001(\t\022\022\n\nstatusCode\030\005 "
+          + "\001(\t\022\031\n\021eventUploadStatus\030\006 \001(\t\022\033\n\023eventD"
+          + "ownloadStatus\030\007 \001(\t2\207\001\n\022EnvoyWriterServi"
+          + "ce\022=\n\026GetCommunicationServer\022\023.EnvoyWrit"
+          + "erRequest\032\014.WriterReply\"\000\0222\n\013StatusCheck"
+          + "\022\023.EnvoyWriterRequest\032\014.WriterReply\"\000B\036\n"
+          + "\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -2505,7 +2802,13 @@ public final class EnvoyWriter {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_WriterReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "MessageId", "ShipId", "Message", "StatusCode",
+              "ResponseStatus",
+              "MessageId",
+              "ShipId",
+              "Message",
+              "StatusCode",
+              "EventUploadStatus",
+              "EventDownloadStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

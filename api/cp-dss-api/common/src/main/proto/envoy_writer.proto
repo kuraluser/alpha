@@ -26,4 +26,6 @@ message WriterReply {
   string shipId = 3;
   string message = 4;
   string statusCode = 5;
+  string eventUploadStatus = 6;
+  string eventDownloadStatus = 7;
 }

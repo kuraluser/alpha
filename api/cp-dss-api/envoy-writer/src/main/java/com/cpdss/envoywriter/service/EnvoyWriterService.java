@@ -62,7 +62,9 @@ public class EnvoyWriterService {
     Optional<SequenceNumber> numberOpt = sequenceNumberRepository.findById(SEQUENCE_NUMBER_ID);
     Long sequenceNumber = numberOpt.get().getSequenceNumber();
     updateSequenceNumber(sequenceNumber, numberOpt.get());
-    String uuid = UUID.randomUUID().toString();
+    String uuid = null;
+    if (request.getMessageId().isEmpty()) uuid = UUID.randomUUID().toString();
+    else uuid = request.getMessageId();
     String encryptedString = encrypt(request.getJsonPayload(), request.getImoNumber());
     FileOutputStream out = null;
     try {
@@ -158,7 +160,7 @@ public class EnvoyWriterService {
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     headers.set("checksum", checkSum);
     headers.set("algo", "md5");
-    headers.set("split", "y");
+    headers.set("split", "n");
     return headers;
   }
 

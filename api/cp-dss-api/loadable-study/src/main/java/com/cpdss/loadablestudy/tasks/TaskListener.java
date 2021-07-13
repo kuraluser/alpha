@@ -30,6 +30,8 @@ public class TaskListener implements ExecuteTaskListener {
         communicationService.saveLoadableStudyShore(taskReqParams);
       else if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.ALGORESULT)))
         communicationService.saveAlgoPatternFromShore(taskReqParams);
+    } else if (taskName.contains("STATUS_CHECK_")) {
+      communicationService.checkLoadableStudyStatus(taskReqParams);
     }
   }
 }

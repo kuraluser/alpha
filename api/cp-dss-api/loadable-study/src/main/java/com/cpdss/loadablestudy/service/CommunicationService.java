@@ -4,13 +4,18 @@ package com.cpdss.loadablestudy.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyReader;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
+import com.cpdss.common.generated.EnvoyWriter;
+import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
+import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -41,6 +46,9 @@ public class CommunicationService {
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
+  @GrpcClient("envoyReaderService")
+  private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
+
   public void saveLoadableStudyShore(Map<String, String> taskReqParams) {
 
     try {
@@ -57,37 +65,8 @@ public class CommunicationService {
       if (loadableStudyEntity != null) {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-        ModelMapper modelMapper = new ModelMapper();
-        com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-            new com.cpdss.loadablestudy.domain.LoadableStudy();
 
-        loadableStudyService.buildLoadableStudy(
-            loadableStudyEntity.getId(), loadableStudyEntity, loadableStudy, modelMapper);
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        objectMapper.writeValue(
-            new File(
-                this.rootFolder
-                    + "/json/loadableStudyFromShip_"
-                    + loadableStudyEntity.getId()
-                    + ".json"),
-            loadableStudy);
-
-        this.jsonDataService.saveJsonToDatabase(
-            loadableStudyEntity.getId(),
-            LoadableStudiesConstants.LOADABLE_STUDY_REQUEST,
-            objectMapper.writeValueAsString(loadableStudy));
-
-        AlgoResponse algoResponse =
-            restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
-        loadableStudyService.updateProcessIdForLoadableStudy(
-            algoResponse.getProcessId(),
-            loadableStudyEntity,
-            LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID);
-
-        loadableStudyRepository.updateLoadableStudyStatus(
-            LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
-            loadableStudyEntity.getId());
+        processAlgoFromShip(loadableStudyEntity);
       }
 
     } catch (GenericServiceException e) {
@@ -99,6 +78,40 @@ public class CommunicationService {
     } catch (Exception e) {
       log.error("Exception when when calling algo  ", e);
     }
+  }
+
+  private void processAlgoFromShip(LoadableStudy loadableStudyEntity)
+      throws GenericServiceException, IOException {
+    ModelMapper modelMapper = new ModelMapper();
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+
+    loadableStudyService.buildLoadableStudy(
+        loadableStudyEntity.getId(), loadableStudyEntity, loadableStudy, modelMapper);
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    objectMapper.writeValue(
+        new File(
+            this.rootFolder
+                + "/json/loadableStudyFromShip_"
+                + loadableStudyEntity.getId()
+                + ".json"),
+        loadableStudy);
+
+    this.jsonDataService.saveJsonToDatabase(
+        loadableStudyEntity.getId(),
+        LoadableStudiesConstants.LOADABLE_STUDY_REQUEST,
+        objectMapper.writeValueAsString(loadableStudy));
+
+    AlgoResponse algoResponse =
+        restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
+    loadableStudyService.updateProcessIdForLoadableStudy(
+        algoResponse.getProcessId(),
+        loadableStudyEntity,
+        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID);
+
+    loadableStudyRepository.updateLoadableStudyStatus(
+        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
   }
 
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
@@ -128,6 +141,30 @@ public class CommunicationService {
         loadableStudyService.saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving pattern", e);
+    }
+  }
+
+  public void checkLoadableStudyStatus(Map<String, String> taskReqParams)
+      throws GenericServiceException, IOException {
+    List<LoadableStudy> loadableStudyList =
+        loadableStudyRepository.findByCommunicationStatusAndIsActiveOrderByCommunicationDateTimeASC(
+            CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(), true);
+    if (!loadableStudyList.isEmpty()) {
+      for (LoadableStudy loadableStudy : loadableStudyList) {
+        EnvoyWriter.EnvoyWriterRequest.Builder request =
+            EnvoyWriter.EnvoyWriterRequest.newBuilder();
+        request.setMessageId(taskReqParams.get("messageType"));
+        request.setClientId(taskReqParams.get("ClientId"));
+        request.setImoNumber(taskReqParams.get("ShipId"));
+        EnvoyWriter.WriterReply statusReply = this.envoyWriterService.statusCheck(request.build());
+
+        if (!(statusReply.getEventDownloadStatus() != null
+            && statusReply
+                .getEventDownloadStatus()
+                .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED))) {
+          processAlgoFromShip(loadableStudy);
+        }
+      }
     }
   }
 }

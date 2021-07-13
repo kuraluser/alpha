@@ -73,4 +73,9 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   public boolean existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
       String name, int i, Voyage voyage, boolean b);
+
+  @Query(
+      "FROM LoadableStudy LS WHERE LS.messageUUID IS NOT NULL AND LS.communicationStatus = ?1 AND LS.isActive = ?2")
+  public List<LoadableStudy> findByCommunicationStatusAndIsActiveOrderByCommunicationDateTimeASC(
+      final String communicationStatus, final boolean isActive);
 }

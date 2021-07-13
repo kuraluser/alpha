@@ -4765,40 +4765,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         /** **Calling EW for communication server */
         // uncomment with communication service implementation
         EnvoyWriter.WriterReply ewReply = passRequestPayloadToEnvoyWriter(loadableStudy);
-        if (!SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-          throw new GenericServiceException(
-              "Failed to pass toWriterReply",
-              ewReply.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
+        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          this.loadableStudyRepository.updateLoadableStudyUUID(
+              ewReply.getMessageId(), request.getLoadableStudyId());
+        } else {
+          AlgoResponse algoResponse =
+              restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
+          updateProcessIdForLoadableStudy(
+              algoResponse.getProcessId(),
+              loadableStudyOpt.get(),
+              LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID);
+
+          loadableStudyRepository.updateLoadableStudyStatus(
+              LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
+              loadableStudyOpt.get().getId());
+          replyBuilder =
+              AlgoReply.newBuilder()
+                  .setProcesssId("42435656547")
+                  .setResponseStatus(
+                      ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
         }
-        this.loadableStudyRepository.updateLoadableStudyUUID(
-            ewReply.getMessageId(), request.getLoadableStudyId());
-        /*       EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReader(ewReply.getLsUUID());
-                if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-                  throw new GenericServiceException(
-                          "Failed to get Result from Communication Server",
-                          erReply.getResponseStatus().getCode(),
-                          HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
-                }
-                LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
-                load.setLoadableStudyId(request.getLoadableStudyId());
-                saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
-        */
-        /* AlgoResponse algoResponse =
-            restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
-        updateProcessIdForLoadableStudy(
-            algoResponse.getProcessId(),
-            loadableStudyOpt.get(),
-            LOADABLE_STUDY_PROCESSING_STARTED_ID);
-
-        loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());*/
-
-        replyBuilder =
-            AlgoReply.newBuilder()
-                .setProcesssId("42435656547")
-                .setResponseStatus(
-                    ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
 
       } else {
         log.info("INVALID_LOADABLE_STUDY {} - ", request.getLoadableStudyId());
@@ -5007,6 +4993,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
+      writerRequest.setMessageId(loadableStudy.getMessageUUID());
       return this.envoyWriterGrpcService.getCommunicationServer(writerRequest.build());
 
     } catch (InvalidProtocolBufferException e) {
