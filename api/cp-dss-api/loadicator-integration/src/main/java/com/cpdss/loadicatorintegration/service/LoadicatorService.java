@@ -601,7 +601,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         .ifPresent(item -> ldTrim.setErrorDetails(String.valueOf(item)));
     Optional.ofNullable(trim.getMessageText())
         .ifPresent(item -> ldTrim.setMessageText(String.valueOf(item)));
-    Optional.ofNullable(trim.getHogSag()).ifPresent(item -> ldTrim.setHogSag(String.valueOf(item)));
+    Optional.ofNullable(trim.getDeflection())
+        .ifPresent(item -> ldTrim.setDeflection(String.valueOf(item)));
     return ldTrim;
   }
 

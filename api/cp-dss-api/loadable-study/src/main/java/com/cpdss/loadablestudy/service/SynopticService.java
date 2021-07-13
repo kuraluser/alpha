@@ -1106,7 +1106,8 @@ public class SynopticService {
           com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder();
       ofNullable(loadicatorData.getBlindSector())
           .ifPresent(item -> dataBuilder.setBlindSector(valueOf(item)));
-      ofNullable(loadicatorData.getHog()).ifPresent(item -> dataBuilder.setHogSag(valueOf(item)));
+      ofNullable(loadicatorData.getDeflection())
+          .ifPresent(item -> dataBuilder.setDeflection(valueOf(item)));
       ofNullable(loadicatorData.getCalculatedDraftAftActual())
           .ifPresent(item -> dataBuilder.setCalculatedDraftAftActual(valueOf(item)));
       ofNullable(loadicatorData.getCalculatedDraftAftPlanned())
@@ -1225,9 +1226,9 @@ public class SynopticService {
   public void setFinalDraftValues(
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder,
       SynopticalTableLoadicatorData loadicatorData) {
-    BigDecimal hog = BigDecimal.ZERO;
-    if (null != loadicatorData.getHog()) {
-      hog = loadicatorData.getHog();
+    BigDecimal deflection = BigDecimal.ZERO;
+    if (null != loadicatorData.getDeflection()) {
+      deflection = loadicatorData.getDeflection();
     }
     BigDecimal calculatedDraftFwd = BigDecimal.ZERO;
     if (null != loadicatorData.getCalculatedDraftFwdActual()) {
@@ -1247,9 +1248,9 @@ public class SynopticService {
     } else if (null != loadicatorData.getCalculatedDraftMidPlanned()) {
       calculatedDraftMid = loadicatorData.getCalculatedDraftMidPlanned();
     }
-    dataBuilder.setFinalDraftAft(valueOf(hog.add(calculatedDraftAft)));
-    dataBuilder.setFinalDraftFwd(valueOf(hog.add(calculatedDraftFwd)));
-    dataBuilder.setFinalDraftMid(valueOf(hog.add(calculatedDraftMid)));
+    dataBuilder.setFinalDraftAft(valueOf(deflection.add(calculatedDraftAft)));
+    dataBuilder.setFinalDraftFwd(valueOf(deflection.add(calculatedDraftFwd)));
+    dataBuilder.setFinalDraftMid(valueOf(deflection.add(calculatedDraftMid)));
   }
 
   /**

@@ -17,6 +17,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Optional;
@@ -131,6 +132,7 @@ public class LoadablePatternService {
       loadablePlanService.buildLoadablePlanPortWiseDetails(
           loadablePatternOpt.get(), loadabalePatternValidateRequest);
       ObjectMapper mapper = new ObjectMapper();
+      mapper.setDefaultPropertyInclusion(Include.NON_NULL);
       builder.setLoadablePatternDetails(
           mapper.writeValueAsString(
               loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
