@@ -8,7 +8,9 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.loadablestudy.domain.ApiTempHistorySpecification;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.entity.ApiTempHistory;
+import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
+import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Master Service For CargoService Operations
@@ -36,6 +39,7 @@ import org.springframework.util.CollectionUtils;
 public class CargoService {
 
   @Autowired private ApiTempHistoryRepository apiTempHistoryRepository;
+  @Autowired private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
   public LoadableStudy.CargoHistoryReply.Builder getAllCargoHistory(
       LoadableStudy.CargoHistoryRequest request,
@@ -180,5 +184,28 @@ public class CargoService {
       replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     }
     return replyBuilder;
+  }
+
+  public LoadableStudy.PurposeOfCommingleReply.Builder getPurposeOfCommingle(
+      LoadableStudy.PurposeOfCommingleRequest request,
+      LoadableStudy.PurposeOfCommingleReply.Builder reply) {
+    Iterable<PurposeOfCommingle> purposeList = purposeOfCommingleRepository.findAll();
+    purposeList.forEach(
+        purposeEntity -> {
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder purpose =
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.newBuilder();
+
+          if (purposeEntity.getId() != null) {
+            purpose.setId(purposeEntity.getId());
+          }
+          if (!StringUtils.isEmpty(purposeEntity.getPurpose())) {
+            purpose.setName(purposeEntity.getPurpose());
+          }
+          reply.addPurposeOfCommingle(purpose);
+        });
+    Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
+    responseStatus.setStatus(SUCCESS);
+    reply.setResponseStatus(responseStatus);
+    return reply;
   }
 }

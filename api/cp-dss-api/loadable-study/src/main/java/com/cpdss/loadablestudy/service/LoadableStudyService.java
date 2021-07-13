@@ -7,16 +7,11 @@ import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.CargoInfo.CargoDetail;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
-import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.EnvoyReader;
-import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
-import com.cpdss.common.generated.EnvoyWriter;
-import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
@@ -45,11 +40,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsR
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
-import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -97,20 +89,8 @@ import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
-import com.cpdss.common.generated.Loadicator.BallastInfo;
-import com.cpdss.common.generated.Loadicator.CargoInfo;
-import com.cpdss.common.generated.Loadicator.LoadicatorReply;
-import com.cpdss.common.generated.Loadicator.LoadicatorRequest;
-import com.cpdss.common.generated.Loadicator.OtherTankInfo;
-import com.cpdss.common.generated.Loadicator.StowageDetails;
-import com.cpdss.common.generated.Loadicator.StowagePlan;
-import com.cpdss.common.generated.LoadicatorServiceGrpc.LoadicatorServiceBlockingStub;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
-import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
-import com.cpdss.common.generated.PortInfo.PortRequest;
-import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
@@ -138,11 +118,9 @@ import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.JsonType;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
@@ -158,8 +136,6 @@ import com.cpdss.loadablestudy.entity.LoadableStudyRules;
 import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
 import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
-import com.cpdss.loadablestudy.entity.StabilityParameters;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
@@ -233,10 +209,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
@@ -307,6 +279,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadableStudyRuleService loadableStudyRuleService;
   @Autowired private AlgoErrorService algoErrorService;
   @Autowired private DischargeStudyService dischargeStudyService;
+  @Autowired private LoadicatorService lsLoadicatorService;
+  @Autowired private OnBoardQuantityService onBoardQuantityService;
 
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
@@ -351,20 +325,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
-  @GrpcClient("portInfoService")
-  private PortInfoServiceBlockingStub portInfoGrpcService;
-
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
-
-  @GrpcClient("loadicatorService")
-  private LoadicatorServiceBlockingStub loadicatorService;
 
   @GrpcClient("envoyWriterService")
   private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
 
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
+
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
   /**
    * method for save voyage
@@ -1193,52 +1164,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
     PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
     try {
-      Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findById(request.getLoadableStudyId());
-      if (!loadableStudyOpt.isPresent() || !loadableStudyOpt.get().isActive()) {
-        throw new GenericServiceException(
-            "Loadable study does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
-      loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
-      LoadableStudy loadableStudy = loadableStudyOpt.get();
-      if (null != loadableStudy.getLoadableStudyStatus()
-          && LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID.equals(
-              loadableStudy.getLoadableStudyStatus().getId())) {
-        throw new GenericServiceException(
-            "Cannot delete ports for loadable study with status - plan generated",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      Optional<LoadableStudyPortRotation> entityOpt =
-          this.loadableStudyPortRotationRepository.findById(request.getId());
-      if (!entityOpt.isPresent()) {
-        throw new GenericServiceException(
-            "port rotation does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      LoadableStudyPortRotation entity = entityOpt.get();
-      if (loadableStudy.getPlanningTypeXId() != null
-          && loadableStudy.getPlanningTypeXId().equals(Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE)) {
-        if (null != entity.getOperation()
-            && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
-                || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
-          throw new GenericServiceException(
-              "Cannot delete loading/discharging ports",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-      }
-      entity.setActive(false);
-      // delete ports from synoptical table
-      if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
-        entity.getSynopticalTable().forEach(portRecord -> portRecord.setIsActive(false));
-      }
-      this.loadableStudyPortRotationRepository.save(entity);
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      loadableStudyPortRotationService.deletePortRotation(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when deleting port rotation", e);
       replyBuilder.setResponseStatus(
@@ -1270,7 +1196,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     OnHandQuantityReply.Builder replyBuilder = OnHandQuantityReply.newBuilder();
     try {
       onHandQuantityService.getOnHandQuantity(request, replyBuilder);
-
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching on hand quantities", e);
       replyBuilder.setResponseStatus(
@@ -1339,23 +1264,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       PurposeOfCommingleRequest request, StreamObserver<PurposeOfCommingleReply> responseObserver) {
     PurposeOfCommingleReply.Builder reply = PurposeOfCommingleReply.newBuilder();
     try {
-      Iterable<PurposeOfCommingle> purposeList = purposeOfCommingleRepository.findAll();
-      purposeList.forEach(
-          purposeEntity -> {
-            com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder purpose =
-                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.newBuilder();
-
-            if (purposeEntity.getId() != null) {
-              purpose.setId(purposeEntity.getId());
-            }
-            if (!StringUtils.isEmpty(purposeEntity.getPurpose())) {
-              purpose.setName(purposeEntity.getPurpose());
-            }
-            reply.addPurposeOfCommingle(purpose);
-          });
-      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-      responseStatus.setStatus(SUCCESS);
-      reply.setResponseStatus(responseStatus);
+      cargoService.getPurposeOfCommingle(request, reply);
     } catch (Exception e) {
       log.error("Error in getPurposeOfCommingle method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
@@ -1373,101 +1282,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadablePatternAlgoRequest request, StreamObserver<AlgoReply> responseObserver) {
     AlgoReply.Builder builder = AlgoReply.newBuilder();
     try {
-
-      log.info("saveLoadablePatternDetails - loadable study micro service");
-      Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-      if (!loadableStudyOpt.isPresent()) {
-        throw new GenericServiceException(
-            "Loadable study does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-
-      if (request.getLoadablePlanDetailsList().isEmpty()) {
-        log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
-        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, request.getProcesssId(), true);
-        loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
-      } else {
-        // uncomment with communication service implementation
-        // savePatternDtails(request, loadableStudyOpt);
-        Long lastLoadingPort =
-            loadableStudyPortRotationService.getLastPort(
-                loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-        List<LoadablePattern> loadablePatterns = new ArrayList<LoadablePattern>();
-        request
-            .getLoadablePlanDetailsList()
-            .forEach(
-                lpd -> {
-                  LoadablePattern loadablePattern =
-                      saveloadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator());
-                  loadablePatterns.add(loadablePattern);
-                  saveConstrains(lpd, loadablePattern);
-                  Optional<LoadablePlanPortWiseDetails> lppwdOptional =
-                      lpd.getLoadablePlanPortWiseDetailsList().stream()
-                          .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-                          .findAny();
-
-                  if (lppwdOptional.isPresent()) {
-                    saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
-                    saveLoadablePlanCommingleCargo(
-                        lppwdOptional
-                            .get()
-                            .getDepartureCondition()
-                            .getLoadableQuantityCommingleCargoDetailsList(),
-                        loadablePattern);
-                    saveLoadablePlanStowageDetails(
-                        lppwdOptional
-                            .get()
-                            .getDepartureCondition()
-                            .getLoadablePlanStowageDetailsList(),
-                        loadablePattern);
-                    saveLoadablePlanBallastDetails(
-                        lppwdOptional
-                            .get()
-                            .getDepartureCondition()
-                            .getLoadablePlanBallastDetailsList(),
-                        loadablePattern);
-                  }
-
-                  AtomicInteger displayOrder = new AtomicInteger(0);
-                  saveLoadableQuantityCommingleCargoPortwiseDetails(
-                      lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
-                  saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
-                  saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
-                  saveLoadablePlanBallastDetails(loadablePattern, lpd);
-                  saveStabilityParameterForNonLodicator(
-                      request.getHasLodicator(), loadablePattern, lpd);
-                });
-        if (request.getHasLodicator()) {
-          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-              LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
-          this.saveLoadicatorInfo(
-              loadableStudyOpt.get(), request.getProcesssId(), 0L, loadablePatterns);
-        } else {
-
-          loadableStudyRepository.updateLoadableStudyStatus(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
-          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
-        }
-      }
-      if (request.getAlgoErrorsCount() > 0) {
-        algoErrorsRepository.deleteAlgoErrorByLSId(false, request.getLoadableStudyId());
-        algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(
-            false, request.getLoadableStudyId());
-        saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
-        loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadableStudyOpt.get().getId());
-        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, request.getProcesssId(), true);
-      }
-
-      builder
-          .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
-          .build();
+      loadablePatternService.saveLoadablePatterns(request, builder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in loadable pattern list", e);
       builder.setResponseStatus(
@@ -1537,604 +1352,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    }*/
 
   /**
-   * @param lpd
-   * @param loadablePattern void
-   */
-  private void saveConstrains(LoadablePlanDetails lpd, LoadablePattern loadablePattern) {
-    if (!lpd.getConstraintsList().isEmpty()) {
-      lpd.getConstraintsList()
-          .forEach(
-              constrains -> {
-                LoadablePlanConstraints constraints = new LoadablePlanConstraints();
-                constraints.setConstraintsData(constrains);
-                constraints.setIsActive(true);
-                constraints.setLoadablePattern(loadablePattern);
-                loadablePlanConstraintsRespository.save(constraints);
-              });
-    }
-  }
-
-  private void saveStabilityParameterForNonLodicator(
-      boolean hasLodicator, LoadablePattern loadablePattern, LoadablePlanDetails lpd) {
-
-    if (!hasLodicator) {
-      for (LoadablePlanPortWiseDetails portWiseDetails : lpd.getLoadablePlanPortWiseDetailsList()) {
-        LoadablePlanDetailsReply arrivalCondition = portWiseDetails.getArrivalCondition();
-        if (Optional.ofNullable(arrivalCondition).isPresent()) {
-          saveLodicatorDataForSynoptical(
-              loadablePattern, arrivalCondition, lpd, "ARR", portWiseDetails.getPortRotationId());
-        }
-
-        LoadablePlanDetailsReply departureCondition = portWiseDetails.getDepartureCondition();
-        if (Optional.ofNullable(departureCondition).isPresent()) {
-          saveLodicatorDataForSynoptical(
-              loadablePattern, departureCondition, lpd, "DEP", portWiseDetails.getPortRotationId());
-        }
-      }
-    }
-  }
-
-  private void saveLodicatorDataForSynoptical(
-      LoadablePattern loadablePattern,
-      LoadablePlanDetailsReply arrivalCondition,
-      LoadablePlanDetails lpd,
-      String portType,
-      Long portRotationId) {
-
-    SynopticalTableLoadicatorData synopticalTableLoadicatorData =
-        new SynopticalTableLoadicatorData();
-
-    LoadableStudyPortRotation lsPortRotOption =
-        loadableStudyPortRotationRepository.getOne(portRotationId);
-
-    Optional<SynopticalTable> synData =
-        synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
-            lsPortRotOption.getId(), portType, true);
-
-    if (synData.isPresent()) {
-      StabilityParameter stabilityParameter = arrivalCondition.getStabilityParameter();
-      synopticalTableLoadicatorData.setLoadablePatternId(loadablePattern.getId());
-
-      synopticalTableLoadicatorData.setCalculatedDraftFwdPlanned(
-          isEmpty(stabilityParameter.getForwardDraft())
-              ? null
-              : new BigDecimal(stabilityParameter.getForwardDraft()));
-
-      synopticalTableLoadicatorData.setCalculatedDraftMidPlanned(
-          isEmpty(stabilityParameter.getMeanDraft())
-              ? null
-              : new BigDecimal(stabilityParameter.getMeanDraft()));
-
-      synopticalTableLoadicatorData.setCalculatedDraftAftPlanned(
-          isEmpty(stabilityParameter.getAfterDraft())
-              ? null
-              : new BigDecimal(stabilityParameter.getAfterDraft()));
-
-      synopticalTableLoadicatorData.setCalculatedTrimPlanned(
-          isEmpty(stabilityParameter.getTrim())
-              ? null
-              : new BigDecimal(stabilityParameter.getTrim()));
-      synopticalTableLoadicatorData.setBendingMoment(
-          isEmpty(stabilityParameter.getBendinMoment())
-              ? null
-              : new BigDecimal(stabilityParameter.getBendinMoment()));
-      synopticalTableLoadicatorData.setShearingForce(
-          isEmpty(stabilityParameter.getShearForce())
-              ? null
-              : new BigDecimal(stabilityParameter.getShearForce()));
-      synopticalTableLoadicatorData.setActive(true);
-      synopticalTableLoadicatorData.setSynopticalTable(synData.get());
-      synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
-    }
-  }
-
-  /**
-   * save comminglo cargo portwise information into loadable_plan_commingle_details_portwise table *
-   */
-  private void saveLoadableQuantityCommingleCargoPortwiseDetails(
-      List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList,
-      LoadablePattern loadablePattern,
-      AtomicInteger displayOrder) {
-
-    loadablePlanPortWiseDetailsList.forEach(
-        it -> {
-          saveLodableQtyCommingleCargoPortData(
-              it.getPortId(),
-              it.getPortRotationId(),
-              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
-              it.getArrivalCondition().getLoadableQuantityCommingleCargoDetailsList(),
-              loadablePattern,
-              displayOrder);
-
-          saveLodableQtyCommingleCargoPortData(
-              it.getPortId(),
-              it.getPortRotationId(),
-              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
-              it.getDepartureCondition().getLoadableQuantityCommingleCargoDetailsList(),
-              loadablePattern,
-              displayOrder);
-        });
-  }
-
-  private void saveLodableQtyCommingleCargoPortData(
-      long portId,
-      long portRotationXid,
-      String operationType,
-      List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
-      LoadablePattern loadablePattern,
-      AtomicInteger displayOrder) {
-
-    if (Optional.ofNullable(loadableQuantityCommingleCargoDetailsList).isPresent()) {
-
-      loadableQuantityCommingleCargoDetailsList.forEach(
-          it -> {
-            LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails =
-                LoadablePlanComminglePortwiseDetails.builder()
-                    .portId(portId)
-                    .operationType(operationType)
-                    .api(it.getApi())
-                    .cargo1Abbreviation(it.getCargo1Abbreviation())
-                    .cargo1Mt(it.getCargo1MT())
-                    .cargo1Percentage(it.getCargo1Percentage())
-                    .cargo2Abbreviation(it.getCargo2Abbreviation())
-                    .cargo2Mt(it.getCargo2MT())
-                    .cargo2Percentage(it.getCargo2Percentage())
-                    .grade(it.getGrade())
-                    .isActive(true)
-                    .loadablePattern(loadablePattern)
-                    .quantity(it.getQuantity())
-                    .tankName(it.getTankName())
-                    .temperature(it.getTemp())
-                    .orderQuantity(it.getOrderedMT())
-                    .priority(it.getPriority())
-                    .loadingOrder(it.getLoadingOrder())
-                    .tankId(it.getTankId())
-                    .fillingRatio(it.getFillingRatio())
-                    .correctionFactor(it.getCorrectionFactor())
-                    .correctedUllage(it.getCorrectedUllage())
-                    .rdgUllage(it.getRdgUllage())
-                    .cargo1NominationId(it.getCargo1NominationId())
-                    .cargo2NominationId(it.getCargo2NominationId())
-                    .portRotationXid(portRotationXid)
-                    .tankName(it.getTankShortName())
-                    // .actualQuantity(it.getActualQuantity()!=  null ? new
-                    // BigDecimal(it.getActualQuantity()): null)
-                    .build();
-
-            loadablePlanCommingleDetailsPortwiseRepository.save(
-                loadablePlanComminglePortwiseDetails);
-
-            if (operationType.equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
-              it.getToppingOffSequencesList()
-                  .forEach(
-                      toppingSequence -> {
-                        LoadablePatternCargoToppingOffSequence lpctos =
-                            new LoadablePatternCargoToppingOffSequence();
-                        lpctos.setCargoXId(toppingSequence.getCargoId());
-                        lpctos.setTankXId(toppingSequence.getTankId());
-                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                        lpctos.setLoadablePattern(loadablePattern);
-                        lpctos.setDisplayOrder(displayOrder.incrementAndGet());
-                        lpctos.setPortRotationXId(portRotationXid);
-                        lpctos.setIsActive(true);
-                        toppingOffSequenceRepository.save(lpctos);
-                      });
-            }
-          });
-    }
-  }
-
-  /**
-   * @param loadablePattern
-   * @param lpd void
-   * @param lastLoadingPort
-   */
-  private void saveStabilityParameters(
-      LoadablePattern loadablePattern, LoadablePlanDetails lpd, Long lastLoadingPort) {
-    log.info("saving stability parameter to DB");
-    StabilityParameters stabilityParameter = new StabilityParameters();
-    stabilityParameter.setAftDraft(lpd.getStabilityParameters().getAfterDraft());
-    stabilityParameter.setBendingMoment(lpd.getStabilityParameters().getBendinMoment());
-    stabilityParameter.setFwdDraft(lpd.getStabilityParameters().getForwardDraft());
-    stabilityParameter.setHeal(lpd.getStabilityParameters().getHeel());
-    stabilityParameter.setLoadablePattern(loadablePattern);
-    stabilityParameter.setMeanDraft(lpd.getStabilityParameters().getMeanDraft());
-    stabilityParameter.setPortXid(lastLoadingPort);
-    stabilityParameter.setShearingForce(lpd.getStabilityParameters().getShearForce());
-    stabilityParameter.setTrimValue(lpd.getStabilityParameters().getTrim());
-    stabilityParameter.setIsActive(true);
-    stabilityParameterRepository.save(stabilityParameter);
-  }
-
-  /**
-   * @param loadablePattern
-   * @param lpd void
-   */
-  private void saveLoadablePlanBallastDetails(
-      LoadablePattern loadablePattern, LoadablePlanDetails lpd) {
-    lpd.getLoadablePlanPortWiseDetailsList()
-        .forEach(
-            lppwd -> {
-              LoadableStudyPortRotation loadableStudyPortRotation =
-                  this.loadableStudyPortRotationRepository.getOne(lppwd.getPortRotationId());
-              lppwd
-                  .getArrivalCondition()
-                  .getLoadablePlanBallastDetailsList()
-                  .forEach(
-                      lpbd -> {
-                        saveLoadablePlanBallastDetailsOperationWise(
-                            SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
-                            lpbd,
-                            lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
-                            loadablePattern);
-                      });
-              lppwd
-                  .getDepartureCondition()
-                  .getLoadablePlanBallastDetailsList()
-                  .forEach(
-                      lpbd -> {
-                        saveLoadablePlanBallastDetailsOperationWise(
-                            SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
-                            lpbd,
-                            lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
-                            loadablePattern);
-                      });
-            });
-  }
-
-  /**
-   * @param synopticalTableOpTypeDeparture
-   * @param lpbd
-   * @param portId
-   * @param loadableStudyPortRotation
-   * @param loadablePattern void
-   */
-  private void saveLoadablePlanBallastDetailsOperationWise(
-      String synopticalTableOpTypeDeparture,
-      com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails lpbd,
-      long portId,
-      Long portRotationId,
-      LoadablePattern loadablePattern) {
-    LoadablePlanStowageBallastDetails loadablePlanStowageBallastDetails =
-        new LoadablePlanStowageBallastDetails();
-    loadablePlanStowageBallastDetails.setLoadablePatternId(loadablePattern.getId());
-    loadablePlanStowageBallastDetails.setOperationType(synopticalTableOpTypeDeparture);
-    loadablePlanStowageBallastDetails.setPortXId(portId);
-    loadablePlanStowageBallastDetails.setPortRotationId(portRotationId);
-    loadablePlanStowageBallastDetails.setQuantity(
-        !StringUtils.isEmpty(lpbd.getMetricTon()) ? new BigDecimal(lpbd.getMetricTon()) : null);
-    loadablePlanStowageBallastDetails.setTankXId(lpbd.getTankId());
-    loadablePlanStowageBallastDetails.setIsActive(true);
-    loadablePlanStowageBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
-    loadablePlanStowageBallastDetails.setSg(lpbd.getSg());
-    loadablePlanStowageBallastDetails.setCorrectedUllage(lpbd.getCorrectedLevel());
-    loadablePlanStowageBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
-    loadablePlanStowageBallastDetails.setRdgUllage(lpbd.getRdgLevel());
-    loadablePlanStowageBallastDetails.setFillingPercentage(lpbd.getPercentage());
-    loadablePlanStowageBallastDetailsRepository.save(loadablePlanStowageBallastDetails);
-  }
-
-  /**
-   * @param loadablePattern
-   * @param lpd void
-   * @param displayOrder
-   */
-  private void saveLoadablePlanStowageDetails(
-      LoadablePattern loadablePattern, LoadablePlanDetails lpd, AtomicInteger displayOrder) {
-    lpd.getLoadablePlanPortWiseDetailsList()
-        .forEach(
-            lppwd -> {
-              lppwd
-                  .getArrivalCondition()
-                  .getLoadablePlanStowageDetailsList()
-                  .forEach(
-                      lpsd -> {
-                        saveLoadablePlanStowageDetailsOperationWise(
-                            SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
-                            lpsd,
-                            lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
-                            loadablePattern);
-                      });
-              lppwd
-                  .getDepartureCondition()
-                  .getLoadablePlanStowageDetailsList()
-                  .forEach(
-                      lpsd -> {
-                        saveLoadablePlanStowageDetailsOperationWise(
-                            SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
-                            lpsd,
-                            lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
-                            loadablePattern);
-                      });
-              saveCargoToppingOffList(lppwd, loadablePattern, displayOrder);
-            });
-  }
-
-  private void saveCargoToppingOffList(
-      LoadablePlanPortWiseDetails lppwd,
-      LoadablePattern loadablePattern,
-      AtomicInteger displayOrder) {
-    lppwd
-        .getDepartureCondition()
-        .getLoadableQuantityCargoDetailsList()
-        .forEach(
-            lqcd -> {
-              lqcd.getToppingOffSequencesList()
-                  .forEach(
-                      toppingSequence -> {
-                        LoadablePatternCargoToppingOffSequence lpctos =
-                            new LoadablePatternCargoToppingOffSequence();
-                        lpctos.setCargoXId(toppingSequence.getCargoId());
-                        lpctos.setTankXId(toppingSequence.getTankId());
-                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                        lpctos.setLoadablePattern(loadablePattern);
-                        lpctos.setDisplayOrder(displayOrder.incrementAndGet());
-                        lpctos.setPortRotationXId(lppwd.getPortRotationId());
-                        lpctos.setIsActive(true);
-                        toppingOffSequenceRepository.save(lpctos);
-                      });
-            });
-  }
-
-  /**
-   * @param synopticalTableOpTypeArrival
-   * @param lpsd
-   * @param portId void
-   * @param loadablePattern
-   */
-  private void saveLoadablePlanStowageDetailsOperationWise(
-      String synopticalTableOpTypeArrival,
-      com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails lpsd,
-      long portId,
-      Long portRotationId,
-      LoadablePattern loadablePattern) {
-    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails loadablePatternCargoDetails =
-        new com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails();
-    loadablePatternCargoDetails.setIsActive(true);
-    loadablePatternCargoDetails.setLoadablePatternId(loadablePattern.getId());
-    loadablePatternCargoDetails.setOperationType(synopticalTableOpTypeArrival);
-    loadablePatternCargoDetails.setPlannedQuantity(
-        !StringUtils.isEmpty(lpsd.getWeight()) ? new BigDecimal(lpsd.getWeight()) : null);
-    loadablePatternCargoDetails.setPortId(portId);
-    loadablePatternCargoDetails.setPortRotationId(portRotationId);
-    loadablePatternCargoDetails.setTankId(lpsd.getTankId());
-    loadablePatternCargoDetails.setAbbreviation(lpsd.getCargoAbbreviation());
-    loadablePatternCargoDetails.setApi(new BigDecimal(lpsd.getApi()));
-    loadablePatternCargoDetails.setTemperature(new BigDecimal(lpsd.getTemperature()));
-    loadablePatternCargoDetails.setColorCode(lpsd.getColorCode());
-    loadablePatternCargoDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
-    loadablePatternCargoDetails.setCorrectedUllage(
-        !StringUtils.isEmpty(lpsd.getCorrectedUllage())
-            ? new BigDecimal(lpsd.getCorrectedUllage())
-            : null);
-    loadablePatternCargoDetails.setCargoNominationId(lpsd.getCargoNominationId());
-    loadablePatternCargoDetails.setCargoNominationTemperature(
-        new BigDecimal(lpsd.getCargoNominationTemperature()));
-    loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
-    loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
-  }
-
-  /**
-   * @param loadablePlanBallastDetailsList
-   * @param loadablePattern void
-   */
-  private void saveLoadablePlanBallastDetails(
-      List<com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails>
-          loadablePlanBallastDetailsList,
-      LoadablePattern loadablePattern) {
-    loadablePlanBallastDetailsList.forEach(
-        lpbd -> {
-          LoadablePlanBallastDetails loadablePlanBallastDetails = new LoadablePlanBallastDetails();
-          loadablePlanBallastDetails.setMetricTon(lpbd.getMetricTon());
-          loadablePlanBallastDetails.setPercentage(lpbd.getPercentage());
-          loadablePlanBallastDetails.setSg(lpbd.getSg());
-          loadablePlanBallastDetails.setTankName(lpbd.getTankName());
-          loadablePlanBallastDetails.setTankId(lpbd.getTankId());
-          loadablePlanBallastDetails.setRdgLevel(lpbd.getRdgLevel());
-          loadablePlanBallastDetails.setIsActive(true);
-          loadablePlanBallastDetails.setLoadablePattern(loadablePattern);
-          loadablePlanBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
-          loadablePlanBallastDetails.setCorrectedLevel(lpbd.getCorrectedLevel());
-          loadablePlanBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
-          loadablePlanBallastDetailsRepository.save(loadablePlanBallastDetails);
-        });
-  }
-
-  /**
-   * @param loadablePlanStowageDetailsList
-   * @param loadablePattern void
-   */
-  private void saveLoadablePlanStowageDetails(
-      List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
-          loadablePlanStowageDetailsList,
-      LoadablePattern loadablePattern) {
-    loadablePlanStowageDetailsList.forEach(
-        lpsd -> {
-          LoadablePlanStowageDetails loadablePlanStowageDetails = new LoadablePlanStowageDetails();
-          loadablePlanStowageDetails.setApi(lpsd.getApi());
-          loadablePlanStowageDetails.setAbbreviation(lpsd.getCargoAbbreviation());
-          loadablePlanStowageDetails.setColorCode(lpsd.getColorCode());
-          loadablePlanStowageDetails.setFillingPercentage(lpsd.getFillingRatio());
-          loadablePlanStowageDetails.setRdgUllage(lpsd.getRdgUllage());
-          loadablePlanStowageDetails.setTankId(lpsd.getTankId());
-          loadablePlanStowageDetails.setTankname(lpsd.getTankName());
-          loadablePlanStowageDetails.setWeight(lpsd.getWeight());
-          loadablePlanStowageDetails.setTemperature(lpsd.getTemperature());
-          loadablePlanStowageDetails.setIsActive(true);
-          loadablePlanStowageDetails.setLoadablePattern(loadablePattern);
-          loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
-          loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
-          loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
-          loadablePlanStowageDetails.setCargoNominationTemperature(
-              new BigDecimal(lpsd.getCargoNominationTemperature()));
-          loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
-        });
-  }
-
-  /**
-   * @param loadableQuantityCommingleCargoDetailsList
-   * @param loadablePattern void
-   */
-  private void saveLoadablePlanCommingleCargo(
-      List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetailsList,
-      LoadablePattern loadablePattern) {
-    for (int i = 0; i < loadableQuantityCommingleCargoDetailsList.size(); i++) {
-      LoadablePlanCommingleDetails loadablePlanCommingleDetails =
-          new LoadablePlanCommingleDetails();
-      loadablePlanCommingleDetails.setApi(
-          loadableQuantityCommingleCargoDetailsList.get(i).getApi());
-      loadablePlanCommingleDetails.setCargo1Abbreviation(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo1Abbreviation());
-      loadablePlanCommingleDetails.setCargo1Mt(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo1MT());
-      loadablePlanCommingleDetails.setCargo1Percentage(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo1Percentage());
-      loadablePlanCommingleDetails.setCargo2Abbreviation(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2Abbreviation());
-      loadablePlanCommingleDetails.setCargo2Mt(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2MT());
-      loadablePlanCommingleDetails.setCargo2Percentage(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2Percentage());
-      loadablePlanCommingleDetails.setGrade(COMMINGLE + (i + 1));
-      loadablePlanCommingleDetails.setIsActive(true);
-      loadablePlanCommingleDetails.setLoadablePattern(loadablePattern);
-      loadablePlanCommingleDetails.setQuantity(
-          loadableQuantityCommingleCargoDetailsList.get(i).getQuantity());
-      loadablePlanCommingleDetails.setTankName(
-          loadableQuantityCommingleCargoDetailsList.get(i).getTankName());
-      loadablePlanCommingleDetails.setTemperature(
-          loadableQuantityCommingleCargoDetailsList.get(i).getTemp());
-      loadablePlanCommingleDetails.setOrderQuantity(
-          loadableQuantityCommingleCargoDetailsList.get(i).getOrderedMT());
-      loadablePlanCommingleDetails.setPriority(
-          loadableQuantityCommingleCargoDetailsList.get(i).getPriority());
-      loadablePlanCommingleDetails.setLoadingOrder(
-          loadableQuantityCommingleCargoDetailsList.get(i).getLoadingOrder());
-      loadablePlanCommingleDetails.setTankId(
-          loadableQuantityCommingleCargoDetailsList.get(i).getTankId());
-      loadablePlanCommingleDetails.setFillingRatio(
-          loadableQuantityCommingleCargoDetailsList.get(i).getFillingRatio());
-      loadablePlanCommingleDetails.setCorrectionFactor(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCorrectionFactor());
-      loadablePlanCommingleDetails.setCorrectedUllage(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCorrectedUllage());
-      loadablePlanCommingleDetails.setRdgUllage(
-          loadableQuantityCommingleCargoDetailsList.get(i).getRdgUllage());
-      loadablePlanCommingleDetails.setSlopQuantity(
-          loadableQuantityCommingleCargoDetailsList.get(i).getSlopQuantity());
-      loadablePlanCommingleDetails.setTimeRequiredForLoading(
-          loadableQuantityCommingleCargoDetailsList.get(i).getTimeRequiredForLoading());
-      loadablePlanCommingleDetails.setCargo2NominationId(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
-      loadablePlanCommingleDetails.setCargo2NominationId(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
-      loadablePlanCommingleDetails.setTankShortName(
-          loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
-      loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
-      loadableQuantityCommingleCargoDetailsList
-          .get(i)
-          .getToppingOffSequencesList()
-          .forEach(
-              toppingSequence -> {
-                LoadablePatternCargoToppingOffSequence lpctos =
-                    new LoadablePatternCargoToppingOffSequence();
-                lpctos.setCargoXId(toppingSequence.getCargoId());
-                lpctos.setTankXId(toppingSequence.getTankId());
-                lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                lpctos.setLoadablePattern(loadablePattern);
-                lpctos.setIsActive(true);
-                toppingOffSequenceRepository.save(lpctos);
-              });
-    }
-  }
-
-  /**
-   * @param loadablePlanPortWiseDetails
-   * @return Consumer<? super LoadablePlanPortWiseDetails>
-   */
-  private void saveLoadableQuantity(
-      LoadablePlanPortWiseDetails loadablePlanPortWiseDetails, LoadablePattern loadablePattern) {
-    loadablePlanPortWiseDetails
-        .getDepartureCondition()
-        .getLoadableQuantityCargoDetailsList()
-        .forEach(
-            lqcd -> {
-              LoadablePlanQuantity loadablePlanQuantity = new LoadablePlanQuantity();
-              loadablePlanQuantity.setDifferencePercentage(lqcd.getDifferencePercentage());
-              loadablePlanQuantity.setEstimatedApi(new BigDecimal(lqcd.getEstimatedAPI()));
-              loadablePlanQuantity.setEstimatedTemperature(new BigDecimal(lqcd.getEstimatedTemp()));
-              loadablePlanQuantity.setCargoXId(lqcd.getCargoId());
-              loadablePlanQuantity.setIsActive(true);
-              loadablePlanQuantity.setLoadableMt(lqcd.getLoadableMT());
-              loadablePlanQuantity.setOrderQuantity(new BigDecimal(lqcd.getOrderedMT()));
-              loadablePlanQuantity.setLoadablePattern(loadablePattern);
-              loadablePlanQuantity.setCargoAbbreviation(lqcd.getCargoAbbreviation());
-              loadablePlanQuantity.setCargoColor(lqcd.getColorCode());
-              loadablePlanQuantity.setPriority(lqcd.getPriority());
-              loadablePlanQuantity.setLoadingOrder(lqcd.getLoadingOrder());
-              loadablePlanQuantity.setMinTolerence(lqcd.getMinTolerence());
-              loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
-              loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
-              loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
-              loadablePlanQuantity.setCargoNominationTemperature(
-                  new BigDecimal(lqcd.getCargoNominationTemperature()));
-              loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
-              loadablePlanQuantityRepository.save(loadablePlanQuantity);
-              lqcd.getToppingOffSequencesList()
-                  .forEach(
-                      toppingSequence -> {
-                        LoadablePatternCargoToppingOffSequence lpctos =
-                            new LoadablePatternCargoToppingOffSequence();
-                        lpctos.setCargoXId(lqcd.getCargoId());
-                        lpctos.setTankXId(toppingSequence.getTankId());
-                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                        lpctos.setLoadablePattern(loadablePattern);
-                        lpctos.setIsActive(true);
-                        toppingOffSequenceRepository.save(lpctos);
-                      });
-            });
-  }
-
-  /**
-   * @param lpd void
-   * @param loadableStudy
-   * @param hasLoadicator
-   */
-  private LoadablePattern saveloadablePattern(
-      LoadablePlanDetails lpd, LoadableStudy loadableStudy, boolean hasLoadicator) {
-    LoadablePattern loadablePattern = new LoadablePattern();
-    loadablePattern.setCaseNumber(lpd.getCaseNumber());
-    if (hasLoadicator) {
-      loadablePattern.setIsActive(false);
-    } else {
-      loadablePattern.setIsActive(true);
-    }
-
-    loadablePattern.setLoadableStudy(loadableStudy);
-    loadablePattern.setLoadableStudyStatus(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
-    Optional<LoadablePattern> lp =
-        loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
-            loadableStudy, lpd.getCaseNumber());
-    if (lp.isPresent()) { // Delete old one and add new pattern
-      log.info(
-          "Lodable Pattern delete for LS Id {}, Case Number {}",
-          loadableStudy.getId(),
-          lpd.getCaseNumber());
-      loadablePatternRepository.deleteLoadablePattern(lp.get().getId());
-    }
-    loadablePatternRepository.save(loadablePattern);
-    log.info(
-        "Loadable Pattern Saved for LS Id {}, Case Number {}",
-        loadableStudy.getId(),
-        lpd.getCaseNumber());
-    return loadablePattern;
-  }
-
-  /**
    * @param request
    * @param responseObserver
    */
@@ -2143,21 +1360,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadicatorResultsRequest request, StreamObserver<AlgoReply> responseObserver) {
     AlgoReply.Builder replyBuilder = AlgoReply.newBuilder();
     try {
-      log.info("saveLoadicatorResults - loadable study micro service");
-      Optional<LoadableStudy> loadableStudy =
-          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-      if (!loadableStudy.isPresent()) {
-        log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
-        replyBuilder.setResponseStatus(
-            ResponseStatus.newBuilder()
-                .setStatus(FAILED)
-                .setMessage(INVALID_LOADABLE_STUDY_ID)
-                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
-      } else {
-        saveLoadicatorResults(request);
-        updateloadablestudystatus(request);
-        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      }
+      lsLoadicatorService.saveLoadicatorResults(request, replyBuilder);
     } catch (Exception e) {
       log.error("Exception in saveLoadicatorResults", e);
       replyBuilder.setResponseStatus(
@@ -2172,83 +1375,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  /** @param request void */
-  private void updateloadablestudystatus(LoadicatorResultsRequest request) {
-    loadableStudyRepository.updateLoadableStudyStatus(
-        LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getLoadableStudyId());
-    loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-        LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcessId(), true);
-  }
-
-  /** @param request void */
-  private void saveLoadicatorResults(LoadicatorResultsRequest request) {
-    request
-        .getLoadicatorPatternDetailsResultsList()
-        .forEach(
-            lrr -> {
-              lrr.getLodicatorResultDetailsList()
-                  .forEach(
-                      lrdl -> {
-                        SynopticalTableLoadicatorData loadicatorData =
-                            new SynopticalTableLoadicatorData();
-                        loadicatorData.setActive(true);
-                        loadicatorData.setBlindSector(
-                            !StringUtils.isEmpty(lrdl.getBlindSector())
-                                ? new BigDecimal(lrdl.getBlindSector())
-                                : null);
-                        loadicatorData.setCalculatedDraftAftPlanned(
-                            !StringUtils.isEmpty(lrdl.getCalculatedDraftAftPlanned())
-                                ? new BigDecimal(lrdl.getCalculatedDraftAftPlanned())
-                                : null);
-                        loadicatorData.setCalculatedDraftFwdPlanned(
-                            !StringUtils.isEmpty(lrdl.getCalculatedDraftFwdPlanned())
-                                ? new BigDecimal(lrdl.getCalculatedDraftFwdPlanned())
-                                : null);
-                        loadicatorData.setCalculatedDraftMidPlanned(
-                            !StringUtils.isEmpty(lrdl.getCalculatedDraftMidPlanned())
-                                ? new BigDecimal(lrdl.getCalculatedDraftMidPlanned())
-                                : null);
-                        loadicatorData.setCalculatedTrimPlanned(
-                            !StringUtils.isEmpty(lrdl.getCalculatedTrimPlanned())
-                                ? new BigDecimal(lrdl.getCalculatedTrimPlanned())
-                                : null);
-                        loadicatorData.setDeflection(
-                            !StringUtils.isEmpty(lrdl.getDeflection())
-                                ? new BigDecimal(lrdl.getDeflection())
-                                : null);
-                        loadicatorData.setList(
-                            !StringUtils.isEmpty(lrdl.getList())
-                                ? new BigDecimal(lrdl.getList())
-                                : null);
-                        loadicatorData.setPortId(lrdl.getPortId());
-                        loadicatorData.setOperationId(lrdl.getOperationId());
-                        loadicatorData.setLoadablePatternId(lrr.getLoadablePatternId());
-                        synopticalTableLoadicatorDataRepository.save(loadicatorData);
-                      });
-            });
-  }
-
   @Override
   public void getLoadablePatternList(
       LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
     LoadablePatternReply.Builder replyBuilder = LoadablePatternReply.newBuilder();
     try {
-      log.info("getLoadablePatternList - loadable study micro service");
-      Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-      if (!loadableStudyOpt.isPresent()) {
-        throw new GenericServiceException(
-            "Loadable study does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      List<LoadablePattern> patterns =
-          this.loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
-              loadableStudyOpt.get(), true);
-      if (null != patterns && !patterns.isEmpty()) {
-        this.buildPatternDetails(patterns, replyBuilder);
-      }
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      loadablePatternService.getLoadablePatternList(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in loadable pattern list", e);
       replyBuilder.setResponseStatus(
@@ -2268,24 +1400,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
-    }
-  }
-
-  /**
-   * Build pattern reply
-   *
-   * @param patterns
-   * @param replyBuilder
-   */
-  private void buildPatternDetails(
-      List<LoadablePattern> patterns, LoadablePatternReply.Builder replyBuilder) {
-    for (LoadablePattern pattern : patterns) {
-      com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder builder =
-          com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
-      builder.setLoadablePatternId(pattern.getId());
-      builder.setLoadableStudyStatusId(pattern.getLoadableStudyStatus());
-      ofNullable(pattern.getCaseNumber()).ifPresent(item -> builder.setCaseNumber(item));
-      replyBuilder.addLoadablePattern(builder.build());
     }
   }
 
@@ -3328,88 +2442,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadablePatternAlgoRequest request, StreamObserver<AlgoReply> responseObserver) {
     AlgoReply.Builder builder = AlgoReply.newBuilder();
     try {
-
-      log.info("savePatternValidateResult - loadable study micro service");
-      Optional<LoadablePattern> loadablePatternOpt =
-          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
-      if (!loadablePatternOpt.isPresent()) {
-        throw new GenericServiceException(
-            "Loadable pattern does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-
-      if (!request.getValidated()) {
-        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-            LOADABLE_PATTERN_VALIDATION_FAILED_ID, request.getProcesssId(), true);
-
-        algoErrorsRepository.deleteAlgoError(false, request.getLoadablePatternId());
-        algoErrorHeadingRepository.deleteAlgoErrorHeading(false, request.getLoadablePatternId());
-
-        saveAlgoErrorToDB(request, loadablePatternOpt.get(), new LoadableStudy(), true);
-
-      } else {
-
-        deleteExistingPlanDetails(loadablePatternOpt.get());
-
-        Long lastLoadingPort =
-            loadableStudyPortRotationService.getLastPort(
-                loadablePatternOpt.get().getLoadableStudy(),
-                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-        request
-            .getLoadablePlanDetailsList()
-            .forEach(
-                lpd -> {
-                  Optional<LoadablePlanPortWiseDetails> lppwdOptional =
-                      lpd.getLoadablePlanPortWiseDetailsList().stream()
-                          .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-                          .findAny();
-                  if (lppwdOptional.isPresent()) {
-                    saveLoadableQuantity(lppwdOptional.get(), loadablePatternOpt.get());
-                    saveLoadablePlanCommingleCargo(
-                        lppwdOptional
-                            .get()
-                            .getDepartureCondition()
-                            .getLoadableQuantityCommingleCargoDetailsList(),
-                        loadablePatternOpt.get());
-                    saveLoadablePlanStowageDetails(
-                        lppwdOptional
-                            .get()
-                            .getDepartureCondition()
-                            .getLoadablePlanStowageDetailsList(),
-                        loadablePatternOpt.get());
-                    saveLoadablePlanBallastDetails(
-                        lppwdOptional
-                            .get()
-                            .getDepartureCondition()
-                            .getLoadablePlanBallastDetailsList(),
-                        loadablePatternOpt.get());
-                  }
-                  AtomicInteger displayOrder = new AtomicInteger(0);
-                  saveLoadableQuantityCommingleCargoPortwiseDetails(
-                      lpd.getLoadablePlanPortWiseDetailsList(),
-                      loadablePatternOpt.get(),
-                      displayOrder);
-                  saveLoadablePlanStowageDetails(loadablePatternOpt.get(), lpd, displayOrder);
-                  saveLoadablePlanBallastDetails(loadablePatternOpt.get(), lpd);
-                  saveStabilityParameterForNonLodicator(
-                      request.getHasLodicator(), loadablePatternOpt.get(), lpd);
-                });
-        if (request.getHasLodicator()) {
-          this.saveLoadicatorInfo(
-              loadablePatternOpt.get().getLoadableStudy(),
-              request.getProcesssId(),
-              request.getLoadablePatternId(),
-              new ArrayList<LoadablePattern>());
-        } else {
-          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
-        }
-      }
-
-      builder
-          .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
-          .build();
+      loadablePatternService.savePatternValidateResult(request, builder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in loadable pattern list", e);
       builder.setResponseStatus(
@@ -3430,63 +2463,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
-  }
-
-  /**
-   * @param request
-   * @param loadableStudy
-   * @param loadablePattern
-   * @param b void
-   */
-  private void saveAlgoErrorToDB(
-      LoadablePatternAlgoRequest request,
-      LoadablePattern loadablePattern,
-      LoadableStudy loadableStudy,
-      boolean isPatternErrorSaving) {
-    request
-        .getAlgoErrorsList()
-        .forEach(
-            algoError -> {
-              AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
-              algoErrorHeading.setErrorHeading(algoError.getErrorHeading());
-              if (isPatternErrorSaving) {
-                algoErrorHeading.setLoadablePattern(loadablePattern);
-              } else {
-                algoErrorHeading.setLoadableStudy(loadableStudy);
-              }
-              algoErrorHeading.setIsActive(true);
-              algoErrorHeadingRepository.save(algoErrorHeading);
-              algoError
-                  .getErrorMessagesList()
-                  .forEach(
-                      error -> {
-                        com.cpdss.loadablestudy.entity.AlgoErrors algoErrors =
-                            new com.cpdss.loadablestudy.entity.AlgoErrors();
-                        algoErrors.setAlgoErrorHeading(algoErrorHeading);
-                        algoErrors.setErrorMessage(error);
-                        algoErrors.setIsActive(true);
-                        algoErrorsRepository.save(algoErrors);
-                      });
-            });
-  }
-
-  /** @param loadablePattern void */
-  private void deleteExistingPlanDetails(LoadablePattern loadablePattern) {
-    stowageDetailsTempRepository.deleteLoadablePlanStowageDetailsTemp(
-        false, loadablePattern.getId());
-    loadablePlanQuantityRepository.deleteLoadablePlanQuantity(false, loadablePattern.getId());
-    loadablePlanCommingleDetailsRepository.deleteLoadablePlanCommingleDetails(
-        false, loadablePattern.getId());
-    loadablePlanStowageDetailsRespository.deleteLoadablePlanStowageDetails(
-        false, loadablePattern.getId());
-    loadablePatternCargoDetailsRepository.deleteLoadablePatternCargoDetails(
-        false, loadablePattern.getId());
-    loadablePlanBallastDetailsRepository.deleteLoadablePlanBallastDetails(
-        false, loadablePattern.getId());
-    loadablePlanStowageBallastDetailsRepository.deleteLoadablePlanStowageBallastDetails(
-        false, loadablePattern.getId());
-    synopticalTableLoadicatorDataRepository.deleteByLoadablePatternId(
-        false, loadablePattern.getId());
   }
 
   @Override
@@ -3780,7 +2756,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         log.info("Deleting loadable pattern " + loadablePattern.getId());
                         this.loadablePatternRepository.deleteLoadablePattern(
                             loadablePattern.getId());
-                        this.deleteExistingPlanDetails(loadablePattern);
+                        loadablePatternService.deleteExistingPlanDetails(loadablePattern);
                       });
             } else {
               log.error("Loadable Study not found in database");
@@ -4766,37 +3742,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       OnBoardQuantityDetail request, StreamObserver<OnBoardQuantityReply> responseObserver) {
     OnBoardQuantityReply.Builder replyBuilder = OnBoardQuantityReply.newBuilder();
     try {
-      Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-      if (!loadableStudyOpt.isPresent()) {
-        throw new GenericServiceException(
-            "Loadable study does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      OnBoardQuantity entity = null;
-      if (request.getId() == 0) {
-        entity = new OnBoardQuantity();
-        entity.setLoadableStudy(loadableStudyOpt.get());
-      } else {
-        entity = this.onBoardQuantityRepository.findByIdAndIsActive(request.getId(), true);
-        if (null == entity) {
-          throw new GenericServiceException(
-              "On hand quantity does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-      }
-      this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
-      loadablePatternService.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
-
-      this.buildOnBoardQuantityEntity(entity, request);
-      entity = this.onBoardQuantityRepository.save(entity);
-      loadableStudyOpt.get().setIsObqComplete(request.getIsObqComplete());
-      loadableStudyOpt.get().setLoadOnTop(request.getLoadOnTop());
-      this.loadableStudyRepository.save(loadableStudyOpt.get());
-      replyBuilder.setId(entity.getId());
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      onBoardQuantityService.saveOnBoardQuantity(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving on board quantities", e);
       replyBuilder.setResponseStatus(
@@ -4818,27 +3764,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
-  }
-
-  /**
-   * Build on board quantity entity
-   *
-   * @param entity
-   * @param request
-   */
-  private void buildOnBoardQuantityEntity(OnBoardQuantity entity, OnBoardQuantityDetail request) {
-    entity.setCargoId(0 == request.getCargoId() ? null : request.getCargoId());
-    entity.setTankId(request.getTankId());
-    entity.setPortId(request.getPortId());
-    entity.setSounding(
-        isEmpty(request.getSounding()) ? null : new BigDecimal(request.getSounding()));
-    entity.setPlannedArrivalWeight(
-        isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
-    entity.setVolumeInM3(request.getVolume());
-    entity.setColorCode(isEmpty(request.getColorCode()) ? null : request.getColorCode());
-    entity.setAbbreviation(isEmpty(request.getAbbreviation()) ? null : request.getAbbreviation());
-    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
-    entity.setIsActive(true);
   }
 
   /**
@@ -6349,618 +5274,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  /**
-   * Save to loadicator tables
-   *
-   * @param loadableStudyEntity
-   * @param processId
-   */
-  public void saveLoadicatorInfo(
-      LoadableStudy loadableStudyEntity,
-      String processId,
-      Long patternId,
-      List<LoadablePattern> loadablePatternsList) {
-    LoadicatorRequest.Builder loadicatorRequestBuilder = LoadicatorRequest.newBuilder();
-    try {
-      List<LoadablePattern> loadablePatterns = null;
-      if (patternId == 0) {
-        loadablePatterns = loadablePatternsList;
-        loadicatorRequestBuilder.setIsPattern(false);
-        loadicatorRequestBuilder.setLoadableStudyId(loadableStudyEntity.getId());
-      } else {
-        Optional<LoadablePattern> lpOpt =
-            this.loadablePatternRepository.findByIdAndIsActive(patternId, true);
-        loadablePatterns =
-            lpOpt.isPresent() ? new ArrayList<LoadablePattern>(Arrays.asList(lpOpt.get())) : null;
-        loadicatorRequestBuilder.setIsPattern(true);
-        loadicatorRequestBuilder.setLoadablePatternId(lpOpt.get().getId());
-      }
-      if (null == loadablePatterns) {
-        throw new GenericServiceException(
-            "No loadable patterns found for this loadable study",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      List<Long> loadablePatternIds =
-          loadablePatterns.stream().map(LoadablePattern::getId).collect(Collectors.toList());
-      List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
-          this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdInAndIsActive(
-              loadablePatternIds, true);
-      List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails>
-          loadablePatternCommingleCargoDetails =
-              this.loadablePlanCommingleDetailsPortwiseRepository
-                  .findByLoadablePatternIdInAndIsActive(loadablePatternIds, true);
-      List<LoadablePlanStowageBallastDetails> loadablePatternBallastList =
-          this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdInAndIsActive(
-              loadablePatternIds, true);
-      List<SynopticalTable> synopticalEntities =
-          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
-              loadableStudyEntity.getId(), true);
-      List<OnHandQuantity> ohqEntities =
-          this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
-      CargoReply cargoReply = this.getCargoInfoForLoadicator(loadableStudyEntity);
-      VesselReply vesselReply = this.getVesselDetailsForLoadicator(loadableStudyEntity);
-      PortReply portReply = this.getPortInfoForLoadicator(loadableStudyEntity);
-      for (LoadablePattern pattern : loadablePatterns) {
-        for (SynopticalTable synopticalEntity : synopticalEntities) {
-          loadicatorRequestBuilder.addStowagePlanDetails(
-              this.buildLoadicatorStowagePlan(
-                  pattern,
-                  synopticalEntity,
-                  portReply,
-                  vesselReply,
-                  cargoReply,
-                  processId,
-                  loadableStudyEntity,
-                  loadablePatternCargoDetails,
-                  loadablePatternBallastList,
-                  ohqEntities,
-                  loadablePatternCommingleCargoDetails));
-        }
-      }
-      LoadicatorReply reply = this.saveLoadicatorInfo(loadicatorRequestBuilder.build());
-
-    } catch (GenericServiceException e) {
-      log.error("Error in saveLoadicatorInfo ", e);
-    } catch (Exception e) {
-      log.error("Error saving LoadicatorInfo ", e);
-    }
-  }
-
-  /**
-   * Build loadicator stowage plan
-   *
-   * @param pattern
-   * @param synopticalEntity
-   * @param portReply
-   * @param vesselReply
-   * @param cargoReply
-   * @param processId
-   * @param loadableStudyEntity
-   * @param loadablePatternCargoDetails
-   * @param loadablePatternBallastList
-   * @param ohqEntities
-   * @return
-   */
-  private StowagePlan buildLoadicatorStowagePlan(
-      LoadablePattern pattern,
-      SynopticalTable synopticalEntity,
-      PortReply portReply,
-      VesselReply vesselReply,
-      CargoReply cargoReply,
-      String processId,
-      LoadableStudy loadableStudyEntity,
-      List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails,
-      List<LoadablePlanStowageBallastDetails> loadablePatternBallastList,
-      List<OnHandQuantity> ohqEntities,
-      List<LoadablePlanComminglePortwiseDetails> loadablePatternCommingleCargoDetails) {
-    StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
-    this.buildLoadicatorStowagePlan(
-        stowagePlanBuilder,
-        pattern,
-        synopticalEntity,
-        portReply,
-        vesselReply,
-        processId,
-        loadableStudyEntity);
-    this.buildLoadicatorStowagePlanDetails(
-        stowagePlanBuilder,
-        loadablePatternCargoDetails,
-        vesselReply,
-        cargoReply,
-        synopticalEntity,
-        loadablePatternCommingleCargoDetails);
-    this.buildLoadicatorCargoDetails(
-        stowagePlanBuilder,
-        loadablePatternCargoDetails,
-        synopticalEntity,
-        cargoReply,
-        loadablePatternCommingleCargoDetails);
-    this.buildLoadicatorBallastDetails(
-        stowagePlanBuilder, vesselReply, synopticalEntity, loadablePatternBallastList);
-    this.buildLoadicatorOhqDetails(stowagePlanBuilder, vesselReply, synopticalEntity, ohqEntities);
-    return stowagePlanBuilder.build();
-  }
-
-  /**
-   * Build stowage plan
-   *
-   * @param stowagePlanBuilder
-   * @param pattern
-   * @param synopticalEntity
-   * @param portReply
-   * @param vesselReply
-   * @param processId
-   * @param loadableStudyEntity
-   */
-  private void buildLoadicatorStowagePlan(
-      com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
-      LoadablePattern pattern,
-      SynopticalTable synopticalEntity,
-      PortReply portReply,
-      VesselReply vesselReply,
-      String processId,
-      LoadableStudy loadableStudyEntity) {
-    stowagePlanBuilder.setProcessId(processId);
-    VesselDetail vessel = vesselReply.getVesselsList().get(0);
-    Optional.ofNullable(vessel.getId()).ifPresent(stowagePlanBuilder::setVesselId);
-    Optional.ofNullable(vessel.getImoNumber()).ifPresent(stowagePlanBuilder::setImoNumber);
-    Optional.ofNullable(vessel.getTypeOfShip()).ifPresent(stowagePlanBuilder::setShipType);
-    Optional.ofNullable(vessel.getCode()).ifPresent(stowagePlanBuilder::setVesselCode);
-    Optional.ofNullable(vessel.getProvisionalConstant())
-        .ifPresent(stowagePlanBuilder::setProvisionalConstant);
-    Optional.ofNullable(vessel.getDeadweightConstant())
-        .ifPresent(stowagePlanBuilder::setDeadweightConstant);
-    stowagePlanBuilder.setPortId(synopticalEntity.getLoadableStudyPortRotation().getPortXId());
-    stowagePlanBuilder.setStowageId(pattern.getId());
-    stowagePlanBuilder.setStatus(STOWAGE_STATUS);
-    stowagePlanBuilder.setBookingListId(loadableStudyEntity.getId());
-    Optional<PortDetail> portDetail =
-        portReply.getPortsList().stream()
-            .filter(
-                port ->
-                    Long.valueOf(port.getId())
-                        .equals(synopticalEntity.getLoadableStudyPortRotation().getPortXId()))
-            .findAny();
-    if (portDetail.isPresent()) {
-      Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
-    }
-    Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation().getSeaWaterDensity())
-        .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
-    stowagePlanBuilder.setSynopticalId(synopticalEntity.getId());
-  }
-
-  /**
-   * Build stowage plan details
-   *
-   * @param stowagePlanBuilder
-   * @param loadablePatternCargoDetails
-   * @param vesselReply
-   * @param cargoReply
-   * @param synopticalEntity
-   */
-  private void buildLoadicatorStowagePlanDetails(
-      StowagePlan.Builder stowagePlanBuilder,
-      List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails,
-      VesselReply vesselReply,
-      CargoReply cargoReply,
-      SynopticalTable synopticalEntity,
-      List<LoadablePlanComminglePortwiseDetails> loadablePatternCommingleCargoDetails) {
-    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> synopticalWiseList =
-        loadablePatternCargoDetails.stream()
-            .filter(
-                cargo ->
-                    synopticalEntity
-                            .getLoadableStudyPortRotation()
-                            .getId()
-                            .equals(cargo.getPortRotationId())
-                        && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
-            .collect(Collectors.toList());
-    synopticalWiseList.forEach(
-        patternCargo -> {
-          if (stowagePlanBuilder.getStowageId() == patternCargo.getLoadablePatternId()) {
-            this.buildLoadicatorStowagePlanDetails(
-                patternCargo, stowagePlanBuilder, cargoReply, vesselReply);
-          }
-        });
-    AtomicInteger commingleCount = new AtomicInteger(0);
-    List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails>
-        synopticalWiseCommingleList =
-            loadablePatternCommingleCargoDetails.stream()
-                .filter(
-                    cargo ->
-                        synopticalEntity
-                                .getLoadableStudyPortRotation()
-                                .getId()
-                                .equals(cargo.getPortRotationXid())
-                            && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
-                .collect(Collectors.toList());
-    synopticalWiseCommingleList.forEach(
-        patternCmomingleCargo -> {
-          if (stowagePlanBuilder.getStowageId()
-              == patternCmomingleCargo.getLoadablePattern().getId()) {
-            this.buildLoadicatorStowagePlanDetailsForCommingleCargo(
-                patternCmomingleCargo, stowagePlanBuilder, cargoReply, vesselReply, commingleCount);
-          }
-        });
-  }
-
-  private void buildLoadicatorStowagePlanDetailsForCommingleCargo(
-      LoadablePlanComminglePortwiseDetails patternCmomingleCargo,
-      com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
-      CargoReply cargoReply,
-      VesselReply vesselReply,
-      AtomicInteger commingleCount) {
-    StowageDetails.Builder stowageDetailsBuilder = StowageDetails.newBuilder();
-    Optional.ofNullable(patternCmomingleCargo.getTankId())
-        .ifPresent(stowageDetailsBuilder::setTankId);
-
-    BigDecimal cargo1Mt = null;
-    BigDecimal cargo2Mt = null;
-
-    if (!isEmpty(patternCmomingleCargo.getCargo1Mt())) {
-      cargo1Mt = new BigDecimal(patternCmomingleCargo.getCargo1Mt());
-    }
-
-    if (!isEmpty(patternCmomingleCargo.getCargo2Mt())) {
-      cargo2Mt = new BigDecimal(patternCmomingleCargo.getCargo2Mt());
-    }
-
-    BigDecimal plannedQuantity = cargo1Mt.add(cargo2Mt);
-
-    Optional.ofNullable(plannedQuantity)
-        .ifPresent(quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
-
-    Optional.ofNullable(patternCmomingleCargo.getPortId())
-        .ifPresent(stowageDetailsBuilder::setPortId);
-    Optional.ofNullable(patternCmomingleCargo.getLoadablePattern())
-        .ifPresent(item -> stowageDetailsBuilder.setStowageId(item.getId()));
-    Optional<VesselTankDetail> tankDetail =
-        vesselReply.getVesselTanksList().stream()
-            .filter(
-                tank -> Long.valueOf(tank.getTankId()).equals(patternCmomingleCargo.getTankId()))
-            .findAny();
-    if (tankDetail.isPresent()) {
-      Optional.ofNullable(tankDetail.get().getTankName())
-          .ifPresent(stowageDetailsBuilder::setTankName);
-      Optional.ofNullable(tankDetail.get().getShortName())
-          .ifPresent(stowageDetailsBuilder::setShortName);
-    }
-    //    Optional<CargoDetail> cargoDetail =
-    //        cargoReply.getCargosList().stream()
-    //            .filter(c -> Long.valueOf(c.getId()).equals(patternCmomingleCargo.getId()))
-    //            .findAny();
-    //    if (cargoDetail.isPresent()) {
-    //      Optional.ofNullable(cargoDetail.get().getCrudeType())
-    //          .ifPresent(stowageDetailsBuilder::setCargoName);
-    //    }
-    stowageDetailsBuilder.setCargoName("COM" + commingleCount.incrementAndGet());
-    stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
-  }
-
-  /**
-   * Build stowage plan details
-   *
-   * @param patternCargo
-   * @param stowagePlanBuilder
-   * @param cargoReply
-   * @param vesselReply
-   */
-  private void buildLoadicatorStowagePlanDetails(
-      com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails patternCargo,
-      com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
-      CargoReply cargoReply,
-      VesselReply vesselReply) {
-    StowageDetails.Builder stowageDetailsBuilder = StowageDetails.newBuilder();
-    Optional.ofNullable(patternCargo.getCargoId()).ifPresent(stowageDetailsBuilder::setCargoId);
-    Optional.ofNullable(patternCargo.getTankId()).ifPresent(stowageDetailsBuilder::setTankId);
-    Optional.ofNullable(patternCargo.getPlannedQuantity())
-        .ifPresent(quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
-    Optional.ofNullable(patternCargo.getAbbreviation())
-        .ifPresent(stowageDetailsBuilder::setCargoName);
-    Optional.ofNullable(patternCargo.getPortId()).ifPresent(stowageDetailsBuilder::setPortId);
-    Optional.ofNullable(patternCargo.getLoadablePatternId())
-        .ifPresent(stowageDetailsBuilder::setStowageId);
-    Optional<VesselTankDetail> tankDetail =
-        vesselReply.getVesselTanksList().stream()
-            .filter(tank -> Long.valueOf(tank.getTankId()).equals(patternCargo.getTankId()))
-            .findAny();
-    if (tankDetail.isPresent()) {
-      Optional.ofNullable(tankDetail.get().getTankName())
-          .ifPresent(stowageDetailsBuilder::setTankName);
-      Optional.ofNullable(tankDetail.get().getShortName())
-          .ifPresent(stowageDetailsBuilder::setShortName);
-    }
-    Optional<CargoDetail> cargoDetail =
-        cargoReply.getCargosList().stream()
-            .filter(c -> Long.valueOf(c.getId()).equals(patternCargo.getId()))
-            .findAny();
-    if (cargoDetail.isPresent()) {
-      Optional.ofNullable(cargoDetail.get().getCrudeType())
-          .ifPresent(stowageDetailsBuilder::setCargoName);
-    }
-
-    stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
-  }
-
-  /**
-   * Build cargo details
-   *
-   * @param stowagePlanBuilder
-   * @param loadablePatternCargoDetails
-   * @param synopticalEntity
-   * @param cargoReply
-   */
-  @SuppressWarnings("unchecked")
-  private void buildLoadicatorCargoDetails(
-      com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
-      List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails,
-      SynopticalTable synopticalEntity,
-      CargoReply cargoReply,
-      List<LoadablePlanComminglePortwiseDetails> loadablePatternCommingleCargoDetails) {
-    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> synopticalWiseList =
-        loadablePatternCargoDetails.stream()
-            .filter(
-                cargo ->
-                    synopticalEntity
-                            .getLoadableStudyPortRotation()
-                            .getId()
-                            .equals(cargo.getPortRotationId())
-                        && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
-            .collect(Collectors.toList());
-    synopticalWiseList =
-        synopticalWiseList.stream()
-            .filter(
-                cargo ->
-                    synopticalEntity
-                        .getLoadableStudyPortRotation()
-                        .getId()
-                        .equals(cargo.getPortRotationId()))
-            .filter(
-                distinctByKeys(
-                    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails::getAbbreviation))
-            .collect(Collectors.toList());
-    synopticalWiseList.forEach(
-        patternCargo ->
-            stowagePlanBuilder.addCargoInfo(
-                this.buildLoadicatorCargoDetails(patternCargo, cargoReply)));
-
-    List<LoadablePlanComminglePortwiseDetails> synopticalWiseCommingleList =
-        loadablePatternCommingleCargoDetails.stream()
-            .filter(
-                cargo ->
-                    synopticalEntity
-                            .getLoadableStudyPortRotation()
-                            .getId()
-                            .equals(cargo.getPortRotationXid())
-                        && synopticalEntity.getOperationType().equals(cargo.getOperationType()))
-            .filter(
-                distinctByKeys(
-                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
-                        ::getCargo1Abbreviation,
-                    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
-                        ::getCargo2Abbreviation))
-            .collect(Collectors.toList());
-    AtomicInteger commingleCount = new AtomicInteger(0);
-    synopticalWiseCommingleList.forEach(
-        commingleCargo ->
-            stowagePlanBuilder.addAllCargoInfo(
-                this.buildLoadicatorCargoDetails(commingleCargo, cargoReply, commingleCount)));
-  }
-
-  /**
-   * Build commingle cargo details
-   *
-   * @param commingleCargo
-   * @param cargoReply
-   * @return
-   */
-  private List<CargoInfo> buildLoadicatorCargoDetails(
-      LoadablePlanComminglePortwiseDetails commingleCargo,
-      CargoReply cargoReply,
-      AtomicInteger commingleCount) {
-    List<CargoInfo> list = new ArrayList<>();
-    CargoInfo.Builder cargoBuilder = CargoInfo.newBuilder();
-    cargoBuilder.setCargoAbbrev("COM" + commingleCount.incrementAndGet());
-    Optional.ofNullable(String.valueOf(commingleCargo.getApi())).ifPresent(cargoBuilder::setApi);
-    Optional.ofNullable(String.valueOf(commingleCargo.getTemperature()))
-        .ifPresent(cargoBuilder::setStandardTemp);
-    Optional.ofNullable(commingleCargo.getPortId()).ifPresent(cargoBuilder::setPortId);
-    if (null != commingleCargo.getLoadablePattern()) {
-      cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
-    }
-    //    list.add(cargoBuilder.build());
-    //    cargoBuilder = CargoInfo.newBuilder();
-    //    Optional.ofNullable(String.valueOf(commingleCargo.getCargo2Abbreviation()))
-    //        .ifPresent(cargoBuilder::setCargoAbbrev);
-    //
-    // Optional.ofNullable(String.valueOf(commingleCargo.getApi())).ifPresent(cargoBuilder::setApi);
-    //    Optional.ofNullable(String.valueOf(commingleCargo.getTemperature()))
-    //        .ifPresent(cargoBuilder::setStandardTemp);
-    //    Optional.ofNullable(commingleCargo.getPortId()).ifPresent(cargoBuilder::setPortId);
-    //    if (null != commingleCargo.getLoadablePattern()) {
-    //      cargoBuilder.setStowageId(commingleCargo.getLoadablePattern().getId());
-    //    }
-    list.add(cargoBuilder.build());
-    return list;
-  }
-
-  /**
-   * Build cargo
-   *
-   * @param cargo
-   * @return
-   */
-  private CargoInfo buildLoadicatorCargoDetails(
-      com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails cargo, CargoReply cargoReply) {
-    CargoInfo.Builder cargoBuilder = CargoInfo.newBuilder();
-    Optional.ofNullable(String.valueOf(cargo.getAbbreviation()))
-        .ifPresent(cargoBuilder::setCargoAbbrev);
-    Optional.ofNullable(String.valueOf(cargo.getApi())).ifPresent(cargoBuilder::setApi);
-    Optional.ofNullable(String.valueOf(cargo.getTemperature()))
-        .ifPresent(cargoBuilder::setStandardTemp);
-    Optional.ofNullable(cargo.getCargoId()).ifPresent(cargoBuilder::setCargoId);
-    Optional.ofNullable(cargo.getPortId()).ifPresent(cargoBuilder::setPortId);
-    Optional.ofNullable(cargo.getLoadablePatternId()).ifPresent(cargoBuilder::setStowageId);
-    return cargoBuilder.build();
-  }
-
-  /**
-   * Build ballast details
-   *
-   * @param stowagePlanBuilder
-   * @param vesselReply
-   * @param synopticalEntity
-   * @param loadablePatternBallastList
-   */
-  private void buildLoadicatorBallastDetails(
-      com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
-      VesselReply vesselReply,
-      SynopticalTable synopticalEntity,
-      List<LoadablePlanStowageBallastDetails> loadablePatternBallastList) {
-    List<LoadablePlanStowageBallastDetails> synopticalWiseList =
-        loadablePatternBallastList.stream()
-            .filter(
-                ballast ->
-                    synopticalEntity
-                            .getLoadableStudyPortRotation()
-                            .getId()
-                            .equals(ballast.getPortRotationId())
-                        && synopticalEntity.getOperationType().equals(ballast.getOperationType()))
-            .collect(Collectors.toList());
-    synopticalWiseList.forEach(
-        patternBallast -> {
-          if (stowagePlanBuilder.getStowageId() == patternBallast.getLoadablePatternId()) {
-            this.buildLoadicatorBallastDetails(patternBallast, stowagePlanBuilder, vesselReply);
-          }
-        });
-  }
-
-  /**
-   * Build ballast details
-   *
-   * @param ballast
-   * @param stowagePlanBuilder
-   * @param vesselReply
-   */
-  private void buildLoadicatorBallastDetails(
-      LoadablePlanStowageBallastDetails ballast,
-      com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
-      VesselReply vesselReply) {
-
-    BallastInfo.Builder ballastBuilder = BallastInfo.newBuilder();
-    Optional.ofNullable(String.valueOf(ballast.getQuantity()))
-        .ifPresent(ballastBuilder::setQuantity);
-    Optional.ofNullable(ballast.getLoadablePatternId()).ifPresent(ballastBuilder::setStowageId);
-    Optional.ofNullable(ballast.getTankXId()).ifPresent(ballastBuilder::setTankId);
-    Optional.ofNullable(ballast.getPortXId()).ifPresent(ballastBuilder::setPortId);
-    Optional<VesselTankDetail> tankDetail =
-        vesselReply.getVesselTanksList().stream()
-            .filter(tank -> Long.valueOf(tank.getTankId()).equals(ballast.getTankXId()))
-            .findAny();
-    if (tankDetail.isPresent()) {
-      Optional.ofNullable(tankDetail.get().getTankName()).ifPresent(ballastBuilder::setTankName);
-      Optional.ofNullable(tankDetail.get().getShortName()).ifPresent(ballastBuilder::setShortName);
-    }
-    stowagePlanBuilder.addBallastInfo(ballastBuilder.build());
-  }
-
-  /**
-   * Build loadicator OHQ data
-   *
-   * @param stowagePlanBuilder
-   * @param vesselReply
-   * @param synopticalEntity
-   * @param ohqEntities
-   */
-  private void buildLoadicatorOhqDetails(
-      com.cpdss.common.generated.Loadicator.StowagePlan.Builder stowagePlanBuilder,
-      VesselReply vesselReply,
-      SynopticalTable synopticalEntity,
-      List<OnHandQuantity> ohqEntities) {
-    List<OnHandQuantity> synopticalWiseList =
-        ohqEntities.stream()
-            .filter(
-                ohq ->
-                    ohq.getPortRotation()
-                        .getId()
-                        .equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
-            .collect(Collectors.toList());
-    synopticalWiseList.forEach(
-        ohq -> {
-          OtherTankInfo.Builder otherTankBuilder = OtherTankInfo.newBuilder();
-          otherTankBuilder.setTankId(ohq.getTankXId());
-          Optional<VesselTankDetail> tankDetail =
-              vesselReply.getVesselTanksList().stream()
-                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(ohq.getTankXId()))
-                  .findAny();
-          if (tankDetail.isPresent()) {
-            Optional.ofNullable(tankDetail.get().getTankName())
-                .ifPresent(otherTankBuilder::setTankName);
-            Optional.ofNullable(tankDetail.get().getShortName())
-                .ifPresent(otherTankBuilder::setShortName);
-          }
-          if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(synopticalEntity.getOperationType())) {
-            Optional.ofNullable(ohq.getArrivalQuantity())
-                .ifPresent(qty -> otherTankBuilder.setQuantity(valueOf(qty)));
-          } else {
-            Optional.ofNullable(ohq.getDepartureQuantity())
-                .ifPresent(qty -> otherTankBuilder.setQuantity(valueOf(qty)));
-          }
-          stowagePlanBuilder.addOtherTankInfo(otherTankBuilder.build());
-        });
-  }
-
-  /**
-   * Get port info for loadicator
-   *
-   * @param loadableStudyEntity
-   * @return
-   * @throws GenericServiceException
-   */
-  private PortReply getPortInfoForLoadicator(LoadableStudy loadableStudyEntity)
-      throws GenericServiceException {
-    PortRequest portRequest =
-        PortRequest.newBuilder()
-            .setVesselId(loadableStudyEntity.getVesselXId())
-            .setVoyageId(loadableStudyEntity.getVoyage().getId())
-            .setLoadableStudyId(loadableStudyEntity.getId())
-            .build();
-    PortReply portReply = this.GetPortInfo(portRequest);
-    if (!SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Error in calling cargo service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
-    return portReply;
-  }
-
-  /**
-   * get vessel detail for loadicator
-   *
-   * @param loadableStudyEntity
-   * @return
-   * @throws GenericServiceException
-   */
-  private VesselReply getVesselDetailsForLoadicator(LoadableStudy loadableStudyEntity)
-      throws GenericServiceException {
-    VesselRequest replyBuilder =
-        VesselRequest.newBuilder()
-            .setVesselId(loadableStudyEntity.getVesselXId())
-            .setVesselDraftConditionId(loadableStudyEntity.getLoadLineXId())
-            .setDraftExtreme(loadableStudyEntity.getDraftMark().toString())
-            .build();
-    VesselReply vesselReply = this.getVesselDetailByVesselId(replyBuilder);
-    if (!SUCCESS.equalsIgnoreCase(vesselReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Error in calling vessel service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
-    return vesselReply;
-  }
-
   private VesselDetail getVesselDetailsForEnvoy(Long vesselId) throws GenericServiceException {
     VesselInfo.VesselIdRequest replyBuilder =
         VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build();
@@ -6974,57 +5287,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     return vesselResponse.getVesselDetail();
   }
-  /**
-   * Get cargo deatils
-   *
-   * @param loadableStudyEntity
-   * @return
-   * @throws GenericServiceException
-   */
-  private CargoReply getCargoInfoForLoadicator(LoadableStudy loadableStudyEntity)
-      throws GenericServiceException {
-    CargoRequest cargoRequest =
-        CargoRequest.newBuilder()
-            .setVesselId(loadableStudyEntity.getVesselXId())
-            .setVoyageId(loadableStudyEntity.getVoyage().getId())
-            .setLoadableStudyId(loadableStudyEntity.getId())
-            .build();
-    CargoReply cargoReply = this.getCargoInfo(cargoRequest);
-    if (!SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Error in calling cargo service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
-    return cargoReply;
-  }
 
   public CargoReply getCargoInfo(CargoRequest build) {
     return cargoInfoGrpcService.getCargoInfo(build);
   }
 
-  public PortReply GetPortInfo(PortRequest build) {
-    return portInfoGrpcService.getPortInfo(build);
-  }
-
-  public LoadicatorReply saveLoadicatorInfo(LoadicatorRequest build) {
-    return loadicatorService.saveLoadicatorInfo(build);
-  }
-
   public VesselInfo.VesselIdResponse getVesselInfoByVesselId(
       VesselInfo.VesselIdRequest replyBuilder) {
     return this.vesselInfoGrpcService.getVesselInfoByVesselId(replyBuilder);
-  }
-
-  private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
-    final Map<List<?>, Boolean> seen = new ConcurrentHashMap<>();
-
-    return t -> {
-      final List<?> keys =
-          Arrays.stream(keyExtractors).map(ke -> ke.apply(t)).collect(Collectors.toList());
-
-      return seen.putIfAbsent(keys, Boolean.TRUE) == null;
-    };
   }
 
   @Override
@@ -7562,10 +5832,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
-  }
-
-  public VesselInfo.VesselReply getVesselDetailByVesselId(VesselInfo.VesselRequest replyBuilder) {
-    return this.vesselInfoGrpcService.getVesselDetailByVesselId(replyBuilder);
   }
 
   /**
