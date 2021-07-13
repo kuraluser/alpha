@@ -857,9 +857,9 @@ public class LoadicatorService {
                             !StringUtils.isEmpty(lrdl.getCalculatedTrimPlanned())
                                 ? new BigDecimal(lrdl.getCalculatedTrimPlanned())
                                 : null);
-                        loadicatorData.setHog(
-                            !StringUtils.isEmpty(lrdl.getHog())
-                                ? new BigDecimal(lrdl.getHog())
+                        loadicatorData.setDeflection(
+                            !StringUtils.isEmpty(lrdl.getDeflection())
+                                ? new BigDecimal(lrdl.getDeflection())
                                 : null);
                         loadicatorData.setList(
                             !StringUtils.isEmpty(lrdl.getList())
