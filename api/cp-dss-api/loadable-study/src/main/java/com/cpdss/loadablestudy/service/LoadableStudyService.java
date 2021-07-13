@@ -2461,7 +2461,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder replyBuilder =
         AlgoReply.newBuilder();
     try {
-       loadablePatternService.generateLoadablePatterns(request, replyBuilder);
+      loadablePatternService.generateLoadablePatterns(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when generating pattern", e);
       replyBuilder.setResponseStatus(
@@ -2566,7 +2566,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadableStudyId, loadableStudy, modelMapper);
     cargoNominationService.buildCargoNominationPortDetails(loadableStudyId, loadableStudy);
     onHandQuantityService.buildOnHandQuantityDetails(loadableStudyOpt, loadableStudy, modelMapper);
-    onBoardQuantityService.buildOnBoardQuantityDetails(loadableStudyOpt, loadableStudy, modelMapper);
+    onBoardQuantityService.buildOnBoardQuantityDetails(
+        loadableStudyOpt, loadableStudy, modelMapper);
     loadableStudyPortRotationService.buildportRotationDetails(loadableStudyOpt, loadableStudy);
     loadableStudyRuleService.buildLoadableStudyRuleDetails(
         loadableStudyOpt, loadableStudy, modelMapper);
@@ -3950,7 +3951,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         replyBuilder.addAllBallastRearTanks(onHandQuantityService.groupTanks(rearBallastTanks));
         // build cargo layout tanks not available in synoptical
         replyBuilder.addAllCargoTanks(
-                onHandQuantityService.groupTanks(
+            onHandQuantityService.groupTanks(
                 sortedTankList.stream()
                     .filter(
                         tankList -> CARGO_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))

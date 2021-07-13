@@ -352,8 +352,7 @@ public class OnHandQuantityService {
    * @param tankDetailList
    * @return
    */
-  public List<LoadableStudy.TankList> groupTanks(
-      List<VesselInfo.VesselTankDetail> tankDetailList) {
+  public List<LoadableStudy.TankList> groupTanks(List<VesselInfo.VesselTankDetail> tankDetailList) {
     Map<Integer, List<VesselInfo.VesselTankDetail>> vesselTankMap = new HashMap<>();
     for (VesselInfo.VesselTankDetail tank : tankDetailList) {
       Integer tankGroup = tank.getTankGroup();
@@ -403,31 +402,29 @@ public class OnHandQuantityService {
     return builder.build();
   }
 
-
   /**
    * @param loadableStudy
    * @param loadableStudyEntity
    * @param modelMapper void
    */
   public void buildOnHandQuantityDetails(
-          com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyEntity,
-          com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
-          ModelMapper modelMapper) {
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
     loadableStudy.setOnHandQuantity(new ArrayList<>());
     List<OnHandQuantity> onHandQuantities =
-            onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+        onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
     onHandQuantities.forEach(
-            onHandQuantity -> {
-              com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
-                      new com.cpdss.loadablestudy.domain.OnHandQuantity();
-              modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-              onHandQuantityDto =
-                      modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
-              onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
-              onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
-              onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
-              loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
-            });
+        onHandQuantity -> {
+          com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
+              new com.cpdss.loadablestudy.domain.OnHandQuantity();
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+          onHandQuantityDto =
+              modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
+          onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
+          onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
+          onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
+          loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
+        });
   }
-
 }

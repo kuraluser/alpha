@@ -15,7 +15,6 @@ import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,38 +209,37 @@ public class CargoService {
     return reply;
   }
 
-    /**
-     * @param loadableStudyId
-     * @param loadableStudy void
-     * @param modelMapper
-     */
-    public void buildCommingleCargoDetails(
-            Long loadableStudyId,
-            com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
-            ModelMapper modelMapper) {
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy void
+   * @param modelMapper
+   */
+  public void buildCommingleCargoDetails(
+      Long loadableStudyId,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
 
-        List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
-                commingleCargoRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
-        loadableStudy.setCommingleCargos(new ArrayList<>());
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
+        commingleCargoRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    loadableStudy.setCommingleCargos(new ArrayList<>());
 
-        commingleCargos.forEach(
-                commingleCargo -> {
-                    com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
-                            new com.cpdss.loadablestudy.domain.CommingleCargo();
-                    commingleCargoDto =
-                            modelMapper.map(commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
-                    commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
-                    commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
-                    commingleCargoDto.setCargo1Percentage(
-                            null != commingleCargo.getCargo1Pct()
-                                    ? commingleCargo.getCargo1Pct().toString()
-                                    : null);
-                    commingleCargoDto.setCargo2Percentage(
-                            null != commingleCargo.getCargo2Pct()
-                                    ? commingleCargo.getCargo2Pct().toString()
-                                    : null);
-                    loadableStudy.getCommingleCargos().add(commingleCargoDto);
-                });
-    }
-
+    commingleCargos.forEach(
+        commingleCargo -> {
+          com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
+              new com.cpdss.loadablestudy.domain.CommingleCargo();
+          commingleCargoDto =
+              modelMapper.map(commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
+          commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
+          commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
+          commingleCargoDto.setCargo1Percentage(
+              null != commingleCargo.getCargo1Pct()
+                  ? commingleCargo.getCargo1Pct().toString()
+                  : null);
+          commingleCargoDto.setCargo2Percentage(
+              null != commingleCargo.getCargo2Pct()
+                  ? commingleCargo.getCargo2Pct().toString()
+                  : null);
+          loadableStudy.getCommingleCargos().add(commingleCargoDto);
+        });
+  }
 }

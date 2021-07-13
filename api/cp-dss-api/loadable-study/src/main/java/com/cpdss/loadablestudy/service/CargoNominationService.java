@@ -753,27 +753,27 @@ public class CargoNominationService {
   }
 
   /** @param loadableStudy void */
-  public void validateLoadableStudyWithCommingle(com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy)
-          throws GenericServiceException {
+  public void validateLoadableStudyWithCommingle(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) throws GenericServiceException {
     List<CargoNomination> cargoNominations =
-            cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudy.getId(), true);
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudy.getId(), true);
     List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
-            commingleCargoRepository.findByLoadableStudyXIdAndPurposeXidAndIsActive(
-                    loadableStudy.getId(), 2L, true);
+        commingleCargoRepository.findByLoadableStudyXIdAndPurposeXidAndIsActive(
+            loadableStudy.getId(), 2L, true);
     if (!cargoNominations.isEmpty() && !commingleCargos.isEmpty()) {
       BigDecimal cargoSum =
-              cargoNominations.stream().map(CargoNomination::getQuantity).reduce(BigDecimal::add).get();
+          cargoNominations.stream().map(CargoNomination::getQuantity).reduce(BigDecimal::add).get();
       BigDecimal commingleCargoSum =
-              commingleCargos.stream()
-                      .map(com.cpdss.loadablestudy.entity.CommingleCargo::getQuantity)
-                      .reduce(BigDecimal::add)
-                      .get();
+          commingleCargos.stream()
+              .map(com.cpdss.loadablestudy.entity.CommingleCargo::getQuantity)
+              .reduce(BigDecimal::add)
+              .get();
       if (commingleCargoSum.compareTo(cargoSum) == 1) {
         log.info("commingle quanity is gerater for LS - {}", loadableStudy.getId());
         throw new GenericServiceException(
-                "Commingle quanity is gerater for LS - {}" + loadableStudy.getId(),
-                CommonErrorCodes.E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY,
-                HttpStatusCode.INTERNAL_SERVER_ERROR);
+            "Commingle quanity is gerater for LS - {}" + loadableStudy.getId(),
+            CommonErrorCodes.E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
     }
   }
@@ -784,63 +784,61 @@ public class CargoNominationService {
    * @param modelMapper
    */
   public void buildCargoNominationDetails(
-          long loadableStudyId,
-          com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
-          ModelMapper modelMapper) {
+      long loadableStudyId,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
     List<CargoNomination> cargoNominations =
-            cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
 
     loadableStudy.setCargoNomination(new ArrayList<>());
     cargoNominations.forEach(
-            cargoNomination -> {
-              com.cpdss.loadablestudy.domain.CargoNomination cargoNominationDto =
-                      new com.cpdss.loadablestudy.domain.CargoNomination();
-              cargoNominationDto =
-                      modelMapper.map(
-                              cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
-              CargoInfo.CargoRequest.Builder cargoReq = CargoInfo.CargoRequest.newBuilder();
-              cargoReq.setCargoId(cargoNomination.getCargoXId());
-              com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
-                      this.getCargoInfoById(cargoReq.build());
-              if (cargoDetailReply.getResponseStatus().getStatus().equals(SUCCESS)) {
-                log.info("Fetched cargo info of cargo with id {}", cargoNomination.getCargoXId());
-                cargoNominationDto.setIsCondensateCargo(
-                        cargoDetailReply.getCargoDetail().getIsCondensateCargo());
-                cargoNominationDto.setIsHrvpCargo(cargoDetailReply.getCargoDetail().getIsHrvpCargo());
-              } else {
-                log.error(
-                        "Could not fetch cargo info of cargo with id {}", cargoNomination.getCargoXId());
-              }
-              loadableStudy.getCargoNomination().add(cargoNominationDto);
-            });
+        cargoNomination -> {
+          com.cpdss.loadablestudy.domain.CargoNomination cargoNominationDto =
+              new com.cpdss.loadablestudy.domain.CargoNomination();
+          cargoNominationDto =
+              modelMapper.map(
+                  cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
+          CargoInfo.CargoRequest.Builder cargoReq = CargoInfo.CargoRequest.newBuilder();
+          cargoReq.setCargoId(cargoNomination.getCargoXId());
+          com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
+              this.getCargoInfoById(cargoReq.build());
+          if (cargoDetailReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+            log.info("Fetched cargo info of cargo with id {}", cargoNomination.getCargoXId());
+            cargoNominationDto.setIsCondensateCargo(
+                cargoDetailReply.getCargoDetail().getIsCondensateCargo());
+            cargoNominationDto.setIsHrvpCargo(cargoDetailReply.getCargoDetail().getIsHrvpCargo());
+          } else {
+            log.error(
+                "Could not fetch cargo info of cargo with id {}", cargoNomination.getCargoXId());
+          }
+          loadableStudy.getCargoNomination().add(cargoNominationDto);
+        });
   }
-
 
   /**
    * @param loadableStudyId
    * @param loadableStudy void
    */
   public void buildCargoNominationPortDetails(
-          long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+      long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
     List<CargoNomination> cargoNominations =
-            cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
     loadableStudy.setCargoNominationOperationDetails(new ArrayList<>());
     List<CargoNominationPortDetails> cargoNominationOperationDetails =
-            cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
-                    cargoNominations, true);
+        cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
+            cargoNominations, true);
     cargoNominationOperationDetails.forEach(
-            cargoNominationOperationDetail -> {
-              com.cpdss.loadablestudy.domain.CargoNominationOperationDetails
-                      cargoNominationOperationDetailDto =
-                      new com.cpdss.loadablestudy.domain.CargoNominationOperationDetails();
-              cargoNominationOperationDetailDto.setCargoNominationId(
-                      cargoNominationOperationDetail.getCargoNomination().getId());
-              cargoNominationOperationDetailDto.setId(cargoNominationOperationDetail.getId());
-              cargoNominationOperationDetailDto.setPortId(cargoNominationOperationDetail.getPortId());
-              cargoNominationOperationDetailDto.setQuantity(
-                      String.valueOf(cargoNominationOperationDetail.getQuantity()));
-              loadableStudy.getCargoNominationOperationDetails().add(cargoNominationOperationDetailDto);
-            });
+        cargoNominationOperationDetail -> {
+          com.cpdss.loadablestudy.domain.CargoNominationOperationDetails
+              cargoNominationOperationDetailDto =
+                  new com.cpdss.loadablestudy.domain.CargoNominationOperationDetails();
+          cargoNominationOperationDetailDto.setCargoNominationId(
+              cargoNominationOperationDetail.getCargoNomination().getId());
+          cargoNominationOperationDetailDto.setId(cargoNominationOperationDetail.getId());
+          cargoNominationOperationDetailDto.setPortId(cargoNominationOperationDetail.getPortId());
+          cargoNominationOperationDetailDto.setQuantity(
+              String.valueOf(cargoNominationOperationDetail.getQuantity()));
+          loadableStudy.getCargoNominationOperationDetails().add(cargoNominationOperationDetailDto);
+        });
   }
-
 }

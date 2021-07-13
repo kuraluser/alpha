@@ -105,25 +105,24 @@ public class OnBoardQuantityService {
    * @param modelMapper void
    */
   public void buildOnBoardQuantityDetails(
-          com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyEntity,
-          com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
-          ModelMapper modelMapper) {
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
     loadableStudy.setOnBoardQuantity(new ArrayList<>());
     List<OnBoardQuantity> onBoardQuantities =
-            onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+        onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
     onBoardQuantities.forEach(
-            onBoardQuantity -> {
-              com.cpdss.loadablestudy.domain.OnBoardQuantity onBoardQuantityDto =
-                      new com.cpdss.loadablestudy.domain.OnBoardQuantity();
-              onBoardQuantityDto =
-                      modelMapper.map(
-                              onBoardQuantity, com.cpdss.loadablestudy.domain.OnBoardQuantity.class);
-              onBoardQuantityDto.setApi(
-                      null != onBoardQuantity.getDensity()
-                              ? String.valueOf(onBoardQuantity.getDensity())
-                              : "");
-              loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
-            });
+        onBoardQuantity -> {
+          com.cpdss.loadablestudy.domain.OnBoardQuantity onBoardQuantityDto =
+              new com.cpdss.loadablestudy.domain.OnBoardQuantity();
+          onBoardQuantityDto =
+              modelMapper.map(
+                  onBoardQuantity, com.cpdss.loadablestudy.domain.OnBoardQuantity.class);
+          onBoardQuantityDto.setApi(
+              null != onBoardQuantity.getDensity()
+                  ? String.valueOf(onBoardQuantity.getDensity())
+                  : "");
+          loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
+        });
   }
-
 }
