@@ -399,7 +399,7 @@
                   'Content-Type': 'application/json',
                   'Authorization': 'Bearer ' + token
                 }
-                const syncResponse = await fetch(`${apiUrl}/vessels/${ohq?.vesselId}/voyages/${ohq?.voyageId}/discharge-studies/${ohq?.loadableStudyId}/port-rotation/${ohq?.portRotationId}/on-hand-quantities/${ohq?.id}`, {
+                const syncResponse = await fetch(`${apiUrl}/vessels/${ohq?.vesselId}/voyages/${ohq?.voyageId}/discharge-studies/${ohq?.dischargeStudyId}/port-rotation/${ohq?.portRotationId}/on-hand-quantities/${ohq?.id}`, {
                   method: 'POST',
                   body: JSON.stringify(ohq),
                   headers: headers

@@ -185,7 +185,7 @@
                     <div class="col-sm-12" *ngIf="loadableStudies?.length">
                         <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && cargoNominationTabPermission?.view">
                             <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
-                            <p-dropdown [options]="ports" (onChange)="onDischargePortChange($event)" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}" optionLabel="name" [(ngModel)]="dischargingPortData" optionLabel="name" resetFilterOnHide="true"
+                            <p-dropdown [options]="ports" [filter]="true" (onChange)="onDischargePortChange($event)" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}" optionLabel="name" [(ngModel)]="dischargingPortData" optionLabel="name" resetFilterOnHide="true"
                             [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)"></p-dropdown>
                             <span class="col error-column" *ngIf="!isSelectedDischargePort">
                                 <cpdss-portal-validation-error [errors]="fieldError()"

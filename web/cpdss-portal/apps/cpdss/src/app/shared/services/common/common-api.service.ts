@@ -61,4 +61,17 @@ export class CommonApiService {
     return this.http.delete<T>(this.apiGetter(apiUri),{headers:httpHeaders});
   }
 
+
+/**
+ * Common put request handler as formdata.
+ *
+ * @template T
+ * @param {string} apiUri
+ * @param {FormData} body
+ * @return {*}  {Observable<T>}
+ * @memberof CommonApiService
+ */
+putFormData<T>(apiUri: string, body: FormData): Observable<T> {
+    return this.http.put<T>(this.apiGetter(apiUri), body);
+  }
 }

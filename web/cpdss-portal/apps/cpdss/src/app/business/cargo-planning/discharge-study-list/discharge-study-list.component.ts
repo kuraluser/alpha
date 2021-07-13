@@ -28,6 +28,7 @@ import { DischargeStudyListTransformationApiService } from '../services/discharg
 })
 export class DischargeStudyListComponent implements OnInit {
 
+  
   voyages: Voyage[];
   _selectedVoyage: Voyage;
   loading = true;
@@ -87,8 +88,8 @@ export class DischargeStudyListComponent implements OnInit {
       this.vesselDetails = res[0] ?? <IVessel>{};
       localStorage.setItem("vesselId", this.vesselDetails?.id.toString())
       const result = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
-      this.voyages = this.getSelectedVoyages(result);
-      this.ngxSpinnerService.hide();
+      this.voyages = result;
+       this.ngxSpinnerService.hide();
       this.selectedVoyage = this.voyages[0];
       this.showDischargeStudyList();
 
@@ -128,9 +129,16 @@ export class DischargeStudyListComponent implements OnInit {
   *
   * @memberof DischargeStudyListComponent
   */
- callNewDischargeStudyPopup() {
+ callNewDischargeStudyPopup(event,selectedDischargeStudy) {
     this.display = true;
-    this.edit = false;
+    this.edit = event;
+    if(this.edit)
+    {
+      this.selectedDischargeStudy = selectedDischargeStudy;
+    }
+    else{
+      this.selectedDischargeStudy = null;
+    }
   }
 
   /**
@@ -139,12 +147,29 @@ export class DischargeStudyListComponent implements OnInit {
    * @param {*} event
    * @memberof DischargeStudyListComponent
    */
+
   onRowSelect(event: any) {
-    this.edit = true;
-    this.display = true;
-    this.selectedDischargeStudy = event.data;
-    this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+    if (event.field == 'actions') {
+      this.callNewDischargeStudyPopup(true,event.data);      
+    }
+    else {
+      this.display = true;
+      this.selectedDischargeStudy = null;
+      this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+    }
   }
+
+
+  /**
+   * Method on new discharge study added
+   *
+   * @memberof DischargeStudyListComponent
+   */
+  onNewDischargeStudyAdded(dischargeStudyLId)
+  {
+    this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${dischargeStudyLId}`]);
+  }
+
 
   /**
    * Method to get discharge study info
@@ -160,9 +185,13 @@ export class DischargeStudyListComponent implements OnInit {
       const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
 
       const dateFormatOptions: IDateTimeFormatOptions = { utcFormat: true };
-      const dischargeStudyList = result.loadableStudies.map(dischargeStudy => {
+      const dischargeStudyList = result?.dischargeStudies?.map(dischargeStudy => {
         dischargeStudy.createdDate = this.timeZoneTransformationService.formatDateTime(dischargeStudy.createdDate, dateFormatOptions);
         dischargeStudy.lastEdited = this.timeZoneTransformationService.formatDateTime(dischargeStudy.lastEdited, dateFormatOptions);
+        if (this.selectedVoyage.status !== "Active") {
+          dischargeStudy.isActionsEnabled = false;
+          dischargeStudy.isEditable = false;
+        }
         return dischargeStudy;
       });
       dischargeStudyList?.length ? this.dischargeStudyList = [...dischargeStudyList] : this.dischargeStudyList = [];

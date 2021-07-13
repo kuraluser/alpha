@@ -86,6 +86,7 @@ export interface ILoadablePlanStowageDetails extends ILoadableCargo {
     colorCode: string;
     quantityMT: string;
     isCommingle?: boolean;
+    weightOrginal: string;
 }
 
 /**

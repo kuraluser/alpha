@@ -16,14 +16,15 @@ import { IDischargeStudyPortList , IDischargePortsDetailsResponse , Voyage, VOYA
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { IDischargeStudy } from '../../models/discharge-study-list.model';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 import { IDateTimeFormatOptions, ITimeZone, ValueObject } from './../../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import * as moment from 'moment';
 import { seaWaterDensityRangeValidator } from '../../../core/directives/seawater-density-range-validator.directive';
-
+import { environment } from '../../../../../environments/environment';
+import { SecurityService } from '../../../../shared/services/security/security.service';
 
 /**
  * Component class of ports screen
@@ -64,9 +65,9 @@ export class PortsComponent implements OnInit, OnDestroy {
   get dischargeStudy() {
     return this._dischargeStudy;
   }
-  set dischargeStudy(value: LoadableStudy) {
+  set dischargeStudy(value: IDischargeStudy) {
     this._dischargeStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Output() portUpdate = new EventEmitter<boolean>();
@@ -87,7 +88,7 @@ export class PortsComponent implements OnInit, OnDestroy {
 
   // private fields
   private _portsLists: IDischargeStudyPortsValueObject[];
-  private _dischargeStudy: LoadableStudy;
+  private _dischargeStudy: IDischargeStudy;
   private portsListSaved: IDischargeStudyPortsValueObject[];
 
 
@@ -286,6 +287,11 @@ export class PortsComponent implements OnInit, OnDestroy {
    * @memberof PortsComponent
    */
   private swMessageHandler = async (event) => {
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
+      this.globalErrorHandler.sessionOutMessage();
+    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
+      SecurityService.refreshToken(event?.data?.refreshedToken)
+    }
     const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_PORT_UPDATE_ERROR', 'DISCHARGE_STUDY_PORT_UPDATE_STATUS_ERROR']).toPromise();
     if (event?.data?.type === 'discharge_ports_sync_finished') {
       this.dischargeStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
