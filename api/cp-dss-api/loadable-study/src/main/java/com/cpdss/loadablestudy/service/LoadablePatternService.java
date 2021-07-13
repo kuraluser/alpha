@@ -8,20 +8,29 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Master Service for Loadable Pattern
@@ -88,6 +97,24 @@ public class LoadablePatternService {
 
   @Autowired
   private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
+
+  @Autowired private VoyageService voyageService;
+
+  @Autowired private CargoNominationService cargoNominationService;
+
+  @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
+
+  @Autowired private LoadableQuantityRepository loadableQuantityRepository;
+
+  @Autowired private RestTemplate restTemplate;
+
+  @Autowired private LoadableStudyService loadableStudyService;
+
+  @Value("${loadablestudy.attachement.rootFolder}")
+  private String rootFolder;
+
+  @Value("${algo.loadablestudy.api.url}")
+  private String loadableStudyUrl;
   /**
    * @param loadableStudy
    * @throws GenericServiceException
@@ -987,5 +1014,115 @@ public class LoadablePatternService {
       ofNullable(pattern.getCaseNumber()).ifPresent(item -> builder.setCaseNumber(item));
       replyBuilder.addLoadablePattern(builder.build());
     }
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder generateLoadablePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request, com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder replyBuilder) throws GenericServiceException, IOException {
+    Optional<LoadableStudy> loadableStudyOpt =
+            loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (loadableStudyOpt.isPresent()) {
+      this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
+      cargoNominationService.validateLoadableStudyWithCommingle(loadableStudyOpt.get());
+      ModelMapper modelMapper = new ModelMapper();
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+              new com.cpdss.loadablestudy.domain.LoadableStudy();
+
+      loadableStudyService.buildLoadableStudy(
+              request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+
+      ObjectMapper objectMapper = new ObjectMapper();
+
+      objectMapper.writeValue(
+              new File(
+                      this.rootFolder + "/json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
+              loadableStudy);
+
+      loadableStudyService.saveJsonToDatabase(
+              request.getLoadableStudyId(),
+              LOADABLE_STUDY_REQUEST,
+              objectMapper.writeValueAsString(loadableStudy));
+      /** **Calling EW for communication server */
+      // uncomment with communication service implementation
+        /* EnvoyWriter.WriterReply ewReply = passRequestPayloadToEnvoyWriter(loadableStudy);
+                if (!SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+                  throw new GenericServiceException(
+                          "Failed to pass toWriterReply",
+                          ewReply.getResponseStatus().getCode(),
+                          HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
+                }
+                this.loadableStudyRepository.updateLoadableStudyUUIDAndSeqNo(
+                        ewReply.getLsUUID(), ewReply.getSequenceNo(), request.getLoadableStudyId());
+                EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReader(ewReply.getLsUUID());
+                if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+                  throw new GenericServiceException(
+                          "Failed to get Result from Communication Server",
+                          erReply.getResponseStatus().getCode(),
+                          HttpStatusCode.valueOf(Integer.valueOf(ewReply.getResponseStatus().getCode())));
+                }
+                LoadablePatternAlgoRequest.Builder load = LoadablePatternAlgoRequest.newBuilder();
+                load.setLoadableStudyId(request.getLoadableStudyId());
+                saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
+        */
+      AlgoResponse algoResponse =
+              restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
+      updateProcessIdForLoadableStudy(
+              algoResponse.getProcessId(),
+              loadableStudyOpt.get(),
+              LOADABLE_STUDY_PROCESSING_STARTED_ID);
+
+      loadableStudyRepository.updateLoadableStudyStatus(
+              LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
+
+      replyBuilder.setProcesssId(algoResponse.getProcessId())
+                      .setResponseStatus(
+                              Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+
+    } else {
+      log.info("INVALID_LOADABLE_STUDY {} - ", request.getLoadableStudyId());
+      replyBuilder.setResponseStatus(
+                              Common.ResponseStatus.newBuilder()
+                                      .setStatus(FAILED)
+                                      .setMessage(INVALID_LOADABLE_STUDY_ID)
+                                      .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                                      .build());
+    }
+     return replyBuilder;
+  }
+
+
+  private void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
+    List<PortRotationIdAndPortId> ports =
+            loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(ls.getId(), true);
+    boolean valid = false;
+    for (PortRotationIdAndPortId port : ports) {
+      Optional<LoadableQuantity> lQs =
+              loadableQuantityRepository.findByLSIdAndPortRotationId(ls.getId(), port.getId(), true);
+      if (lQs.isPresent()) {
+        valid = true;
+        break;
+      }
+    }
+    if (!valid) {
+      log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
+      throw new GenericServiceException(
+              "No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
+              CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * @param loadableStudyStatus
+   * @param loadableStudy void
+   */
+  public void updateProcessIdForLoadableStudy(
+          String processId, LoadableStudy loadableStudy, Long loadableStudyStatus) {
+    LoadableStudyAlgoStatus status = new LoadableStudyAlgoStatus();
+    status.setLoadableStudy(loadableStudy);
+    status.setIsActive(true);
+    status.setLoadableStudyStatus(loadableStudyStatusRepository.getOne(loadableStudyStatus));
+    status.setProcessId(processId);
+    status.setVesselxid(loadableStudy.getVesselXId());
+    loadableStudyAlgoStatusRepository.save(status);
   }
 }

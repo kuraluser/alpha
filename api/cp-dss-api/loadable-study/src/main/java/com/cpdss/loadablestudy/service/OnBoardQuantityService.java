@@ -13,8 +13,11 @@ import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,4 +98,32 @@ public class OnBoardQuantityService {
     entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     entity.setIsActive(true);
   }
+
+  /**
+   * @param loadableStudy
+   * @param loadableStudyEntity
+   * @param modelMapper void
+   */
+  public void buildOnBoardQuantityDetails(
+          com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyEntity,
+          com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+          ModelMapper modelMapper) {
+    loadableStudy.setOnBoardQuantity(new ArrayList<>());
+    List<OnBoardQuantity> onBoardQuantities =
+            onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+    onBoardQuantities.forEach(
+            onBoardQuantity -> {
+              com.cpdss.loadablestudy.domain.OnBoardQuantity onBoardQuantityDto =
+                      new com.cpdss.loadablestudy.domain.OnBoardQuantity();
+              onBoardQuantityDto =
+                      modelMapper.map(
+                              onBoardQuantity, com.cpdss.loadablestudy.domain.OnBoardQuantity.class);
+              onBoardQuantityDto.setApi(
+                      null != onBoardQuantity.getDensity()
+                              ? String.valueOf(onBoardQuantity.getDensity())
+                              : "");
+              loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
+            });
+  }
+
 }
