@@ -111,15 +111,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setMaxTolerance(cargo.getMaxTolerance());
     dischargeStudyCargo.setMinTolerance(cargo.getMinTolerance());
     dischargeStudyCargo.setPriority(cargo.getPriority());
-    if (cargo.getCargoNominationPortDetails() == null
-        || cargo.getCargoNominationPortDetails().isEmpty()) {
-      dischargeStudyCargo.setQuantity(new BigDecimal(0));
-    } else {
-      dischargeStudyCargo.setQuantity(
-          cargo.getCargoNominationPortDetails().stream()
-              .map(CargoNominationPortDetails::getQuantity)
-              .reduce(BigDecimal.ZERO, BigDecimal::add));
-    }
+    dischargeStudyCargo.setQuantity(cargo.getQuantity());
     dischargeStudyCargo.setSegregationXId(cargo.getSegregationXId());
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());

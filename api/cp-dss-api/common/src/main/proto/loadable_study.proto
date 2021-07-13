@@ -796,6 +796,8 @@ message CargoNominationDetail {
 	int64 segregationId = 13;
 	bool isCargoNominationComplete=14;
 	string cargoName = 16;
+	string api = 17;
+	string temperature = 18;
 
 }
 
