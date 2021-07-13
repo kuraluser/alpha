@@ -4927,51 +4927,40 @@ public class LoadableStudyService {
         if (!CollectionUtils.isEmpty(synopticalRecord.get().getCargos())) {
           // build cargo quantities
           voyageStatusResponse.setCargoQuantities(synopticalRecord.get().getCargos());
-          // group on-board-quantities by cargo for Cargo conditions
-          List<Cargo> cargoConditions = new ArrayList<>();
+          List<Cargo> cargos = new ArrayList<Cargo>();
           synopticalRecord.get().getCargos().stream()
-              .collect(
-                  Collectors.groupingBy(
-                      synopticalCargoRecord ->
-                          synopticalCargoRecord.getCargoId() != null
-                              ? synopticalCargoRecord.getCargoId()
-                              : Long.valueOf("0"),
-                      Collectors.collectingAndThen(
-                          Collectors.reducing(
-                              (index, accum) ->
-                                  new SynopticalCargoBallastRecord(
-                                      index.getLpCargoDetailId(),
-                                      index.getCargoNominationId(),
-                                      index.getTankId(),
-                                      index.getTankName(),
-                                      index.getActualWeight().add(accum.getActualWeight()),
-                                      index.getPlannedWeight().add(accum.getPlannedWeight()),
-                                      index.getCapacity(),
-                                      index.getAbbreviation(),
-                                      index.getCargoId(),
-                                      index.getColorCode(),
-                                      index.getCorrectedUllage(),
-                                      index.getApi(),
-                                      index.getSg(),
-                                      index.getIsCommingleCargo(),
-                                      index.getGrade(),
-                                      index.getTemperature(),
-                                      null)),
-                          Optional::get)))
+              .filter(o -> !o.getAbbreviation().equals(""))
               .forEach(
-                  (id, synopticalCargoRecord) -> {
-                    if (synopticalCargoRecord.getCargoId() != null) {
-                      Cargo cargo = new Cargo();
-                      cargo.setId(synopticalCargoRecord.getCargoId());
-                      cargo.setPlannedWeight(synopticalCargoRecord.getPlannedWeight());
-                      cargo.setActualWeight(synopticalCargoRecord.getActualWeight());
-                      cargo.setAbbreviation(synopticalCargoRecord.getAbbreviation());
-                      cargo.setApi(synopticalCargoRecord.getApi().toString());
-                      cargo.setTemp(synopticalCargoRecord.getTemperature().toString());
-                      cargoConditions.add(cargo);
-                    }
+                  item -> {
+                    Cargo cargo = new Cargo();
+                    cargo.setAbbreviation(item.getAbbreviation());
+                    cargo.setActualWeight(item.getActualWeight());
+                    cargo.setApi(String.valueOf(item.getApi()));
+                    cargo.setId(item.getCargoId());
+                    cargo.setPlannedWeight(item.getPlannedWeight());
+                    cargo.setTemp(String.valueOf(item.getTemperature()));
+                    cargos.add(cargo);
                   });
-          voyageStatusResponse.setCargoConditions(cargoConditions);
+
+          Map<String, Cargo> cargoMap = new HashMap<String, Cargo>();
+
+          cargos.forEach(
+              cargodata -> {
+                if (cargoMap.containsKey(cargodata.getAbbreviation())) {
+                  Cargo cargodat = cargoMap.get(cargodata.getAbbreviation());
+                  cargodat.setActualWeight(
+                      cargodat.getActualWeight().add(cargodata.getActualWeight()));
+                  cargodat.setPlannedWeight(
+                      cargodat.getPlannedWeight().add(cargodata.getPlannedWeight()));
+                  cargoMap.put(cargodata.getAbbreviation(), cargodat);
+                } else {
+                  cargoMap.put(cargodata.getAbbreviation(), cargodata);
+                }
+              });
+
+          List<Cargo> cargoList = new ArrayList<Cargo>(cargoMap.values());
+
+          voyageStatusResponse.setCargoConditions(cargoList);
         }
         // build bunker conditions
         BunkerConditions bunkerConditions = new BunkerConditions();

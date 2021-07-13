@@ -3253,9 +3253,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadableStudyOpt.get(), true);
         if (!onHandQuantityList.isEmpty()) {
           List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
-
-          for (OnHandQuantity onHandQuantity : onHandQuantityList) {
-
+          for (OnHandQuantity onHandQuantity :
+              onHandQuantityList.stream()
+                  .filter(ohq -> ohq.getPortRotation().isActive())
+                  .collect(Collectors.toList())) {
             Optional<LoadableStudyPortRotation> duplicated =
                 loadableStudyDuplicatedPorts.stream()
                     .filter(

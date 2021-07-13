@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.domain.algo;
 
+import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
 import java.util.List;
 import lombok.Data;
 
@@ -13,4 +14,5 @@ public class LoadingInformationAlgoRequest {
   private List<OnHandQuantity> onHandQuantity;
   private List<OnBoardQuantity> onBoardQuantity;
   private List<LoadingRule> loadingRules;
+  private List<PortTideAlgo> portTideDetails;
 }
