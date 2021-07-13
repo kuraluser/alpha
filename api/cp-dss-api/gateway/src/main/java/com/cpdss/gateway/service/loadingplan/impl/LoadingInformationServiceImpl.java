@@ -597,10 +597,16 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     try {
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
       LoadingPlanModels.LoadingInfoSaveResponse response =
-          loadingInfoBuilderService.buildLoadingInformation(request);
+          loadingInfoBuilderService.saveDataAsync(request);
       if (request.getLoadingDetails() != null) {
         // Updating synoptic table (time)
         this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
+      }
+      if (response == null) {
+        throw new GenericServiceException(
+            "Failed to save Loading Information",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
       return buildLoadingInformationResponse(response, correlationId);
     } catch (Exception e) {

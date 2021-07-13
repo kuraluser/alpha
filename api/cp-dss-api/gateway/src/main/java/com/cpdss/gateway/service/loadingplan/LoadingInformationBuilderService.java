@@ -21,9 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class LoadingInformationBuilderService {
 
@@ -41,8 +44,8 @@ public class LoadingInformationBuilderService {
    * @return
    * @throws Exception
    */
-  public LoadingPlanModels.LoadingInfoSaveResponse buildLoadingInformation(
-      LoadingInformationRequest request) throws Exception {
+  public LoadingPlanModels.LoadingInfoSaveResponse saveDataAsync(LoadingInformationRequest request)
+      throws Exception {
 
     LoadingInformation.Builder builder = LoadingInformation.newBuilder();
     List<Callable<LoadingPlanModels.LoadingInfoSaveResponse>> callableTasks = new ArrayList<>();
@@ -119,7 +122,29 @@ public class LoadingInformationBuilderService {
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     List<Future<LoadingPlanModels.LoadingInfoSaveResponse>> futures =
         executorService.invokeAll(callableTasks);
-    return futures.stream().findAny().get().get();
+
+    List<Future<LoadingPlanModels.LoadingInfoSaveResponse>> data =
+        futures.stream()
+            .filter(
+                v -> {
+                  try {
+                    if (v.get().getLoadingInfoId() > 0) {
+                      return true;
+                    }
+                    log.error("Failed to save Thread {}", v.get());
+                  } catch (InterruptedException e) {
+                    e.printStackTrace();
+                  } catch (ExecutionException e) {
+                    e.printStackTrace();
+                  }
+                  return false;
+                })
+            .collect(Collectors.toList());
+    log.info(
+        "Save Loading info, Save Request Count - {}, Response Count {}",
+        callableTasks.size(),
+        data.size());
+    return data.isEmpty() ? null : data.stream().findFirst().get().get();
   }
 
   public LoadingDetails buildLoadingDetails(
