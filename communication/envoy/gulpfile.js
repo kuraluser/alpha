@@ -48,7 +48,7 @@ let dockerClient = new Docker({
 });
 //Sample Environment variable
 let dockerEnvVars = [`CONTAINER_VOLUME_PATH=${containerVolumePath}`,`APP_TYPE=${appName}`, 
-`LOG_LEVEL=info`, `PORT=${containerPort}`, `SHIP_ID=${process.env.SHIP_ID}`, 
+`LOG_LEVEL=info`, `PORT=${containerPort}`, `SHIP_ID=${process.env.SHIP_ID}`, `DB_NAME=${process.env.DB_NAME}`,
 `DB_HOST=${process.env.DB_HOST}`, `DB_PASSWORD=${process.env.DB_PASSWORD}`, 
 `DB_USER=${process.env.DB_USER}`];
 //Registry Authentication
@@ -79,6 +79,10 @@ function buildApp(cb) {
       console.log(stderr);
       cb(err);
     });
+  }
+  
+  if(appName == "client"){
+	  dockerEnvVars.push(`ENVOY_SERVER_URL=${process.env.ENVOY_SERVER_URL}`);
   }
 }
 
