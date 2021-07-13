@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelays;
@@ -18,27 +20,106 @@ import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LoadingInformationBuilderService {
 
-  public LoadingInformation buildLoadingInformation(LoadingInformationRequest request)
-      throws Exception {
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
+
+  /**
+   * Multi Thread save implemented for Save Loading Info
+   *
+   * <p>If Any issue found during this API, need to change to Synchronized Save Operation (save one
+   * by one).
+   *
+   * @param request
+   * @return
+   * @throws Exception
+   */
+  public LoadingPlanModels.LoadingInfoSaveResponse buildLoadingInformation(
+      LoadingInformationRequest request) throws Exception {
+
     LoadingInformation.Builder builder = LoadingInformation.newBuilder();
-    builder.setLoadingDetail(
-        buildLoadingDetails(request.getLoadingDetails(), request.getLoadingInfoId()));
-    builder.setLoadingRate(
-        buildLoadingRates(request.getLoadingRates(), request.getLoadingInfoId()));
-    builder.addAllLoadingBerths(
-        buildLoadingBerths(request.getLoadingBerths(), request.getLoadingInfoId()));
-    LoadingDelay.Builder loadingDelayBuilder = LoadingDelay.newBuilder();
-    loadingDelayBuilder.addAllDelays(buildLoadingDelays(request.getLoadingDelays()));
-    builder.setLoadingDelays(loadingDelayBuilder.build());
-    builder.addAllLoadingMachines(buildLoadingMachineries(request.getLoadingMachineries()));
-    builder.addAllToppingOffSequence(buildToppingOffSequences(request.getToppingOffSequence()));
-    builder.setLoadingStage(buildLoadingStage(request));
-    return builder.build();
+    List<Callable<LoadingPlanModels.LoadingInfoSaveResponse>> callableTasks = new ArrayList<>();
+    builder.setLoadingInfoId(request.getLoadingInfoId());
+    builder.setSynopticTableId(request.getSynopticalTableId());
+
+    // Loading Info Case 1 - Details
+    if (request.getLoadingDetails() != null) {
+      Callable<LoadingPlanModels.LoadingInfoSaveResponse> t1 =
+          () -> {
+            builder.setLoadingDetail(
+                buildLoadingDetails(request.getLoadingDetails(), request.getLoadingInfoId()));
+            return loadingInfoServiceBlockingStub.saveLoadingInformation(builder.build());
+          };
+      callableTasks.add(t1);
+    }
+
+    // Loading Info Case 2 - Stages
+    if (request.getLoadingStages() != null) {
+      Callable<LoadingPlanModels.LoadingInfoSaveResponse> t2 =
+          () -> {
+            builder.setLoadingStage(buildLoadingStage(request));
+            return loadingInfoServiceBlockingStub.saveLoadingInfoStages(builder.build());
+          };
+      callableTasks.add(t2);
+    }
+
+    // Loading Info Case 3 - Rates
+    if (request.getLoadingRates() != null) {
+      Callable<LoadingPlanModels.LoadingInfoSaveResponse> t3 =
+          () -> {
+            builder.setLoadingRate(
+                buildLoadingRates(request.getLoadingRates(), request.getLoadingInfoId()));
+            return loadingInfoServiceBlockingStub.saveLoadingInfoRates(builder.build());
+          };
+      callableTasks.add(t3);
+    }
+
+    // Loading Info Case 4 - Berths
+    if (request.getLoadingBerths() != null) {
+      Callable<LoadingPlanModels.LoadingInfoSaveResponse> t4 =
+          () -> {
+            builder.addAllLoadingBerths(
+                buildLoadingBerths(request.getLoadingBerths(), request.getLoadingInfoId()));
+            return loadingInfoServiceBlockingStub.saveLoadingInfoBerths(builder.build());
+          };
+      callableTasks.add(t4);
+    }
+
+    // Loading Info Case 5 - Delays
+    if (request.getLoadingDelays() != null) {
+      Callable<LoadingPlanModels.LoadingInfoSaveResponse> t5 =
+          () -> {
+            LoadingDelay.Builder loadingDelayBuilder = LoadingDelay.newBuilder();
+            loadingDelayBuilder.addAllDelays(buildLoadingDelays(request.getLoadingDelays()));
+            builder.setLoadingDelays(loadingDelayBuilder.build());
+            return loadingInfoServiceBlockingStub.saveLoadingInfoDelays(builder.build());
+          };
+      callableTasks.add(t5);
+    }
+
+    // Loading Info Case 6 - Machines
+    if (request.getLoadingMachineries() != null) {
+      Callable<LoadingPlanModels.LoadingInfoSaveResponse> t6 =
+          () -> {
+            builder.addAllLoadingMachines(buildLoadingMachineries(request.getLoadingMachineries()));
+            return loadingInfoServiceBlockingStub.saveLoadingInfoMachinery(builder.build());
+          };
+      callableTasks.add(t6);
+    }
+    // builder.addAllToppingOffSequence(buildToppingOffSequences(request.getToppingOffSequence()));
+
+    ExecutorService executorService =
+        new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+    List<Future<LoadingPlanModels.LoadingInfoSaveResponse>> futures =
+        executorService.invokeAll(callableTasks);
+    return futures.stream().findAny().get().get();
   }
 
   public LoadingDetails buildLoadingDetails(
@@ -194,18 +275,24 @@ public class LoadingInformationBuilderService {
         durationBuilder =
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder();
     StageOffsets.Builder offsetBuilder = StageOffsets.newBuilder();
-    if (Optional.ofNullable(request.getStageDuration()).isPresent()) {
-      Optional.ofNullable(request.getStageDuration().getId()).ifPresent(durationBuilder::setId);
-      Optional.ofNullable(request.getStageDuration().getDuration())
-          .ifPresent(durationBuilder::setDuration);
+    if (request.getLoadingStages() != null) {
+      if (request.getLoadingStages().getStageDuration() != null) {
+        Optional.ofNullable(request.getLoadingStages().getStageDuration().getId())
+            .ifPresent(durationBuilder::setId);
+        Optional.ofNullable(request.getLoadingStages().getStageDuration().getDuration())
+            .ifPresent(durationBuilder::setDuration);
+      }
+      if (request.getLoadingStages().getStageOffset() != null) {
+        Optional.ofNullable(request.getLoadingStages().getStageOffset().getId())
+            .ifPresent(offsetBuilder::setId);
+        Optional.ofNullable(request.getLoadingStages().getStageOffset().getStageOffsetVal())
+            .ifPresent(offsetBuilder::setStageOffsetVal);
+      }
+      Optional.ofNullable(request.getLoadingStages().getTrackGradeSwitch())
+          .ifPresent(builder::setTrackGradeSwitch);
+      Optional.ofNullable(request.getLoadingStages().getTrackStartEndStage())
+          .ifPresent(builder::setTrackStartEndStage);
     }
-    if (Optional.ofNullable(request.getStageOffset()).isPresent()) {
-      Optional.ofNullable(request.getStageOffset().getId()).ifPresent(offsetBuilder::setId);
-      Optional.ofNullable(request.getStageOffset().getStageOffsetVal())
-          .ifPresent(offsetBuilder::setStageOffsetVal);
-    }
-    Optional.ofNullable(request.getTrackGradeSwitch()).ifPresent(builder::setTrackGradeSwitch);
-    Optional.ofNullable(request.getTrackStartEndStage()).ifPresent(builder::setTrackStartEndStage);
     builder.setDuration(durationBuilder.build());
     builder.setOffset(offsetBuilder.build());
     return builder.build();

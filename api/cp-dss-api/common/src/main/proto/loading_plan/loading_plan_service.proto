@@ -27,6 +27,9 @@ service LoadingInformationService {
   // Case 5, reason for delay
   rpc SaveLoadingInfoDelays(LoadingInformation) returns (LoadingInfoSaveResponse) {}
 
+  // Case 6, Stages and track status
+  rpc SaveLoadingInfoStages(LoadingInformation) returns (LoadingInfoSaveResponse) {}
+
   rpc GetLoadigInformationByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
 
   rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}

@@ -229,35 +229,26 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public LoadingInfoResponse saveLoadingInformation(
+  public LoadingInformation saveLoadingInformation(
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request)
       throws Exception {
-    LoadingInfoResponse response = new LoadingInfoResponse();
     Optional<LoadingInformation> loadingInformationOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingDetail().getId());
     if (loadingInformationOpt.isPresent()) {
       LoadingInformation loadingInformation = loadingInformationOpt.get();
-      // buildLoadingInformation(request, loadingInformation);
       informationBuilderService.buildLoadingInfoFromRpcMessage(request, loadingInformation);
       loadingInformationRepository.save(loadingInformation);
-      // loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList(),
-      // loadingInformation);
-      // loadingDelayService.saveLoadingDelayList(request.getLoadingDelays(), loadingInformation);
-      // loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList(),
-      // loadingInformation);
-      // toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
-      buildLoadingInfoResponse(loadingInformation, response);
+      return loadingInformationOpt.get();
     } else {
       throw new Exception(
           "Cannot find loading information with id " + request.getLoadingDetail().getId());
     }
-
-    return response;
   }
 
   @Override
   public LoadingInformation saveLoadingInfoRates(
       LoadingPlanModels.LoadingRates source,
+      LoadingInformation loadingInformation,
       LoadingPlanModels.LoadingInfoSaveResponse.Builder response) {
     Optional<LoadingInformation> information = this.getLoadingInformation(source.getId());
     if (information.isPresent()) {
@@ -289,7 +280,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       if (!source.getNoticeTimeStopLoading().isEmpty())
         var1.setNoticeTimeForStopLoading(Integer.valueOf(source.getNoticeTimeStopLoading()));
-
       loadingInformationRepository.save(var1);
       return var1;
     }
@@ -299,6 +289,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Override
   public LoadingInformation saveLoadingInfoBerths(
       List<LoadingPlanModels.LoadingBerths> berths,
+      LoadingInformation loadingInformation,
       LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
       throws GenericServiceException {
     return null;
@@ -307,6 +298,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Override
   public LoadingInformation saveLoadingInfoMachines(
       List<LoadingPlanModels.LoadingMachinesInUse> machines,
+      LoadingInformation loadingInformation,
       LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
       throws GenericServiceException {
     return null;
@@ -315,8 +307,41 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Override
   public LoadingInformation saveLoadingInfoDelays(
       List<LoadingPlanModels.LoadingDelay> loadingDelays,
+      LoadingInformation loadingInformation,
       LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
       throws GenericServiceException {
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoStages(
+      LoadingPlanModels.LoadingStages loadingStage, LoadingInformation loadingInformation) {
+
+    if (loadingStage != null) {
+      loadingInformation.setTrackStartEndStage(loadingStage.getTrackStartEndStage());
+      loadingInformation.setTrackGradeSwitch(loadingStage.getTrackGradeSwitch());
+      if (Optional.ofNullable(loadingStage.getDuration().getId()).isPresent()
+          && loadingStage.getDuration().getId() != 0) {
+        Optional<StageDuration> stageDurationOpt =
+            stageDurationRepository.findByIdAndIsActiveTrue(loadingStage.getDuration().getId());
+        if (stageDurationOpt.isPresent()) {
+          loadingInformation.setStageDuration(stageDurationOpt.get());
+        } else {
+          log.error("Duration not found id {}", loadingStage.getDuration().getId());
+        }
+      }
+      if (Optional.of(loadingStage.getOffset().getId()).isPresent()
+          && loadingStage.getOffset().getId() != 0) {
+        Optional<StageOffset> stageOffsetOpt =
+            stageOffsetRepository.findByIdAndIsActiveTrue(loadingStage.getOffset().getId());
+        if (stageOffsetOpt.isPresent()) {
+          loadingInformation.setStageOffset(stageOffsetOpt.get());
+        } else {
+          log.info("Offset Not found Id {}", loadingStage.getOffset().getId());
+        }
+      }
+      loadingInformationRepository.save(loadingInformation);
+    }
     return null;
   }
 

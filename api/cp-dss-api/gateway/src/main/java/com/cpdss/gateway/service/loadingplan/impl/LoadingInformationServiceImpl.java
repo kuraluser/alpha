@@ -8,7 +8,6 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -597,21 +596,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
-      LoadingInformation loadingInformation =
+      LoadingPlanModels.LoadingInfoSaveResponse response =
           loadingInfoBuilderService.buildLoadingInformation(request);
-      LoadingInfoSaveResponse response =
-          this.loadingPlanGrpcService.saveLoadingInformation(loadingInformation);
-      if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
-        // Updating synoptical table
-        this.updateSynopticalTable(request.getLoadingDetails(), response.getSynopticalTableId());
-        return buildLoadingInformationResponse(response, correlationId);
-      } else {
-        log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
-        throw new GenericServiceException(
-            "Failed to save Loading Information",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
+      if (request.getLoadingDetails() != null) {
+        // Updating synoptic table (time)
+        this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
       }
+      return buildLoadingInformationResponse(response, correlationId);
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
       e.printStackTrace();

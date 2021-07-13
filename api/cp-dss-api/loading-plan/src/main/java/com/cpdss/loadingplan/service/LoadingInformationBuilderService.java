@@ -214,11 +214,9 @@ public class LoadingInformationBuilderService {
 
   public LoadingInformation buildLoadingInfoFromRpcMessage(
       LoadingPlanModels.LoadingInformation source, LoadingInformation target) {
-
     // Set Loading Details
     if (source.getLoadingDetail() != null) {
       log.info("Save Loading info, Set Loading Details");
-
       if (!source.getLoadingDetail().getStartTime().isEmpty())
         target.setStartTime(
             LocalTime.from(TIME_FORMATTER.parse(source.getLoadingDetail().getStartTime())));
@@ -235,7 +233,6 @@ public class LoadingInformationBuilderService {
         target.setMaximumTrim(
             new BigDecimal(source.getLoadingDetail().getTrimAllowed().getMaximumTrim()));
     }
-
     return target;
   }
 }
