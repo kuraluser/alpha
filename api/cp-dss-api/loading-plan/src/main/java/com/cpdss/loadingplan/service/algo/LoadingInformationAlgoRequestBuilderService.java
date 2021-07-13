@@ -50,6 +50,8 @@ import com.cpdss.loadingplan.domain.algo.ToppingOffSequence;
 import com.cpdss.loadingplan.domain.algo.TrimAllowed;
 import com.cpdss.loadingplan.domain.algo.VesselPump;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
+import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
+import com.cpdss.loadingplan.service.LoadingPortTideService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -78,6 +80,8 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   @Autowired LoadingInformationRepository loadingInformationRepository;
 
+  @Autowired LoadingPortTideService loadingPortTideDetailsService;
+
   /**
    * Creates the ALGO request
    *
@@ -102,6 +106,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
       buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
+      buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
     } else {
       throw new GenericServiceException(
           "Could not find loading information " + request.getLoadingInfoId(),
@@ -109,6 +114,14 @@ public class LoadingInformationAlgoRequestBuilderService {
           HttpStatusCode.BAD_REQUEST);
     }
     return algoRequest;
+  }
+
+  private void buildPortTideDetails(LoadingInformationAlgoRequest algoRequest, Long portXId) {
+    if (portXId != null && portXId > 0) {
+      List<PortTideAlgo> list =
+          loadingPortTideDetailsService.findRecentTideDetailsByPortId(portXId);
+      algoRequest.setPortTideDetails(list);
+    }
   }
 
   private void buildLoadingRules(LoadingInformationAlgoRequest algoRequest, Long vesselXId)
