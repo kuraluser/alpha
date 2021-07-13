@@ -17,8 +17,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.loadingplan.domain.LoadingInfoResponse;
-import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
-import com.cpdss.loadingplan.service.LoadingInformationService;
+import com.cpdss.loadingplan.service.*;
 import com.cpdss.loadingplan.service.algo.LoadingInformationAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingInformationDischargeService;
 import io.grpc.stub.StreamObserver;
@@ -42,6 +41,12 @@ public class LoadingInformationGrpcService
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
   @Autowired LoadingInformationDischargeService loadingInfoService;
   @Autowired LoadingInformationAlgoService loadingInfoAlgoService;
+
+  @Autowired LoadingMachineryInUseService loadingMachineryInUseService;
+
+  @Autowired LoadingDelayService loadingDelayService;
+
+  LoadingBerthService loadingBerthService;
 
   /**
    * Loading Information Is the First page in Loading module (UI).
@@ -135,6 +140,55 @@ public class LoadingInformationGrpcService
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveLoadingInfoRates(
+      LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {}
+
+  @Override
+  public void saveLoadingInfoBerths(
+      LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
+    Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
+        loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
+    if (loadingInformation.isPresent()) {
+      try {
+        loadingBerthService.saveLoadingBerthList(
+            request.getLoadingBerthsList(), loadingInformation.get());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  @Override
+  public void saveLoadingInfoMachinery(
+      LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
+    Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
+        loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
+    if (loadingInformation.isPresent()) {
+      try {
+        loadingMachineryInUseService.saveLoadingMachineryList(
+            request.getLoadingMachinesList(), loadingInformation.get());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  @Override
+  public void saveLoadingInfoDelays(
+      LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
+    Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
+        loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
+    if (loadingInformation.isPresent()) {
+      try {
+        loadingDelayService.saveLoadingDelayList(
+            request.getLoadingDelays(), loadingInformation.get());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 

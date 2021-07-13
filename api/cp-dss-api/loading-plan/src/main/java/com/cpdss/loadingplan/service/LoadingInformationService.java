@@ -6,6 +6,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
 import com.cpdss.loadingplan.domain.LoadingInfoResponse;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import java.util.List;
 import java.util.Optional;
 
 /** Master service for the Loading Information */
@@ -19,6 +20,14 @@ public interface LoadingInformationService {
   Optional<LoadingInformation> getLoadingInformation(
       Long id, Long vesselId, Long voyageId, Long patternId, Long portRotationId);
 
+  /**
+   * Fetch Single Data by Id
+   *
+   * @param id Loading Information Id
+   * @return Optional of Object
+   */
+  Optional<LoadingInformation> getLoadingInformation(Long id);
+
   LoadingPlanModels.LoadingInformation getLoadingInformation(
       LoadingPlanModels.LoadingInformationRequest request,
       LoadingPlanModels.LoadingInformation.Builder response)
@@ -26,4 +35,24 @@ public interface LoadingInformationService {
 
   public LoadingInfoResponse saveLoadingInformation(
       LoadingPlanModels.LoadingInformation loadingInformation) throws Exception;
+
+  LoadingInformation saveLoadingInfoRates(
+      LoadingPlanModels.LoadingRates loadingRates,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException;
+
+  LoadingInformation saveLoadingInfoBerths(
+      List<LoadingPlanModels.LoadingBerths> berths,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException;
+
+  LoadingInformation saveLoadingInfoMachines(
+      List<LoadingPlanModels.LoadingMachinesInUse> machines,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException;
+
+  LoadingInformation saveLoadingInfoDelays(
+      List<LoadingPlanModels.LoadingDelay> loadingDelays,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException;
 }

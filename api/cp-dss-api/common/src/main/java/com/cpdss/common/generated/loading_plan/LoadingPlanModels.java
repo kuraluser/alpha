@@ -49689,9 +49689,9 @@ public final class LoadingPlanModels {
     }
   }
 
-  public interface UpdateUllageLoadingReplayOrBuilder
+  public interface var1OrBuilder
       extends
-      // @@protoc_insertion_point(interface_extends:UpdateUllageLoadingReplay)
+      // @@protoc_insertion_point(interface_extends:var1)
       com.google.protobuf.MessageOrBuilder {
 
     /**

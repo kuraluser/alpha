@@ -134,6 +134,234 @@ public final class LoadingInformationServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoRatesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadingInfoRates",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoRatesMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        getSaveLoadingInfoRatesMethod;
+    if ((getSaveLoadingInfoRatesMethod =
+            LoadingInformationServiceGrpc.getSaveLoadingInfoRatesMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getSaveLoadingInfoRatesMethod =
+                LoadingInformationServiceGrpc.getSaveLoadingInfoRatesMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getSaveLoadingInfoRatesMethod =
+              getSaveLoadingInfoRatesMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveLoadingInfoRates"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInfoSaveResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "SaveLoadingInfoRates"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadingInfoRatesMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoBerthsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadingInfoBerths",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoBerthsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        getSaveLoadingInfoBerthsMethod;
+    if ((getSaveLoadingInfoBerthsMethod =
+            LoadingInformationServiceGrpc.getSaveLoadingInfoBerthsMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getSaveLoadingInfoBerthsMethod =
+                LoadingInformationServiceGrpc.getSaveLoadingInfoBerthsMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getSaveLoadingInfoBerthsMethod =
+              getSaveLoadingInfoBerthsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveLoadingInfoBerths"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInfoSaveResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "SaveLoadingInfoBerths"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadingInfoBerthsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoMachineryMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadingInfoMachinery",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoMachineryMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        getSaveLoadingInfoMachineryMethod;
+    if ((getSaveLoadingInfoMachineryMethod =
+            LoadingInformationServiceGrpc.getSaveLoadingInfoMachineryMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getSaveLoadingInfoMachineryMethod =
+                LoadingInformationServiceGrpc.getSaveLoadingInfoMachineryMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getSaveLoadingInfoMachineryMethod =
+              getSaveLoadingInfoMachineryMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveLoadingInfoMachinery"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInfoSaveResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "SaveLoadingInfoMachinery"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadingInfoMachineryMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoDelaysMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadingInfoDelays",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveLoadingInfoDelaysMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        getSaveLoadingInfoDelaysMethod;
+    if ((getSaveLoadingInfoDelaysMethod =
+            LoadingInformationServiceGrpc.getSaveLoadingInfoDelaysMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getSaveLoadingInfoDelaysMethod =
+                LoadingInformationServiceGrpc.getSaveLoadingInfoDelaysMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getSaveLoadingInfoDelaysMethod =
+              getSaveLoadingInfoDelaysMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveLoadingInfoDelays"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInfoSaveResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "SaveLoadingInfoDelays"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadingInfoDelaysMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.loading_plan.LoadingPlanModels
               .LoadingInformationSynopticalRequest,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels
@@ -358,13 +586,80 @@ public final class LoadingInformationServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadingInformationMethod(), responseObserver);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * refactoring single api to 5 grpc, Reason, please see the gateway Doc for why this split
+     * Case 1
+     * </pre>
+     */
     public void saveLoadingInformation(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
         io.grpc.stub.StreamObserver<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
             responseObserver) {
       asyncUnimplementedUnaryCall(getSaveLoadingInformationMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 2, Only Loading Rate data
+     * </pre>
+     */
+    public void saveLoadingInfoRates(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadingInfoRatesMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 3, Adding Or Removing Berth Data
+     * </pre>
+     */
+    public void saveLoadingInfoBerths(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadingInfoBerthsMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 4, Machines in Use data
+     * </pre>
+     */
+    public void saveLoadingInfoMachinery(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadingInfoMachineryMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 5, reason for delay
+     * </pre>
+     */
+    public void saveLoadingInfoDelays(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadingInfoDelaysMethod(), responseObserver);
     }
 
     /** */
@@ -415,6 +710,34 @@ public final class LoadingInformationServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInfoSaveResponse>(this, METHODID_SAVE_LOADING_INFORMATION)))
+          .addMethod(
+              getSaveLoadingInfoRatesMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>(this, METHODID_SAVE_LOADING_INFO_RATES)))
+          .addMethod(
+              getSaveLoadingInfoBerthsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>(this, METHODID_SAVE_LOADING_INFO_BERTHS)))
+          .addMethod(
+              getSaveLoadingInfoMachineryMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>(this, METHODID_SAVE_LOADING_INFO_MACHINERY)))
+          .addMethod(
+              getSaveLoadingInfoDelaysMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>(this, METHODID_SAVE_LOADING_INFO_DELAYS)))
           .addMethod(
               getGetLoadigInformationByVoyageMethod(),
               asyncUnaryCall(
@@ -470,7 +793,14 @@ public final class LoadingInformationServiceGrpc {
           responseObserver);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * refactoring single api to 5 grpc, Reason, please see the gateway Doc for why this split
+     * Case 1
+     * </pre>
+     */
     public void saveLoadingInformation(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
         io.grpc.stub.StreamObserver<
@@ -478,6 +808,78 @@ public final class LoadingInformationServiceGrpc {
             responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getSaveLoadingInformationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 2, Only Loading Rate data
+     * </pre>
+     */
+    public void saveLoadingInfoRates(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoRatesMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 3, Adding Or Removing Berth Data
+     * </pre>
+     */
+    public void saveLoadingInfoBerths(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoBerthsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 4, Machines in Use data
+     * </pre>
+     */
+    public void saveLoadingInfoMachinery(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoMachineryMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 5, reason for delay
+     * </pre>
+     */
+    public void saveLoadingInfoDelays(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoDelaysMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -545,12 +947,75 @@ public final class LoadingInformationServiceGrpc {
           getChannel(), getGetLoadingInformationMethod(), getCallOptions(), request);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * refactoring single api to 5 grpc, Reason, please see the gateway Doc for why this split
+     * Case 1
+     * </pre>
+     */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
         saveLoadingInformation(
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadingInformationMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 2, Only Loading Rate data
+     * </pre>
+     */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
+        saveLoadingInfoRates(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveLoadingInfoRatesMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 3, Adding Or Removing Berth Data
+     * </pre>
+     */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
+        saveLoadingInfoBerths(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveLoadingInfoBerthsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 4, Machines in Use data
+     * </pre>
+     */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
+        saveLoadingInfoMachinery(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveLoadingInfoMachineryMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 5, reason for delay
+     * </pre>
+     */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
+        saveLoadingInfoDelays(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveLoadingInfoDelaysMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -604,13 +1069,80 @@ public final class LoadingInformationServiceGrpc {
           getChannel().newCall(getGetLoadingInformationMethod(), getCallOptions()), request);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * refactoring single api to 5 grpc, Reason, please see the gateway Doc for why this split
+     * Case 1
+     * </pre>
+     */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
         saveLoadingInformation(
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
       return futureUnaryCall(
           getChannel().newCall(getSaveLoadingInformationMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 2, Only Loading Rate data
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        saveLoadingInfoRates(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoRatesMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 3, Adding Or Removing Berth Data
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        saveLoadingInfoBerths(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoBerthsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 4, Machines in Use data
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        saveLoadingInfoMachinery(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoMachineryMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 5, reason for delay
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        saveLoadingInfoDelays(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadingInfoDelaysMethod(), getCallOptions()), request);
     }
 
     /** */
@@ -648,9 +1180,13 @@ public final class LoadingInformationServiceGrpc {
 
   private static final int METHODID_GET_LOADING_INFORMATION = 0;
   private static final int METHODID_SAVE_LOADING_INFORMATION = 1;
-  private static final int METHODID_GET_LOADIG_INFORMATION_BY_VOYAGE = 2;
-  private static final int METHODID_UPDATE_ULLAGE = 3;
-  private static final int METHODID_GENERATE_LOADING_PLAN = 4;
+  private static final int METHODID_SAVE_LOADING_INFO_RATES = 2;
+  private static final int METHODID_SAVE_LOADING_INFO_BERTHS = 3;
+  private static final int METHODID_SAVE_LOADING_INFO_MACHINERY = 4;
+  private static final int METHODID_SAVE_LOADING_INFO_DELAYS = 5;
+  private static final int METHODID_GET_LOADIG_INFORMATION_BY_VOYAGE = 6;
+  private static final int METHODID_UPDATE_ULLAGE = 7;
+  private static final int METHODID_GENERATE_LOADING_PLAN = 8;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -679,6 +1215,42 @@ public final class LoadingInformationServiceGrpc {
           break;
         case METHODID_SAVE_LOADING_INFORMATION:
           serviceImpl.saveLoadingInformation(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADING_INFO_RATES:
+          serviceImpl.saveLoadingInfoRates(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADING_INFO_BERTHS:
+          serviceImpl.saveLoadingInfoBerths(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADING_INFO_MACHINERY:
+          serviceImpl.saveLoadingInfoMachinery(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADING_INFO_DELAYS:
+          serviceImpl.saveLoadingInfoDelays(
               (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
                   request,
               (io.grpc.stub.StreamObserver<
@@ -778,6 +1350,10 @@ public final class LoadingInformationServiceGrpc {
                       .setSchemaDescriptor(new LoadingInformationServiceFileDescriptorSupplier())
                       .addMethod(getGetLoadingInformationMethod())
                       .addMethod(getSaveLoadingInformationMethod())
+                      .addMethod(getSaveLoadingInfoRatesMethod())
+                      .addMethod(getSaveLoadingInfoBerthsMethod())
+                      .addMethod(getSaveLoadingInfoMachineryMethod())
+                      .addMethod(getSaveLoadingInfoDelaysMethod())
                       .addMethod(getGetLoadigInformationByVoyageMethod())
                       .addMethod(getUpdateUllageMethod())
                       .addMethod(getGenerateLoadingPlanMethod())

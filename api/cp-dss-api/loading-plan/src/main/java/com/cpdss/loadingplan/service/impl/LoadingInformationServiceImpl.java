@@ -140,6 +140,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
+  public Optional<LoadingInformation> getLoadingInformation(Long id) {
+    return this.getLoadingInformation(id, 0L, 0L, 0L, 0L);
+  }
+
+  @Override
   public LoadingPlanModels.LoadingInformation getLoadingInformation(
       LoadingPlanModels.LoadingInformationRequest request,
       LoadingPlanModels.LoadingInformation.Builder builder)
@@ -233,15 +238,14 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     if (loadingInformationOpt.isPresent()) {
       LoadingInformation loadingInformation = loadingInformationOpt.get();
       // buildLoadingInformation(request, loadingInformation);
-
       informationBuilderService.buildLoadingInfoFromRpcMessage(request, loadingInformation);
-
       loadingInformationRepository.save(loadingInformation);
-      loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList(), loadingInformation);
-      loadingDelayService.saveLoadingDelayList(request.getLoadingDelays(), loadingInformation);
-      loadingMachineryInUseService.saveLoadingMachineryList(
-          request.getLoadingMachinesList(), loadingInformation);
-      toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
+      // loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList(),
+      // loadingInformation);
+      // loadingDelayService.saveLoadingDelayList(request.getLoadingDelays(), loadingInformation);
+      // loadingMachineryInUseService.saveLoadingMachineryList(request.getLoadingMachinesList(),
+      // loadingInformation);
+      // toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
       buildLoadingInfoResponse(loadingInformation, response);
     } else {
       throw new Exception(
@@ -249,6 +253,71 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     }
 
     return response;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoRates(
+      LoadingPlanModels.LoadingRates source,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response) {
+    Optional<LoadingInformation> information = this.getLoadingInformation(source.getId());
+    if (information.isPresent()) {
+      LoadingInformation var1 = information.get();
+      log.info("Save Loading Info, Set Loading Rates");
+      if (!source.getLineContentRemaining().isEmpty())
+        var1.setLineContentRemaining(new BigDecimal(source.getLineContentRemaining()));
+
+      if (!source.getMaxDeBallastingRate().isEmpty())
+        var1.setMaxDeBallastRate(new BigDecimal(source.getMaxDeBallastingRate()));
+
+      if (!source.getMaxLoadingRate().isEmpty())
+        var1.setMaxLoadingRate(new BigDecimal(source.getMaxLoadingRate()));
+
+      if (!source.getMinDeBallastingRate().isEmpty())
+        var1.setMinDeBallastRate(new BigDecimal(source.getMinDeBallastingRate()));
+
+      if (!source.getReducedLoadingRate().isEmpty())
+        var1.setReducedLoadingRate(new BigDecimal(source.getReducedLoadingRate()));
+
+      if (!source.getMinLoadingRate().isEmpty())
+        var1.setMinLoadingRate(new BigDecimal(source.getMinLoadingRate()));
+
+      if (!source.getInitialLoadingRate().isEmpty())
+        var1.setInitialLoadingRate(new BigDecimal(source.getInitialLoadingRate()));
+
+      if (!source.getNoticeTimeRateReduction().isEmpty())
+        var1.setNoticeTimeForRateReduction(Integer.valueOf(source.getNoticeTimeRateReduction()));
+
+      if (!source.getNoticeTimeStopLoading().isEmpty())
+        var1.setNoticeTimeForStopLoading(Integer.valueOf(source.getNoticeTimeStopLoading()));
+
+      loadingInformationRepository.save(var1);
+      return var1;
+    }
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoBerths(
+      List<LoadingPlanModels.LoadingBerths> berths,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException {
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoMachines(
+      List<LoadingPlanModels.LoadingMachinesInUse> machines,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException {
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoDelays(
+      List<LoadingPlanModels.LoadingDelay> loadingDelays,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException {
+    return null;
   }
 
   private void buildLoadingInfoResponse(
