@@ -34,6 +34,10 @@ public class LoadingInstructionTemplate extends EntityDoc {
 
 	@Column(name = "is_active")
 	private Boolean isActive;
+	
+	@Column(name = "parent_instruction_xid")
+	private Long parentInstructionXId;
+	
 
 
 }

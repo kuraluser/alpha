@@ -27,6 +27,12 @@ public class LoadingInstruction extends EntityDoc {
   @Column(name = "parent_instruction_xid")
   private Long parentInstructionXId;
   
+  @Column(name = "loading_type_xid")
+  private Long loadingTypeXId;
+  
+  @Column(name = "loading_instruction_header_xid")
+  private Long loadingInstructionHeaderXId;
+  
   @Column(name = "is_checked")
   private Boolean isChecked;
 
@@ -36,12 +42,11 @@ public class LoadingInstruction extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
  
-  @ManyToOne
-  @JoinColumn(name = "loading_instruction_templatexid")
-  private LoadingInstructionTemplate loadingInstructionTemplateXId;
   
-  @ManyToOne
-  @JoinColumn(name = "loading_xid")
-  private LoadingInformation loadingXId;;
- 
+  @Column(name = "loading_instruction_templatexid")
+  private Long loadingInstructionTemplateXId;
+  
+  @Column(name = "loading_xid")
+  private Long loadingXId;
+   
 }

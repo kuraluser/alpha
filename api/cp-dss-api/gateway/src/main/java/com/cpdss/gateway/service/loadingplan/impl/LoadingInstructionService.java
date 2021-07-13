@@ -30,20 +30,17 @@ public class LoadingInstructionService {
 	@GrpcClient("loadingInformationService")
 	private LoadingInstructionServiceBlockingStub loadingInstructionServiceBlockingStub;
 
-	public LoadingInstructionResponse getLoadingInstructions(Long vesselId, Long infoId, Long portRotationId)
+	public LoadingInstructionDetails getLoadingInstructions(Long vesselId, Long infoId, Long portRotationId)
 			throws GenericServiceException {
 		try {
 			log.info("Calling getLoadingInstructions in loading-plan microservice via GRPC");
 			LoadingInstructionRequest.Builder requestBuilber = LoadingInstructionRequest.newBuilder();
 			requestBuilber.setLoadingInfoId(infoId).setPortRotationId(portRotationId).setVesselId(vesselId);
-			LoadingInstructionResponse loadingInstructionresponse = new LoadingInstructionResponse();
 			LoadingInstructionDetails response = loadingInstructionServiceBlockingStub
 					.getLoadingInstructions(requestBuilber.build());
+			
 			if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
-				CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
-				loadingInstructionresponse.setResponseStatus(successResponse);
-				// add data params to be returned here TODO
-				return loadingInstructionresponse;
+				return response;
 			} else {
 				log.error("Failed to retrieve loading instructions of  vesselID: {} on port: {}", vesselId,
 						portRotationId);

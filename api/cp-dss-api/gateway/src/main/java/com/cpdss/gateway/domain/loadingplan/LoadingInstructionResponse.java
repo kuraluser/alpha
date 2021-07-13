@@ -1,11 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
-import com.cpdss.common.rest.CommonSuccessResponse;
+import java.util.List;
+
 import lombok.Data;
 
 @Data
 public class LoadingInstructionResponse {
 
-  private CommonSuccessResponse responseStatus;
+	private Long instructionTypeId;
+	
+	private String instructionType;
+
+	List<LoadingInstructionHeader> loadingInstructionList;
 }

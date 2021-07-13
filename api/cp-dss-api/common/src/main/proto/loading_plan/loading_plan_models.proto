@@ -390,8 +390,23 @@ message LoadingInstructionRequest {
 }
 
 
+message LoadingInstructions {
+  int64 instructionId =1;
+  string instruction = 2;
+  bool isChecked =3;
+}
+
+message LoadingInstructionSubHeader {
+  int64 headerId = 1;
+  string headerName = 2;
+  bool isChecked =3;
+  repeated LoadingInstructions loadingInstructionsList =4;
+}
+
 message LoadingInstructionDetails {
-  int64 id = 1;
-  ResponseStatus responseStatus = 6;
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  repeated LoadingInstructionSubHeader loadingInstructionSubHeader =3;
+  ResponseStatus responseStatus = 4;
 }
 
