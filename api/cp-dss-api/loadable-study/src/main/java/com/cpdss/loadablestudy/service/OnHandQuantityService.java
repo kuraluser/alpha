@@ -25,6 +25,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -350,8 +352,7 @@ public class OnHandQuantityService {
    * @param tankDetailList
    * @return
    */
-  private List<LoadableStudy.TankList> groupTanks(
-      List<VesselInfo.VesselTankDetail> tankDetailList) {
+  public List<LoadableStudy.TankList> groupTanks(List<VesselInfo.VesselTankDetail> tankDetailList) {
     Map<Integer, List<VesselInfo.VesselTankDetail>> vesselTankMap = new HashMap<>();
     for (VesselInfo.VesselTankDetail tank : tankDetailList) {
       Integer tankGroup = tank.getTankGroup();
@@ -399,5 +400,31 @@ public class OnHandQuantityService {
     builder.setTankGroup(detail.getTankGroup());
     builder.setFullCapacityCubm(detail.getFullCapacityCubm());
     return builder.build();
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loadableStudyEntity
+   * @param modelMapper void
+   */
+  public void buildOnHandQuantityDetails(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+    loadableStudy.setOnHandQuantity(new ArrayList<>());
+    List<OnHandQuantity> onHandQuantities =
+        onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+    onHandQuantities.forEach(
+        onHandQuantity -> {
+          com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
+              new com.cpdss.loadablestudy.domain.OnHandQuantity();
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+          onHandQuantityDto =
+              modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
+          onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
+          onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
+          onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
+          loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
+        });
   }
 }
