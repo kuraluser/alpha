@@ -106,7 +106,8 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
       buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
-      buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      // Need confirmation on amount of data to share (whole data or high/low tide details)
+      // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
     } else {
       throw new GenericServiceException(
           "Could not find loading information " + request.getLoadingInfoId(),
