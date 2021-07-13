@@ -83,7 +83,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       loadingBerthId: 0,
       maxLoa: '',
       maxDraft: '',
-      lineDisplacement: this.fb.control('', [numberValidator(3, 4)])
+      lineDisplacement: this.fb.control('', [numberValidator(0, 6), Validators.min(500), Validators.max(200000)])
     });
     this.berthDetailsForm.disable();
     this.initFormArray();

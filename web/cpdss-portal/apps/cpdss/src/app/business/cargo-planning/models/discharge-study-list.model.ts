@@ -7,37 +7,35 @@ import { IPort, IPortList , IDischargeStudyPortList } from '../../core/models/co
  * Model for discharge study list 
  */
 export class IDischargeStudy {
-    id: number;
-    slNo: number;
-    name: string;
-    status: string;
-    statusId: DISCHARGE_STUDY_STATUS;
-    detail: string;
-    createdDate: string;
-    lastEdited:string;
-    charterer: string;
-    subCharterer: string;
-    draftMark: number;
-    loadLineXId: number;
-    draftRestriction: number;
-    maxAirTemperature: number;
-    maxWaterTemperature: number;
+    id?: number;
+    slNo?: number;
+    name?: string;
+    status?: string;
+    statusId?: DISCHARGE_STUDY_STATUS;
+    detail?: string;
+    createdDate?: string;
+    lastEdited?:string;
+    charterer?: string;
+    subCharterer?: string;
+    draftMark?: number;
+    loadLineXId?: number;
+    draftRestriction?: number;
+    maxAirTemperature?: number;
+    maxWaterTemperature?: number;
     dischargingPortIds?: number[];
-    loadableStudyStatusLastModifiedTime?: string;
-    loadableStudyAttachment?: IDischargeStudyAttachment[];
-    dischargingCargoId: number;
+    dischargingCargoId?: number;
     createdFromId?: number;
-    loadOnTop: boolean;
+    loadOnTop?: boolean;
     isEditable?: boolean;
     isDeletable?: boolean;
     isDuplicate?: boolean;
     isActionsEnabled?: boolean;
-    isCargoNominationComplete: boolean;
-    isPortsComplete: boolean;
-    isOhqComplete: boolean;
-    isObqComplete: boolean;
-    isDischargingPortComplete: boolean;
-    ohqPorts: IDischargeOHQStatus[];
+    isCargoNominationComplete?: boolean;
+    isPortsComplete?: boolean;
+    isOhqComplete?: boolean;
+    isObqComplete?: boolean;
+    isDischargingPortComplete?: boolean;
+    ohqPorts?: IDischargeOHQStatus[];  
 }
 
 /**
@@ -265,6 +263,28 @@ export interface IPortCargo {
     responseStatus: IResponse;
     billOfLaddings: IBillingOfLaddings[],
     loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
+}
+
+/**
+ * Interface for discharge list api.
+ *
+ * @export
+ * @interface IDischargeStudiesResponse
+ */
+export interface IDischargeStudiesResponse {
+    responseStatus: IResponse;
+    dischargeStudies: IDischargeStudy[];   
+}
+
+/**
+ * Interface for dicharge study api.
+ *
+ * @export
+ * @interface IDischargeStudyResponse
+ * @extends {IResponse}
+ */
+export interface IDischargeStudyResponse extends IResponse {
+    dischargeStudyId: number;
 }
 
 

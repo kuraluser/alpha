@@ -30,11 +30,11 @@
                         </div>
                     </div>
                     <div class="row  form-group">
-                        <label for="loadable_quantity_arrival_max_draft"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT' | translate}}</label>
+                        <label for="loadable_quantity_max_draft"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_MAX_DRAFT' | translate}}</label>
                         <div class="col text-right pt-5">
                             <label
-                                id="loadable_quantity_arrival_max_draft">{{getControlLabel('arrivalMaxDraft') | number : '1.2-2'}}</label>
+                                id="loadable_quantity_max_draft">{{getControlLabel('arrivalMaxDraft') | number : '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_M' | translate }}</div>
                         <div class="col error-column">
@@ -61,11 +61,8 @@
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                     </div>
                     <div class="row form-group no-border mb-5 sub-heading-size strong">
-                        <label *ngIf="caseNo===3" for="loadable_quantity_dwt"
+                        <label for="loadable_quantity_dwt"
                             class="col col-form-label strong ">{{'LOADABLE_QUANTITY_DWT' | translate}}</label>
-                        <label *ngIf="caseNo!==3" for="loadable_quantity_dwt"
-                            class="col col-form-label strong ">{{selectedZone}} {{'LOADABLE_QUANTITY_DWT' |
-                            translate}}</label>
                         <div class="col pt-5">
                             <label id="loadable_quantity_dwt">{{getControlLabel('dwt')| number : '1.2-2'}}</label>
                         </div>
@@ -271,6 +268,19 @@
 
                         </div>
                     </div>
+                    <div class="row form-group no-border sub-heading-size strong text-secondary" *ngIf="caseNo === 1">
+                        <label for="" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
+                        <div class="col pt-5">
+                            <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity') | number :
+                                '1.2-2'}}</label>
+
+                        </div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
+                                [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
                     <div class="row" *ngIf="caseNo !== 1">
                         <div class="col error-container">
                             <div class="text-danger" *ngIf="isNegative">
@@ -283,6 +293,18 @@
                                 {{'LOADABLE_QUANTITY_DISPLACEMENT_REQUIRED' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoLwt">
                                 {{'LOADABLE_QUANTITY_LWT_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoConstant">
+                                {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="caseNo === 1">
+                        <div class="col error-container">
+                            <div class="pt-5 text-danger" *ngIf="isNegative">
+                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoTpc">
+                                {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoDwt">
+                                {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
                             <div class="text-danger" *ngIf="isNoConstant">
                                 {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
                         </div>
@@ -388,34 +410,7 @@
                                 [errorMessages]="errorMesages.foConsInSz"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group sub-heading-size text-secondary no-border">
-                        <label for="" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
-                        <div class="col pt-5">
-                            <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity') | number :
-                                '1.2-2'}}</label>
-
-                        </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
-                                [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col error-container">
-                            <div class="pt-5 text-danger" *ngIf="isNegative">
-                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoTpc">
-                                {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoDwt">
-                                {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoConstant">
-                                {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
-                        </div>
-                    </div>
-
                 </div>
-
             </div>
         </div>
     </form>

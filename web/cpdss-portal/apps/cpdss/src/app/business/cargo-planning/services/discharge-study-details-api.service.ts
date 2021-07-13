@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { IPort, IDischargeStudyPortList , IDischargePortsDetailsResponse , IPortsResponse , IAlgoResponse } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { CargoNominationDB, ICargoNomination, ICargoPortsResponse, DischargePortsDB , IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, DischargeOHQDB , IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop, IGeneratePatternResponse, ICargoApiTempHistoryResponse, IApiTempHistoryRequest } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNomination, ICargoPortsResponse, DischargePortsDB , IOHQPortRotationResponse, IDischargeStudyPortOHQResponse, IDischargeStudyPortOHQTankDetail , DischargeOHQDB , IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop, IGeneratePatternResponse, ICargoApiTempHistoryResponse, IApiTempHistoryRequest } from '../models/cargo-planning.model';
 
 import { ICargoNominationDetailsResponse } from '../models/discharge-study-list.model'
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
@@ -106,27 +106,27 @@ export class DischargeStudyDetailsApiService {
        * @param {number} voyageId
        * @param {number} dischargeStudyId
        * @param {number} portId
-       * @returns {Observable<IPortOHQResponse>}
+       * @returns {Observable<IDischargeStudyPortOHQResponse>}
        * @memberof DischargeStudyDetailsApiService
        */
-      getPortOHQDetails(vesselId: number, voyageId: number, dischargeStudyId: number, portId: number): Observable<IPortOHQResponse> {
-          return this.commonApiService.get<IPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/port-rotation/${portId}/on-hand-quantities`);
+      getPortOHQDetails(vesselId: number, voyageId: number, dischargeStudyId: number, portId: number): Observable<IDischargeStudyPortOHQResponse> {
+          return this.commonApiService.get<IDischargeStudyPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/port-rotation/${portId}/on-hand-quantities`);
       }
   
       /**
        * Method to set ohq
        *
-       * @param {IPortOHQTankDetail} ohqTankDetails
+       * @param {IDischargeStudyPortOHQTankDetail} ohqTankDetails
        * @param {number} vesselId
        * @param {number} voyageId
        * @param {number} dischargeStudyId
        * @returns {Promise<number>}
        * @memberof DischargeStudyDetailsApiService
        */
-      setOHQTankDetails(ohqTankDetails: IPortOHQTankDetail, vesselId: number, voyageId: number, dischargeStudyId: number, isPortRotationOhqComplete: boolean): Promise<number> {
+      setOHQTankDetails(ohqTankDetails: IDischargeStudyPortOHQTankDetail, vesselId: number, voyageId: number, dischargeStudyId: number, isPortRotationOhqComplete: boolean): Promise<number> {
           ohqTankDetails.vesselId = vesselId;
           ohqTankDetails.voyageId = voyageId;
-          // ohqTankDetails.dischargeStudyId = dischargeStudyId;
+          ohqTankDetails.dischargeStudyId = dischargeStudyId;
           ohqTankDetails.isPortRotationOhqComplete = isPortRotationOhqComplete;
           return this._ohqDb.dischargeOhq.add(ohqTankDetails);
       }

@@ -291,9 +291,12 @@ export class DatatableComponent implements OnInit {
     }
     colEditable = col?.editable
     if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
-      const control = this.field(event.index, event.field);
-      if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE) {
-        event.data[event.field].isEditMode = control?.invalid;
+      for(let i= event.index; i >= 0; i--){
+        const control = this.field(i, event.field);
+        if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE && event.data[event.field].value) {
+          event.data[event.field].isEditMode = control?.invalid;
+          control.updateValueAndValidity();
+        }
       }
     }
   }
@@ -841,7 +844,6 @@ export class DatatableComponent implements OnInit {
   disabledField(formGroupIndex: number, formControlName: string) {
     const formControl = this.field(formGroupIndex, formControlName);
     return formControl.disabled;
-
   }
 
   /**

@@ -1472,6 +1472,7 @@ td.sl div{
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 45%;
+        left: auto;
       }
 }
 
@@ -2737,4 +2738,9 @@ textarea{
 
 .rules-pop-up{
   width: 90vw;
+}
+
+.content-wrapper{
+  height: 98%;
+  overflow-y: auto;
 }

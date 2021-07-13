@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid content-wrapper">
     <div class="row">
         <div class="col vessel-info-wrapper">
             <div class="row">
@@ -18,14 +18,17 @@
                 </div>
             </div>
         </div>
-        <div class="pr-15 text-right" style="float: right;">
-            <button id="generate_plan" class="btn btn-main mr-10">{{'DISCHARGE_STUDY_VIEW_CONFIRM_PLAN' |
-                translate}}</button>
-
-            <button id="view_plan" class="btn btn-main"
-                (click)="backToDischargeStudy()">{{'DISCHARGE_STUDY_VIEW_BACK_TO_DISCHARGE_STUDY' | translate
-                }}</button>
+        <div class="col text-right">
+            <div class="">
+                <button id="generate_plan" class="btn btn-main mr-10">{{'DISCHARGE_STUDY_VIEW_CONFIRM_PLAN' |
+                    translate}}</button>
+    
+                <button id="view_plan" class="btn btn-main"
+                    (click)="backToDischargeStudy()">{{'DISCHARGE_STUDY_VIEW_BACK_TO_DISCHARGE_STUDY' | translate
+                    }}</button>
+            </div>
         </div>
+        
     </div>
     <cpdss-portal-view-plan [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
         [dischargeStudyId]="dischargeStudyId"></cpdss-portal-view-plan>

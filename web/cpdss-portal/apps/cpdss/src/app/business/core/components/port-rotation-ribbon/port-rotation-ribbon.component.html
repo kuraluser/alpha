@@ -86,7 +86,7 @@
                             <div (click)="editPort($event, port, 'time')" class="row" *ngIf=" port.type === 'Arrival'">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_TIME' | translate }}</label>
                                 <div *ngIf="!port?.isTimeEditable" class="col text-secondary content-ellipsis">
-                                    {{port.portTime}}
+                                    <span pTooltip="{{port.portTime}}">{{port.portTime}}</span>
                                 </div>
                                 <div class="col text-secondary relative error-icon-wrapper mr-10" *ngIf="port?.isTimeEditable">
                                     <p-calendar appendTo="body"
@@ -111,7 +111,7 @@
                                 *ngIf=" port.type === 'Departure'">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_TIME' | translate }}</label>
                                 <div *ngIf="!port?.isTimeEditable" class="col content-ellipsis text-secondary">
-                                    {{port.portTime}}
+                                    <span pTooltip="{{port.portTime}}">{{port.portTime}}</span>
                                 </div>
                                 <div class="col text-secondary relative error-icon-wrapper mr-10" *ngIf="port?.isTimeEditable">
                                     <p-calendar appendTo="body"
@@ -135,7 +135,7 @@
                                 <a class="text-secondary btn btn-main btn-xs m-auto"
                                     *ngIf="voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port?.isFutureDate && port?.isFocused"
                                     id="port_rotation_ribbon_save__{{portList.indexOf(port)}}"
-                                    (click)="save(port)">Save</a>
+                                    (click)="save(port)">{{ 'PORT_ROTATION_RIBBON_SAVE' | translate }}</a>
                             </div>
                         </div>
                     </div>

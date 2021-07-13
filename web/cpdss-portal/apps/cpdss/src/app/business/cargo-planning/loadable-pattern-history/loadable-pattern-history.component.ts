@@ -331,7 +331,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
       pattern.loadablePatternCargoDetails = loadablePatternCargoDetails;
       const loadablePlanStowageDetails = pattern.loadablePlanStowageDetails?.map(loadableStowage => {
         if (loadableStowage) {
-          const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api);
+          const quantity = this.quantityPipe.transform(loadableStowage?.weightOrginal, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api);
           loadableStowage.quantity = Number(quantity);
         }
         return loadableStowage;
