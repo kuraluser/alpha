@@ -1,6 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.common.utils;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -112,5 +115,15 @@ public class Utils {
     // Return if the IP address
     // matched the ReGex
     return m.matches();
+  }
+
+  public static String toJson(MessageOrBuilder o) {
+    try {
+      String val = JsonFormat.printer().print(o);
+      return val;
+    } catch (InvalidProtocolBufferException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }
