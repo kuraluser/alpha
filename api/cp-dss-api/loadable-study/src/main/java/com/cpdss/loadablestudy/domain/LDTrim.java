@@ -28,4 +28,5 @@ public class LDTrim {
   private String messageText;
   private Long portId;
   private Long synopticalId;
+  private String deflection;
 }

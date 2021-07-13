@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { IPortOHQTankDetailEvent, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank, IPortOHQTankDetail } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
-import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
@@ -320,6 +320,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const fromGroup = this.row(event.index);
     event.data.fullCapacity = event?.data?.fullCapacityCubm * event?.data?.density.value ?? 0;
+    const formControl = this.field(event?.index, event?.field);
 
     let dependentKeys = [];
     switch (event?.field) {
@@ -350,18 +351,18 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
         formControl2.updateValueAndValidity();
       }
     } else {
-      const formControl = this.field(event?.index, event?.field);
       event.data[event.field].value = 0;
       formControl.setValue(0);
-      formControl.updateValueAndValidity();
     }
 
     event.data.arrivalVolume = event?.data?.density?.value ? event?.data?.arrivalQuantity?.value / event?.data?.density?.value : 0;
     event.data.departureVolume = event?.data?.density?.value ? event?.data.departureQuantity?.value / event?.data?.density?.value : 0;
 
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
+    formControl.updateValueAndValidity();
     if (fromGroup.valid) {
       event.data.processing = true;
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
       const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
       if (res) {
@@ -376,9 +377,9 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     } else {
       for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
         if (this.selectedPortOHQTankDetails[valueIndex].hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
-          const formControl = this.field(event.index, key);
-          formControl.updateValueAndValidity();
-          this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = formControl.invalid;
+          const _formControl = this.field(event.index, key);
+          _formControl.updateValueAndValidity();
+          this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = _formControl.invalid;
         }
       }
       fromGroup.markAllAsTouched();
@@ -389,18 +390,18 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       if (row.invalid && row.touched) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
-          const formControl = this.field(index, key);
-          formControl.updateValueAndValidity();
+          const _formControl = this.field(index, key);
+          _formControl.updateValueAndValidity();
         });
         if (row.valid) {
           event.data.processing = true;
-          const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]);
+          const _selectedPortOHQTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[index]);
           const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId, this.ohqGroupValidity(this.selectedPortOHQTankDetails, _selectedPortOHQTankDetail.fuelTypeId));
           if (res) {
-            for (const key in this.selectedPortOHQTankDetails[valueIndex]) {
-              if (this.selectedPortOHQTankDetails[valueIndex].hasOwnProperty(key) && this.selectedPortOHQTankDetails[valueIndex][key]?.hasOwnProperty('_isEditMode')) {
-                const formControl = this.field(index, key);
-                this.selectedPortOHQTankDetails[valueIndex][key].isEditMode = formControl.invalid;
+            for (const key in this.selectedPortOHQTankDetails[index]) {
+              if (this.selectedPortOHQTankDetails[index].hasOwnProperty(key) && this.selectedPortOHQTankDetails[index][key]?.hasOwnProperty('_isEditMode')) {
+                const _formControl = this.field(index, key);
+                this.selectedPortOHQTankDetails[index][key].isEditMode = _formControl.invalid;
               }
             }
             this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
@@ -409,8 +410,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       } else if (row.invalid) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
-          const formControl = this.field(index, key);
-          formControl.updateValueAndValidity();
+          const _formControl = this.field(index, key);
+          _formControl.updateValueAndValidity();
         });
       }
     });
@@ -445,6 +446,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   private swMessageHandler = async (event) => {
     const translationKeys = await this.translateService.get(['OHQ_UPDATE_ERROR', 'OHQ_UPDATE_STATUS_ERROR']).toPromise();
     if (event?.data?.type === 'ohq_sync_finished') {
+      this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
       const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.selectedPortOHQTankDetails[index].processing = false;

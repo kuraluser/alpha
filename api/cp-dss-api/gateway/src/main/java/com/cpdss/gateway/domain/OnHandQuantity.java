@@ -57,4 +57,6 @@ public class OnHandQuantity {
   private Long portRotationId;
 
   private Boolean isPortRotationOhqComplete;
+
+  private Long dischargeStudyId;
 }

@@ -19,11 +19,11 @@
             </div>
             <div class="ml-auto pr-15">
                 <ng-container *ngIf="!validationPending;else refPending">
-                    <ng-container [ngSwitch]="loadablePatternValidationStatus">  
-                        <span class="badge-custom badge-success v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_SUCCESS">{{'LOADABLE_PLAN_ULLAGE_VERIFIED' | translate}}</span>  
-                        <span class="badge-custom badge-danger v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_FAILED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_FAILED' | translate}}</span>  
-                        <span class="badge-custom badge-info v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_STARTED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_IN_PROGESS' | translate}}</span>  
-                    </ng-container> 
+                    <ng-container [ngSwitch]="loadablePatternValidationStatus">
+                        <span class="badge-custom badge-success v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_SUCCESS">{{'LOADABLE_PLAN_ULLAGE_VERIFIED' | translate}}</span>
+                        <span class="badge-custom badge-danger v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_FAILED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_FAILED' | translate}}</span>
+                        <span class="badge-custom badge-info v-middle mr-10" *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_STARTED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_IN_PROGESS' | translate}}</span>
+                    </ng-container>
                 </ng-container>
                 <ng-template #refPending><span class="badge-custom badge-muted v-middle mr-10" >{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_PENDING' | translate}}</span></ng-template>
                 <button class="btn btn-main mr-10" id="confirm_plan" [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending" [ngClass]="{'confirmed': loadableStudyStatus}" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="onConfirmPlanClick()">
@@ -33,7 +33,7 @@
                 <button class="btn btn-main" id="export" (click)="export()">
                     {{'LOADABLE_PLAN_EXPORT' |translate}}
                 </button>
-                
+
                 <a><img src="../../../../assets/images/themes/dark/print-icon.png" alt="" class="ml-20 mr-30"></a>
                 <button class="btn btn-main" id="btn_callNewLoadableStudyPopup" (click)="backToLoadableStudy()">{{'LOADABLE_PLAN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
                 translate}}</button>
@@ -52,16 +52,16 @@
                 [cargoTankDetails]="cargoTankDetails" [ballastDetails]="loadablePlanBallastDetails"
                 [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
                 [loadableStudyId]="loadableStudyId" [voyage]="selectedVoyage" [loadableStudy]="loadableStudy" [loadablePatternValidationStatus]="loadablePatternValidationStatus"
-                [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup" (ullageUpdate)="validationPending = $event"
+                [errorMessage]="errorMessage" [(errorMessageDisplay)]="errorPopup" [validationPending]="validationPending" (ullageUpdate)="validationPending = $event"
                 (registerEvents)="listenEvents()" [loadableQuantityCargo]="loadableQuantityCargo" [loadableQuantity]="loadableQuantity">
             </cpdss-portal-stowage>
         </div>
         <div>
-            <cpdss-portal-port-eta-etd-condition [synopticalRecords]="loadablePlanSynopticalRecords">
+            <cpdss-portal-port-eta-etd-condition [vesselLightWeight]="vesselLightWeight" [synopticalRecords]="loadablePlanSynopticalRecords">
             </cpdss-portal-port-eta-etd-condition>
         </div>
         <div>
-            <cpdss-portal-comments [loadablePatternId]="loadablePatternId" [loadableStudyId]="loadableStudyId" [isVoyageClosed]="isVoyageClosed"
+            <cpdss-portal-comments  [loadablePatternId]="loadablePatternId" [loadableStudyId]="loadableStudyId" [isVoyageClosed]="isVoyageClosed"
                 [commentsDetails]="loadablePlanComments" [loadablePatternValidationStatus]="loadablePatternValidationStatus" [vesselId]="vesselId" [voyageId]="voyageId" [enableSubmit]="true">
             </cpdss-portal-comments>
         </div>

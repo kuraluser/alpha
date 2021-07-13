@@ -24,8 +24,8 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "hog")
-  private BigDecimal hog;
+  @Column(name = "deflection")
+  private BigDecimal deflection;
 
   @Column(name = "calculated_draft_fwd_plan")
   private BigDecimal calculatedDraftFwdPlanned;
@@ -75,4 +75,10 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
 
   @Column(name = "operation_xid")
   private Long operationId;
+
+  @Column(name = "bending_moment")
+  private BigDecimal bendingMoment;
+
+  @Column(name = "shearing_force")
+  private BigDecimal shearingForce;
 }

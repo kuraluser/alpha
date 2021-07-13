@@ -25,14 +25,16 @@ export class PortEtaEtdConditionComponent implements OnInit {
   public tableCol: any[];
   public arrangeRecords: ISynopticalRecordArrangeModel[];
 
-  // private 
+  // private
   private _synopticalRecords: ILoadablePlanSynopticalRecord[];
 
   @Input() set synopticalRecords(value: ILoadablePlanSynopticalRecord[]) {
     this._synopticalRecords = value;
     this.setTableHeader(this._synopticalRecords);
   }
-  
+
+  @Input() vesselLightWeight: number;
+
   // public method
   constructor(
     private loadablePlanTransformationService: LoadablePlanTransformationService,
@@ -57,9 +59,9 @@ export class PortEtaEtdConditionComponent implements OnInit {
   private setTableHeader(synopticalRecords: ILoadablePlanSynopticalRecord[]) {
     this.tableCol = [];
     this.arrangeRecords = [];
-    synopticalRecords?.map((synopticalRecord: ILoadablePlanSynopticalRecord) => { 
+    synopticalRecords?.map((synopticalRecord: ILoadablePlanSynopticalRecord) => {
       synopticalRecord.operationType === 'ARR' ? this.tableCol.push({ header: 'ARRIVAL' }) : this.tableCol.push({ header: 'DEPARTURE' });
-      this.arrangeRecords.push(this.loadablePlanTransformationService.getFormatedEtaEtdData(this._decimalPipe , synopticalRecord));
+      this.arrangeRecords.push(this.loadablePlanTransformationService.getFormatedEtaEtdData(this._decimalPipe , synopticalRecord, this.vesselLightWeight));
     })
   }
 

@@ -128,4 +128,13 @@ public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
 
   @Column(name = "actual_quantity")
   private BigDecimal actualQuantity;
+
+  @Column(name = "cargo1_nomination_xid")
+  private Long cargo1NominationId;
+
+  @Column(name = "cargo2_nomination_xid")
+  private Long cargo2NominationId;
+
+  @Column(name = "short_name")
+  private String tankShortName;
 }

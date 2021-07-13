@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
-import { IBallastQuantities, ICargoQuantities, IShipBallastTank, IShipBunkerTank, IShipCargoTank } from '../../voyage-status/models/voyage-status.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
 import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
 
@@ -30,7 +30,7 @@ export class ArrivalConditionComponent implements OnInit {
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   currentQuantitySelectedUnit: any = null;
 
@@ -587,7 +587,7 @@ export class ArrivalConditionComponent implements OnInit {
       "showTooltip": true,
       "isSelectable": false,
       "ullageField": "correctedUllage",
-      "ullageUnit": "CM",
+      "ullageUnit": AppConfigurationService.settings?.ullageUnit,
       "densityField": "api",
       "weightField": "actualWeight",
       "commodityNameField": "abbreviation"

@@ -38,6 +38,9 @@ import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-
 
 import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { RulesTableModule } from '../../core/components/rules-table/rules-table.module'
+import { RulesModule } from './rules/rules.module'
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -72,7 +75,13 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
     TableModule,
     TooltipModule,
     QuantityDecimalFormatPipeModule,
-    ErrorLogPopupModule
+    ErrorLogPopupModule,
+    InputSwitchModule,
+    RulesTableModule,
+    RulesModule
+
+
+
   ],
   providers: [
     LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe, QuantityDecimalFormatPipe

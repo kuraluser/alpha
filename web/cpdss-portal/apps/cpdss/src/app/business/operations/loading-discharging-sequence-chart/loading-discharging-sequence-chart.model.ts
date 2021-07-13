@@ -6,7 +6,8 @@ declare module 'highcharts' {
     end?: number;
     quantity?: number;
     rate?: number;
-    tankNo?: number;
+    tankNo?: string;
+    pumpNo?: string;
     highlight: (event: Highcharts.PointerEventObject) => void;
   }
 
@@ -22,7 +23,7 @@ declare module 'highcharts' {
 }
 
 /**
- * Interface for Commodity data
+ * Interface for Commodity data cargo/ ballast
  *
  * @export
  * @interface Commodity
@@ -36,6 +37,22 @@ export interface Commodity {
   duration?: string,
   label?: number,
   label1?: number,
+  data?: Array<any>,
+  stageId?: number
+}
+
+/**
+ * Interface for Pump data (cargo / ballast)
+ *
+ * @export
+ * @interface Pump
+ */
+export interface Pump {
+  id: number,
+  name: string,
+  custom?: Object,
+  color?: string,
+  duration?: string,
   data?: Array<any>,
   stageId?: number
 }

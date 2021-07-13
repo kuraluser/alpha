@@ -264,6 +264,7 @@ public class LoadableStudyCargoService {
         e.printStackTrace();
       }
     }
+    cargoHistoryResponse.setTotalElements(Long.valueOf(sortingList.size()));
     cargoHistoryResponse.setCargoHistory(pagedList);
     return cargoHistoryResponse;
   }

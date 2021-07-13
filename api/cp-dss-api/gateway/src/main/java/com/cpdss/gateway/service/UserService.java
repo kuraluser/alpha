@@ -1,8 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -32,6 +30,7 @@ import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.security.ship.ShipJwtService;
 import com.cpdss.gateway.security.ship.ShipUserContext;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -274,7 +273,8 @@ public class UserService {
 
     List<ScreenData> list = new ArrayList<>();
 
-    List<Screen> screens = this.screenRepository.findByCompanyXIdAndIsActive(companyId, true);
+    List<Screen> screens =
+        this.screenRepository.findByCompanyXIdAndIsActiveOrderByScreenOrderAsc(companyId, true);
 
     List<ScreenData> info = new ArrayList<>();
     if (screens != null && !screens.isEmpty()) {
@@ -484,9 +484,10 @@ public class UserService {
   private List<User> findUsers(UserType userType) throws GenericServiceException {
     List<User> userList = new ArrayList<>();
     List<Users> users = new ArrayList<>();
+    UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
     switch (userType) {
       case SHIP:
-        users = this.usersRepository.findByIsActiveOrderById(true);
+        users = this.usersRepository.findByIsActiveAndStatusOrderById(true, userStatus);
         if (users != null && !users.isEmpty()) {
           users.forEach(
               userEntity -> {
@@ -512,7 +513,9 @@ public class UserService {
         List<String> keyCloakIds =
             Arrays.stream(keycloakUsersList).map(KeycloakUser::getId).collect(Collectors.toList());
 
-        users = this.usersRepository.findByKeycloakIdInOrderById(keyCloakIds);
+        users =
+            this.usersRepository.findByKeycloakIdInAndStatusAndIsActiveOrderById(
+                keyCloakIds, userStatus, true);
         users.forEach(
             userEntity -> {
               KeycloakUser keycloakUser = null;
@@ -772,7 +775,8 @@ public class UserService {
     response.setToken(this.jwtService.generateToken(user));
     if (user.getPasswordExpiryDate() != null) { // Password expire reminder
       LocalDateTime timeNow = LocalDateTime.now();
-      long daysDiff = DAYS.between(timeNow, user.getPasswordExpiryDate());
+      long hours = ChronoUnit.HOURS.between(timeNow, user.getPasswordExpiryDate());
+      long daysDiff = (long) Math.ceil(hours / 24.0);
       if (daysDiff <= PASSWORD_EXPIRE_REMINDER) {
         response.setExpiryReminder(new PasswordExpiryReminder(daysDiff));
       }

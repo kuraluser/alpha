@@ -60,7 +60,7 @@ public class SynopticalRecord {
   private BigDecimal ballastPlannedTotal;
   private BigDecimal ballastActualTotal;
 
-  private BigDecimal hogSag;
+  private BigDecimal deflection;
   private BigDecimal finalDraftFwd;
   private BigDecimal finalDraftAft;
   private BigDecimal finalDraftMid;
@@ -76,4 +76,7 @@ public class SynopticalRecord {
   private BigDecimal list;
   private List<SynopticalCargoBallastRecord> ballast;
   private Long portTimezoneId;
+  private BigDecimal bm;
+  private BigDecimal sf;
+  private Boolean hasLoadicator;
 }

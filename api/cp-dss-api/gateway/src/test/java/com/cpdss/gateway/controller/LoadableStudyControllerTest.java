@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -257,7 +258,17 @@ class LoadableStudyControllerTest {
   private static final String UPDATE_ULLAGE_SHIP_API_URL =
       SHIP_API_URL_PREFIX + UPDATE_ULLAGE_API_URL;
 
+  private static final String GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_API_URL =
+      "/loadble-study-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}/loadableStudyId/{loadableStudyId}";
+  private static final String GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_API_URL;
+  private static final String GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_API_URL;
+
   private static final String AUTHORIZATION_HEADER = "Authorization";
+
+  private static final Long TEST_RULE_SECTION_ID = 1L;
+  private static final Long LOADBLE_STUDY_ID = 44L;
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -267,7 +278,8 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {LOADABLE_STUDY_LIST_CLOUD_API_URL, LOADABLE_STUDY_LIST_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadableStudyByVoyage(String url) throws Exception {
-    when(this.loadableStudyService.getLoadableStudies(anyLong(), anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadableStudies(
+            anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenReturn(new LoadableStudyResponse());
     this.mockMvc
         .perform(
@@ -287,7 +299,8 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {LOADABLE_STUDY_LIST_CLOUD_API_URL, LOADABLE_STUDY_LIST_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadableStudyByVoyageServiceException(String url) throws Exception {
-    when(this.loadableStudyService.getLoadableStudies(anyLong(), anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadableStudies(
+            anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenThrow(
             new GenericServiceException(
                 "service exception",
@@ -311,7 +324,8 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {LOADABLE_STUDY_LIST_CLOUD_API_URL, LOADABLE_STUDY_LIST_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadableStudyByVoyageRuntimeException(String url) throws Exception {
-    when(this.loadableStudyService.getLoadableStudies(anyLong(), anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadableStudies(
+            anyLong(), anyLong(), anyLong(), anyString(), anyLong()))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(
@@ -413,7 +427,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortList(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenReturn(new PortRotationResponse());
     this.mockMvc
         .perform(
@@ -433,7 +447,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListServiceException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenThrow(
             new GenericServiceException(
                 "test", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST));
@@ -455,7 +469,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListRuntimeException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(
@@ -1960,5 +1974,71 @@ class LoadableStudyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(
+      strings = {
+        GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_CLOUD_API_URL,
+        GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_SHIP_API_URL
+      })
+  @ParameterizedTest
+  void testGetRulesAgainstLoadbleStudy(String url) throws Exception {
+    when(this.loadableStudyService.getOrSaveRulesForLoadableStudy(
+            anyLong(), anyLong(), anyLong(), null, anyString()))
+        .thenReturn(new RuleResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_RULE_SECTION_ID, LOADBLE_STUDY_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(
+      strings = {
+        GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_CLOUD_API_URL,
+        GET_OR_SAVE_RULES_FOR_LOADBLE_STUDY_SHIP_API_URL
+      })
+  @ParameterizedTest
+  void testSaveRulesForVessel(String url) throws Exception {
+    when(this.loadableStudyService.getOrSaveRulesForLoadableStudy(
+            anyLong(), anyLong(), anyLong(), any(RuleRequest.class), anyString()))
+        .thenReturn(new RuleResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_RULE_SECTION_ID, LOADBLE_STUDY_ID)
+                .content(createRuleRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  private String createRuleRequest() throws JsonProcessingException {
+    RuleRequest request = new RuleRequest();
+    List<RulePlans> rulePlanList = new ArrayList<RulePlans>();
+    List<Rules> rules = new ArrayList<Rules>();
+    List<com.cpdss.gateway.domain.RulesInputs> ruleInputList =
+        new ArrayList<com.cpdss.gateway.domain.RulesInputs>();
+    RulePlans rulePlan = new RulePlans();
+    Rules rule = new Rules();
+    rule.setDisplayInSettings(true);
+    rule.setEnable(true);
+    // rule.setId("1");
+    rule.setRuleTemplateId("701");
+    rule.setIsHardRule(false);
+    rule.setVesselRuleXId("176");
+    rule.setRuleType("Absolute");
+    com.cpdss.gateway.domain.RulesInputs input = new com.cpdss.gateway.domain.RulesInputs();
+    input.setPrefix("Condensate cargo can only be put in a tank for");
+    input.setType("Number");
+    input.setMax("10");
+    input.setMin("1");
+    // input.setId("1");
+    input.setSuffix("voyages apart");
+    ruleInputList.add(input);
+    rule.setInputs(ruleInputList);
+    rules.add(rule);
+    rulePlan.setRules(rules);
+    request.setPlan(rulePlanList);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
   }
 }

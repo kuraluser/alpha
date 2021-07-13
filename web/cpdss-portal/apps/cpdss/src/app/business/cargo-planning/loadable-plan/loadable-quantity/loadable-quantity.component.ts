@@ -6,7 +6,7 @@ import { LoadablePlanTransformationService } from '../../services/loadable-plan-
 
 import { ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
-import { ILoadableQuantityCargo } from '../../models/cargo-planning.model';
+import { ILoadableQuantityCargo } from '../../../core/models/common.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -28,7 +28,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe, loadableQuantityData))
     });
     this.calculateTotal(this.loadableQuantityData);
-    this.total.differencePercentage = ((this.total.loadableBbls60f - this.total.orderBbls60f)/this.total.orderBbls60f)*100;
+    this.total.differencePercentage = ((this.total.loadableMT - this.total.orderedQuantity)/this.total.orderedQuantity)*100;
   }
 
   @Input() set loadableQuantityCommingleCargoDetails(value: ILoadableQuantityCommingleCargo[]) {
@@ -68,7 +68,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.total.loadableLT += this.convertToNumber(value?.loadableLT);
       this.total.loadableMT += this.convertToNumber(value?.loadableMT);
       this.total.loadableKL += this.convertToNumber(value?.loadableKL);
-      
+
     })
   }
 
@@ -94,6 +94,22 @@ export class LoadableQuantityComponent implements OnInit {
   }
 
   /**
+  * Method to return class based on value 
+  * @returns {number}
+  */
+     getTotalDiffClass(value: number) {
+      if (!isNaN(Number(value))) {
+        if (value > 0) {
+          return 'badge-custom success';
+        } else if (value < 0) {
+          return 'badge-custom error';
+        } else {
+          return '';
+        }
+      }
+    }
+
+  /**
    * parse number from formatted string
    * @returns {number}
    */
@@ -102,13 +118,30 @@ export class LoadableQuantityComponent implements OnInit {
     return Number(value)
   }
 
-   /**
-   * parse number from formatted percentage string
-   * @returns {number}
-   */
+  /**
+  * parse number from formatted percentage string
+  * @returns {number}
+  */
   convertPercentageToNumber(value: string) {
     value = value?.replace('%', '');
     return Number(value)
+  }
+
+  /**
+   * Method to return class based on value
+   * @returns {number}
+  */
+  getDiffClass(value: string) {
+    if (!isNaN(Number(value))) {
+      const convertedValue = this.convertPercentageToNumber(value);
+      if (convertedValue > 0) {
+        return 'badge-custom success';
+      } else if (convertedValue < 0) {
+        return 'badge-custom error';
+      } else {
+        return '';
+      }
+    }
   }
 
 }

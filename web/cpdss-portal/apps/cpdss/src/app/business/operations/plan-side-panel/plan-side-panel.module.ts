@@ -7,6 +7,7 @@ import { LoadingRateModule } from './../loading-rate/loading-rate.module';
 import { DepartureConditionPanelModule } from './../departure-condition-panel/departure-condition-panel.module';
 import { PanelModule } from 'primeng/panel';
 import { ArrivalConditionPanelModule } from './../arrival-condition-panel/arrival-condition-panel.module';
+import { LoadingDischargingBerthModule } from '../loading-discharging-berth/loading-discharging-berth.module';
 
 /**
  * Module for plan tab side panel
@@ -22,7 +23,8 @@ import { ArrivalConditionPanelModule } from './../arrival-condition-panel/arriva
     PanelModule,
     LoadingRateModule,
     DepartureConditionPanelModule,
-    ArrivalConditionPanelModule
+    ArrivalConditionPanelModule,
+    LoadingDischargingBerthModule
   ],
   exports: [PlanSidePanelComponent],
   providers: [PlanSidePanelTransformationService]

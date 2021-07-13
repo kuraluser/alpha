@@ -117,6 +117,8 @@ export class DatatableComponent implements OnInit {
 
   @Input() scrollable = true;
 
+  @Input() showHeader = true;
+
   @Input()
   set loading(loading: boolean) {
     this._loading = loading;
@@ -289,9 +291,12 @@ export class DatatableComponent implements OnInit {
     }
     colEditable = col?.editable
     if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
-      const control = this.field(event.index, event.field);
-      if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE) {
-        event.data[event.field].isEditMode = control?.invalid;
+      for(let i= event.index; i >= 0; i--){
+        const control = this.field(i, event.field);
+        if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE && event.data[event.field].value) {
+          event.data[event.field].isEditMode = control?.invalid;
+          control.updateValueAndValidity();
+        }
       }
     }
   }
@@ -336,6 +341,7 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onRowSave() {
+    console.log('datatableRowsave' + Date.now()); // TODO: Need to remove after testing.
     this.saveRow.emit(this.selectedRowEvent);
   }
 
@@ -356,6 +362,26 @@ export class DatatableComponent implements OnInit {
         rowData[prevField].isEditMode = !control.valid;
       }
       rowData[col.field].isEditMode = true;
+    }
+  }
+  
+  /**
+   * Handler for cell tab on focus event
+   * @param event
+   * @param rowData
+   * @param rowIndex
+   * @param col
+   * @param colIndex
+   */
+  onFocusKeyDown(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
+    const nextField = this.columns[colIndex + 1];
+    if(event.keyCode === 9 && !event.shiftKey && nextField.fieldType === 'DATETIME') {
+      const id = `${nextField.field}_${rowIndex}input`;
+      setTimeout(() => {
+        if(document.getElementById(id) !== document.activeElement && this.value[rowIndex][nextField.field].isEditMode) {
+          document.getElementById(id).focus();
+        }
+      },250)
     }
   }
 
@@ -717,7 +743,7 @@ export class DatatableComponent implements OnInit {
   onDateRangeSelect(event, formGroupIndex: number, col, rowData: Object) {
     const formControlName: string = col.field;
     const formControl = this.field(formGroupIndex, formControlName);
-    if (formControl?.value[0] && formControl?.value[1]) {
+    if (formControl?.value && formControl?.value[0] && formControl?.value[1]) {
       if (formControl?.value[0]?.toDateString() === formControl?.value[1]?.toDateString()) {
         formControl.setErrors({ 'datesEqual': true });
       } else {
@@ -731,7 +757,7 @@ export class DatatableComponent implements OnInit {
         this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
       }
     }
-    else if (formControl?.value[0] && !formControl?.value[1]) {
+    else if (formControl?.value && formControl?.value[0] && !formControl?.value[1]) {
       formControl.setErrors({ 'toDate': true });
     }
   }
@@ -818,7 +844,6 @@ export class DatatableComponent implements OnInit {
   disabledField(formGroupIndex: number, formControlName: string) {
     const formControl = this.field(formGroupIndex, formControlName);
     return formControl.disabled;
-
   }
 
   /**
@@ -835,7 +860,7 @@ export class DatatableComponent implements OnInit {
       this.filteredValue.forEach(row => {
         if (row[col.field]) {
           const value = row[col.field].value ?? 0;
-          total += value
+          total += Number(value)
         }
       })
       return total;

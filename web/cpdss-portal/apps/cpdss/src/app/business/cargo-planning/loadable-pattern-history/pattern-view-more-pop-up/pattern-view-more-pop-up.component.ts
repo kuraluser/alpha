@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import { ICargo, QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { IBallastStowageDetails, IBallastTank, ICargoTank, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
-import { ILoadableQuantityCargo } from '../../models/cargo-planning.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableQuantityCargo, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service'
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
@@ -64,8 +63,8 @@ export class PatternViewMorePopUpComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   baseUnit = AppConfigurationService.settings.baseUnit;
 
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, fillingPercentageField: 'fillingRatio', weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
-  ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM', showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, fillingPercentageField: 'fillingRatio', weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'rdgUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api' }
+  ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: AppConfigurationService.settings?.ullageUnit, showTooltip: true, weightField: 'metricTon', weightUnit: AppConfigurationService.settings.baseUnit, showDensity: true, densityField: 'sg' };
 
   private _loadablePlanBallastDetails: IBallastStowageDetails[];
   private _selectedLoadablePattern: ILoadablePattern;

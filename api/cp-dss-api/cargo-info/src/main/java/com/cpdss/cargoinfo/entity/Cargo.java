@@ -29,4 +29,7 @@ public class Cargo extends EntityDoc {
 
   @Column(name = "company_xid")
   private String companyXId;
+
+  @Column(name = "is_condensate_cargo")
+  private Boolean isCondensateCargo;
 }

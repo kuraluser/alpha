@@ -24,6 +24,8 @@ service PortInfoService {
 	}
 
 	rpc GetPortInfoByPaging(PortRequestWithPaging) returns (PortReply){}
+
+	rpc GetBerthDetailsByPortId(PortIdRequest) returns (BerthInfoResponse) {}
 }
 
 message GetPortInfoByPortIdsRequest {
@@ -96,3 +98,31 @@ message TimezoneResponse{
 	ResponseStatus responseStatus = 1;
 	repeated Timezone timezones = 2;
 }
+
+// <------ start loading plan, by john -------->
+
+message PortIdRequest{
+	int64 portId = 1;
+}
+
+message BerthInfoResponse{
+	ResponseStatus responseStatus = 1;
+	repeated BerthDetail berths = 2;
+}
+
+message BerthDetail{
+	int64 id = 1;
+	int64 portId = 2;
+	int64 loadingInfoId = 12;
+	string maxShipChannel = 3;
+	string berthName = 4;
+	string maxShipDepth = 5;
+	string seaDraftLimitation = 6;
+	string airDraftLimitation = 7;
+	string maxManifoldHeight = 8;
+	string regulationAndRestriction = 9;
+	string maxLoa = 10;
+	string maxDraft = 11;
+	string lineDisplacement = 13;
+}
+// <------ end loading plan, by john -------->

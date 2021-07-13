@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableQuantityCargo } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly,  ICargoTankDetailValueObject, ISynopticalRecordArrangeModel , IBallastTankDetailValueObject } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject , ISubTotal } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from '../models/cargo-planning.model';
+import { ILoadablePlanSynopticalRecord } from '../models/cargo-planning.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 
 /**
@@ -48,6 +48,9 @@ export class LoadablePlanTransformationService {
       { field: 'finalDraftAft', header: "", subHeader: 'ETA_ETD_DRAFT_AFT' },
       { field: 'finalDraftMid', header: "", subHeader: 'ETA_ETD_DRAFT_MID' },
       { field: 'calculatedTrimPlanned', header: 'ETA_ETD_TRIM' },
+      { field: 'bm', header: 'ETA_ETD_BM' },
+      { field: 'sf', header: 'ETA_ETD_SF' },
+      { field: 'list', header: 'ETA_ETD_LIST'},
       { field: 'cargoPlannedTotal', header: 'ETA_ETD_CARGO' },
       { field: 'plannedFOTotal', header: 'ETA_ETD_FO' },
       { field: 'plannedDOTotal', header: 'ETA_ETD_DO' },
@@ -69,7 +72,7 @@ export class LoadablePlanTransformationService {
   public getCommingledCargoTableColumn(): IDataTableColumn[] {
     return [
       { field: 'grade', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_GRADE', rowspan: 2 },
-      { field: 'tankName', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TANK', rowspan: 2 },
+      { field: 'tankShortName', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TANK', rowspan: 2 },
       {
         header: 'LOADABLE_PLAN_COMMINGLED_CARGO_QUANTITY', colspan: 2, fieldColumnClass: "th-border", subColumns: [
           { field: 'quantity', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_MT', rowspan: 2 },
@@ -153,7 +156,7 @@ export class LoadablePlanTransformationService {
     _loadableQuantityDetails.loadableLT = this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.LT, 'loadableMT',-1)?.toString();
     _loadableQuantityDetails.loadableMT = _loadableQuantityDetails.loadableMT;
     _loadableQuantityDetails.differencePercentageValue = Number(_loadableQuantityDetails.differencePercentage.replace('%', ''))
-    _loadableQuantityDetails.differencePercentage = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.differencePercentageValue, '1.2-2') + '%';
+    _loadableQuantityDetails.differencePercentage = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.differencePercentageValue, '1.2-2');
     return loadableQuantity;
   }
 
@@ -194,6 +197,7 @@ export class LoadablePlanTransformationService {
     _loadablePlanCommingleCargoDetails.cargoMT = this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo1MT, QUANTITY_UNIT.MT) + '<br>' + this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo2MT, QUANTITY_UNIT.MT);
     _loadablePlanCommingleCargoDetails.cargoLT = this.quantityDecimalFormatPipe.transform(_loadablePlanCommingleCargoDetails.cargo1LT, QUANTITY_UNIT.LT) + '<br>' + this.quantityDecimalFormatPipe.transform( _loadablePlanCommingleCargoDetails.cargo2LT, QUANTITY_UNIT.LT);
     _loadablePlanCommingleCargoDetails.cargoKL = this.quantityDecimalFormatPipe.transform(_loadablePlanCommingleCargoDetails.cargo1KL, QUANTITY_UNIT.KL) + '<br>' + this.quantityDecimalFormatPipe.transform( _loadablePlanCommingleCargoDetails.cargo2KL, QUANTITY_UNIT.KL);
+    _loadablePlanCommingleCargoDetails.tankShortName = loadablePlanCommingleCargoDetails?.tankShortName;
     return _loadablePlanCommingleCargoDetails;
   }
 
@@ -256,20 +260,28 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.id = cargoTankDetail.id;
     _cargoTankDetail.tankId = cargoTankDetail.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail.cargoAbbreviation;
+    _cargoTankDetail.cargoNominationId = cargoTankDetail.cargoNominationId;
     _cargoTankDetail.weight = cargoTankDetail.weight;
+    _cargoTankDetail.weightOrginal = cargoTankDetail.weightOrginal;
     _cargoTankDetail.correctedUllage = cargoTankDetail.correctedUllage;
+    _cargoTankDetail.correctedUllageOrginal = cargoTankDetail.correctedUllageOrginal;
     _cargoTankDetail.tankName = cargoTankDetail.tankName;
     _cargoTankDetail.rdgUllage = cargoTankDetail.rdgUllage;
+    _cargoTankDetail.rdgUllageOrginal = cargoTankDetail.rdgUllageOrginal;
     _cargoTankDetail.tankShortName = cargoTankDetail.tankShortName;
     _cargoTankDetail.correctionFactor = cargoTankDetail.correctionFactor;
+    _cargoTankDetail.correctionFactorOrginal = cargoTankDetail.correctionFactorOrginal;
     _cargoTankDetail.api = cargoTankDetail.api;
     _cargoTankDetail.temperature = cargoTankDetail.temperature;
     _cargoTankDetail.colorCode = cargoTankDetail.isCommingle ? AppConfigurationService.settings.commingleColor : cargoTankDetail.colorCode;
     _cargoTankDetail.observedM3 = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.OBSKL, 'weight');
     _cargoTankDetail.observedBarrels = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.OBSBBLS, 'weight');
     _cargoTankDetail.observedBarrelsAt60 = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.BBLS, 'weight');
+    _cargoTankDetail.observedBarrelsAt60Original = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.BBLS, 'weightOrginal');
     _cargoTankDetail.fillingRatio = cargoTankDetail.fillingRatio;
+    _cargoTankDetail.fillingRatioOrginal = cargoTankDetail.fillingRatioOrginal;
     _cargoTankDetail.fullCapacityCubm = cargoTankDetail.fullCapacityCubm;
+    _cargoTankDetail.isCommingle = cargoTankDetail?.isCommingle;
     return _cargoTankDetail;
   }
 
@@ -286,26 +298,35 @@ export class LoadablePlanTransformationService {
     const unitConvertedTankDetails = {
       observedM3: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSKL, cargoTankDetail?.api, cargoTankDetail?.temperature,-1),
       observedBarrelsAt60: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoTankDetail?.api, cargoTankDetail?.temperature,-1),
+      observedBarrelsAt60Original: this.quantityPipe.transform(cargoTankDetail?.weightOrginal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoTankDetail?.api, cargoTankDetail?.temperature, -1),
       observedBarrels: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSBBLS, cargoTankDetail?.api, cargoTankDetail?.temperature,-1)
     }
     _cargoTankDetail.id = cargoTankDetail?.id;
     _cargoTankDetail.tankId = cargoTankDetail?.tankId;
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail?.cargoAbbreviation;
+    _cargoTankDetail.cargoNominationId = cargoTankDetail?.cargoNominationId;
     _cargoTankDetail.weight = new ValueObject<number>(Number(cargoTankDetail?.weight), true, false);
+    _cargoTankDetail.weightOrginal = Number(cargoTankDetail?.weightOrginal);
     _cargoTankDetail.correctedUllage = new ValueObject<number>(cargoTankDetail?.correctedUllage, true, false);
+    _cargoTankDetail.correctedUllageOrginal = cargoTankDetail?.correctedUllageOrginal;
     _cargoTankDetail.fillingRatio = new ValueObject<number>(Number(cargoTankDetail?.fillingRatio), true, false);
+    _cargoTankDetail.fillingRatioOrginal = Number(cargoTankDetail?.fillingRatioOrginal);
     _cargoTankDetail.tankName = cargoTankDetail?.tankName;
     _cargoTankDetail.tankShortName = cargoTankDetail?.tankShortName;
-    _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, isNewValue);
+    _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, !cargoTankDetail?.isCommingle, false, !cargoTankDetail?.isCommingle);
+    _cargoTankDetail.rdgUllageOrginal = cargoTankDetail?.rdgUllageOrginal;
     _cargoTankDetail.correctionFactor = new ValueObject<number>(cargoTankDetail?.correctionFactor, true, false);
+    _cargoTankDetail.correctionFactorOrginal = cargoTankDetail?.correctionFactorOrginal;
     _cargoTankDetail.observedM3 = new ValueObject<number>(unitConvertedTankDetails.observedM3, true, false);
     _cargoTankDetail.observedBarrels = new ValueObject<number>(unitConvertedTankDetails?.observedBarrels, true, false);
     _cargoTankDetail.observedBarrelsAt60 = new ValueObject<number>(unitConvertedTankDetails?.observedBarrelsAt60, true, false);
+    _cargoTankDetail.observedBarrelsAt60Original = unitConvertedTankDetails?.observedBarrelsAt60Original;
     _cargoTankDetail.api = new ValueObject<number>(cargoTankDetail?.api, true, false);
     _cargoTankDetail.temperature = new ValueObject<number>(cargoTankDetail?.temperature, true, false);
     _cargoTankDetail.colorCode = cargoTankDetail?.colorCode;
     _cargoTankDetail.isAdd = isNewValue;
     _cargoTankDetail.fullCapacityCubm = cargoTankDetail.fullCapacityCubm;
+    _cargoTankDetail.isCommingle = cargoTankDetail?.isCommingle;
     return _cargoTankDetail;
   }
 
@@ -356,7 +377,8 @@ export class LoadablePlanTransformationService {
         errorMessages: {
           'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR',
-          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
+          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT',
+          'invalidNumber': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_INVALID'
         }
       },
       {
@@ -413,7 +435,7 @@ export class LoadablePlanTransformationService {
         field: 'fillingRatio',
         header: 'LOADABLE_PLAN_CARGO_GRID_FILLING_RATIO',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: '1.0-2',
+        numberFormat: '1.2-2',
         editable: false,
       },
       {
@@ -451,15 +473,16 @@ export class LoadablePlanTransformationService {
         errorMessages: {
           'required': 'LOADABLE_PLAN_BALLAST_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR',
-          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT'
+          'maxLimit': 'LOADABLE_PLAN_MAX_LIMIT',
+          'invalidNumber': 'LOADABLE_PLAN_BALLAST_GRID_RDG_ULG_INVALID'
         }
       },
-      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.0-2'},
-      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat}
+      { field: 'correctionFactor', header: 'STOWAGE_BALLAST_CORR', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER },
+      { field: 'correctedLevel', header: 'STOWAGE_BALLAST_CORR_LEVEL', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
+      { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER, numberFormat: AppConfigurationService.settings.quantityNumberFormatMT },
+      { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER, numberFormat: AppConfigurationService.settings.quantityNumberFormatKL },
+      { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat: '1.2-2' },
+      { field: 'sg', header: 'STOWAGE_BALLAST_SG', editable: false , fieldType: DATATABLE_FIELD_TYPE.NUMBER , numberFormat:  AppConfigurationService.settings?.sgNumberFormat }
     ]
   }
 
@@ -477,11 +500,16 @@ export class LoadablePlanTransformationService {
       _ballastTankDetail.tankName = new ValueObject<string>(ballastTankDetail?.tankName, true, false);
       _ballastTankDetail.tankId = ballastTankDetail.tankId;
       _ballastTankDetail.rdgLevel = new ValueObject<string>(ballastTankDetail?.rdgLevel, true, isNewValue);
+      _ballastTankDetail.rdgLevelOrginal = ballastTankDetail?.rdgLevelOrginal;
       _ballastTankDetail.correctionFactor = new ValueObject<string>(ballastTankDetail?.correctionFactor, true, false);
+      _ballastTankDetail.correctionFactorOrginal = ballastTankDetail?.correctionFactorOrginal;
       _ballastTankDetail.correctedLevel = new ValueObject<string>(ballastTankDetail?.correctedLevel, true, false);
+      _ballastTankDetail.correctedLevelOrginal = ballastTankDetail?.correctedLevelOrginal;
       _ballastTankDetail.metricTon = new ValueObject<string>(ballastTankDetail?.metricTon, true, false);
+      _ballastTankDetail.metricTonOrginal = ballastTankDetail?.metricTonOrginal;
       _ballastTankDetail.cubicMeter = new ValueObject<string>(this.convertToNumber(ballastTankDetail?.cubicMeter), true, false);
       _ballastTankDetail.percentage = new ValueObject<string>(ballastTankDetail?.percentage, true, false);
+      _ballastTankDetail.percentageOrginal = ballastTankDetail?.percentageOrginal;
       _ballastTankDetail.api = new ValueObject<number>(ballastTankDetail?.api, true, false);
       _ballastTankDetail.temperature = new ValueObject<number>(ballastTankDetail?.temperature, true, false);
       _ballastTankDetail.sg = new ValueObject<string>(ballastTankDetail?.sg, true, false);
@@ -517,8 +545,13 @@ export class LoadablePlanTransformationService {
   * @returns {ISynopticalRecordArrangeModel}
   * @param { ILoadablePlanSynopticalRecord } synopticalRecord
   */
-  public getFormatedEtaEtdData(_decimalPipe: any, synopticalRecord: ILoadablePlanSynopticalRecord): ISynopticalRecordArrangeModel {
+  public getFormatedEtaEtdData(_decimalPipe: any, synopticalRecord: ILoadablePlanSynopticalRecord, vesselLightWeight: number): ISynopticalRecordArrangeModel {
     const _synopticalRecord = <ISynopticalRecordArrangeModel>{};
+    const totalDwtPlanned = synopticalRecord?.plannedFOTotal + synopticalRecord?.plannedDOTotal
+      + synopticalRecord?.plannedFWTotal + synopticalRecord?.cargoPlannedTotal
+      + synopticalRecord?.ballastPlanned + synopticalRecord?.othersPlanned
+      + synopticalRecord?.constantPlanned;
+    const displacementPlanned = totalDwtPlanned + vesselLightWeight;
     _synopticalRecord.id = synopticalRecord.id;
     _synopticalRecord.operationType = synopticalRecord.operationType;
     _synopticalRecord.portId = synopticalRecord.portId;
@@ -528,11 +561,14 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.plannedDOTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedDOTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.plannedFWTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedFWTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.othersPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.othersPlanned,QUANTITY_UNIT.MT);
-    _synopticalRecord.totalDwtPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.totalDwtPlanned,QUANTITY_UNIT.MT);
-    _synopticalRecord.displacementPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.displacementPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.totalDwtPlanned = this.quantityDecimalFormatPipe.transform(totalDwtPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.displacementPlanned = this.quantityDecimalFormatPipe.transform(displacementPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, AppConfigurationService.settings?.sgNumberFormat);
     _synopticalRecord.cargoPlannedTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.cargoPlannedTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.ballastPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.ballastPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.sf = synopticalRecord.sf ? this.decimalConvertion(_decimalPipe, synopticalRecord.sf , '1.2-2') : '0.00';
+    _synopticalRecord.bm = synopticalRecord.bm ? this.decimalConvertion(_decimalPipe, synopticalRecord.bm , '1.2-2') : '0.00';
+    _synopticalRecord.list = synopticalRecord.list ? this.decimalConvertion(_decimalPipe, synopticalRecord.list , '1.1-1') : '0.0';
 
     _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.2-2') + 'm';
     _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.2-2') + 'm';

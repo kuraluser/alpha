@@ -28,7 +28,6 @@ appConfig {
   monitoring = 'y'
   docker {
         imageName = 'cpdss-gateway'
-        baseImage = 'openjdk:8u292-jre'
         containerName = 'gateway-container'
         networkName = 'cpdss-network'
         hostVolumeMapping {
@@ -57,4 +56,6 @@ dependencies {
     testImplementation('net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE')
     implementation 'org.keycloak:keycloak-spring-security-adapter:12.0.3'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+    testRuntimeOnly "org.junit.platform:junit-platform-commons:1.7.0"
 }

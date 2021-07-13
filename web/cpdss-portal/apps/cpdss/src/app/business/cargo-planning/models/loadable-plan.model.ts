@@ -1,7 +1,7 @@
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { IResponseStatus, ValueObject , IResponse } from '../../../shared/models/common.model';
-import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
-import { ILoadablePlanSynopticalRecord, ILoadableQuantityCargo } from './cargo-planning.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableCargo, ILoadableQuantityCargo } from '../../core/models/common.model';
+import { ILoadablePlanSynopticalRecord } from './cargo-planning.model';
 
 
 /**
@@ -61,7 +61,8 @@ export interface ILoadableQuantityCommingleCargo {
     cargo1MT: string,
     cargo2MT: string,
     cargo1KL: string,
-    cargo2KL: string
+    cargo2KL: string,
+    tankShortName?: string
 }
 
 /**
@@ -88,6 +89,7 @@ export interface ICommingleCargoDispaly {
     cargoLT: string
     cargoMT: string,
     cargoKL: string,
+    tankShortName?: string
 }
 
 
@@ -118,20 +120,27 @@ export interface ICargoTankDetail extends ILoadableCargo {
     tankId: number;
     cargoAbbreviation: string;
     weight: number;
+    weightOrginal: number;
     correctedUllage: number;
+    correctedUllageOrginal: number;
     fillingRatio: string;
+    fillingRatioOrginal: string;
     tankName: string;
     rdgUllage: number;
+    rdgUllageOrginal: number;
     correctionFactor: number;
+    correctionFactorOrginal: number;
     observedM3: number;
     observedBarrels: number;
     observedBarrelsAt60: number;
+    observedBarrelsAt60Original: number;
     api: number;
     temperature: number;
     colorCode: string;
     fullCapacityCubm: string;
     isCommingle?: boolean;
     tankShortName?: string;
+    cargoNominationId?: number;
 }
 
 /**
@@ -146,19 +155,27 @@ export interface ICargoTankDetailValueObject {
     tankId: number;
     cargoAbbreviation: string;
     weight: ValueObject<number>;
+    weightOrginal: number;
     correctedUllage: ValueObject<number>;
+    correctedUllageOrginal: number;
     fillingRatio: ValueObject<number>;
+    fillingRatioOrginal: number;
     tankName: string;
     rdgUllage: ValueObject<number>;
+    rdgUllageOrginal: number;
     correctionFactor: ValueObject<number>;
+    correctionFactorOrginal: number;
     observedM3: ValueObject<number>;
     observedBarrels: ValueObject<number>;
     observedBarrelsAt60: ValueObject<number>;
+    observedBarrelsAt60Original: number;
     api: ValueObject<number>;
     temperature: ValueObject<number>;
     isAdd: boolean;
     fullCapacityCubm: string;
     tankShortName: string;
+    isCommingle?: boolean;
+    cargoNominationId?: number;
 }
 
 /**
@@ -172,11 +189,16 @@ export interface ICargoTankDetailValueObject {
     tankName?: ValueObject<string>;
     tankId: number;
     rdgLevel: ValueObject<string>;
+    rdgLevelOrginal: string;
     correctionFactor: ValueObject<string>;
+    correctionFactorOrginal: string;
     correctedLevel: ValueObject<string>;
+    correctedLevelOrginal: string;
     metricTon: ValueObject<string>;
+    metricTonOrginal: string;
     cubicMeter: ValueObject<string>;
     percentage: ValueObject<string>;
+    percentageOrginal: string;
     sg: ValueObject<string>;
     fullCapacityCubm: string;
     isAdd: boolean;
@@ -205,7 +227,7 @@ export interface ICargoTankDetailEvent extends IDataTableEvent {
 /**
  * Interface for ballast Tank details
  * @export
- * @interface 
+ * @interface
  */
 export interface IBallastTanksDetails {
     id: number,
@@ -227,7 +249,7 @@ export interface IBallastTanksDetails {
 /**
  * Interface for LoadablePlan arranged Synoptical Records
  * @export
- * @interface 
+ * @interface
  */
 export interface ISynopticalRecordArrangeModel {
     id: number,
@@ -247,13 +269,16 @@ export interface ISynopticalRecordArrangeModel {
     finalDraftMid: string,
     calculatedTrimPlanned: string,
     cargoPlannedTotal: string,
-    ballastPlanned: string
+    ballastPlanned: string;
+    sf: number;
+    bm: number;
+    list: number;
 }
 
 /**
  * Interface for LoadablePlan comments details
  * @export
- * @interface 
+ * @interface
  */
 export interface ILoadablePlanCommentsDetails {
     id: number,
@@ -265,7 +290,7 @@ export interface ILoadablePlanCommentsDetails {
 /**
  * Interface for save comment
  * @export
- * @interface 
+ * @interface
  */
 export interface ISaveComment {
     comment: string;
@@ -300,6 +325,7 @@ export interface IUpdateUllageModel {
    api: string;
    temperature: string;
    sg: string;
+   isCommingle?: boolean;
 }
 
 /**
@@ -326,7 +352,7 @@ export interface IUpdateUllageModel {
     correctionFactor: string;
     correctedUllage: string;
     quantityMt: string;
- } 
+ }
 
 /**
  * Interface for change response
@@ -427,11 +453,12 @@ export enum VALIDATION_AND_SAVE_STATUS {
      cargoAbbreviation: string;
      minTolerence: number;
      maxTolerence: number;
+     cargoNominationId? : number;
  }
 
 
 
 
 
- 
+
 

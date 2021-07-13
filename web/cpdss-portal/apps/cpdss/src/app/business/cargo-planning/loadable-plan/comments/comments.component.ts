@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , ViewChild , ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 
@@ -15,6 +15,7 @@ import { LoadablePlanTransformationService } from '../../services/loadable-plan-
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { whiteSpaceValidator } from '../../../core/directives/space-validator.directive';
 
 /**
  * Component class of comments component in loadable plan
@@ -29,6 +30,9 @@ import { TimeZoneTransformationService } from './../../../../shared/services/tim
   styleUrls: ['./comments.component.scss']
 })
 export class CommentsComponent implements OnInit {
+
+  @ViewChild('submitBtn') submitBtnRef: ElementRef;
+
   @Input() vesselId: number;
   @Input() loadableStudyId: number;
   @Input() voyageId: number;
@@ -59,7 +63,7 @@ export class CommentsComponent implements OnInit {
   get isVoyageClosed(): boolean {
     return this._isVoyageClosed;
   }
-  
+
 
   private _commentsDetails: ILoadablePlanCommentsDetails[];
   private _loadablePatternValidationStatus: number;
@@ -69,8 +73,10 @@ export class CommentsComponent implements OnInit {
   public commentForm: FormGroup;
   public formError: boolean;
   public isPermissionAvaliable: boolean;
+  public validateAndSaveProcessing: boolean;
   public errorMessages = {
-    'required': 'COMMENTS_REQUIRED'
+    'maxlength': 'LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH',
+    'whitespace': 'COMMENTS_REQUIRED'
   };
 
   constructor(
@@ -95,16 +101,18 @@ export class CommentsComponent implements OnInit {
   ngOnInit(): void {
     this.isPermissionAvaliable = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePlanAddComments'], false).view;
     this.commentForm = this.fb.group({
-      comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.required, Validators.maxLength(100)]]
+      comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.maxLength(100) , whiteSpaceValidator]]
     })
-
+    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
+      this.validateAndSaveProcessing = value.validateAndSaveProcessing;
+    });
   }
 
   /**
    * add new comments
   */
   async submitComments() {
-    if (this.commentForm.valid) {
+    if (this.commentForm.valid && !this.isVoyageClosed) {
       const translationKeys = await this.translateService.get(['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS', 'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS']).toPromise();
       const comments: ISaveComment = {
         comment: this.commentForm.controls['comment'].value
@@ -118,11 +126,16 @@ export class CommentsComponent implements OnInit {
         const commentDetails: ILoadablePlanCommentsDetails  = response.comment;
         commentDetails['dataAndTime'] = this.timeZoneTransformationService.formatDateTime(commentDetails.dataAndTime, {utcFormat: true});
         this.commentsDetails.unshift(commentDetails);
+        this.submitBtnRef.nativeElement.focus();
         this.commentForm.reset();
         this.formError = false;
       }
     } else {
       this.formError = true;
+      const translationKeys = await this.translateService.get(['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL', 'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL_DETAILS']).toPromise();
+      if(this.isVoyageClosed) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL'], detail: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_FAIL_DETAILS'] });
+      }
     }
   }
 
@@ -139,7 +152,7 @@ export class CommentsComponent implements OnInit {
   }
 
   /**
-  * Get form control of comments form 
+  * Get form control of comments form
   *
   * @param {string} formControlName
   * @returns {FormControl}
@@ -161,5 +174,14 @@ export class CommentsComponent implements OnInit {
     commentArray.map(comment => (comment.dataAndTime = this.timeZoneTransformationService.formatDateTime(comment.dataAndTime, {utcFormat: true})));
     return commentArray;
   }
+
+    /**
+   * Trim blank space
+   * @param {string} formControlName
+   * @memberof CommentsComponent
+   */
+    trimFormControl(formControlName: string) {
+      this.commentForm.controls[formControlName].setValue((this.commentForm.get(formControlName).value).trim());
+    }
 
 }

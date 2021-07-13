@@ -30,7 +30,7 @@ appConfig {
     environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser,
                    'DB_PASSWORD': dbPassword]
   }
-  javaMainClass = "com.rambus.cmcc.tss.Application"
+  javaMainClass = "com.cpdss.task.manager.Application"
 }
 
 dependencies {

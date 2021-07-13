@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Loadable study entity
@@ -28,6 +29,7 @@ import lombok.Setter;
 @Table(name = "loadable_study")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @CPDSSJsonParser
@@ -91,7 +93,7 @@ public class LoadableStudy extends EntityDoc {
   private Integer caseNo;
 
   @Column(name = "first_cargo_to_be_discharged")
-  private Long dischargeCargoId;
+  private Long dischargeCargoNominationId;
 
   @Column(name = "load_on_top")
   private Boolean loadOnTop;
@@ -122,9 +124,6 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "feedback_loop_count")
   private Integer feedbackLoopCount;
 
-  /*  @Column(name = "messageUUID")
-  private String messageUUID;
-
-  @Column(name = "sequence_no")
-  private String sequenceNo;*/
+  @Column(name = "planning_type_xid")
+  private Integer planningTypeXId = 1;
 }

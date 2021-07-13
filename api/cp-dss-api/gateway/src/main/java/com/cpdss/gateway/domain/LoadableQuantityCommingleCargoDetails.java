@@ -4,6 +4,7 @@ package com.cpdss.gateway.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -53,7 +54,8 @@ public class LoadableQuantityCommingleCargoDetails {
   private String orderedQuantity;
   private Integer priority;
   private Integer loadingOrder;
-  private Long cargoNominationId;
+  private Long cargo1NominationId;
+  private Long cargo2NominationId;
 
   private Long tankId;
   private String fillingRatio;
@@ -63,5 +65,8 @@ public class LoadableQuantityCommingleCargoDetails {
   private String slopQuantity;
   private BigDecimal actualQuantity;
 
+  private List<CargoToppingOffSequence> toppingSequence;
   private String timeRequiredForLoading;
+  private String tankShortName;
+  private Long toppingOffCargoId;
 }

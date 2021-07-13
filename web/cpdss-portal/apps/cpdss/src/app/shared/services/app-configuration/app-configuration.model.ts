@@ -14,13 +14,16 @@ export interface IAppConfiguration {
     tokenMinValidity?: number;
     commingleColor?: string;
     dateFormat?: string;
-    quantityNumberFormatKL?: string,
-    quantityNumberFormatBBLS?: string,
-    quantityNumberFormatMT?: string,
-    quantityNumberFormatOBSBBLS?: string,
-    quantityNumberFormatLT?: string
-    defaultWeightUnit: QUANTITY_UNIT,
-    maxFillingPercentage: string,
-    sgNumberFormat: string
+    quantityNumberFormatKL?: string;
+    quantityNumberFormatBBLS?: string;
+    quantityNumberFormatMT?: string;
+    quantityNumberFormatOBSBBLS?: string;
+    quantityNumberFormatLT?: string;
+    defaultWeightUnit: QUANTITY_UNIT;
+    maxFillingPercentage: string;
+    sgNumberFormat: string;
+    ullageUnit: string;
+    restrictMaxNumberOfCargo?: boolean;
+    maxCargoLimit?: number;
 }
 

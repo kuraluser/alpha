@@ -49,7 +49,7 @@ subprojects {
   sonarlint {
      ignoreFailures = true
 	 excludes {
-	      source 'ro/common/generated/*'
+	      source 'com/cpdss/common/generated/*'
 	 }
    }
    

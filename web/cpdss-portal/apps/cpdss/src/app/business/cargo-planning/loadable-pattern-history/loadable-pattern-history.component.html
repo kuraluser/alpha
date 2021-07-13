@@ -39,29 +39,10 @@
             <div class="row" *ngIf="loadablePatterns?.length && patternLoaded">
                 <div *ngFor="let loadablePattern of loadablePatterns; let i = index"
                     class="col-6 pb-15 pt-10 content-pattern">
-                    <cpdss-portal-pattern-case [loadablePattern]="loadablePattern" [tankList]="tankLists"
+                    <cpdss-portal-pattern-case [selectedVoyage]="selectedVoyage" [loadablePlanPermissionContext]="loadablePlanPermissionContext" [loadablePattern]="loadablePattern" [tankList]="tankLists"
                         [index]="i + 1" (displayCommingleDetailPopup)="displayCommingleDetailPopup($event)"
-                        (displayPatternViewMorePopup)="displayPatternViewMorePopup($event)">
+                        (displayPatternViewMorePopup)="displayPatternViewMorePopup($event)" (viewPlan)="viewPlan($event)" (confirmPlanClick)="onConfirmPlanClick($event)">
                     </cpdss-portal-pattern-case>
-                    <div class="row">
-                        <div class="col-7 text-center pt-20">
-                            <button class="btn btn-main mr-10" (click)="viewPlan(loadablePattern)"
-                                *cpdssPortalPermission="loadablePlanPermissionContext">{{'LOADABLE_PATTERN_HISTORY_VIEW_PLAN_BUTTON_LABEL'
-                                |
-                                translate}}</button>
-                            <button class="btn btn-main mr-10" (click)="onConfirmPlanClick(loadablePattern?.loadablePatternId)" id="pattern-history-confirm-btn"
-                                *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
-                                |
-                                translate}}</button>
-                            <button class="btn btn-main confirmed"
-                                *ngIf="loadablePattern?.loadableStudyStatusId === 2" [disabled]="true">
-                                <span class="pi pi-check check-rounded"></span>
-                                {{'LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |
-                                translate}}</button>
-                            <!-- <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
-                                {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button> -->
-                        </div>
-                    </div>
                 </div>
             </div>
             <div *ngIf="!loadablePatterns?.length && patternLoaded">

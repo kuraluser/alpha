@@ -76,6 +76,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     com.cpdss.common.generated.Loadicator.LoadicatorReply.Builder replyBuilder =
         LoadicatorReply.newBuilder();
     try {
+      log.info("inside saveLoadicatorInfo");
       AtomicLong cargoId = new AtomicLong(0L);
       List<StowagePlan> stowagePlanList = new ArrayList<>();
       for (com.cpdss.common.generated.Loadicator.StowagePlan plan :
@@ -106,7 +107,11 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       this.taskExecutor.execute(
           () -> {
             try {
-              this.getStatus(stowagePlanList, request.getIsPattern());
+              this.getStatus(
+                  stowagePlanList,
+                  request.getIsPattern(),
+                  request.getLoadableStudyId(),
+                  request.getLoadablePatternId());
             } catch (InterruptedException e) {
               log.error("Encounted error while checking loadicator status");
               replyBuilder.setResponseStatus(
@@ -139,12 +144,12 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   private void updateStowageDetails(List<StowagePlan> stowagePlanList) {
     stowagePlanList.forEach(
         stowagePlan -> {
-          Optional<CargoData> cargoDataOpt =
-              this.cargoDataRepository.findByStowagePlan(stowagePlan);
-          if (cargoDataOpt.isPresent()) {
-            this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
-                stowagePlan, cargoDataOpt.get().getCargoId());
-          }
+          List<CargoData> cargoDatas = this.cargoDataRepository.findByStowagePlan(stowagePlan);
+          cargoDatas.forEach(
+              cargoData -> {
+                this.stowageDetailsRepository.updateCargoIdInStowageDetailsByStowagePlan(
+                    stowagePlan, cargoData.getCargoId(), cargoData.getCargoAbbrev());
+              });
         });
   }
 
@@ -225,6 +230,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       otherTankDetails.setShortName(
           StringUtils.isEmpty(ballast.getShortName()) ? null : ballast.getShortName());
       otherTankDetails.setStowagePlan(entity);
+      set.add(otherTankDetails);
     }
     return set;
   }
@@ -319,14 +325,26 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
             ? null
             : stowagePlanInfo.getVesselCode());
     stowagePlan.setProcessId(stowagePlanInfo.getProcessId());
+    stowagePlan.setSeaWater(
+        StringUtils.isEmpty(stowagePlanInfo.getSeaWaterDensity())
+            ? null
+            : new BigDecimal(stowagePlanInfo.getSeaWaterDensity()));
     return stowagePlan;
   }
 
-  public void getStatus(List<StowagePlan> stowagePlans, Boolean isPattern)
+  public void getStatus(
+      List<StowagePlan> stowagePlans,
+      Boolean isPattern,
+      Long loadableStudyId,
+      Long loadablePatternId)
       throws InterruptedException {
     boolean status = false;
     do {
-      log.info("Checking loadicator status");
+      log.info(
+          "Checking loadicator status of "
+              + (!isPattern
+                  ? ("Loadable Study " + loadableStudyId)
+                  : ("Loadable Pattern " + loadablePatternId)));
       Thread.sleep(10000);
       List<Long> stowagePlanIds =
           stowagePlans.stream().map(StowagePlan::getId).collect(Collectors.toList());
@@ -335,7 +353,11 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
-        log.info("Loadicator check completed");
+        log.info(
+            "Loadicator check completed for "
+                + (!isPattern
+                    ? ("Loadable Study " + loadableStudyId)
+                    : ("Loadable Pattern " + loadablePatternId)));
         LoadicatorDataRequest loadableStudyrequest =
             this.sendLoadicatorData(stowagePlanList, isPattern);
 
@@ -579,6 +601,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         .ifPresent(item -> ldTrim.setErrorDetails(String.valueOf(item)));
     Optional.ofNullable(trim.getMessageText())
         .ifPresent(item -> ldTrim.setMessageText(String.valueOf(item)));
+    Optional.ofNullable(trim.getDeflection())
+        .ifPresent(item -> ldTrim.setDeflection(String.valueOf(item)));
     return ldTrim;
   }
 

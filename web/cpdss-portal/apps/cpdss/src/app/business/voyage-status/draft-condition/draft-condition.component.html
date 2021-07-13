@@ -1,28 +1,29 @@
 <div class="text-center text-uppercase table-head-draft">
-    <span>{{'VOYAGE_STATUS_DRAFT_CONDITION_HEADER' | translate}}</span>
+  <span>{{'VOYAGE_STATUS_DRAFT_CONDITION_HEADER' | translate}}</span>
 </div>
 <p-table *ngIf="draftCondition && value" [columns]="columns" [value]="value">
-    <ng-template pTemplate="colgroup" let-columns>
-        <colgroup>
-            <col style="width:80px">
-                <col>
-                <col>
-                <col>
-        </colgroup>
-    </ng-template>
-    <ng-template pTemplate="header" let-columns>
-        <tr>
-            <th *ngFor="let col of columns">
-                {{col.header |  translate}}
-            </th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-            <ng-container *ngFor="let col of columns">
-                <th class="text-uppercase" *ngIf="col.field === 'header'"> {{rowData[col.field] | translate}}</th>
-                <td *ngIf="col.field !== 'header'">{{rowData[col.field] | number}}{{'VOYAGE_STATUS_DRAFT_CONDITION_UNIT' | translate}}</td>
-            </ng-container>
-        </tr>
-    </ng-template>
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+      <col class="calculated-column">
+      <col>
+      <col>
+      <col>
+    </colgroup>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns">
+        {{col.header | translate}}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr>
+      <ng-container *ngFor="let col of columns">
+        <th class="text-uppercase" *ngIf="col.field === 'header'"> {{rowData[col.field] | translate}}</th>
+        <td *ngIf="col.field !== 'header'">{{rowData[col.field] | number:
+          '1.2-2'}}{{'VOYAGE_STATUS_DRAFT_CONDITION_UNIT' | translate}}</td>
+      </ng-container>
+    </tr>
+  </ng-template>
 </p-table>

@@ -129,6 +129,9 @@ export class CPDSSDB extends Dexie {
     ports!: Dexie.Table<any, number>;
     ohq!: Dexie.Table<any, number>;
     obq!: Dexie.Table<any, number>;
+    dischargePorts!: Dexie.Table<any, number>;
+    dischargeOhq!: Dexie.Table<any , number>;
+    loadingInformations: Dexie.Table<any, number>;
     properties!: Dexie.Table<any>;
     constructor() {
         super('CPDSS');
@@ -137,6 +140,9 @@ export class CPDSSDB extends Dexie {
             ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
             ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
             obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+            dischargePorts: "++,storeKey,timeStamp,vesselId,voyageId,dischargeStudyId,status",
+            dischargeOhq: "++,storeKey,timeStamp,vesselId,voyageId,dischargeStudyId,status",
+            loadingInformations: "++,storeKey,timeStamp,vesselId,voyageId,loadablePlanId,status",
             properties: ""
         });
     }
@@ -298,6 +304,8 @@ export interface ICargo {
  export interface IConfirmStatusResponse {
     responseStatus: IResponse;
     confirmed: boolean;
+    loadablePatternStatusId: number;
+    validated: boolean;
 }
 
 /**
@@ -427,4 +435,76 @@ export interface ISubTotal {
     public loadableQuantityId?: number;
     public id?: number;
     private loadableStudyId?: number
+}
+
+/**
+ * Interface for cargo conditions model
+ */
+ export class ICargoConditions {
+    id: number;
+    plannedWeight: number;
+    actualWeight: number;
+    abbreviation?: string;
+}
+
+/**
+ * Interface for Mode
+ *
+ * @export
+ * @interface IMode
+ */
+ export interface IMode {
+    name: string;
+    id: number;
+}
+
+
+/**
+ * Interface for instruction
+ *
+ * @export
+ * @interface IInstruction
+ */
+export interface IInstruction {
+    value: string;
+}
+
+
+/**
+ * Interface for percentage
+ *
+ * @export
+ * @interface IPercentage
+ */
+ export interface IPercentage {
+    value: string;
+    name: string;
+}
+
+export interface ITankDetails {
+    displayOrder: number,
+    group: number,
+    id: number,
+    name: string,
+    order: number,
+    shortName: string,
+    slopTank: boolean,
+}
+
+/**
+ * Interface for cargo
+ *
+ * @export
+ * @interface ICargo
+ */
+ export interface ICargo {
+    id: number;
+    companyId: number;
+    actualWeight: string;
+    plannedWeight: string;
+    name?: string;
+    abbreviation?: string;
+    api?: number;
+    ports?: IPort[];
+    temp: string;
 }

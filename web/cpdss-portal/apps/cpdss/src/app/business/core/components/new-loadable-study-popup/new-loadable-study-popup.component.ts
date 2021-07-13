@@ -7,7 +7,7 @@ import { IVessel } from '../../../core/models/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { Router } from '@angular/router';
-import { numberValidator } from '../../../cargo-planning/directives/validator/number-validator.directive'
+import { numberValidator } from '../../../core/directives/number-validator.directive'
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -180,11 +180,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
                 this.loadableStudyDetailsTransformationService.setLoadLineChange();
               }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
+              this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
             }
             this.closeDialog();
-            this.addedNewLoadableStudy.emit(result.loadableStudyId)
+            this.addedNewLoadableStudy.emit(result.loadableStudyId);
           }
         } catch (error) {
           if (error.error.errorCode === 'ERR-RICO-105') {

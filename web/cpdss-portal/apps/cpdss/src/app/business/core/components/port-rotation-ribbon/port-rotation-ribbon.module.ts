@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ValidationErrorModule } from '../../../../shared/components/validation-error/validation-error.module';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  *  Module for port ribbon component
@@ -20,7 +21,8 @@ import { ValidationErrorModule } from '../../../../shared/components/validation-
     ValidationErrorModule,
     CalendarModule,
     CarouselModule,
-    TranslateModule
+    TranslateModule,
+    TooltipModule
   ],
   providers: [PortRotationService],
   exports: [PortRotationRibbonComponent]

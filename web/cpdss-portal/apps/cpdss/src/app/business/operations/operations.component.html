@@ -1,38 +1,32 @@
-<div class="container-fluid">
+<div class="container-fluid operations-wrapper" *ngIf="vessel && voyages">
     <div class="row">
         <div class="col vessel-info-wrapper">
-            <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo"></cpdss-portal-vessel-info>
+            <cpdss-portal-vessel-info [vesselDetails]="vessel"></cpdss-portal-vessel-info>
         </div>
-        <div *ngIf="vesselInfo && voyages">
+        <div *ngIf="vessel && voyages">
             <label for="">Voyage</label>
             <p-dropdown styleClass="dropdown-w-100" [options]="voyages" optionLabel="voyageNo"
                 [(ngModel)]="selectedVoyage" resetFilterOnHide="true"></p-dropdown>
         </div>
         <div class="col">
-            <a class="btn btn-link icon-btn plus-icon-rounded ml-15" id="show-popup" (click)="showNewVoyageDialog()">New Voyage</a>
-            <a class="btn btn-link icon-btn pencil-icon" id="show-edit-port-rotation-popup" (click)="showEditPortRotation()">Edit Port Rotation</a>
-            <cpdss-portal-unit-dropdown></cpdss-portal-unit-dropdown>
+            <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
         </div>
         <div class="pr-15">Voyage Distance</div>
-        <div class="float-right">
-            <a class="btn btn-link icon-btn plus-icon-rounded ml-15" id="show-popup">Add Port</a>
-        </div>
+        <!-- TODO : Remove comment after get confirmation -->
+        <!-- <div class="float-right">
+            <a class="btn btn-link icon-btn plus-icon-rounded ml-15 disabled" id="show-popup"
+                (click)="addPort()">{{'OPERATIONS_ADD_PORT_BUTTON_LABEL' | translate}}</a>
+        </div> -->
     </div>
     <div class="row">
         <div class="col">
-            <cpdss-portal-port-rotation-ribbon [vesselDetails]="vesselInfo" *ngIf="vesselInfo && selectedVoyage"
-                [voyageDetails]="selectedVoyage">
+            <cpdss-portal-port-rotation-ribbon [vesselDetails]="vessel" *ngIf="vessel && selectedVoyage"
+                [groupSelection]="true" [showOperationType]="true" [voyageDetails]="selectedVoyage"
+                (portSelection)="onPortSelection($event)">
             </cpdss-portal-port-rotation-ribbon>
         </div>
     </div>
-    <router-outlet *ngIf="vesselInfo && selectedVoyage"></router-outlet>
+    <router-outlet *ngIf="vessel && selectedVoyage"></router-outlet>
 </div>
-
-<cpdss-portal-new-voyage-popup [vesselDetails]="vesselInfo" *ngIf="displayNewVoyagePopup && vesselInfo"
-    (displayPopUp)="displayPopUpTab($event)">
-</cpdss-portal-new-voyage-popup>
-
-<cpdss-portal-edit-port-rotation-popup *ngIf="displayEditPortRotationPopup && vesselInfo && selectedVoyage"
-    (displayPopUp)="displayEditPortRotationPopUpTab($event)" [vesselDetails]="vesselInfo"
-    [voyageDetails]="selectedVoyage">
-</cpdss-portal-edit-port-rotation-popup>
+<cpdss-portal-add-port-popup *ngIf="showAddPortPopup" [display]="showAddPortPopup"
+    (displayPopUp)="closeAddPortPoup($event)"></cpdss-portal-add-port-popup>

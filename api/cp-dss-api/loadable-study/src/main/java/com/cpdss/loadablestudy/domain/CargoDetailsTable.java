@@ -10,11 +10,11 @@ import lombok.Data;
 @Data
 public class CargoDetailsTable {
   private List<CargosTable> cargosTableList;
-  private float cargoNominationTotal;
-  private float nBblsTotal;
-  private float mtTotal;
-  private float kl15CTotal;
-  private float ltTotal;
-  private float diffBblsTotal;
-  private float diffPercentageTotal;
+  private double cargoNominationTotal;
+  private double nBblsTotal;
+  private double mtTotal;
+  private double kl15CTotal;
+  private double ltTotal;
+  private double diffBblsTotal;
+  private double diffPercentageTotal;
 }

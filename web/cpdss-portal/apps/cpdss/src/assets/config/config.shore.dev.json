@@ -1,12 +1,12 @@
 {
     "apiUrl": "",
-    "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
+    "keycloakUrl": "https://cpdss-dev.alphaorimarine.com/auth/",
     "path": "",
     "redirectPath": ":9002",
     "clientId": "frontend",
     "baseUnit": "MT",
     "volumeBaseUnit": "KL",
-    "processingTimeout": 3600000,
+    "processingTimeout": 7200000,
     "commingleColor": "#7114d9",
     "dateFormat": "DD-MMM-YYYY HH:mm",
     "quantityNumberFormatKL": "1.3-3",
@@ -16,5 +16,8 @@
     "quantityNumberFormatOBSBBLS": "1.0-0",
     "defaultWeightUnit" : "BBLS",
     "maxFillingPercentage": "98",
-    "sgNumberFormat": "1.4-4"
+    "sgNumberFormat": "1.4-4",
+    "restrictMaxNumberOfCargo": true,
+    "maxCargoLimit": 7,
+    "ullageUnit": "M"
 }

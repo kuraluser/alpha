@@ -102,4 +102,7 @@ public class LoadablePlanQuantity extends EntityDoc {
 
   @Column(name = "time_required_for_loading")
   private String timeRequiredForLoading;
+
+  @Column(name = "cargo_nomination_temperature")
+  private BigDecimal cargoNominationTemperature;
 }

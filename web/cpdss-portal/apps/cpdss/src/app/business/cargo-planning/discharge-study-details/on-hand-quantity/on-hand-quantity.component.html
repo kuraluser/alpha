@@ -1,0 +1,167 @@
+<form *ngIf="ohqForm" [formGroup]="ohqForm">
+    <div class="content-outer-ohq">
+        <div class="">
+            <div class="container-fluid pl-0">
+                <div class="row h-100 no-wrap">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <div class="header-info-pop-up mb-5"><span class="info-icon mr-5">!</span>
+                                    {{'OHQ_LOADABLE_QUANTITY_UPDATE_INFO' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col pr-0" style="max-width: 113px;">
+                                <span class="text-secondary text-uppercase">{{'OHQ_SELECTED_PORT'| translate}}</span>
+                            </div>
+                            <div class="col pl-0">
+                                <ul class="list-unstyled list-inline port-list pb-10 mb-0">
+                                    <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}"
+                                        *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">
+                                        {{port?.name}}
+                                        <span *ngIf="!dischargeStudyDetailsTransformationService.getOHQPortValidity(port.id)"
+                                         class="error-icon" pTooltip="{{'INCOMPLETE'|translate}}">!</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group row">
+                                    <div class="col pl-0" [ngClass]="{'datatable-loading': dataTableLoading }">
+                                        <div class="table-responsive-custom cargo-nomination-table ohq" #ohqDatatable>
+                                            <cpdss-portal-datatable [tableId]="'ohq'" [form]="ohqForm"
+                                                [columns]="columns" [value]="selectedPortOHQTankDetails"
+                                                [editMode]="editMode" [filterable]="true" [listData]="listData"
+                                                [selectionMode]="selectionMode" [(selection)]="selectedTank"
+                                                [loading]="dataTableLoading" [progress]="progress" (editComplete)="onEditComplete($event)"
+                                                (rowSelection)="onRowSelection($event)" (filter)="onFilter($event)"
+                                                (sort)="onSort($event)">
+                                            </cpdss-portal-datatable>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pr-15 tank-ohq-outer">
+            <div class=" tank-wrapper-ohq">
+                <div class="row">
+                    <div class="col">
+                        <p class="text-uppercase text-center text-secondary">{{'DISCHARGE_OHQ_TANK_FILLS' | translate}}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center text-uppercase pt-10">
+                        <label class="radio-custom">
+                            {{'DISCHARGE_OHQ_ARRIVAL' | translate}}
+                            <input type="radio" id="ohq_arrival_btn" name="mode" class="custom-control-input"
+                                formControlName="mode" [value]="OHQ_MODE.ARRIVAL"
+                                (change)="onModeChange(OHQ_MODE.ARRIVAL)">
+                            <span class="checkmark"></span>
+                        </label>
+
+                        <label class="radio-custom">
+                            {{'DISCHARGE_OHQ_DEPARTURE' | translate}}
+                            <input type="radio" id="ohq_departure_btn" name="mode" class="custom-control-input"
+                                formControlName="mode" [value]="OHQ_MODE.DEPARTURE"
+                                (change)="onModeChange(OHQ_MODE.DEPARTURE)">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row mb-10">
+                    <div class="col text-center">
+                        <span class="mr-10 text-uppercase text-secondary">{{'DISCHARGE_OHQ_TYPE'| translate}}</span>
+                        <ng-container *ngFor="let fuelType of listData.fuelTypes">
+                            <span class="badge-custom mr-5" *ngIf="fuelType?.shortName"
+                                [ngStyle]="{'background-color': fuelType?.colorCode}">{{fuelType?.shortName}}</span>
+                        </ng-container>
+
+                    </div>
+                    <div class="col-4" [ngStyle]="{'visibility':selectedTankId ? 'visible': 'hidden'}">
+                        <span *ngIf="selectedTank">{{selectedTank?.percentageFilled}}</span>
+                        {{('DISCHARGE_OHQ_FILLED'| translate)}}</div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <cpdss-portal-bunkering-layout [tanks]="tanks" [rearTanks]="rearTanks"
+                            [(selectedTankId)]="selectedTankId" [options]="ohqTankOptions">
+                        </cpdss-portal-bunkering-layout>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col">
+                        <p class="text-uppercase text-center text-danger">{{'DISCHARGE_OHQ_LUBRICANT_TANK_MESSAGE' | translate}}</p>
+                    </div>
+                </div>
+                <div class="row text-uppercase text-secondary mt-10" *ngIf="selectedTankFormGroup"
+                    [formGroup]="selectedTankFormGroup">
+                    <div class="col-4">
+                        <div class="row mb-15">
+                            <label for="" class="col-12 text-center">{{'DISCHARGE_OHQ_FUEL_TYPE'| translate}}</label>
+                            <div class="col">
+                                <input type="text" class="form-control" formControlName="fuelTypeName" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="row mb-15">
+                                    <label for="" class="col-12 text-center">{{'DISCHARGE_OHQ_DENSITY'| translate}}</label>
+                                    <div class="col error-icon-wrapper">
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control"
+                                            formControlName="density"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'density')"
+                                            [readOnly]="!editMode">
+                                        <cpdss-portal-validation-error
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'density')| async"
+                                            [errorMessages]="getErrorMessages('density')">
+                                        </cpdss-portal-validation-error>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-7" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.ARRIVAL">
+                                <div class="row">
+                                    <label for="" class="col-12 text-center no-wrap">{{'DISCHARGE_OHQ_ARRIVAL'| translate}}
+                                        {{'DISCHARGE_OHQ_QUANTITY'| translate}}</label>
+                                    <div class="col error-icon-wrapper">
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control"
+                                            formControlName="arrivalQuantity"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')"
+                                            [readOnly]="!editMode">
+                                        <cpdss-portal-validation-error
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalQuantity')| async"
+                                            [errorMessages]="getErrorMessages('arrivalQuantity')">
+                                        </cpdss-portal-validation-error>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE">
+                                <div class="row">
+                                    <label for="" class="col-12 text-center no-wrap">{{'DISCHARGE_OHQ_DEPARTURE'| translate}}
+                                        {{'DISCHARGE_OHQ_QUANTITY'| translate}}</label>
+                                    <div class="col error-icon-wrapper">
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control"
+                                            formControlName="departureQuantity"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')"
+                                            [readOnly]="!editMode">
+                                        <cpdss-portal-validation-error
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureQuantity')| async"
+                                            [errorMessages]="getErrorMessages('departureQuantity')">
+                                        </cpdss-portal-validation-error>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -61,4 +61,6 @@ public class LoadablePlanStowageDetails {
 
   @JsonInclude(Include.NON_NULL)
   private String rdgUllageOrginal;
+
+  private String cargoNominationTemperature;
 }

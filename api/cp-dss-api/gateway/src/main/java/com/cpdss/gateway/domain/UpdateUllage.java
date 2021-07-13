@@ -36,5 +36,5 @@ public class UpdateUllage {
 
   private String sg;
 
-  private Boolean isCommingle;
+  private boolean isCommingle;
 }

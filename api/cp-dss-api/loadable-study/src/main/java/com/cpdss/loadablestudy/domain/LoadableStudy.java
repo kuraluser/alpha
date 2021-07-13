@@ -32,4 +32,7 @@ public class LoadableStudy {
   private List<OnHandQuantity> onHandQuantity;
   private List<OnBoardQuantity> onBoardQuantity;
   private List<PortDetails> portDetails;
+  private Boolean feedbackLoop;
+  private Integer feedbackLoopCount;
+  private List<RulePlans> loadableStudyRuleList;
 }

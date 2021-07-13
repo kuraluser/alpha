@@ -4,6 +4,9 @@ import { LoadingDischargingBerthComponent } from './loading-discharging-berth.co
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
 import { DropdownModule } from 'primeng/dropdown';
+import { TranslateModule } from '@ngx-translate/core';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+import { LoadingDischargingBerthTransformationService } from './loading-discharging-berth-transformation.service';
 
 /**
  * Module for loading discharging berth module
@@ -19,7 +22,10 @@ import { DropdownModule } from 'primeng/dropdown';
     FormsModule,
     ReactiveFormsModule,
     NumberDirectiveModule,
-    DropdownModule
-  ]
+    DropdownModule,
+    TranslateModule,
+    ValidationErrorModule
+  ],
+  providers: [LoadingDischargingBerthTransformationService]
 })
 export class LoadingDischargingBerthModule { }

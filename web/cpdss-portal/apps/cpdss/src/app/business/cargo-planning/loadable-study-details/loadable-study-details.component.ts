@@ -4,7 +4,7 @@ import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.mo
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT , IAlgoResponse , IAlgoError } from '../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT, IAlgoResponse, IAlgoError } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -20,6 +20,10 @@ import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { takeUntil, switchMap } from 'rxjs/operators';
+import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
+import { SecurityService } from '../../../shared/services/security/security.service';
+import * as moment from 'moment';
+import { environment } from '../../../../environments/environment';
 
 
 /**
@@ -89,6 +93,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   baseUnit = this.loadableStudyDetailsApiService.baseUnit;
   isPatternGenerated = false;
   isGenerateClicked = false;
+  showGenerateBtn = false;
   isPatternOpenOrNoplan = false;
   showLoadableQuantityButton = false;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
@@ -102,6 +107,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   loadablePatternHistoryPermission: IPermission;
   errorPopup: boolean;
   errorMessage: IAlgoError[];
+  isServiceWorkerCallActive = false;
+  isRuleModalVisible:boolean = false;
+  dischargingPortData: any = [];
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -114,7 +122,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private messageService: MessageService,
     private permissionsService: PermissionsService,
-    private loadableQuantityApiService: LoadableQuantityApiService) {
+    private loadableQuantityApiService: LoadableQuantityApiService,
+    private globalErrorHandler: GlobalErrorHandler) {
   }
 
   ngOnInit(): void {
@@ -236,8 +245,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
       this.isDischargePortAvailable();
-      if(this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION) {
+      if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ERROR) {
         this.getAlgoErrorMessage(false);
+      } else if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING) {
+        this.isGenerateClicked = true;
       }
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
       this.loadableStudyDetailsTransformationService.setPortValidity(this.selectedLoadableStudy.isPortsComplete)
@@ -248,6 +259,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.selectedLoadableStudy = null;
       this.loadableStudies = [];
     }
+    this.showGenerateBtn = true;
     this.ngxSpinnerService.hide();
   }
 
@@ -273,6 +285,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     if (!this.dischargingPorts) {
       this.dischargingPorts = [];
+      this.dischargingPortData = null;
+    } else {
+      this.dischargingPortData = this.dischargingPorts[0];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
 
@@ -281,11 +296,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
     } else {
       const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(vesselId, voyageId, this.loadableStudyId).toPromise();
-      const portRotationId = portsData.portList ? portsData.lastModifiedPortId : 0;
-
-      const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId ? portRotationId : 0).toPromise();
+      const portRotationId = portsData.portList ? (portsData?.lastModifiedPortId ? portsData?.lastModifiedPortId : 0) : 0;
+      const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
       if (loadableQuantityResult.responseStatus.status === "200") {
-        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+        this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : loadableQuantityResult.loadableQuantity.totalQuantity;
         if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
           this.messageService.clear();
           this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
@@ -301,7 +315,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    *
    * @memberof LoadableStudyDetailsComponent
    */
-  addCargoNomination() {
+  async addCargoNomination() {
+    if (AppConfigurationService.settings.restrictMaxNumberOfCargo && this.loadableStudyDetailsApiService.cargoNominations.length >= AppConfigurationService.settings.maxCargoLimit) {
+      const translationKeys = await this.translateService.get(['MAXIMUM_CARGO_WARNING', 'MAXIMUM_CARGO_LIMIT_REACHED']).toPromise();
+      this.messageService.add({ severity: 'warn', summary: translationKeys['MAXIMUM_CARGO_WARNING'], detail: translationKeys['MAXIMUM_CARGO_LIMIT_REACHED'] });
+      return;
+    }
+
     console.log('addCargoNomination' + Date.now()); // TODO: Need to remove after testing.
     this.loadableStudyDetailsTransformationService.addCargoNomination();
   }
@@ -327,36 +347,44 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     })
     this.loadableStudyDetailsTransformationService.obqValidity$.subscribe((res) => {
       this.obqComplete = res;
-    })
+    });
+    this.loadableStudyDetailsTransformationService.loadableStudyUpdate$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
+      if (value) {
+        this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      }
+    });
     this.loadableStudyDetailsApiService.cargoNominationChange.asObservable()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         this.onCargoNominationChange();
       })
-      let portRotationId;
-      this.loadableStudyDetailsTransformationService.portUpdate$?.pipe(
-        switchMap(() => {
-          return  this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId);
-        })
-      ).subscribe((portResult) => {
-        if (portResult.responseStatus.status === "200") {
-          portRotationId = portResult?.lastModifiedPortId;
-          this.loadableStudyDetailsTransformationService.ohqUpdated();
-        }
-      });
+    let portRotationId;
+    this.loadableStudyDetailsTransformationService.portUpdate$?.pipe(takeUntil(this.ngUnsubscribe),
+      switchMap(() => {
+        return this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId);
+      })
+    ).subscribe((portResult) => {
+      if (portResult.responseStatus?.status === "200") {
+        portRotationId = portResult?.lastModifiedPortId;
+        this.loadableStudyDetailsTransformationService.ohqUpdated();
+      }
+    });
 
-    this.loadableStudyDetailsTransformationService.ohqUpdate$?.pipe(
+    this.loadableStudyDetailsTransformationService.ohqUpdate$?.pipe(takeUntil(this.ngUnsubscribe),
       switchMap(() => {
         return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.loadableStudyId, portRotationId);
       })
-    ).subscribe((loadableQuantityResult) => {
-      if (loadableQuantityResult.responseStatus.status === "200") {
-        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+    ).subscribe((loadableQuantityResult: any) => {
+      if (loadableQuantityResult?.responseStatus?.status === "200") {
+        this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : loadableQuantityResult.loadableQuantity.totalQuantity;
       }
     });
     this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
       this.displayLoadableQuntity = true;
-    })
+    });
+    this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.subscribe(value=>{
+      this.isServiceWorkerCallActive = value;
+    });
   }
 
   /**
@@ -376,9 +404,32 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   private swMessageHandler = async event => {
+    let isValidStatus = false;
+    if ([LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_CONFIRMED, LOADABLE_STUDY_STATUS.PLAN_GENERATED, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED,
+    LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(event.data.statusId)) {
+      isValidStatus = true;
+    }
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210' && isValidStatus) {
+      this.globalErrorHandler.sessionOutMessage();
+    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200') && isValidStatus) {
+      SecurityService.refreshToken(event?.data?.refreshedToken)
+    }
     if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isGenerateClicked = true;
         this.processingMessage();
+      } else {
+        this.messageService.clear();
+      }
+    }
+    else if (event.data.type === 'loadable-pattern-loadicator-checking' && this.router.url.includes('loadable-study-details')) {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isGenerateClicked = true;
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_LOADICATOR_CHECKING;
+        this.messageService.clear();
+        const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_INFO', 'GENERATE_LOADABLE_PATTERN_LOADICATOR_CHECKING']).toPromise();
+        this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LOADABLE_PATTERN_INFO'], detail: translationKeys['GENERATE_LOADABLE_PATTERN_LOADICATOR_CHECKING'], life: 1000, closable: false });
       } else {
         this.messageService.clear();
       }
@@ -386,7 +437,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     else if (event.data.type === 'loadable-pattern-completed') {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isPatternGenerated = true;
-        this.selectedLoadableStudy.statusId = 3;
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_GENERATED;
         this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_GENERATED;
       }
       this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
@@ -402,6 +453,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
     }
+    else if (event.data.type === 'loadable-pattern-error-occured') {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isPatternOpenOrNoplan = false;
+        this.isPatternGenerated = false;
+        this.isGenerateClicked = false;
+        this.getAlgoErrorMessage(true);
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_ERROR;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR;
+      }
+      this.errorOccurdMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
+    }
     else if (event.data.type === 'loadable-pattern-no-response') {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isPatternOpenOrNoplan = false;
@@ -410,27 +472,29 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
     }
-    this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
+    if (isValidStatus) {
+      this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
+    }
   }
 
-    /**
-  * Get algo error response
-  * @returns {Promise<IAlgoResponse>}
-  * @memberof LoadablePlanComponent
-  */
+  /**
+* Get algo error response
+* @returns {Promise<IAlgoResponse>}
+* @memberof LoadablePlanComponent
+*/
   async getAlgoErrorMessage(status: boolean) {
     const algoError: IAlgoResponse = await this.loadableStudyDetailsApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
-    if(algoError.responseStatus.status === '200') {
+    if (algoError.responseStatus.status === '200') {
       this.errorMessage = algoError.algoErrors;
       this.errorPopup = status;
     }
   }
 
-    /**
-  * view algo error message
-  * @param {boolean} status
-  * @memberof LoadablePlanComponent
-  */
+  /**
+* view algo error message
+* @param {boolean} status
+* @memberof LoadablePlanComponent
+*/
   public viewError(status: boolean) {
     this.errorPopup = status;
   }
@@ -445,6 +509,35 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     loadableStudies = loadableStudies ?? this.loadableStudies;
     const _loadableStudies = loadableStudies?.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
+        loadableStudy.statusId = statusId;
+        switch (statusId) {
+          case 1:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_PENDING
+            break;
+          case 2:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_CONFIRMED
+            break;
+          case 3:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_GENERATED
+            break;
+          case 4:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING
+            break;
+          case 5:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING_COMPETED
+            break;
+          case 6:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_NO_SOLUTION
+            break;
+          case 7:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_LOADICATOR_CHECKING
+            break;
+          case 11:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR
+            break;
+          default:
+            break;
+        }
         if ([4, 5].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
         }
@@ -453,11 +546,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           loadableStudy.isDeletable = false;
           loadableStudy.isActionsEnabled = true;
         }
-        else if ([6, 1].includes(statusId)) {
+        else if ([6, 1, 11].includes(statusId)) {
           loadableStudy.isActionsEnabled = true;
+          if (this.loadableStudyId === loadableStudyId) {
+            this.selectedLoadableStudy = JSON.parse(JSON.stringify(loadableStudy));
+          }
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }
@@ -484,15 +580,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async onDischargePortChange(event) {
-    let isPortSelected;
-    this.dischargingPorts.map((dischargingPort, index) => { if (dischargingPort.id === event.itemValue.id) { isPortSelected = index } });
-    if (isPortSelected >= 0) {
-      this.dischargingPorts.splice(isPortSelected, 1);
-      this.updatingDischargingPort();
-    } else if (this.dischargingPorts.length < 5) {
-      this.dischargingPorts.push(event.itemValue);
-      this.updatingDischargingPort();
-    }
+    this.dischargingPorts = [event?.value];
+    this.updatingDischargingPort();
     this.loadableStudyDetailsTransformationService.setPortValidity(false);
   }
 
@@ -585,14 +674,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     else {
       this.selectedTab = selectedTab;
     }
-
+    if (this.selectedTab !== 'PORTS') {
+      this.portUpdate(false);
+    }
+    this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(false);
   }
 
   /**
    * Show loadable quantity popup
    */
   showLoadableQuantityPopup() {
-    if(!this.loadableStudies?.length) {
+    if (!this.loadableStudies?.length) {
       return;
     }
     this.displayLoadableQuntity = true;
@@ -639,7 +731,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     // Show alert if total quantity exceeds loadable quantity
     if (event.error) {
       const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
-      if ( Number(this.loadableQuantityNew) && Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
+      if (Number(this.loadableQuantityNew) && Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
         this.messageService.clear();
         this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
       }
@@ -651,9 +743,19 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   /**
  * Port update event haandler get value from commingle button
  */
-   async portUpdate(event) {
-      this.showLoadableQuantityButton = event;
-   }
+  async portUpdate(event) {
+    this.showLoadableQuantityButton = event;
+  }
+
+  /**
+   * function to emit incomplete status change
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async portOhqStatusUpdate(event) {
+    this.portsComplete = event;
+    this.ohqComplete = event;
+  }
 
   /**
  * Take the user to particular pattern history
@@ -677,14 +779,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.loadableStudyDetailsTransformationService.setOHQValidity([]);
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
       this.isGenerateClicked = false;
-      const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselId, this.voyageId).toPromise();
-      const loadableStudies = result?.loadableStudies ?? [];
-      if (loadableStudies.length) {
-        this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
-        this.selectedLoadableStudy = this.loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === this.loadableStudyId) : this.loadableStudies[0];
-      } else {
-        this.loadableStudies = [];
-      }
       this.tabPermission();
       this.ngxSpinnerService.hide();
       this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
@@ -703,7 +797,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts = [];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
-    if(this.selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length) {
+    if (this.selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length) {
       this.messageService.clear();
       const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
       this.isSelectedDischargePort = false;
@@ -729,12 +823,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   onCargoNominationChange() {
     this.dischargeCargos = []
     this.loadableStudyDetailsApiService.cargoNominations.forEach(cargoNomination => {
-      if (!cargoNomination.isAdd && this.dischargeCargos.indexOf(cargoNomination.cargo.value) === -1)
-        this.dischargeCargos.push(cargoNomination.cargo.value)
+      if (!cargoNomination.isAdd && !this.dischargeCargos.some(cargo => cargo?.id === cargoNomination?.id)) {
+        const _cargo = <ICargo>{ id: cargoNomination.id, name: cargoNomination.cargo.value.name, color: cargoNomination.color.value, abbreviation: cargoNomination.abbreviation.value };
+        this.dischargeCargos.push(_cargo);
+      }
     });
-    if (this.selectedDischargeCargo) {
-      this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
-    }
+      this.selectedDischargeCargo = this.dischargeCargos?.find(cargo => cargo?.id === this.selectedLoadableStudy?.dischargingCargoId)
   }
 
 
@@ -758,9 +852,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async updateDischargeData(sucessKeys: string[]) {
     this.ngxSpinnerService.show();
     this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
+    this.selectedLoadableStudy.dischargingCargoId = this.selectedDischargeCargo?.id;
     const dischargingPortIds: IDischargingPortIds = {
       portIds: this.selectedLoadableStudy.dischargingPortIds,
-      dischargingCargoId: this.selectedDischargeCargo?.id ?? null,
+      cargoNominationId: this.selectedDischargeCargo?.id ?? null,
       isDischargingPortComplete: !!this.selectedLoadableStudy.dischargingPortIds?.length
     };
     try {
@@ -791,13 +886,15 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   /**
   * Calculation for subtotal
   */
-  getSubTotal(loadableQuantityResult: any) {
+  getSubTotal(loadableQuantityResult: any): any {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
     let subTotal = 0;
+    const sgCorrection = (loadableQuantity.estSeaDensity && loadableQuantity.displacmentDraftRestriction) && (Number(loadableQuantity.estSeaDensity) - 1.025) / 1.025 * Number(loadableQuantity.displacmentDraftRestriction);
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
       const data: ISubTotal = {
         dwt: loadableQuantity.dwt,
         sagCorrection: loadableQuantity.saggingDeduction,
+        sgCorrection: sgCorrection.toString(),
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
@@ -807,14 +904,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
       }
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
-      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
-    }
-    else {
+      return this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+    } else {
       const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
       const data: ISubTotal = {
         dwt: dwt,
         sagCorrection: loadableQuantity.saggingDeduction,
-        sgCorrection: loadableQuantity.sgCorrection,
+        sgCorrection: sgCorrection.toString(),
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
@@ -824,7 +920,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
       }
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
-      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+      return this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
   }
 
@@ -832,28 +928,24 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   /**
    * Calculation for Loadable quantity
   */
-  getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
+  getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any): any {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
+    let loadableQuantityNew;
     if (loadableQuantityResult.caseNo === 1) {
       const total = Number(subTotal) + Number(loadableQuantity.foConInSZ);
       if (total < 0) {
-        this.loadableQuantityNew = '0';
+        loadableQuantityNew = '0';
+      } else {
+        loadableQuantityNew = total?.toString();
       }
-      else {
-        this.loadableQuantityNew = total?.toString();
-      }
-
-    }
-    else {
+    } else {
       if (subTotal < 0) {
-        this.loadableQuantityNew = '0';
+        loadableQuantityNew = '0';
+      } else {
+        loadableQuantityNew = subTotal?.toString();
       }
-      else {
-        this.loadableQuantityNew = subTotal?.toString();
-      }
-
     }
-
+    return loadableQuantityNew;
   }
 
   /**
@@ -861,8 +953,42 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 *
 * @memberof LoadableStudyDetailsComponent
 */
-  onGenerateLoadablePattern() {
-    this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
+  async onGenerateLoadablePattern() {
+    this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_WARNING', 'LOADABLE_QUANTITY_WARNING_MISMATCH']).toPromise();
+    const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
+    const portRotationId = (portsData.portList && portsData?.lastModifiedPortId) ?? portsData?.lastModifiedPortId;
+    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
+    if (loadableQuantityResult.responseStatus.status === "200") {
+      this.ngxSpinnerService.hide();
+      let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
+      let databaseTotQty = this.sliceToTwoDecimalPoint(Number(loadableQuantityResult.loadableQuantity.totalQuantity).toString(), 2);
+      if (calculatedTotQty === databaseTotQty) {
+        this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
+      } else {
+        this.messageService.clear();
+        this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_QUANTITY_WARNING'], detail: translationKeys['LOADABLE_QUANTITY_WARNING_MISMATCH'] });
+      }
+    } else {
+      this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+   * function to slice the stringified decimal value
+   * @param {string} value
+   * @param {number} limit
+   * @return {*}  {string}
+   * @memberof LoadableStudyDetailsComponent
+   */
+  sliceToTwoDecimalPoint(value: string, limit: number): string {
+    if (value && value.includes('.')) {
+      const wholepart = value.split('.')[0];
+      const decimalPart = value.split('.')[1].slice(0, limit);
+      return [wholepart, decimalPart].join('.');
+    } else {
+      return value;
+    }
   }
 
   /**
@@ -885,6 +1011,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     }
 
     try {
+      this.selectedLoadableStudy.isActionsEnabled = false;
       const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
       if (res.responseStatus.status === '200') {
         this.isGenerateClicked = true;
@@ -893,15 +1020,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         data.processId = res.processId;
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
-          this.selectedLoadableStudy.isActionsEnabled = false;
+          this.selectedLoadableStudy = { ...this.selectedLoadableStudy };
         } else {
           this.isGenerateClicked = false;
         }
       } else {
+        this.selectedLoadableStudy.isActionsEnabled = true;
         this.isGenerateClicked = false;
       }
     }
     catch (errorResponse) {
+      this.selectedLoadableStudy.isActionsEnabled = true;
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR'], life: 10000 });
@@ -909,6 +1038,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (errorResponse?.error?.errorCode === 'ERR-RICO-521') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_STATUS_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_STATUS_ERROR'], life: 10000 });
+      }
+      if(errorResponse?.error?.errorCode === 'ERR-RICO-114'){
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR', 'LOADABLE_STUDY_COMMINGLE_LOADABLE_QTY_ERROR']).toPromise();
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR'], detail: translationKeys['LOADABLE_STUDY_COMMINGLE_LOADABLE_QTY_ERROR'], life: 10000 });
       }
     }
     this.ngxSpinnerService.hide();
@@ -951,6 +1084,18 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Toast to show for generating pattern have algo error
+   * @param {string} selectedVoyageNo
+   * @param {string} selectedLoadableStudyName
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async errorOccurdMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
+    this.messageService.clear();
+    const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_ERROR_OCCURED', 'GENERATE_LOADABLE_PATTERN_ERROR_OCCURED_MESSAGE']).toPromise();
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_ERROR_OCCURED'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_ERROR_OCCURED_MESSAGE'] });
+  }
+
+  /**
 * Toast to show pattern bo reposnse
 *
 * @param {string} selectedVoyageNo
@@ -989,23 +1134,34 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   */
   inProcessing() {
     if (this.selectedLoadableStudy?.statusId === 4) {
-      const dateString = this.selectedLoadableStudy?.loadableStudyStatusLastModifiedTime;
+      let dateString = this.selectedLoadableStudy?.loadableStudyStatusLastModifiedTime;
       const dateTimeParts = dateString?.split(' ');
-      const timeParts = dateTimeParts[1]?.split(':');
       const dateParts = dateTimeParts[0]?.split('-');
-      if(dateParts?.length){
-        const modifiedDate = new Date(Number(dateParts[2]), parseInt(dateParts[1], 10) - 1, Number(dateParts[0]), Number(timeParts[0]), Number(timeParts[1]));
-        const addFiveMinute = new Date(modifiedDate.getTime() + AppConfigurationService.settings.processingTimeout);
+
+      if (dateParts?.length) {
+        dateString = Number(dateParts[1]) + "/" + Number(dateParts[0]) + "/" + Number(dateParts[2]) + " " + dateTimeParts[1];
+        var modifiedDate = moment.utc(dateString).toDate();
+        const addProcessingTimeout = new Date(modifiedDate.getTime() + 600);
         const now = new Date();
-        if (addFiveMinute < now) {
+        if (addProcessingTimeout < now) {
           return false;
         } else {
           return true;
         }
-      }else{
+      } else {
         return true;
       }
 
     }
+  }
+
+
+  /**
+   * Method to close rules pop up.
+   *
+   * @memberof LoadableStudyDetailsComponent
+   */
+  closeModal(event) {
+    this.isRuleModalVisible = event;
   }
 }

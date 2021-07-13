@@ -10,5 +10,5 @@
 rootProject.name = 'cp-dss-api'
 
 include "common", "gateway", "loadable-study", "loadable-plan", "vessel-info", "cargo-info", "port-info",
-"loading-plan", "discharging-plan", "user-authorization", "admin-support", "company-info", "envoy-reader", 
+"loading-plan", "user-authorization", "admin-support", "company-info", "envoy-reader",
 "envoy-writer","loadicator-integration", "task-manager"

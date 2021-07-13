@@ -1,6 +1,6 @@
 {
     "/api/ship/company": {
-        "target": "http://192.168.2.89:8082/",
+        "target": "http://13.251.226.207:8082/",
         "secure": false,
         "logLevel": "debug",
         "pathRewrite": {
@@ -8,7 +8,7 @@
         }
     },
     "/api/ship": {
-        "target": "http://192.168.2.89:8084/",
+        "target": "http://13.251.226.207:8085/",
         "secure": false,
         "logLevel": "debug",
         "pathRewrite": {
@@ -16,7 +16,7 @@
         }
     },
     "/api": {
-        "target": "http://192.168.2.89:8082/",
+        "target": "http://13.251.141.12:8082/",
         "secure": false,
         "logLevel": "debug",
         "pathRewrite": {

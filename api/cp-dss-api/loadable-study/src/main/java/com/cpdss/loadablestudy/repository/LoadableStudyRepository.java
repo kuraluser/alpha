@@ -17,6 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface LoadableStudyRepository extends CommonCrudRepository<LoadableStudy, Long> {
 
+  List<LoadableStudy>
+      findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
+          final Long vesselXId, final Voyage voyage, Integer typeId);
+
+  default List<LoadableStudy> findAllLoadableStudy(
+      Long vesselXId, Voyage voyage, Integer planningId) {
+    return findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
+        vesselXId, voyage, planningId);
+  }
+
+  public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
+      final Long vesselXId, final Voyage voyage, final boolean isActive, Long id);
+
+  // Use at test Only
   public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
       final Long vesselXId, final Voyage voyage, final boolean isActive);
 
@@ -29,11 +43,11 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   @Query(
       "FROM LoadableStudy LS WHERE LS.voyage= ?1 AND  LS.loadableStudyStatus.id = ?2 AND LS.isActive = ?3")
-  public Optional<LoadableStudy> findByVoyageAndLoadableStudyStatusAndIsActive(
-      Voyage voyage, Long status, Boolean isActive);
+  public Optional<LoadableStudy> findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+      Voyage voyage, Long status, Boolean isActive, Integer planningId);
 
-  public LoadableStudy findByVoyageAndNameIgnoreCaseAndIsActive(
-      Voyage voyage, String name, boolean isActive);
+  public LoadableStudy findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
+      Voyage voyage, String name, boolean isActive, Integer planningId);
 
   @Transactional
   @Modifying
@@ -51,4 +65,10 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   @Modifying
   @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1, LS.sequenceNo = ?2 WHERE id = ?3")
   public void updateLoadableStudyUUIDAndSeqNo(String messageUUID, String sequenceNo, Long id);*/
+
+  public Optional<LoadableStudy> findByIdAndIsActiveAndVesselXId(
+      Long id, Boolean isActive, Long vesselId);
+
+  public boolean existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
+      String name, int i, Voyage voyage, boolean b);
 }

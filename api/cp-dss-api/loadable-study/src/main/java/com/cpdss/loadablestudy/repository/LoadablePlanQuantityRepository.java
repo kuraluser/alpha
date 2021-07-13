@@ -13,6 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 public interface LoadablePlanQuantityRepository
     extends CommonCrudRepository<LoadablePlanQuantity, Long> {
 
+  // Can use for loading plan, and discharge plan
+  default List<LoadablePlanQuantity> PORT_WISE_CARGO_DETAILS(
+      Long patternId, String opType, Long portRotation, Long port) {
+    return findAllLoadablePlanQuantity(patternId, opType, portRotation, port);
+  }
+
   public List<LoadablePlanQuantity> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
 
@@ -20,4 +26,11 @@ public interface LoadablePlanQuantityRepository
   @Modifying
   @Query("UPDATE LoadablePlanQuantity SET isActive = ?1 WHERE loadablePattern.id = ?2")
   public void deleteLoadablePlanQuantity(Boolean isActive, Long loadablePatternId);
+
+  String CARGO_TO_BE_LOADED_QUERY_1 =
+      "FROM LoadablePlanQuantity lpq WHERE lpq.loadablePattern.id = ?1 AND lpq.cargoNominationId IN (SELECT DISTINCT lpcd.cargoNominationId FROM LoadablePatternCargoDetails lpcd WHERE lpcd.loadablePatternId = ?1 AND lpcd.operationType = ?2 AND lpcd.portRotationId = ?3 AND lpcd.portId = ?4 AND isActive = true)";
+
+  @Query(CARGO_TO_BE_LOADED_QUERY_1)
+  List<LoadablePlanQuantity> findAllLoadablePlanQuantity(
+      Long patternId, String opType, Long portRotation, Long port);
 }

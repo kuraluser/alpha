@@ -5,6 +5,7 @@ option java_package = "com.cpdss.common.generated";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "loadable_study/loadable_study_models.proto";
 
 service LoadableStudyService {
 	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
@@ -175,8 +176,40 @@ service LoadableStudyService {
 	rpc FetchAllAlgoErrors(AlgoErrors) returns (AlgoErrors) {}
 	
 	rpc GetCargoHistoryByCargo(LatestCargoRequest) returns(LatestCargoReply) {}
+
+	rpc GetActiveVoyagesByVessel (VoyageRequest) returns (ActiveVoyage) {
+	}
+
+	rpc GetSynopticDataForLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanCommonResponse) {}
+
+	rpc SaveLoadingInfoToSynopticData(LoadingInfoSynopticalUpdateRequest) returns (ResponseStatus) {}
+
+	rpc GetOrSaveRulesForLoadableStudy(LoadableRuleRequest) returns (LoadableRuleReply) {}
+
+	rpc GetLoadablePatternDetailsJson(LoadablePlanDetailsRequest) returns (LoadablePatternPortWiseDetailsJson) {}
+
+	rpc getLoadablePatternByVoyageAndStatus(LoadableStudyRequest) returns (LoadablePatternConfirmedReply) {}
+
+	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
+	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
 }
 
+service DischargeStudyOperationService {
+  rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
+  rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){}
+  rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
+}
+
+message CargoNominationDetailReply{
+	CargoNominationDetail cargoNominationdetail = 1;
+	ResponseStatus responseStatus = 2;
+}
+
+message  LoadablePatternConfirmedReply{
+	LoadablePattern pattern= 1;
+	int64 loadableStudyId= 2;
+	ResponseStatus responseStatus = 3;
+}
 message LatestCargoRequest{
 	int64 vesselId = 1;
 	int64 portId = 2;
@@ -197,6 +230,7 @@ message LatestCargoReply{
 message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
 	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+	bool updateUllageForLoadingPlan = 3;
 }
 
 message UpdateUllageReply {
@@ -217,7 +251,7 @@ message LoadicatorPatternDetailsResults {
 
 message LodicatorResultDetails {
 	int64 portId = 1;
-	string hog = 2;
+	string deflection = 2;
 	string calculatedDraftFwdPlanned = 3;
 	string calculatedDraftMidPlanned = 4;
 	string calculatedDraftAftPlanned = 5;
@@ -270,6 +304,7 @@ message LDtrim {
    int64 portId = 21;
    int64 stowagePlanId = 22;
    int64 synopticalId = 23;
+   string deflection = 24;
 }
 
 message LDStrength{
@@ -376,7 +411,10 @@ message LoadablePlanPortWiseDetails {
 message LoadablePlanDetailsRequest {
 	int64 loadablePatternId = 1;
 }
-
+message LoadableCommingleDetailsReply{
+	ResponseStatus responseStatus = 1;
+	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
+}
 message LoadablePlanDetailsReply {
 	ResponseStatus responseStatus = 1;
 	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
@@ -432,7 +470,7 @@ message LoadablePlanBallastDetails {
 	string correctionFactorOrginal = 19;
 	string correctedLevelOrginal = 20; //same as corrected ullage
 	string metricTonOrginal = 21; //quantity
-	string percentageOrginal = 22;	
+	string percentageOrginal = 22;
 }
 
 message LoadablePlanStowageDetails {
@@ -457,12 +495,13 @@ message LoadablePlanStowageDetails {
   string sg = 19;
   string tankShortName = 20;
   int32 tankDisplayOrder = 21;
-  
+
   string correctedUllageOrginal = 22; // ullage(M)
   string correctionFactorOrginal = 23;
   string fillingRatioOrginal = 24;
-  string rdgUllageOrginal = 25; 
+  string rdgUllageOrginal = 25;
   string weightOrginal = 26; // MT
+  string cargoNominationTemperature = 27;
  }
 
 
@@ -495,9 +534,13 @@ message LoadableQuantityCommingleCargoDetails {
 	 string correctedUllage = 26;
  	 string rdgUllage = 27;
      string correctionFactor = 28;
-      string slopQuantity = 29;
+     string slopQuantity = 29;
      string actualQuantity=30;
-	string timeRequiredForLoading = 33;
+     string timeRequiredForLoading = 31;
+	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 32;
+	 int64 cargo1NominationId = 33;
+	 int64 cargo2NominationId = 34;
+	 string tankShortName = 35;
 }
 
 message LoadableQuantityCargoDetails {
@@ -526,6 +569,16 @@ message LoadableQuantityCargoDetails {
 	 int64 cargoNominationId = 23;
 	 repeated LoadingPortDetail loadingPorts = 24;
 	 string timeRequiredForLoading = 25;
+	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 26;
+	 string cargoNominationTemperature = 27;
+	 string cargoNominationQuantity = 28;
+	 string orderQuantity = 29;
+}
+
+message CargoToppingOffSequenceDetails {
+  int64 tankId = 1;
+  int32 orderNumber = 2;
+  int64 cargoId = 3;
 }
 
 message ConfirmPlanRequest {
@@ -536,6 +589,8 @@ message ConfirmPlanRequest {
 message ConfirmPlanReply {
 	ResponseStatus responseStatus = 1;
 	bool confirmed = 2;
+	int64 loadablePatternStatusId = 3;
+	bool validated = 4;
 }
 
 message LoadableStudyStatusRequest {
@@ -666,6 +721,7 @@ message LoadableStudyRequest{
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
+	PLANNING_TYPE planningType = 5;
 }
 
 message LoadableStudyAttachment{
@@ -739,6 +795,7 @@ message CargoNominationDetail {
 	string tempEst = 12;
 	int64 segregationId = 13;
 	bool isCargoNominationComplete=14;
+	string cargoName = 16;
 
 }
 
@@ -765,7 +822,7 @@ message PortRotationRequest{
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
 	repeated PortRotationDetail portRotationDetails = 6;
-	int64 dischargingCargoId=7;
+	int64 cargoNominationId=7;
     bool isDischargingPortsComplete=8;
 
 }
@@ -963,6 +1020,7 @@ message LoadablePattern {
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 10;
 	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 11;
 	bool validated = 12;
+	int64 loadablePatternStatusId = 13;
 }
 
 message LoadablePatternCargoDetails {
@@ -1073,6 +1131,7 @@ message SynopticalRecord{
 	repeated SynopticalBallastRecord ballast = 38;
 	int64 portRotationId = 39;
 	int64 portTimezoneId = 40;
+	bool hasLoadicator = 41;
 }
 
 message SynopticalCargoRecord{
@@ -1090,6 +1149,8 @@ message SynopticalCargoRecord{
 	bool isCommingleCargo=12;
 	string temperature = 13;
 	string fillingRatio = 14;
+	int64 cargoNominationId = 15;
+	int64 lpCargoDetailId = 16; // loadable_pattern_cargo_detail ID
 }
 
 message SynopticalOhqRecord{
@@ -1137,7 +1198,7 @@ message SynopticalTableReply{
 }
 
 message SynopticalTableLoadicatorData{
-	string hogSag = 1;
+	string deflection = 1;
 	string finalDraftFwd = 2;
 	string finalDraftAft = 3;
 	string finalDraftMid = 4;
@@ -1152,6 +1213,8 @@ message SynopticalTableLoadicatorData{
 	string calculatedTrimActual = 13;
 	string blindSector = 14;
 	string list = 15;
+	string bendingMoment = 16;
+	string shearingForce = 17;
 }
 
 message LoadableStudyAttachmentRequest{
@@ -1214,6 +1277,7 @@ string status=1;
 int64 voyageId=2;
 string actualStartDate=3;
 string actualEndDate=4;
+int64 vesselId=5;
 }
 
 message SaveVoyageStatusReply {
@@ -1273,4 +1337,80 @@ message AlgoErrors{
 	string errorHeading = 2;
 	repeated string errorMessages = 3;
 	ResponseStatus responseStatus = 4;
+}
+
+// <------ start loading plan, by john -------->
+message ActiveVoyage{
+	int64 id = 1;
+	string voyageNumber = 2;
+	string startDate = 3;
+	string endDate = 4;
+	string status = 5;
+	string charterer = 6;
+	string actualStartDate = 7;
+	string actualEndDate = 8;
+	int64 statusId = 9;
+
+	ResponseStatus responseStatus = 10;
+	LoadableStudyDetail confirmedLoadableStudy = 11;
+	repeated PortRotationDetail portRotation = 12;
+	repeated CargoNominationDetail cargoNomination = 13;
+
+	int64 patternId = 14;
+	int64 patternCaseNo = 15;
+	int64 patternStatus = 16;
+}
+
+// Generic Request message
+// This id can be LS Id, Or PR Id Or Voyage Id
+// Usage at LoadingPlanGrpcServiceImpl.fetchSynopticRecordForPortRotationArrivalCondition
+message LoadingPlanIdRequest {
+	int64 id = 1;
+	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY
+	int64 patternId = 3;
+	string operationType = 4;
+	int64 portRotationId = 5;
+	int64 portId = 6;
+}
+
+message LoadingPlanCommonResponse{
+	ResponseStatus responseStatus = 1;
+	repeated LoadingSynopticResponse synopticData = 2;
+	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
+}
+
+message LoadingSynopticResponse{
+	int64 synopticTableId = 1;
+	int64 loadableStudyId = 2;
+	int64 portRotationId = 3;
+	int64 portId = 4;
+	string operationType = 5;
+	string timeOfSunrise = 6;
+	string timeOfSunset = 7;
+}
+
+message LoadingInfoSynopticalUpdateRequest {
+	int64 synopticalTableId = 1;
+	string timeOfSunrise = 2;
+	string timeOfSunset = 3;
+}
+
+message LoadableRuleRequest{
+	int64 vesselId = 1;
+	int64 sectionId = 2;
+	repeated RulePlans rulePlan = 3;
+	int64 loadableStudyId = 4;
+	bool isNoDefaultRule = 5;
+}
+
+message LoadableRuleReply{
+	ResponseStatus responseStatus = 1;
+	repeated RulePlans rulePlan = 2;
+}
+// <------ end loading plan, by john -------->
+
+message LoadablePatternPortWiseDetailsJson {
+	string loadablePatternDetails = 1;
+	ResponseStatus responseStatus = 2;
+	int64 loadableStudyId = 3;
 }

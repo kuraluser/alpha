@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { numberValidator } from '../../../cargo-planning/directives/validator/number-validator.directive';
+import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { PortMasterTransformationService } from '../../services/port-master-transformation.service';
 
 
@@ -27,7 +27,7 @@ export class AddBerthComponent implements OnChanges, OnInit {
   constructor(private fb: FormBuilder, private portMasterTransformationService: PortMasterTransformationService) { }
 
   /**
-   * 
+   *
    * Component lifecycle ngOnchanges
    *
    * @param {SimpleChanges} changes

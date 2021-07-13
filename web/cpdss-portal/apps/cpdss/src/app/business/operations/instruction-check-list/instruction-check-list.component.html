@@ -1,24 +1,37 @@
 <div class="row">
-    <div class="col-md-10">
-        <input class="form-check-input" [(ngModel)]="selectAll" type="checkbox" value="" id="flexCheckDefault">
-                Select All
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-10">
-        <ul class="list-group list-group-flush bg-transparent">
-            <li class="list-group-item bg-transparent" *ngFor="let row of instructionList">
-                <input class="form-check-input" [(ngModel)]="row.checked" type="checkbox" value="" id="flexCheckDefault">
-                {{row?.label}}
-                <ul class="list-group list-group-flush bg-transparent" *ngIf="row?.subList && row?.subList?.length">
-                    <li *ngFor="let subList of row.subList" class="list-group-item borderless bg-transparent">
-                        <input class="form-check-input" type="checkbox" [checked]="subList.checked" id="flexCheckDefault">
-                        {{subList?.label}}</li>
-                </ul>
-            </li>
-        </ul>
+    <div class="col-md-10 check-list-table">
+
+        <p-treeTable (onNodeUnselect)="nodeUnselect($event)" [value]="instructionListData" selectionMode="checkbox"
+            [(selection)]="selectedData">
+            <ng-template pTemplate="caption">
+                <div class="p-d-flex">
+                    <p-treeTableHeaderCheckbox></p-treeTableHeaderCheckbox>
+                    <span class="p-ml-2">{{'SELECT_ALL' | translate}}</span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                <tr>
+                    <td>
+                        <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                        <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+                        <span *ngIf="!rowNode.node.data.editable">{{rowNode?.node?.label}}</span>
+                        <span *ngIf="!rowNode.node.data.editable && rowNode.node.data.userCreated"
+                            (click)="editData(rowNode)" class="pencil-icon"></span>
+                        <span *ngIf="!rowNode.node.data.editable && rowNode.node.data.userCreated"
+                            (click)="deleteData(rowNode)" class="delete-icon"></span>
+                        <span (click)="addChild(rowNode)" class="btn btn-link icon-btn plus-icon-rounded ml-15"
+                            *ngIf="rowNode?.level === 0 && !rowNode.node.data.editable && rowNode.node.data.type !== 2"></span>
+                        <input #editField *ngIf="rowNode.node.data.editable" [maxlength]="textFieldLength"
+                            [(ngModel)]="rowNode.node.label" type="text"> <button *ngIf="rowNode.node.data.editable"
+                            (click)="saveData(rowNode)">{{ 'SAVE' | translate}}</button>
+                        <button *ngIf="rowNode.node.data.editable" (click)="cancel(rowNode)">{{'CANCEL' | translate}}</button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-treeTable>
     </div>
     <div class="col-md-2">
-        <button class="btn btn-light">Add New</button>
+        <button (click)="addParent()" class="btn btn-light">{{'ADD_NEW_BUTTON_LABEL' | translate}}</button>
+        <button (click)="addNewInstruction()" class="btn btn-light">{{'ADD_NEW_INSTRUCTION_BUTTON_LABEL' | translate}}</button>
     </div>
 </div>

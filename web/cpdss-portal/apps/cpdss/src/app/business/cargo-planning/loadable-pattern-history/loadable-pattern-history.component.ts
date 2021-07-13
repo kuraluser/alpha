@@ -15,6 +15,7 @@ import { ICargo, ICargoResponseModel, IPermissionContext, PERMISSION_ACTION, QUA
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { VALIDATION_AND_SAVE_STATUS } from '../models/loadable-plan.model';
 
 /**
  * Component class of pattern history screen
@@ -77,6 +78,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePlanPermissionContext: IPermissionContext;
   showPortRotationPopup = false;
   selectedLoadablePatternId: number;
+  readonly VALIDATION_AND_SAVE_STATUS = VALIDATION_AND_SAVE_STATUS;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -182,7 +184,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
           loadableStudy.isActionsEnabled = true;
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }
@@ -240,28 +242,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
       this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
-      const loadablePatterns = this.loadablePatterns?.map(pattern => {
-        const loadablePatternCargoDetails = pattern.loadablePatternCargoDetails.map(cargo => {
-          if (!cargo?.isCommingle) {
-            pattern?.loadableQuantityCommingleCargoDetails.forEach(commingleCargo => {
-              if (cargo.cargoAbbreviation === commingleCargo.cargo1Abbreviation) {
-                cargo.quantity = Number(cargo.quantity) - Number(commingleCargo?.cargo1MT);
-                cargo.orderedQuantity = Number(cargo.orderedQuantity) - Number(commingleCargo?.cargo1MT);
-              }
-              else if (cargo.cargoAbbreviation === commingleCargo.cargo2Abbreviation) {
-                cargo.quantity = Number(cargo.quantity) - Number(commingleCargo?.cargo2MT);
-                cargo.orderedQuantity = Number(cargo.orderedQuantity) - Number(commingleCargo?.cargo2MT);
-              }
-            });
-          }
-          return cargo;
-        });
-        pattern.loadablePatternCargoDetails = loadablePatternCargoDetails;
-        return pattern;
-      });
-      if (loadablePatterns) {
-        this.loadablePatterns = JSON.parse(JSON.stringify(loadablePatterns));
-      }
       this.convertQuantityToSelectedUnit();
       this.tankLists = this.loadablePatternResponse?.tankLists;
       this.rearBallastTanks = this.loadablePatternResponse?.rearBallastTanks;
@@ -351,7 +331,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
       pattern.loadablePatternCargoDetails = loadablePatternCargoDetails;
       const loadablePlanStowageDetails = pattern.loadablePlanStowageDetails?.map(loadableStowage => {
         if (loadableStowage) {
-          const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api);
+          const quantity = this.quantityPipe.transform(loadableStowage?.weightOrginal, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api);
           loadableStowage.quantity = Number(quantity);
         }
         return loadableStowage;
@@ -376,13 +356,24 @@ export class LoadablePatternHistoryComponent implements OnInit {
     const result = await this.loadablePatternApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, loadablePatternId).toPromise();
     this.ngxSpinnerService.hide();
     let detail;
+
     if (result.confirmed) {
       detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
     } else {
       detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
     }
 
-    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_SUMMARY', detail, 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL', 'LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_SUMMARY', detail, 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL', 'LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR',
+    , 'VALIDATE_AND_SAVE_ERROR','VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING']).toPromise();
+    if(!result.validated) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: translationKeys['VALIDATE_AND_SAVE_PENDING'] });
+      return;
+    }
+    else if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
+      const errorDetails = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED === result.loadablePatternStatusId ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
+      this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail:  errorDetails });
+      return;
+    }
 
     this.confirmationService.confirm({
       key: 'confirmation-alert',
