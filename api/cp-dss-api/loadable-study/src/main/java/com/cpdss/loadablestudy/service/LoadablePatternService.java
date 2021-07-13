@@ -90,7 +90,7 @@ public class LoadablePatternService {
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
 
-  @Autowired private AlgoErrorService algoErrorService;
+  @Autowired private AlgoService algoService;
 
   @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
 
@@ -339,8 +339,7 @@ public class LoadablePatternService {
     if (request.getAlgoErrorsCount() > 0) {
       algoErrorsRepository.deleteAlgoErrorByLSId(false, request.getLoadableStudyId());
       algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(false, request.getLoadableStudyId());
-      algoErrorService.saveAlgoErrorToDB(
-          request, new LoadablePattern(), loadableStudyOpt.get(), false);
+      algoService.saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
       loadableStudyRepository.updateLoadableStudyStatus(
           LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadableStudyOpt.get().getId());
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
@@ -510,8 +509,7 @@ public class LoadablePatternService {
       algoErrorsRepository.deleteAlgoError(false, request.getLoadablePatternId());
       algoErrorHeadingRepository.deleteAlgoErrorHeading(false, request.getLoadablePatternId());
 
-      algoErrorService.saveAlgoErrorToDB(
-          request, loadablePatternOpt.get(), new LoadableStudy(), true);
+      algoService.saveAlgoErrorToDB(request, loadablePatternOpt.get(), new LoadableStudy(), true);
 
     } else {
 
@@ -1150,7 +1148,7 @@ public class LoadablePatternService {
               .setMessage(INVALID_LOADABLE_STUDY_ID)
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
     } else {
-      boolean status = loadableStudyService.validateLoadableStudyForConfimPlan(loadableStudy.get());
+      boolean status = loadablePlanService.validateLoadableStudyForConfimPlan(loadableStudy.get());
       builder.setConfirmPlanEligibility(status);
       List<LoadablePattern> loadablePatterns =
           loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
@@ -1501,5 +1499,77 @@ public class LoadablePatternService {
    */
   public VesselInfo.VesselReply getVesselTanks(VesselInfo.VesselRequest request) {
     return this.vesselInfoGrpcService.getVesselTanks(request);
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.Builder
+      getLoadablePatternCommingleDetails(
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest request,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.Builder
+              builder) {
+    Optional<LoadablePlanCommingleDetails> loadablePlanComingleDetails =
+        loadablePlanCommingleDetailsRepository.findByIdAndIsActive(
+            request.getLoadablePatternCommingleDetailsId(), true);
+    if (!loadablePlanComingleDetails.isPresent()) {
+      log.info(
+          INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID,
+          request.getLoadablePatternCommingleDetailsId());
+      builder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+    } else {
+
+      buildLoadablePatternComingleDetails(loadablePlanComingleDetails.get(), builder);
+      builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    }
+    return builder;
+  }
+
+  /**
+   * Build upadate ullage reply
+   *
+   * @param builder
+   * @param loadablePlanCommingleDetails
+   * @return
+   */
+  private void buildLoadablePatternComingleDetails(
+      LoadablePlanCommingleDetails loadablePlanCommingleDetails,
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.Builder
+          builder) {
+    ofNullable(loadablePlanCommingleDetails.getApi())
+        .ifPresent(api -> builder.setApi(String.valueOf(api)));
+    ofNullable(loadablePlanCommingleDetails.getCargo1Abbreviation())
+        .ifPresent(cargo1Abbrivation -> builder.setCargo1Abbrivation(cargo1Abbrivation));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo2Abbreviation())
+        .ifPresent(cargo2Abbrivation -> builder.setCargo2Abbrivation(cargo2Abbrivation));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo1Percentage())
+        .ifPresent(
+            cargo1Percentage -> builder.setCargo1Percentage(String.valueOf(cargo1Percentage)));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo2Percentage())
+        .ifPresent(
+            cargo2Percentage -> builder.setCargo2Percentage(String.valueOf(cargo2Percentage)));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo1Mt())
+        .ifPresent(cargo1Quantity -> builder.setCargo1Quantity(String.valueOf(cargo1Quantity)));
+
+    ofNullable(loadablePlanCommingleDetails.getCargo2Mt())
+        .ifPresent(cargo2Quantity -> builder.setCargo2Quantity(String.valueOf(cargo2Quantity)));
+
+    ofNullable(loadablePlanCommingleDetails.getGrade()).ifPresent(grade -> builder.setGrade(grade));
+
+    ofNullable(loadablePlanCommingleDetails.getQuantity())
+        .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
+
+    ofNullable(loadablePlanCommingleDetails.getTankName())
+        .ifPresent(tankShortName -> builder.setTankShortName(tankShortName));
+
+    ofNullable(loadablePlanCommingleDetails.getTemperature())
+        .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
+
+    ofNullable(loadablePlanCommingleDetails.getId()).ifPresent(id -> builder.setId(id));
   }
 }

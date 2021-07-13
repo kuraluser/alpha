@@ -479,4 +479,43 @@ public class CargoService {
     commingleCargoEntity.setIsSlopOnly(requestRecord.getSlopOnly());
     return commingleCargoEntity;
   }
+
+  public LoadableStudy.CargoHistoryReply.Builder getCargoApiTempHistory(
+      LoadableStudy.CargoHistoryRequest request,
+      LoadableStudy.CargoHistoryReply.Builder replyBuilder) {
+    // fetch the history for last 5 years
+    Calendar now = Calendar.getInstance();
+    int year = now.get(Calendar.YEAR) - 5;
+    List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList =
+        this.apiTempHistoryRepository.findApiTempHistoryWithYearAfter(request.getCargoId(), year);
+    buildCargoHistoryReply(apiTempHistList, replyBuilder);
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
+    return replyBuilder;
+  }
+
+  private void buildCargoHistoryReply(
+      List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList,
+      com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder replyBuilder) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(ETA_ETD_FORMAT);
+    if (!CollectionUtils.isEmpty(apiTempHistList)) {
+      apiTempHistList.forEach(
+          apiTempRecord -> {
+            LoadableStudy.CargoHistoryDetail.Builder builder =
+                LoadableStudy.CargoHistoryDetail.newBuilder();
+            Optional.ofNullable(apiTempRecord.getCargoId()).ifPresent(builder::setCargoId);
+            Optional.ofNullable(apiTempRecord.getLoadingPortId())
+                .ifPresent(builder::setLoadingPortId);
+            Optional.ofNullable(apiTempRecord.getLoadedDate())
+                .ifPresent(loadedDate -> builder.setLoadedDate(formatter.format(loadedDate)));
+            Optional.ofNullable(apiTempRecord.getYear()).ifPresent(builder::setLoadedYear);
+            Optional.ofNullable(apiTempRecord.getMonth()).ifPresent(builder::setLoadedMonth);
+            Optional.ofNullable(apiTempRecord.getDate()).ifPresent(builder::setLoadedDay);
+            Optional.ofNullable(apiTempRecord.getApi())
+                .ifPresent(api -> builder.setApi(String.valueOf(api)));
+            Optional.ofNullable(apiTempRecord.getTemp())
+                .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
+            replyBuilder.addCargoHistory(builder);
+          });
+    }
+  }
 }

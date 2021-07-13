@@ -100,6 +100,8 @@ public class LoadablePlanService {
 
   @Autowired private SynopticalTableRepository synopticalTableRepository;
 
+  @Autowired private LoadableStudyRepository loadableStudyRepository;
+
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
@@ -2758,5 +2760,69 @@ public class LoadablePlanService {
     }
     algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
     return algoRequest;
+  }
+
+  public LoadableStudy.LoadablePlanDetailsReply.Builder getLoadablePlanDetails(
+      LoadableStudy.LoadablePlanDetailsRequest request,
+      LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(INVALID_LOADABLE_PATTERN_ID)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+    } else {
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> ls =
+          loadableStudyRepository.findByIdAndIsActive(
+              loadablePatternOpt.get().getLoadableStudy().getId(), true);
+      boolean status = this.validateLoadableStudyForConfimPlan(ls.get());
+      replyBuilder.setConfirmPlanEligibility(status);
+      buildLoadablePlanDetails(loadablePatternOpt, replyBuilder);
+    }
+    return replyBuilder;
+  }
+
+  /**
+   * This validation based on DSS-1860 If the ETA/ETD/Lay are empty for a LS, then this retunr value
+   * must false.
+   *
+   * @return
+   */
+  public boolean validateLoadableStudyForConfimPlan(
+      com.cpdss.loadablestudy.entity.LoadableStudy ls) {
+    boolean status = true;
+    Map<Long, Boolean> validationStack = new HashMap<>();
+    if (ls.getPortRotations() != null && !ls.getPortRotations().isEmpty()) {
+      for (LoadableStudyPortRotation pr : ls.getPortRotations()) {
+        if (pr.getId() > 0) {
+          if (pr.getEta() == null || pr.getEtd() == null || !isLayCanValid(pr)) {
+            validationStack.put(pr.getId(), false);
+          }
+        }
+      }
+    }
+    log.info(
+        "Loadable Study, Validate Plan, status - {}, LS Id - {}",
+        validationStack.isEmpty(),
+        ls.getId());
+    if (!validationStack.isEmpty()) {
+      log.info(
+          "Loadable Study, Validate Plan, Invalid Port Rotaion Ids - {}", validationStack.keySet());
+    }
+    return validationStack.isEmpty();
+  }
+
+  private boolean isLayCanValid(LoadableStudyPortRotation lsPr) {
+    List ids =
+        Arrays.asList(LOADING_OPERATION_ID, STS_LOADING_OPERATION_ID, STS_DISCHARGING_OPERATION_ID);
+    if (ids.contains(lsPr.getOperation().getId())) {
+      if (lsPr.getLayCanTo() == null || lsPr.getLayCanFrom() == null) return false;
+      else return true;
+    }
+    return true;
   }
 }
