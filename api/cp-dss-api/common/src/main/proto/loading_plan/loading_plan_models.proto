@@ -391,16 +391,20 @@ message LoadingInstructionRequest {
 
 
 message LoadingInstructions {
-  int64 instructionId =1;
-  string instruction = 2;
-  bool isChecked =3;
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 instructionId =3;
+  string instruction = 4;
+  bool isChecked =5;
 }
 
 message LoadingInstructionSubHeader {
-  int64 headerId = 1;
-  string headerName = 2;
-  bool isChecked =3;
-  repeated LoadingInstructions loadingInstructionsList =4;
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 subHeaderId = 3;
+  string subHeaderName = 4;
+  bool isChecked =5;
+  repeated LoadingInstructions loadingInstructionsList =6;
 }
 
 message LoadingInstructionGroup {
@@ -409,10 +413,8 @@ message LoadingInstructionGroup {
 }
 
 message LoadingInstructionDetails {
-  int64 instructionTypeId = 1;
-  int64 instructionHeaderId = 2;
-  repeated LoadingInstructionSubHeader loadingInstructionSubHeader =3;
-  repeated LoadingInstructionGroup loadingInstructionGroupList =4;
-  ResponseStatus responseStatus = 5;
+  repeated LoadingInstructionSubHeader loadingInstructionSubHeader =1;
+  repeated LoadingInstructionGroup loadingInstructionGroupList =2;
+  ResponseStatus responseStatus = 3;
 }
 

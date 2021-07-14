@@ -66,7 +66,8 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 			log.info("Found Suitable Loading information of port {}",loadingInformation.get().getPortXId());
 			final Long PortXId = loadingInformation.get().getPortXId();
 			List<LoadingInstructionHeader> groupNameList = loadingInstructionHeaderRepository
-					.getAllLoadingInstructionHeader();
+					.findAllByIsActiveTrue();
+			log.info("Found instructionGroup {}",groupNameList.toString());
 			List<LoadingInstructionGroup> groupBuilderlist = groupNameList.stream().map(item -> LoadingInstructionGroup
 					.newBuilder().setGroupId(item.getId()).setGroupName(item.getHeaderName()).build())
 					.collect(Collectors.toList());
@@ -90,6 +91,7 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 					response = getAllLoadingInstructions(request, response);
 				}
 			} else {
+				log.info("Fetching existing data from instruction table");
 				response = getAllLoadingInstructions(request, response);
 			}
 		}
@@ -105,14 +107,14 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 		log.info("listLoadingInstruction {}",listLoadingInstruction.toString());
 		if (listLoadingInstruction != null && !listLoadingInstruction.isEmpty()) {
 			log.info("Found list listLoadingInstruction");
-			response = buildLoadingInstructionDetails(listLoadingInstruction);
+			response = buildLoadingInstructionDetails(listLoadingInstruction,response);
 			response.setResponseStatus(
 					ResponseStatus.newBuilder().setMessage("Successfull").setStatus(SUCCESS).build());
 		}
 		return response;
 	}
 
-	private Builder buildLoadingInstructionDetails(List<LoadingInstruction> listLoadingInstruction) {
+	private Builder buildLoadingInstructionDetails(List<LoadingInstruction> listLoadingInstruction, Builder responseBuilder) {
 
 		List<LoadingInstruction> subHeaderList = listLoadingInstruction.stream()
 				.filter(item -> item.getParentInstructionXId() == null).collect(Collectors.toList());
@@ -120,31 +122,30 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 		List<LoadingInstruction> instructionList = listLoadingInstruction.stream()
 				.filter(item -> item.getParentInstructionXId() != null).collect(Collectors.toList());
 
-		LoadingInstructionDetails.Builder responseBuilder = LoadingInstructionDetails.newBuilder();
-		for (LoadingInstruction instruction : subHeaderList) {
-			responseBuilder.setInstructionHeaderId(instruction.getLoadingInstructionHeaderXId());
-			// responseBuilder.setInstructionHeaderName(instruction.getLoadingInstructionHeaderName());
-			responseBuilder.setInstructionTypeId(instruction.getLoadingTypeXId());
-
 			List<LoadingInstructionSubHeader> subHeaderBuilderList = new ArrayList<>();
 			for (LoadingInstruction headerInstruction : subHeaderList) {
+				log.info("inside  header loop");
 				LoadingInstructionSubHeader.Builder subHeaderBuilder = LoadingInstructionSubHeader.newBuilder();
-				subHeaderBuilder.setHeaderId(headerInstruction.getId());
-				subHeaderBuilder.setHeaderName(headerInstruction.getLoadingInstruction());
+				subHeaderBuilder.setSubHeaderId(headerInstruction.getId());
+				subHeaderBuilder.setSubHeaderName(headerInstruction.getLoadingInstruction());
 				subHeaderBuilder.setIsChecked(headerInstruction.getIsChecked());
+				subHeaderBuilder.setInstructionHeaderId(headerInstruction.getLoadingInstructionHeaderXId());
+				subHeaderBuilder.setInstructionTypeId(headerInstruction.getLoadingTypeXId());
 
 				List<LoadingInstructions> instructionsBuilderList = new ArrayList<>();
 
 				instructionsBuilderList = instructionList.stream()
 						.filter(item -> item.getParentInstructionXId() == headerInstruction.getId())
 						.map(item -> LoadingInstructions.newBuilder().setInstructionId(item.getId())
+								.setInstructionHeaderId(item.getLoadingInstructionHeaderXId())
+								.setInstructionTypeId(item.getLoadingTypeXId())
 								.setInstruction(item.getLoadingInstruction()).setIsChecked(item.getIsChecked()).build())
 						.collect(Collectors.toList());
 				subHeaderBuilder.addAllLoadingInstructionsList(instructionsBuilderList);
 				subHeaderBuilderList.add(subHeaderBuilder.build());
 			}
 			responseBuilder.addAllLoadingInstructionSubHeader(subHeaderBuilderList);
-		}
+		
 
 		return responseBuilder;
 	}

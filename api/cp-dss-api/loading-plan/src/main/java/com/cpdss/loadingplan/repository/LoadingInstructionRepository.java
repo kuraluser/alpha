@@ -8,26 +8,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LoadingInstructionRepository
-    extends CommonCrudRepository<LoadingInstruction, Long> {
+public interface LoadingInstructionRepository extends CommonCrudRepository<LoadingInstruction, Long> {
 
-  @Query(
-      value =
-          "select LIT.id,LIT.type_name,LI.reference_xid,LH.id,LH.header_name,"
-              + " LI.id,LI.loading_instruction,LI.parent_instruction_xid,"
-              + " LI.is_checked from loading_instructions LI "
-              + " join loading_instructions_header LH on LI.loading_instruction_header_xid = LH.id"
-              + " join loading_instructions_type LIT ON LIT.id = LI.loading_type_xid"
-              + " join loading_information LIF on LI.loading_xid = LIF.id"
-              + " where LIF.vessel_xid=:vesselId and LI.loading_xid= :loadingInfoId and LIF.port_rotation_xid =:portRotationId "
-              + "and LI.is_active = true",
-      nativeQuery = true)
-  public List<LoadingInstruction> getAllLoadingInstructions(
-      long vesselId, long loadingInfoId, long portRotationId);
+	@Query(value = "select * from loading_instructions LI "
+			+ " join loading_information LIF on LI.loading_xid = LIF.id"
+			+ " where LIF.vessel_xid=:vesselId and LI.loading_xid= :loadingInfoId and LIF.port_rotation_xid =:portRotationId "
+			+ "and LI.is_active = true", nativeQuery = true)
+	public List<LoadingInstruction> getAllLoadingInstructions(long vesselId, long loadingInfoId, long portRotationId);
 
-  @Query(
-      value =
-          "SELECT CASE WHEN count(*)>0 then true else false END FROM LoadingInstruction "
-              + " where loading_xid = ?1 and is_active = true")
-  public Boolean findAny(Long loadingInfoId);
+	@Query(value = "SELECT CASE WHEN count(*)>0 then true else false END FROM LoadingInstruction "
+			+ " where loading_xid = ?1 and is_active = true")
+	public Boolean findAny(Long loadingInfoId);
 }

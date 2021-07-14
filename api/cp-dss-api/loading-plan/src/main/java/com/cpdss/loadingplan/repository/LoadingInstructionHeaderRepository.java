@@ -13,5 +13,7 @@ public interface LoadingInstructionHeaderRepository extends CommonCrudRepository
 
 	@Query(value = "SELECT * FROM loading_instructions_header where is_active=true", nativeQuery = true)
 	public List<LoadingInstructionHeader> getAllLoadingInstructionHeader();
+	
+	public List<LoadingInstructionHeader> findAllByIsActiveTrue();
 
 }
