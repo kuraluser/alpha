@@ -117,6 +117,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setCargoNominationPortDetails(
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId));
+    dischargeStudyCargo.setMode(2L);
     return dischargeStudyCargo;
   }
 
@@ -525,7 +526,12 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
             ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
-            Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
+            ofNullable(cargoNomination.getMode()).ifPresent(builder::setMode);
+            Optional.ofNullable(cargoNomination.getApi())
+                .ifPresent(val -> builder.setApi(String.valueOf(val)));
+            Optional.ofNullable(cargoNomination.getTemperature())
+                .ifPresent(val -> builder.setTemperature(String.valueOf(val)));
+
             ofNullable(cargoNomination.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object

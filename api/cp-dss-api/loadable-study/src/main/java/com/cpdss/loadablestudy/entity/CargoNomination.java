@@ -60,6 +60,9 @@ public class CargoNomination extends EntityDoc {
   @Column(name = "quantity")
   private BigDecimal quantity;
 
+  @Column(name = "mode_xid")
+  private Long mode;
+
   @OneToMany(
       mappedBy = "cargoNomination",
       cascade = CascadeType.ALL,

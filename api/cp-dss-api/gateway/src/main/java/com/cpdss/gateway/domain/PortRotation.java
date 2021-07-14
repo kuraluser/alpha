@@ -60,5 +60,17 @@ public class PortRotation {
 
   private Long dischargeStudyId;
 
+  private Boolean isBackLoadingEnabled;
+
+  private List<BackLoading> backLoading;
+
+  private Long cowId;
+
+  private Long percentage;
+
+  private List<Long> tanks;
+
+  private List<Long> instructionId;
+
   private List<CargoNomination> cargoNominationList;
 }

@@ -798,7 +798,7 @@ message CargoNominationDetail {
 	string cargoName = 16;
 	string api = 17;
 	string temperature = 18;
-
+	int64 mode = 19;
 }
 
 message CargoNominationRequest {
@@ -851,6 +851,13 @@ message PortRotationDetail{
 	int64 portTimezoneId = 19;
 	bool isLandingPage=20;
 	string operationType=21;
+	bool isBackLoadingEnabled = 22;
+	repeated BackLoading backLoading = 23;
+	repeated int64 instructionId = 24;
+	int64 cowId = 25;
+	int64 percentage = 26;
+	repeated int64 tanks = 27;
+	
 }
 
 message Operation{
