@@ -12,7 +12,6 @@ import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import io.grpc.stub.StreamObserver;
 import java.util.*;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,76 +91,5 @@ public class AlgoErrorService {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
-  }
-
-  public void fetchAllErrors(
-      com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-      StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-    String errorHeading = request.getErrorHeading();
-    LoadableStudy.AlgoErrors.Builder builder = LoadableStudy.AlgoErrors.newBuilder();
-    try {
-      if (errorHeading != null && errorHeading.length() > 0) {
-        Optional<List<AlgoErrorHeading>> alogError =
-            algoErrorHeadingRepository.findAllByErrorHeading(errorHeading);
-        if (alogError.isPresent()) {
-          log.info(
-              "Alog Error for Heading {}, Found with size {}",
-              errorHeading,
-              alogError.get().size());
-          for (AlgoErrorHeading alEr : alogError.get()) {
-            List<String> res = new ArrayList<>();
-            res.addAll(
-                alEr.getAlgoErrors().stream()
-                    .map(val -> val.getErrorMessage())
-                    .collect(Collectors.toList()));
-            builder.addAllErrorMessages(res);
-            builder.setErrorHeading(request.getErrorHeading());
-          }
-        }
-      }
-      builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
-    } catch (Exception e) {
-      e.printStackTrace();
-      builder.setResponseStatus(
-          Common.ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED));
-    } finally {
-      responseObserver.onNext(builder.build());
-      responseObserver.onCompleted();
-    }
-  }
-
-  /**
-   * Algorithm Error For Loadable Study
-   *
-   * @param loadableStudy - Object
-   * @param replyBuilder - GRPC Object
-   */
-  public void buildLoadableStudyErrorDetails(
-      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
-      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder replyBuilder) {
-
-    Optional<List<AlgoErrorHeading>> alogError =
-        algoErrorHeadingRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
-    if (alogError.isPresent()) {
-      log.info("Adding ALGO error");
-      for (AlgoErrorHeading errorHeading : alogError.get()) {
-        LoadableStudy.AlgoErrors.Builder errorBuilder = LoadableStudy.AlgoErrors.newBuilder();
-
-        Optional<List<com.cpdss.loadablestudy.entity.AlgoErrors>> algoError =
-            algoErrorsRepository.findByAlgoErrorHeadingAndIsActive(errorHeading, true);
-        if (algoError.isPresent()) {
-          List<String> res = new ArrayList<>();
-          res.addAll(
-              algoError.get().stream()
-                  .map(val -> val.getErrorMessage())
-                  .collect(Collectors.toList()));
-          errorBuilder.addAllErrorMessages(res);
-        }
-
-        errorBuilder.setErrorHeading(errorHeading.getErrorHeading());
-        replyBuilder.addAlgoErrors(errorBuilder);
-      }
-    }
-    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 }

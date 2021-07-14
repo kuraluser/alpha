@@ -1,10 +1,10 @@
 export const environment = {
     SHIP_ID: `${process.env.SHIP_ID || '123456asdef'}`,
     ENVOY_CLIENT_PATH: `${process.env.CONTAINER_VOLUME_PATH}/client/clientData`,
-    SOCKET_URL: `https://test-cpdss-comm.alphaorimarine.com:443/id-${process.env.SHIP_ID || '123456asdef'}`,
+    SOCKET_URL: `${process.env.ENVOY_SERVER_URL}/id-${process.env.SHIP_ID || '123456asdef'}`,
     SPLIT_FILE_SIZE: 1000*20,
     PORT: `${process.env.PORT || 3000}`,
-    DB_NAME: 'envoy_client',
+    DB_NAME: process.env.DB_NAME,
     DB_USERNAME: process.env.DB_USER,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_HOST: process.env.DB_HOST,

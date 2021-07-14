@@ -10,29 +10,31 @@
                 <p-dropdown styleClass="dropdown-w-180" [options]="voyageInfo" optionLabel="voyageNo"
                     [(ngModel)]="selectedVoyage" resetFilterOnHide="true"></p-dropdown>
             </div>
-            <div class="col" *ngIf="vesselInfo">
-                <a class="btn btn-link icon-btn plus-icon-rounded ml-15" (click)="showDialog()"
-                    id="show-popup" *cpdssPortalPermission="newVoyagePermissionContext">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
-                    <ng-container *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
-
-                <!--
-                    Edit port rotation is disabled by commenting the html below as per the suggestion in following mail
-                    https://outlook.office.com/mail/inbox/id/AAQkADQxYWUyMmFhLTEyMDItNDk3Ni1iNGRjLTAzOGIxZjhmN2E2ZAAQAJwYEa6k3kDOkxyNpQzebG0%3D
-                -->
-                <!-- <a class="btn btn-link icon-btn pencil-icon"
-                    (click)="showEditPortRotation()" id="show-edit-port-rotation-popup" *cpdssPortalPermission="editPortRotationPermissionContext">{{'EDIT_PORT_ROTATION' |
-                    translate}}</a> -->
-
-                </ng-container>
-                <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
-            </div>
-            <div class="pr-15">
+            
+            <div class="pr-15 pt-10 col text-right">
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
-            <div class="pr-15">
+            <div class="pr-30 pt-10 ">
                 {{portRotationService.voyageDistance? (portRotationService.voyageDistance | number) :
                 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
+            <div class=" text-right" *ngIf="vesselInfo">
+               
+                <ng-container *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
+
+            <!--
+                Edit port rotation is disabled by commenting the html below as per the suggestion in following mail
+                https://outlook.office.com/mail/inbox/id/AAQkADQxYWUyMmFhLTEyMDItNDk3Ni1iNGRjLTAzOGIxZjhmN2E2ZAAQAJwYEa6k3kDOkxyNpQzebG0%3D
+            -->
+            <!-- <a class="btn btn-link icon-btn pencil-icon"
+                (click)="showEditPortRotation()" id="show-edit-port-rotation-popup" *cpdssPortalPermission="editPortRotationPermissionContext">{{'EDIT_PORT_ROTATION' |
+                translate}}</a> -->
+
+            </ng-container>
+            <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
+            <a class="btn btn-main   ml-30" (click)="showDialog()"
+            id="show-popup" *cpdssPortalPermission="newVoyagePermissionContext">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
+        </div>
         </div>
         <div class="row">
             <div class="col">

@@ -20,8 +20,8 @@
                         <span *ngIf="!rowNode.node.data.editable && rowNode.node.data.userCreated"
                             (click)="deleteData(rowNode)" class="delete-icon"></span>
                         <span (click)="addChild(rowNode)" class="btn btn-link icon-btn plus-icon-rounded ml-15"
-                            *ngIf="rowNode?.level === 0 && !rowNode.node.data.editable"></span>
-                        <input *ngIf="rowNode.node.data.editable" [maxlength]="textFieldLength"
+                            *ngIf="rowNode?.level === 0 && !rowNode.node.data.editable && rowNode.node.data.type !== 2"></span>
+                        <input #editField *ngIf="rowNode.node.data.editable" [maxlength]="textFieldLength"
                             [(ngModel)]="rowNode.node.label" type="text"> <button *ngIf="rowNode.node.data.editable"
                             (click)="saveData(rowNode)">{{ 'SAVE' | translate}}</button>
                         <button *ngIf="rowNode.node.data.editable" (click)="cancel(rowNode)">{{'CANCEL' | translate}}</button>
@@ -32,5 +32,6 @@
     </div>
     <div class="col-md-2">
         <button (click)="addParent()" class="btn btn-light">{{'ADD_NEW_BUTTON_LABEL' | translate}}</button>
+        <button (click)="addNewInstruction()" class="btn btn-light">{{'ADD_NEW_INSTRUCTION_BUTTON_LABEL' | translate}}</button>
     </div>
 </div>

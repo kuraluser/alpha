@@ -27,7 +27,7 @@
             </span>
         </div>
         <div class="text-right pr-15">
-            <button class="btn btn-main" (click)="callNewDischargeStudyPopup()"
+            <button class="btn btn-main" (click)="callNewDischargeStudyPopup(false)" *ngIf="this.selectedVoyage?.statusId === VOYAGE_STATUS.ACTIVE"
                 id="btn_callNewDischargeStudyPopup">{{'DISCHARGE_STUDY_LIST_CREATE_NEW_DISCHARGE_STUDY' |
                 translate}}</button>
         </div>
@@ -42,6 +42,6 @@
         </div>
         </div>
     </div>
-<cpdss-portal-new-discharge-study-pop-up [display]="display" [isEdit]="edit"
-    [selectedDischargeStudy]="selectedDischargeStudy" (displayPopup)="display=false">
+<cpdss-portal-new-discharge-study-pop-up [display]="display" [isEdit]="edit" [dischargeStudyList]="dischargeStudyList"
+    [selectedDischargeStudy]="selectedDischargeStudy" (displayPopup)="display=false" [vesselInfoList]="vesselDetails" [selectedVoyage]="selectedVoyage" (addedNewDischargeStudy)="onNewDischargeStudyAdded($event)">
 </cpdss-portal-new-discharge-study-pop-up>

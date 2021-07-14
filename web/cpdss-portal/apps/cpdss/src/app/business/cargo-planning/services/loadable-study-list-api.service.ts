@@ -62,6 +62,7 @@ export class LoadableStudyListApiService {
       }
 
     }
+    
     return this.commonApiService.postFormData<ILoadableStudyResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudy.id}`, formData);
   }
 

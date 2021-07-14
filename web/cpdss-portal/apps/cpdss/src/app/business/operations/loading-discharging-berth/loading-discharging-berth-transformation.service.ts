@@ -27,6 +27,10 @@ export class LoadingDischargingBerthTransformationService {
       },
       itemsToBeAgreedWith: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_ITEMS_TO_BE_AGREED_WITH_CHARACTER_LIMIT'
+      },
+      lineDisplacement: {
+        'min': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MIN',
+        'max': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MAX'
       }
     }
   }
