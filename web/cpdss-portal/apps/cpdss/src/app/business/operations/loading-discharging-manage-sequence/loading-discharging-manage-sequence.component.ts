@@ -39,9 +39,19 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.initiLoadingSequenceArray();
     }
   }
+
+  @Input() get editable(): boolean {
+    return this._editable;
+  }
+
+  set editable(editable: boolean) {
+    this._editable = editable;
+  }
+
   @Output() updateLoadingDelays: EventEmitter<ILoadingDelays[]> = new EventEmitter();
 
   private _loadingSequences: ILoadingSequences;
+  private _editable: boolean = true;
 
   loadingSequenceForm: FormGroup;
   columns: IDataTableColumn[];
@@ -76,7 +86,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.loadingSequences.loadingDelays.unshift(initialDelay)
     }
     const _loadingDelays = this.loadingSequences.loadingDelays?.map((loadingDelay) => {
-      const loadingSequenceData = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, true, this.listData);
+      const loadingSequenceData = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, this.editable, this.listData);
       if (!loadingDelay.cargoId && !loadingDelay.quantity) {
         this.addInitialDelay = true;
       }

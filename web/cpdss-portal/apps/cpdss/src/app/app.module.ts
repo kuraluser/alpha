@@ -25,10 +25,12 @@ import { GlobalErrorHandler } from './shared/services/error-handlers/global-erro
 import { ConfirmationAlertModule } from './shared/components/confirmation-alert/confirmation-alert.module';
 import { FocusTrapModule } from 'primeng/focustrap';
 import { tokenAuthCPDSSInitializer } from "../app/shared/utils/token-auth.cpdss.init";
+import { HasUnsavedDataGuard } from './shared/services/guards/has-unsaved-data.guard';
 
 let providers: any = [
   { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
-  { provide: ErrorHandler, useClass: GlobalErrorHandler }
+  { provide: ErrorHandler, useClass: GlobalErrorHandler },
+  HasUnsavedDataGuard
 ];
 
 if (environment.name === 'shore') {

@@ -9,22 +9,28 @@
         <cpdss-portal-departure-condition></cpdss-portal-departure-condition>
         <div class="row border-bottom border-secondary pb-5">
             <div class="col-md-12 pt-20">
+                <label>{{'LOADING_PLAN_CARGO_SEQUENCE' | translate}}</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 pt-5">
+                <div class="row">
+                    <cpdss-portal-loading-discharging-manage-sequence [cargos]="cargos"
+                        [loadableQuantityCargo]="loadableQuantityCargoDetails" [loadingSequences]="loadingSequences"></cpdss-portal-loading-discharging-manage-sequence>
+                </div>
+            </div>
+        </div>
+        <div class="row border-bottom border-secondary pb-5">
+            <div class="col-md-12 pt-20">
                 <label>{{'LOADING_RATE_CARGO_TYPE_TOPPING_OFF_SCIENCE' | translate}}</label>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12 pt-5">
-                <!-- <div class="row border-bottom border-secondary">
-                    <div class="col-md-3">
-                        <label>Topping Off Rate</label>
-                    </div>
-                    <div class="col-md-9 pb-5">
-                        <button class="btn btn-main">Initial</button>
-                        <button class="btn btn-main">Final</button>
-                    </div>
-                </div> -->
                 <div class="row">
-                    <cpdss-portal-topping-off-tank-table></cpdss-portal-topping-off-tank-table>
+                    <cpdss-portal-topping-off-tank-table [cargos]="cargos" [toppingOffSequence]="toppingOffSequence"
+                        [cargoTanks]="cargoTanks">
+                    </cpdss-portal-topping-off-tank-table>
                 </div>
             </div>
         </div>

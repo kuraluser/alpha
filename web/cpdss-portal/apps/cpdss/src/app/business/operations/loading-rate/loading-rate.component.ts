@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors, FormControl, Validators } from '@angular/forms';
-import { DATATABLE_EDITMODE } from '../../../shared/components/datatable/datatable.model';
 import { ILoadingRates } from '../models/loading-information.model';
 import { compareNumberValidator } from '../directives/validator/compare-number-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
@@ -31,18 +30,18 @@ export class LoadingRateComponent implements OnInit {
   }
 
   @Input()
-  get editMode(): DATATABLE_EDITMODE {
+  get editMode(): boolean {
     return this._editMode;
   }
 
-  set editMode(editMode: DATATABLE_EDITMODE) {
+  set editMode(editMode: boolean) {
     this._editMode = editMode;
   }
 
   @Output() loadingRateChange: EventEmitter<ILoadingRates> = new EventEmitter();
 
 
-  private _editMode: DATATABLE_EDITMODE;
+  private _editMode: boolean;
   private _loadingRates: ILoadingRates;
   public errorMesages: any;
 

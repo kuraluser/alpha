@@ -4,6 +4,9 @@
       {{selectedPortName}}
     </div>
     <div class="col text-right">
+      <button class="btn btn-main mr-10" id="save_loading_information"  *ngIf="currentTab === OPERATION_TAB.INFORMATION"  (click)="saveLoadingInformationData()">
+        {{'LOADING_INFORMATION_SAVE_BUTTON_LABEL' |translate}}
+    </button>
       <button class="btn btn-main mr-10" id="in_use"  [disabled]="true">
         <span class="pi pi-check check-rounded v-t-bottom"></span>
         {{'LOADING_INFORMATION_IN_USE_BUTTON_LABEL' |translate}}
@@ -60,7 +63,7 @@
     </div>
   </div>
 
-    <cpdss-portal-loading-information [vesselId]="vesselId" *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId" [portRotationId]="portRotationId"></cpdss-portal-loading-information>
+    <cpdss-portal-loading-information [cargos]="cargos" [vesselId]="vesselId" *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId" [portRotationId]="portRotationId"></cpdss-portal-loading-information>
     <!-- <div class="col-4">
         <div class="row">
             <div class="col">
@@ -122,6 +125,6 @@
     </div>
   </div>
   <div class="row" *ngIf="currentTab === OPERATION_TAB.PLAN">
-      <cpdss-portal-loading-plan></cpdss-portal-loading-plan>
+      <cpdss-portal-loading-plan [cargos]="cargos"></cpdss-portal-loading-plan>
   </div>
 </div>
