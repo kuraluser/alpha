@@ -2,14 +2,12 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.util.Set;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "loading_instructions")
@@ -17,6 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LoadingInstruction extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -26,13 +25,13 @@ public class LoadingInstruction extends EntityDoc {
 
   @Column(name = "parent_instruction_xid")
   private Long parentInstructionXId;
-  
+
   @Column(name = "loading_type_xid")
   private Long loadingTypeXId;
-  
+
   @Column(name = "loading_instruction_header_xid")
   private Long loadingInstructionHeaderXId;
-  
+
   @Column(name = "is_checked")
   private Boolean isChecked;
 
@@ -41,12 +40,10 @@ public class LoadingInstruction extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
- 
-  
+
   @Column(name = "loading_instruction_templatexid")
   private Long loadingInstructionTemplateXId;
-  
+
   @Column(name = "loading_xid")
   private Long loadingXId;
-   
 }

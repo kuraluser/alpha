@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "loading_instructions")
@@ -14,30 +15,28 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LoadingInstructionTemplate extends EntityDoc {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@ManyToOne
-	@JoinColumn(name = "loading_insruction_typexid")
-	private LoadingInstructionType loading_insruction_typexid;
+  @ManyToOne
+  @JoinColumn(name = "loading_insruction_typexid")
+  private LoadingInstructionType loadingInsructionType;
 
-	@Column(name = "loading_instruction")
-	private String loading_instruction;
+  @Column(name = "loading_instruction")
+  private String loading_instruction;
 
-	@ManyToOne
-	@JoinColumn(name = "loading_instruction_header_xid")
-	private LoadingInstructionHeader loadingInstructionHeaderXId;
+  @ManyToOne
+  @JoinColumn(name = "loading_instruction_header_xid")
+  private LoadingInstructionHeader loadingInstructionHeaderXId;
 
-	@Column(name = "reference_xid")
-	private Long referenceXId;
+  @Column(name = "reference_xid")
+  private Long referenceXId;
 
-	@Column(name = "is_active")
-	private Boolean isActive;
-	
-	@Column(name = "parent_instruction_xid")
-	private Long parentInstructionXId;
-	
+  @Column(name = "is_active")
+  private Boolean isActive;
 
-
+  @Column(name = "parent_instruction_xid")
+  private Long parentInstructionXId;
 }

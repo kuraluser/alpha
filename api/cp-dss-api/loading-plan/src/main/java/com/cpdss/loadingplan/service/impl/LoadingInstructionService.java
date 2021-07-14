@@ -1,36 +1,38 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
-import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.loading_plan.LoadingInstructionServiceGrpc.LoadingInstructionServiceImplBase;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails.Builder;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionSubHeader;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructions;
-import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.entity.LoadingInstruction;
-import com.cpdss.loadingplan.entity.LoadingInstructionTemplate;
-import com.cpdss.loadingplan.repository.LoadingInformationRepository;
-import com.cpdss.loadingplan.repository.LoadingInstructionRepository;
-import com.cpdss.loadingplan.repository.LoadingInstructionTemplateRepository;
-
-import io.grpc.stub.StreamObserver;
-import lombok.extern.slf4j.Slf4j;
-
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.FAILED;
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.SUCCESS;
 
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.loading_plan.LoadingInstructionServiceGrpc.LoadingInstructionServiceImplBase;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails.Builder;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionGroup;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionSubHeader;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructions;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.LoadingInstruction;
+import com.cpdss.loadingplan.entity.LoadingInstructionHeader;
+import com.cpdss.loadingplan.entity.LoadingInstructionTemplate;
+import com.cpdss.loadingplan.repository.LoadingInformationRepository;
+import com.cpdss.loadingplan.repository.LoadingInstructionHeaderRepository;
+import com.cpdss.loadingplan.repository.LoadingInstructionRepository;
+import com.cpdss.loadingplan.repository.LoadingInstructionTemplateRepository;
+import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service
+@GrpcService
 public class LoadingInstructionService extends LoadingInstructionServiceImplBase {
 
 	@Autowired
@@ -43,44 +45,71 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 	LoadingInformationRepository loadingInformationRepository;
 
 	@Autowired
+	LoadingInstructionHeaderRepository loadingInstructionHeaderRepository;
+
+	@Autowired
 	LoadingInformationServiceImpl loadingInformationServiceImpl;
 
 	@Override
 	public void getLoadingInstructions(LoadingInstructionRequest request,
 			StreamObserver<LoadingInstructionDetails> responseObserver) {
+		log.info("Inside getLoadingInstructions");
 
+		
 		LoadingInstructionDetails.Builder response = LoadingInstructionDetails.newBuilder();
-		Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
-		responseStatus.setStatus(FAILED);
+		response.setResponseStatus(Common.ResponseStatus.newBuilder().setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+				.setStatus(FAILED).build());
 
 		Optional<LoadingInformation> loadingInformation = loadingInformationServiceImpl.getLoadingInformation(
-				request.getLoadingInfoId(), request.getVesselId(), null, null, request.getPortRotationId());
-
-		if (!loadingInformation.isPresent()) {
-			response.setResponseStatus(responseStatus.build());
-		}
-
-		final Long PortXId = loadingInformation.get().getPortXId();
-
-		if (!loadingInstructionRepository.findAny(request.getLoadingInfoId())) {
-			List<LoadingInstructionTemplate> templateList = loadingInstructionTemplateRepository
-					.getCommonInstructionTemplate(PortXId);
-			List<LoadingInstruction> instructionList = templateList.stream()
-					.map(template -> new LoadingInstruction(template.getLoading_instruction(),
-							template.getParentInstructionXId(), template.getLoading_insruction_typexid().getId(),
-							template.getLoadingInstructionHeaderXId().getId(), true, template.getReferenceXId(),
-							template.getIsActive(), template.getId(), request.getLoadingInfoId()))
+				request.getLoadingInfoId(), request.getVesselId(), 0L, 0L, request.getPortRotationId());
+		if (!loadingInformation.isEmpty()) {
+			log.info("Found Suitable Loading information of port {}",loadingInformation.get().getPortXId());
+			final Long PortXId = loadingInformation.get().getPortXId();
+			List<LoadingInstructionHeader> groupNameList = loadingInstructionHeaderRepository
+					.getAllLoadingInstructionHeader();
+			List<LoadingInstructionGroup> groupBuilderlist = groupNameList.stream().map(item -> LoadingInstructionGroup
+					.newBuilder().setGroupId(item.getId()).setGroupName(item.getHeaderName()).build())
 					.collect(Collectors.toList());
-			loadingInstructionRepository.saveAll(instructionList);
+			response.addAllLoadingInstructionGroupList(groupBuilderlist);
+			
+			if (!loadingInstructionRepository.findAny(request.getLoadingInfoId())) {
+				log.info("First time intruction fetch - fetching data from template master");
+				List<LoadingInstructionTemplate> templateList = loadingInstructionTemplateRepository
+						.findALLByLoadingInsructionTypeIdAndReferenceId(1L,PortXId);
+				log.info("templateList {}",templateList.toString());
+				if (templateList != null && !templateList.isEmpty()) {
+					List<LoadingInstruction> instructionList = templateList.stream()
+							.map(template -> new LoadingInstruction(template.getLoading_instruction(),
+									template.getParentInstructionXId(),
+									template.getLoadingInsructionType().getId(),
+									template.getLoadingInstructionHeaderXId().getId(), true, template.getReferenceXId(),
+									template.getIsActive(), template.getId(), request.getLoadingInfoId()))
+							.collect(Collectors.toList());
+					log.info("Saving general instruction for first time");
+					loadingInstructionRepository.saveAll(instructionList);
+					response = getAllLoadingInstructions(request, response);
+				}
+			} else {
+				response = getAllLoadingInstructions(request, response);
+			}
 		}
-
-		List<LoadingInstruction> listLoadingInstruction = loadingInstructionRepository.getAllLoadingInstructions(
-				request.getVesselId(), request.getLoadingInfoId(), request.getPortRotationId());
-
-		response = buildLoadingInstructionDetails(listLoadingInstruction);
-		response.setResponseStatus(responseStatus.setStatus(SUCCESS));
+		log.info("Exiting getLoadingInstructions");
 		responseObserver.onNext(response.build());
 		responseObserver.onCompleted();
+	}
+
+	private Builder getAllLoadingInstructions(LoadingInstructionRequest request, Builder response) {
+		log.info("Fetching data from instruction ");
+		List<LoadingInstruction> listLoadingInstruction = loadingInstructionRepository.getAllLoadingInstructions(
+				request.getVesselId(), request.getLoadingInfoId(), request.getPortRotationId());
+		log.info("listLoadingInstruction {}",listLoadingInstruction.toString());
+		if (listLoadingInstruction != null && !listLoadingInstruction.isEmpty()) {
+			log.info("Found list listLoadingInstruction");
+			response = buildLoadingInstructionDetails(listLoadingInstruction);
+			response.setResponseStatus(
+					ResponseStatus.newBuilder().setMessage("Successfull").setStatus(SUCCESS).build());
+		}
+		return response;
 	}
 
 	private Builder buildLoadingInstructionDetails(List<LoadingInstruction> listLoadingInstruction) {
@@ -119,5 +148,4 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 
 		return responseBuilder;
 	}
-
 }

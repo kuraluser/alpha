@@ -403,10 +403,16 @@ message LoadingInstructionSubHeader {
   repeated LoadingInstructions loadingInstructionsList =4;
 }
 
+message LoadingInstructionGroup {
+  int64 groupId =1;
+  string groupName = 2;
+}
+
 message LoadingInstructionDetails {
   int64 instructionTypeId = 1;
   int64 instructionHeaderId = 2;
   repeated LoadingInstructionSubHeader loadingInstructionSubHeader =3;
-  ResponseStatus responseStatus = 4;
+  repeated LoadingInstructionGroup loadingInstructionGroupList =4;
+  ResponseStatus responseStatus = 5;
 }
 

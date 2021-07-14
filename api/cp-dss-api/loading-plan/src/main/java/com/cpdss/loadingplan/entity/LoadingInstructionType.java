@@ -2,9 +2,6 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.util.Set;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,13 +16,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoadingInstructionType extends EntityDoc {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Column(name = "type_name")
-	private String typeName;
+  @Column(name = "type_name")
+  private String typeName;
 
-	@Column(name = "is_active")
-	private Boolean isActive;
-
-
+  @Column(name = "is_active")
+  private Boolean isActive;
 }

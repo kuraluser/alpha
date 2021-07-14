@@ -4,8 +4,11 @@ package com.cpdss.gateway.controller;
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.LoadingNewInstructionRequest;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
@@ -26,6 +29,7 @@ import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -206,25 +210,26 @@ public class LoadingPlanController {
     }
   }
   
-//  /**
-//   * Save new Loading Instructions
-//   * @return
-//   * @throws CommonRestException
-//   */
-//  @PostMapping("/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
-//  public LoadingInstruction updateLoadingInstructions(
-//      @RequestHeader HttpHeaders headers,
-//      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-//      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
-//      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portRotationId,
-//      @RequestBody LoadingInstructionRequest request
-//      )
-//      throws CommonRestException {
-//	  
-	  
+  /**
+   * Save new Loading Instructions
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
+  public CommonSuccessResponse updateLoadingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portRotationId,
+      @RequestBody LoadingNewInstructionRequest request
+      )
+      throws CommonRestException {
+	  CommonSuccessResponse response =  new CommonSuccessResponse();
+      response.setStatus(HttpStatus.OK.value()+ "");
+      return response;
 //    try {
-//      log.info("Getting all Loading instructions of vesselID: {} on port: {}", vesselId,portRotationId);
-//      return loadingInstructionService.getLoadingInstructions(vesselId,infoId,portRotationId);
+//      log.info("Adding new instruction under existing template");
+//      
 //     
 //    } catch (GenericServiceException e) {
 //      log.error("Getting all Loading instructions");
@@ -236,7 +241,40 @@ public class LoadingPlanController {
 //          e.getMessage(),
 //          e);
 //    }
-//  }
+  }
+  
+  /**
+   * Save new Loading Instructions subheader
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/port-rotation/{portRotationId}/loading-info/{infoId}")
+  public CommonSuccessResponse updateLoadingInstructionsSubHeader(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portRotationId,
+      @RequestBody LoadingInstructionRequest request
+      )
+      throws CommonRestException {
+	  CommonSuccessResponse response =  new CommonSuccessResponse();
+      response.setStatus(HttpStatus.OK.value()+ "");
+      return response;
+//    try {
+//      log.info("Adding new instruction under existing template");
+//      
+//     
+//    } catch (GenericServiceException e) {
+//      log.error("Getting all Loading instructions");
+//      e.printStackTrace();
+//      throw new CommonRestException(
+//          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+//          headers,
+//          HttpStatusCode.INTERNAL_SERVER_ERROR,
+//          e.getMessage(),
+//          e);
+//    }
+  }
   
   /**
    * Retrieve all loading Instructions
