@@ -7,7 +7,7 @@
 
                 </h5>
             </div>
-            <div class="col text-right">
+            <div class="col text-right" *ngIf="!editable">
                 <label class="checkbox-custom mt-5 pr-10">{{'LOADING_INFORMATION_ADD_INITIAL_DELAY_CHECK_LABEL' | translate}}
                     <input type="checkbox" [(ngModel)]="addInitialDelay" (change)="onAddInitialDelay()">
                     <span class="checkmark"></span>

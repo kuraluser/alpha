@@ -27,7 +27,7 @@ import { ToppingOffTankTableModule } from './../topping-off-tank-table/topping-o
 import { CheckboxModule } from 'primeng/checkbox';
 import { LoadingInformationApiService } from '../services/loading-information-api.service';
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
-
+import { LoadingApiService } from '../services/loading-api.service';
 
 /**
  * Module for loading operation
@@ -68,6 +68,6 @@ import { LoadingDischargingManageSequenceModule } from '../loading-discharging-m
     LoadingDischargingManageSequenceModule
 
   ],
-  providers: [LoadingInformationApiService],
+  providers: [LoadingInformationApiService, LoadingApiService],
 })
 export class LoadingModule { }

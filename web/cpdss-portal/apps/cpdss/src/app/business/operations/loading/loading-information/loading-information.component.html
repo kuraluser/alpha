@@ -11,7 +11,7 @@
         </div>
         <div class="row pt-30">
             <div class="col">
-                <cpdss-portal-loading-rate [editMode]="loadingRateEditMode"
+                <cpdss-portal-loading-rate [editMode]="true"
                     [loadingRates]="loadingInformationData.loadingRates"
                     (loadingRateChange)="onLoadingRateChange($event)"></cpdss-portal-loading-rate>
             </div>
@@ -124,11 +124,9 @@
         <div class="row">
             <div class="col pt-5 ml-30">
 
-                <cpdss-portal-topping-off-tank-table [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId"
-                    [portRotationId]="portRotationId" 
+                <cpdss-portal-topping-off-tank-table [cargos]="cargos" 
                     [toppingOffSequence]="loadingInformationData?.toppingOffSequence"
-                    [cargoTanks]="loadingInformationData?.cargoVesselTankDetails?.cargoTanks"
-                    (updateToppingOff)="onUpdateToppingOff($event)">
+                    [cargoTanks]="loadingInformationData?.cargoVesselTankDetails?.cargoTanks">
                 </cpdss-portal-topping-off-tank-table>
 
             </div>
