@@ -200,6 +200,10 @@ service DischargeStudyOperationService {
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
 }
 
+service PortInstructionService {
+    rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
+}
+
 message CargoNominationDetailReply{
 	CargoNominationDetail cargoNominationdetail = 1;
 	ResponseStatus responseStatus = 2;

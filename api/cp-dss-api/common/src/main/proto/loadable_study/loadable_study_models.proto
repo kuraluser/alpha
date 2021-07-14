@@ -44,3 +44,16 @@ message BackLoading{
 	string abbreviation = 6;
 	string quantity=7;
 }
+
+message InstructionReply{
+	repeated InstructionDetail instructionDetails =1;
+	ResponseStatus responseStatus = 2;
+}
+message InstructionDetail{
+	int64 id=1;
+	string instruction=2;
+}
+
+
+message EmptyRequest{
+}
