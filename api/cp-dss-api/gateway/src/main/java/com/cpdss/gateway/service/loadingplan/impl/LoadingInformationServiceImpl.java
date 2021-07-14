@@ -8,7 +8,6 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -261,6 +260,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 ? null
                 : new BigDecimal(rateFromLoading.getLineContentRemaining()));
       }
+
+      // Shore Loading Rate
+      loadingRates.setShoreLoadingRate(
+          rateFromLoading.getShoreLoadingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(rateFromLoading.getShoreLoadingRate()));
 
       // Set Loading Info Id
       loadingRates.setId(rateFromLoading.getId());
@@ -591,21 +596,19 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
-      LoadingInformation loadingInformation =
-          loadingInfoBuilderService.buildLoadingInformation(request);
-      LoadingInfoSaveResponse response =
-          this.loadingPlanGrpcService.saveLoadingInformation(loadingInformation);
-      if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
-        // Updating synoptical table
-        this.updateSynopticalTable(request.getLoadingDetails(), response.getSynopticalTableId());
-        return buildLoadingInformationResponse(response, correlationId);
-      } else {
-        log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
+      LoadingPlanModels.LoadingInfoSaveResponse response =
+          loadingInfoBuilderService.saveDataAsync(request);
+      if (request.getLoadingDetails() != null) {
+        // Updating synoptic table (time)
+        this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
+      }
+      if (response == null) {
         throw new GenericServiceException(
             "Failed to save Loading Information",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      return buildLoadingInformationResponse(response, correlationId);
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
       e.printStackTrace();

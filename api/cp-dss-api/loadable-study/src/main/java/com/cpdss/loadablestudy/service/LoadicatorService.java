@@ -10,8 +10,13 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,9 +26,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Master Service for Voyage Related Operations
@@ -57,6 +65,20 @@ public class LoadicatorService {
   @Autowired private LoadableStudyRepository loadableStudyRepository;
 
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
+
+  @Autowired private LoadablePatternService loadablePatternService;
+
+  @Autowired private RestTemplate restTemplate;
+
+  @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
+
+  @Autowired private LoadableStudyService loadableStudyService;
+
+  @Value("${loadablestudy.attachement.rootFolder}")
+  private String rootFolder;
+
+  @Value("${algo.loadicator.api.url}")
+  private String loadicatorUrl;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -871,5 +893,475 @@ public class LoadicatorService {
                         synopticalTableLoadicatorDataRepository.save(loadicatorData);
                       });
             });
+  }
+
+  public LoadableStudy.LoadicatorDataReply.Builder getLoadicatorData(
+      LoadableStudy.LoadicatorDataRequest request,
+      LoadableStudy.LoadicatorDataReply.Builder replyBuilder)
+      throws Exception {
+    LoadicatorAlgoRequest loadicator = new LoadicatorAlgoRequest();
+    this.buildLoadicatorUrlRequest(request, loadicator);
+    ObjectMapper objectMapper = new ObjectMapper();
+    this.saveLoadicatorAlgoRequest(request, loadicator, objectMapper);
+    LoadicatorAlgoResponse algoResponse =
+        restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
+    this.saveLoadicatorAlgoResponse(request, algoResponse, objectMapper);
+    if (algoResponse.getFeedbackLoop() != null) {
+      if (!request.getIsPattern()) {
+        if (algoResponse.getFeedbackLoop()) {
+          log.info(
+              "I2R Algorithm has started feedback loop for loadable study "
+                  + request.getLoadableStudyId());
+          this.updateFeedbackLoopParameters(
+              request.getLoadableStudyId(),
+              false,
+              true,
+              algoResponse.getFeedbackLoopCount(),
+              LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED);
+          Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+              this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+          if (loadableStudyOpt.isPresent()) {
+            log.info("Deleting existing patterns");
+            this.loadablePatternRepository
+                .findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true)
+                .forEach(
+                    loadablePattern -> {
+                      log.info("Deleting loadable pattern " + loadablePattern.getId());
+                      this.loadablePatternRepository.deleteLoadablePattern(loadablePattern.getId());
+                      loadablePatternService.deleteExistingPlanDetails(loadablePattern);
+                    });
+          } else {
+            log.error("Loadable Study not found in database");
+            throw new Exception("Loadable Study not found in database");
+          }
+        } else {
+          log.info("Feedback Loop ended for loadable study " + request.getLoadableStudyId());
+          this.updateFeedbackLoopParameters(
+              request.getLoadableStudyId(),
+              false,
+              false,
+              algoResponse.getFeedbackLoopCount(),
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+          this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
+        }
+      } else {
+        if (algoResponse.getFeedbackLoop()) {
+          log.info(
+              "I2R Algorithm has started feedback loop for loadable pattern "
+                  + request.getLoadicatorPatternDetails(0).getLoadablePatternId());
+          this.updateFeedbackLoopParameters(
+              request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+              true,
+              true,
+              algoResponse.getFeedbackLoopCount(),
+              LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED);
+        } else {
+          log.info(
+              "Feedback loop ended for loadable pattern "
+                  + request.getLoadicatorPatternDetails(0).getLoadablePatternId());
+          this.updateFeedbackLoopParameters(
+              request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+              true,
+              false,
+              algoResponse.getFeedbackLoopCount(),
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+          this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
+        }
+      }
+    } else {
+      this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+          LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
+    }
+    replyBuilder =
+        LoadableStudy.LoadicatorDataReply.newBuilder()
+            .setResponseStatus(
+                Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
+
+  /**
+   * @param request
+   * @param loadicator void
+   * @throws GenericServiceException
+   */
+  private void buildLoadicatorUrlRequest(
+      LoadableStudy.LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator)
+      throws GenericServiceException {
+    loadicator.setProcessId(request.getProcessId());
+    loadicator.setLoadicatorPatternDetails(new ArrayList<>());
+
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (loadableStudyOpt.isPresent()) {
+      ModelMapper modelMapper = new ModelMapper();
+      loadableStudyService.buildLoadableStudy(
+          request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+    }
+
+    if (request.getIsPattern()) {
+      com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails patternDetails =
+          request.getLoadicatorPatternDetails(0);
+      LoadicatorPatternDetails pattern = new LoadicatorPatternDetails();
+      pattern.setLoadablePatternId(patternDetails.getLoadablePatternId());
+      pattern.setLdTrim(this.createLdTrim(patternDetails.getLDtrimList()));
+      pattern.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
+      pattern.setLdIntactStability(
+          this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(
+              patternDetails.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        loadableStudy.setFeedbackLoop(
+            Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoop()).isPresent()
+                ? loadablePatternOpt.get().getFeedbackLoop()
+                : false);
+        loadableStudy.setFeedbackLoopCount(
+            Optional.ofNullable(loadablePatternOpt.get().getFeedbackLoopCount()).isPresent()
+                ? loadablePatternOpt.get().getFeedbackLoopCount()
+                : 0);
+      }
+      loadicator.setLoadicatorPatternDetail(pattern);
+    } else {
+      request
+          .getLoadicatorPatternDetailsList()
+          .forEach(
+              patternDetails -> {
+                LoadicatorPatternDetails patterns = new LoadicatorPatternDetails();
+                patterns.setLoadablePatternId(patternDetails.getLoadablePatternId());
+                patterns.setLdTrim(this.createLdTrim(patternDetails.getLDtrimList()));
+                patterns.setLdStrength(this.createLdStrength(patternDetails.getLDStrengthList()));
+                patterns.setLdIntactStability(
+                    this.createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+                loadicator.getLoadicatorPatternDetails().add(patterns);
+              });
+    }
+
+    loadicator.setLoadableStudy(loadableStudy);
+  }
+
+  /**
+   * Save Loadicator ALGO request
+   *
+   * @param request
+   * @param loadicator
+   * @param objectMapper
+   */
+  private void saveLoadicatorAlgoRequest(
+      LoadableStudy.LoadicatorDataRequest request,
+      LoadicatorAlgoRequest loadicator,
+      ObjectMapper objectMapper) {
+    log.info("Saving Loadicator ALGO request to database");
+    try {
+      if (request.getIsPattern()) {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_pattern_"
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
+                    + ".json"),
+            loadicator);
+        loadableStudyService.saveJsonToDatabase(
+            request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+            LOADABLE_PATTERN_EDIT_LOADICATOR_REQUEST,
+            objectMapper.writeValueAsString(loadicator));
+      } else {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
+            loadicator);
+        loadableStudyService.saveJsonToDatabase(
+            request.getLoadableStudyId(),
+            LOADABLE_STUDY_LOADICATOR_REQUEST,
+            objectMapper.writeValueAsString(loadicator));
+      }
+    } catch (Exception e) {
+      log.error("Encountered error while saving loadicator request json");
+    }
+  }
+
+  /**
+   * Save Loadicator ALGO reponse
+   *
+   * @param request
+   * @param response
+   * @param objectMapper
+   */
+  private void saveLoadicatorAlgoResponse(
+      LoadableStudy.LoadicatorDataRequest request,
+      LoadicatorAlgoResponse response,
+      ObjectMapper objectMapper) {
+    log.info("Saving Loadicator ALGO response to database");
+    try {
+      if (request.getIsPattern()) {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_algo_response_pattern_"
+                    + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
+                    + ".json"),
+            response);
+        loadableStudyService.saveJsonToDatabase(
+            request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+            LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE,
+            objectMapper.writeValueAsString(response));
+      } else {
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder
+                    + "/json/loadicator_algo_response_"
+                    + request.getLoadableStudyId()
+                    + ".json"),
+            response);
+        loadableStudyService.saveJsonToDatabase(
+            request.getLoadableStudyId(),
+            LOADABLE_STUDY_LOADICATOR_RESPONSE,
+            objectMapper.writeValueAsString(response));
+      }
+    } catch (Exception e) {
+      log.error("Encountered error while saving loadicator response json");
+    }
+  }
+
+  /**
+   * Update Feedback Loop parameters for loadable study/ loadable pattern
+   *
+   * @param id
+   * @param isPattern
+   * @param feedbackLoop
+   * @param feedbackLoopCount
+   * @param status
+   */
+  private void updateFeedbackLoopParameters(
+      Long id, Boolean isPattern, Boolean feedbackLoop, Integer feedbackLoopCount, Long status) {
+    if (isPattern) {
+      this.loadablePatternRepository.updateLoadablePatternStatus(status, id);
+      this.loadablePatternRepository.updateLoadablePatternFeedbackLoopAndFeedbackLoopCount(
+          feedbackLoop, feedbackLoopCount, id);
+    } else {
+      this.loadableStudyRepository.updateLoadableStudyStatus(status, id);
+      this.loadableStudyRepository.updateLoadableStudyFeedbackLoopAndFeedbackLoopCount(
+          feedbackLoop, feedbackLoopCount, id);
+    }
+  }
+
+  /**
+   * Save data for synoptical table
+   *
+   * @param algoResponse
+   */
+  private void saveloadicatorDataForSynopticalTable(
+      LoadicatorAlgoResponse algoResponse, Boolean isPattern) {
+    List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
+    if (isPattern) {
+      algoResponse
+          .getLoadicatorResults()
+          .getLoadicatorResultDetails()
+          .forEach(
+              result -> {
+                this.synopticalTableLoadicatorDataRepository
+                    .deleteBySynopticalTableAndLoadablePatternId(
+                        this.synopticalTableRepository.getOne(result.getSynopticalId()),
+                        algoResponse.getLoadicatorResults().getLoadablePatternId());
+                entities.add(
+                    this.createSynopticalTableLoadicatorDataEntity(
+                        algoResponse.getLoadicatorResults(), result));
+              });
+    } else {
+      for (LoadicatorPatternDetailsResults patternDetails :
+          algoResponse.getLoadicatorResultsPatternWise()) {
+        patternDetails
+            .getLoadicatorResultDetails()
+            .forEach(
+                result -> {
+                  entities.add(
+                      this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
+                  LoadablePattern loadablePattern =
+                      loadablePatternRepository.getOne(patternDetails.getLoadablePatternId());
+                  loadablePattern.setIsActive(true);
+                  loadablePatternRepository.save(loadablePattern);
+                });
+      }
+    }
+    this.synopticalTableLoadicatorDataRepository.saveAll(entities);
+  }
+
+  /**
+   * @param list
+   * @return LDTrim
+   */
+  private List<LDTrim> createLdTrim(List<LoadableStudy.LDtrim> list) {
+    List<LDTrim> ldTrims = new ArrayList<LDTrim>();
+    list.forEach(
+        ldTrim -> {
+          LDTrim trim = new LDTrim();
+          trim.setAftDraftValue(ldTrim.getAftDraftValue());
+          trim.setAirDraftJudgement(ldTrim.getAirDraftJudgement());
+          trim.setAirDraftValue(ldTrim.getAirDraftValue());
+          trim.setDisplacementJudgement(ldTrim.getDisplacementJudgement());
+          trim.setDisplacementValue(ldTrim.getDisplacementValue());
+          trim.setErrorDetails(ldTrim.getErrorDetails());
+          trim.setErrorStatus(ldTrim.getErrorStatus());
+          trim.setForeDraftValue(ldTrim.getForeDraftValue());
+          trim.setHeelValue(ldTrim.getHeelValue());
+          trim.setId(ldTrim.getId());
+          trim.setMaximumAllowableJudement(ldTrim.getMaximumAllowableJudement());
+          trim.setMaximumAllowableVisibility(ldTrim.getMaximumAllowableVisibility());
+          trim.setMaximumDraftJudgement(ldTrim.getMaximumDraftJudgement());
+          trim.setMeanDraftValue(ldTrim.getMaximumDraftValue());
+          trim.setMaximumDraftValue(ldTrim.getMaximumDraftValue());
+          trim.setMeanDraftJudgement(ldTrim.getMeanDraftJudgement());
+          trim.setMeanDraftValue(ldTrim.getMeanDraftValue());
+          trim.setMessageText(ldTrim.getMessageText());
+          trim.setMinimumForeDraftInRoughWeatherJudgement(
+              ldTrim.getMinimumForeDraftInRoughWeatherJudgement());
+          trim.setMinimumForeDraftInRoughWeatherValue(
+              ldTrim.getMinimumForeDraftInRoughWeatherValue());
+          trim.setTrimValue(ldTrim.getTrimValue());
+          trim.setPortId(ldTrim.getPortId());
+          trim.setSynopticalId(ldTrim.getSynopticalId());
+          trim.setDeflection(ldTrim.getDeflection());
+          ldTrims.add(trim);
+        });
+
+    return ldTrims;
+  }
+
+  /**
+   * @param list
+   * @return LDIntactStability
+   */
+  private List<LDIntactStability> createLdIntactStability(
+      List<com.cpdss.common.generated.LoadableStudy.LDIntactStability> list) {
+    List<LDIntactStability> ldIntactStabilities = new ArrayList<LDIntactStability>();
+    list.forEach(
+        lDIntactStability -> {
+          LDIntactStability intactStability = new LDIntactStability();
+          intactStability.setAngleatmaxrleverJudgement(
+              lDIntactStability.getAngleatmaxrleverJudgement());
+          intactStability.setAngleatmaxrleverValue(lDIntactStability.getAngleatmaxrleverValue());
+          intactStability.setAreaofStability030Judgement(
+              lDIntactStability.getAreaofStability030Judgement());
+          intactStability.setAreaofStability030Value(
+              lDIntactStability.getAreaofStability030Value());
+          intactStability.setAreaofStability040Judgement(
+              lDIntactStability.getAreaofStability040Judgement());
+          intactStability.setAreaofStability040Value(
+              lDIntactStability.getAreaofStability040Value());
+          intactStability.setAreaofStability3040Judgement(
+              lDIntactStability.getAreaofStability3040Judgement());
+          intactStability.setAreaofStability3040Value(
+              lDIntactStability.getAreaofStability3040Value());
+          intactStability.setBigIntialGomJudgement(lDIntactStability.getBigIntialGomJudgement());
+          intactStability.setBigintialGomValue(lDIntactStability.getBigintialGomValue());
+          intactStability.setErrorDetails(lDIntactStability.getErrorDetails());
+          intactStability.setErrorStatus(lDIntactStability.getErrorStatus());
+          intactStability.setGmAllowableCurveCheckJudgement(
+              lDIntactStability.getGmAllowableCurveCheckJudgement());
+          intactStability.setGmAllowableCurveCheckValue(
+              lDIntactStability.getGmAllowableCurveCheckValue());
+          intactStability.setHeelBySteadyWindJudgement(
+              lDIntactStability.getHeelBySteadyWindJudgement());
+          intactStability.setHeelBySteadyWindValue(lDIntactStability.getHeelBySteadyWindValue());
+          intactStability.setId(lDIntactStability.getId());
+          intactStability.setMaximumRightingLeverJudgement(
+              lDIntactStability.getMaximumRightingLeverJudgement());
+          intactStability.setMaximumRightingLeverValue(
+              lDIntactStability.getMaximumRightingLeverValue());
+          intactStability.setMessageText(lDIntactStability.getMessageText());
+          intactStability.setStabilityAreaBaJudgement(
+              lDIntactStability.getStabilityAreaBaJudgement());
+          intactStability.setStabilityAreaBaValue(lDIntactStability.getStabilityAreaBaValue());
+          intactStability.setPortId(lDIntactStability.getPortId());
+          intactStability.setSynopticalId(lDIntactStability.getSynopticalId());
+          ldIntactStabilities.add(intactStability);
+        });
+
+    return ldIntactStabilities;
+  }
+
+  /**
+   * @param list
+   * @return LDStrength
+   */
+  private List<LDStrength> createLdStrength(
+      List<com.cpdss.common.generated.LoadableStudy.LDStrength> list) {
+    List<LDStrength> ldStrengths = new ArrayList<LDStrength>();
+    list.forEach(
+        ldStrength -> {
+          LDStrength strength = new LDStrength();
+          strength.setBendingMomentPersentFrameNumber(
+              ldStrength.getBendingMomentPersentFrameNumber());
+          strength.setBendingMomentPersentJudgement(ldStrength.getBendingMomentPersentJudgement());
+          strength.setBendingMomentPersentValue(ldStrength.getBendingMomentPersentValue());
+          strength.setErrorDetails(ldStrength.getErrorDetails());
+          strength.setId(ldStrength.getId());
+          strength.setInnerLongiBhdFrameNumber(ldStrength.getInnerLongiBhdFrameNumber());
+          strength.setInnerLongiBhdJudgement(ldStrength.getInnerLongiBhdJudgement());
+          strength.setInnerLongiBhdValue(ldStrength.getInnerLongiBhdValue());
+          strength.setMessageText(ldStrength.getMessageText());
+          strength.setOuterLongiBhdFrameNumber(ldStrength.getOuterLongiBhdFrameNumber());
+          strength.setOuterLongiBhdJudgement(ldStrength.getOuterLongiBhdJudgement());
+          strength.setOuterLongiBhdValue(ldStrength.getOuterLongiBhdValue());
+          strength.setSfFrameNumber(ldStrength.getSfFrameNumber());
+          strength.setSfHopperFrameNumber(ldStrength.getSfHopperFrameNumber());
+          strength.setSfHopperJudgement(ldStrength.getSfHopperJudgement());
+          strength.setSfHopperValue(ldStrength.getSfHopperValue());
+          strength.setSfSideShellFrameNumber(ldStrength.getSfSideShellFrameNumber());
+          strength.setSfSideShellJudgement(ldStrength.getSfSideShellJudgement());
+          strength.setSfSideShellValue(ldStrength.getSfSideShellValue());
+          strength.setShearingForceJudgement(ldStrength.getShearingForceJudgement());
+          strength.setShearingForcePersentValue(ldStrength.getShearingForcePersentValue());
+          strength.setPortId(ldStrength.getPortId());
+          strength.setSynopticalId(ldStrength.getSynopticalId());
+          ldStrengths.add(strength);
+        });
+
+    return ldStrengths;
+  }
+
+  /**
+   * Create SynopticalTableLoadicatorData entities
+   *
+   * @param patternDetails
+   * @param result
+   * @return SynopticalTableLoadicatorData
+   */
+  private SynopticalTableLoadicatorData createSynopticalTableLoadicatorDataEntity(
+      LoadicatorPatternDetailsResults patternDetails, LoadicatorResultDetails result) {
+    SynopticalTableLoadicatorData entity = new SynopticalTableLoadicatorData();
+    entity.setLoadablePatternId(patternDetails.getLoadablePatternId());
+    entity.setSynopticalTable(this.synopticalTableRepository.getOne(result.getSynopticalId()));
+    entity.setActive(true);
+    entity.setBlindSector(
+        isEmpty(result.getDeflection()) ? null : new BigDecimal(result.getDeflection()));
+    entity.setCalculatedDraftAftPlanned(
+        isEmpty(result.getCalculatedDraftAftPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftAftPlanned()));
+    entity.setCalculatedDraftFwdPlanned(
+        isEmpty(result.getCalculatedDraftFwdPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
+    entity.setCalculatedDraftMidPlanned(
+        isEmpty(result.getCalculatedDraftMidPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftMidPlanned()));
+    entity.setCalculatedTrimPlanned(
+        isEmpty(result.getCalculatedTrimPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedTrimPlanned()));
+    entity.setList(isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    entity.setBendingMoment(isEmpty(result.getBm()) ? null : new BigDecimal(result.getBm()));
+    entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
+    entity.setDeflection(
+        isEmpty(result.getDeflection()) ? null : new BigDecimal(result.getDeflection()));
+    return entity;
   }
 }

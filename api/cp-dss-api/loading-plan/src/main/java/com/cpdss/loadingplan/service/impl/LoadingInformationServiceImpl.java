@@ -140,6 +140,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
+  public Optional<LoadingInformation> getLoadingInformation(Long id) {
+    return this.getLoadingInformation(id, 0L, 0L, 0L, 0L);
+  }
+
+  @Override
   public LoadingPlanModels.LoadingInformation getLoadingInformation(
       LoadingPlanModels.LoadingInformationRequest request,
       LoadingPlanModels.LoadingInformation.Builder builder)
@@ -224,28 +229,124 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public LoadingInfoResponse saveLoadingInformation(
+  public LoadingInformation saveLoadingInformation(
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request)
       throws Exception {
-    LoadingInfoResponse response = new LoadingInfoResponse();
     Optional<LoadingInformation> loadingInformationOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingDetail().getId());
     if (loadingInformationOpt.isPresent()) {
       LoadingInformation loadingInformation = loadingInformationOpt.get();
-      buildLoadingInformation(request, loadingInformation);
+      informationBuilderService.buildLoadingInfoFromRpcMessage(request, loadingInformation);
       loadingInformationRepository.save(loadingInformation);
-      loadingBerthService.saveLoadingBerthList(request.getLoadingBerthsList(), loadingInformation);
-      loadingDelayService.saveLoadingDelayList(request.getLoadingDelays(), loadingInformation);
-      loadingMachineryInUseService.saveLoadingMachineryList(
-          request.getLoadingMachinesList(), loadingInformation);
-      toppingOffSequenceService.saveCargoToppingOffSequences(request.getToppingOffSequenceList());
-      buildLoadingInfoResponse(loadingInformation, response);
+      return loadingInformationOpt.get();
     } else {
       throw new Exception(
           "Cannot find loading information with id " + request.getLoadingDetail().getId());
     }
+  }
 
-    return response;
+  @Override
+  public LoadingInformation saveLoadingInfoRates(
+      LoadingPlanModels.LoadingRates source,
+      LoadingInformation loadingInformation,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response) {
+    Optional<LoadingInformation> information = this.getLoadingInformation(source.getId());
+    if (information.isPresent()) {
+      LoadingInformation var1 = information.get();
+      log.info("Save Loading Info, Set Loading Rates");
+      if (!source.getLineContentRemaining().isEmpty())
+        var1.setLineContentRemaining(new BigDecimal(source.getLineContentRemaining()));
+
+      if (!source.getMaxDeBallastingRate().isEmpty())
+        var1.setMaxDeBallastRate(new BigDecimal(source.getMaxDeBallastingRate()));
+
+      if (!source.getMaxLoadingRate().isEmpty())
+        var1.setMaxLoadingRate(new BigDecimal(source.getMaxLoadingRate()));
+
+      if (!source.getMinDeBallastingRate().isEmpty())
+        var1.setMinDeBallastRate(new BigDecimal(source.getMinDeBallastingRate()));
+
+      if (!source.getReducedLoadingRate().isEmpty())
+        var1.setReducedLoadingRate(new BigDecimal(source.getReducedLoadingRate()));
+
+      if (!source.getMinLoadingRate().isEmpty())
+        var1.setMinLoadingRate(new BigDecimal(source.getMinLoadingRate()));
+
+      if (!source.getInitialLoadingRate().isEmpty())
+        var1.setInitialLoadingRate(new BigDecimal(source.getInitialLoadingRate()));
+
+      if (!source.getNoticeTimeRateReduction().isEmpty())
+        var1.setNoticeTimeForRateReduction(Integer.valueOf(source.getNoticeTimeRateReduction()));
+
+      if (!source.getNoticeTimeStopLoading().isEmpty())
+        var1.setNoticeTimeForStopLoading(Integer.valueOf(source.getNoticeTimeStopLoading()));
+
+      if (!source.getShoreLoadingRate().isEmpty())
+        var1.setShoreLoadingRate(new BigDecimal(source.getShoreLoadingRate()));
+
+      loadingInformationRepository.save(var1);
+      return var1;
+    }
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoBerths(
+      List<LoadingPlanModels.LoadingBerths> berths,
+      LoadingInformation loadingInformation,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException {
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoMachines(
+      List<LoadingPlanModels.LoadingMachinesInUse> machines,
+      LoadingInformation loadingInformation,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException {
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoDelays(
+      List<LoadingPlanModels.LoadingDelay> loadingDelays,
+      LoadingInformation loadingInformation,
+      LoadingPlanModels.LoadingInfoSaveResponse.Builder response)
+      throws GenericServiceException {
+    return null;
+  }
+
+  @Override
+  public LoadingInformation saveLoadingInfoStages(
+      LoadingPlanModels.LoadingStages loadingStage, LoadingInformation loadingInformation) {
+
+    if (loadingStage != null) {
+      loadingInformation.setTrackStartEndStage(loadingStage.getTrackStartEndStage());
+      loadingInformation.setTrackGradeSwitch(loadingStage.getTrackGradeSwitch());
+      if (Optional.ofNullable(loadingStage.getDuration().getId()).isPresent()
+          && loadingStage.getDuration().getId() != 0) {
+        Optional<StageDuration> stageDurationOpt =
+            stageDurationRepository.findByIdAndIsActiveTrue(loadingStage.getDuration().getId());
+        if (stageDurationOpt.isPresent()) {
+          loadingInformation.setStageDuration(stageDurationOpt.get());
+        } else {
+          log.error("Duration not found id {}", loadingStage.getDuration().getId());
+        }
+      }
+      if (Optional.of(loadingStage.getOffset().getId()).isPresent()
+          && loadingStage.getOffset().getId() != 0) {
+        Optional<StageOffset> stageOffsetOpt =
+            stageOffsetRepository.findByIdAndIsActiveTrue(loadingStage.getOffset().getId());
+        if (stageOffsetOpt.isPresent()) {
+          loadingInformation.setStageOffset(stageOffsetOpt.get());
+        } else {
+          log.info("Offset Not found Id {}", loadingStage.getOffset().getId());
+        }
+      }
+      loadingInformationRepository.save(loadingInformation);
+    }
+    return null;
   }
 
   private void buildLoadingInfoResponse(

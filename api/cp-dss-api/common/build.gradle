@@ -51,6 +51,7 @@ protobuf {
 }
 
 dependencies {
+    implementation group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.11.4'
     implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
     implementation('commons-beanutils:commons-beanutils:1.9.4')
 }
