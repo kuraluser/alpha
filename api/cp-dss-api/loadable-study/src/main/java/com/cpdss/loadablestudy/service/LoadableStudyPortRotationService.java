@@ -610,44 +610,46 @@ public class LoadableStudyPortRotationService {
                         ports.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList()));
 
         ports.forEach(
-                port -> {
-                  com.cpdss.common.generated.LoadableStudy.PortRotationDetail.Builder builder =
-                          com.cpdss.common.generated.LoadableStudy.PortRotationDetail.newBuilder();
-                  builder.setPortId(port.getPortXId());
-                  builder.setId(port.getId());
-                  builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
-                  if (port.getIsbackloadingEnabled() != null) {
-                    builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
-                    if (backloadingDataByportIds.get(port.getPortXId()) != null) {
-                      backloadingDataByportIds
-                              .get(port.getPortXId())
-                              .forEach(
-                                      backLoading -> {
-                                        builder.addBackLoading(buildBackloading(backLoading));
-                                      });
-                    }
-                  }
-                  if (instructionsForThePort.get(port.getPortXId()) != null) {
-                    builder.addAllInstructionId(
-                            instructionsForThePort.get(port.getPortXId()).stream()
-                                    .map(DischargeStudyPortInstruction::getId)
-                                    .collect(Collectors.toList()));
-                  }
-                  if (cowDetails.get(port.getId()) != null) {
-                    DischargeStudyCowDetail cow = cowDetails.get(port.getId());
-                    builder.setCowId(cow.getCowType());
-                    builder.setPercentage(cow.getPercentage());
-                    if (cow.getTankIds() != null && !cow.getTankIds().isEmpty()) {
-                      List<String> tanks = Arrays.asList(cow.getTankIds().split(","));
-                      builder.addAllTanks(
-                              tanks.stream()
-                                      .map(tank -> Long.parseLong(tank))
-                                      .collect(Collectors.toList()));
-                    }
-                  }
+            port -> {
+              com.cpdss.common.generated.LoadableStudy.PortRotationDetail.Builder builder =
+                  com.cpdss.common.generated.LoadableStudy.PortRotationDetail.newBuilder();
+              builder.setPortId(port.getPortXId());
+              builder.setId(port.getId());
+              builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
+              if (port.getIsbackloadingEnabled() != null) {
+                builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
+                if (backloadingDataByportIds.get(port.getPortXId()) != null) {
+                  backloadingDataByportIds
+                      .get(port.getPortXId())
+                      .forEach(
+                          backLoading -> {
+                            builder.addBackLoading(buildBackloading(backLoading));
+                          });
+                }
+              }
+              if (instructionsForThePort.get(port.getPortXId()) != null) {
+                builder.addAllInstructionId(
+                    instructionsForThePort.get(port.getPortXId()).stream()
+                        .map(DischargeStudyPortInstruction::getId)
+                        .collect(Collectors.toList()));
+              }
+              if (cowDetails.get(port.getId()) != null) {
+                DischargeStudyCowDetail cow = cowDetails.get(port.getId());
+                builder.setCowId(cow.getCowType());
+                if (cow.getPercentage() != null) {
+                  builder.setPercentage(cow.getPercentage());
+                }
+                if (cow.getTankIds() != null && !cow.getTankIds().isEmpty()) {
+                  List<String> tanks = Arrays.asList(cow.getTankIds().split(","));
+                  builder.addAllTanks(
+                      tanks.stream()
+                          .map(tank -> Long.parseLong(tank))
+                          .collect(Collectors.toList()));
+                }
+              }
 
-                  portRotationReplyBuilder.addPorts(builder);
-                });
+              portRotationReplyBuilder.addPorts(builder);
+            });
 
         portRotationReplyBuilder
                 .setResponseStatus(

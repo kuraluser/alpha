@@ -14,11 +14,39 @@ import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
 import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
+import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.BMAndSF;
+import com.cpdss.gateway.domain.BendingMoment;
+import com.cpdss.gateway.domain.BendingMomentShearingForceType3;
+import com.cpdss.gateway.domain.BendingMomentType2;
+import com.cpdss.gateway.domain.BendingMomentType4;
+import com.cpdss.gateway.domain.CalculationSheet;
+import com.cpdss.gateway.domain.CalculationSheetTankGroup;
+import com.cpdss.gateway.domain.HydrostaticData;
+import com.cpdss.gateway.domain.InnerBulkHeadValues;
+import com.cpdss.gateway.domain.LoadLine;
+import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
+import com.cpdss.gateway.domain.Parameter;
+import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.SelectableParameter;
+import com.cpdss.gateway.domain.ShearingForce;
+import com.cpdss.gateway.domain.ShearingForceType2;
+import com.cpdss.gateway.domain.ShearingForceType4;
+import com.cpdss.gateway.domain.StationValues;
+import com.cpdss.gateway.domain.UllageDetails;
+import com.cpdss.gateway.domain.UllageTrimCorrection;
+import com.cpdss.gateway.domain.User;
+import com.cpdss.gateway.domain.Vessel;
+import com.cpdss.gateway.domain.VesselDetailsResponse;
+import com.cpdss.gateway.domain.VesselDraftCondition;
+import com.cpdss.gateway.domain.VesselResponse;
+import com.cpdss.gateway.domain.VesselTank;
+import com.cpdss.gateway.domain.VesselTankResponse;
+import com.cpdss.gateway.domain.VesselTankTCG;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.domain.user.UserStatusValue;
 import com.cpdss.gateway.domain.user.UserType;
@@ -31,7 +59,13 @@ import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
 import com.cpdss.gateway.utility.Utility;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
@@ -64,6 +98,8 @@ public class VesselInfoService {
   private static final String SUCCESS = "SUCCESS";
   private static final String SHIP_URL_PREFIX = "/api/ship";
 
+  private static final Long CARGO_TANK_CATEGORY_ID = 1L;
+
   /**
    * Get vessels by company
    *
@@ -85,6 +121,52 @@ public class VesselInfoService {
           HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
     VesselResponse response = this.createVesselResponse(reply);
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+  /**
+   * Get vessel tanks
+   *
+   * @param vesselId
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public VesselTankResponse getCargoVesselTanks(Long vesselId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getVessel tanks, correlationId:{}", correlationId);
+
+    VesselInfo.VesselRequest.Builder vesselGrpcRequest = VesselInfo.VesselRequest.newBuilder();
+    vesselGrpcRequest.setVesselId(vesselId);
+    vesselGrpcRequest.addAllTankCategories(Arrays.asList(CARGO_TANK_CATEGORY_ID));
+    VesselReply reply = this.vesselInfoGrpcService.getVesselCargoTanks(vesselGrpcRequest.build());
+
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to fetch vessels",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    List<VesselTankDetail> vesselsList = reply.getVesselTanksList();
+    List<VesselTank> vesselTankList = new ArrayList<>();
+    vesselsList
+        .parallelStream()
+        .filter(tank -> tank.getTankCategoryId() == CARGO_TANK_CATEGORY_ID)
+        .forEach(
+            tankDetail -> {
+              VesselTank vesselTank = new VesselTank();
+              vesselTank.setId(tankDetail.getTankId());
+              vesselTank.setName(tankDetail.getTankName());
+              vesselTank.setShortName(tankDetail.getShortName());
+              vesselTank.setGroup(tankDetail.getTankGroup());
+              vesselTank.setOrder(tankDetail.getTankOrder());
+              vesselTank.setDisplayOrder(tankDetail.getTankDisplayOrder());
+              vesselTankList.add(vesselTank);
+            });
+
+    VesselTankResponse response = new VesselTankResponse();
+    response.setCargoVesselTanks(vesselTankList);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;

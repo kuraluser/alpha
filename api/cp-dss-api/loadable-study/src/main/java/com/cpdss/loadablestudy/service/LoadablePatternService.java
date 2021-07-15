@@ -1573,4 +1573,92 @@ public class LoadablePatternService {
     ofNullable(loadablePlanCommingleDetails.getId()).ifPresent(id -> builder.setId(id));
   }
 
+
+  public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder confirmPlanStatus(
+      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder replyBuilder) {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(INVALID_LOADABLE_PATTERN_ID)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+    } else {
+      List<LoadablePatternAlgoStatus> patternStatus =
+          loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
+              loadablePatternOpt.get(), true);
+      if (!patternStatus.isEmpty()) {
+        replyBuilder.setLoadablePatternStatusId(
+            patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
+      }
+
+      if (!patternStatus.isEmpty()) {
+        if (stowageDetailsTempRepository
+                .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+                .isEmpty()
+            || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
+          replyBuilder.setValidated(true);
+        }
+      } else {
+        if (stowageDetailsTempRepository
+            .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+            .isEmpty()) {
+          replyBuilder.setValidated(true);
+        }
+      }
+      List<LoadablePattern> loadablePatternConfirmedOpt =
+          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+              request.getVoyageId(), CONFIRMED_STATUS_ID, true);
+      if (!loadablePatternConfirmedOpt.isEmpty()) {
+        // set confirm status to false since some other plan is already confirmed
+        log.info("other plan is in confirmed status or verification pending");
+        replyBuilder.setConfirmed(false);
+      } else {
+        log.info("plan is okay to confirm");
+
+        replyBuilder.setConfirmed(true);
+      }
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    }
+    return replyBuilder;
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder confirmPlan(
+      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder replyBuilder) {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(INVALID_LOADABLE_PATTERN_ID)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+    } else {
+      List<LoadablePattern> loadablePatternConfirmedOpt =
+          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+              loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),
+              CONFIRMED_STATUS_ID,
+              true);
+      if (!loadablePatternConfirmedOpt.isEmpty()) {
+        log.info("changing status of other confirmed plan to plan generated");
+        loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmedOpt.get(0).getId());
+        loadablePatternRepository.updateLoadableStudyStatusToPlanGenerated(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+            loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
+      }
+      log.info("confirming selected plan");
+      loadablePatternRepository.updateLoadablePatternStatus(
+          CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
+      loadableStudyRepository.updateLoadableStudyStatus(
+          CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    }
+    return replyBuilder;
+  }
 }

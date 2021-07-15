@@ -90,9 +90,7 @@ import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.JsonType;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
@@ -104,30 +102,13 @@ import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
-import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
-import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
-import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
@@ -138,11 +119,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
-import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -180,7 +157,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
 
 /** @Author jerin.g */
 @Log4j2
@@ -191,37 +167,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
-  @Value("${algo.loadablestudy.api.url}")
-  private String loadableStudyUrl;
-
-  @Value("${algo.loadicator.api.url}")
-  private String loadicatorUrl;
-
-  @Value("${algo.stowage.edit.api.url}")
-  private String algoUpdateUllageUrl;
-
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
-  @Autowired private CargoOperationRepository cargoOperationRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
-  @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
-  @Autowired private PurposeOfCommingleRepository purposeOfCommingleRepository;
-  @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
-  @Autowired private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
-  @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
-  @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @Autowired private EntityManager entityManager;
-  @Autowired private RestTemplate restTemplate;
-  @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
-  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
-  @Autowired private AlgoErrorsRepository algoErrorsRepository;
-  @Autowired private StabilityParameterRepository stabilityParameterRepository;
   @Autowired VoyageService voyageService;
   @Autowired SynopticService synopticService;
   @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
@@ -235,18 +190,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private OnBoardQuantityService onBoardQuantityService;
   @Autowired private AlgoService algoService;
 
-  @Autowired
-  private LoadablePlanCommingleDetailsPortwiseRepository
-      loadablePlanCommingleDetailsPortwiseRepository;
-
   @Autowired OnHandQuantityService onHandQuantityService;
-
-  @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
-
-  @Autowired
-  private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
-
-  @Autowired private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
 
   @Autowired
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
@@ -255,16 +199,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private CommingleCargoRepository commingleCargoRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
-  @Autowired private CargoHistoryRepository cargoHistoryRepository;
-  @Autowired private VoyageHistoryRepository voyageHistoryRepository;
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @Autowired private SynopticalTableRepository synopticalTableRepository;
-
-  @Autowired
-  private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
-
-  @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
-  @Autowired private ApiTempHistoryRepository apiTempHistoryRepository;
 
   @Autowired private JsonDataRepository jsonDataRepository;
   @Autowired private JsonTypeRepository jsonTypeRepository;
@@ -272,8 +208,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private CargoNominationService cargoNominationService;
   @Autowired private CargoService cargoService;
-
-  @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -1949,52 +1883,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     log.info("inside confirmPlanStatus loadable study service");
     ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
     try {
-      Optional<LoadablePattern> loadablePatternOpt =
-          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
-      if (!loadablePatternOpt.isPresent()) {
-        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
-        replyBuilder.setResponseStatus(
-            ResponseStatus.newBuilder()
-                .setStatus(FAILED)
-                .setMessage(INVALID_LOADABLE_PATTERN_ID)
-                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
-      } else {
-        List<LoadablePatternAlgoStatus> patternStatus =
-            loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
-                loadablePatternOpt.get(), true);
-        if (!patternStatus.isEmpty()) {
-          replyBuilder.setLoadablePatternStatusId(
-              patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
-        }
-
-        if (!patternStatus.isEmpty()) {
-          if (stowageDetailsTempRepository
-                  .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
-                  .isEmpty()
-              || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
-            replyBuilder.setValidated(true);
-          }
-        } else {
-          if (stowageDetailsTempRepository
-              .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
-              .isEmpty()) {
-            replyBuilder.setValidated(true);
-          }
-        }
-        List<LoadablePattern> loadablePatternConfirmedOpt =
-            loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-                request.getVoyageId(), CONFIRMED_STATUS_ID, true);
-        if (!loadablePatternConfirmedOpt.isEmpty()) {
-          // set confirm status to false since some other plan is already confirmed
-          log.info("other plan is in confirmed status or verification pending");
-          replyBuilder.setConfirmed(false);
-        } else {
-          log.info("plan is okay to confirm");
-
-          replyBuilder.setConfirmed(true);
-        }
-        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      }
+      loadablePatternService.confirmPlanStatus(request, replyBuilder);
     } catch (Exception e) {
       log.error("Exception when confirmPlanStatus ", e);
       replyBuilder.setResponseStatus(
@@ -2018,36 +1907,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     log.info("inside confirmPlan loadable study service");
     ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
     try {
-      Optional<LoadablePattern> loadablePatternOpt =
-          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
-      if (!loadablePatternOpt.isPresent()) {
-        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
-        replyBuilder.setResponseStatus(
-            ResponseStatus.newBuilder()
-                .setStatus(FAILED)
-                .setMessage(INVALID_LOADABLE_PATTERN_ID)
-                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
-      } else {
-        List<LoadablePattern> loadablePatternConfirmedOpt =
-            loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-                loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),
-                CONFIRMED_STATUS_ID,
-                true);
-        if (!loadablePatternConfirmedOpt.isEmpty()) {
-          log.info("changing status of other confirmed plan to plan generated");
-          loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmedOpt.get(0).getId());
-          loadablePatternRepository.updateLoadableStudyStatusToPlanGenerated(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
-        }
-        log.info("confirming selected plan");
-        loadablePatternRepository.updateLoadablePatternStatus(
-            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
-        loadableStudyRepository.updateLoadableStudyStatus(
-            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
-        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      }
+      loadablePatternService.confirmPlan(request, replyBuilder);
     } catch (Exception e) {
       log.error("Exception when confirmPlan ", e);
       replyBuilder.setResponseStatus(
@@ -2498,40 +2358,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     SaveCommentReply.Builder replyBuilder = SaveCommentReply.newBuilder();
     try {
-      LoadablePlanComments entity = new LoadablePlanComments();
-      entity.setComments(request.getComment());
-      Optional<LoadablePattern> loadablePatternOpt =
-          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
-      if (loadablePatternOpt.isPresent()) {
-        entity.setLoadablePattern(loadablePatternOpt.get());
-      }
-      entity.setCreatedBy(Long.toString(request.getUser()));
-
-      entity.setIsActive(true);
-      this.loadablePlanCommentsRepository.save(entity);
-      if (entity.getId() != null) {
-        SaveCommentRequest.Builder comment = SaveCommentRequest.newBuilder();
-        comment.setComment(entity.getComments());
-        comment.setCommentId(entity.getId());
-        comment.setCreateDate(
-            DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getCreatedDateTime()));
-        comment.setUpdateDate(
-            DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getLastModifiedDateTime()));
-        try {
-          comment.setUser(Long.valueOf(entity.getCreatedBy()));
-        } catch (Exception e) {
-          log.error(
-              "Failed to parse user id {}, error - {}", entity.getCreatedBy(), e.getMessage());
-        }
-        comment.build();
-        replyBuilder.setComment(comment);
-        log.info(
-            "Save Comment, saved for Pattern id {}, Comment {}",
-            request.getLoadablePatternId(),
-            entity.getComments());
-      }
-
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      loadablePlanService.saveComment(request, replyBuilder);
     } catch (Exception e) {
       log.error("Error saving comment", e);
       replyBuilder.setResponseStatus(
