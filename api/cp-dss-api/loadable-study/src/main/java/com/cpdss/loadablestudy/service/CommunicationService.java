@@ -1,20 +1,26 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.EnvoyReader;
-import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
-import com.cpdss.common.generated.EnvoyWriter;
-import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
+import com.cpdss.common.generated.*;
+import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +28,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -43,17 +50,23 @@ public class CommunicationService {
   @Value("${algo.loadablestudy.api.url}")
   private String loadableStudyUrl;
 
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
   @GrpcClient("envoyReaderService")
   private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
 
+  @Value("${loadablestudy.communication.timelimit}")
+  private Long timeLimit;
+
   public void saveLoadableStudyShore(Map<String, String> taskReqParams) {
 
     try {
       EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
-      if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+      if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Failed to get Result from Communication Server",
             erReply.getResponseStatus().getCode(),
@@ -127,7 +140,7 @@ public class CommunicationService {
   public void saveAlgoPatternFromShore(Map<String, String> taskReqParams) {
     try {
       EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
-      if (!LoadableStudiesConstants.SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+      if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Failed to get Result from Communication Server",
             erReply.getResponseStatus().getCode(),
@@ -144,27 +157,117 @@ public class CommunicationService {
     }
   }
 
-  public void checkLoadableStudyStatus(Map<String, String> taskReqParams)
-      throws GenericServiceException, IOException {
+  public void checkLoadableStudyStatus(Map<String, String> taskReqParams) {
     List<LoadableStudy> loadableStudyList =
         loadableStudyRepository.findByCommunicationStatusAndIsActiveOrderByCommunicationDateTimeASC(
             CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(), true);
     if (!loadableStudyList.isEmpty()) {
-      for (LoadableStudy loadableStudy : loadableStudyList) {
-        EnvoyWriter.EnvoyWriterRequest.Builder request =
-            EnvoyWriter.EnvoyWriterRequest.newBuilder();
-        request.setMessageId(taskReqParams.get("messageType"));
-        request.setClientId(taskReqParams.get("ClientId"));
-        request.setImoNumber(taskReqParams.get("ShipId"));
-        EnvoyWriter.WriterReply statusReply = this.envoyWriterService.statusCheck(request.build());
+      loadableStudyList
+          .parallelStream()
+          .forEach(
+              loadableStudy -> {
+                try {
+                  EnvoyWriter.EnvoyWriterRequest.Builder request =
+                      EnvoyWriter.EnvoyWriterRequest.newBuilder();
+                  request.setMessageId(taskReqParams.get("messageType"));
+                  request.setClientId(taskReqParams.get("ClientId"));
+                  request.setImoNumber(taskReqParams.get("ShipId"));
+                  EnvoyWriter.WriterReply statusReply =
+                      this.envoyWriterService.statusCheck(request.build());
+                  if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
 
-        if (!(statusReply.getEventDownloadStatus() != null
-            && statusReply
-                .getEventDownloadStatus()
-                .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED))) {
-          processAlgoFromShip(loadableStudy);
-        }
-      }
+                    throw new GenericServiceException(
+                        "Loadable pattern does not exist",
+                        CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                        HttpStatusCode.BAD_REQUEST);
+                  }
+                  if (!(statusReply.getEventDownloadStatus() != null
+                      && statusReply
+                          .getEventDownloadStatus()
+                          .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
+                    processAlgoFromShip(loadableStudy);
+                  } else {
+                    loadableStudyRepository.updateLoadableStudyCommunicationStatus(
+                        statusReply.getEventDownloadStatus(), loadableStudy.getId());
+                  }
+                  long start =
+                      Timestamp.valueOf(loadableStudy.getCommunicationDateTime()).getTime();
+                  long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
+                  if (System.currentTimeMillis() > end) {
+                    loadableStudyRepository.updateLoadableStudyCommunicationStatus(
+                        CommunicationStatus.TIME_OUT.getId(), loadableStudy.getId());
+                  }
+                } catch (GenericServiceException | IOException e) {
+                  e.printStackTrace();
+                }
+              });
     }
+  }
+
+  @Async
+  public EnvoyWriter.WriterReply passResultPayloadToEnvoyWriter(
+      com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.Builder
+          algoResponseCommunication,
+      LoadableStudy loadableStudy)
+      throws GenericServiceException {
+    String jsonPayload = null;
+    try {
+      VesselInfo.VesselDetail vesselReply =
+          this.getVesselDetailsForEnvoy(loadableStudy.getVesselXId());
+
+      algoResponseCommunication.setMessageId(loadableStudy.getMessageUUID());
+      jsonPayload = JsonFormat.printer().print(algoResponseCommunication);
+      EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
+          EnvoyWriter.EnvoyWriterRequest.newBuilder();
+      writerRequest.setJsonPayload(jsonPayload);
+      writerRequest.setClientId(vesselReply.getName());
+      writerRequest.setImoNumber(vesselReply.getImoNumber());
+      writerRequest.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
+      writerRequest.setMessageId(loadableStudy.getMessageUUID());
+      return this.envoyWriterService.getCommunicationServer(writerRequest.build());
+
+    } catch (InvalidProtocolBufferException e) {
+      log.error("Exception when calling passResultPayloadToEnvoyWriter  ", e);
+    }
+    return null;
+  }
+
+  public VesselInfo.VesselDetail getVesselDetailsForEnvoy(Long vesselId)
+      throws GenericServiceException {
+    VesselInfo.VesselIdRequest replyBuilder =
+        VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build();
+    VesselInfo.VesselIdResponse vesselResponse =
+        this.vesselInfoGrpcService.getVesselInfoByVesselId(replyBuilder);
+    if (!SUCCESS.equalsIgnoreCase(vesselResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error in calling vessel service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+
+    return vesselResponse.getVesselDetail();
+  }
+
+  public EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy)
+      throws GenericServiceException, IOException {
+    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    String loadableStudyJson = null;
+    try {
+      VesselInfo.VesselDetail vesselReply =
+          this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
+      loadableStudyJson = ow.writeValueAsString(loadableStudy);
+      EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
+          EnvoyWriter.EnvoyWriterRequest.newBuilder();
+      writerRequest.setJsonPayload(loadableStudyJson);
+      writerRequest.setClientId(vesselReply.getName());
+      writerRequest.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
+      writerRequest.setImoNumber(vesselReply.getImoNumber());
+      return this.envoyWriterService.getCommunicationServer(writerRequest.build());
+
+    } catch (JsonProcessingException e) {
+      log.error("Exception when when calling EnvoyWriter", e);
+    }
+    return null;
   }
 }
