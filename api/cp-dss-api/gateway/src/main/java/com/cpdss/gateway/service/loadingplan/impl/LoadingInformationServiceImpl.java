@@ -11,6 +11,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSave
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
@@ -47,8 +48,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
 
-  private final Long LOADING_RULE_MASTER_ID = 2l;
-
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired PortInfoService portInfoService;
@@ -81,7 +80,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         // RPC call to vessel info, Get Rules (default value for Loading Info)
         RuleResponse ruleResponse =
             vesselInfoService.getRulesByVesselIdAndSectionId(
-                vesselId, LOADING_RULE_MASTER_ID, null, null);
+                vesselId, GatewayConstants.LOADING_RULE_MASTER_ID, null, null);
         AdminRuleValueExtract extract =
             AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
 
@@ -163,7 +162,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // RPC call to vessel info, Get Rules (default value for Loading Info)
       RuleResponse ruleResponse =
           vesselInfoService.getRulesByVesselIdAndSectionId(
-              vesselId, LOADING_RULE_MASTER_ID, null, null);
+              vesselId, GatewayConstants.LOADING_RULE_MASTER_ID, null, null);
 
       // RPC call to vessel info, Get Vessel Details
       VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);

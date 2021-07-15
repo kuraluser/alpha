@@ -45,4 +45,6 @@ public interface LoadingPlanGrpcService {
       throws GenericServiceException;
 
   ResponseStatus generateLoadingPlan(Long loadingInfoId);
+
+  Object getLoadingPlanRules(Long vesselId, Long loadingInfoId) throws GenericServiceException;
 }

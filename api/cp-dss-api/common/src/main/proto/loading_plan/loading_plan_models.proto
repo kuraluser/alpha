@@ -387,7 +387,7 @@ message LoadingPlanRuleRequest{
   int64 vesselId = 1;
   int64 sectionId = 2;
   repeated RulePlans rulePlan = 3;
-  int64 loadableStudyId = 4;
+  int64 loadingInfoId = 4;
   bool isNoDefaultRule = 5;
 }
 
