@@ -636,7 +636,9 @@ public class LoadableStudyPortRotationService {
               if (cowDetails.get(port.getId()) != null) {
                 DischargeStudyCowDetail cow = cowDetails.get(port.getId());
                 builder.setCowId(cow.getCowType());
-                builder.setPercentage(cow.getPercentage());
+                if (cow.getPercentage() != null) {
+                  builder.setPercentage(cow.getPercentage());
+                }
                 if (cow.getTankIds() != null && !cow.getTankIds().isEmpty()) {
                   List<String> tanks = Arrays.asList(cow.getTankIds().split(","));
                   builder.addAllTanks(
