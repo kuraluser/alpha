@@ -33,3 +33,27 @@ message DischargeStudyReply{
 	DischargeStudyDetail dischargeStudy = 2;
 	int64 id = 3;
 }
+
+
+message BackLoading{
+	int64 id=1;
+	string colour=2;
+	int64 cargoId=3;
+	string api=4;
+	string temperature=5;
+	string abbreviation = 6;
+	string quantity=7;
+}
+
+message InstructionReply{
+	repeated InstructionDetail instructionDetails =1;
+	ResponseStatus responseStatus = 2;
+}
+message InstructionDetail{
+	int64 id=1;
+	string instruction=2;
+}
+
+
+message EmptyRequest{
+}

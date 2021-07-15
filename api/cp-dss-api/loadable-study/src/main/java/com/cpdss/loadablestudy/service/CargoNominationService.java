@@ -112,20 +112,13 @@ public class CargoNominationService {
     dischargeStudyCargo.setMaxTolerance(cargo.getMaxTolerance());
     dischargeStudyCargo.setMinTolerance(cargo.getMinTolerance());
     dischargeStudyCargo.setPriority(cargo.getPriority());
-    if (cargo.getCargoNominationPortDetails() == null
-        || cargo.getCargoNominationPortDetails().isEmpty()) {
-      dischargeStudyCargo.setQuantity(new BigDecimal(0));
-    } else {
-      dischargeStudyCargo.setQuantity(
-          cargo.getCargoNominationPortDetails().stream()
-              .map(CargoNominationPortDetails::getQuantity)
-              .reduce(BigDecimal.ZERO, BigDecimal::add));
-    }
+    dischargeStudyCargo.setQuantity(cargo.getQuantity());
     dischargeStudyCargo.setSegregationXId(cargo.getSegregationXId());
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setCargoNominationPortDetails(
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId));
+    dischargeStudyCargo.setMode(2L);
     return dischargeStudyCargo;
   }
 
@@ -534,7 +527,12 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
             ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
-            Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
+            ofNullable(cargoNomination.getMode()).ifPresent(builder::setMode);
+            Optional.ofNullable(cargoNomination.getApi())
+                .ifPresent(val -> builder.setApi(String.valueOf(val)));
+            Optional.ofNullable(cargoNomination.getTemperature())
+                .ifPresent(val -> builder.setTemperature(String.valueOf(val)));
+
             ofNullable(cargoNomination.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object

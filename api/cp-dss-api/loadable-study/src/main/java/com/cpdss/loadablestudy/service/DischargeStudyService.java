@@ -113,9 +113,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           createDischargeStudyPortRotationData(loadableStudyPortRotation, savedDischargeStudy);
       LoadableStudyPortRotation savedDischargeport =
           loadableStudyPortRotationRepository.save(dischargeStudyPortRotation);
-      List<CargoNomination> dischargeCargos =
-          this.cargoNominationService.saveDsichargeStudyCargoNominations(
-              savedDischargeStudy.getId(), loadableStudy.getId(), savedDischargeport.getPortXId());
+      this.cargoNominationService.saveDsichargeStudyCargoNominations(
+          savedDischargeStudy.getId(), loadableStudy.getId(), savedDischargeport.getPortXId());
 
       this.synopticalTableRepository.saveAll(
           createDischargeSynoptical(synopticalData, savedDischargeport));
