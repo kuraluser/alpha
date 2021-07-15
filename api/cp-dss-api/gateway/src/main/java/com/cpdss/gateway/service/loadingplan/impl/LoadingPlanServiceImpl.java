@@ -6,7 +6,6 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.*;
@@ -15,7 +14,6 @@ import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
-import com.cpdss.gateway.utility.LoadingPlanSection;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -178,17 +176,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   @Override
-  public RuleResponse getLoadingPlanRules(
-      Long vesselId, Long voyageId, Long loadingInfoId, LoadingPlanSection section)
+  public RuleResponse getLoadingPlanRules(Long vesselId, Long voyageId, Long loadingInfoId)
       throws GenericServiceException {
-
-    // RPC call to vessel info, Get Rules (default value for Loading Info)
-    RuleResponse ruleResponse =
-        vesselInfoService.getRulesByVesselIdAndSectionId(
-            vesselId, GatewayConstants.LOADING_RULE_MASTER_ID, null, null);
-
-    // RPC call to Loading info, Get Loading specific rules
-
-    return null;
+    return this.loadingPlanGrpcService.getLoadingPlanRules(vesselId, loadingInfoId);
   }
 }

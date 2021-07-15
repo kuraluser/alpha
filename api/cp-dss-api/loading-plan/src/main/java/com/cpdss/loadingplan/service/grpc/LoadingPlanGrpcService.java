@@ -21,7 +21,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
 
   @Autowired LoadingPlanService loadingPlanService;
 
-  @Autowired LoadingPlanRuleServiceImpl planRuleService;
+  @Autowired LoadingPlanRuleServiceImpl loadingPlanRuleService;
 
   @Override
   public void loadingPlanSynchronization(
@@ -54,6 +54,21 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   public void getOrSaveRulesForLoadingPlan(
       LoadingPlanModels.LoadingPlanRuleRequest request,
       StreamObserver<LoadingPlanModels.LoadingPlanRuleReply> responseObserver) {
-    super.getOrSaveRulesForLoadingPlan(request, responseObserver);
+    LoadingPlanModels.LoadingPlanRuleReply.Builder builder =
+        LoadingPlanModels.LoadingPlanRuleReply.newBuilder();
+    try {
+      loadingPlanRuleService.getOrSaveRulesForLoadingPlan(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

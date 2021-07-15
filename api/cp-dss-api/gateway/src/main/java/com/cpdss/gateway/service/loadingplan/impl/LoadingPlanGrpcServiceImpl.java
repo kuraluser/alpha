@@ -266,14 +266,14 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   @Override
-  public Object getLoadingPlanRules(Long vesselId, Long loadingInfoId)
+  public RuleResponse getLoadingPlanRules(Long vesselId, Long loadingInfoId)
       throws GenericServiceException {
     RuleResponse ruleResponse = new RuleResponse();
     LoadingPlanModels.LoadingPlanRuleRequest.Builder builder =
         LoadingPlanModels.LoadingPlanRuleRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.setSectionId(LOADING_RULE_MASTER_ID);
-    builder.setLoadableStudyId(loadingInfoId);
+    builder.setLoadingInfoId(loadingInfoId);
     LoadingPlanModels.LoadingPlanRuleReply loadingRuleReply =
         this.loadingPlanServiceBlockingStub.getOrSaveRulesForLoadingPlan(builder.build());
     if (!loadingRuleReply.getResponseStatus().getStatus().equals(SUCCESS)) {
@@ -285,6 +285,6 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     ruleResponse.setPlan(Utility.buildLoadingPlanRule(loadingRuleReply));
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
-    return null;
+    return ruleResponse;
   }
 }

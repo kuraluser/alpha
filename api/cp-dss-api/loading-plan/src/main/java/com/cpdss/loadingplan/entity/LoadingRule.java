@@ -36,10 +36,10 @@ public class LoadingRule extends EntityDoc {
   private Long loadingXid;
 
   @Column(name = "numeric_precision")
-  private Integer numericPrecision;
+  private Long numericPrecision;
 
   @Column(name = "numeric_scale")
-  private Integer numericScale;
+  private Long numericScale;
 
   @Column(name = "parent_rule_xid")
   private Long parentRuleXid;

@@ -51965,11 +51965,11 @@ public final class LoadingPlanModels {
     com.cpdss.common.generated.Common.RulePlansOrBuilder getRulePlanOrBuilder(int index);
 
     /**
-     * <code>int64 loadableStudyId = 4;</code>
+     * <code>int64 loadingInfoId = 4;</code>
      *
-     * @return The loadableStudyId.
+     * @return The loadingInfoId.
      */
-    long getLoadableStudyId();
+    long getLoadingInfoId();
 
     /**
      * <code>bool isNoDefaultRule = 5;</code>
@@ -52047,7 +52047,7 @@ public final class LoadingPlanModels {
               }
             case 32:
               {
-                loadableStudyId_ = input.readInt64();
+                loadingInfoId_ = input.readInt64();
                 break;
               }
             case 40:
@@ -52140,15 +52140,15 @@ public final class LoadingPlanModels {
       return rulePlan_.get(index);
     }
 
-    public static final int LOADABLESTUDYID_FIELD_NUMBER = 4;
-    private long loadableStudyId_;
+    public static final int LOADINGINFOID_FIELD_NUMBER = 4;
+    private long loadingInfoId_;
     /**
-     * <code>int64 loadableStudyId = 4;</code>
+     * <code>int64 loadingInfoId = 4;</code>
      *
-     * @return The loadableStudyId.
+     * @return The loadingInfoId.
      */
-    public long getLoadableStudyId() {
-      return loadableStudyId_;
+    public long getLoadingInfoId() {
+      return loadingInfoId_;
     }
 
     public static final int ISNODEFAULTRULE_FIELD_NUMBER = 5;
@@ -52185,8 +52185,8 @@ public final class LoadingPlanModels {
       for (int i = 0; i < rulePlan_.size(); i++) {
         output.writeMessage(3, rulePlan_.get(i));
       }
-      if (loadableStudyId_ != 0L) {
-        output.writeInt64(4, loadableStudyId_);
+      if (loadingInfoId_ != 0L) {
+        output.writeInt64(4, loadingInfoId_);
       }
       if (isNoDefaultRule_ != false) {
         output.writeBool(5, isNoDefaultRule_);
@@ -52209,8 +52209,8 @@ public final class LoadingPlanModels {
       for (int i = 0; i < rulePlan_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, rulePlan_.get(i));
       }
-      if (loadableStudyId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, loadableStudyId_);
+      if (loadingInfoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, loadingInfoId_);
       }
       if (isNoDefaultRule_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(5, isNoDefaultRule_);
@@ -52236,7 +52236,7 @@ public final class LoadingPlanModels {
       if (getVesselId() != other.getVesselId()) return false;
       if (getSectionId() != other.getSectionId()) return false;
       if (!getRulePlanList().equals(other.getRulePlanList())) return false;
-      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (getLoadingInfoId() != other.getLoadingInfoId()) return false;
       if (getIsNoDefaultRule() != other.getIsNoDefaultRule()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
@@ -52257,8 +52257,8 @@ public final class LoadingPlanModels {
         hash = (37 * hash) + RULEPLAN_FIELD_NUMBER;
         hash = (53 * hash) + getRulePlanList().hashCode();
       }
-      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      hash = (37 * hash) + LOADINGINFOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadingInfoId());
       hash = (37 * hash) + ISNODEFAULTRULE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsNoDefaultRule());
       hash = (29 * hash) + unknownFields.hashCode();
@@ -52423,7 +52423,7 @@ public final class LoadingPlanModels {
         } else {
           rulePlanBuilder_.clear();
         }
-        loadableStudyId_ = 0L;
+        loadingInfoId_ = 0L;
 
         isNoDefaultRule_ = false;
 
@@ -52472,7 +52472,7 @@ public final class LoadingPlanModels {
         } else {
           result.rulePlan_ = rulePlanBuilder_.build();
         }
-        result.loadableStudyId_ = loadableStudyId_;
+        result.loadingInfoId_ = loadingInfoId_;
         result.isNoDefaultRule_ = isNoDefaultRule_;
         onBuilt();
         return result;
@@ -52565,8 +52565,8 @@ public final class LoadingPlanModels {
             }
           }
         }
-        if (other.getLoadableStudyId() != 0L) {
-          setLoadableStudyId(other.getLoadableStudyId());
+        if (other.getLoadingInfoId() != 0L) {
+          setLoadingInfoId(other.getLoadingInfoId());
         }
         if (other.getIsNoDefaultRule() != false) {
           setIsNoDefaultRule(other.getIsNoDefaultRule());
@@ -52878,35 +52878,35 @@ public final class LoadingPlanModels {
         return rulePlanBuilder_;
       }
 
-      private long loadableStudyId_;
+      private long loadingInfoId_;
       /**
-       * <code>int64 loadableStudyId = 4;</code>
+       * <code>int64 loadingInfoId = 4;</code>
        *
-       * @return The loadableStudyId.
+       * @return The loadingInfoId.
        */
-      public long getLoadableStudyId() {
-        return loadableStudyId_;
+      public long getLoadingInfoId() {
+        return loadingInfoId_;
       }
       /**
-       * <code>int64 loadableStudyId = 4;</code>
+       * <code>int64 loadingInfoId = 4;</code>
        *
-       * @param value The loadableStudyId to set.
+       * @param value The loadingInfoId to set.
        * @return This builder for chaining.
        */
-      public Builder setLoadableStudyId(long value) {
+      public Builder setLoadingInfoId(long value) {
 
-        loadableStudyId_ = value;
+        loadingInfoId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 loadableStudyId = 4;</code>
+       * <code>int64 loadingInfoId = 4;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearLoadableStudyId() {
+      public Builder clearLoadingInfoId() {
 
-        loadableStudyId_ = 0L;
+        loadingInfoId_ = 0L;
         onChanged();
         return this;
       }
@@ -54304,14 +54304,14 @@ public final class LoadingPlanModels {
           + "vesselId\030\002 \001(\003\022\026\n\016portRotationId\030\003 \001(\003\022\031"
           + "\n\021synopticalTableId\030\004 \001(\003\022\020\n\010voyageId\030\005 "
           + "\001(\003\022\'\n\016responseStatus\030\006 \001(\0132\017.ResponseSt"
-          + "atus\"\215\001\n\026LoadingPlanRuleRequest\022\020\n\010vesse"
+          + "atus\"\213\001\n\026LoadingPlanRuleRequest\022\020\n\010vesse"
           + "lId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan"
-          + "\030\003 \003(\0132\n.RulePlans\022\027\n\017loadableStudyId\030\004 "
-          + "\001(\003\022\027\n\017isNoDefaultRule\030\005 \001(\010\"]\n\024LoadingP"
-          + "lanRuleReply\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
-          + "esponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePl"
-          + "ansB+\n\'com.cpdss.common.generated.loadin"
-          + "g_planP\000b\006proto3"
+          + "\030\003 \003(\0132\n.RulePlans\022\025\n\rloadingInfoId\030\004 \001("
+          + "\003\022\027\n\017isNoDefaultRule\030\005 \001(\010\"]\n\024LoadingPla"
+          + "nRuleReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res"
+          + "ponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlan"
+          + "sB+\n\'com.cpdss.common.generated.loading_"
+          + "planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -54757,7 +54757,7 @@ public final class LoadingPlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingPlanRuleRequest_descriptor,
             new java.lang.String[] {
-              "VesselId", "SectionId", "RulePlan", "LoadableStudyId", "IsNoDefaultRule",
+              "VesselId", "SectionId", "RulePlan", "LoadingInfoId", "IsNoDefaultRule",
             });
     internal_static_LoadingPlanRuleReply_descriptor = getDescriptor().getMessageTypes().get(31);
     internal_static_LoadingPlanRuleReply_fieldAccessorTable =

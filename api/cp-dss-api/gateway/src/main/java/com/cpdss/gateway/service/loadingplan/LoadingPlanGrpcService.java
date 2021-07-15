@@ -8,6 +8,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import java.util.List;
@@ -46,5 +47,6 @@ public interface LoadingPlanGrpcService {
 
   ResponseStatus generateLoadingPlan(Long loadingInfoId);
 
-  Object getLoadingPlanRules(Long vesselId, Long loadingInfoId) throws GenericServiceException;
+  RuleResponse getLoadingPlanRules(Long vesselId, Long loadingInfoId)
+      throws GenericServiceException;
 }
