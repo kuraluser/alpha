@@ -9,11 +9,15 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class LoadingInformationBuilderService {
 
@@ -62,6 +66,8 @@ public class LoadingInformationBuilderService {
           .ifPresent(v -> builder.setLineContentRemaining(v.toString()));
       Optional.ofNullable(var1.getMinLoadingRate())
           .ifPresent(v -> builder.setMinLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getShoreLoadingRate())
+          .ifPresent(v -> builder.setShoreLoadingRate(v.toString()));
     }
     return builder.build();
   }
@@ -204,5 +210,29 @@ public class LoadingInformationBuilderService {
       toppingOffs.add(builder.build());
     }
     return toppingOffs;
+  }
+
+  public LoadingInformation buildLoadingInfoFromRpcMessage(
+      LoadingPlanModels.LoadingInformation source, LoadingInformation target) {
+    // Set Loading Details
+    if (source.getLoadingDetail() != null) {
+      log.info("Save Loading info, Set Loading Details");
+      if (!source.getLoadingDetail().getStartTime().isEmpty())
+        target.setStartTime(
+            LocalTime.from(TIME_FORMATTER.parse(source.getLoadingDetail().getStartTime())));
+
+      if (!source.getLoadingDetail().getTrimAllowed().getFinalTrim().isEmpty())
+        target.setFinalTrim(
+            new BigDecimal(source.getLoadingDetail().getTrimAllowed().getFinalTrim()));
+
+      if (!source.getLoadingDetail().getTrimAllowed().getInitialTrim().isEmpty())
+        target.setInitialTrim(
+            new BigDecimal(source.getLoadingDetail().getTrimAllowed().getInitialTrim()));
+
+      if (!source.getLoadingDetail().getTrimAllowed().getMaximumTrim().isEmpty())
+        target.setMaximumTrim(
+            new BigDecimal(source.getLoadingDetail().getTrimAllowed().getMaximumTrim()));
+    }
+    return target;
   }
 }

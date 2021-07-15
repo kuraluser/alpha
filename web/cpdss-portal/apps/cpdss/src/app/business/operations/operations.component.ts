@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -39,6 +39,7 @@ export class OperationsComponent implements OnInit {
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
     private loadingTransformationService: LoadingTransformationService) { }
+
 
   ngOnInit(): void {
     this.getVesselInfo();

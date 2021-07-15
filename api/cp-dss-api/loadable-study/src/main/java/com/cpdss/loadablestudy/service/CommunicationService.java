@@ -40,6 +40,7 @@ public class CommunicationService {
   @Autowired VoyageService voyageService;
   @Autowired LoadableQuantityService loadableQuantityService;
   @Autowired LoadableStudyService loadableStudyService;
+  @Autowired LoadablePatternService loadablePatternService;
   @Autowired JsonDataService jsonDataService;
   @Autowired private RestTemplate restTemplate;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
@@ -118,7 +119,7 @@ public class CommunicationService {
 
     AlgoResponse algoResponse =
         restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
-    loadableStudyService.updateProcessIdForLoadableStudy(
+    loadablePatternService.updateProcessIdForLoadableStudy(
         algoResponse.getProcessId(),
         loadableStudyEntity,
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID);
@@ -151,7 +152,7 @@ public class CommunicationService {
           com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.newBuilder();
       // load.setLoadableStudyId(request.getLoadableStudyId());
       if (!jsonResult.isEmpty())
-        loadableStudyService.saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
+        loadablePatternService.saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving pattern", e);
     }

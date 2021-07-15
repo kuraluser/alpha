@@ -19,6 +19,7 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { IPortsDetailsResponse, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 import { QuantityDecimalFormatPipe } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component class of cargonomination screen
@@ -576,7 +577,12 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @private
    * @memberof CargoNominationComponent
    */
-  private addCargoNomination(cargoNomination: ICargoNomination = null) {
+  private async addCargoNomination(cargoNomination: ICargoNomination = null) {
+    if(AppConfigurationService.settings.restrictMaxNumberOfCargo && this.loadableStudyDetailsApiService.cargoNominations.length >= AppConfigurationService.settings.maxCargoLimit){
+      const translationKeys = await this.translateService.get(['MAXIMUM_CARGO_WARNING', 'MAXIMUM_CARGO_LIMIT_REACHED']).toPromise();
+      this.messageService.add({ severity: 'warn', summary: translationKeys['MAXIMUM_CARGO_WARNING'], detail: translationKeys['MAXIMUM_CARGO_LIMIT_REACHED'] });
+      return;
+    }
     cargoNomination = cargoNomination ?? <ICargoNomination>{ id: 0, priority: 1, color: null, cargoId: null, abbreviation: null, quantity: null, segregationId: 1, loadingPorts: null };
     const _cargoNomination = this.loadableStudyDetailsTransformationService.getCargoNominationAsValueObject(cargoNomination, true, this.listData);
     this.cargoNominations = [...this.cargoNominations, _cargoNomination];

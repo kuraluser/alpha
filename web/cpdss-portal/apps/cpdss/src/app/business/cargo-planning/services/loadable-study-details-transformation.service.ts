@@ -1240,7 +1240,8 @@ export class LoadableStudyDetailsTransformationService {
         showTemplate: true,
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
-          'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'
+          'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION',
+          'similarCargo' : 'COMMINGLE_MANUAL_SAME_CARGO_ON_BOTH_FIELD'
         }
       },
       {
@@ -1279,7 +1280,8 @@ export class LoadableStudyDetailsTransformationService {
         showTemplate: true,
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
-          'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'
+          'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION',
+          'similarCargo' : 'COMMINGLE_MANUAL_SAME_CARGO_ON_BOTH_FIELD'
         }
       },
       {

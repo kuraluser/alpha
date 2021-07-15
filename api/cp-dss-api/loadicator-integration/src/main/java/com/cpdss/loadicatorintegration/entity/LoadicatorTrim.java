@@ -80,5 +80,5 @@ public class LoadicatorTrim extends EntityDoc {
   private String messageText;
 
   @Column(name = "hogsag")
-  private BigDecimal hogSag;
+  private BigDecimal deflection;
 }

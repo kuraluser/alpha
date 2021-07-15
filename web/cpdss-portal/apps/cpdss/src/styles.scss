@@ -1472,6 +1472,7 @@ td.sl div{
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 45%;
+        left: auto;
       }
 }
 
@@ -1847,6 +1848,8 @@ th .p-button.p-button-icon-only.p-button-rounded{
     background: none;
     width: 14px;
     height: 14px;
+    position: relative;
+    border-radius: 2px;
   }
 }
 .p-checkbox .p-checkbox-box .p-checkbox-icon{
@@ -2737,4 +2740,25 @@ textarea{
 
 .rules-pop-up{
   width: 90vw;
+}
+
+.content-wrapper{
+  height: 98%;
+  overflow-y: auto;
+}
+.p-checkbox-icon{
+  position: relative;
+
+}
+
+.p-checkbox-icon.pi-check:before{
+  content: ""!important;
+  border: solid #005397;
+  width: 4px;
+  height: 8px;
+  border-width: 0 2px 2px 0 !important;
+  transform: rotate(45deg);
+  position: absolute;
+  top: -4px; 
+  right: -2px;
 }

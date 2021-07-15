@@ -298,13 +298,11 @@ export class CommingleComponent implements OnInit {
     this.cargoFieldsUpdateValue();
     const form = this.row(event.index);
     if (event.field === 'cargo1') {
-      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.data.cargo1.value.id);
       this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color;
       // this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
     if (event.field === 'cargo2') {
-      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.data.cargo2.value.id);
       this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color;
       // this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
       form.controls.quantity.updateValueAndValidity();

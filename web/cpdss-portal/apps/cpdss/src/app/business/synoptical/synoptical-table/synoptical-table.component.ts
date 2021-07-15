@@ -202,6 +202,22 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     if (result.responseStatus.status === "200") {
       this.synopticalService.synopticalRecords = await this.convertIntoZoneTimeZone(result.synopticalRecords);
       this.synopticalService.showActions = true;
+      const index = this.cols.findIndex(item => item?.header === 'Hogging/Sagging (cm)');
+      if (!this.synopticalService?.synopticalRecords[0]?.hasLoadicator && (index || index === 0)) {
+        if (index || index === 0) {
+          this.cols.splice(index, 1);
+        }
+      } else if(this.synopticalService?.synopticalRecords[0]?.hasLoadicator && (!index && index !== 0)){
+          const indexBefore = this.cols.findIndex(item => item?.header === 'Final Draft (m)');
+          if (indexBefore || indexBefore === 0) {
+            this.cols.splice(indexBefore, 0, {
+              header: "Hogging/Sagging (cm)",
+              fields: [
+                { key: "hogSag" }
+              ],
+            });
+          }
+      }
       this.dynamicColumns.forEach(dynamicColumn => {
         this.formatData(dynamicColumn)
         this.addToColumns(dynamicColumn);
@@ -458,7 +474,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         header: "Hogging/Sagging (cm)",
         fields: [
           { key: "hogSag" }
-        ]
+        ],
       },
       {
         header: "Final Draft (m)",

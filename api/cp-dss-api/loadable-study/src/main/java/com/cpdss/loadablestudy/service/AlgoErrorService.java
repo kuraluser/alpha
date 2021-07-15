@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.scheduler.ScheduledTaskRequest;
@@ -10,7 +12,6 @@ import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import io.grpc.stub.StreamObserver;
 import java.util.*;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,42 +97,6 @@ public class AlgoErrorService {
       builder.setId(heading.getId());
       builder.addAllErrorMessages(rep);
       builder.setErrorHeading(heading.getErrorHeading());
-      builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
-    } catch (Exception e) {
-      e.printStackTrace();
-      builder.setResponseStatus(
-          Common.ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED));
-    } finally {
-      responseObserver.onNext(builder.build());
-      responseObserver.onCompleted();
-    }
-  }
-
-  public void fetchAllErrors(
-      com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-      StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-    String errorHeading = request.getErrorHeading();
-    LoadableStudy.AlgoErrors.Builder builder = LoadableStudy.AlgoErrors.newBuilder();
-    try {
-      if (errorHeading != null && errorHeading.length() > 0) {
-        Optional<List<AlgoErrorHeading>> alogError =
-            algoErrorHeadingRepository.findAllByErrorHeading(errorHeading);
-        if (alogError.isPresent()) {
-          log.info(
-              "Alog Error for Heading {}, Found with size {}",
-              errorHeading,
-              alogError.get().size());
-          for (AlgoErrorHeading alEr : alogError.get()) {
-            List<String> res = new ArrayList<>();
-            res.addAll(
-                alEr.getAlgoErrors().stream()
-                    .map(val -> val.getErrorMessage())
-                    .collect(Collectors.toList()));
-            builder.addAllErrorMessages(res);
-            builder.setErrorHeading(request.getErrorHeading());
-          }
-        }
-      }
       builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (Exception e) {
       e.printStackTrace();

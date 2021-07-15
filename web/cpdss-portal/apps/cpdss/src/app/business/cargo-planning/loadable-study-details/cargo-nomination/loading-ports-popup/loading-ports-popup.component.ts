@@ -177,8 +177,6 @@ export class LoadingPortsPopupComponent implements OnInit {
       this.popupDataChange.emit(this.popupData);
       if (this.checkNewPortOccured()) {
         this.portOhqTabStatusUpdate.emit(false);
-      } else {
-        this.portOhqTabStatusUpdate.emit(true);
       }
       this.closePopup();
     } else {

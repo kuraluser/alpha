@@ -26,6 +26,6 @@ import { LoadingTransformationService } from './services/loading-transformation.
     PortRotationRibbonModule,
     AddPortPopupModule
   ],
-  providers: [VesselsApiService, LoadingTransformationService]
+  providers: [VesselsApiService, LoadingTransformationService ]
 })
 export class OperationsModule { }

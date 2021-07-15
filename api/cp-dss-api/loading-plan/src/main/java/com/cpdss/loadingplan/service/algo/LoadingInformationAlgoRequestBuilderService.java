@@ -50,6 +50,8 @@ import com.cpdss.loadingplan.domain.algo.ToppingOffSequence;
 import com.cpdss.loadingplan.domain.algo.TrimAllowed;
 import com.cpdss.loadingplan.domain.algo.VesselPump;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
+import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
+import com.cpdss.loadingplan.service.LoadingPortTideService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -78,6 +80,8 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   @Autowired LoadingInformationRepository loadingInformationRepository;
 
+  @Autowired LoadingPortTideService loadingPortTideDetailsService;
+
   /**
    * Creates the ALGO request
    *
@@ -102,6 +106,8 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
       buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
+      // Need confirmation on amount of data to share (whole data or high/low tide details)
+      // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
     } else {
       throw new GenericServiceException(
           "Could not find loading information " + request.getLoadingInfoId(),
@@ -109,6 +115,14 @@ public class LoadingInformationAlgoRequestBuilderService {
           HttpStatusCode.BAD_REQUEST);
     }
     return algoRequest;
+  }
+
+  private void buildPortTideDetails(LoadingInformationAlgoRequest algoRequest, Long portXId) {
+    if (portXId != null && portXId > 0) {
+      List<PortTideAlgo> list =
+          loadingPortTideDetailsService.findRecentTideDetailsByPortId(portXId);
+      algoRequest.setPortTideDetails(list);
+    }
   }
 
   private void buildLoadingRules(LoadingInformationAlgoRequest algoRequest, Long vesselXId)
@@ -221,28 +235,10 @@ public class LoadingInformationAlgoRequestBuilderService {
         this.loadableStudyService.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
                 .setPatternId(entity.getLoadablePatternXId())
-                .setOperationType("ARR")
+                .setOperationType("DEP")
                 .setPortRotationId(entity.getPortRotationXId())
                 .setPortId(entity.getPortXId())
                 .build());
-
-    if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to fetch cargoVesselTankDetails from Loadable-Study MS",
-          response.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(response.getResponseStatus().getCode())));
-    }
-
-    if (response.getLoadableQuantityCargoDetailsList().isEmpty()) {
-      response =
-          this.loadableStudyService.getSynopticDataForLoadingPlan(
-              LoadableStudy.LoadingPlanIdRequest.newBuilder()
-                  .setPatternId(entity.getLoadablePatternXId())
-                  .setOperationType("DEP")
-                  .setPortRotationId(entity.getPortRotationXId())
-                  .setPortId(entity.getPortXId())
-                  .build());
-    }
 
     if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

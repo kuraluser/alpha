@@ -16,4 +16,5 @@ public class LoadingRates {
   private BigDecimal noticeTimeStopLoading;
   private BigDecimal lineContentRemaining;
   private BigDecimal minLoadingRate; // or initial loading rate
+  private BigDecimal shoreLoadingRate;
 }

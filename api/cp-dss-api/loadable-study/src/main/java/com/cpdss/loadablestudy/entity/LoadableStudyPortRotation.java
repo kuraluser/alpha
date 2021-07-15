@@ -97,4 +97,7 @@ public class LoadableStudyPortRotation extends EntityDoc {
 
   @Column(name = "is_portrotation_ohq_complete")
   private Boolean isPortRotationOhqComplete;
+
+  @Column(name = "is_backloading_enabled")
+  private Boolean isbackloadingEnabled;
 }

@@ -1,10 +1,12 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
+import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import java.util.List;
 import lombok.Data;
 
 @Data
+@CPDSSJsonParser
 public class LoadingInformationRequest {
 
   private Long loadingInfoId;
@@ -19,15 +21,9 @@ public class LoadingInformationRequest {
 
   private List<LoadingMachinesInUse> loadingMachineries;
 
-  private StageOffset stageOffset;
-
-  private StageDuration stageDuration;
-
   private List<LoadingDelays> loadingDelays;
 
   private List<ToppingOffSequence> toppingOffSequence;
 
-  private Boolean trackStartEndStage;
-
-  private Boolean trackGradeSwitch;
+  private LoadingStagesRequest loadingStages;
 }

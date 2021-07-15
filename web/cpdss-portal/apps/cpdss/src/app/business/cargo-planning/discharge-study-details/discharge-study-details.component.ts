@@ -172,10 +172,10 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
       this.ports = await this.getPorts();
       const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
-      const dischargeStudies = result?.loadableStudies ?? [];
+      const dischargeStudies = result?.dischargeStudies ?? [];
       if (dischargeStudies.length) {
-        this.setProcessingLoadableStudyActions(0, 0, dischargeStudies);
-        this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(loadableStudy => loadableStudy.id === dischargeStudyId) : this.dischargeStudies[0];
+        this.dischargeStudies = dischargeStudies;
+        this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId) : this.dischargeStudies[0];
         this.dischargeStudyDetailsTransformationService.setOHQValidity(this.selectedDischargeStudy?.ohqPorts ?? []);
       } else {
         this.dischargeStudies = [];
@@ -287,6 +287,16 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
   */
   addPort() {
     this.dischargeStudyDetailsTransformationService.addPort();
+  }
+
+  /**
+  * Method to change discharge study
+  *
+  * @memberof DischargeStudyDetailsComponent
+  */
+  onDischargeStudyChange(event) {
+    const dischargeStudyId = event.value.id;
+    this.router.navigate([`business/cargo-planning/discharge-study-details/${this.vesselId}/${this.voyageId}/${dischargeStudyId}`]);
   }
 
 }

@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
+import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -9,10 +10,7 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.LoadableQuantity;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import java.math.BigDecimal;
@@ -48,6 +46,10 @@ public class LoadableQuantityService {
   @Autowired private LoadablePatternService loadablePatternService;
 
   @Autowired LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+
+  @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
+
+  @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -129,7 +131,7 @@ public class LoadableQuantityService {
             "Loadable Quantity, Port Rotation Operation Type - {}",
             portRotation.getOperation().getId());
         minDraftValue.add(portRotation.getMaxDraft());
-        minDraftValue.add(loadableStudy.get().getDraftMark());
+        // minDraftValue.add(loadableStudy.get().getDraftMark());
         Optional<BigDecimal> minVal =
             minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
         log.info("Minimum draft value among 2 {}", minVal.get());
@@ -590,6 +592,156 @@ public class LoadableQuantityService {
                   ? null
                   : new BigDecimal(request.getDraftMark()));
       this.loadableQuantityRepository.save(loadableQuantity.get(0));
+    }
+  }
+
+  /**
+   * @param loadablePlanPortWiseDetails
+   * @return Consumer<? super LoadablePlanPortWiseDetails>
+   */
+  public void saveLoadableQuantity(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails
+          loadablePlanPortWiseDetails,
+      LoadablePattern loadablePattern) {
+    loadablePlanPortWiseDetails
+        .getDepartureCondition()
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            lqcd -> {
+              LoadablePlanQuantity loadablePlanQuantity = new LoadablePlanQuantity();
+              loadablePlanQuantity.setDifferencePercentage(lqcd.getDifferencePercentage());
+              loadablePlanQuantity.setEstimatedApi(new BigDecimal(lqcd.getEstimatedAPI()));
+              loadablePlanQuantity.setEstimatedTemperature(new BigDecimal(lqcd.getEstimatedTemp()));
+              loadablePlanQuantity.setCargoXId(lqcd.getCargoId());
+              loadablePlanQuantity.setIsActive(true);
+              loadablePlanQuantity.setLoadableMt(lqcd.getLoadableMT());
+              loadablePlanQuantity.setOrderQuantity(new BigDecimal(lqcd.getOrderedMT()));
+              loadablePlanQuantity.setLoadablePattern(loadablePattern);
+              loadablePlanQuantity.setCargoAbbreviation(lqcd.getCargoAbbreviation());
+              loadablePlanQuantity.setCargoColor(lqcd.getColorCode());
+              loadablePlanQuantity.setPriority(lqcd.getPriority());
+              loadablePlanQuantity.setLoadingOrder(lqcd.getLoadingOrder());
+              loadablePlanQuantity.setMinTolerence(lqcd.getMinTolerence());
+              loadablePlanQuantity.setMaxTolerence(lqcd.getMaxTolerence());
+              loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
+              loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
+              loadablePlanQuantity.setCargoNominationTemperature(
+                  new BigDecimal(lqcd.getCargoNominationTemperature()));
+              loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
+              loadablePlanQuantityRepository.save(loadablePlanQuantity);
+              lqcd.getToppingOffSequencesList()
+                  .forEach(
+                      toppingSequence -> {
+                        LoadablePatternCargoToppingOffSequence lpctos =
+                            new LoadablePatternCargoToppingOffSequence();
+                        lpctos.setCargoXId(lqcd.getCargoId());
+                        lpctos.setTankXId(toppingSequence.getTankId());
+                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                        lpctos.setLoadablePattern(loadablePattern);
+                        lpctos.setIsActive(true);
+                        toppingOffSequenceRepository.save(lpctos);
+                      });
+            });
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy void
+   */
+  public void buildLoadableQuantityDetails(
+      long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    List<LoadableQuantity> loadableQuantity =
+        loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    if (!loadableQuantity.isEmpty()) {
+
+      loadableQuantity.forEach(
+          loadableQunty -> {
+            com.cpdss.loadablestudy.domain.LoadableQuantity loadableQuantityDto =
+                new com.cpdss.loadablestudy.domain.LoadableQuantity();
+
+            ofNullable(loadableQunty.getBallast())
+                .ifPresent(ballast -> loadableQuantityDto.setBallast(String.valueOf(ballast)));
+            ofNullable(loadableQunty.getBoilerWaterOnBoard())
+                .ifPresent(
+                    boilerWaterOnBoard ->
+                        loadableQuantityDto.setBoilerWaterOnBoard(
+                            String.valueOf(boilerWaterOnBoard)));
+            ofNullable(loadableQunty.getConstant())
+                .ifPresent(constant -> loadableQuantityDto.setConstant(String.valueOf(constant)));
+            ofNullable(loadableQunty.getDeadWeight())
+                .ifPresent(
+                    deadWeight -> loadableQuantityDto.setDeadWeight(String.valueOf(deadWeight)));
+            ofNullable(loadableQunty.getDistanceFromLastPort())
+                .ifPresent(
+                    distanceFromLastPort ->
+                        loadableQuantityDto.setDistanceFromLastPort(
+                            String.valueOf(distanceFromLastPort)));
+            ofNullable(loadableQunty.getDraftRestriction())
+                .ifPresent(
+                    draftRestriction ->
+                        loadableQuantityDto.setDraftRestriction(String.valueOf(draftRestriction)));
+            ofNullable(loadableQunty.getEstimatedDOOnBoard())
+                .ifPresent(
+                    estimatedDOOnBoard ->
+                        loadableQuantityDto.setEstDOOnBoard(String.valueOf(estimatedDOOnBoard)));
+            ofNullable(loadableQunty.getEstimatedFOOnBoard())
+                .ifPresent(
+                    estimatedFOOnBoard ->
+                        loadableQuantityDto.setEstFOOnBoard(String.valueOf(estimatedFOOnBoard)));
+            ofNullable(loadableQunty.getEstimatedFWOnBoard())
+                .ifPresent(
+                    estimatedFWOnBoard ->
+                        loadableQuantityDto.setEstFreshWaterOnBoard(
+                            String.valueOf(estimatedFWOnBoard)));
+            ofNullable(loadableQunty.getEstimatedSagging())
+                .ifPresent(
+                    estimatedSagging ->
+                        loadableQuantityDto.setEstSagging(String.valueOf(estimatedSagging)));
+            ofNullable(loadableQunty.getFoConsumptionInSZ())
+                .ifPresent(
+                    foConsumptionInSZ ->
+                        loadableQuantityDto.setFoConInSZ(String.valueOf(foConsumptionInSZ)));
+            ofNullable(loadableQunty.getId()).ifPresent(id -> loadableQuantityDto.setId(id));
+            ofNullable(loadableQunty.getOtherIfAny())
+                .ifPresent(
+                    otherIfAny -> loadableQuantityDto.setOtherIfAny(String.valueOf(otherIfAny)));
+            ofNullable(loadableQunty.getPortId())
+                .ifPresent(
+                    portId -> loadableQuantityDto.setPortId(Long.valueOf(portId.toString())));
+            ofNullable(loadableQunty.getRunningDays())
+                .ifPresent(
+                    runningDays -> loadableQuantityDto.setRunningDays(String.valueOf(runningDays)));
+            ofNullable(loadableQunty.getRunningHours())
+                .ifPresent(
+                    runningHours ->
+                        loadableQuantityDto.setRunningHours(String.valueOf(runningHours)));
+            ofNullable(loadableQunty.getSaggingDeduction())
+                .ifPresent(
+                    saggingDeduction ->
+                        loadableQuantityDto.setSaggingDeduction(String.valueOf(saggingDeduction)));
+            ofNullable(loadableQunty.getSgCorrection())
+                .ifPresent(
+                    sgCorrection ->
+                        loadableQuantityDto.setSgCorrection(String.valueOf(sgCorrection)));
+            ofNullable(loadableQunty.getTotalFoConsumption())
+                .ifPresent(
+                    totalFoConsumption ->
+                        loadableQuantityDto.setTotalFoConsumption(
+                            String.valueOf(totalFoConsumption)));
+            ofNullable(loadableQunty.getTotalQuantity())
+                .ifPresent(
+                    totalQuantity ->
+                        loadableQuantityDto.setTotalQuantity(String.valueOf(totalQuantity)));
+            ofNullable(loadableQunty.getTpcatDraft())
+                .ifPresent(tpcatDraft -> loadableQuantityDto.setTpc(String.valueOf(tpcatDraft)));
+            ofNullable(loadableQunty.getVesselAverageSpeed())
+                .ifPresent(
+                    VesselAverageSpeed ->
+                        loadableQuantityDto.setVesselAverageSpeed(
+                            String.valueOf(VesselAverageSpeed)));
+
+            loadableStudy.setLoadableQuantity(loadableQuantityDto);
+          });
     }
   }
 
