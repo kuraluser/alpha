@@ -7,12 +7,9 @@ import lombok.Data;
 /** @Author jerin.g */
 @Data
 @AllArgsConstructor
-public class LoadingInstructions {
-
-  private Long instructionTypeId;
-  private Long instructionHeaderId;
-  private Long instructionId;
-  private String instruction;
-  private Boolean isChecked;
+public class LoadingInstructionGroup {
+	 
+	private Long groupId;
+	private String groupName;
   
 }

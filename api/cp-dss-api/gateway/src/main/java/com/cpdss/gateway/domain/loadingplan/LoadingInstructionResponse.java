@@ -5,12 +5,9 @@ import java.util.List;
 
 import lombok.Data;
 
+/** @Author jerin.g */
 @Data
 public class LoadingInstructionResponse {
-
-	private Long instructionTypeId;
-	
-	private String instructionType;
-
-	List<LoadingInstructionHeader> loadingInstructionList;
+	private List<LoadingInstructionSubHeader> loadingInstructionSubHeader;
+	private List<LoadingInstructionGroup> loadingInstructionGroupList;
 }

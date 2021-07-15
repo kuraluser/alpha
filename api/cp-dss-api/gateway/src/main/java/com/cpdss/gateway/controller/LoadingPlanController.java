@@ -17,6 +17,8 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionHeader;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructions;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
@@ -249,31 +251,31 @@ public class LoadingPlanController {
    * @throws CommonRestException
    */
   @PostMapping("/vessels/{vesselId}/port-rotation/{portRotationId}/loading-info/{infoId}")
-  public CommonSuccessResponse updateLoadingInstructionsSubHeader(
+  public LoadingInstructionsSaveResponse addLoadingInstructionsSubHeader(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portRotationId,
-      @RequestBody LoadingInstructionRequest request
+      @RequestBody LoadingInstructionsSaveRequest request
       )
       throws CommonRestException {
-	  CommonSuccessResponse response =  new CommonSuccessResponse();
-      response.setStatus(HttpStatus.OK.value()+ "");
-      return response;
-//    try {
-//      log.info("Adding new instruction under existing template");
-//      
-//     
-//    } catch (GenericServiceException e) {
-//      log.error("Getting all Loading instructions");
-//      e.printStackTrace();
-//      throw new CommonRestException(
-//          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-//          headers,
-//          HttpStatusCode.INTERNAL_SERVER_ERROR,
-//          e.getMessage(),
-//          e);
-//    }
+//	  CommonSuccessResponse response =  new CommonSuccessResponse();
+//      response.setStatus(HttpStatus.OK.value()+ "");
+//      return response;
+    try {
+      log.info("Adding new Loading Instruction sub header");
+      return loadingInstructionService.addLoadingInstructionsSubHeader(request);
+     
+    } catch (GenericServiceException e) {
+      log.error("Getting all Loading instructions");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
   }
   
   /**
@@ -282,39 +284,18 @@ public class LoadingPlanController {
    * @throws CommonRestException
    */
   @GetMapping("/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
-  public LoadingInstructionDetails getAllLoadingInstructions(
+  public LoadingInstructionResponse getAllLoadingInstructions(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portRotationId)
       throws CommonRestException {
-	  
-	  LoadingInstructionResponse mockreturn = new LoadingInstructionResponse();
-//	  mockreturn.setInstructionType("Preparation for entering and cargo loading");
-//	  mockreturn.setInstructionTypeId(1L);
-//	  List<LoadingInstructionHeader> hlist = new ArrayList<>();
-//	  LoadingInstructionHeader header = new LoadingInstructionHeader();
-//	  header.setHeaderName("Oil spill Equipment - 1");
-//	  header.setIsHeaderChecked(true);
-//	  LoadingInstructions instruction = new LoadingInstructions();
-//	  instruction.setInstruction("Oil spill Equipment to be displayed and ready for use before cargo operation start-1");
-//	  instruction.setIsChecked(true);
-//	  LoadingInstructions instruction2 = new LoadingInstructions();
-//	  instruction2.setInstruction("Oil spill Equipment to be displayed and ready for use");
-//	  instruction2.setIsChecked(false);
-//	  List<LoadingInstructions> ilist = new ArrayList<>();
-//	  ilist.add(instruction);
-//	  ilist.add(instruction2);
-//	  header.setLoadingInstructionlist(ilist);
-//	  hlist.add(header);
-//	  mockreturn.setLoadingInstructionList(hlist);
-//	  return mockreturn;
     try {
       log.info("Getting all Loading instructions of vesselID: {} on port: {}", vesselId,portRotationId);
       return loadingInstructionService.getLoadingInstructions(vesselId,infoId,portRotationId);
      
     } catch (GenericServiceException e) {
-      log.error("Getting all Loading instructions");
+      log.error("Getting all Loading instructions Failed");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

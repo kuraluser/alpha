@@ -84,10 +84,12 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 									template.getParentInstructionXId(),
 									template.getLoadingInsructionType().getId(),
 									template.getLoadingInstructionHeaderXId().getId(), true, template.getReferenceXId(),
-									template.getIsActive(), template.getId(), request.getLoadingInfoId()))
+									template.getIsActive(), template.getId(), request.getLoadingInfoId(),
+									template.getIsHeaderInstruction(),null))
 							.collect(Collectors.toList());
 					log.info("Saving general instruction for first time");
 					loadingInstructionRepository.saveAll(instructionList);
+					//loadingInstructionRepository.updateInstructionParentChildMapping();
 					response = getAllLoadingInstructions(request, response);
 				}
 			} else {
