@@ -2825,4 +2825,43 @@ public class LoadablePlanService {
     }
     return true;
   }
+
+  public LoadableStudy.SaveCommentReply.Builder saveComment(
+      LoadableStudy.SaveCommentRequest request,
+      LoadableStudy.SaveCommentReply.Builder replyBuilder) {
+    LoadablePlanComments entity = new LoadablePlanComments();
+    entity.setComments(request.getComment());
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (loadablePatternOpt.isPresent()) {
+      entity.setLoadablePattern(loadablePatternOpt.get());
+    }
+    entity.setCreatedBy(Long.toString(request.getUser()));
+
+    entity.setIsActive(true);
+    this.loadablePlanCommentsRepository.save(entity);
+    if (entity.getId() != null) {
+      LoadableStudy.SaveCommentRequest.Builder comment =
+          LoadableStudy.SaveCommentRequest.newBuilder();
+      comment.setComment(entity.getComments());
+      comment.setCommentId(entity.getId());
+      comment.setCreateDate(
+          DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getCreatedDateTime()));
+      comment.setUpdateDate(
+          DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getLastModifiedDateTime()));
+      try {
+        comment.setUser(Long.valueOf(entity.getCreatedBy()));
+      } catch (Exception e) {
+        log.error("Failed to parse user id {}, error - {}", entity.getCreatedBy(), e.getMessage());
+      }
+      comment.build();
+      replyBuilder.setComment(comment);
+      log.info(
+          "Save Comment, saved for Pattern id {}, Comment {}",
+          request.getLoadablePatternId(),
+          entity.getComments());
+    }
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
 }
