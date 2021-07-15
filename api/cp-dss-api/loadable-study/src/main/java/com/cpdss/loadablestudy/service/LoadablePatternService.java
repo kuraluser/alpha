@@ -1572,4 +1572,5 @@ public class LoadablePatternService {
 
     ofNullable(loadablePlanCommingleDetails.getId()).ifPresent(id -> builder.setId(id));
   }
+
 }

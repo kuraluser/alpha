@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface LoadableStudyRepository extends CommonCrudRepository<LoadableStudy, Long> {
 
   List<LoadableStudy>
-      findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
+  findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
           final Long vesselXId, final Voyage voyage, Integer typeId);
 
   default List<LoadableStudy> findAllLoadableStudy(
@@ -26,6 +26,8 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
     return findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
         vesselXId, voyage, planningId);
   }
+
+ public List<LoadableStudy> findByVesselXId(final Long vesselXId);
 
   public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
       final Long vesselXId, final Voyage voyage, final boolean isActive, Long id);
