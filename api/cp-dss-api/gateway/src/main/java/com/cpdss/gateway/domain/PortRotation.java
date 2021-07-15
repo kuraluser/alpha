@@ -4,6 +4,7 @@ package com.cpdss.gateway.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ import lombok.Data;
  * @author suhail.k
  */
 @Data
-@JsonInclude(Include.NON_EMPTY)
+@JsonInclude(Include.NON_NULL)
 public class PortRotation {
 
   private Long id;
@@ -62,15 +63,15 @@ public class PortRotation {
 
   private Boolean isBackLoadingEnabled;
 
-  private List<BackLoading> backLoading;
+  private List<BackLoading> backLoading = new ArrayList<>();
 
   private Long cowId;
 
   private Long percentage;
 
-  private List<Long> tanks;
+  private List<Long> tanks = new ArrayList<>();
 
-  private List<Long> instructionId;
+  private List<Long> instructionId = new ArrayList<>();
 
   private List<CargoNomination> cargoNominationList;
 }
