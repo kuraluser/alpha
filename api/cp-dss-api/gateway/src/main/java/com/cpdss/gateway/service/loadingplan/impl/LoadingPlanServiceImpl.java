@@ -7,8 +7,10 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
@@ -26,6 +28,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @Autowired LoadingInformationService loadingInformationService;
 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+
+  @Autowired VesselInfoService vesselInfoService;
 
   /**
    * Port Rotation From Loading Plan DB
@@ -169,5 +173,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.getLoadingInformationByPortRotation(
             response.getVesseld(), 0L, response.getPortRotationId()));
     return response;
+  }
+
+  @Override
+  public RuleResponse getLoadingPlanRules(Long vesselId, Long voyageId, Long loadingInfoId)
+      throws GenericServiceException {
+    return this.loadingPlanGrpcService.getLoadingPlanRules(vesselId, loadingInfoId);
   }
 }
