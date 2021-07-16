@@ -962,8 +962,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (loadableQuantityResult.responseStatus.status === "200") {
       this.ngxSpinnerService.hide();
       let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
-      let databaseTotQty = this.sliceToTwoDecimalPoint(Number(loadableQuantityResult.loadableQuantity.totalQuantity).toString(), 2);
-      if (calculatedTotQty === databaseTotQty) {
+      let databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
+      if (Number(calculatedTotQty) === Number(databaseTotQty)) {
         this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
       } else {
         this.messageService.clear();

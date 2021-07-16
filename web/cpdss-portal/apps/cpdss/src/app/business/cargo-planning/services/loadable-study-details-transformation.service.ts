@@ -223,6 +223,7 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'alphabetsOnly': 'CARGO_NOMINATION_FIELD_ALPHABETS_ONLY_ERROR',
+          'duplicateAbbrevation': 'CARGO_NOMINATION_ABBREVIATION_ALREADY_USED_ERROR',
           'maxlength': 'CARGO_NOMINATION_FIELD_ABBREVIATION_MAX_LENGTH_ERROR'
         }
       },
@@ -316,6 +317,7 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'min': 'CARGO_NOMINATION_API_MIN_ERROR',
+          'max': 'CARGO_NOMINATION_API_MAX_ERROR',
           'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },
@@ -335,6 +337,8 @@ export class LoadableStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
+          'min': 'CARGO_NOMINATION_TEMPERATURE_MIN_ERROR',
+          'max': 'CARGO_NOMINATION_TEMPERATURE_MAX_ERROR',
           'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },

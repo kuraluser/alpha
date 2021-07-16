@@ -80,7 +80,7 @@
             <div class="col">
                 <cpdss-portal-trim-condition *ngIf="voyageStatusResponse?.stabilityConditions"
                     [trim]="voyageStatusResponse?.stabilityConditions?.calculatedTrimActual"
-                    [hogSag]="voyageStatusResponse?.stabilityConditions?.hogSag"></cpdss-portal-trim-condition>
+                    [deflection]="voyageStatusResponse?.stabilityConditions?.deflection"></cpdss-portal-trim-condition>
             </div>
             <div class="col sidebar-right-landing">
                 <cpdss-portal-draft-condition *ngIf="voyageStatusResponse?.stabilityConditions"

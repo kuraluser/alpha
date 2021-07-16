@@ -486,63 +486,6 @@
 
 
   /**
- * Fuction for sync of indexdb and server for loading information data
- *
- */
-  async function serverSyncLoadingInformation(token) {
-    // Remove all records with api initiated as status true
-    db.loadingInformations.where({ 'status': 1 }).delete();
-
-    //Get all store keys
-    await db.loadingInformations.orderBy('storeKey').uniqueKeys((storeKeys) => {
-      storeKeys.forEach(async (key) => {
-        const timeStamp = Date.now - 60000;
-        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
-        const primaryKey = await db.loadingInformations.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
-
-        if (primaryKey?.length) {
-          //Get last update record of particular store key
-          const loadingInformation = await db.loadingInformations.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
-          if (loadingInformation) {
-            const updated = await db.loadingInformations.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
-            if (updated) {
-              // send update or add sync request to the server
-              var headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-
-              }
-              const syncResponse = await fetch(`${apiUrl}/vessels/${loadingInformation?.vesselId}/voyages/${loadingInformation?.voyageId}/loading-info`, {
-                method: 'POST',
-                body: JSON.stringify(loadingInformation),
-                headers: headers
-              });
-
-              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
-                const sync = await syncResponse.json();
-                sync.storeKey = loadingInformation?.storeKey;
-                sync.type = 'loading_information_sync_finished';
-                const refreshedToken = syncResponse.headers.get('token');
-                sync.refreshedToken = refreshedToken;
-                // update id of loading information if there are any new rows with same storekey
-                const updated = await db.loadingInformations?.where({ 'storeKey': key }).modify({ 'id': loadingInformation?.id });
-                if (updated) {
-                  //on success of api call remove all rows of selected primary keys
-                  primaryKey.forEach(async (primaryKey) => await db.loadingInformations?.delete(primaryKey));
-                }
-                return notifyClients(sync);
-              }
-
-              return Promise.reject('sync failed: ' + syncResponse.status);
-            }
-          }
-        }
-      });
-    });
-  }
-
-  /**
    * Notify all clents of service worker with events
    *
    * @param {*} sync

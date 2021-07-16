@@ -2762,3 +2762,9 @@ textarea{
   top: -4px; 
   right: -2px;
 }
+
+.check-list-table{
+  .p-treetable-header{
+    border-top: 0;
+  }
+}
