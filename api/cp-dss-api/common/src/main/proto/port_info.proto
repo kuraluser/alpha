@@ -26,6 +26,19 @@ service PortInfoService {
 	rpc GetPortInfoByPaging(PortRequestWithPaging) returns (PortReply){}
 
 	rpc GetBerthDetailsByPortId(PortIdRequest) returns (BerthInfoResponse) {}
+	
+	rpc GetCargoInfoByPortIds(GetPortInfoByPortIdsRequest) returns (CargoInfos) {}
+	
+}
+
+message CargoInfos {
+	repeated CargoPortMapping cargoPorts = 1;
+	ResponseStatus responseStatus = 2;
+	
+}
+message CargoPortMapping {
+	int64 cargoId = 1;
+	int64 portId= 2;
 }
 
 message GetPortInfoByPortIdsRequest {
