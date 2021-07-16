@@ -8,7 +8,6 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoHistory;

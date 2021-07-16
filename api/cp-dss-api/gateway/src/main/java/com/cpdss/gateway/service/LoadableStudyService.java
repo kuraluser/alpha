@@ -100,72 +100,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.AlgoError;
-import com.cpdss.gateway.domain.AlgoErrorResponse;
-import com.cpdss.gateway.domain.AlgoPatternResponse;
-import com.cpdss.gateway.domain.AlgoStatusRequest;
-import com.cpdss.gateway.domain.AlgoStatusResponse;
-import com.cpdss.gateway.domain.BunkerConditions;
-import com.cpdss.gateway.domain.Cargo;
-import com.cpdss.gateway.domain.CargoGroup;
-import com.cpdss.gateway.domain.CargoHistory;
-import com.cpdss.gateway.domain.CargoHistoryRequest;
-import com.cpdss.gateway.domain.CargoHistoryResponse;
-import com.cpdss.gateway.domain.CargoNomination;
-import com.cpdss.gateway.domain.CargoNominationResponse;
-import com.cpdss.gateway.domain.Comment;
-import com.cpdss.gateway.domain.CommingleCargo;
-import com.cpdss.gateway.domain.CommingleCargoResponse;
-import com.cpdss.gateway.domain.CommonResponse;
-import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
-import com.cpdss.gateway.domain.DischargingPortRequest;
-import com.cpdss.gateway.domain.LoadOnTopRequest;
-import com.cpdss.gateway.domain.LoadablePattern;
-import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
-import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePatternResponse;
-import com.cpdss.gateway.domain.LoadablePlanBallastDetails;
-import com.cpdss.gateway.domain.LoadablePlanComments;
-import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePlanRequest;
-import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
-import com.cpdss.gateway.domain.LoadablePlanSynopticalRecord;
-import com.cpdss.gateway.domain.LoadableQuantity;
-import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
-import com.cpdss.gateway.domain.LoadableQuantityResponse;
-import com.cpdss.gateway.domain.LoadableStudy;
-import com.cpdss.gateway.domain.LoadableStudyAttachmentData;
-import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
-import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
-import com.cpdss.gateway.domain.LoadicatorResultsRequest;
-import com.cpdss.gateway.domain.LoadingPort;
-import com.cpdss.gateway.domain.OnBoardQuantity;
-import com.cpdss.gateway.domain.OnBoardQuantityResponse;
-import com.cpdss.gateway.domain.OnHandQuantity;
-import com.cpdss.gateway.domain.OnHandQuantityResponse;
-import com.cpdss.gateway.domain.PatternValidateResultRequest;
-import com.cpdss.gateway.domain.Port;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationResponse;
-import com.cpdss.gateway.domain.Purpose;
-import com.cpdss.gateway.domain.RuleRequest;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.SaveCommentResponse;
-import com.cpdss.gateway.domain.StabilityConditions;
-import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
-import com.cpdss.gateway.domain.SynopticalOhqRecord;
-import com.cpdss.gateway.domain.SynopticalRecord;
-import com.cpdss.gateway.domain.SynopticalTableResponse;
-import com.cpdss.gateway.domain.UpdateUllage;
-import com.cpdss.gateway.domain.ValveSegregation;
-import com.cpdss.gateway.domain.VesselTank;
-import com.cpdss.gateway.domain.Voyage;
-import com.cpdss.gateway.domain.VoyageActionRequest;
-import com.cpdss.gateway.domain.VoyageActionResponse;
-import com.cpdss.gateway.domain.VoyageResponse;
-import com.cpdss.gateway.domain.VoyageStatusRequest;
-import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
@@ -5881,5 +5816,59 @@ public class LoadableStudyService {
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;
+  }
+
+  public LoadableStudyShoreResponse getLoadableStudyShore(String first)
+      throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder
+        loadableRuleRequestBuilder =
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
+
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse responseShore =
+        loadableStudyServiceBlockingStub.getLoadableStudyShore(loadableRuleRequestBuilder.build());
+    List<LoadableStudyShore> shoreList = new ArrayList<LoadableStudyShore>();
+
+    responseShore
+        .getShoreListList()
+        .forEach(
+            vesselDetail -> {
+              LoadableStudyShore shore = new LoadableStudyShore();
+              shore.setId(vesselDetail.getId());
+              shore.setVesselName(vesselDetail.getVesselName());
+              shore.setImoNo(vesselDetail.getImoNo());
+              shore.setFlagName(vesselDetail.getFlagName());
+              shore.setEta(vesselDetail.getEta());
+              shore.setAtd(vesselDetail.getAtd());
+              shore.setVoyageName(vesselDetail.getVoyageName());
+
+              List<VoyagePorts> portList = new ArrayList<>();
+
+              vesselDetail
+                  .getVoyagePortsList()
+                  .forEach(
+                      voPorts -> {
+                        VoyagePorts ports = new VoyagePorts();
+                        ports.setAtd(voPorts.getAtd());
+                        ports.setEta(voPorts.getEta());
+                        ports.setEtd(voPorts.getEtd());
+                        ports.setPortOrder(voPorts.getPortOrder());
+                        ports.setPortName(voPorts.getPortName());
+                        ports.setAnchorage(voPorts.getAnchorage());
+                        ports.setIconUrl(voPorts.getIconUrl());
+                        ports.setPortType(voPorts.getPortType());
+                        ports.setAta(voPorts.getAta());
+                        ports.setLat(voPorts.getLat());
+                        ports.setLon(voPorts.getLon());
+                        portList.add(ports);
+                      });
+
+              shore.setVoyagePorts(portList);
+
+              shoreList.add(shore);
+            });
+
+    LoadableStudyShoreResponse response = new LoadableStudyShoreResponse();
+    response.setShoreList(shoreList);
+    return response;
   }
 }

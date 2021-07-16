@@ -12,7 +12,6 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
