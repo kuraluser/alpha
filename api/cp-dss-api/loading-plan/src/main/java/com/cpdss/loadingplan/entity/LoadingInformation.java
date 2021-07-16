@@ -122,7 +122,4 @@ public class LoadingInformation extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "loading_status_xid")
   private LoadingInformationStatus loadingInformationStatus;
-
-  @OneToMany(mappedBy = "loadingInformation", fetch = FetchType.LAZY)
-  private Set<LoadingSequence> loadingSequences;
 }

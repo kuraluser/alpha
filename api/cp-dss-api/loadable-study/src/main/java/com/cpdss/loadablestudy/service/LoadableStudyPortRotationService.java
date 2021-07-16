@@ -13,7 +13,10 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.PortDetails;
+import com.cpdss.loadablestudy.entity.BackLoading;
 import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
+import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
@@ -23,8 +26,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -47,8 +52,6 @@ public class LoadableStudyPortRotationService {
 
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
 
-  @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
-
   @Autowired private LoadableStudyRepository loadableStudyRepository;
 
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
@@ -62,6 +65,11 @@ public class LoadableStudyPortRotationService {
   @Autowired private LoadablePatternService loadablePatternService;
 
   @Autowired private SynopticalTableRepository synopticalTableRepository;
+
+  @Autowired private BackLoadingService backLoadingService;
+
+  @Autowired private PortInstructionService portInstructionService;
+  @Autowired private CowDetailService cowDetailService;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -590,6 +598,17 @@ public class LoadableStudyPortRotationService {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
+        List<Long> portIds =
+            ports.stream().map(LoadableStudyPortRotation::getPortXId).collect(Collectors.toList());
+        Map<Long, List<BackLoading>> backloadingDataByportIds =
+            backLoadingService.getBackloadingDataByportIds(request.getLoadableStudyId(), portIds);
+        Map<Long, List<DischargeStudyPortInstruction>> instructionsForThePort =
+            portInstructionService.getPortWiseInstructions(request.getLoadableStudyId(), portIds);
+        Map<Long, DischargeStudyCowDetail> cowDetails =
+            cowDetailService.getCowDetailForThePort(
+                request.getLoadableStudyId(),
+                ports.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList()));
+
         ports.forEach(
             port -> {
               com.cpdss.common.generated.LoadableStudy.PortRotationDetail.Builder builder =
@@ -597,8 +616,41 @@ public class LoadableStudyPortRotationService {
               builder.setPortId(port.getPortXId());
               builder.setId(port.getId());
               builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
+              if (port.getIsbackloadingEnabled() != null) {
+                builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
+                if (backloadingDataByportIds.get(port.getPortXId()) != null) {
+                  backloadingDataByportIds
+                      .get(port.getPortXId())
+                      .forEach(
+                          backLoading -> {
+                            builder.addBackLoading(buildBackloading(backLoading));
+                          });
+                }
+              }
+              if (instructionsForThePort.get(port.getPortXId()) != null) {
+                builder.addAllInstructionId(
+                    instructionsForThePort.get(port.getPortXId()).stream()
+                        .map(DischargeStudyPortInstruction::getId)
+                        .collect(Collectors.toList()));
+              }
+              if (cowDetails.get(port.getId()) != null) {
+                DischargeStudyCowDetail cow = cowDetails.get(port.getId());
+                builder.setCowId(cow.getCowType());
+                if (cow.getPercentage() != null) {
+                  builder.setPercentage(cow.getPercentage());
+                }
+                if (cow.getTankIds() != null && !cow.getTankIds().isEmpty()) {
+                  List<String> tanks = Arrays.asList(cow.getTankIds().split(","));
+                  builder.addAllTanks(
+                      tanks.stream()
+                          .map(tank -> Long.parseLong(tank))
+                          .collect(Collectors.toList()));
+                }
+              }
+
               portRotationReplyBuilder.addPorts(builder);
             });
+
         portRotationReplyBuilder
             .setResponseStatus(
                 Common.ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
@@ -606,6 +658,23 @@ public class LoadableStudyPortRotationService {
       }
     }
     return portRotationReplyBuilder;
+  }
+
+  private com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading buildBackloading(
+      BackLoading backLoading) {
+
+    com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading.Builder
+        backLoadingBuilder =
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading.newBuilder();
+    backLoadingBuilder.setAbbreviation(backLoading.getAbbreviation());
+    backLoadingBuilder.setApi(backLoading.getApi().toString());
+    backLoadingBuilder.setCargoId(backLoading.getCargoId());
+    backLoadingBuilder.setColour(backLoading.getColour());
+    backLoadingBuilder.setId(backLoading.getId());
+    backLoadingBuilder.setQuantity(backLoading.getQuantity().toString());
+    backLoadingBuilder.setTemperature(backLoading.getTemperature().toString());
+
+    return backLoadingBuilder.build();
   }
 
   public com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder deletePortRotation(

@@ -53,8 +53,7 @@
         serverSyncOHQ(token);
         serverSyncOBQ(token);
         serverSyncDischargeChargeOHQ(token);
-        serverSyncDischargeChargePorts(token)
-        serverSyncLoadingInformation(token);
+        serverSyncDischargeChargePorts(token);
       }
     }, 2000);
   }
@@ -484,6 +483,7 @@
       });
     });
   }
+
 
   /**
  * Fuction for sync of indexdb and server for loading information data

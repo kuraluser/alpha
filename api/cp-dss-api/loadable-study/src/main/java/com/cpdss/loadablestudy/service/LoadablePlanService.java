@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.service;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
@@ -18,10 +19,13 @@ import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
@@ -32,8 +36,12 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 /** Master Service for Loadable Plans */
 @Slf4j
@@ -79,13 +87,35 @@ public class LoadablePlanService {
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
 
+  @Autowired LoadableStudyStatusRepository loadableStudyStatusRepository;
+
+  @Autowired private RestTemplate restTemplate;
+
+  @Autowired private LoadableStudyService loadableStudyService;
+
   @Autowired private LoadablePatternRepository loadablePatternRepository;
+
+  @Autowired
+  private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
+
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
+
+  @Autowired private LoadableStudyRepository loadableStudyRepository;
+
+  @Value("${loadablestudy.attachement.rootFolder}")
+  private String rootFolder;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @Value("${algo.loadablestudy.api.url}")
+  private String loadableStudyUrl;
+
+  @Value("${algo.stowage.edit.api.url}")
+  private String algoUpdateUllageUrl;
 
   public void buildLoadablePlanQuantity(
       List<LoadablePlanQuantity> loadablePlanQuantities,
@@ -2478,5 +2508,360 @@ public class LoadablePlanService {
           Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
+  }
+
+  public LoadableStudy.AlgoReply.Builder validateLoadablePlan(
+      LoadableStudy.LoadablePlanDetailsRequest request,
+      LoadableStudy.AlgoReply.Builder replyBuilder)
+      throws IOException, GenericServiceException {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(INVALID_LOADABLE_PATTERN_ID)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+
+    } else {
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+          new LoadabalePatternValidateRequest();
+
+      ModelMapper modelMapper = new ModelMapper();
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+          new com.cpdss.loadablestudy.domain.LoadableStudy();
+
+      loadableStudyService.buildLoadableStudy(
+          loadablePatternOpt.get().getLoadableStudy().getId(),
+          loadablePatternOpt.get().getLoadableStudy(),
+          loadableStudy,
+          modelMapper);
+      buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
+
+      loadabalePatternValidateRequest.setLoadableStudy(loadableStudy);
+
+      loadabalePatternValidateRequest.setBallastEdited(
+          stowageDetailsTempRepository.isBallastEdited(request.getLoadablePatternId(), true));
+      loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
+      loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
+      ObjectMapper objectMapper = new ObjectMapper();
+      loadableStudyService.saveJsonToDatabase(
+          request.getLoadablePatternId(),
+          LOADABLE_PATTERN_EDIT_REQUEST,
+          objectMapper.writeValueAsString(loadabalePatternValidateRequest));
+      objectMapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/loadablePattern_request_"
+                  + request.getLoadablePatternId()
+                  + ".json"),
+          loadabalePatternValidateRequest);
+      AlgoResponse algoResponse =
+          restTemplate.postForObject(
+              loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+
+      updateProcessIdForLoadablePattern(
+          algoResponse.getProcessId(),
+          loadablePatternOpt.get(),
+          LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+      replyBuilder
+          .setProcesssId(algoResponse.getProcessId())
+          .setResponseStatus(
+              Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+    }
+    return replyBuilder;
+  }
+
+  /**
+   * @param processId
+   * @param loadablePattern
+   * @param loadablePatternProcessingStartedId void
+   */
+  private void updateProcessIdForLoadablePattern(
+      String processId, LoadablePattern loadablePattern, Long loadablePatternProcessingStartedId) {
+    LoadablePatternAlgoStatus status = new LoadablePatternAlgoStatus();
+    status.setLoadablePattern(loadablePattern);
+    status.setIsActive(true);
+    status.setLoadableStudyStatus(
+        loadableStudyStatusRepository.getOne(loadablePatternProcessingStartedId));
+    status.setProcessId(processId);
+    status.setVesselxid(loadablePattern.getLoadableStudy().getVesselXId());
+    loadablePatternAlgoStatusRepository.save(status);
+  }
+
+  public LoadableStudy.UpdateUllageReply.Builder updateUllage(
+      LoadableStudy.UpdateUllageRequest request,
+      LoadableStudy.UpdateUllageReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      throw new GenericServiceException(
+          INVALID_LOADABLE_PATTERN_ID,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    UllageUpdateResponse algoResponse =
+        this.callAlgoUllageUpdateApi(
+            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    if (!request.getUpdateUllageForLoadingPlan() && !algoResponse.getFillingRatio().equals("")) {
+      this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
+    }
+    replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
+
+  /**
+   * Build upadate ullage reply
+   *
+   * @param algoResponse
+   * @param request
+   * @return
+   */
+  private com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+      buildUpdateUllageReply(
+          UllageUpdateResponse algoResponse, LoadableStudy.UpdateUllageRequest request) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+    Optional.ofNullable(algoResponse.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
+    Optional.ofNullable(algoResponse.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+    Optional.ofNullable(algoResponse.getQuantityMt()).ifPresent(builder::setWeight);
+    Optional.ofNullable(request.getLoadablePlanStowageDetails().getIsBallast())
+        .ifPresent(builder::setIsBallast);
+    Optional.ofNullable(algoResponse.getFillingRatio()).ifPresent(builder::setFillingRatio);
+    return builder.build();
+  }
+
+  /**
+   * Save corrected ullage to the temp table
+   *
+   * @param algoResponse
+   * @param loadablePattern
+   */
+  private void saveUllageUpdateResponse(
+      UllageUpdateResponse algoResponse,
+      LoadableStudy.UpdateUllageRequest request,
+      LoadablePattern loadablePattern) {
+    LoadablePlanStowageDetailsTemp stowageTemp = null;
+    if (request.getLoadablePlanStowageDetails().getIsBallast()) {
+      LoadablePlanBallastDetails ballastDetails =
+          this.loadablePlanBallastDetailsRepository.getOne(algoResponse.getId());
+      stowageTemp =
+          this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsAndIsActive(
+              ballastDetails, true);
+      if (null == stowageTemp) {
+        stowageTemp = new LoadablePlanStowageDetailsTemp();
+        stowageTemp.setLoadablePlanBallastDetails(ballastDetails);
+        stowageTemp.setIsActive(true);
+      }
+    } else if (request.getLoadablePlanStowageDetails().getIsCommingle()) {
+      LoadablePlanCommingleDetails commingleDetails =
+          this.loadablePlanCommingleDetailsRepository.getOne(algoResponse.getId());
+      stowageTemp =
+          this.stowageDetailsTempRepository.findByLoadablePlanCommingleDetailsAndIsActive(
+              commingleDetails, true);
+      if (null == stowageTemp) {
+        stowageTemp = new LoadablePlanStowageDetailsTemp();
+        stowageTemp.setLoadablePlanCommingleDetails(commingleDetails);
+        stowageTemp.setIsActive(true);
+      }
+    } else {
+      LoadablePlanStowageDetails stowageDetails =
+          this.loadablePlanStowageDetailsRespository.getOne(algoResponse.getId());
+      stowageTemp =
+          this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsAndIsActive(
+              stowageDetails, true);
+      if (null == stowageTemp) {
+        stowageTemp = new LoadablePlanStowageDetailsTemp();
+        stowageTemp.setLoadablePlanStowageDetails(stowageDetails);
+        stowageTemp.setIsActive(true);
+      }
+    }
+
+    stowageTemp.setCorrectedUllage(
+        isEmpty(algoResponse.getCorrectedUllage())
+            ? null
+            : new BigDecimal(algoResponse.getCorrectedUllage()));
+    stowageTemp.setCorrectionFactor(
+        isEmpty(algoResponse.getCorrectionFactor())
+            ? null
+            : new BigDecimal(algoResponse.getCorrectionFactor()));
+
+    stowageTemp.setQuantity(
+        isEmpty(algoResponse.getQuantityMt())
+            ? null
+            : new BigDecimal(algoResponse.getQuantityMt()));
+    stowageTemp.setRdgUllage(
+        isEmpty(request.getLoadablePlanStowageDetails().getCorrectedUllage())
+            ? null
+            : new BigDecimal(request.getLoadablePlanStowageDetails().getCorrectedUllage()));
+    stowageTemp.setIsBallast(request.getLoadablePlanStowageDetails().getIsBallast());
+    stowageTemp.setIsCommingle(request.getLoadablePlanStowageDetails().getIsCommingle());
+    stowageTemp.setLoadablePattern(loadablePattern);
+    stowageTemp.setFillingRatio(
+        isEmpty(algoResponse.getFillingRatio())
+            ? null
+            : new BigDecimal(algoResponse.getFillingRatio()));
+    this.stowageDetailsTempRepository.save(stowageTemp);
+  }
+
+  /**
+   * Call algo - ullage update api and validate the resonse
+   *
+   * @param algoRequest
+   * @return
+   * @throws GenericServiceException
+   */
+  private UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
+      throws GenericServiceException {
+    ResponseEntity<UllageUpdateResponse> responseEntity =
+        this.restTemplate.postForEntity(
+            this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);
+    if (HttpStatusCode.OK.value() != responseEntity.getStatusCodeValue()) {
+      throw new GenericServiceException(
+          "Error calling algo: invalid status received",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return responseEntity.getBody();
+  }
+
+  /**
+   * Prepare ullage upate request for algo
+   *
+   * @param request
+   * @param loadablePattern
+   * @return
+   */
+  private UllageUpdateRequest prepareUllageUpdateRequest(
+      LoadableStudy.UpdateUllageRequest request, LoadablePattern loadablePattern) {
+    UllageUpdateRequest algoRequest = new UllageUpdateRequest();
+    algoRequest.setRdgUllage(request.getLoadablePlanStowageDetails().getCorrectedUllage());
+    algoRequest.setId(request.getLoadablePlanStowageDetails().getId());
+    algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
+    algoRequest.setApi(request.getLoadablePlanStowageDetails().getApi());
+    algoRequest.setTemp(request.getLoadablePlanStowageDetails().getTemperature());
+    Optional<SynopticalTable> synopticalTableOpt =
+        synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            loadableStudyPortRotationService.getLastPortRotationId(
+                loadablePattern.getLoadableStudy(),
+                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID)),
+            SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+            true);
+    if (synopticalTableOpt.isPresent()) {
+      algoRequest.setTrim(
+          String.valueOf(
+              synopticalTableLoadicatorDataRepository
+                  .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                      synopticalTableOpt.get(), loadablePattern.getId(), true)
+                  .getCalculatedTrimPlanned()));
+    }
+    algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
+    return algoRequest;
+  }
+
+  public LoadableStudy.LoadablePlanDetailsReply.Builder getLoadablePlanDetails(
+      LoadableStudy.LoadablePlanDetailsRequest request,
+      LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(INVALID_LOADABLE_PATTERN_ID)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+    } else {
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> ls =
+          loadableStudyRepository.findByIdAndIsActive(
+              loadablePatternOpt.get().getLoadableStudy().getId(), true);
+      boolean status = this.validateLoadableStudyForConfimPlan(ls.get());
+      replyBuilder.setConfirmPlanEligibility(status);
+      buildLoadablePlanDetails(loadablePatternOpt, replyBuilder);
+    }
+    return replyBuilder;
+  }
+
+  /**
+   * This validation based on DSS-1860 If the ETA/ETD/Lay are empty for a LS, then this retunr value
+   * must false.
+   *
+   * @return
+   */
+  public boolean validateLoadableStudyForConfimPlan(
+      com.cpdss.loadablestudy.entity.LoadableStudy ls) {
+    boolean status = true;
+    Map<Long, Boolean> validationStack = new HashMap<>();
+    if (ls.getPortRotations() != null && !ls.getPortRotations().isEmpty()) {
+      for (LoadableStudyPortRotation pr : ls.getPortRotations()) {
+        if (pr.getId() > 0) {
+          if (pr.getEta() == null || pr.getEtd() == null || !isLayCanValid(pr)) {
+            validationStack.put(pr.getId(), false);
+          }
+        }
+      }
+    }
+    log.info(
+        "Loadable Study, Validate Plan, status - {}, LS Id - {}",
+        validationStack.isEmpty(),
+        ls.getId());
+    if (!validationStack.isEmpty()) {
+      log.info(
+          "Loadable Study, Validate Plan, Invalid Port Rotaion Ids - {}", validationStack.keySet());
+    }
+    return validationStack.isEmpty();
+  }
+
+  private boolean isLayCanValid(LoadableStudyPortRotation lsPr) {
+    List ids =
+        Arrays.asList(LOADING_OPERATION_ID, STS_LOADING_OPERATION_ID, STS_DISCHARGING_OPERATION_ID);
+    if (ids.contains(lsPr.getOperation().getId())) {
+      if (lsPr.getLayCanTo() == null || lsPr.getLayCanFrom() == null) return false;
+      else return true;
+    }
+    return true;
+  }
+
+  public LoadableStudy.SaveCommentReply.Builder saveComment(
+      LoadableStudy.SaveCommentRequest request,
+      LoadableStudy.SaveCommentReply.Builder replyBuilder) {
+    LoadablePlanComments entity = new LoadablePlanComments();
+    entity.setComments(request.getComment());
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (loadablePatternOpt.isPresent()) {
+      entity.setLoadablePattern(loadablePatternOpt.get());
+    }
+    entity.setCreatedBy(Long.toString(request.getUser()));
+
+    entity.setIsActive(true);
+    this.loadablePlanCommentsRepository.save(entity);
+    if (entity.getId() != null) {
+      LoadableStudy.SaveCommentRequest.Builder comment =
+          LoadableStudy.SaveCommentRequest.newBuilder();
+      comment.setComment(entity.getComments());
+      comment.setCommentId(entity.getId());
+      comment.setCreateDate(
+          DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getCreatedDateTime()));
+      comment.setUpdateDate(
+          DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).format(entity.getLastModifiedDateTime()));
+      try {
+        comment.setUser(Long.valueOf(entity.getCreatedBy()));
+      } catch (Exception e) {
+        log.error("Failed to parse user id {}, error - {}", entity.getCreatedBy(), e.getMessage());
+      }
+      comment.build();
+      replyBuilder.setComment(comment);
+      log.info(
+          "Save Comment, saved for Pattern id {}, Comment {}",
+          request.getLoadablePatternId(),
+          entity.getComments());
+    }
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
   }
 }

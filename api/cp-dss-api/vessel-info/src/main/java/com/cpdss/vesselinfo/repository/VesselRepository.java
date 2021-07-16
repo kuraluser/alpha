@@ -58,7 +58,9 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " INNER JOIN RuleTemplate ruleTemplate ON ruleListMaster.id = ruleTemplate.ruleListMaster"
           + " INNER JOIN RuleType ruleType ON ruleTemplate.ruleType = ruleType.id "
           + " INNER JOIN RuleTemplateInput ruleTemplateInput ON ruleTemplate.id = ruleTemplateInput.ruleTemplate "
-          + " WHERE ruleMasterSection.id = :sectionId ORDER BY ruleListMaster.ruleOrder, ruleTemplateInput.id ASC")
+          + " WHERE ruleMasterSection.id = :sectionId AND ruleListMaster.isActive = true AND ruleMasterSection.isActive = true"
+          + " AND ruleTemplate.isActive = true AND ruleType.isActive = true AND ruleTemplateInput.isActive = true "
+          + "  ORDER BY ruleListMaster.ruleOrder, ruleTemplateInput.id ASC")
   public List<VesselRule> findRuleTemplateForNoVessel(@Param("sectionId") Long sectionId);
 
   @Query(
@@ -78,7 +80,9 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " INNER JOIN RuleTemplate ruleTemplate ON ruleVesselMapping.ruleTemplate =  ruleTemplate.id "
           + " INNER JOIN RuleListMaster ruleListMaster ON ruleTemplate.ruleListMaster = ruleListMaster.id "
           + " INNER JOIN RuleMasterSection ruleMasterSection ON ruleListMaster.ruleMasterSection = ruleMasterSection.id "
-          + " WHERE vessel.id = :vesselId AND ruleMasterSection.id = :sectionId ORDER BY ruleListMaster.ruleOrder, ruleVesselInput.id ASC")
+          + " WHERE vessel.id = :vesselId AND ruleMasterSection.id = :sectionId AND ruleVesselMapping.isActive = true AND "
+          + " ruleVesselInput.isActive = true AND ruleType.isActive = true AND ruleTemplate.isActive = true AND ruleListMaster.isActive = true"
+          + " AND ruleMasterSection.isActive = true  ORDER BY ruleListMaster.ruleOrder, ruleVesselInput.id ASC")
   public List<VesselRule> findVesselRuleByVesselIdAndSectionId(
       @Param("vesselId") Long vesselId, @Param("sectionId") Long sectionId);
 

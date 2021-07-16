@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { IBerth } from '../models/loading-information.model';
+import { IBerth, ILoadingRates } from '../models/loading-information.model';
 import { PlanSidePanelTransformationService } from './plan-side-panel-transformation.service';
 
 /**
@@ -21,12 +21,12 @@ export class PlanSidePanelComponent implements OnInit {
   departureColumns: IDataTableColumn[];
   arrivalData = [];
   selectedBerths: IBerth[] = [];
+  loadingRates: ILoadingRates;
   constructor(
     private planSidePanelTransformationService: PlanSidePanelTransformationService
   ) { }
 
   ngOnInit(): void {
-    
     this.arrivalData = [
       {
         label: 'KU', value: '0 MT'
@@ -55,6 +55,19 @@ export class PlanSidePanelComponent implements OnInit {
         "lineDisplacement": null
       }
     ]
+
+    this.loadingRates = {
+      id: 119,
+lineContentRemaining: null,
+maxDeBallastingRate: null,
+maxLoadingRate: 20500,
+minDeBallastingRate: null,
+minLoadingRate: 1000,
+noticeTimeRateReduction: null,
+noticeTimeStopLoading: null,
+reducedLoadingRate: 1700,
+shoreLoadingRate: 2000
+    }
   }
 
 }

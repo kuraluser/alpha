@@ -389,7 +389,12 @@ public class DischargeStudyService {
                   (isEmpty(port.getMaxDraft()) || port.getMaxDraft().equals("null"))
                       ? null
                       : new BigDecimal(port.getMaxDraft()));
-              portRotation.setCargoNominationList(new ArrayList<>());
+              portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
+              portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
+              portRotation.setCowId(port.getCowId());
+              portRotation.setPercentage(port.getPercentage());
+              portRotation.setTanks(port.getTanksList());
+              portRotation.setInstructionId(port.getInstructionIdList());
               if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
                 List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
                     portIdsToCargoNominationMap.get(port.getPortId());
@@ -399,9 +404,30 @@ public class DischargeStudyService {
             });
   }
 
+  private List<BackLoading> buildBackLoading(
+      List<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading>
+          backLoadingList) {
+    List<BackLoading> backloadingList = new ArrayList<>();
+    backLoadingList.forEach(
+        loading -> {
+          BackLoading backLoading = new BackLoading();
+          backLoading.setAbbreviation(loading.getAbbreviation());
+          backLoading.setApi(new BigDecimal(loading.getApi()));
+          backLoading.setCargoId(loading.getCargoId());
+          backLoading.setColour(loading.getColour());
+          backLoading.setId(loading.getId());
+          backLoading.setQuantity(new BigDecimal(loading.getQuantity()));
+          backLoading.setTemperature(new BigDecimal(loading.getTemperature()));
+          backloadingList.add(backLoading);
+        });
+
+    return backloadingList;
+  }
+
   private void buildCargoNomination(
       List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList,
       PortRotation portRotation) {
+    List<CargoNomination> cargoNominations = new ArrayList<>();
     cargoNominationDetailList.stream()
         .forEach(
             cargoNominationDetail -> {
@@ -412,7 +438,12 @@ public class DischargeStudyService {
               cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
               cargoNomination.setAbbreviation(cargoNominationDetail.getAbbreviation());
               cargoNomination.setQuantity(new BigDecimal(cargoNominationDetail.getQuantity()));
-              portRotation.getCargoNominationList().add(cargoNomination);
+              cargoNomination.setApi(new BigDecimal(cargoNominationDetail.getApi()));
+              cargoNomination.setTemperature(
+                  new BigDecimal(cargoNominationDetail.getTemperature()));
+              cargoNomination.setMode(cargoNominationDetail.getMode());
+              cargoNominations.add(cargoNomination);
             });
+    portRotation.setCargoNominationList(cargoNominations);
   }
 }

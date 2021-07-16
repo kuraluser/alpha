@@ -70,6 +70,9 @@ export class CargoDetailsComponent implements OnInit {
       ...this.cargoQuantities.find((item) => item.cargoId === itm.id),
       ...itm
     }));
+    this.newCargoList.forEach((newCargoList) => {
+      newCargoList.colorCode = this.cargoQuantities?.find((cargoQuantities) => cargoQuantities.abbreviation === newCargoList.abbreviation).colorCode;
+    })
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.convertQuantityToSelectedUnit();
   }
