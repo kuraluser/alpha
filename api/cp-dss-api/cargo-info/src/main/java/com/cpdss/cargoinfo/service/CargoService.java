@@ -5,6 +5,7 @@ import com.cpdss.cargoinfo.entity.Cargo;
 import com.cpdss.cargoinfo.repository.CargoRepository;
 import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
+import com.cpdss.common.generated.CargoInfo.CargoListRequest;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceImplBase;
@@ -120,6 +121,33 @@ public class CargoService extends CargoInfoServiceImplBase {
       cargoReply.setResponseStatus(responseStatus);
     } catch (Exception e) {
       log.error("Error in getCargoInfoById method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      cargoReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(cargoReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getCargoInfosByCargoIds(
+      CargoListRequest request, StreamObserver<CargoReply> responseObserver) {
+
+    CargoReply.Builder cargoReply = CargoReply.newBuilder();
+    try {
+      List<Cargo> cargos = cargoRepository.findByIdIn(request.getIdList());
+      cargos.forEach(
+          cargo -> {
+            CargoDetail.Builder cargoDetail = CargoDetail.newBuilder();
+            buildCargoDetail(cargo, cargoDetail);
+            cargoReply.addCargos(cargoDetail);
+          });
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      cargoReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getCargoInfoByPage method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus("FAILURE");
       cargoReply.setResponseStatus(responseStatus);

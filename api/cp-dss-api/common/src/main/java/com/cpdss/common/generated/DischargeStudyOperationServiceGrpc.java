@@ -219,6 +219,77 @@ public final class DischargeStudyOperationServiceGrpc {
     return getUpdateDischargeStudyMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply>
+      getGetDischargeStudyPortWiseCargosMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getDischargeStudyPortWiseCargos",
+      requestType =
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest.class,
+      responseType =
+          com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyCargoReply
+              .class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply>
+      getGetDischargeStudyPortWiseCargosMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest,
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply>
+        getGetDischargeStudyPortWiseCargosMethod;
+    if ((getGetDischargeStudyPortWiseCargosMethod =
+            DischargeStudyOperationServiceGrpc.getGetDischargeStudyPortWiseCargosMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getGetDischargeStudyPortWiseCargosMethod =
+                DischargeStudyOperationServiceGrpc.getGetDischargeStudyPortWiseCargosMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getGetDischargeStudyPortWiseCargosMethod =
+              getGetDischargeStudyPortWiseCargosMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss
+                              .common
+                              .generated
+                              .loadableStudy
+                              .LoadableStudyModels
+                              .DischargeStudyRequest,
+                          com.cpdss
+                              .common
+                              .generated
+                              .loadableStudy
+                              .LoadableStudyModels
+                              .DishargeStudyCargoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getDischargeStudyPortWiseCargos"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                                  .DischargeStudyRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                                  .DishargeStudyCargoReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "getDischargeStudyPortWiseCargos"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargeStudyPortWiseCargosMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -297,6 +368,20 @@ public final class DischargeStudyOperationServiceGrpc {
       asyncUnimplementedUnaryCall(getUpdateDischargeStudyMethod(), responseObserver);
     }
 
+    /** */
+    public void getDischargeStudyPortWiseCargos(
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetDischargeStudyPortWiseCargosMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -348,6 +433,23 @@ public final class DischargeStudyOperationServiceGrpc {
                           .loadableStudy
                           .LoadableStudyModels
                           .UpdateDischargeStudyReply>(this, METHODID_UPDATE_DISCHARGE_STUDY)))
+          .addMethod(
+              getGetDischargeStudyPortWiseCargosMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DischargeStudyRequest,
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DishargeStudyCargoReply>(
+                      this, METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS)))
           .build();
     }
   }
@@ -406,6 +508,23 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getDischargeStudyPortWiseCargos(
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetDischargeStudyPortWiseCargosMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -447,6 +566,15 @@ public final class DischargeStudyOperationServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getUpdateDischargeStudyMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+        getDischargeStudyPortWiseCargos(
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
+                request) {
+      return blockingUnaryCall(
+          getChannel(), getGetDischargeStudyPortWiseCargosMethod(), getCallOptions(), request);
     }
   }
 
@@ -493,11 +621,23 @@ public final class DischargeStudyOperationServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getUpdateDischargeStudyMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply>
+        getDischargeStudyPortWiseCargos(
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetDischargeStudyPortWiseCargosMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
   private static final int METHODID_SAVE_DISCHARGE_STUDY = 1;
   private static final int METHODID_UPDATE_DISCHARGE_STUDY = 2;
+  private static final int METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS = 3;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -553,6 +693,19 @@ public final class DischargeStudyOperationServiceGrpc {
                           .loadableStudy
                           .LoadableStudyModels
                           .UpdateDischargeStudyReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS:
+          serviceImpl.getDischargeStudyPortWiseCargos(
+              (com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DishargeStudyCargoReply>)
                   responseObserver);
           break;
         default:
@@ -623,6 +776,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getDeleteDischargeStudyMethod())
                       .addMethod(getSaveDischargeStudyMethod())
                       .addMethod(getUpdateDischargeStudyMethod())
+                      .addMethod(getGetDischargeStudyPortWiseCargosMethod())
                       .build();
         }
       }

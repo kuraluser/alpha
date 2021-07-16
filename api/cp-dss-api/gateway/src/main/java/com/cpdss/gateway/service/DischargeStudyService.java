@@ -11,16 +11,37 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.domain.DischargeStudy.*;
+import com.cpdss.gateway.domain.BackLoading;
+import com.cpdss.gateway.domain.BillOfLadding;
+import com.cpdss.gateway.domain.Cargo;
+import com.cpdss.gateway.domain.CargoNomination;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
+import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
+import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
+import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.PortWiseCargo;
+import com.cpdss.gateway.domain.PortWiseCargoResponse;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -445,5 +466,49 @@ public class DischargeStudyService {
               cargoNominations.add(cargoNomination);
             });
     portRotation.setCargoNominationList(cargoNominations);
+  }
+
+  public PortWiseCargoResponse getCargosByPorts(Long dischargeStudyId, HttpHeaders headers)
+      throws GenericServiceException {
+    com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest.Builder
+        request =
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
+                .newBuilder();
+    request.setDischargeStudyId(dischargeStudyId);
+    DishargeStudyCargoReply dischargeStudyPortWiseCargos =
+        dischargeStudyOperationServiceBlockingStub.getDischargeStudyPortWiseCargos(request.build());
+    if (!SUCCESS.equals(dischargeStudyPortWiseCargos.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Port Rotation",
+          dischargeStudyPortWiseCargos.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(dischargeStudyPortWiseCargos.getResponseStatus().getCode())));
+    }
+    List<PortWiseCargo> portWiseCargos = new ArrayList<>();
+
+    dischargeStudyPortWiseCargos.getPortCargosList().stream()
+        .forEach(
+            portCargo -> {
+              PortWiseCargo response = new PortWiseCargo();
+              List<Cargo> cargos = new ArrayList<>();
+              List<DishargeStudyCargoDetail> cargosList = portCargo.getCargosList();
+              response.setPortId(portCargo.getPortId());
+              cargosList.forEach(
+                  detail -> {
+                    Cargo portWisecargo = new Cargo();
+                    portWisecargo.setAbbreviation(detail.getAbbreviation());
+                    portWisecargo.setId(detail.getId());
+                    portWisecargo.setName(detail.getCrudeType());
+                    cargos.add(portWisecargo);
+                  });
+              response.setCargos(cargos);
+              portWiseCargos.add(response);
+            });
+    PortWiseCargoResponse response = new PortWiseCargoResponse();
+    response.setPortWiseCorges(portWiseCargos);
+    response.setResponseStatus(
+        new CommonSuccessResponse(
+            valueOf(HttpStatus.OK.value()), headers.getFirst("correlationId")));
+    return response;
   }
 }

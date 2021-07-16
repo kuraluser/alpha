@@ -8,13 +8,22 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.CargoInfo.CargoDetail;
+import com.cpdss.common.generated.CargoInfo.CargoListRequest;
+import com.cpdss.common.generated.CargoInfo.CargoReply;
+import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceImplBase;
 import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfo.CargoInfos;
+import com.cpdss.common.generated.PortInfo.CargoPortMapping;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -24,6 +33,7 @@ import com.cpdss.loadablestudy.repository.*;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -52,6 +62,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private CargoOperationRepository cargoOperationRepository;
   @Autowired private SynopticService synopticService;
+
+  @GrpcClient("cargoService")
+  private CargoInfoServiceBlockingStub cargoInfoGrpcService;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -502,5 +515,111 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
    */
   public PortInfo.PortReply getPortInfo(PortInfo.GetPortInfoByPortIdsRequest build) {
     return portInfoGrpcService.getPortInfoByPortIds(build);
+  }
+
+  @Override
+  public void getDischargeStudyPortWiseCargos(
+      DischargeStudyRequest request, StreamObserver<DishargeStudyCargoReply> responseObserver) {
+    DishargeStudyCargoReply.Builder replyBuilder = DishargeStudyCargoReply.newBuilder();
+
+    try {
+      if (!dischargeStudyRepository.existsById(request.getDischargeStudyId())) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      List<LoadableStudyPortRotation> findByLoadableStudyIdAndIsActive =
+          loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+              request.getDischargeStudyId(), true);
+      List<Long> portIds =
+          findByLoadableStudyIdAndIsActive.stream()
+              .map(LoadableStudyPortRotation::getPortXId)
+              .collect(Collectors.toList());
+      PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder =
+          PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
+      portIds.forEach(
+          port -> {
+            reqBuilder.addId(port);
+          });
+      CargoInfos cargoInfos = portInfoGrpcService.getCargoInfoByPortIds(reqBuilder.build());
+      if (!SUCCESS.equalsIgnoreCase(cargoInfos.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in calling port service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+      CargoListRequest.Builder cargoRequest = CargoListRequest.newBuilder();
+      List<CargoPortMapping> cargoPortMappings = cargoInfos.getCargoPortsList();
+      cargoRequest.addAllId(
+          cargoPortMappings.stream()
+              .map(CargoPortMapping::getCargoId)
+              .collect(Collectors.toList()));
+      CargoReply cargoInfosByCargoIds =
+          cargoInfoGrpcService.getCargoInfosByCargoIds(cargoRequest.build());
+
+      if (!SUCCESS.equalsIgnoreCase(cargoInfosByCargoIds.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in calling cargo service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+
+      Map<Long, List<Long>> portWiseCargos =
+          cargoPortMappings.stream()
+              .collect(
+                  Collectors.groupingBy(
+                      CargoPortMapping::getPortId,
+                      Collectors.mapping(CargoPortMapping::getCargoId, Collectors.toList())));
+      portWiseCargos.forEach(
+          (portId, cargoIds) -> {
+            List<CargoDetail> cargoDetails =
+                cargoInfosByCargoIds.getCargosList().stream()
+                    .filter(c -> cargoIds.contains(c.getId()))
+                    .collect(Collectors.toList());
+            DishargeStudyPortCargoMapping.Builder cargoPortMappingBuilder =
+                DishargeStudyPortCargoMapping.newBuilder();
+            createCargoResponse(cargoDetails, cargoPortMappingBuilder);
+            cargoPortMappingBuilder.setPortId(portId);
+            replyBuilder.addPortCargos(cargoPortMappingBuilder.build());
+          });
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when deleting discharge study", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when deleting discharge study", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception  when deleting discharge study")
+              .setStatus(FAILED)
+              .setHttpStatusCode(Integer.valueOf(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void createCargoResponse(
+      List<CargoDetail> cargoDetails, DishargeStudyPortCargoMapping.Builder replyBuilder) {
+    cargoDetails.forEach(
+        cargo -> {
+          DishargeStudyCargoDetail.Builder cargoDetail = DishargeStudyCargoDetail.newBuilder();
+          cargoDetail.setId(cargo.getId());
+          cargoDetail.setApi(cargo.getApi());
+          cargoDetail.setAbbreviation(cargo.getAbbreviation());
+          cargoDetail.setIsCondensateCargo(cargo.getIsCondensateCargo());
+          cargoDetail.setIsHrvpCargo(cargo.getIsHrvpCargo());
+          cargoDetail.setCrudeType(cargo.getCrudeType());
+          replyBuilder.addCargos(cargoDetail.build());
+        });
   }
 }
