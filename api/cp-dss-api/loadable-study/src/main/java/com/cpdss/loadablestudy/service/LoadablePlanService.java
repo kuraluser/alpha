@@ -712,7 +712,7 @@ public class LoadablePlanService {
     //    Create port operations table
     PortOperationTable portOperationTable =
         synopticService.buildPortOperationsTable(
-            request.getLoadableStudyId(), request.getLoadablePatternId());
+                request.getLoadableStudyId(), request.getLoadablePatternId());
     drawPortOperationTable(
         spreadsheet,
         portOperationTable,
@@ -1483,12 +1483,13 @@ public class LoadablePlanService {
             operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
             break;
         }
+
         XSSFCellStyle cellStyle =
             getCellStyle(
                 spreadsheet,
                 TableCellStyle.PORT_OPERATIONS_VALUES,
                 Optional.empty(),
-                Optional.empty());
+                Optional.of(portOperationsTableTitle.getFormat()));
         operationsValueCell.setCellStyle(cellStyle);
         portColumnIndex++;
       }

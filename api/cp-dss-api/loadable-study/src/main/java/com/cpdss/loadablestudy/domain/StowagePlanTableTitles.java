@@ -12,9 +12,9 @@ public enum StowagePlanTableTitles {
   CARGO_CODE("Cargo Code", ""),
   ULLAGE("Ullage (m)", "\"(U)\"_0.00_ \"m\""),
   LOADED_PERCENTAGE("Loaded  %", ""),
-  SHIPS_NBBLS("Ship's N.BBLS", "#,##0.00_ \"Bbls\""),
+  SHIPS_NBBLS("Ship's N.BBLS", "#,##0_ \"Bbls\""),
   SHIPS_MT("Ship's MT", "#,##0.00_ \"MT\""),
-  SHIPS_KL_15C("Ship's KL @ 15°C", "#,##0_ \"KL\"");
+  SHIPS_KL_15C("Ship's KL @ 15°C", "#,##0.000_ \"KL\"");
 
   private final String columnName;
   private final String format;
