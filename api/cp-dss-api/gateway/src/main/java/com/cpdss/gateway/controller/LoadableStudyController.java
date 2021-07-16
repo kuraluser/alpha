@@ -2141,14 +2141,13 @@ public class LoadableStudyController {
    */
   @GetMapping(
           value =
-                  "/loadble-study/shore-detail/{vesselId}",
+                  "/loadble-study/shore-detail",
           produces = MediaType.APPLICATION_JSON_VALUE)
   public LoadableStudyShoreResponse getLoadableStudyShore(
-          @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
           @RequestHeader HttpHeaders headers)
           throws CommonRestException {
     try {
-      return this.loadableStudyService.getLoadableStudyShore(vesselId,  headers.getFirst(CORRELATION_ID_HEADER));
+      return this.loadableStudyService.getLoadableStudyShore(headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching rules against loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

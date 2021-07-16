@@ -5818,9 +5818,9 @@ public class LoadableStudyService {
     return ruleResponse;
   }
 
-    public LoadableStudyShoreResponse getLoadableStudyShore(Long vesselId, String first)  throws GenericServiceException{
+    public LoadableStudyShoreResponse getLoadableStudyShore(String first)  throws GenericServiceException{
       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder loadableRuleRequestBuilder =
-              com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder().setVesselId(vesselId);
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
 
       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse responseShore  =
               loadableStudyServiceBlockingStub.getLoadableStudyShore(loadableRuleRequestBuilder.build());
@@ -5832,14 +5832,34 @@ public class LoadableStudyService {
         shore.setVesselName(vesselDetail.getVesselName());
         shore.setImoNo(vesselDetail.getImoNo());
         shore.setFlagName(vesselDetail.getFlagName());
+        shore.setEta(vesselDetail.getEta());
+        shore.setAtd(vesselDetail.getAtd());
+        shore.setVoyageName(vesselDetail.getVoyageName());
 
+        List<VoyagePorts> portList = new ArrayList<>();
 
-        LoadableStudyRequest request = new LoadableStudyRequest();
-        LoadableStudyReply reply = getloadableStudyList(request);
+        vesselDetail.getVoyagePortsList().forEach(voPorts ->{
+          VoyagePorts ports = new VoyagePorts();
+          ports.setAtd(voPorts.getAtd());
+          ports.setEta(voPorts.getEta());
+          ports.setEtd(voPorts.getEtd());
+          ports.setPortOrder(voPorts.getPortOrder());
+          ports.setPortName(voPorts.getPortName());
+          ports.setAnchorage(voPorts.getAnchorage());
+          ports.setIconUrl(voPorts.getIconUrl());
+          ports.setPortType(voPorts.getPortType());
+          ports.setAta(voPorts.getAta());
+          ports.setLat(voPorts.getLat());
+          ports.setLon(voPorts.getLon());
+          portList.add(ports);
+        });
 
+        shore.setVoyagePorts(portList);
 
         shoreList.add(shore);
       });
+
+
 
       LoadableStudyShoreResponse response = new LoadableStudyShoreResponse();
       response.setShoreList(shoreList);
