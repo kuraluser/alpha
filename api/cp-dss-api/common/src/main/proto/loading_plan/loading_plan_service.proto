@@ -44,5 +44,6 @@ service LoadingInstructionService {
 service LoadingPlanService {
 
   rpc LoadingPlanSynchronization(LoadingPlanSyncDetails) returns (LoadingPlanSyncReply) {}
-
+  
+  rpc SaveLoadingPlan(LoadingPlanSaveRequest) returns (LoadingPlanSaveResponse) {}
 }

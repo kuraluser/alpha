@@ -41,11 +41,12 @@ public final class LoadingPlanServiceOuterClass {
           + "t\032\032.UpdateUllageLoadingReplay\"\000\022A\n\023Gener"
           + "ateLoadingPlan\022\027.LoadingInfoAlgoRequest\032"
           + "\017.ResponseStatus\"\0002\033\n\031LoadingInstruction"
-          + "Service2d\n\022LoadingPlanService\022N\n\032Loading"
-          + "PlanSynchronization\022\027.LoadingPlanSyncDet"
-          + "ails\032\025.LoadingPlanSyncReply\"\000B+\n\'com.cpd"
-          + "ss.common.generated.loading_planP\000b\006prot"
-          + "o3"
+          + "Service2\254\001\n\022LoadingPlanService\022N\n\032Loadin"
+          + "gPlanSynchronization\022\027.LoadingPlanSyncDe"
+          + "tails\032\025.LoadingPlanSyncReply\"\000\022F\n\017SaveLo"
+          + "adingPlan\022\027.LoadingPlanSaveRequest\032\030.Loa"
+          + "dingPlanSaveResponse\"\000B+\n\'com.cpdss.comm"
+          + "on.generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

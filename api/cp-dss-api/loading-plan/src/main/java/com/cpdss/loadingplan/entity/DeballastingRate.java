@@ -44,5 +44,5 @@ public class DeballastingRate extends EntityDoc {
   private BigDecimal loadingRate;
 
   @Column(name = "is_active")
-  private BigDecimal isActive;
+  private Boolean isActive;
 }

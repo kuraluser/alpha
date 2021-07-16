@@ -5,7 +5,6 @@ import com.cpdss.common.utils.EntityDoc;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -35,18 +34,18 @@ public class LoadingPlanPortWiseDetails extends EntityDoc {
   @JoinColumn(name = "loading_sequences_xid", referencedColumnName = "id")
   private LoadingSequence loadingSequence;
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<LoadingPlanStowageDetails> loadingPlanStowageDetails;
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<LoadingPlanBallastDetails> loadingPlanBallastDetails;
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<LoadingPlanRobDetails> loadingPlanRobDetails;
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<LoadingPlanStabilityParameters> loadingPlanStabilityParameters;
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<DeballastingRate> deballastingRates;
 }

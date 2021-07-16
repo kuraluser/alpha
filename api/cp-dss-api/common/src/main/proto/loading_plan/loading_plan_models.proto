@@ -383,4 +383,72 @@ message LoadingInfoSaveResponse {
   ResponseStatus responseStatus = 6;
 }
 
+message LoadingPlanSaveRequest {
+  int64 loadingInfoId = 1;
+  repeated LoadingSequence loadingSequences = 2;
+}
 
+message LoadingSequence {
+  int64 cargoNominationId = 1;
+  int32 startTime = 2;
+  int32 endTime = 3;
+  int64 portId = 4;
+  int32 sequenceNumber = 5;
+  string stageName = 6;
+  bool toLoadicator = 7;
+  repeated Valve cargoValves = 8;
+  repeated Valve ballastValves = 9;
+  repeated LoadingRate loadingRates = 10;
+  repeated DeBallastingRate deBallastingRates = 11;
+  repeated LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;
+}
+
+message LoadingPlanPortWiseDetails {
+  repeated DeBallastingRate deballastingRates = 1;
+  repeated LoadingPlanTankDetails loadingPlanBallastDetails = 2;
+  repeated LoadingPlanTankDetails loadingPlanRobDetails = 3;
+  repeated LoadingPlanStabilityParameters loadingPlanStabilityParameters = 4;
+  repeated LoadingPlanStowageDetails loadingPlanStowageDetails = 5;
+  int32 time = 6;
+}
+
+message LoadingPlanStowageDetails {
+  string api = 1;
+  int64 cargoNominationId = 2;
+  string quantity = 3;
+  int64 tankId = 4;
+  string temperature = 5;
+}
+
+message LoadingPlanStabilityParameters {
+  string draft = 1;
+  string trim = 2;
+}
+
+message LoadingPlanTankDetails {
+  string quantity = 1;
+  int64 tankId = 2;
+}
+
+message DeBallastingRate {
+  string loadingRate = 1;
+  int64 tankId = 2;
+  int32 time = 3;
+}
+
+message LoadingRate {
+  string loadingRate = 1;
+  int64 tankId = 2;
+}
+
+message Valve {
+  string operation = 1;
+  int32 time = 2;
+  string valveCode = 3;
+  string valveType = 4;
+  int64 valveId = 5;
+}
+
+message LoadingPlanSaveResponse {
+  ResponseStatus responseStatus = 1;
+}
