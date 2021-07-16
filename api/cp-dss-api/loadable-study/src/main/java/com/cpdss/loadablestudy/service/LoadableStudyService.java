@@ -2838,12 +2838,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Override
   public void getLoadableStudyShore(
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
-          StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
-                  responseObserver) {
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+          responseObserver) {
 
     com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder builder =
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.newBuilder();
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.newBuilder();
 
     try {
       loadableStudyPortRotationService.getLoadableStudyShore(request, builder);
@@ -2855,5 +2855,4 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-
 }

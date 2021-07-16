@@ -1,16 +1,11 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
-
-import lombok.Data;
 import java.util.List;
+import lombok.Data;
 
-
-/**
- *
- *
- * @author ravi.r
- */
+/** @author ravi.r */
 @Data
 public class LoadableStudyShoreResponse {
-    private List<LoadableStudyShore> shoreList;
+  private List<LoadableStudyShore> shoreList;
 }

@@ -1,23 +1,26 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
+import static com.cpdss.gateway.common.GatewayConstants.*;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.VoyageStatusRequest;
-import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import com.cpdss.gateway.utility.Utility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /** Calls to Grpc Service Parser here and give back to caller. */
@@ -49,6 +53,9 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
       loadingInfoServiceBlockingStub;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
+
   @Autowired private LoadableStudyService loadableStudyService;
 
   @Override
@@ -56,7 +63,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     LoadableStudy.ActiveVoyage activeVoyage =
         loadableStudyServiceBlockingStub.getActiveVoyagesByVessel(
             this.buildVoyageRequest(vesselId));
-    if (!activeVoyage.getResponseStatus().getStatus().equalsIgnoreCase("SUCCESS")) {
+    if (!activeVoyage.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
       log.error("Failed to collect Active Voyage Data, Vessel Id {}", vesselId);
       throw new GenericServiceException(
           "Failed to get Active Voyage",
@@ -107,7 +114,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
                 .setId(portRId)
                 .build());
 
-    if (!response.getResponseStatus().getStatus().equals("SUCCESS")) {
+    if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Failed to get Synoptic data from LS ", response.getResponseStatus().getMessage());
       throw new GenericServiceException(
           "Failed to get Synoptic Data for Port",
@@ -133,7 +140,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
                 .addAllId(Arrays.asList(portId))
                 .build());
 
-    if (!response.getResponseStatus().getStatus().equals("SUCCESS")) {
+    if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error(
           "Failed to get Port Details from Port Info ", response.getResponseStatus().getMessage());
       throw new GenericServiceException(
@@ -163,7 +170,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     if (portRotationId != null) builder.setPortRotationId(portRotationId);
     LoadingPlanModels.LoadingInformation replay =
         loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
-    if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {
+    if (!replay.getResponseStatus().getStatus().equals(SUCCESS)) {
       throw new GenericServiceException(
           "Failed to get Loading Information",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -211,7 +218,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
                 .setPortId(portId)
                 .build());
 
-    if (response.getResponseStatus().getStatus().equals("SUCCESS")) {
+    if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
       return response.getLoadableQuantityCargoDetailsList();
     }
     return new ArrayList<>();
@@ -233,7 +240,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
       throws GenericServiceException {
     LoadingPlanModels.UpdateUllageLoadingReplay replay =
         this.loadingInfoServiceBlockingStub.updateUllage(request);
-    if (!replay.getResponseStatus().getStatus().equals("SUCCESS")) {
+    if (!replay.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error(
           "Update Ullage, Failed to update at Loading Information: {}",
           replay.getResponseStatus().getMessage());
@@ -255,5 +262,28 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     LoadingInfoAlgoRequest.Builder builder = LoadingInfoAlgoRequest.newBuilder();
     builder.setLoadingInfoId(loadingInfoId);
     return this.loadingInfoServiceBlockingStub.generateLoadingPlan(builder.build());
+  }
+
+  @Override
+  public RuleResponse getLoadingPlanRules(Long vesselId, Long loadingInfoId)
+      throws GenericServiceException {
+    RuleResponse ruleResponse = new RuleResponse();
+    LoadingPlanModels.LoadingPlanRuleRequest.Builder builder =
+        LoadingPlanModels.LoadingPlanRuleRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    builder.setSectionId(LOADING_RULE_MASTER_ID);
+    builder.setLoadingInfoId(loadingInfoId);
+    LoadingPlanModels.LoadingPlanRuleReply loadingRuleReply =
+        this.loadingPlanServiceBlockingStub.getOrSaveRulesForLoadingPlan(builder.build());
+    if (!loadingRuleReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "failed to get Vessel Details ",
+          loadingRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(loadingRuleReply.getResponseStatus().getCode())));
+    }
+    ruleResponse.setPlan(Utility.buildLoadingPlanRule(loadingRuleReply));
+    ruleResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
+    return ruleResponse;
   }
 }

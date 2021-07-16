@@ -1573,7 +1573,6 @@ public class LoadablePatternService {
     ofNullable(loadablePlanCommingleDetails.getId()).ifPresent(id -> builder.setId(id));
   }
 
-
   public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder confirmPlanStatus(
       com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
       com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder replyBuilder) {

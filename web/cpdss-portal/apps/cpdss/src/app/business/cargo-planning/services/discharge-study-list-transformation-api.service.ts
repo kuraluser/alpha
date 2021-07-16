@@ -92,7 +92,6 @@ export class DischargeStudyListTransformationApiService {
     ];
 
       const actions: DATATABLE_ACTION[] = [];     
-      actions.push(DATATABLE_ACTION.EDIT);
       const action: IDataTableColumn = {
         field: 'actions',
         header: '',

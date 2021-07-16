@@ -2101,33 +2101,33 @@ public class LoadableStudyController {
    * @throws CommonRestException
    */
   @GetMapping(
-          value =
-                  "/loadble-study-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}/loadableStudyId/{loadableStudyId}",
-          produces = MediaType.APPLICATION_JSON_VALUE)
+      value =
+          "/loadble-study-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}/loadableStudyId/{loadableStudyId}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public RuleResponse getRulesForLoadableStudy(
-          @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-          @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-                  Long loadableStudyId,
-          @PathVariable
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable
           @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-                  Long sectionId,
-          @RequestHeader HttpHeaders headers)
-          throws CommonRestException {
+          Long sectionId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
     try {
       return this.loadableStudyService.getOrSaveRulesForLoadableStudy(
-              vesselId, sectionId, loadableStudyId, null, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId, sectionId, loadableStudyId, null, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching rules against loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching rules for loadable study", e);
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
   }
 
@@ -2139,26 +2139,23 @@ public class LoadableStudyController {
    * @return
    * @throws CommonRestException
    */
-  @GetMapping(
-          value =
-                  "/loadble-study/shore-detail",
-          produces = MediaType.APPLICATION_JSON_VALUE)
-  public LoadableStudyShoreResponse getLoadableStudyShore(
-          @RequestHeader HttpHeaders headers)
-          throws CommonRestException {
+  @GetMapping(value = "/loadble-study/shore-detail", produces = MediaType.APPLICATION_JSON_VALUE)
+  public LoadableStudyShoreResponse getLoadableStudyShore(@RequestHeader HttpHeaders headers)
+      throws CommonRestException {
     try {
-      return this.loadableStudyService.getLoadableStudyShore(headers.getFirst(CORRELATION_ID_HEADER));
+      return this.loadableStudyService.getLoadableStudyShore(
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching rules against loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching rules for loadable study", e);
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
   }
 }

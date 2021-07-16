@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
@@ -15,4 +16,7 @@ public interface LoadingPlanService {
 
   public LoadingInformationResponse saveLoadingInformation(
       LoadingInformationRequest request, String correlationId) throws GenericServiceException;
+
+  RuleResponse getLoadingPlanRules(Long vesselId, Long voyageId, Long loadingInfoId)
+      throws GenericServiceException;
 }

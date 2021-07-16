@@ -124,7 +124,7 @@
         </div> -->
         
         <div class="pr-15">
-            <button id="rulesButton" [disabled]="isPatternGenerated || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING" class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button>
+            <button id="rulesButton" [disabled]="isPatternGenerated || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING " class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button>
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !loadableStudies?.length || !cargoNominationTabPermission?.add || !cargoNominationTabPermission?.add === undefined}"
