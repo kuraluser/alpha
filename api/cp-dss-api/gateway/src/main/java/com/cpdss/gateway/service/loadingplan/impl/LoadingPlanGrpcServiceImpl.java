@@ -8,6 +8,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfoServiceGrpc;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
@@ -264,6 +266,10 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
         request.getVoyageId(),
         request.getTankId());
     return true;
+  }
+
+  public AlgoStatusReply saveLoadingInfoStatus(AlgoStatusRequest request) {
+    return this.loadingInfoServiceBlockingStub.saveAlgoLoadingPlanStatus(request);
   }
 
   @Override

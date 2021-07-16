@@ -8,4 +8,5 @@ import lombok.Data;
 public class AlgoStatusRequest {
   private String processId;
   private Long loadableStudyStatusId;
+  private Long loadingInfoStatusId;
 }

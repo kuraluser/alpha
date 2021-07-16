@@ -2,10 +2,12 @@
 package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.*;
@@ -29,6 +31,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
+  @Autowired LoadingPlanGrpcServiceImpl loadingPlanGrpcServiceImpl;
+
+  private static final String SUCCESS = "SUCCESS";
   @Autowired VesselInfoService vesselInfoService;
 
   /**
@@ -46,6 +51,33 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
     // TO DO
     return activeVoyage.getPortRotations();
+  }
+
+  /**
+   * @param infoId
+   * @param request
+   * @param correlationId
+   * @return LoadingInfoAlgoResponse
+   */
+  public LoadingInfoAlgoResponse saveLoadingInfoStatus(
+      AlgoStatusRequest request, String correlationId) throws GenericServiceException {
+    log.info("update loading info status api");
+    LoadingInfoAlgoResponse loadingInfoAlgoResponse = new LoadingInfoAlgoResponse();
+    com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.Builder requestBuilder =
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.newBuilder();
+    requestBuilder.setLoadableStudystatusId(request.getLoadingInfoStatusId());
+    requestBuilder.setProcesssId(request.getProcessId());
+    AlgoStatusReply reply =
+        loadingPlanGrpcServiceImpl.saveLoadingInfoStatus(requestBuilder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save on board quantities",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    loadingInfoAlgoResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return loadingInfoAlgoResponse;
   }
 
   /**

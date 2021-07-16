@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.service.algo;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
@@ -85,6 +86,21 @@ public class LoadingInformationAlgoService {
     loadingInformationRepository.save(loadingInfoOpt.get());
     updateLoadingInformationAlgoStatus(
         loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get());
+  }
+
+  /** @param request void */
+  public void saveAlgoLoadingPlanStatus(AlgoStatusRequest request) throws GenericServiceException {
+    Optional<LoadingInformationAlgoStatus> loadingInfoStatusOpt =
+        loadingInfoAlgoStatusRepository.findByProcessIdAndIsActiveTrue(request.getProcesssId());
+    if (loadingInfoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information " + request.getProcesssId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    loadingInfoAlgoStatusRepository.updateLoadingInformationAlgoStatus(
+        request.getLoadableStudystatusId(), request.getProcesssId());
   }
 
   /**
