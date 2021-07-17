@@ -12,9 +12,11 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstruct
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionGroup;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionSubHeader;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructions;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.LoadingInformation;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @GrpcService
@@ -52,6 +55,56 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 
 	@Autowired
 	LoadingInformationServiceImpl loadingInformationServiceImpl;
+
+	@Override
+	@Transactional
+	public void updateLoadingInstructions(LoadingInstructionsUpdate request,
+			StreamObserver<ResponseStatus> responseObserver) {
+		ResponseStatus.Builder response = ResponseStatus.newBuilder();
+		response.setStatus(FAILED);
+		try {
+			log.info("Update Instruction status request received for  : {}", request.getInstructionListCount());
+			for (LoadingInstructionStatus item : request.getInstructionListList()) {
+
+				loadingInstructionRepository.updateInstructionStatus(item.getInstructionId(), item.getIsChecked());
+
+			}
+			log.info("Deleted instruction Succesfully");
+			response.setStatus(SUCCESS);
+			response.setMessage(SUCCESS);
+		} catch (Exception e) {
+			log.info("Update instruction status request failed");
+			e.printStackTrace();
+			response.setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR).setMessage(e.getMessage()).setStatus(FAILED).build();
+		} finally {
+			log.info("Exiting GRPC method");
+			responseObserver.onNext(response.build());
+			responseObserver.onCompleted();
+		}
+	}
+
+	@Override
+	@Transactional
+	public void deleteLoadingInstructions(LoadingInstructionStatus request,
+			StreamObserver<ResponseStatus> responseObserver) {
+		ResponseStatus.Builder response = ResponseStatus.newBuilder();
+		response.setStatus(FAILED);
+		try {
+			log.info("Delete instruction request receieved for id : {}", request.getInstructionId());
+			loadingInstructionRepository.deleteInstruction(request.getInstructionId());
+			log.info("Deleted instruction Succesfully");
+			response.setStatus(SUCCESS);
+			response.setMessage(SUCCESS);
+		} catch (Exception e) {
+			log.info("Delete instruction request failed");
+			e.printStackTrace();
+			response.setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR).setMessage(e.getMessage()).setStatus(FAILED).build();
+		} finally {
+			log.info("Exiting GRPC method");
+			responseObserver.onNext(response.build());
+			responseObserver.onCompleted();
+		}
+	}
 
 	@Override
 	public void addLoadingInstruction(LoadingInstructionsSave request,
@@ -91,7 +144,7 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 			}
 
 			if (loadingInstructionRepository.save(newInstruction).getId() != null) {
-				log.info("New instruction added with id {}", loadingInstructionRepository.save(newInstruction).getId());
+				log.info("New instruction added with id ");
 				response.setStatus(SUCCESS);
 				response.setMessage(SUCCESS);
 			}
@@ -197,21 +250,36 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 		for (LoadingInstruction headerInstruction : subHeaderList) {
 			log.info("inside  header loop");
 			LoadingInstructionSubHeader.Builder subHeaderBuilder = LoadingInstructionSubHeader.newBuilder();
-			subHeaderBuilder.setSubHeaderId(headerInstruction.getId());
-			subHeaderBuilder.setSubHeaderName(headerInstruction.getLoadingInstruction());
-			subHeaderBuilder.setIsChecked(headerInstruction.getIsChecked());
-			subHeaderBuilder.setInstructionHeaderId(headerInstruction.getLoadingInstructionHeaderXId());
-			subHeaderBuilder.setInstructionTypeId(headerInstruction.getLoadingTypeXId());
+			Optional.ofNullable(headerInstruction.getId()).ifPresent(subHeaderBuilder::setSubHeaderId);
+			Optional.ofNullable(headerInstruction.getLoadingInstruction())
+					.ifPresent(subHeaderBuilder::setSubHeaderName);
+			Optional.ofNullable(headerInstruction.getIsChecked()).ifPresent(subHeaderBuilder::setIsChecked);
+			Optional.ofNullable(headerInstruction.getLoadingInstructionHeaderXId())
+					.ifPresent(subHeaderBuilder::setInstructionHeaderId);
+			Optional.ofNullable(headerInstruction.getLoadingTypeXId())
+					.ifPresent(subHeaderBuilder::setInstructionTypeId);
 
 			List<LoadingInstructions> instructionsBuilderList = new ArrayList<>();
 
-			instructionsBuilderList = instructionList.stream()
-					.filter(item -> item.getParentInstructionXId() == headerInstruction.getId())
-					.map(item -> LoadingInstructions.newBuilder().setInstructionId(item.getId())
-							.setInstructionHeaderId(item.getLoadingInstructionHeaderXId())
-							.setInstructionTypeId(item.getLoadingTypeXId()).setInstruction(item.getLoadingInstruction())
-							.setIsChecked(item.getIsChecked()).build())
-					.collect(Collectors.toList());
+			for (LoadingInstruction item : instructionList) {
+				if(item.getParentInstructionXId() == headerInstruction.getId()) {
+					LoadingInstructions.Builder itemBuilder =  LoadingInstructions.newBuilder();
+					Optional.ofNullable(item.getId()).ifPresent(itemBuilder::setInstructionId);
+					Optional.ofNullable(item.getLoadingInstructionHeaderXId()).ifPresent(itemBuilder::setInstructionHeaderId);
+					Optional.ofNullable(item.getLoadingInstruction()).ifPresent(itemBuilder::setInstruction);
+					Optional.ofNullable(item.getIsChecked()).ifPresent(itemBuilder::setIsChecked);
+					Optional.ofNullable(item.getLoadingTypeXId()).ifPresent(itemBuilder::setInstructionTypeId);
+					
+					instructionsBuilderList.add(itemBuilder.build());
+				}
+			}
+//			instructionsBuilderList = instructionList.stream()
+//					.filter(item -> item.getParentInstructionXId() == headerInstruction.getId())
+//					.map(item -> LoadingInstructions.newBuilder().setInstructionId(item.getId())
+//							.setInstructionHeaderId(item.getLoadingInstructionHeaderXId())
+//							.setInstructionTypeId(item.getLoadingTypeXId()).setInstruction(item.getLoadingInstruction())
+//							.setIsChecked(item.getIsChecked()).build())
+//					.collect(Collectors.toList());
 			subHeaderBuilder.addAllLoadingInstructionsList(instructionsBuilderList);
 			subHeaderBuilderList.add(subHeaderBuilder.build());
 		}

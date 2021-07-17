@@ -27,8 +27,6 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.Min;
-
 import org.springframework.stereotype.Service;
 
 /**
@@ -158,7 +156,6 @@ public class LoadingInstructionService {
 			log.info("Calling deleteLoadingInstructions in loading-plan microservice via GRPC");
 			LoadingInstructionStatus.Builder requestBuilder	= LoadingInstructionStatus.newBuilder();
 			Optional.ofNullable(request.getInstructionId()).ifPresent(requestBuilder::setInstructionId);
-			Optional.ofNullable(request.getIsChecked()).ifPresent(requestBuilder::setIsChecked);
 
 			ResponseStatus grpcResponse = this.loadingInstructionServiceBlockingStub
 					.deleteLoadingInstructions(requestBuilder.build());
