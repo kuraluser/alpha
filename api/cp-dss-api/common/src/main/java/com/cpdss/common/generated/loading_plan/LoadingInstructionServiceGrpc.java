@@ -76,6 +76,171 @@ public final class LoadingInstructionServiceGrpc {
     return getGetLoadingInstructionsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getAddLoadingInstructionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "AddLoadingInstruction",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave.class,
+      responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getAddLoadingInstructionMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getAddLoadingInstructionMethod;
+    if ((getAddLoadingInstructionMethod =
+            LoadingInstructionServiceGrpc.getAddLoadingInstructionMethod)
+        == null) {
+      synchronized (LoadingInstructionServiceGrpc.class) {
+        if ((getAddLoadingInstructionMethod =
+                LoadingInstructionServiceGrpc.getAddLoadingInstructionMethod)
+            == null) {
+          LoadingInstructionServiceGrpc.getAddLoadingInstructionMethod =
+              getAddLoadingInstructionMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInstructionsSave,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "AddLoadingInstruction"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInstructionsSave.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInstructionServiceMethodDescriptorSupplier(
+                              "AddLoadingInstruction"))
+                      .build();
+        }
+      }
+    }
+    return getAddLoadingInstructionMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getUpdateLoadingInstructionsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateLoadingInstructions",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate.class,
+      responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getUpdateLoadingInstructionsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getUpdateLoadingInstructionsMethod;
+    if ((getUpdateLoadingInstructionsMethod =
+            LoadingInstructionServiceGrpc.getUpdateLoadingInstructionsMethod)
+        == null) {
+      synchronized (LoadingInstructionServiceGrpc.class) {
+        if ((getUpdateLoadingInstructionsMethod =
+                LoadingInstructionServiceGrpc.getUpdateLoadingInstructionsMethod)
+            == null) {
+          LoadingInstructionServiceGrpc.getUpdateLoadingInstructionsMethod =
+              getUpdateLoadingInstructionsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInstructionsUpdate,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "UpdateLoadingInstructions"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInstructionsUpdate.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInstructionServiceMethodDescriptorSupplier(
+                              "UpdateLoadingInstructions"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateLoadingInstructionsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getDeleteLoadingInstructionsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DeleteLoadingInstructions",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus.class,
+      responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getDeleteLoadingInstructionsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getDeleteLoadingInstructionsMethod;
+    if ((getDeleteLoadingInstructionsMethod =
+            LoadingInstructionServiceGrpc.getDeleteLoadingInstructionsMethod)
+        == null) {
+      synchronized (LoadingInstructionServiceGrpc.class) {
+        if ((getDeleteLoadingInstructionsMethod =
+                LoadingInstructionServiceGrpc.getDeleteLoadingInstructionsMethod)
+            == null) {
+          LoadingInstructionServiceGrpc.getDeleteLoadingInstructionsMethod =
+              getDeleteLoadingInstructionsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInstructionStatus,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DeleteLoadingInstructions"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInstructionStatus.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInstructionServiceMethodDescriptorSupplier(
+                              "DeleteLoadingInstructions"))
+                      .build();
+        }
+      }
+    }
+    return getDeleteLoadingInstructionsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingInstructionServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInstructionServiceStub> factory =
@@ -130,6 +295,30 @@ public final class LoadingInstructionServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadingInstructionsMethod(), responseObserver);
     }
 
+    /** */
+    public void addLoadingInstruction(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getAddLoadingInstructionMethod(), responseObserver);
+    }
+
+    /** */
+    public void updateLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getUpdateLoadingInstructionsMethod(), responseObserver);
+    }
+
+    /** */
+    public void deleteLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getDeleteLoadingInstructionsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -141,6 +330,30 @@ public final class LoadingInstructionServiceGrpc {
                           .LoadingInstructionRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInstructionDetails>(this, METHODID_GET_LOADING_INSTRUCTIONS)))
+          .addMethod(
+              getAddLoadingInstructionMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInstructionsSave,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_ADD_LOADING_INSTRUCTION)))
+          .addMethod(
+              getUpdateLoadingInstructionsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInstructionsUpdate,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_UPDATE_LOADING_INSTRUCTIONS)))
+          .addMethod(
+              getDeleteLoadingInstructionsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInstructionStatus,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_DELETE_LOADING_INSTRUCTIONS)))
           .build();
     }
   }
@@ -170,6 +383,39 @@ public final class LoadingInstructionServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void addLoadingInstruction(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getAddLoadingInstructionMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void updateLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getUpdateLoadingInstructionsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void deleteLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getDeleteLoadingInstructionsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -193,6 +439,29 @@ public final class LoadingInstructionServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadingInstructionsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.ResponseStatus addLoadingInstruction(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave request) {
+      return blockingUnaryCall(
+          getChannel(), getAddLoadingInstructionMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.ResponseStatus updateLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate
+            request) {
+      return blockingUnaryCall(
+          getChannel(), getUpdateLoadingInstructionsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.ResponseStatus deleteLoadingInstructions(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus
+            request) {
+      return blockingUnaryCall(
+          getChannel(), getDeleteLoadingInstructionsMethod(), getCallOptions(), request);
     }
   }
 
@@ -219,9 +488,42 @@ public final class LoadingInstructionServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadingInstructionsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        addLoadingInstruction(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getAddLoadingInstructionMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        updateLoadingInstructions(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getUpdateLoadingInstructionsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        deleteLoadingInstructions(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getDeleteLoadingInstructionsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_LOADING_INSTRUCTIONS = 0;
+  private static final int METHODID_ADD_LOADING_INSTRUCTION = 1;
+  private static final int METHODID_UPDATE_LOADING_INSTRUCTIONS = 2;
+  private static final int METHODID_DELETE_LOADING_INSTRUCTIONS = 3;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -247,6 +549,27 @@ public final class LoadingInstructionServiceGrpc {
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInstructionDetails>)
+                  responseObserver);
+          break;
+        case METHODID_ADD_LOADING_INSTRUCTION:
+          serviceImpl.addLoadingInstruction(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave)
+                  request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
+          break;
+        case METHODID_UPDATE_LOADING_INSTRUCTIONS:
+          serviceImpl.updateLoadingInstructions(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate)
+                  request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
+          break;
+        case METHODID_DELETE_LOADING_INSTRUCTIONS:
+          serviceImpl.deleteLoadingInstructions(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus)
+                  request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
                   responseObserver);
           break;
         default:
@@ -314,6 +637,9 @@ public final class LoadingInstructionServiceGrpc {
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new LoadingInstructionServiceFileDescriptorSupplier())
                       .addMethod(getGetLoadingInstructionsMethod())
+                      .addMethod(getAddLoadingInstructionMethod())
+                      .addMethod(getUpdateLoadingInstructionsMethod())
+                      .addMethod(getDeleteLoadingInstructionsMethod())
                       .build();
         }
       }

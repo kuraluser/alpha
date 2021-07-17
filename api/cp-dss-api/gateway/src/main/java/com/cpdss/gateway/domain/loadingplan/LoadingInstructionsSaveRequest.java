@@ -9,13 +9,13 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
-@AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class LoadingInstructionsSaveRequest {
-    private Long headerId;
+    private Long instructionHeaderId;
     private Long instructionTypeId;
-    private String newSubheading;
     private Boolean isChecked;
     private Boolean isSingleHeader;
-  
+    private Long subHeaderId;
+    private String instruction;
+	private Boolean isSubHeader;
 }

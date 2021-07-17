@@ -48,7 +48,7 @@ public class LoadingInstruction extends EntityDoc {
   private Long loadingXId;
   
   @Column(name = "is_header_instruction")
-  private Long isHeaderInstruction;
+  private Boolean isHeaderInstruction;
   
   @Column(name = "template_parent_xid")
   private Long templateParentXId;
