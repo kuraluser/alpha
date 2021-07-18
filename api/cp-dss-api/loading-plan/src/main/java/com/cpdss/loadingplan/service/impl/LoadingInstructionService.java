@@ -34,6 +34,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -197,14 +199,14 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 				if (templateList != null && !templateList.isEmpty()) {
 					List<LoadingInstruction> instructionList = templateList.stream()
 							.map(template -> new LoadingInstruction(template.getLoading_instruction(),
-									template.getParentInstructionXId(), template.getLoadingInsructionType().getId(),
+									null, template.getLoadingInsructionType().getId(),
 									template.getLoadingInstructionHeaderXId().getId(), true, template.getReferenceXId(),
 									template.getIsActive(), template.getId(), request.getLoadingInfoId(),
-									template.getIsHeaderInstruction(), null))
+									template.getIsHeaderInstruction(), template.getParentInstructionXId()))
 							.collect(Collectors.toList());
 					log.info("Saving general instruction for first time");
 					loadingInstructionRepository.saveAll(instructionList);
-					// loadingInstructionRepository.updateInstructionParentChildMapping();
+					this.updateInstructionParentChildMapping(instructionList);
 					response = getAllLoadingInstructions(request, response);
 				}
 			} else {
@@ -222,6 +224,23 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 			responseObserver.onCompleted();
 		}
 
+	}
+
+	@Transactional
+	private void updateInstructionParentChildMapping(List<LoadingInstruction> instructionList) {
+		List<LoadingInstruction> updateList = new ArrayList<>();
+		updateList = instructionList.stream()
+				.filter(item -> item.getParentInstructionXId().equals(null)
+						&& item.getTemplateParentXId() != null)
+				.collect(Collectors.toList());
+		
+		updateList.stream().forEach(
+				item -> item.setParentInstructionXId(
+						instructionList.stream().filter(i ->
+						i.getLoadingInstructionTemplateXId() == item.getParentInstructionXId())
+						.findFirst().get().getId()));
+		
+		loadingInstructionRepository.saveAll(updateList);
 	}
 
 	private Builder getAllLoadingInstructions(LoadingInstructionRequest request, Builder response) {
@@ -258,28 +277,24 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 					.ifPresent(subHeaderBuilder::setInstructionHeaderId);
 			Optional.ofNullable(headerInstruction.getLoadingTypeXId())
 					.ifPresent(subHeaderBuilder::setInstructionTypeId);
-
+			Optional.ofNullable(headerInstruction.getIsHeaderInstruction()).ifPresent(subHeaderBuilder::setIsHeaderInstruction);
+			subHeaderBuilder.setIsEditable(headerInstruction.getLoadingInstructionTemplateXId() == null ? true : false);
+			
 			List<LoadingInstructions> instructionsBuilderList = new ArrayList<>();
 
 			for (LoadingInstruction item : instructionList) {
+				log.info("inside  child loop");
 				if(item.getParentInstructionXId() == headerInstruction.getId()) {
-					LoadingInstructions.Builder itemBuilder =  LoadingInstructions.newBuilder();
-					Optional.ofNullable(item.getId()).ifPresent(itemBuilder::setInstructionId);
-					Optional.ofNullable(item.getLoadingInstructionHeaderXId()).ifPresent(itemBuilder::setInstructionHeaderId);
-					Optional.ofNullable(item.getLoadingInstruction()).ifPresent(itemBuilder::setInstruction);
-					Optional.ofNullable(item.getIsChecked()).ifPresent(itemBuilder::setIsChecked);
-					Optional.ofNullable(item.getLoadingTypeXId()).ifPresent(itemBuilder::setInstructionTypeId);
-					
-					instructionsBuilderList.add(itemBuilder.build());
+					LoadingInstructions.Builder instructionBuilder =  LoadingInstructions.newBuilder();
+					Optional.ofNullable(item.getId()).ifPresent(instructionBuilder::setInstructionId);
+					Optional.ofNullable(item.getLoadingInstructionHeaderXId()).ifPresent(instructionBuilder::setInstructionHeaderId);
+					Optional.ofNullable(item.getLoadingInstruction()).ifPresent(instructionBuilder::setInstruction);
+					Optional.ofNullable(item.getIsChecked()).ifPresent(instructionBuilder::setIsChecked);
+					Optional.ofNullable(item.getLoadingTypeXId()).ifPresent(instructionBuilder::setInstructionTypeId);
+					instructionBuilder.setIsEditable(item.getLoadingInstructionTemplateXId() == null ? true : false);
+					instructionsBuilderList.add(instructionBuilder.build());
 				}
 			}
-//			instructionsBuilderList = instructionList.stream()
-//					.filter(item -> item.getParentInstructionXId() == headerInstruction.getId())
-//					.map(item -> LoadingInstructions.newBuilder().setInstructionId(item.getId())
-//							.setInstructionHeaderId(item.getLoadingInstructionHeaderXId())
-//							.setInstructionTypeId(item.getLoadingTypeXId()).setInstruction(item.getLoadingInstruction())
-//							.setIsChecked(item.getIsChecked()).build())
-//					.collect(Collectors.toList());
 			subHeaderBuilder.addAllLoadingInstructionsList(instructionsBuilderList);
 			subHeaderBuilderList.add(subHeaderBuilder.build());
 		}

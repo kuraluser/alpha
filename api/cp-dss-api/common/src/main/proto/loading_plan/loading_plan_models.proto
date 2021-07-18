@@ -396,6 +396,7 @@ message LoadingInstructions {
   int64 instructionId =3;
   string instruction = 4;
   bool isChecked =5;
+  bool isEditable =6;
 }
 
 message LoadingInstructionSubHeader {
@@ -405,6 +406,9 @@ message LoadingInstructionSubHeader {
   string subHeaderName = 4;
   bool isChecked =5;
   repeated LoadingInstructions loadingInstructionsList =6;
+  bool isEditable =7;
+  bool IsHeaderInstruction = 8;
+  
 }
 
 message LoadingInstructionGroup {
