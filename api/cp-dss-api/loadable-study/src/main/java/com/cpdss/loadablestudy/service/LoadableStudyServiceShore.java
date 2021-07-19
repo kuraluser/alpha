@@ -1,10 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static java.lang.String.valueOf;
-import static org.springframework.util.StringUtils.isEmpty;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
@@ -12,14 +8,30 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.domain.CargoNominationOperationDetails;
-import com.cpdss.loadablestudy.domain.RuleMasterSection;
-import com.cpdss.loadablestudy.domain.RuleType;
-import com.cpdss.loadablestudy.domain.RulesInputs;
+import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.domain.*;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.CommingleCargo;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.OnBoardQuantity;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.google.gson.Gson;
+import lombok.extern.log4j.Log4j2;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -30,14 +42,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import lombok.extern.log4j.Log4j2;
-import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static java.lang.String.valueOf;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Log4j2
 @Service
@@ -63,8 +71,9 @@ public class LoadableStudyServiceShore {
   @Autowired private CargoOperationRepository cargoOperationRepository;
   @Autowired private LoadableStudyRuleService loadableStudyRuleService;
   @Autowired private LoadableStudyRuleRepository loadableStudyRuleRepository;
+  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
-  public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
+    public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
     LoadableStudy loadableStudyEntity = null;
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
@@ -75,7 +84,8 @@ public class LoadableStudyServiceShore {
 
       try {
         ModelMapper modelMapper = new ModelMapper();
-        loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage, messageId);
+        loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
+        saveLoadableStudyCommunicaionStatus(messageId,loadableStudyEntity);
         saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
       } catch (IOException e) {
         e.printStackTrace();
@@ -84,7 +94,17 @@ public class LoadableStudyServiceShore {
     return loadableStudyEntity;
   }
 
-  private void saveLoadableStudyDataShore(
+    private void saveLoadableStudyCommunicaionStatus(String messageId, LoadableStudy loadableStudyEntity) {
+        LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
+        lsCommunicationStatus.setMessageUUID(messageId);
+        lsCommunicationStatus.setCommunicationStatus(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
+        lsCommunicationStatus.setReferenceId(loadableStudyEntity.getId());
+        lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
+        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+    }
+
+    private void saveLoadableStudyDataShore(
       LoadableStudy loadableStudyEntity,
       com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
       ModelMapper modelMapper)
@@ -390,7 +410,7 @@ public class LoadableStudyServiceShore {
                           loadableStudyRulesList.add(loadableStudyRules);
                         });
               });
-      loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
+      this.loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
     }
   }
 
@@ -614,7 +634,7 @@ public class LoadableStudyServiceShore {
   }
 
   private LoadableStudy saveLoadableStudyShore(
-      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy, Voyage voyage, String messageId)
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy, Voyage voyage)
       throws IOException {
     LoadableStudy entity = new LoadableStudy();
     entity.setVesselXId(loadableStudy.getVesselId());
@@ -645,7 +665,6 @@ public class LoadableStudyServiceShore {
     this.setCaseNo(entity);
     /*entity.setDischargeCargoId(loadableStudy.getD);*/
     entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
-    entity.setMessageUUID(messageId);
     /*entity.setIsCargoNominationComplete(loadableStudy.getIsCargoNominationComplete());
     entity.setIsDischargePortsComplete(loadableStudy.getIsDischargePortsComplete());
     entity.setIsObqComplete(loadableStudy.getIsObqComplete());

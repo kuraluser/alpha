@@ -12,7 +12,9 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
+import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -25,6 +27,7 @@ import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,6 +60,8 @@ public class LoadablePatternService {
   @Autowired private VoyageRepository voyageRepository;
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
+
+  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
@@ -269,10 +274,13 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    if (loadableStudyOpt.get().getMessageUUID() != null) {
+    Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
+            this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+    if (loadableStudyCommunicationStatus.get() != null) {
 
       AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
       algoRespComm.setLoadablePatternAlgoRequest(request);
+      algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
       communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
     }
     if (request.getLoadablePlanDetailsList().isEmpty()) {
@@ -1063,8 +1071,16 @@ public class LoadablePatternService {
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(loadableStudy);
       if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-        this.loadableStudyRepository.updateLoadableStudyUUID(
-            ewReply.getMessageId(), request.getLoadableStudyId());
+        LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
+        if(ewReply.getMessageId() != null){
+          lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          lsCommunicationStatus.setCommunicationStatus(CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+
+        }
+        lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
+        lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
+        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
       } else {
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
@@ -1664,9 +1680,13 @@ public class LoadablePatternService {
       AlgoResponseCommunication responseCommunication = load.build();
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest patternResult =
           responseCommunication.getLoadablePatternAlgoRequest();
-      Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findByMessageUUIDAndIsActive(
-              responseCommunication.getMessageId(), true);
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
+          this.loadableStudyCommunicationStatusRepository.findByMessageUUID(
+                  Long.valueOf(responseCommunication.getMessageId()));
+        Optional<LoadableStudy> loadableStudyOpt =
+                (this.loadableStudyRepository.findById(
+                        loadableStudyCommunicationStatus.get().getReferenceId()));
+
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
             "Loadable study does not exist",

@@ -11,6 +11,8 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
+import com.cpdss.loadablestudy.repository.LoadableStudyCommunicationStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +25,8 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -44,6 +48,7 @@ public class CommunicationService {
   @Autowired JsonDataService jsonDataService;
   @Autowired private RestTemplate restTemplate;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
+  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -159,18 +164,18 @@ public class CommunicationService {
   }
 
   public void checkLoadableStudyStatus(Map<String, String> taskReqParams) {
-    List<LoadableStudy> loadableStudyList =
-        loadableStudyRepository.findByCommunicationStatusAndIsActiveOrderByCommunicationDateTimeASC(
-            CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(), true);
-    if (!loadableStudyList.isEmpty()) {
-      loadableStudyList
+    List<LoadableStudyCommunicationStatus> communicationStatusList =
+            loadableStudyCommunicationStatusRepository.findByCommunicationStatusOrderByCommunicationDateTimeASC(
+            CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+    if (!communicationStatusList.isEmpty()) {
+      communicationStatusList
           .parallelStream()
           .forEach(
-              loadableStudy -> {
+                  communicationStatusRow -> {
                 try {
                   EnvoyWriter.EnvoyWriterRequest.Builder request =
                       EnvoyWriter.EnvoyWriterRequest.newBuilder();
-                  request.setMessageId(taskReqParams.get("messageType"));
+                  request.setMessageId(communicationStatusRow.getMessageUUID());
                   request.setClientId(taskReqParams.get("ClientId"));
                   request.setImoNumber(taskReqParams.get("ShipId"));
                   EnvoyWriter.WriterReply statusReply =
@@ -182,21 +187,23 @@ public class CommunicationService {
                         CommonErrorCodes.E_HTTP_BAD_REQUEST,
                         HttpStatusCode.BAD_REQUEST);
                   }
+                  Optional<LoadableStudy> loadableStudy = loadableStudyRepository.findByIdAndIsActive(communicationStatusRow.getReferenceId(),true);
+
                   if (!(statusReply.getEventDownloadStatus() != null
                       && statusReply
                           .getEventDownloadStatus()
                           .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
-                    processAlgoFromShip(loadableStudy);
+                    processAlgoFromShip(loadableStudy.get());
                   } else {
-                    loadableStudyRepository.updateLoadableStudyCommunicationStatus(
-                        statusReply.getEventDownloadStatus(), loadableStudy.getId());
+                    loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
+                        statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
                   }
                   long start =
-                      Timestamp.valueOf(loadableStudy.getCommunicationDateTime()).getTime();
+                      Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime()).getTime();
                   long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
                   if (System.currentTimeMillis() > end) {
-                    loadableStudyRepository.updateLoadableStudyCommunicationStatus(
-                        CommunicationStatus.TIME_OUT.getId(), loadableStudy.getId());
+                    loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
+                        CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
                   }
                 } catch (GenericServiceException | IOException e) {
                   e.printStackTrace();
@@ -216,7 +223,6 @@ public class CommunicationService {
       VesselInfo.VesselDetail vesselReply =
           this.getVesselDetailsForEnvoy(loadableStudy.getVesselXId());
 
-      algoResponseCommunication.setMessageId(loadableStudy.getMessageUUID());
       jsonPayload = JsonFormat.printer().print(algoResponseCommunication);
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
@@ -224,7 +230,7 @@ public class CommunicationService {
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
-      writerRequest.setMessageId(loadableStudy.getMessageUUID());
+      writerRequest.setMessageId(algoResponseCommunication.getMessageId());
       return this.envoyWriterService.getCommunicationServer(writerRequest.build());
 
     } catch (InvalidProtocolBufferException e) {

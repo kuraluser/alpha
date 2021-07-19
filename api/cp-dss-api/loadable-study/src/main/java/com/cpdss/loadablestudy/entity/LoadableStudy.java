@@ -129,12 +129,4 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "planning_type_xid")
   private Integer planningTypeXId = 1;
 
-  @Column(name = "message_uuid")
-  private String messageUUID;
-
-  @Column(name = "communication_status")
-  private String communicationStatus = CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId();
-
-  @Column(name = "communication_send_date_time", columnDefinition = "TIMESTAMP")
-  private LocalDateTime communicationDateTime;
 }

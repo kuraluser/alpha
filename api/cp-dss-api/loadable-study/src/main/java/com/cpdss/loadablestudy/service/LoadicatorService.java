@@ -10,6 +10,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
@@ -66,6 +67,7 @@ public class LoadicatorService {
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
+  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
@@ -983,9 +985,13 @@ public class LoadicatorService {
           LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
       Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
           this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-      if (loadableStudyOpt.get().getMessageUUID() != null) {
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
+              this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+
+      if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
         LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
             LoadableStudy.AlgoResponseCommunication.newBuilder();
+        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
         LoadableStudy.LoadicatorResultsRequest.Builder loadicatorResultsRequest =
             LoadableStudy.LoadicatorResultsRequest.newBuilder();
         JsonFormat.parser()

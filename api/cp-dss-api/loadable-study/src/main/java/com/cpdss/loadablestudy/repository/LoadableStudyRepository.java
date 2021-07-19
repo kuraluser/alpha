@@ -61,26 +61,11 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   @Query("UPDATE LoadableStudy LS SET LS.isPortsComplete = ?2 WHERE LS.id = ?1")
   public void updateLoadableStudyIsPortsComplete(Long loadableStudyId, Boolean isPortsComplete);
 
-  @Transactional
-  @Modifying
-  @Query("UPDATE LoadableStudy LS SET LS.messageUUID = ?1 WHERE id = ?2 ")
-  public void updateLoadableStudyUUID(String messageUUID, Long id);
-
-  public Optional<LoadableStudy> findByMessageUUIDAndIsActive(String messageUUID, boolean isActive);
-
   public Optional<LoadableStudy> findByIdAndIsActiveAndVesselXId(
       Long id, Boolean isActive, Long vesselId);
 
   public boolean existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
       String name, int i, Voyage voyage, boolean b);
 
-  @Query(
-      "FROM LoadableStudy LS WHERE LS.messageUUID IS NOT NULL AND LS.communicationStatus = ?1 AND LS.isActive = ?2")
-  public List<LoadableStudy> findByCommunicationStatusAndIsActiveOrderByCommunicationDateTimeASC(
-      final String communicationStatus, final boolean isActive);
 
-  @Transactional
-  @Modifying
-  @Query("UPDATE LoadableStudy LS SET LS.communicationStatus = ?1 WHERE id = ?2 ")
-  public void updateLoadableStudyCommunicationStatus(String communicationStatus, Long id);
 }
