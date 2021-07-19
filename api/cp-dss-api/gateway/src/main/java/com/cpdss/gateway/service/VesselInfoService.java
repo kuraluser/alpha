@@ -1087,7 +1087,7 @@ public class VesselInfoService {
     vesselRuleBuilder.setSectionId(sectionId);
     vesselRuleBuilder.setVesselId(vesselId);
     vesselRuleBuilder.setIsNoDefaultRule(false);
-    Utility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, true);
+    Utility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, true, false);
     VesselRuleReply vesselRuleReply =
         this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
     RuleResponse ruleResponse = new RuleResponse();
