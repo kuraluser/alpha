@@ -14,7 +14,6 @@ import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
@@ -42,13 +41,9 @@ import com.cpdss.loadingplan.domain.algo.LoadingRule;
 import com.cpdss.loadingplan.domain.algo.LoadingSequences;
 import com.cpdss.loadingplan.domain.algo.OnBoardQuantity;
 import com.cpdss.loadingplan.domain.algo.OnHandQuantity;
-import com.cpdss.loadingplan.domain.algo.PumpType;
 import com.cpdss.loadingplan.domain.algo.ReasonForDelay;
-import com.cpdss.loadingplan.domain.algo.StageDuration;
-import com.cpdss.loadingplan.domain.algo.StageOffset;
 import com.cpdss.loadingplan.domain.algo.ToppingOffSequence;
 import com.cpdss.loadingplan.domain.algo.TrimAllowed;
-import com.cpdss.loadingplan.domain.algo.VesselPump;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
 import com.cpdss.loadingplan.service.LoadingPortTideService;
@@ -305,7 +300,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     log.info("Populating loading stage details");
     com.cpdss.loadingplan.domain.algo.LoadingStages loadingStages =
         new com.cpdss.loadingplan.domain.algo.LoadingStages();
-    List<StageOffset> stageOffsetList = new ArrayList<StageOffset>();
+    /*    List<StageOffset> stageOffsetList = new ArrayList<StageOffset>();
     loadingStage
         .getStageOffsetsList()
         .forEach(
@@ -327,7 +322,7 @@ public class LoadingInformationAlgoRequestBuilderService {
               stageDuration.setDuration(duration.getDuration());
               stageDurationList.add(stageDuration);
             });
-    loadingStages.setStageDurationList(stageDurationList);
+    loadingStages.setStageDurationList(stageDurationList);*/
 
     loadingStages.setStageDuration(loadingStage.getStageDuration());
     loadingStages.setStageOffset(loadingStage.getStageOffset());
@@ -369,7 +364,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     log.info("Populating loading machineries in use");
     CargoMachineryInUse cargoMachineryInUse = new CargoMachineryInUse();
 
-    VesselInfo.VesselPumpsResponse grpcReply =
+    /*     VesselInfo.VesselPumpsResponse grpcReply =
         this.vesselInfoService.getVesselPumpsByVesselId(
             VesselInfo.VesselIdRequest.newBuilder()
                 .setVesselId(loadingInformation.getVesselXId())
@@ -411,7 +406,7 @@ public class LoadingInformationAlgoRequestBuilderService {
               Optional.ofNullable(vp.getVesselId()).ifPresent(vesselPump::setVesselId);
               vesselPumps.add(vesselPump);
             });
-    cargoMachineryInUse.setVesselPumps(vesselPumps);
+    cargoMachineryInUse.setVesselPumps(vesselPumps);*/
 
     List<com.cpdss.loadingplan.domain.algo.LoadingMachinesInUse> machineList =
         new ArrayList<com.cpdss.loadingplan.domain.algo.LoadingMachinesInUse>();
@@ -519,6 +514,7 @@ public class LoadingInformationAlgoRequestBuilderService {
             delay -> {
               LoadingDelays ld = new LoadingDelays();
               ld.setCargoId(delay.getCargoId());
+              ld.setCargoNominationId(delay.getCargoNominationId());
               ld.setDuration(
                   StringUtils.isEmpty(delay.getDuration())
                       ? null
@@ -558,10 +554,10 @@ public class LoadingInformationAlgoRequestBuilderService {
               StringUtils.isEmpty(berth.getMaxManifoldHeight())
                   ? null
                   : new BigDecimal(berth.getMaxManifoldHeight()));
-          berthDetail.setSeaDraftLimitation(
-              StringUtils.isEmpty(berth.getSeaDraftLimitation())
-                  ? null
-                  : new BigDecimal(berth.getSeaDraftLimitation()));
+          /*berthDetail.setSeaDraftLimitation(
+          StringUtils.isEmpty(berth.getSeaDraftLimitation())
+              ? null
+              : new BigDecimal(berth.getSeaDraftLimitation()));*/
           berthDetail.setRegulationAndRestriction(berth.getSpecialRegulationRestriction());
 
           berthDetails.add(berthDetail);

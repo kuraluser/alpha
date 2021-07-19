@@ -93,6 +93,7 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
           "Cannot find the reason with id " + delay.getReasonForDelayId() + "for the delay");
     }
 
+    loadingDelay.setCargoNominationId(delay.getCargoNominationId());
     loadingDelay.setDuration(
         StringUtils.isEmpty(delay.getDuration()) ? null : new BigDecimal(delay.getDuration()));
     Optional.ofNullable(delay.getCargoId()).ifPresent(loadingDelay::setCargoXId);

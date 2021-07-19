@@ -139,6 +139,7 @@ message LoadingDelays{
   string duration = 4;
   int64 cargoId = 5;
   string quantity = 6; // was added in gateway
+  int64 cargoNominationId = 7;
 }
 
 // pure cargo details based on the port rotation
