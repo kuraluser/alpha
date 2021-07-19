@@ -58,6 +58,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   /**
+   * @param infoId
    * @param request
    * @param correlationId
    * @return LoadingInfoAlgoResponse
@@ -74,7 +75,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         loadingPlanGrpcServiceImpl.saveLoadingInfoStatus(requestBuilder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "Failed to save on board quantities",
+          "Failed to saveLoadingInfoStatus",
           reply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
