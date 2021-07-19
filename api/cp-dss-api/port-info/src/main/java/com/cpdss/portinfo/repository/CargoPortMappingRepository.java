@@ -13,4 +13,6 @@ public interface CargoPortMappingRepository extends CommonCrudRepository<CargoPo
   @Query(
       "Select new com.cpdss.portinfo.domain.PortInfo(c.portInfo.id, c.portInfo.name) from CargoPortMapping c where c.cargoXId = ?1")
   List<PortInfo> getPortsInfo(long cargoId);
+
+  public List<CargoPortMapping> findByportInfo_idIn(List<Long> portIds);
 }

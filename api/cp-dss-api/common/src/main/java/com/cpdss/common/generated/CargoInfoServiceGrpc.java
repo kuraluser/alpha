@@ -161,6 +161,56 @@ public final class CargoInfoServiceGrpc {
     return getGetCargoInfoByIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoListRequest,
+          com.cpdss.common.generated.CargoInfo.CargoReply>
+      getGetCargoInfosByCargoIdsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoInfosByCargoIds",
+      requestType = com.cpdss.common.generated.CargoInfo.CargoListRequest.class,
+      responseType = com.cpdss.common.generated.CargoInfo.CargoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoListRequest,
+          com.cpdss.common.generated.CargoInfo.CargoReply>
+      getGetCargoInfosByCargoIdsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.CargoInfo.CargoListRequest,
+            com.cpdss.common.generated.CargoInfo.CargoReply>
+        getGetCargoInfosByCargoIdsMethod;
+    if ((getGetCargoInfosByCargoIdsMethod = CargoInfoServiceGrpc.getGetCargoInfosByCargoIdsMethod)
+        == null) {
+      synchronized (CargoInfoServiceGrpc.class) {
+        if ((getGetCargoInfosByCargoIdsMethod =
+                CargoInfoServiceGrpc.getGetCargoInfosByCargoIdsMethod)
+            == null) {
+          CargoInfoServiceGrpc.getGetCargoInfosByCargoIdsMethod =
+              getGetCargoInfosByCargoIdsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.CargoInfo.CargoListRequest,
+                          com.cpdss.common.generated.CargoInfo.CargoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetCargoInfosByCargoIds"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoListRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new CargoInfoServiceMethodDescriptorSupplier("GetCargoInfosByCargoIds"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoInfosByCargoIdsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static CargoInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<CargoInfoServiceStub> factory =
@@ -229,6 +279,14 @@ public final class CargoInfoServiceGrpc {
       asyncUnimplementedUnaryCall(getGetCargoInfoByIdMethod(), responseObserver);
     }
 
+    /** */
+    public void getCargoInfosByCargoIds(
+        com.cpdss.common.generated.CargoInfo.CargoListRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCargoInfosByCargoIdsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -253,6 +311,13 @@ public final class CargoInfoServiceGrpc {
                       com.cpdss.common.generated.CargoInfo.CargoRequest,
                       com.cpdss.common.generated.CargoInfo.CargoDetailReply>(
                       this, METHODID_GET_CARGO_INFO_BY_ID)))
+          .addMethod(
+              getGetCargoInfosByCargoIdsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.CargoInfo.CargoListRequest,
+                      com.cpdss.common.generated.CargoInfo.CargoReply>(
+                      this, METHODID_GET_CARGO_INFOS_BY_CARGO_IDS)))
           .build();
     }
   }
@@ -301,6 +366,17 @@ public final class CargoInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCargoInfosByCargoIds(
+        com.cpdss.common.generated.CargoInfo.CargoListRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCargoInfosByCargoIdsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -334,6 +410,13 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetCargoInfoByIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.CargoInfo.CargoReply getCargoInfosByCargoIds(
+        com.cpdss.common.generated.CargoInfo.CargoListRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetCargoInfosByCargoIdsMethod(), getCallOptions(), request);
     }
   }
 
@@ -373,11 +456,20 @@ public final class CargoInfoServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetCargoInfoByIdMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.CargoInfo.CargoReply>
+        getCargoInfosByCargoIds(com.cpdss.common.generated.CargoInfo.CargoListRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetCargoInfosByCargoIdsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_CARGO_INFO = 0;
   private static final int METHODID_GET_CARGO_INFO_BY_PAGING = 1;
   private static final int METHODID_GET_CARGO_INFO_BY_ID = 2;
+  private static final int METHODID_GET_CARGO_INFOS_BY_CARGO_IDS = 3;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -412,6 +504,12 @@ public final class CargoInfoServiceGrpc {
           serviceImpl.getCargoInfoById(
               (com.cpdss.common.generated.CargoInfo.CargoRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_CARGO_INFOS_BY_CARGO_IDS:
+          serviceImpl.getCargoInfosByCargoIds(
+              (com.cpdss.common.generated.CargoInfo.CargoListRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>)
                   responseObserver);
           break;
         default:
@@ -481,6 +579,7 @@ public final class CargoInfoServiceGrpc {
                       .addMethod(getGetCargoInfoMethod())
                       .addMethod(getGetCargoInfoByPagingMethod())
                       .addMethod(getGetCargoInfoByIdMethod())
+                      .addMethod(getGetCargoInfosByCargoIdsMethod())
                       .build();
         }
       }

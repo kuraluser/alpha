@@ -200,6 +200,7 @@ service DischargeStudyOperationService {
   rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
   rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){}
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
+  rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
 }
 
 service PortInstructionService {

@@ -346,6 +346,9 @@ public class LoadableStudyPortRotationService {
               portDetails.setName(portList.getName());
               portDetails.setTideHeight(portList.getTideHeight());
               portDetails.setCountryName(portList.getCountryName());
+              portDetails.setTimezoneId(portList.getTimezoneId());
+              portDetails.setOffset(portList.getTimezoneOffsetVal());
+              portDetails.setTimezoneAbbr(portList.getTimezoneAbbreviation());
               loadableStudy.getPortDetails().add(portDetails);
             });
   }

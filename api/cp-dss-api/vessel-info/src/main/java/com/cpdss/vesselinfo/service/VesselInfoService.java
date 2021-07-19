@@ -169,6 +169,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         Optional.ofNullable(entity.getName()).ifPresent(builder::setName);
         Optional.ofNullable(entity.getVesselFlag())
             .ifPresent(flag -> builder.setFlag(flag.getFlagImagePath()));
+        Optional.ofNullable(entity.getHasLoadicator()).ifPresent(builder::setHasLoadicator);
         Set<VesselDraftCondition> draftConditions = entity.getVesselDraftConditionCollection();
 
         TreeMap<Long, TreeSet<BigDecimal>> map = new TreeMap<>();

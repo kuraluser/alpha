@@ -6,6 +6,7 @@ option java_package = "com.cpdss.common.generated.loading_plan";
 import "common.proto";
 // Messages for the Service related to Loading Plan
 import "loading_plan/loading_plan_models.proto";
+import "loadable_study.proto";
 
 service LoadingInformationService {
 
@@ -33,6 +34,8 @@ service LoadingInformationService {
   rpc GetLoadigInformationByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
 
   rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}
+  
+  rpc SaveAlgoLoadingPlanStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
   
   rpc GenerateLoadingPlan(LoadingInfoAlgoRequest) returns (ResponseStatus) {}
 }
