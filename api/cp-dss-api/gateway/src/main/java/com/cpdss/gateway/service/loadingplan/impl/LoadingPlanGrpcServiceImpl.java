@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
-import static com.cpdss.gateway.common.GatewayConstants.LOADING_RULE_MASTER_ID;
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -279,7 +278,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     return this.loadingInfoServiceBlockingStub.generateLoadingPlan(builder.build());
   }
 
-  @Override
+  /*  @Override
   public RuleResponse getLoadingPlanRules(Long vesselId, Long loadingInfoId)
       throws GenericServiceException {
     RuleResponse ruleResponse = new RuleResponse();
@@ -293,6 +292,24 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     if (!loadingRuleReply.getResponseStatus().getStatus().equals(SUCCESS)) {
       throw new GenericServiceException(
           "failed to get Vessel Details ",
+          loadingRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(loadingRuleReply.getResponseStatus().getCode())));
+    }
+    ruleResponse.setPlan(Utility.buildLoadingPlanRule(loadingRuleReply));
+    ruleResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
+    return ruleResponse;
+  }*/
+
+  @Override
+  public RuleResponse saveOrGetLoadingPlanRules(
+      LoadingPlanModels.LoadingPlanRuleRequest.Builder builder) throws GenericServiceException {
+    RuleResponse ruleResponse = new RuleResponse();
+    LoadingPlanModels.LoadingPlanRuleReply loadingRuleReply =
+        this.loadingPlanServiceBlockingStub.getOrSaveRulesForLoadingPlan(builder.build());
+    if (!loadingRuleReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to save loading plan rules",
           loadingRuleReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(loadingRuleReply.getResponseStatus().getCode())));
     }
