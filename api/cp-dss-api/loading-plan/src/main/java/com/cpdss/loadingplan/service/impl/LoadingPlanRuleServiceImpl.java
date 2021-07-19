@@ -77,7 +77,7 @@ public class LoadingPlanRuleServiceImpl {
           HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
     }
     if (!CollectionUtils.isEmpty(request.getRulePlanList())) {
-      log.info("save loadable study rules");
+      log.info("Save Loading Info Rules");
       List<LoadingRule> loadingRuleList = new ArrayList<>();
       request
           .getRulePlanList()
@@ -211,19 +211,21 @@ public class LoadingPlanRuleServiceImpl {
                           loadingRuleList.add(loadingRules);
                         });
               });
+      log.info("Saving Loading Rule List {}", loadingRuleList.size());
       loadingRuleRepository.saveAll(loadingRuleList);
     }
-    updateDisplayInSettingsInLoadableStudyRules(vesselRuleReply);
+    updateDisplayInSettingsInLoadingInfoRules(vesselRuleReply);
     List<Long> ruleListId =
         vesselRuleReply.getRulePlanList().stream()
             .flatMap(rulesList -> rulesList.getRulesList().stream())
             .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
             .collect(Collectors.toList());
     List<LoadingRule> loadingRulesList =
-        loadingRuleRepository.findByLoadingXidAndVesselXidAndIsActiveAndVesselRuleXidInOrderById(
-            loadingInformation.get().getId(), request.getVesselId(), true, ruleListId);
+        loadingRuleRepository
+            .findByLoadingXidAndVesselXidAndIsActiveTrueAndVesselRuleXidInOrderById(
+                loadingInformation.get().getId(), request.getVesselId(), ruleListId);
     if (loadingRulesList.size() > 0) {
-      log.info("Fetch  loadable study rules");
+      log.info("Loading information rules fetched, Size {}", loadingRulesList.size());
       vesselRuleReply
           .getRulePlanList()
           .forEach(
@@ -243,7 +245,8 @@ public class LoadingPlanRuleServiceImpl {
                     lStudyRulesList, ruleId, rulePlanBuider, builder, vesselRuleReply);
               });
     } else {
-      log.info("Fetch default loadable study rules : ");
+      log.info(
+          "Fetch default loading plan Rules, Size {}", vesselRuleReply.getRulePlanList().size());
       vesselRuleReply
           .getRulePlanList()
           .forEach(
@@ -342,7 +345,7 @@ public class LoadingPlanRuleServiceImpl {
     }
   }
 
-  private void updateDisplayInSettingsInLoadableStudyRules(
+  private void updateDisplayInSettingsInLoadingInfoRules(
       VesselInfo.VesselRuleReply vesselRuleReply) {
     Set<Long> setOfSelectedDisplayInSetting = new LinkedHashSet<>();
     Set<Long> setOfDeselectedDisplayInSetting = new LinkedHashSet<>();
@@ -407,7 +410,7 @@ public class LoadingPlanRuleServiceImpl {
       if (lStudyRulesList.get(ruleIndex).getIsHardRule() == null) {
         rulesBuilder.setIsHardRule(false);
       }
-      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getRuleTypeXid())
+      Optional.ofNullable(lStudyRulesList.get(ruleIndex).getVesselRuleXid())
           .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
       Optional.ofNullable(lStudyRulesList.get(ruleIndex).getRuleTypeXid())
           .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));

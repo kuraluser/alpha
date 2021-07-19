@@ -19665,6 +19665,13 @@ public final class LoadingPlanModels {
      * @return The bytes for quantity.
      */
     com.google.protobuf.ByteString getQuantityBytes();
+
+    /**
+     * <code>int64 cargoNominationId = 7;</code>
+     *
+     * @return The cargoNominationId.
+     */
+    long getCargoNominationId();
   }
   /** Protobuf type {@code LoadingDelays} */
   public static final class LoadingDelays extends com.google.protobuf.GeneratedMessageV3
@@ -19743,6 +19750,11 @@ public final class LoadingPlanModels {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 quantity_ = s;
+                break;
+              }
+            case 56:
+              {
+                cargoNominationId_ = input.readInt64();
                 break;
               }
             default:
@@ -19906,6 +19918,17 @@ public final class LoadingPlanModels {
       }
     }
 
+    public static final int CARGONOMINATIONID_FIELD_NUMBER = 7;
+    private long cargoNominationId_;
+    /**
+     * <code>int64 cargoNominationId = 7;</code>
+     *
+     * @return The cargoNominationId.
+     */
+    public long getCargoNominationId() {
+      return cargoNominationId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -19938,6 +19961,9 @@ public final class LoadingPlanModels {
       if (!getQuantityBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, quantity_);
       }
+      if (cargoNominationId_ != 0L) {
+        output.writeInt64(7, cargoNominationId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -19965,6 +19991,9 @@ public final class LoadingPlanModels {
       if (!getQuantityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, quantity_);
       }
+      if (cargoNominationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, cargoNominationId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -19988,6 +20017,7 @@ public final class LoadingPlanModels {
       if (!getDuration().equals(other.getDuration())) return false;
       if (getCargoId() != other.getCargoId()) return false;
       if (!getQuantity().equals(other.getQuantity())) return false;
+      if (getCargoNominationId() != other.getCargoNominationId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -20011,6 +20041,8 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
       hash = (37 * hash) + QUANTITY_FIELD_NUMBER;
       hash = (53 * hash) + getQuantity().hashCode();
+      hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -20166,6 +20198,8 @@ public final class LoadingPlanModels {
 
         quantity_ = "";
 
+        cargoNominationId_ = 0L;
+
         return this;
       }
 
@@ -20203,6 +20237,7 @@ public final class LoadingPlanModels {
         result.duration_ = duration_;
         result.cargoId_ = cargoId_;
         result.quantity_ = quantity_;
+        result.cargoNominationId_ = cargoNominationId_;
         onBuilt();
         return result;
       }
@@ -20278,6 +20313,9 @@ public final class LoadingPlanModels {
         if (!other.getQuantity().isEmpty()) {
           quantity_ = other.quantity_;
           onChanged();
+        }
+        if (other.getCargoNominationId() != 0L) {
+          setCargoNominationId(other.getCargoNominationId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -20621,6 +20659,39 @@ public final class LoadingPlanModels {
         checkByteStringIsUtf8(value);
 
         quantity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long cargoNominationId_;
+      /**
+       * <code>int64 cargoNominationId = 7;</code>
+       *
+       * @return The cargoNominationId.
+       */
+      public long getCargoNominationId() {
+        return cargoNominationId_;
+      }
+      /**
+       * <code>int64 cargoNominationId = 7;</code>
+       *
+       * @param value The cargoNominationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoNominationId(long value) {
+
+        cargoNominationId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 cargoNominationId = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoNominationId() {
+
+        cargoNominationId_ = 0L;
         onChanged();
         return this;
       }
@@ -54184,134 +54255,135 @@ public final class LoadingPlanModels {
           + "(\0132\r.DelayReasons\022\036\n\006delays\030\002 \003(\0132\016.Load"
           + "ingDelays\022#\n\006cargos\030\003 \003(\0132\023.LoadingDelay"
           + "Cargos\"*\n\014DelayReasons\022\n\n\002id\030\001 \001(\003\022\016\n\006re"
-          + "ason\030\002 \001(\t\"\201\001\n\rLoadingDelays\022\n\n\002id\030\001 \001(\003"
+          + "ason\030\002 \001(\t\"\234\001\n\rLoadingDelays\022\n\n\002id\030\001 \001(\003"
           + "\022\025\n\rloadingInfoId\030\002 \001(\003\022\030\n\020reasonForDela"
           + "yId\030\003 \001(\003\022\020\n\010duration\030\004 \001(\t\022\017\n\007cargoId\030\005"
-          + " \001(\003\022\020\n\010quantity\030\006 \001(\t\"u\n\022LoadingDelayCa"
-          + "rgos\022\017\n\007cargoId\030\001 \001(\003\022\022\n\ncolourCode\030\002 \001("
-          + "\t\022\021\n\tcargoName\030\003 \001(\t\022\025\n\rcargoShorName\030\004 "
-          + "\001(\t\022\020\n\010quantity\030\005 \001(\t\"\256\002\n\021LoadingTopping"
-          + "Off\022\n\n\002id\030\001 \001(\003\022\025\n\rloadingInfoId\030\002 \001(\003\022\023"
-          + "\n\013orderNumber\030\003 \001(\005\022\016\n\006tankId\030\004 \001(\003\022\021\n\tc"
-          + "argoName\030\005 \001(\t\022\031\n\021cargoAbbreviation\030\006 \001("
-          + "\t\022\022\n\ncolourCode\030\007 \001(\t\022\016\n\006ullage\030\010 \001(\t\022\020\n"
-          + "\010quantity\030\t \001(\t\022\024\n\014fillingRatio\030\n \001(\t\022\016\n"
-          + "\006remark\030\013 \001(\t\022\017\n\007cargoId\030\014 \001(\003\022\013\n\003api\030\r "
-          + "\001(\t\022\023\n\013temperature\030\016 \001(\t\022\024\n\014displayOrder"
-          + "\030\017 \001(\005\"\234\001\n\030LoadingInformationDetail\022\031\n\021l"
-          + "oadablePatternId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031"
-          + "\n\021synopticalTableId\030\003 \001(\003\022\020\n\010vesselId\030\004 "
-          + "\001(\003\022\020\n\010voyageId\030\005 \001(\003\022\026\n\016portRotationId\030"
-          + "\006 \001(\003\"\314\002\n\031LoadablePlanBallastDetail\022\n\n\002i"
-          + "d\030\001 \001(\003\022\021\n\tcolorCode\030\002 \001(\t\022\026\n\016correctedL"
-          + "evel\030\003 \001(\t\022\030\n\020correctionFactor\030\004 \001(\t\022\022\n\n"
-          + "cubicMeter\030\005 \001(\t\022\017\n\007inertia\030\006 \001(\t\022\020\n\010isA"
-          + "ctive\030\007 \001(\010\022\013\n\003lcg\030\010 \001(\t\022\031\n\021loadablePatt"
-          + "ernId\030\t \001(\003\022\021\n\tmetricTon\030\n \001(\t\022\022\n\npercen"
-          + "tage\030\013 \001(\t\022\020\n\010rdgLevel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t"
-          + "\022\016\n\006tankId\030\016 \001(\003\022\020\n\010tankName\030\017 \001(\t\022\013\n\003tc"
-          + "g\030\020 \001(\t\022\013\n\003vcg\030\021 \001(\t\"\330\005\n\033LoadablePlanCom"
-          + "mingleDetail\022\n\n\002id\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n"
-          + "\022cargo1Abbreviation\030\003 \001(\t\022\025\n\rcargo1Bbls6"
-          + "0f\030\004 \001(\t\022\025\n\rcargo1BblsDbs\030\005 \001(\t\022\020\n\010cargo"
-          + "1Kl\030\006 \001(\t\022\020\n\010cargo1Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030"
-          + "\010 \001(\t\022\030\n\020cargo1Percentage\030\t \001(\t\022\032\n\022cargo"
-          + "2Abbreviation\030\n \001(\t\022\025\n\rcargo2Bbls60f\030\013 \001"
-          + "(\t\022\025\n\rcargo2BblsDbs\030\014 \001(\t\022\020\n\010cargo2Kl\030\r "
-          + "\001(\t\022\020\n\010cargo2Lt\030\016 \001(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022"
-          + "\030\n\020cargo2Percentage\030\020 \001(\t\022\027\n\017correctedUl"
-          + "lage\030\021 \001(\t\022\030\n\020correctionFactor\030\022 \001(\t\022\024\n\014"
-          + "fillingRatio\030\023 \001(\t\022\r\n\005grade\030\024 \001(\t\022\020\n\010isA"
-          + "ctive\030\025 \001(\010\022\031\n\021loadablePatternId\030\026 \001(\003\022\026"
-          + "\n\016loadablePlanId\030\027 \001(\003\022\024\n\014loadingOrder\030\030"
-          + " \001(\005\022\025\n\rorderQuantity\030\031 \001(\t\022\020\n\010priority\030"
-          + "\032 \001(\005\022\020\n\010quantity\030\033 \001(\t\022\021\n\trdgUllage\030\034 \001"
-          + "(\t\022\024\n\014slopQuantity\030\035 \001(\t\022\016\n\006tankId\030\036 \001(\003"
-          + "\022\020\n\010tankName\030\037 \001(\t\022\023\n\013temperature\030  \001(\t\022"
-          + "\036\n\026timeRequiredForLoading\030! \001(\t\"\221\005\n\024Load"
-          + "ablePlanQuantity\022\031\n\021cargoAbbreviation\030\001 "
-          + "\001(\t\022\022\n\ncargoColor\030\002 \001(\t\022\031\n\021cargoNominati"
-          + "onId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\027\n\017differenc"
-          + "eColor\030\005 \001(\t\022\034\n\024differencePercentage\030\006 \001"
-          + "(\t\022\024\n\014estimatedApi\030\007 \001(\t\022\034\n\024estimatedTem"
-          + "perature\030\010 \001(\t\022\r\n\005grade\030\t \001(\t\022\n\n\002id\030\n \001("
-          + "\003\022\020\n\010isActive\030\013 \001(\010\022\027\n\017loadableBbls60f\030\014"
-          + " \001(\t\022\027\n\017loadableBblsDbs\030\r \001(\t\022\022\n\nloadabl"
-          + "eKl\030\016 \001(\t\022\022\n\nloadableLt\030\017 \001(\t\022\022\n\nloadabl"
-          + "eMt\030\020 \001(\t\022\031\n\021loadablePatternId\030\021 \001(\003\022\026\n\016"
-          + "loadablePlanId\030\022 \001(\003\022\030\n\020loadableQuantity"
-          + "\030\023 \001(\t\022\024\n\014loadingOrder\030\024 \001(\005\022\024\n\014maxToler"
-          + "ence\030\025 \001(\t\022\024\n\014minTolerence\030\026 \001(\t\022\024\n\014orde"
-          + "rBbls60f\030\027 \001(\t\022\024\n\014orderBblsDbs\030\030 \001(\t\022\025\n\r"
-          + "orderQuantity\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\024\n"
-          + "\014slopQuantity\030\033 \001(\t\022\036\n\026timeRequiredForLo"
-          + "ading\030\034 \001(\t\"\250\003\n\031LoadablePlanStowageDetai"
-          + "l\022\024\n\014abbreviation\030\001 \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021"
-          + "cargoNominationId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003"
-          + "\022\021\n\tcolorCode\030\005 \001(\t\022\027\n\017correctedUllage\030\006"
-          + " \001(\t\022\030\n\020correctionFactor\030\007 \001(\t\022\031\n\021fillin"
-          + "gPercentage\030\010 \001(\t\022\n\n\002id\030\t \001(\003\022\020\n\010isActiv"
-          + "e\030\n \001(\010\022\031\n\021loadablePatternId\030\013 \001(\003\022\027\n\017ob"
-          + "servedBarrels\030\014 \001(\t\022\033\n\023observedBarrelsAt"
-          + "60\030\r \001(\t\022\022\n\nobservedM3\030\016 \001(\t\022\021\n\trdgUllag"
-          + "e\030\017 \001(\t\022\016\n\006tankId\030\020 \001(\003\022\020\n\010tankname\030\021 \001("
-          + "\t\022\023\n\013temperature\030\022 \001(\t\022\016\n\006weight\030\023 \001(\t\"\355"
-          + "\005\n\020LoadableQuantity\022\017\n\007ballast\030\001 \001(\t\022\032\n\022"
-          + "boilerWaterOnBoard\030\002 \001(\t\022\020\n\010constant\030\003 \001"
-          + "(\t\022\022\n\ndeadWeight\030\004 \001(\t\022&\n\036displacementAt"
-          + "DraftRestriction\030\005 \001(\t\022\034\n\024distanceFromLa"
-          + "stPort\030\006 \001(\t\022\030\n\020draftRestriction\030\007 \001(\t\022\032"
-          + "\n\022estimatedDOOnBoard\030\010 \001(\t\022\032\n\022estimatedF"
-          + "OOnBoard\030\t \001(\t\022\032\n\022estimatedFWOnBoard\030\n \001"
-          + "(\t\022\030\n\020estimatedSagging\030\013 \001(\t\022\033\n\023estimate"
-          + "dSeaDensity\030\014 \001(\t\022\031\n\021foConsumptionInSZ\030\r"
-          + " \001(\t\022\033\n\023foConsumptionPerDay\030\016 \001(\t\022\n\n\002id\030"
-          + "\017 \001(\003\022\020\n\010isActive\030\020 \001(\010\022\023\n\013lightWeight\030\021"
-          + " \001(\t\022#\n\033loadableStudyPortRotationId\030\022 \001("
-          + "\003\022\027\n\017loadableStudyId\030\023 \001(\003\022\022\n\notherIfAny"
-          + "\030\024 \001(\t\022\016\n\006portId\030\025 \001(\t\022\023\n\013runningDays\030\026 "
-          + "\001(\t\022\024\n\014runningHours\030\027 \001(\t\022\030\n\020saggingDedu"
-          + "ction\030\030 \001(\t\022\024\n\014sgCorrection\030\031 \001(\t\022\020\n\010sub"
-          + "Total\030\032 \001(\t\022\032\n\022totalFoConsumption\030\033 \001(\t\022"
-          + "\025\n\rtotalQuantity\030\034 \001(\t\022\022\n\ntpcatDraft\030\035 \001"
-          + "(\t\022\032\n\022vesselAverageSpeed\030\036 \001(\t\"\245\002\n\027Cargo"
-          + "ToppingOffSequence\022\020\n\010cargoXId\030\001 \001(\003\022\024\n\014"
-          + "fillingRatio\030\002 \001(\t\022\020\n\010isActive\030\003 \001(\010\022\023\n\013"
-          + "orderNumber\030\004 \001(\005\022\017\n\007remarks\030\005 \001(\t\022\017\n\007ta"
-          + "nkXId\030\006 \001(\003\022\016\n\006ullage\030\007 \001(\t\022\016\n\006volume\030\010 "
-          + "\001(\t\022\016\n\006weight\030\t \001(\t\022\031\n\021loadablePatternId"
-          + "\030\n \001(\003\022\013\n\003api\030\013 \001(\t\022\023\n\013temperature\030\014 \001(\t"
-          + "\022\024\n\014displayOrder\030\r \001(\005\022\026\n\016portRotationId"
-          + "\030\016 \001(\003\"\316\001\n\026LoadingPlanSyncDetails\022;\n\030loa"
-          + "dingInformationDetail\030\001 \001(\0132\031.LoadingInf"
-          + "ormationDetail\022;\n\030loadablePlanDetailsRep"
-          + "ly\030\002 \001(\0132\031.LoadablePlanDetailsReply\022:\n\030c"
-          + "argoToppingOffSequences\030\003 \003(\0132\030.CargoTop"
-          + "pingOffSequence\"?\n\024LoadingPlanSyncReply\022"
-          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
-          + "\"\257\002\n\032UpdateUllageLoadingRequest\022\'\n\016respo"
-          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\025\n\rload"
-          + "ingInfoId\030\002 \001(\003\022\026\n\016portRotationId\030\003 \001(\003\022"
-          + "\020\n\010vesselId\030\004 \001(\003\022\020\n\010voyageId\030\005 \001(\003\022\016\n\006t"
-          + "ankId\030\006 \001(\003\022\017\n\007cargoId\030\010 \001(\003\022\024\n\014fillingR"
-          + "atio\030\t \001(\t\022\020\n\010quantity\030\n \001(\t\022\027\n\017correcte"
-          + "dUllage\030\013 \001(\t\022\030\n\020correctionFactor\030\014 \001(\t\022"
-          + "\031\n\021cargoToppingOffId\030\r \001(\003\"D\n\031UpdateUlla"
-          + "geLoadingReplay\022\'\n\016responseStatus\030\001 \001(\0132"
-          + "\017.ResponseStatus\"/\n\026LoadingInfoAlgoReque"
-          + "st\022\025\n\rloadingInfoId\030\001 \001(\003\"\260\001\n\027LoadingInf"
-          + "oSaveResponse\022\025\n\rloadingInfoId\030\001 \001(\003\022\020\n\010"
-          + "vesselId\030\002 \001(\003\022\026\n\016portRotationId\030\003 \001(\003\022\031"
-          + "\n\021synopticalTableId\030\004 \001(\003\022\020\n\010voyageId\030\005 "
-          + "\001(\003\022\'\n\016responseStatus\030\006 \001(\0132\017.ResponseSt"
-          + "atus\"\213\001\n\026LoadingPlanRuleRequest\022\020\n\010vesse"
-          + "lId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan"
-          + "\030\003 \003(\0132\n.RulePlans\022\025\n\rloadingInfoId\030\004 \001("
-          + "\003\022\027\n\017isNoDefaultRule\030\005 \001(\010\"]\n\024LoadingPla"
-          + "nRuleReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res"
-          + "ponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlan"
-          + "sB+\n\'com.cpdss.common.generated.loading_"
-          + "planP\000b\006proto3"
+          + " \001(\003\022\020\n\010quantity\030\006 \001(\t\022\031\n\021cargoNominatio"
+          + "nId\030\007 \001(\003\"u\n\022LoadingDelayCargos\022\017\n\007cargo"
+          + "Id\030\001 \001(\003\022\022\n\ncolourCode\030\002 \001(\t\022\021\n\tcargoNam"
+          + "e\030\003 \001(\t\022\025\n\rcargoShorName\030\004 \001(\t\022\020\n\010quanti"
+          + "ty\030\005 \001(\t\"\256\002\n\021LoadingToppingOff\022\n\n\002id\030\001 \001"
+          + "(\003\022\025\n\rloadingInfoId\030\002 \001(\003\022\023\n\013orderNumber"
+          + "\030\003 \001(\005\022\016\n\006tankId\030\004 \001(\003\022\021\n\tcargoName\030\005 \001("
+          + "\t\022\031\n\021cargoAbbreviation\030\006 \001(\t\022\022\n\ncolourCo"
+          + "de\030\007 \001(\t\022\016\n\006ullage\030\010 \001(\t\022\020\n\010quantity\030\t \001"
+          + "(\t\022\024\n\014fillingRatio\030\n \001(\t\022\016\n\006remark\030\013 \001(\t"
+          + "\022\017\n\007cargoId\030\014 \001(\003\022\013\n\003api\030\r \001(\t\022\023\n\013temper"
+          + "ature\030\016 \001(\t\022\024\n\014displayOrder\030\017 \001(\005\"\234\001\n\030Lo"
+          + "adingInformationDetail\022\031\n\021loadablePatter"
+          + "nId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021synopticalT"
+          + "ableId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020\n\010voyage"
+          + "Id\030\005 \001(\003\022\026\n\016portRotationId\030\006 \001(\003\"\314\002\n\031Loa"
+          + "dablePlanBallastDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tco"
+          + "lorCode\030\002 \001(\t\022\026\n\016correctedLevel\030\003 \001(\t\022\030\n"
+          + "\020correctionFactor\030\004 \001(\t\022\022\n\ncubicMeter\030\005 "
+          + "\001(\t\022\017\n\007inertia\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\022\013"
+          + "\n\003lcg\030\010 \001(\t\022\031\n\021loadablePatternId\030\t \001(\003\022\021"
+          + "\n\tmetricTon\030\n \001(\t\022\022\n\npercentage\030\013 \001(\t\022\020\n"
+          + "\010rdgLevel\030\014 \001(\t\022\n\n\002sg\030\r \001(\t\022\016\n\006tankId\030\016 "
+          + "\001(\003\022\020\n\010tankName\030\017 \001(\t\022\013\n\003tcg\030\020 \001(\t\022\013\n\003vc"
+          + "g\030\021 \001(\t\"\330\005\n\033LoadablePlanCommingleDetail\022"
+          + "\n\n\002id\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\032\n\022cargo1Abbrev"
+          + "iation\030\003 \001(\t\022\025\n\rcargo1Bbls60f\030\004 \001(\t\022\025\n\rc"
+          + "argo1BblsDbs\030\005 \001(\t\022\020\n\010cargo1Kl\030\006 \001(\t\022\020\n\010"
+          + "cargo1Lt\030\007 \001(\t\022\020\n\010cargo1Mt\030\010 \001(\t\022\030\n\020carg"
+          + "o1Percentage\030\t \001(\t\022\032\n\022cargo2Abbreviation"
+          + "\030\n \001(\t\022\025\n\rcargo2Bbls60f\030\013 \001(\t\022\025\n\rcargo2B"
+          + "blsDbs\030\014 \001(\t\022\020\n\010cargo2Kl\030\r \001(\t\022\020\n\010cargo2"
+          + "Lt\030\016 \001(\t\022\020\n\010cargo2Mt\030\017 \001(\t\022\030\n\020cargo2Perc"
+          + "entage\030\020 \001(\t\022\027\n\017correctedUllage\030\021 \001(\t\022\030\n"
+          + "\020correctionFactor\030\022 \001(\t\022\024\n\014fillingRatio\030"
+          + "\023 \001(\t\022\r\n\005grade\030\024 \001(\t\022\020\n\010isActive\030\025 \001(\010\022\031"
+          + "\n\021loadablePatternId\030\026 \001(\003\022\026\n\016loadablePla"
+          + "nId\030\027 \001(\003\022\024\n\014loadingOrder\030\030 \001(\005\022\025\n\rorder"
+          + "Quantity\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\020\n\010quan"
+          + "tity\030\033 \001(\t\022\021\n\trdgUllage\030\034 \001(\t\022\024\n\014slopQua"
+          + "ntity\030\035 \001(\t\022\016\n\006tankId\030\036 \001(\003\022\020\n\010tankName\030"
+          + "\037 \001(\t\022\023\n\013temperature\030  \001(\t\022\036\n\026timeRequir"
+          + "edForLoading\030! \001(\t\"\221\005\n\024LoadablePlanQuant"
+          + "ity\022\031\n\021cargoAbbreviation\030\001 \001(\t\022\022\n\ncargoC"
+          + "olor\030\002 \001(\t\022\031\n\021cargoNominationId\030\003 \001(\003\022\017\n"
+          + "\007cargoId\030\004 \001(\003\022\027\n\017differenceColor\030\005 \001(\t\022"
+          + "\034\n\024differencePercentage\030\006 \001(\t\022\024\n\014estimat"
+          + "edApi\030\007 \001(\t\022\034\n\024estimatedTemperature\030\010 \001("
+          + "\t\022\r\n\005grade\030\t \001(\t\022\n\n\002id\030\n \001(\003\022\020\n\010isActive"
+          + "\030\013 \001(\010\022\027\n\017loadableBbls60f\030\014 \001(\t\022\027\n\017loada"
+          + "bleBblsDbs\030\r \001(\t\022\022\n\nloadableKl\030\016 \001(\t\022\022\n\n"
+          + "loadableLt\030\017 \001(\t\022\022\n\nloadableMt\030\020 \001(\t\022\031\n\021"
+          + "loadablePatternId\030\021 \001(\003\022\026\n\016loadablePlanI"
+          + "d\030\022 \001(\003\022\030\n\020loadableQuantity\030\023 \001(\t\022\024\n\014loa"
+          + "dingOrder\030\024 \001(\005\022\024\n\014maxTolerence\030\025 \001(\t\022\024\n"
+          + "\014minTolerence\030\026 \001(\t\022\024\n\014orderBbls60f\030\027 \001("
+          + "\t\022\024\n\014orderBblsDbs\030\030 \001(\t\022\025\n\rorderQuantity"
+          + "\030\031 \001(\t\022\020\n\010priority\030\032 \001(\005\022\024\n\014slopQuantity"
+          + "\030\033 \001(\t\022\036\n\026timeRequiredForLoading\030\034 \001(\t\"\250"
+          + "\003\n\031LoadablePlanStowageDetail\022\024\n\014abbrevia"
+          + "tion\030\001 \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n\021cargoNominati"
+          + "onId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\021\n\tcolorCode"
+          + "\030\005 \001(\t\022\027\n\017correctedUllage\030\006 \001(\t\022\030\n\020corre"
+          + "ctionFactor\030\007 \001(\t\022\031\n\021fillingPercentage\030\010"
+          + " \001(\t\022\n\n\002id\030\t \001(\003\022\020\n\010isActive\030\n \001(\010\022\031\n\021lo"
+          + "adablePatternId\030\013 \001(\003\022\027\n\017observedBarrels"
+          + "\030\014 \001(\t\022\033\n\023observedBarrelsAt60\030\r \001(\t\022\022\n\no"
+          + "bservedM3\030\016 \001(\t\022\021\n\trdgUllage\030\017 \001(\t\022\016\n\006ta"
+          + "nkId\030\020 \001(\003\022\020\n\010tankname\030\021 \001(\t\022\023\n\013temperat"
+          + "ure\030\022 \001(\t\022\016\n\006weight\030\023 \001(\t\"\355\005\n\020LoadableQu"
+          + "antity\022\017\n\007ballast\030\001 \001(\t\022\032\n\022boilerWaterOn"
+          + "Board\030\002 \001(\t\022\020\n\010constant\030\003 \001(\t\022\022\n\ndeadWei"
+          + "ght\030\004 \001(\t\022&\n\036displacementAtDraftRestrict"
+          + "ion\030\005 \001(\t\022\034\n\024distanceFromLastPort\030\006 \001(\t\022"
+          + "\030\n\020draftRestriction\030\007 \001(\t\022\032\n\022estimatedDO"
+          + "OnBoard\030\010 \001(\t\022\032\n\022estimatedFOOnBoard\030\t \001("
+          + "\t\022\032\n\022estimatedFWOnBoard\030\n \001(\t\022\030\n\020estimat"
+          + "edSagging\030\013 \001(\t\022\033\n\023estimatedSeaDensity\030\014"
+          + " \001(\t\022\031\n\021foConsumptionInSZ\030\r \001(\t\022\033\n\023foCon"
+          + "sumptionPerDay\030\016 \001(\t\022\n\n\002id\030\017 \001(\003\022\020\n\010isAc"
+          + "tive\030\020 \001(\010\022\023\n\013lightWeight\030\021 \001(\t\022#\n\033loada"
+          + "bleStudyPortRotationId\030\022 \001(\003\022\027\n\017loadable"
+          + "StudyId\030\023 \001(\003\022\022\n\notherIfAny\030\024 \001(\t\022\016\n\006por"
+          + "tId\030\025 \001(\t\022\023\n\013runningDays\030\026 \001(\t\022\024\n\014runnin"
+          + "gHours\030\027 \001(\t\022\030\n\020saggingDeduction\030\030 \001(\t\022\024"
+          + "\n\014sgCorrection\030\031 \001(\t\022\020\n\010subTotal\030\032 \001(\t\022\032"
+          + "\n\022totalFoConsumption\030\033 \001(\t\022\025\n\rtotalQuant"
+          + "ity\030\034 \001(\t\022\022\n\ntpcatDraft\030\035 \001(\t\022\032\n\022vesselA"
+          + "verageSpeed\030\036 \001(\t\"\245\002\n\027CargoToppingOffSeq"
+          + "uence\022\020\n\010cargoXId\030\001 \001(\003\022\024\n\014fillingRatio\030"
+          + "\002 \001(\t\022\020\n\010isActive\030\003 \001(\010\022\023\n\013orderNumber\030\004"
+          + " \001(\005\022\017\n\007remarks\030\005 \001(\t\022\017\n\007tankXId\030\006 \001(\003\022\016"
+          + "\n\006ullage\030\007 \001(\t\022\016\n\006volume\030\010 \001(\t\022\016\n\006weight"
+          + "\030\t \001(\t\022\031\n\021loadablePatternId\030\n \001(\003\022\013\n\003api"
+          + "\030\013 \001(\t\022\023\n\013temperature\030\014 \001(\t\022\024\n\014displayOr"
+          + "der\030\r \001(\005\022\026\n\016portRotationId\030\016 \001(\003\"\316\001\n\026Lo"
+          + "adingPlanSyncDetails\022;\n\030loadingInformati"
+          + "onDetail\030\001 \001(\0132\031.LoadingInformationDetai"
+          + "l\022;\n\030loadablePlanDetailsReply\030\002 \001(\0132\031.Lo"
+          + "adablePlanDetailsReply\022:\n\030cargoToppingOf"
+          + "fSequences\030\003 \003(\0132\030.CargoToppingOffSequen"
+          + "ce\"?\n\024LoadingPlanSyncReply\022\'\n\016responseSt"
+          + "atus\030\001 \001(\0132\017.ResponseStatus\"\257\002\n\032UpdateUl"
+          + "lageLoadingRequest\022\'\n\016responseStatus\030\001 \001"
+          + "(\0132\017.ResponseStatus\022\025\n\rloadingInfoId\030\002 \001"
+          + "(\003\022\026\n\016portRotationId\030\003 \001(\003\022\020\n\010vesselId\030\004"
+          + " \001(\003\022\020\n\010voyageId\030\005 \001(\003\022\016\n\006tankId\030\006 \001(\003\022\017"
+          + "\n\007cargoId\030\010 \001(\003\022\024\n\014fillingRatio\030\t \001(\t\022\020\n"
+          + "\010quantity\030\n \001(\t\022\027\n\017correctedUllage\030\013 \001(\t"
+          + "\022\030\n\020correctionFactor\030\014 \001(\t\022\031\n\021cargoToppi"
+          + "ngOffId\030\r \001(\003\"D\n\031UpdateUllageLoadingRepl"
+          + "ay\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
+          + "tus\"/\n\026LoadingInfoAlgoRequest\022\025\n\rloading"
+          + "InfoId\030\001 \001(\003\"\260\001\n\027LoadingInfoSaveResponse"
+          + "\022\025\n\rloadingInfoId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001("
+          + "\003\022\026\n\016portRotationId\030\003 \001(\003\022\031\n\021synopticalT"
+          + "ableId\030\004 \001(\003\022\020\n\010voyageId\030\005 \001(\003\022\'\n\016respon"
+          + "seStatus\030\006 \001(\0132\017.ResponseStatus\"\213\001\n\026Load"
+          + "ingPlanRuleRequest\022\020\n\010vesselId\030\001 \001(\003\022\021\n\t"
+          + "sectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003(\0132\n.Rule"
+          + "Plans\022\025\n\rloadingInfoId\030\004 \001(\003\022\027\n\017isNoDefa"
+          + "ultRule\030\005 \001(\010\"]\n\024LoadingPlanRuleReply\022\'\n"
+          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022\034"
+          + "\n\010rulePlan\030\002 \003(\0132\n.RulePlansB+\n\'com.cpds"
+          + "s.common.generated.loading_planP\000b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -54470,7 +54542,13 @@ public final class LoadingPlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingDelays_descriptor,
             new java.lang.String[] {
-              "Id", "LoadingInfoId", "ReasonForDelayId", "Duration", "CargoId", "Quantity",
+              "Id",
+              "LoadingInfoId",
+              "ReasonForDelayId",
+              "Duration",
+              "CargoId",
+              "Quantity",
+              "CargoNominationId",
             });
     internal_static_LoadingDelayCargos_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_LoadingDelayCargos_fieldAccessorTable =

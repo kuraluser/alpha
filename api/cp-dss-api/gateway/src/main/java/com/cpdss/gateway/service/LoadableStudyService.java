@@ -5801,7 +5801,8 @@ public class LoadableStudyService {
     loadableRuleRequestBuilder.setVesselId(vesselId);
     loadableRuleRequestBuilder.setSectionId(sectionId);
     loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
-    Utility.buildRuleListForSave(loadableRuleRequest, null, loadableRuleRequestBuilder, false);
+    Utility.buildRuleListForSave(
+        loadableRuleRequest, null, loadableRuleRequestBuilder, null, false, false);
     LoadableRuleReply loadableRuleReply =
         loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
             loadableRuleRequestBuilder.build());

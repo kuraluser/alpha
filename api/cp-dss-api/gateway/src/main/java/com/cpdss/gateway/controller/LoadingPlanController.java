@@ -6,6 +6,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
+import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
@@ -237,6 +238,16 @@ public class LoadingPlanController {
     }
   }
 
+  /**
+   * To get rule against the Loading Information.
+   *
+   * @param headers
+   * @param vesselId Long Id
+   * @param voyageId Long Id
+   * @param infoId Long Id
+   * @return RuleResponse
+   * @throws CommonRestException
+   */
   @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/rules")
   public RuleResponse getLoadingPlanRules(
       @RequestHeader HttpHeaders headers,
@@ -248,6 +259,37 @@ public class LoadingPlanController {
       return loadingPlanService.getLoadingPlanRules(vesselId, voyageId, infoId);
     } catch (GenericServiceException e) {
       e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save Rule from Loading Information Page
+   *
+   * @param headers HttpHeaders
+   * @param vesselId Long Id
+   * @param voyageId Long Id
+   * @param infoId Long Id
+   * @param loadingPlanRule RuleRequest
+   * @return RuleResponse
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/rules")
+  public RuleResponse saveLoadingPlanRule(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @RequestBody RuleRequest loadingPlanRule)
+      throws CommonRestException {
+    try {
+      return loadingPlanService.saveLoadingPlanRules(vesselId, voyageId, infoId, loadingPlanRule);
+    } catch (GenericServiceException e) {
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
