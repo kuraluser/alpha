@@ -20,8 +20,8 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.BMAndSF;
-import com.cpdss.gateway.domain.BendingMoment;
 import com.cpdss.gateway.domain.BendingMomentShearingForceType3;
+import com.cpdss.gateway.domain.BendingMomentType1;
 import com.cpdss.gateway.domain.BendingMomentType2;
 import com.cpdss.gateway.domain.BendingMomentType4;
 import com.cpdss.gateway.domain.CalculationSheet;
@@ -33,7 +33,7 @@ import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
 import com.cpdss.gateway.domain.Parameter;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.SelectableParameter;
-import com.cpdss.gateway.domain.ShearingForce;
+import com.cpdss.gateway.domain.ShearingForceType1;
 import com.cpdss.gateway.domain.ShearingForceType2;
 import com.cpdss.gateway.domain.ShearingForceType4;
 import com.cpdss.gateway.domain.StationValues;
@@ -415,8 +415,10 @@ public class VesselInfoService {
       bmAndSF.setBendingMomentShearingForceType3(
           this.createBendingMomentShearingForceType3(vesselAlgoReply, correlationId));
     } else {
-      bmAndSF.setBendingMoment(this.createBendingMomentResponse(vesselAlgoReply, correlationId));
-      bmAndSF.setShearingForce(this.createShearingForceResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setBendingMomentType1(
+          this.createBendingMomentResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setShearingForceType1(
+          this.createShearingForceResponse(vesselAlgoReply, correlationId));
     }
 
     bmAndSF.setCalculationSheet(
@@ -778,15 +780,15 @@ public class VesselInfoService {
    * @param correlationId
    * @return List<ShearingForce>
    */
-  private List<ShearingForce> createShearingForceResponse(
+  private List<ShearingForceType1> createShearingForceResponse(
       VesselAlgoReply vesselAlgoReply, String correlationId) {
-    List<ShearingForce> shearingForces = new ArrayList<ShearingForce>();
+    List<ShearingForceType1> shearingForceType1s = new ArrayList<ShearingForceType1>();
     vesselAlgoReply
         .getBMAndSF()
-        .getShearingForceList()
+        .getShearingForceType1List()
         .forEach(
             shearingForce -> {
-              ShearingForce sf = new ShearingForce();
+              ShearingForceType1 sf = new ShearingForceType1();
               sf.setId(shearingForce.getId());
               sf.setFrameNumber(shearingForce.getFrameNumber());
               sf.setId(shearingForce.getId());
@@ -794,9 +796,9 @@ public class VesselInfoService {
               sf.setBaseDraft(shearingForce.getBaseDraft());
               sf.setDraftCorrection(shearingForce.getDraftCorrection());
               sf.setTrimCorrection(shearingForce.getTrimCorrection());
-              shearingForces.add(sf);
+              shearingForceType1s.add(sf);
             });
-    return shearingForces;
+    return shearingForceType1s;
   }
 
   /**
@@ -859,15 +861,15 @@ public class VesselInfoService {
    * @param correlationId
    * @return List<BendingMoment>
    */
-  private List<BendingMoment> createBendingMomentResponse(
+  private List<BendingMomentType1> createBendingMomentResponse(
       VesselAlgoReply vesselAlgoReply, String correlationId) {
-    List<BendingMoment> bendingMoments = new ArrayList<BendingMoment>();
+    List<BendingMomentType1> bendingMoments = new ArrayList<BendingMomentType1>();
     vesselAlgoReply
         .getBMAndSF()
-        .getBendingMomentList()
+        .getBendingMomentType1List()
         .forEach(
             bendingMoment -> {
-              BendingMoment bm = new BendingMoment();
+              BendingMomentType1 bm = new BendingMomentType1();
               bm.setId(bendingMoment.getId());
               bm.setFrameNumber(bendingMoment.getFrameNumber());
               bm.setId(bendingMoment.getId());
