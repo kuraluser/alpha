@@ -797,12 +797,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts = [];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
-    if (this.selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length) {
-      this.messageService.clear();
-      const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
-      this.isSelectedDischargePort = false;
-      this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS'] });
-    }
   }
 
   /**
@@ -1030,6 +1024,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     catch (errorResponse) {
+      this.selectedLoadableStudy.statusId = 11;
+      this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR;
       this.selectedLoadableStudy.isActionsEnabled = true;
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();

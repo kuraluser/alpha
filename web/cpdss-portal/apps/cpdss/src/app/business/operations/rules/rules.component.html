@@ -1,0 +1,25 @@
+<p-dialog [(visible)]="visible" styleClass="rules-pop-up" header=" {{'RULES' | translate }}" [closable]="true"
+    [draggable]="false" [modal]="true" (onHide)="onClose()">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+            </div>
+        </div>
+        <div *ngIf="rulesService.vessels">
+            <cpdss-portal-rules-table *ngIf="rulesJson" [rulesJson]="rulesJson" [displaySettings]="false"
+                [rulesService]="rulesService" [isCancelChanges]="isCancelChanges"
+                (isSaveClicked)="saveChanges($event)" (formChanges)="updateCancelChangesButton($event)">
+            </cpdss-portal-rules-table>
+        </div>
+    </div>
+    <p-footer>
+        <div class="row">
+            <div class="col text-right">
+                <button class="btn btn-main mr-10" *ngIf="formChanges" id="cancelBtn"
+                    (click)="cancelChanges()">{{'RULES_CANCEL' | translate}}</button>
+                <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()">{{'RULES_SAVE' |
+                    translate}}</button>
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>

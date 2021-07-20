@@ -1,11 +1,11 @@
+
 import { Component, OnInit } from '@angular/core';
-import { IDataTableColumn } from 'apps/cpdss/src/app/shared/components/datatable/datatable.model';
+import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { PortMasterTransformationService } from '../../services/port-master-transformation.service';
 import { PortMasterApiService } from '../../services/port-master-api.service';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IPort } from 'apps/cpdss/src/app/shared/models/common.model';
-
+import { IPort } from '../../../core/models/common.model';
 
 /**
  * Component class of port lising component

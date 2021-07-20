@@ -290,7 +290,7 @@ export interface IPortsDetailsResponse {
 /**
  * Interface for Ports api response
  *
- * @export 
+ * @export
  * @interface IDischargePortsDetailsResponse
  */
  export interface IDischargePortsDetailsResponse {
@@ -645,4 +645,66 @@ export interface ICargoQuantities {
     loadingPort?: string;
     cargoAbbreviation?: string;
     cargoNominationId? : number;
+}
+
+
+/**
+ * Interface for instruction
+ *
+ * @export
+ * @interface IInstruction
+ */
+ export interface IInstruction {
+    instruction: string;
+    id: number;
+}
+
+/**
+ * Interface for instruction api response
+ *
+ * @export
+ * @interface IInstructionResponse
+ */
+ export interface IInstructionResponse {
+    responseStatus: IResponseStatus;
+    instructions: IInstruction[];
+}
+
+/**
+ * Interface for instruction 
+ *
+ * @export
+ * @interface ITankDetails
+ */
+export interface ITankDetails {
+    displayOrder: number,
+    group: number,
+    id: number,
+    name: string,
+    order: number,
+    shortName: string,
+    slopTank: boolean,
+}
+
+/**
+ * Interface for tank api response
+ *
+ * @export
+ * @interface ITankResponse
+ */
+ export interface ITankResponse {
+    responseStatus: IResponseStatus;
+    cargoVesselTanks: ITankDetails[];
+}
+
+
+/**
+ * Interface for port api response
+ *
+ * @export
+ * @interface IPortsResponse
+ */
+export interface IPortsResponse {
+  responseStatus: IResponseStatus;
+  ports: IPort[];
 }

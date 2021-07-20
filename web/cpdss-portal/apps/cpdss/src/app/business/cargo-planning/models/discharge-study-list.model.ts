@@ -1,6 +1,6 @@
-import { IResponse , ValueObject , IMode , IInstruction , IPercentage , ITankDetails , ICargo } from '../../../shared/models/common.model';
-import { DISCHARGE_STUDY_STATUS  } from '../../core/models/common.model';
-import { IPort, IPortList , IDischargeStudyPortList } from '../../core/models/common.model';
+import { IResponse , ValueObject , IMode  , IPercentage , ICargo } from '../../../shared/models/common.model';
+import { DISCHARGE_STUDY_STATUS , ITankDetails } from '../../core/models/common.model';
+import { IPort, IPortList , IDischargeStudyPortList , IInstruction } from '../../core/models/common.model';
 
 
 /**
@@ -192,13 +192,15 @@ export interface IDischargeStudyAttachment {
  * @interface IPortDetailValueObject
  */
 export interface IPortDetailValueObject {
-    portName: string;
-    instruction: IInstruction;
-    draftRestriction: string;
+    id: number;
+    port: IPort;
+    instruction: IInstruction[];
+    portTimezoneId: number;
+    maxDraft: number;
     cargoDetail: IPortCargo[];
     cow: IMode;
     percentage: IPercentage;
-    tank: ITankDetails;
+    tank: ITankDetails[];
     enableBackToLoading: boolean;
     backLoadingDetails: IBackLoadingDetails[];
 }
@@ -209,12 +211,11 @@ export interface IBackLoadingDetails {
     kl: ValueObject<number>;
     bbls: ValueObject<number>;
     color: ValueObject<string>;
-    api: ValueObject<string>;
-    temp: ValueObject<string>
+    api: ValueObject<number>;
+    temp: ValueObject<number>
     isDelete: boolean;
     isAdd: boolean;
     abbreviation: ValueObject<string>;
-    cargoAbbreviation: string;
     storedKey: ValueObject<string>;
 }
 
@@ -251,6 +252,8 @@ export interface IPortCargo {
     tank: ITankDetails[];
     instructions: IInstruction[];
     cargoList: ICargo[];
+    portList: IPort[];
+    percentageList: IPercentage[];
 }
 
 /**
@@ -298,6 +301,108 @@ export interface IDischargeStudyResponse extends IResponse {
 export interface IDischargeStudiesResponse {
     responseStatus: IResponse;
     loadableStudies: IDischargeStudy[]; //variable name is loadablestudies since it comes from backend in that name.
+}
+
+/**
+ * Interface for Discharge Study api response
+ *
+ * @export
+ * @interface IDischargeStudyDetailsResponse
+ */
+ export interface IDischargeStudyDetailsResponse {
+    responseStatus: IResponse;
+    dischargeStudyId: number;
+    portList: IDischargeStudyPortListDetails[];
+}
+
+/**
+ * Interface for discharge study port list
+ *
+ * @export
+ * @interface IDischargeStudyPortListDetails
+ */
+export interface IDischargeStudyPortListDetails {
+    id: number;
+    portId: number;
+    maxDraft: number;
+    portTimezoneId: number;
+    cowId: number;
+    percentage: number;
+    instructionId: number[];
+    isBackLoadingEnabled: boolean;
+    backLoading: IDischargeStudyBackLoadingDetails[];
+    tanks: number[];
+    cargoNominationList: IDischargeStudyCargoNominationList[];
+}
+
+/**
+ * Interface for discharge study backloading details
+ *
+ * @export
+ * @interface IDischargeStudyBackLoadingDetails
+ */
+export interface IDischargeStudyBackLoadingDetails {
+    id: number;
+    color: string;
+    cargoId: number;
+    api: number;
+    temperature: number;
+    abbreviation: string;
+    quantity: number;
+}
+
+/**
+ * Interface for discharge study cargo nomination
+ *
+ * @export
+ * @interface IDischargeStudyCargoNominationList
+ */
+export interface IDischargeStudyCargoNominationList {
+    id: number;
+    priority: number;
+    color: string;
+    cargoId: number;
+    abbreviation: string;
+    quantity: number;
+    api: number;
+    temperature: number;
+    mode: number;
+}
+
+/**
+ * Interface for port cargo response
+ *
+ * @export
+ * @interface IPortCargoResponse
+ */
+ export interface IPortCargoResponse {
+    responseStatus: IResponse;
+    portWiseCorges: IPortCargoDetails[];
+}
+
+/**
+ * Interface for port cargo details 
+ *
+ * @export
+ * @interface IPortCargoDetails
+ */
+ export interface IPortCargoDetails {
+    portId: number,
+    cargos: ICargo[]
+}
+
+/**
+ * Interface for cargo history details
+ *
+ * @export
+ * @interface ICargoHistoryDetails
+ */
+export interface ICargoHistoryDetails {
+    api: string;
+    cargoId: number;
+    loadingPortId: number;
+    temperature: string
+    vesselId: number
 }
 
 

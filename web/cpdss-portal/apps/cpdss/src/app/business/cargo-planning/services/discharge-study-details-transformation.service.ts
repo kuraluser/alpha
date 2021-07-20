@@ -16,7 +16,7 @@ import { TimeZoneTransformationService } from '../../../shared/services/time-zon
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject , OPERATIONS } from '../models/cargo-planning.model';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode , ICargo } from '../../../shared/models/common.model';
-import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo ,} from '../models/discharge-study-list.model';
+import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails  } from '../models/discharge-study-list.model';
 import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS } from '../../core/models/common.model';
 
 
@@ -410,7 +410,7 @@ export class DischargeStudyDetailsTransformationService {
       columns = [...columns, ...etaEtd];
     }
     // Note:- Permission is not implemented in port tab. 
-    // if (permission &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(dischargeStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [VOYAGE_STATUS.ACTIVE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
@@ -426,7 +426,7 @@ export class DischargeStudyDetailsTransformationService {
         actions: actions
       };
       columns = [...columns, action];
-    // }
+    }
     return columns;
   }
   
@@ -938,15 +938,15 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
       }
     },
-    // {
-    //   field: 'temp',
-    //   header: 'DISCHARGE_STUDY_DISCHARGE_TEMP_BACK_LOADING',
-    //   fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-    //   fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_TEMP',
-    //   errorMessages: {
-    //     'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
-    //   }
-    // }
+    {
+      field: 'temp',
+      header: 'DISCHARGE_STUDY_DISCHARGE_TEMP_BACK_LOADING',
+      fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+      fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_TEMP',
+      errorMessages: {
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+      }
+    }
   ]
   const actions: DATATABLE_ACTION[] = [];
   actions.push(DATATABLE_ACTION.DELETE);
@@ -966,32 +966,52 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    * Method to convert loadable plan tank details to value object
    *
    * @param {boolean} isLastIndex
-   * @param {*} portDetail
+   * @param {IDischargeStudyPortListDetails} portDetail
    * @param {ITankDetails} tankDetails
    * @param {boolean} [isNewValue=true]
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getPortDetailAsValueObject(portDetail: any, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any): IPortDetailValueObject {
+    getPortDetailAsValueObject(portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any): IPortDetailValueObject {
       const _portDetail = <IPortDetailValueObject>{};
-      _portDetail.portName = portDetail.portName;
-      _portDetail.instruction = portDetail.instruction ? portDetail.instruction : listData.instructions[0];
-      _portDetail.draftRestriction = portDetail.draftRestriction;
-      _portDetail.cargoDetail  = portDetail.cargo.map((cargoDetail) => {
+      _portDetail.id = portDetail.id;
+      _portDetail.portTimezoneId = portDetail.portTimezoneId;
+      _portDetail.port = listData.portList.find((port) =>{
+        if(port.id === portDetail.portId) {
+          return port;
+        }
+      })
+      if(portDetail.instructionId?.length) {
+        _portDetail.instruction = listData.instructions.filter((instruction) => {
+          return portDetail.instructionId.some((instructionId) => {
+            return instructionId === instruction.id;
+          })
+        })
+      } else {
+        _portDetail.instruction = [listData.instructions[0]];
+      }
+      _portDetail.maxDraft = portDetail.maxDraft;
+      _portDetail.cargoDetail  = portDetail.cargoNominationList.map((cargoDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,cargoDetail);
         return this.getCargoDetailsAsValueObject(cargoDetail,listData,storedKey,true);
       })
-      const cow:IMode = listData.mode.find(modeDetails => modeDetails.id === portDetail.cow);
-      _portDetail.cow = cow;
-      _portDetail.percentage = portDetail.percentage;
-      _portDetail.tank = listData?.tank.find((tankDetail) => {
-        return tankDetail.id === portDetail.tankId
-      })
-      _portDetail.enableBackToLoading = portDetail.enableBackToLoading !== '' && !isLastIndex ? true : false;
-      _portDetail.backLoadingDetails =  portDetail.backLoadingDetails.map((backLoadingDetail) => {
+      _portDetail.cow = listData.mode.find(modeDetails => modeDetails.id === portDetail.cowId);
+      if(portDetail.cowId === 1) {
+        _portDetail.percentage = listData.percentageList.find((item) => {
+          return item.value === portDetail.percentage;
+        })
+      } else {
+        _portDetail.tank = listData?.tank.filter((tankDetail) => {
+          portDetail.tanks.map((items) => {
+            return items === tankDetail.id
+          })
+        })
+      }
+      _portDetail.enableBackToLoading = portDetail.isBackLoadingEnabled  && !isLastIndex ? true : false;
+      _portDetail.backLoadingDetails =  portDetail?.backLoading ? portDetail?.backLoading?.map((backLoadingDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,backLoadingDetail);
         return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData , storedKey , isNewValue);
-      });
+      }) : [];
       return _portDetail;
     }
 
@@ -1004,7 +1024,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
     getStoreKey(portUniqueColorAbbrList: any,data: any) {
       const isColorUnique = portUniqueColorAbbrList?.find((item) => {
         if(item.color === data.color) {
-          return portUniqueColorAbbrList.storedKey;
+          return item.storedKey;
         }
       })
       if(isColorUnique) {
@@ -1019,27 +1039,32 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    /**
    * Method to convert loadable plan tank details to value object
    *
-   * @param {*} portDetail
+   * @param {IDischargeStudyCargoNominationList} portDetail
    * @param {ITankDetails} tankDetails
    * @param {boolean} [isNewValue=true]
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getCargoDetailsAsValueObject(cargoDetail: any, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
+    getCargoDetailsAsValueObject(cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
       const _cargoDetailValuObject = <IPortCargo>{};
       const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
       const isKlEditable = mode?.id === 2 ? true : false;
+      const unitConversion = {
+        kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
+        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature),
+      }
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
-      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? cargoDetail.bbls : '-', true , false);
+      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? unitConversion.bbls+'' : '-', true , false);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
-      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? cargoDetail.kl : '-', true , false , false , isKlEditable);
-      _cargoDetailValuObject.maxKl = new ValueObject<number>(cargoDetail.maxKl, false , false);
-      _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.mt : '-', true , false);
+      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? unitConversion.kl+'' : '-', true , false , false , isKlEditable);
+      //Note:- need to remove 25000 when actual value comes from BE.
+      _cargoDetailValuObject.maxKl = new ValueObject<number>(25000, false , false);
+      _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
       _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);
-      _cargoDetailValuObject.temp = new ValueObject<number>(cargoDetail.temp);
+      _cargoDetailValuObject.temp = new ValueObject<number>(cargoDetail.temperature);
       _cargoDetailValuObject.storedKey = new ValueObject<string>(storedKey);
       return _cargoDetailValuObject;
     }
@@ -1051,15 +1076,15 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    * @param {IMode} mode
    * @memberof DischargeStudyDetailsTransformationService
    */
-    setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode) {
+    setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode) : IPortCargo {
       return { 
         storedKey: new ValueObject<string>(backLoadingDetails.storedKey.value),
-        maxKl: new ValueObject<string>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
+        maxKl: new ValueObject<number>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
         abbreviation: new ValueObject<string>(backLoadingDetails.abbreviation.value, true , false),
         color: new ValueObject<string>(backLoadingDetails.color.value, true , false),
-        bbls: new ValueObject<number>(backLoadingDetails.bbls.value, true , false), 
-        kl: new ValueObject<number>(backLoadingDetails.kl.value, true , false),
-        mt: new ValueObject<number>(backLoadingDetails.mt.value, true , false), 
+        bbls: new ValueObject<string>(backLoadingDetails.bbls.value, true , false), 
+        kl: new ValueObject<string>(backLoadingDetails.kl.value, true , false),
+        mt: new ValueObject<string>(backLoadingDetails.mt.value, true , false), 
         cargo: new ValueObject<ICargo>(backLoadingDetails.cargo.value, true , false),
         mode: new ValueObject<IMode>(mode , true , false),
         api: new ValueObject<number>(backLoadingDetails.api.value, true , false),
@@ -1070,27 +1095,30 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    /**
    * Method to convert loadable plan tank details to value object
    *
-   * @param {*} portDetail
-   * @param {ITankDetails} tankDetails
+   * @param {IDischargeStudyBackLoadingDetails} backLoadingDetail
+   * @param {IDischargeStudyDropdownData} listData
    * @param {boolean} [isNewValue=true]
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getBackLoadingDetailAsValueObject(backLoadingDetail: any, listData:IDischargeStudyDropdownData ,storedKey: string ,isNewValue = true): IBackLoadingDetails {
+    getBackLoadingDetailAsValueObject(backLoadingDetail: IDischargeStudyBackLoadingDetails, listData:IDischargeStudyDropdownData ,storedKey: string ,isNewValue = true): IBackLoadingDetails {
       const _backLoadingDetailDetail = <IBackLoadingDetails>{};
+      const unitConversion = {
+        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
+        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
+      }
       const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
-      _backLoadingDetailDetail.bbls = new ValueObject<number>(backLoadingDetail.bbls , true , false);
+      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls , true , false);
       _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true , isNewValue);
-      _backLoadingDetailDetail.kl = new ValueObject<number>(backLoadingDetail.kl , true , isNewValue);
-      _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.mt , true , false);
-      _backLoadingDetailDetail.api = new ValueObject<string>(backLoadingDetail.api , true , isNewValue);
-      _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temp , true , isNewValue);
+      _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl , true , isNewValue);
+      _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.quantity  , true , false);
+      _backLoadingDetailDetail.api = new ValueObject<number>(backLoadingDetail.api , true , isNewValue);
+      _backLoadingDetailDetail.temp = new ValueObject<number>(backLoadingDetail.temperature , true , isNewValue);
       _backLoadingDetailDetail.isDelete = true;
       _backLoadingDetailDetail.isAdd = isNewValue;
       _backLoadingDetailDetail.storedKey = new ValueObject<string>(storedKey),
       _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation);
-      _backLoadingDetailDetail.cargoAbbreviation = Math.random().toString();
       return _backLoadingDetailDetail;
     }
 
@@ -1103,7 +1131,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
 
   setValidationMessageForDischargeStudy() {
     return {
-      draftRestriction: {
+      maxDraft: {
         'whitespace': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
       }
     }
@@ -1117,6 +1145,114 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
  */
   disableGenerateLoadablePatternBtn(value){
     this._loadablePatternBtnDisable.next(value);
+  }
+
+   /**
+   * Method to get value to save discharge study
+   *
+   * @param {IPortDetailValueObject} portItems
+   * @returns {IDischargeStudyPortListDetails}
+   * @memberof DischargeStudyDetailsTransformationService
+   */
+  getDischargeStudyAsValue(portItems: IPortDetailValueObject) {
+    const _portDetails = <IDischargeStudyPortListDetails>{};
+    for (const key in portItems) {
+      if (Object.prototype.hasOwnProperty.call(portItems, key)) { 
+        switch(key) {
+          case 'id': 
+            _portDetails.id = portItems.id;
+            break;
+          case 'port': 
+            _portDetails.portId = portItems.port.id;
+            break;
+          case 'maxDraft': 
+            _portDetails.maxDraft = portItems.maxDraft;
+            break;
+          case 'cowId': 
+            _portDetails.cowId = portItems.cow.id;
+            break;
+          case 'percentage': 
+            _portDetails.percentage = portItems.percentage.value;
+            break;
+          case 'instructionId': 
+            _portDetails.instructionId = portItems.instruction.map((item) => item.id);
+            break;
+          case 'isBackLoadingEnabled': 
+            _portDetails.isBackLoadingEnabled = portItems.enableBackToLoading;
+            break;
+          case 'portTimezoneId': 
+            _portDetails.portTimezoneId = portItems.portTimezoneId;
+            break;
+          case 'cargoDetail': 
+            _portDetails.cargoNominationList = portItems.cargoDetail.map(item =>  this.getCargoNominationList(item));
+            break;
+          case 'backLoadingDetails': 
+            _portDetails.backLoading = portItems.backLoadingDetails.map(item =>  this.getbackLoading(item));
+            break;
+        }
+      }
+    }
+    return _portDetails;
+  }
+
+  /**
+   * Method to get value to save cargo nomination in discharge study
+   *
+   * @param {IPortCargo} cargoDetails
+   * @returns {IDischargeStudyCargoNominationList}
+   * @memberof DischargeStudyDetailsTransformationService
+  */
+  getCargoNominationList(cargoDetails: IPortCargo) {
+    const _cargoDetails = <IDischargeStudyCargoNominationList>{};
+    for (const key in cargoDetails) {
+      if (Object.prototype.hasOwnProperty.call(cargoDetails, key)) { 
+        switch(key) {
+          case 'quantity': 
+            _cargoDetails.quantity = +cargoDetails.mt.value;
+            break;
+          case 'mode': 
+            _cargoDetails.mode = cargoDetails.mode.value.id;
+            break;
+        }
+      }
+    }
+    return _cargoDetails;
+  }
+
+  /**
+   * Method to get value to save back loading in discharge study
+   *
+   * @param {IBackLoadingDetails} backLoading
+   * @returns {IDischargeStudyBackLoadingDetails}
+   * @memberof DischargeStudyDetailsTransformationService
+  */
+  getbackLoading(backLoading: IBackLoadingDetails) {
+    const _backLoading = <IDischargeStudyBackLoadingDetails>{};
+    for (const key in backLoading) {
+      if (Object.prototype.hasOwnProperty.call(backLoading, key)) { 
+        switch(key) {
+          case 'quantity': 
+            _backLoading.quantity = +backLoading.mt.value;
+            break;
+          case 'color': 
+            _backLoading.color = backLoading.color.value;
+            break;
+          case 'color': 
+            _backLoading.cargoId = backLoading.cargo.value.id;
+            break;
+          case 'abbreviation': 
+            _backLoading.abbreviation = backLoading.abbreviation.value;
+            break;
+          case 'api': 
+            _backLoading.api = backLoading.api.value;
+            break;
+          case 'temperature': 
+            _backLoading.temperature = backLoading.temp.value;
+            break;
+        }
+      }
+    }
+    return _backLoading;
   }
 
 }

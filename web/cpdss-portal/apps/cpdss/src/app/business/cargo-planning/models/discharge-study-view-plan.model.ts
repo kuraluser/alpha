@@ -1,4 +1,5 @@
-import { IResponse , ValueObject , IMode , IInstruction , IPercentage , ITankDetails , ICargo } from '../../../shared/models/common.model';
+import { IResponse , ValueObject , IMode  , IPercentage  , ICargo } from '../../../shared/models/common.model';
+import { IInstruction , ITankDetails } from '../../core/models/common.model';
 
 
 /**

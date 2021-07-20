@@ -1,36 +1,38 @@
-<div class="row">
-    <div class="col-4">
-        <div class="row">
-            <cpdss-portal-plan-side-panel style="width: 100%;"></cpdss-portal-plan-side-panel>
-        </div>
-    </div>
-    <div class="col-md-8">
-        <cpdss-portal-arrival-condition></cpdss-portal-arrival-condition>
-        <cpdss-portal-departure-condition></cpdss-portal-departure-condition>
-        <div class="row border-bottom border-secondary pb-5">
-            <div class="col-md-12 pt-20">
-                <label>{{'LOADING_PLAN_CARGO_SEQUENCE' | translate}}</label>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 pt-5">
-                <div class="row">
-                    <cpdss-portal-loading-discharging-manage-sequence [cargos]="cargos"
-                        [loadableQuantityCargo]="loadableQuantityCargoDetails" [loadingSequences]="loadingSequences"></cpdss-portal-loading-discharging-manage-sequence>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col sidebar-loading-and-discharging">
+            <div class="row">
+                <div class="col">
+                    <cpdss-portal-plan-side-panel></cpdss-portal-plan-side-panel>
                 </div>
             </div>
         </div>
-        <div class="row border-bottom border-secondary pb-5">
-            <div class="col-md-12 pt-20">
-                <label>{{'LOADING_RATE_CARGO_TYPE_TOPPING_OFF_SCIENCE' | translate}}</label>
+        <div class="col">
+            <cpdss-portal-arrival-condition></cpdss-portal-arrival-condition>
+            <cpdss-portal-departure-condition></cpdss-portal-departure-condition>
+
+            <div class="row">
+                <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
+
+                    <cpdss-portal-loading-discharging-manage-sequence [cargos]="cargos"
+                        [loadableQuantityCargo]="loadableQuantityCargoDetails" [loadingSequences]="loadingSequences">
+                    </cpdss-portal-loading-discharging-manage-sequence>
+
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 pt-5">
-                <div class="row">
-                    <cpdss-portal-topping-off-tank-table [cargos]="cargos" [toppingOffSequence]="toppingOffSequence"
-                        [cargoTanks]="cargoTanks">
-                    </cpdss-portal-topping-off-tank-table>
+            <div class="row border-bottompb-5">
+                <div class="col-md-12 pt-20">
+                    <h5 class="text-uppercase heading-border">
+                        {{'LOADING_RATE_CARGO_TYPE_TOPPING_OFF_SCIENCE' | translate}}</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col pt-5 ml-30">
+                    <div class="row">
+                        <cpdss-portal-topping-off-tank-table [cargos]="cargos" [toppingOffSequence]="toppingOffSequence"
+                            [cargoTanks]="cargoTanks">
+                        </cpdss-portal-topping-off-tank-table>
+                    </div>
                 </div>
             </div>
         </div>

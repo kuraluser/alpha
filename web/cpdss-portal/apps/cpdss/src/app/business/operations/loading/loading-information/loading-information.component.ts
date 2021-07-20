@@ -9,6 +9,7 @@ import { LoadingTransformationService } from '../../services/loading-transformat
 import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ComponentCanDeactivate } from 'apps/cpdss/src/app/shared/services/guards/component-can-deactivate';
+import {RulesService}from '../../services/rules/rules.service';
 @Component({
   selector: 'cpdss-portal-loading-information',
   templateUrl: './loading-information.component.html',
@@ -62,6 +63,7 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
     private translateService: TranslateService,
     private messageService: MessageService,
     private loadingTransformationService: LoadingTransformationService,
+    private rulesService : RulesService,
     private ngxSpinnerService: NgxSpinnerService) { 
       super();
     }
@@ -102,6 +104,7 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
       this.loadingInformationData = await this.loadingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }
     catch (error) {

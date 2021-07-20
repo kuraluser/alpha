@@ -220,6 +220,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'abbreviation.value',
         fieldPlaceholder: 'ENTER_ABBREVIATION',
+        fieldHeaderClass: 'column-abbreviation',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'alphabetsOnly': 'CARGO_NOMINATION_FIELD_ALPHABETS_ONLY_ERROR',

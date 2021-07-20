@@ -1,4 +1,5 @@
-import { IResponse, ICargo, IPort } from '../../../shared/models/common.model';
+import { IResponse, ICargo } from '../../../shared/models/common.model';
+import { IPort } from '../../core/models/common.model';
 
 /**
  *  model for new-loadable-study-list-names

@@ -16,10 +16,12 @@ export class TrimConditionComponent implements OnInit {
 
   @Input() trim: number;
   @Input() deflection: number;
+  @Input()  hasLoadicator:boolean = false;
 
   constructor() { }
 
   ngOnInit(): void {
-  }
+    
+    }
 
 }
