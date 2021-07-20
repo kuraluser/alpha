@@ -84,6 +84,15 @@ public class PortLoadingPlanStowageDetails extends EntityDoc {
   @Column(name = "port_rotation_xid")
   private Long portRotationXId;
 
+  @Column(name = "quantity")
+  private BigDecimal quantity;
+
+  @Column(name = "quantity_m3")
+  private BigDecimal quantityM3;
+
+  @Column(name = "ullage")
+  private BigDecimal ullage;
+
   @Column(name = "arrival_departutre")
   private Integer conditionType;
 

@@ -92,4 +92,10 @@ public class PortLoadingPlanBallastDetails extends EntityDoc {
 
   @Column(name = "actual_planned")
   private Integer valueType;
+
+  @Column(name = "quantity_m3")
+  private BigDecimal quantityM3;
+
+  @Column(name = "sounding")
+  private BigDecimal sounding;
 }

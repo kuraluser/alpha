@@ -191,8 +191,8 @@ public class LoadingPlanBuilderService {
       PortLoadingPlanBallastDetails ballastDetails,
       LoadingPlanTankDetails ballast) {
     ballastDetails.setConditionType(ballast.getConditionType());
-    ballastDetails.setCorrectedUllage(
-        StringUtils.isEmpty(ballast.getUllage()) ? null : new BigDecimal(ballast.getUllage()));
+    ballastDetails.setSounding(
+        StringUtils.isEmpty(ballast.getSounding()) ? null : new BigDecimal(ballast.getSounding()));
     ballastDetails.setIsActive(true);
     ballastDetails.setLoadingInformation(loadingInformation);
     ballastDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
@@ -200,6 +200,10 @@ public class LoadingPlanBuilderService {
     ballastDetails.setPortRotationXId(loadingInformation.getPortRotationXId());
     ballastDetails.setQuantity(
         StringUtils.isEmpty(ballast.getQuantity()) ? null : new BigDecimal(ballast.getQuantity()));
+    ballastDetails.setQuantityM3(
+        StringUtils.isEmpty(ballast.getQuantityM3())
+            ? null
+            : new BigDecimal(ballast.getQuantityM3()));
     ballastDetails.setTankXId(ballast.getTankId());
     ballastDetails.setTemperature(
         StringUtils.isEmpty(ballast.getTemperature())
@@ -250,12 +254,18 @@ public class LoadingPlanBuilderService {
     stowageDetails.setApi(
         StringUtils.isEmpty(stowage.getApi()) ? null : new BigDecimal(stowage.getApi()));
     stowageDetails.setConditionType(stowage.getConditionType());
-    stowageDetails.setCorrectedUllage(
+    stowageDetails.setUllage(
         StringUtils.isEmpty(stowage.getUllage()) ? null : new BigDecimal(stowage.getUllage()));
     stowageDetails.setIsActive(true);
     stowageDetails.setLoadingInformation(loadingInformation);
     stowageDetails.setPortRotationXId(loadingInformation.getPortRotationXId());
     stowageDetails.setPortXId(loadingInformation.getPortXId());
+    stowageDetails.setQuantity(
+        StringUtils.isEmpty(stowage.getQuantity()) ? null : new BigDecimal(stowage.getQuantity()));
+    stowageDetails.setQuantityM3(
+        StringUtils.isEmpty(stowage.getQuantityM3())
+            ? null
+            : new BigDecimal(stowage.getQuantityM3()));
     stowageDetails.setTankXId(stowage.getTankId());
     stowageDetails.setTemperature(
         StringUtils.isEmpty(stowage.getTemperature())
