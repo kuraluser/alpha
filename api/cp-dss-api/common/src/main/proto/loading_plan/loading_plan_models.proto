@@ -115,9 +115,10 @@ message StageDuration{
 message LoadingMachinesInUse{
   int64 id = 1;
   int64 loadingInfoId = 2;
-  int64 pumpId = 3;
+  int64 machineId = 3;
   string capacity = 4;
   bool isUsing = 5; // Not added in gateway
+  MachineType machineType = 6;
 }
 
 // Object message for hold, master and user data

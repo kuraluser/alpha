@@ -78,8 +78,9 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
     } else {
       throw new Exception("Cannot find the loading information for the machinery");
     }
-
-    Optional.ofNullable(loadingMachinesInUse.getPumpId()).ifPresent(machinery::setPumpXId);
+    Optional.ofNullable(loadingMachinesInUse.getMachineId()).ifPresent(machinery::setMachineXId);
+    Optional.ofNullable(loadingMachinesInUse.getMachineTypeValue())
+        .ifPresent(machinery::setMachineTypeXid);
     machinery.setCapacity(
         StringUtils.isEmpty(loadingMachinesInUse.getCapacity())
             ? null

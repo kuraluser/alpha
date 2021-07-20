@@ -57877,6 +57877,18 @@ public final class VesselInfo {
     /** <code>repeated .VesselPump vesselPump = 3;</code> */
     com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder getVesselPumpOrBuilder(int index);
 
+    /** <code>repeated .TankType tankType = 5;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.TankType> getTankTypeList();
+    /** <code>repeated .TankType tankType = 5;</code> */
+    com.cpdss.common.generated.VesselInfo.TankType getTankType(int index);
+    /** <code>repeated .TankType tankType = 5;</code> */
+    int getTankTypeCount();
+    /** <code>repeated .TankType tankType = 5;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+        getTankTypeOrBuilderList();
+    /** <code>repeated .TankType tankType = 5;</code> */
+    com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder getTankTypeOrBuilder(int index);
+
     /**
      * <code>.VesselDetail vesselDetails = 4;</code>
      *
@@ -57891,6 +57903,32 @@ public final class VesselInfo {
     com.cpdss.common.generated.VesselInfo.VesselDetail getVesselDetails();
     /** <code>.VesselDetail vesselDetails = 4;</code> */
     com.cpdss.common.generated.VesselInfo.VesselDetailOrBuilder getVesselDetailsOrBuilder();
+
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> getVesselManifoldList();
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponent getVesselManifold(int index);
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    int getVesselManifoldCount();
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselManifoldOrBuilderList();
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder getVesselManifoldOrBuilder(
+        int index);
+
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> getVesselBottomLineList();
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponent getVesselBottomLine(int index);
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    int getVesselBottomLineCount();
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselBottomLineOrBuilderList();
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder getVesselBottomLineOrBuilder(
+        int index);
   }
   /** Protobuf type {@code VesselPumpsResponse} */
   public static final class VesselPumpsResponse extends com.google.protobuf.GeneratedMessageV3
@@ -57906,6 +57944,9 @@ public final class VesselInfo {
     private VesselPumpsResponse() {
       pumpType_ = java.util.Collections.emptyList();
       vesselPump_ = java.util.Collections.emptyList();
+      tankType_ = java.util.Collections.emptyList();
+      vesselManifold_ = java.util.Collections.emptyList();
+      vesselBottomLine_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -57998,6 +58039,47 @@ public final class VesselInfo {
 
                 break;
               }
+            case 42:
+              {
+                if (!((mutable_bitField0_ & 0x00000004) != 0)) {
+                  tankType_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.TankType>();
+                  mutable_bitField0_ |= 0x00000004;
+                }
+                tankType_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.TankType.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 50:
+              {
+                if (!((mutable_bitField0_ & 0x00000008) != 0)) {
+                  vesselManifold_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.VesselComponent>();
+                  mutable_bitField0_ |= 0x00000008;
+                }
+                vesselManifold_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.VesselComponent.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 58:
+              {
+                if (!((mutable_bitField0_ & 0x00000010) != 0)) {
+                  vesselBottomLine_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.VesselComponent>();
+                  mutable_bitField0_ |= 0x00000010;
+                }
+                vesselBottomLine_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.VesselComponent.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -58017,6 +58099,15 @@ public final class VesselInfo {
         }
         if (((mutable_bitField0_ & 0x00000002) != 0)) {
           vesselPump_ = java.util.Collections.unmodifiableList(vesselPump_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) != 0)) {
+          tankType_ = java.util.Collections.unmodifiableList(tankType_);
+        }
+        if (((mutable_bitField0_ & 0x00000008) != 0)) {
+          vesselManifold_ = java.util.Collections.unmodifiableList(vesselManifold_);
+        }
+        if (((mutable_bitField0_ & 0x00000010) != 0)) {
+          vesselBottomLine_ = java.util.Collections.unmodifiableList(vesselBottomLine_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -58111,6 +58202,30 @@ public final class VesselInfo {
       return vesselPump_.get(index);
     }
 
+    public static final int TANKTYPE_FIELD_NUMBER = 5;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.TankType> tankType_;
+    /** <code>repeated .TankType tankType = 5;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.TankType> getTankTypeList() {
+      return tankType_;
+    }
+    /** <code>repeated .TankType tankType = 5;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+        getTankTypeOrBuilderList() {
+      return tankType_;
+    }
+    /** <code>repeated .TankType tankType = 5;</code> */
+    public int getTankTypeCount() {
+      return tankType_.size();
+    }
+    /** <code>repeated .TankType tankType = 5;</code> */
+    public com.cpdss.common.generated.VesselInfo.TankType getTankType(int index) {
+      return tankType_.get(index);
+    }
+    /** <code>repeated .TankType tankType = 5;</code> */
+    public com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder getTankTypeOrBuilder(int index) {
+      return tankType_.get(index);
+    }
+
     public static final int VESSELDETAILS_FIELD_NUMBER = 4;
     private com.cpdss.common.generated.VesselInfo.VesselDetail vesselDetails_;
     /**
@@ -58134,6 +58249,58 @@ public final class VesselInfo {
     /** <code>.VesselDetail vesselDetails = 4;</code> */
     public com.cpdss.common.generated.VesselInfo.VesselDetailOrBuilder getVesselDetailsOrBuilder() {
       return getVesselDetails();
+    }
+
+    public static final int VESSELMANIFOLD_FIELD_NUMBER = 6;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> vesselManifold_;
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+        getVesselManifoldList() {
+      return vesselManifold_;
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselManifoldOrBuilderList() {
+      return vesselManifold_;
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    public int getVesselManifoldCount() {
+      return vesselManifold_.size();
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselManifold(int index) {
+      return vesselManifold_.get(index);
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+        getVesselManifoldOrBuilder(int index) {
+      return vesselManifold_.get(index);
+    }
+
+    public static final int VESSELBOTTOMLINE_FIELD_NUMBER = 7;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> vesselBottomLine_;
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+        getVesselBottomLineList() {
+      return vesselBottomLine_;
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselBottomLineOrBuilderList() {
+      return vesselBottomLine_;
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    public int getVesselBottomLineCount() {
+      return vesselBottomLine_.size();
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselBottomLine(int index) {
+      return vesselBottomLine_.get(index);
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+        getVesselBottomLineOrBuilder(int index) {
+      return vesselBottomLine_.get(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -58162,6 +58329,15 @@ public final class VesselInfo {
       if (vesselDetails_ != null) {
         output.writeMessage(4, getVesselDetails());
       }
+      for (int i = 0; i < tankType_.size(); i++) {
+        output.writeMessage(5, tankType_.get(i));
+      }
+      for (int i = 0; i < vesselManifold_.size(); i++) {
+        output.writeMessage(6, vesselManifold_.get(i));
+      }
+      for (int i = 0; i < vesselBottomLine_.size(); i++) {
+        output.writeMessage(7, vesselBottomLine_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -58182,6 +58358,16 @@ public final class VesselInfo {
       }
       if (vesselDetails_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, getVesselDetails());
+      }
+      for (int i = 0; i < tankType_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, tankType_.get(i));
+      }
+      for (int i = 0; i < vesselManifold_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(6, vesselManifold_.get(i));
+      }
+      for (int i = 0; i < vesselBottomLine_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(7, vesselBottomLine_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -58205,10 +58391,13 @@ public final class VesselInfo {
       }
       if (!getPumpTypeList().equals(other.getPumpTypeList())) return false;
       if (!getVesselPumpList().equals(other.getVesselPumpList())) return false;
+      if (!getTankTypeList().equals(other.getTankTypeList())) return false;
       if (hasVesselDetails() != other.hasVesselDetails()) return false;
       if (hasVesselDetails()) {
         if (!getVesselDetails().equals(other.getVesselDetails())) return false;
       }
+      if (!getVesselManifoldList().equals(other.getVesselManifoldList())) return false;
+      if (!getVesselBottomLineList().equals(other.getVesselBottomLineList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -58232,9 +58421,21 @@ public final class VesselInfo {
         hash = (37 * hash) + VESSELPUMP_FIELD_NUMBER;
         hash = (53 * hash) + getVesselPumpList().hashCode();
       }
+      if (getTankTypeCount() > 0) {
+        hash = (37 * hash) + TANKTYPE_FIELD_NUMBER;
+        hash = (53 * hash) + getTankTypeList().hashCode();
+      }
       if (hasVesselDetails()) {
         hash = (37 * hash) + VESSELDETAILS_FIELD_NUMBER;
         hash = (53 * hash) + getVesselDetails().hashCode();
+      }
+      if (getVesselManifoldCount() > 0) {
+        hash = (37 * hash) + VESSELMANIFOLD_FIELD_NUMBER;
+        hash = (53 * hash) + getVesselManifoldList().hashCode();
+      }
+      if (getVesselBottomLineCount() > 0) {
+        hash = (37 * hash) + VESSELBOTTOMLINE_FIELD_NUMBER;
+        hash = (53 * hash) + getVesselBottomLineList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -58372,6 +58573,9 @@ public final class VesselInfo {
         if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
           getPumpTypeFieldBuilder();
           getVesselPumpFieldBuilder();
+          getTankTypeFieldBuilder();
+          getVesselManifoldFieldBuilder();
+          getVesselBottomLineFieldBuilder();
         }
       }
 
@@ -58396,11 +58600,29 @@ public final class VesselInfo {
         } else {
           vesselPumpBuilder_.clear();
         }
+        if (tankTypeBuilder_ == null) {
+          tankType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          tankTypeBuilder_.clear();
+        }
         if (vesselDetailsBuilder_ == null) {
           vesselDetails_ = null;
         } else {
           vesselDetails_ = null;
           vesselDetailsBuilder_ = null;
+        }
+        if (vesselManifoldBuilder_ == null) {
+          vesselManifold_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          vesselManifoldBuilder_.clear();
+        }
+        if (vesselBottomLineBuilder_ == null) {
+          vesselBottomLine_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000010);
+        } else {
+          vesselBottomLineBuilder_.clear();
         }
         return this;
       }
@@ -58452,10 +58674,37 @@ public final class VesselInfo {
         } else {
           result.vesselPump_ = vesselPumpBuilder_.build();
         }
+        if (tankTypeBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            tankType_ = java.util.Collections.unmodifiableList(tankType_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.tankType_ = tankType_;
+        } else {
+          result.tankType_ = tankTypeBuilder_.build();
+        }
         if (vesselDetailsBuilder_ == null) {
           result.vesselDetails_ = vesselDetails_;
         } else {
           result.vesselDetails_ = vesselDetailsBuilder_.build();
+        }
+        if (vesselManifoldBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) != 0)) {
+            vesselManifold_ = java.util.Collections.unmodifiableList(vesselManifold_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
+          result.vesselManifold_ = vesselManifold_;
+        } else {
+          result.vesselManifold_ = vesselManifoldBuilder_.build();
+        }
+        if (vesselBottomLineBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) != 0)) {
+            vesselBottomLine_ = java.util.Collections.unmodifiableList(vesselBottomLine_);
+            bitField0_ = (bitField0_ & ~0x00000010);
+          }
+          result.vesselBottomLine_ = vesselBottomLine_;
+        } else {
+          result.vesselBottomLine_ = vesselBottomLineBuilder_.build();
         }
         onBuilt();
         return result;
@@ -58566,8 +58815,89 @@ public final class VesselInfo {
             }
           }
         }
+        if (tankTypeBuilder_ == null) {
+          if (!other.tankType_.isEmpty()) {
+            if (tankType_.isEmpty()) {
+              tankType_ = other.tankType_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureTankTypeIsMutable();
+              tankType_.addAll(other.tankType_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.tankType_.isEmpty()) {
+            if (tankTypeBuilder_.isEmpty()) {
+              tankTypeBuilder_.dispose();
+              tankTypeBuilder_ = null;
+              tankType_ = other.tankType_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              tankTypeBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getTankTypeFieldBuilder()
+                      : null;
+            } else {
+              tankTypeBuilder_.addAllMessages(other.tankType_);
+            }
+          }
+        }
         if (other.hasVesselDetails()) {
           mergeVesselDetails(other.getVesselDetails());
+        }
+        if (vesselManifoldBuilder_ == null) {
+          if (!other.vesselManifold_.isEmpty()) {
+            if (vesselManifold_.isEmpty()) {
+              vesselManifold_ = other.vesselManifold_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+            } else {
+              ensureVesselManifoldIsMutable();
+              vesselManifold_.addAll(other.vesselManifold_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vesselManifold_.isEmpty()) {
+            if (vesselManifoldBuilder_.isEmpty()) {
+              vesselManifoldBuilder_.dispose();
+              vesselManifoldBuilder_ = null;
+              vesselManifold_ = other.vesselManifold_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              vesselManifoldBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVesselManifoldFieldBuilder()
+                      : null;
+            } else {
+              vesselManifoldBuilder_.addAllMessages(other.vesselManifold_);
+            }
+          }
+        }
+        if (vesselBottomLineBuilder_ == null) {
+          if (!other.vesselBottomLine_.isEmpty()) {
+            if (vesselBottomLine_.isEmpty()) {
+              vesselBottomLine_ = other.vesselBottomLine_;
+              bitField0_ = (bitField0_ & ~0x00000010);
+            } else {
+              ensureVesselBottomLineIsMutable();
+              vesselBottomLine_.addAll(other.vesselBottomLine_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vesselBottomLine_.isEmpty()) {
+            if (vesselBottomLineBuilder_.isEmpty()) {
+              vesselBottomLineBuilder_.dispose();
+              vesselBottomLineBuilder_ = null;
+              vesselBottomLine_ = other.vesselBottomLine_;
+              bitField0_ = (bitField0_ & ~0x00000010);
+              vesselBottomLineBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVesselBottomLineFieldBuilder()
+                      : null;
+            } else {
+              vesselBottomLineBuilder_.addAllMessages(other.vesselBottomLine_);
+            }
+          }
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -59142,6 +59472,214 @@ public final class VesselInfo {
         return vesselPumpBuilder_;
       }
 
+      private java.util.List<com.cpdss.common.generated.VesselInfo.TankType> tankType_ =
+          java.util.Collections.emptyList();
+
+      private void ensureTankTypeIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          tankType_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.TankType>(tankType_);
+          bitField0_ |= 0x00000004;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.TankType,
+              com.cpdss.common.generated.VesselInfo.TankType.Builder,
+              com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+          tankTypeBuilder_;
+
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.TankType> getTankTypeList() {
+        if (tankTypeBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(tankType_);
+        } else {
+          return tankTypeBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public int getTankTypeCount() {
+        if (tankTypeBuilder_ == null) {
+          return tankType_.size();
+        } else {
+          return tankTypeBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType getTankType(int index) {
+        if (tankTypeBuilder_ == null) {
+          return tankType_.get(index);
+        } else {
+          return tankTypeBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder setTankType(int index, com.cpdss.common.generated.VesselInfo.TankType value) {
+        if (tankTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTankTypeIsMutable();
+          tankType_.set(index, value);
+          onChanged();
+        } else {
+          tankTypeBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder setTankType(
+          int index, com.cpdss.common.generated.VesselInfo.TankType.Builder builderForValue) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          tankTypeBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder addTankType(com.cpdss.common.generated.VesselInfo.TankType value) {
+        if (tankTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTankTypeIsMutable();
+          tankType_.add(value);
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder addTankType(int index, com.cpdss.common.generated.VesselInfo.TankType value) {
+        if (tankTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTankTypeIsMutable();
+          tankType_.add(index, value);
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder addTankType(
+          com.cpdss.common.generated.VesselInfo.TankType.Builder builderForValue) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.add(builderForValue.build());
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder addTankType(
+          int index, com.cpdss.common.generated.VesselInfo.TankType.Builder builderForValue) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder addAllTankType(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.TankType> values) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, tankType_);
+          onChanged();
+        } else {
+          tankTypeBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder clearTankType() {
+        if (tankTypeBuilder_ == null) {
+          tankType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          tankTypeBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public Builder removeTankType(int index) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.remove(index);
+          onChanged();
+        } else {
+          tankTypeBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType.Builder getTankTypeBuilder(int index) {
+        return getTankTypeFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder getTankTypeOrBuilder(
+          int index) {
+        if (tankTypeBuilder_ == null) {
+          return tankType_.get(index);
+        } else {
+          return tankTypeBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+          getTankTypeOrBuilderList() {
+        if (tankTypeBuilder_ != null) {
+          return tankTypeBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(tankType_);
+        }
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType.Builder addTankTypeBuilder() {
+        return getTankTypeFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.TankType.getDefaultInstance());
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType.Builder addTankTypeBuilder(int index) {
+        return getTankTypeFieldBuilder()
+            .addBuilder(index, com.cpdss.common.generated.VesselInfo.TankType.getDefaultInstance());
+      }
+      /** <code>repeated .TankType tankType = 5;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.TankType.Builder>
+          getTankTypeBuilderList() {
+        return getTankTypeFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.TankType,
+              com.cpdss.common.generated.VesselInfo.TankType.Builder,
+              com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+          getTankTypeFieldBuilder() {
+        if (tankTypeBuilder_ == null) {
+          tankTypeBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.TankType,
+                  com.cpdss.common.generated.VesselInfo.TankType.Builder,
+                  com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>(
+                  tankType_, ((bitField0_ & 0x00000004) != 0), getParentForChildren(), isClean());
+          tankType_ = null;
+        }
+        return tankTypeBuilder_;
+      }
+
       private com.cpdss.common.generated.VesselInfo.VesselDetail vesselDetails_;
       private com.google.protobuf.SingleFieldBuilderV3<
               com.cpdss.common.generated.VesselInfo.VesselDetail,
@@ -59261,6 +59799,454 @@ public final class VesselInfo {
         return vesselDetailsBuilder_;
       }
 
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          vesselManifold_ = java.util.Collections.emptyList();
+
+      private void ensureVesselManifoldIsMutable() {
+        if (!((bitField0_ & 0x00000008) != 0)) {
+          vesselManifold_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselComponent>(
+                  vesselManifold_);
+          bitField0_ |= 0x00000008;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          vesselManifoldBuilder_;
+
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          getVesselManifoldList() {
+        if (vesselManifoldBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vesselManifold_);
+        } else {
+          return vesselManifoldBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public int getVesselManifoldCount() {
+        if (vesselManifoldBuilder_ == null) {
+          return vesselManifold_.size();
+        } else {
+          return vesselManifoldBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselManifold(int index) {
+        if (vesselManifoldBuilder_ == null) {
+          return vesselManifold_.get(index);
+        } else {
+          return vesselManifoldBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder setVesselManifold(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselManifoldBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.set(index, value);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder setVesselManifold(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder addVesselManifold(
+          com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselManifoldBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(value);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder addVesselManifold(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselManifoldBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(index, value);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder addVesselManifold(
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder addVesselManifold(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder addAllVesselManifold(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.VesselComponent>
+              values) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vesselManifold_);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder clearVesselManifold() {
+        if (vesselManifoldBuilder_ == null) {
+          vesselManifold_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public Builder removeVesselManifold(int index) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.remove(index);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder getVesselManifoldBuilder(
+          int index) {
+        return getVesselManifoldFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+          getVesselManifoldOrBuilder(int index) {
+        if (vesselManifoldBuilder_ == null) {
+          return vesselManifold_.get(index);
+        } else {
+          return vesselManifoldBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselManifoldOrBuilderList() {
+        if (vesselManifoldBuilder_ != null) {
+          return vesselManifoldBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vesselManifold_);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          addVesselManifoldBuilder() {
+        return getVesselManifoldFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder addVesselManifoldBuilder(
+          int index) {
+        return getVesselManifoldFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 6;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent.Builder>
+          getVesselManifoldBuilderList() {
+        return getVesselManifoldFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselManifoldFieldBuilder() {
+        if (vesselManifoldBuilder_ == null) {
+          vesselManifoldBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.VesselComponent,
+                  com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+                  com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>(
+                  vesselManifold_,
+                  ((bitField0_ & 0x00000008) != 0),
+                  getParentForChildren(),
+                  isClean());
+          vesselManifold_ = null;
+        }
+        return vesselManifoldBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          vesselBottomLine_ = java.util.Collections.emptyList();
+
+      private void ensureVesselBottomLineIsMutable() {
+        if (!((bitField0_ & 0x00000010) != 0)) {
+          vesselBottomLine_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselComponent>(
+                  vesselBottomLine_);
+          bitField0_ |= 0x00000010;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          vesselBottomLineBuilder_;
+
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          getVesselBottomLineList() {
+        if (vesselBottomLineBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vesselBottomLine_);
+        } else {
+          return vesselBottomLineBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public int getVesselBottomLineCount() {
+        if (vesselBottomLineBuilder_ == null) {
+          return vesselBottomLine_.size();
+        } else {
+          return vesselBottomLineBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselBottomLine(int index) {
+        if (vesselBottomLineBuilder_ == null) {
+          return vesselBottomLine_.get(index);
+        } else {
+          return vesselBottomLineBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder setVesselBottomLine(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselBottomLineBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.set(index, value);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder setVesselBottomLine(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder addVesselBottomLine(
+          com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselBottomLineBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(value);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder addVesselBottomLine(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselBottomLineBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(index, value);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder addVesselBottomLine(
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder addVesselBottomLine(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder addAllVesselBottomLine(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.VesselComponent>
+              values) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vesselBottomLine_);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder clearVesselBottomLine() {
+        if (vesselBottomLineBuilder_ == null) {
+          vesselBottomLine_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000010);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public Builder removeVesselBottomLine(int index) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.remove(index);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          getVesselBottomLineBuilder(int index) {
+        return getVesselBottomLineFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+          getVesselBottomLineOrBuilder(int index) {
+        if (vesselBottomLineBuilder_ == null) {
+          return vesselBottomLine_.get(index);
+        } else {
+          return vesselBottomLineBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselBottomLineOrBuilderList() {
+        if (vesselBottomLineBuilder_ != null) {
+          return vesselBottomLineBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vesselBottomLine_);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          addVesselBottomLineBuilder() {
+        return getVesselBottomLineFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          addVesselBottomLineBuilder(int index) {
+        return getVesselBottomLineFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 7;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent.Builder>
+          getVesselBottomLineBuilderList() {
+        return getVesselBottomLineFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselBottomLineFieldBuilder() {
+        if (vesselBottomLineBuilder_ == null) {
+          vesselBottomLineBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.VesselComponent,
+                  com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+                  com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>(
+                  vesselBottomLine_,
+                  ((bitField0_ & 0x00000010) != 0),
+                  getParentForChildren(),
+                  isClean());
+          vesselBottomLine_ = null;
+        }
+        return vesselBottomLineBuilder_;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -59309,6 +60295,1590 @@ public final class VesselInfo {
 
     @java.lang.Override
     public com.cpdss.common.generated.VesselInfo.VesselPumpsResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface VesselComponentOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:VesselComponent)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>int64 vesselId = 2;</code>
+     *
+     * @return The vesselId.
+     */
+    long getVesselId();
+
+    /**
+     * <code>string componentName = 3;</code>
+     *
+     * @return The componentName.
+     */
+    java.lang.String getComponentName();
+    /**
+     * <code>string componentName = 3;</code>
+     *
+     * @return The bytes for componentName.
+     */
+    com.google.protobuf.ByteString getComponentNameBytes();
+
+    /**
+     * <code>string componentCode = 4;</code>
+     *
+     * @return The componentCode.
+     */
+    java.lang.String getComponentCode();
+    /**
+     * <code>string componentCode = 4;</code>
+     *
+     * @return The bytes for componentCode.
+     */
+    com.google.protobuf.ByteString getComponentCodeBytes();
+
+    /**
+     * <code>int64 componentType = 5;</code>
+     *
+     * @return The componentType.
+     */
+    long getComponentType();
+  }
+  /** Protobuf type {@code VesselComponent} */
+  public static final class VesselComponent extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:VesselComponent)
+      VesselComponentOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use VesselComponent.newBuilder() to construct.
+    private VesselComponent(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private VesselComponent() {
+      componentName_ = "";
+      componentCode_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new VesselComponent();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private VesselComponent(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                vesselId_ = input.readInt64();
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                componentName_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                componentCode_ = s;
+                break;
+              }
+            case 40:
+              {
+                componentType_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_VesselComponent_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_VesselComponent_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.VesselComponent.class,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int VESSELID_FIELD_NUMBER = 2;
+    private long vesselId_;
+    /**
+     * <code>int64 vesselId = 2;</code>
+     *
+     * @return The vesselId.
+     */
+    public long getVesselId() {
+      return vesselId_;
+    }
+
+    public static final int COMPONENTNAME_FIELD_NUMBER = 3;
+    private volatile java.lang.Object componentName_;
+    /**
+     * <code>string componentName = 3;</code>
+     *
+     * @return The componentName.
+     */
+    public java.lang.String getComponentName() {
+      java.lang.Object ref = componentName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        componentName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string componentName = 3;</code>
+     *
+     * @return The bytes for componentName.
+     */
+    public com.google.protobuf.ByteString getComponentNameBytes() {
+      java.lang.Object ref = componentName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        componentName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int COMPONENTCODE_FIELD_NUMBER = 4;
+    private volatile java.lang.Object componentCode_;
+    /**
+     * <code>string componentCode = 4;</code>
+     *
+     * @return The componentCode.
+     */
+    public java.lang.String getComponentCode() {
+      java.lang.Object ref = componentCode_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        componentCode_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string componentCode = 4;</code>
+     *
+     * @return The bytes for componentCode.
+     */
+    public com.google.protobuf.ByteString getComponentCodeBytes() {
+      java.lang.Object ref = componentCode_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        componentCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int COMPONENTTYPE_FIELD_NUMBER = 5;
+    private long componentType_;
+    /**
+     * <code>int64 componentType = 5;</code>
+     *
+     * @return The componentType.
+     */
+    public long getComponentType() {
+      return componentType_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (vesselId_ != 0L) {
+        output.writeInt64(2, vesselId_);
+      }
+      if (!getComponentNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, componentName_);
+      }
+      if (!getComponentCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, componentCode_);
+      }
+      if (componentType_ != 0L) {
+        output.writeInt64(5, componentType_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (vesselId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, vesselId_);
+      }
+      if (!getComponentNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, componentName_);
+      }
+      if (!getComponentCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, componentCode_);
+      }
+      if (componentType_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, componentType_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.VesselComponent)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.VesselComponent other =
+          (com.cpdss.common.generated.VesselInfo.VesselComponent) obj;
+
+      if (getId() != other.getId()) return false;
+      if (getVesselId() != other.getVesselId()) return false;
+      if (!getComponentName().equals(other.getComponentName())) return false;
+      if (!getComponentCode().equals(other.getComponentCode())) return false;
+      if (getComponentType() != other.getComponentType()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + VESSELID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+      hash = (37 * hash) + COMPONENTNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getComponentName().hashCode();
+      hash = (37 * hash) + COMPONENTCODE_FIELD_NUMBER;
+      hash = (53 * hash) + getComponentCode().hashCode();
+      hash = (37 * hash) + COMPONENTTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getComponentType());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.VesselComponent prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code VesselComponent} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:VesselComponent)
+        com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselComponent_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_VesselComponent_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.VesselComponent.class,
+                com.cpdss.common.generated.VesselInfo.VesselComponent.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.VesselComponent.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        vesselId_ = 0L;
+
+        componentName_ = "";
+
+        componentCode_ = "";
+
+        componentType_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_VesselComponent_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselComponent getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselComponent build() {
+        com.cpdss.common.generated.VesselInfo.VesselComponent result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.VesselComponent buildPartial() {
+        com.cpdss.common.generated.VesselInfo.VesselComponent result =
+            new com.cpdss.common.generated.VesselInfo.VesselComponent(this);
+        result.id_ = id_;
+        result.vesselId_ = vesselId_;
+        result.componentName_ = componentName_;
+        result.componentCode_ = componentCode_;
+        result.componentType_ = componentType_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.VesselComponent) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.VesselComponent) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.VesselComponent other) {
+        if (other == com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (other.getVesselId() != 0L) {
+          setVesselId(other.getVesselId());
+        }
+        if (!other.getComponentName().isEmpty()) {
+          componentName_ = other.componentName_;
+          onChanged();
+        }
+        if (!other.getComponentCode().isEmpty()) {
+          componentCode_ = other.componentCode_;
+          onChanged();
+        }
+        if (other.getComponentType() != 0L) {
+          setComponentType(other.getComponentType());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.VesselComponent parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.VesselComponent) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long vesselId_;
+      /**
+       * <code>int64 vesselId = 2;</code>
+       *
+       * @return The vesselId.
+       */
+      public long getVesselId() {
+        return vesselId_;
+      }
+      /**
+       * <code>int64 vesselId = 2;</code>
+       *
+       * @param value The vesselId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVesselId(long value) {
+
+        vesselId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 vesselId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearVesselId() {
+
+        vesselId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object componentName_ = "";
+      /**
+       * <code>string componentName = 3;</code>
+       *
+       * @return The componentName.
+       */
+      public java.lang.String getComponentName() {
+        java.lang.Object ref = componentName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          componentName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string componentName = 3;</code>
+       *
+       * @return The bytes for componentName.
+       */
+      public com.google.protobuf.ByteString getComponentNameBytes() {
+        java.lang.Object ref = componentName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          componentName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string componentName = 3;</code>
+       *
+       * @param value The componentName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setComponentName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        componentName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string componentName = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearComponentName() {
+
+        componentName_ = getDefaultInstance().getComponentName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string componentName = 3;</code>
+       *
+       * @param value The bytes for componentName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setComponentNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        componentName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object componentCode_ = "";
+      /**
+       * <code>string componentCode = 4;</code>
+       *
+       * @return The componentCode.
+       */
+      public java.lang.String getComponentCode() {
+        java.lang.Object ref = componentCode_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          componentCode_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string componentCode = 4;</code>
+       *
+       * @return The bytes for componentCode.
+       */
+      public com.google.protobuf.ByteString getComponentCodeBytes() {
+        java.lang.Object ref = componentCode_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          componentCode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string componentCode = 4;</code>
+       *
+       * @param value The componentCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setComponentCode(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        componentCode_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string componentCode = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearComponentCode() {
+
+        componentCode_ = getDefaultInstance().getComponentCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string componentCode = 4;</code>
+       *
+       * @param value The bytes for componentCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setComponentCodeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        componentCode_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long componentType_;
+      /**
+       * <code>int64 componentType = 5;</code>
+       *
+       * @return The componentType.
+       */
+      public long getComponentType() {
+        return componentType_;
+      }
+      /**
+       * <code>int64 componentType = 5;</code>
+       *
+       * @param value The componentType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setComponentType(long value) {
+
+        componentType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 componentType = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearComponentType() {
+
+        componentType_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:VesselComponent)
+    }
+
+    // @@protoc_insertion_point(class_scope:VesselComponent)
+    private static final com.cpdss.common.generated.VesselInfo.VesselComponent DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.VesselComponent();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.VesselComponent getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<VesselComponent> PARSER =
+        new com.google.protobuf.AbstractParser<VesselComponent>() {
+          @java.lang.Override
+          public VesselComponent parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new VesselComponent(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<VesselComponent> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<VesselComponent> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.VesselComponent getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface TankTypeOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:TankType)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string typeName = 2;</code>
+     *
+     * @return The typeName.
+     */
+    java.lang.String getTypeName();
+    /**
+     * <code>string typeName = 2;</code>
+     *
+     * @return The bytes for typeName.
+     */
+    com.google.protobuf.ByteString getTypeNameBytes();
+  }
+  /** Protobuf type {@code TankType} */
+  public static final class TankType extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:TankType)
+      TankTypeOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use TankType.newBuilder() to construct.
+    private TankType(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private TankType() {
+      typeName_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new TankType();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private TankType(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                typeName_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_TankType_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_TankType_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.TankType.class,
+              com.cpdss.common.generated.VesselInfo.TankType.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int TYPENAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object typeName_;
+    /**
+     * <code>string typeName = 2;</code>
+     *
+     * @return The typeName.
+     */
+    public java.lang.String getTypeName() {
+      java.lang.Object ref = typeName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        typeName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string typeName = 2;</code>
+     *
+     * @return The bytes for typeName.
+     */
+    public com.google.protobuf.ByteString getTypeNameBytes() {
+      java.lang.Object ref = typeName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        typeName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getTypeNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, typeName_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getTypeNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, typeName_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.TankType)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.TankType other =
+          (com.cpdss.common.generated.VesselInfo.TankType) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getTypeName().equals(other.getTypeName())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + TYPENAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTypeName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.VesselInfo.TankType prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code TankType} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:TankType)
+        com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_TankType_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_TankType_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.TankType.class,
+                com.cpdss.common.generated.VesselInfo.TankType.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.TankType.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        typeName_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_TankType_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.TankType getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.TankType.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.TankType build() {
+        com.cpdss.common.generated.VesselInfo.TankType result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.TankType buildPartial() {
+        com.cpdss.common.generated.VesselInfo.TankType result =
+            new com.cpdss.common.generated.VesselInfo.TankType(this);
+        result.id_ = id_;
+        result.typeName_ = typeName_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.TankType) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.TankType) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.TankType other) {
+        if (other == com.cpdss.common.generated.VesselInfo.TankType.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getTypeName().isEmpty()) {
+          typeName_ = other.typeName_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.TankType parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.VesselInfo.TankType) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object typeName_ = "";
+      /**
+       * <code>string typeName = 2;</code>
+       *
+       * @return The typeName.
+       */
+      public java.lang.String getTypeName() {
+        java.lang.Object ref = typeName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          typeName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string typeName = 2;</code>
+       *
+       * @return The bytes for typeName.
+       */
+      public com.google.protobuf.ByteString getTypeNameBytes() {
+        java.lang.Object ref = typeName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          typeName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string typeName = 2;</code>
+       *
+       * @param value The typeName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTypeName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        typeName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string typeName = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTypeName() {
+
+        typeName_ = getDefaultInstance().getTypeName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string typeName = 2;</code>
+       *
+       * @param value The bytes for typeName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTypeNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        typeName_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:TankType)
+    }
+
+    // @@protoc_insertion_point(class_scope:TankType)
+    private static final com.cpdss.common.generated.VesselInfo.TankType DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.TankType();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.TankType getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<TankType> PARSER =
+        new com.google.protobuf.AbstractParser<TankType>() {
+          @java.lang.Override
+          public TankType parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new TankType(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<TankType> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<TankType> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.TankType getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
   }
@@ -73096,6 +75666,14 @@ public final class VesselInfo {
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_VesselPumpsResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_VesselComponent_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VesselComponent_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_TankType_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_TankType_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_PumpType_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_PumpType_fieldAccessorTable;
@@ -73328,80 +75906,87 @@ public final class VesselInfo {
           + "\ndraftValue\030\002 \001(\t\"t\n\021VesselDWTResponse\022\020"
           + "\n\010vesselId\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n\td"
           + "wtResult\030\003 \001(\t\022\'\n\016responseStatus\030\004 \001(\0132\017"
-          + ".ResponseStatus\"\242\001\n\023VesselPumpsResponse\022"
+          + ".ResponseStatus\"\225\002\n\023VesselPumpsResponse\022"
           + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
           + "\022\033\n\010pumpType\030\002 \003(\0132\t.PumpType\022\037\n\nvesselP"
-          + "ump\030\003 \003(\0132\013.VesselPump\022$\n\rvesselDetails\030"
-          + "\004 \001(\0132\r.VesselDetail\"$\n\010PumpType\022\n\n\002id\030\001"
-          + " \001(\003\022\014\n\004name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001"
-          + " \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001"
-          + "(\003\022\020\n\010pumpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024"
-          + "\n\014pumpCapacity\030\006 \001(\t\"o\n\021VesselRuleReques"
-          + "t\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034"
-          + "\n\010rulePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefa"
-          + "ultRule\030\004 \001(\010\"\347\001\n\017VesselRuleReply\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\010ru"
-          + "lePlan\030\002 \003(\0132\n.RulePlans\022)\n\017cargoTankMas"
-          + "ter\030\003 \003(\0132\020.CargoTankMaster\0229\n\027ruleDropD"
-          + "ownValueMaster\030\004 \003(\0132\030.RuleDropDownValue"
-          + "Master\022\'\n\016ruleTypeMaster\030\005 \003(\0132\017.RuleTyp"
-          + "eMaster\"\260\001\n\030VesselValveSequenceReply\022\'\n\016"
-          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\0220\n"
-          + "\022vvSequenceEntities\030\002 \003(\0132\024.VesselValveS"
-          + "equence\0229\n\023vvEducationEntities\030\003 \003(\0132\034.V"
-          + "esselValveEducationProcess\"\255\004\n\023VesselVal"
-          + "veSequence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValve\030"
-          + "\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineCol"
-          + "or\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipeli"
-          + "neType\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t\022\033\n\023"
-          + "sequenceOperationId\030\010 \001(\005\022\035\n\025sequenceOpe"
-          + "rationName\030\t \001(\t\022\026\n\016sequenceTypeId\030\n \001(\005"
-          + "\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027sequenceVe"
-          + "sselMappingId\030\014 \001(\005\022\025\n\rtankShortName\030\r \001"
-          + "(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017valveCatego"
-          + "ryId\030\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tvalve"
-          + "Side\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rvalve"
-          + "TypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rve"
-          + "sselTankXid\030\025 \001(\005\022\034\n\024vesselValveMappingI"
-          + "d\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselVal"
-          + "veEducationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013educto"
-          + "rName\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010s"
-          + "tepName\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\ted"
-          + "uctorId\030\006 \001(\005\022\037\n\027eductionProcessMasterId"
-          + "\030\007 \001(\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010ves"
-          + "selId\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005"
-          + "rules\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 "
-          + "\001(\0132\017.ResponseStatus\"0\n\017CargoTankMaster\022"
-          + "\n\n\002id\030\001 \001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDr"
-          + "opDownValueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002"
-          + " \001(\t\022\026\n\016ruleTemplateId\030\003 \001(\003\".\n\016RuleType"
-          + "Master\022\n\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n"
-          + "\021VesselInfoService\0228\n\026GetAllVesselsByCom"
-          + "pany\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024"
-          + "GetVesselDetailsById\022\016.VesselRequest\032\014.V"
-          + "esselReply\"\000\0220\n\016GetVesselTanks\022\016.VesselR"
-          + "equest\032\014.VesselReply\"\000\0225\n\023GetVesselCargo"
-          + "Tanks\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n"
-          + "\027GetVesselDetailsForAlgo\022\022.VesselAlgoReq"
-          + "uest\032\020.VesselAlgoReply\"\000\022C\n!GetVesselDet"
-          + "ailForSynopticalTable\022\016.VesselRequest\032\014."
-          + "VesselReply\"\000\022;\n\031GetVesselDetailByVessel"
-          + "Id\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\025Ge"
-          + "tVesselInfoByPaging\022\030.VesselRequestWithP"
-          + "aging\032\014.VesselReply\"\000\022C\n\026GetVesselInfoBy"
-          + "tankIds\022\022.VesselTankRequest\032\023.VesselTank"
-          + "Response\"\000\022C\n\032GetDWTFromVesselByVesselId"
-          + "\022\021.VesselDWTRequest\032\022.VesselDWTResponse\022"
-          + "@\n\027GetVesselInfoByVesselId\022\020.VesselIdReq"
-          + "uest\032\021.VesselIdResponse\"\000\022D\n\030GetVesselPu"
-          + "mpsByVesselId\022\020.VesselIdRequest\032\024.Vessel"
-          + "PumpsResponse\"\000\022H\n\036GetRulesByVesselIdAnd"
-          + "SectionId\022\022.VesselRuleRequest\032\020.VesselRu"
-          + "leReply\"\000\022E\n\026GetVesselValveSequence\022\016.Ve"
-          + "sselRequest\032\031.VesselValveSequenceReply\"\000"
-          + "\022I\n\023GetLoadingInfoRules\022\030.LoadingInfoRul"
-          + "esRequest\032\026.LoadingInfoRulesReply\"\000B\036\n\032c"
-          + "om.cpdss.common.generatedP\000b\006proto3"
+          + "ump\030\003 \003(\0132\013.VesselPump\022\033\n\010tankType\030\005 \003(\013"
+          + "2\t.TankType\022$\n\rvesselDetails\030\004 \001(\0132\r.Ves"
+          + "selDetail\022(\n\016vesselManifold\030\006 \003(\0132\020.Vess"
+          + "elComponent\022*\n\020vesselBottomLine\030\007 \003(\0132\020."
+          + "VesselComponent\"t\n\017VesselComponent\022\n\n\002id"
+          + "\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\025\n\rcomponentNam"
+          + "e\030\003 \001(\t\022\025\n\rcomponentCode\030\004 \001(\t\022\025\n\rcompon"
+          + "entType\030\005 \001(\003\"(\n\010TankType\022\n\n\002id\030\001 \001(\003\022\020\n"
+          + "\010typeName\030\002 \001(\t\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022"
+          + "\014\n\004name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022"
+          + "\020\n\010vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n"
+          + "\010pumpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pum"
+          + "pCapacity\030\006 \001(\t\"o\n\021VesselRuleRequest\022\020\n\010"
+          + "vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rul"
+          + "ePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefaultRu"
+          + "le\030\004 \001(\010\"\347\001\n\017VesselRuleReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePla"
+          + "n\030\002 \003(\0132\n.RulePlans\022)\n\017cargoTankMaster\030\003"
+          + " \003(\0132\020.CargoTankMaster\0229\n\027ruleDropDownVa"
+          + "lueMaster\030\004 \003(\0132\030.RuleDropDownValueMaste"
+          + "r\022\'\n\016ruleTypeMaster\030\005 \003(\0132\017.RuleTypeMast"
+          + "er\"\260\001\n\030VesselValveSequenceReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\0220\n\022vvSe"
+          + "quenceEntities\030\002 \003(\0132\024.VesselValveSequen"
+          + "ce\0229\n\023vvEducationEntities\030\003 \003(\0132\034.Vessel"
+          + "ValveEducationProcess\"\255\004\n\023VesselValveSeq"
+          + "uence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010"
+          + "\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineColor\030\004 "
+          + "\001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipelineTyp"
+          + "e\030\006 \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t\022\033\n\023seque"
+          + "nceOperationId\030\010 \001(\005\022\035\n\025sequenceOperatio"
+          + "nName\030\t \001(\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n\020s"
+          + "equenceTypeName\030\013 \001(\t\022\037\n\027sequenceVesselM"
+          + "appingId\030\014 \001(\005\022\025\n\rtankShortName\030\r \001(\t\022\025\n"
+          + "\rvalveCategory\030\016 \001(\t\022\027\n\017valveCategoryId\030"
+          + "\017 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tvalveSide\030"
+          + "\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rvalveTypeN"
+          + "ame\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesselT"
+          + "ankXid\030\025 \001(\005\022\034\n\024vesselValveMappingId\030\026 \001"
+          + "(\005\022\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselValveEdu"
+          + "cationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorName"
+          + "\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010stepNa"
+          + "me\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\teductor"
+          + "Id\030\006 \001(\005\022\037\n\027eductionProcessMasterId\030\007 \001("
+          + "\005\"+\n\027LoadingInfoRulesRequest\022\020\n\010vesselId"
+          + "\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005rules"
+          + "\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001(\0132\017"
+          + ".ResponseStatus\"0\n\017CargoTankMaster\022\n\n\002id"
+          + "\030\001 \001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDropDow"
+          + "nValueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022"
+          + "\026\n\016ruleTemplateId\030\003 \001(\003\".\n\016RuleTypeMaste"
+          + "r\022\n\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n\021Vess"
+          + "elInfoService\0228\n\026GetAllVesselsByCompany\022"
+          + "\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024GetVe"
+          + "sselDetailsById\022\016.VesselRequest\032\014.Vessel"
+          + "Reply\"\000\0220\n\016GetVesselTanks\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\0225\n\023GetVesselCargoTanks"
+          + "\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\027GetV"
+          + "esselDetailsForAlgo\022\022.VesselAlgoRequest\032"
+          + "\020.VesselAlgoReply\"\000\022C\n!GetVesselDetailFo"
+          + "rSynopticalTable\022\016.VesselRequest\032\014.Vesse"
+          + "lReply\"\000\022;\n\031GetVesselDetailByVesselId\022\016."
+          + "VesselRequest\032\014.VesselReply\"\000\022A\n\025GetVess"
+          + "elInfoByPaging\022\030.VesselRequestWithPaging"
+          + "\032\014.VesselReply\"\000\022C\n\026GetVesselInfoBytankI"
+          + "ds\022\022.VesselTankRequest\032\023.VesselTankRespo"
+          + "nse\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Ve"
+          + "sselDWTRequest\032\022.VesselDWTResponse\022@\n\027Ge"
+          + "tVesselInfoByVesselId\022\020.VesselIdRequest\032"
+          + "\021.VesselIdResponse\"\000\022D\n\030GetVesselPumpsBy"
+          + "VesselId\022\020.VesselIdRequest\032\024.VesselPumps"
+          + "Response\"\000\022H\n\036GetRulesByVesselIdAndSecti"
+          + "onId\022\022.VesselRuleRequest\032\020.VesselRuleRep"
+          + "ly\"\000\022E\n\026GetVesselValveSequence\022\016.VesselR"
+          + "equest\032\031.VesselValveSequenceReply\"\000\022I\n\023G"
+          + "etLoadingInfoRules\022\030.LoadingInfoRulesReq"
+          + "uest\032\026.LoadingInfoRulesReply\"\000B\036\n\032com.cp"
+          + "dss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -73845,30 +76430,50 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselPumpsResponse_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "PumpType", "VesselPump", "VesselDetails",
+              "ResponseStatus",
+              "PumpType",
+              "VesselPump",
+              "TankType",
+              "VesselDetails",
+              "VesselManifold",
+              "VesselBottomLine",
             });
-    internal_static_PumpType_descriptor = getDescriptor().getMessageTypes().get(37);
+    internal_static_VesselComponent_descriptor = getDescriptor().getMessageTypes().get(37);
+    internal_static_VesselComponent_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_VesselComponent_descriptor,
+            new java.lang.String[] {
+              "Id", "VesselId", "ComponentName", "ComponentCode", "ComponentType",
+            });
+    internal_static_TankType_descriptor = getDescriptor().getMessageTypes().get(38);
+    internal_static_TankType_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_TankType_descriptor,
+            new java.lang.String[] {
+              "Id", "TypeName",
+            });
+    internal_static_PumpType_descriptor = getDescriptor().getMessageTypes().get(39);
     internal_static_PumpType_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PumpType_descriptor,
             new java.lang.String[] {
               "Id", "Name",
             });
-    internal_static_VesselPump_descriptor = getDescriptor().getMessageTypes().get(38);
+    internal_static_VesselPump_descriptor = getDescriptor().getMessageTypes().get(40);
     internal_static_VesselPump_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselPump_descriptor,
             new java.lang.String[] {
               "Id", "VesselId", "PumpTypeId", "PumpName", "PumpCode", "PumpCapacity",
             });
-    internal_static_VesselRuleRequest_descriptor = getDescriptor().getMessageTypes().get(39);
+    internal_static_VesselRuleRequest_descriptor = getDescriptor().getMessageTypes().get(41);
     internal_static_VesselRuleRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselRuleRequest_descriptor,
             new java.lang.String[] {
               "VesselId", "SectionId", "RulePlan", "IsNoDefaultRule",
             });
-    internal_static_VesselRuleReply_descriptor = getDescriptor().getMessageTypes().get(40);
+    internal_static_VesselRuleReply_descriptor = getDescriptor().getMessageTypes().get(42);
     internal_static_VesselRuleReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselRuleReply_descriptor,
@@ -73879,14 +76484,14 @@ public final class VesselInfo {
               "RuleDropDownValueMaster",
               "RuleTypeMaster",
             });
-    internal_static_VesselValveSequenceReply_descriptor = getDescriptor().getMessageTypes().get(41);
+    internal_static_VesselValveSequenceReply_descriptor = getDescriptor().getMessageTypes().get(43);
     internal_static_VesselValveSequenceReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselValveSequenceReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "VvSequenceEntities", "VvEducationEntities",
             });
-    internal_static_VesselValveSequence_descriptor = getDescriptor().getMessageTypes().get(42);
+    internal_static_VesselValveSequence_descriptor = getDescriptor().getMessageTypes().get(44);
     internal_static_VesselValveSequence_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselValveSequence_descriptor,
@@ -73916,7 +76521,7 @@ public final class VesselInfo {
               "VesselXid",
             });
     internal_static_VesselValveEducationProcess_descriptor =
-        getDescriptor().getMessageTypes().get(43);
+        getDescriptor().getMessageTypes().get(45);
     internal_static_VesselValveEducationProcess_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselValveEducationProcess_descriptor,
@@ -73929,35 +76534,35 @@ public final class VesselInfo {
               "EductorId",
               "EductionProcessMasterId",
             });
-    internal_static_LoadingInfoRulesRequest_descriptor = getDescriptor().getMessageTypes().get(44);
+    internal_static_LoadingInfoRulesRequest_descriptor = getDescriptor().getMessageTypes().get(46);
     internal_static_LoadingInfoRulesRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingInfoRulesRequest_descriptor,
             new java.lang.String[] {
               "VesselId",
             });
-    internal_static_LoadingInfoRulesReply_descriptor = getDescriptor().getMessageTypes().get(45);
+    internal_static_LoadingInfoRulesReply_descriptor = getDescriptor().getMessageTypes().get(47);
     internal_static_LoadingInfoRulesReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingInfoRulesReply_descriptor,
             new java.lang.String[] {
               "Rules", "ResponseStatus",
             });
-    internal_static_CargoTankMaster_descriptor = getDescriptor().getMessageTypes().get(46);
+    internal_static_CargoTankMaster_descriptor = getDescriptor().getMessageTypes().get(48);
     internal_static_CargoTankMaster_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoTankMaster_descriptor,
             new java.lang.String[] {
               "Id", "ShortName",
             });
-    internal_static_RuleDropDownValueMaster_descriptor = getDescriptor().getMessageTypes().get(47);
+    internal_static_RuleDropDownValueMaster_descriptor = getDescriptor().getMessageTypes().get(49);
     internal_static_RuleDropDownValueMaster_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_RuleDropDownValueMaster_descriptor,
             new java.lang.String[] {
               "Id", "Value", "RuleTemplateId",
             });
-    internal_static_RuleTypeMaster_descriptor = getDescriptor().getMessageTypes().get(48);
+    internal_static_RuleTypeMaster_descriptor = getDescriptor().getMessageTypes().get(50);
     internal_static_RuleTypeMaster_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_RuleTypeMaster_descriptor,
