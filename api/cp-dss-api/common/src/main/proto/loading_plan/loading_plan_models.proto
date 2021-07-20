@@ -386,6 +386,10 @@ message LoadingInfoSaveResponse {
 message LoadingPlanSaveRequest {
   int64 loadingInfoId = 1;
   repeated LoadingSequence loadingSequences = 2;
+  repeated LoadingPlanTankDetails portLoadingPlanStowageDetails = 3;
+  repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
+  repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
+  repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
 }
 
 message LoadingSequence {
@@ -401,33 +405,37 @@ message LoadingSequence {
   repeated LoadingRate loadingRates = 10;
   repeated DeBallastingRate deBallastingRates = 11;
   repeated LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;
+  string cargoLoadingRate1 = 13;
+  string cargoLoadingRate2 = 14;
 }
 
 message LoadingPlanPortWiseDetails {
   repeated DeBallastingRate deballastingRates = 1;
   repeated LoadingPlanTankDetails loadingPlanBallastDetails = 2;
   repeated LoadingPlanTankDetails loadingPlanRobDetails = 3;
-  repeated LoadingPlanStabilityParameters loadingPlanStabilityParameters = 4;
-  repeated LoadingPlanStowageDetails loadingPlanStowageDetails = 5;
+  LoadingPlanStabilityParameters loadingPlanStabilityParameters = 4;
+  repeated LoadingPlanTankDetails loadingPlanStowageDetails = 5;
   int32 time = 6;
-}
-
-message LoadingPlanStowageDetails {
-  string api = 1;
-  int64 cargoNominationId = 2;
-  string quantity = 3;
-  int64 tankId = 4;
-  string temperature = 5;
 }
 
 message LoadingPlanStabilityParameters {
   string draft = 1;
   string trim = 2;
+  string bm = 3;
+  string sf = 4;
+  int32 conditionType = 5;
 }
 
 message LoadingPlanTankDetails {
-  string quantity = 1;
-  int64 tankId = 2;
+  string api = 1;
+  int64 cargoNominationId = 2;
+  string quantity = 3;
+  int64 tankId = 4;
+  string temperature = 5;
+  string ullage = 6;
+  string quantityM3 = 7;
+  string sounding = 8;
+  int32 conditionType = 9;
 }
 
 message DeBallastingRate {

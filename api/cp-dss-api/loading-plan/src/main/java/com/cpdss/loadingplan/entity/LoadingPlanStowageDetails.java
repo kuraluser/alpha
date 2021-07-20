@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -36,13 +37,19 @@ public class LoadingPlanStowageDetails extends EntityDoc {
   private Long cargoNominationId;
 
   @Column(name = "quantity")
-  private String quantity;
+  private BigDecimal quantity;
+
+  @Column(name = "sounding")
+  private BigDecimal ullage;
+
+  @Column(name = "quantity_m3")
+  private BigDecimal quantityM3;
 
   @Column(name = "api")
-  private String api;
+  private BigDecimal api;
 
   @Column(name = "temperature")
-  private String temperature;
+  private BigDecimal temperature;
 
   @Column(name = "is_active")
   private Boolean isActive;

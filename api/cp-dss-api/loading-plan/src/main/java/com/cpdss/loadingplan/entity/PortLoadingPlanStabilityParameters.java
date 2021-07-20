@@ -14,34 +14,40 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "loading_plan_stability_parameters")
+@Table(name = "port_loading_plan_stowage_details")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoadingPlanStabilityParameters extends EntityDoc {
+public class PortLoadingPlanStabilityParameters extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
   @ManyToOne
-  @JoinColumn(
-      name = "loading_plan_portwise_details_xid",
-      referencedColumnName = "id",
-      nullable = true)
-  private LoadingPlanPortWiseDetails loadingPlanPortWiseDetails;
+  @JoinColumn(name = "loading_information_xid", referencedColumnName = "id")
+  private LoadingInformation loadingInformation;
 
-  @Column(name = "trim")
-  private BigDecimal trim;
+  @Column(name = "port_xid")
+  private Long portXId;
+
+  @Column(name = "port_rotation_xid")
+  private Long portRotationXId;
 
   @Column(name = "draft")
   private BigDecimal draft;
 
-  @Column(name = "bm")
-  private BigDecimal bm;
+  @Column(name = "shearing_force")
+  private BigDecimal shearingForce;
 
-  @Column(name = "sf")
-  private BigDecimal sf;
+  @Column(name = "bending_moment")
+  private BigDecimal bendingMoment;
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "arrival_departutre")
+  private Integer conditionType;
+
+  @Column(name = "actual_planned")
+  private Integer valueType;
 }

@@ -8,8 +8,9 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStowageDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -18,6 +19,7 @@ import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
 import com.cpdss.loadingplan.entity.BallastValve;
+import com.cpdss.loadingplan.entity.CargoLoadingRate;
 import com.cpdss.loadingplan.entity.CargoValve;
 import com.cpdss.loadingplan.entity.DeballastingRate;
 import com.cpdss.loadingplan.entity.LoadingInformation;
@@ -25,7 +27,12 @@ import com.cpdss.loadingplan.entity.LoadingInformationAlgoStatus;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BallastValveRepository;
+import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
 import com.cpdss.loadingplan.repository.CargoValveRepository;
 import com.cpdss.loadingplan.repository.DeballastingRateRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationAlgoStatusRepository;
@@ -34,8 +41,13 @@ import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -45,10 +57,12 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
+@Transactional
 public class LoadingPlanAlgoService {
 
   @Value(value = "${algo.planGenerationUrl}")
@@ -68,6 +82,12 @@ public class LoadingPlanAlgoService {
   @Autowired LoadingPlanBallastDetailsRepository loadingPlanBallastDetailsRepository;
   @Autowired LoadingPlanRobDetailsRepository loadingPlanRobDetailsRepository;
   @Autowired LoadingPlanStowageDetailsRepository loadingPlanStowageDetailsRepository;
+  @Autowired LoadingPlanStabilityParametersRepository loadingPlanStabilityParametersRepository;
+  @Autowired CargoLoadingRateRepository cargoLoadingRateRepository;
+  @Autowired PortLoadingPlanBallastDetailsRepository portBallastDetailsRepository;
+  @Autowired PortLoadingPlanRobDetailsRepository portRobDetailsRepository;
+  @Autowired PortLoadingPlanStabilityParametersRepository portStabilityParamsRepository;
+  @Autowired PortLoadingPlanStowageDetailsRepository portStowageDetailsRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
@@ -163,7 +183,14 @@ public class LoadingPlanAlgoService {
     }
   }
 
-  public void saveLoadingPlan(LoadingPlanSaveRequest request) throws GenericServiceException {
+  /**
+   * Saves Loading sequence and Plan
+   *
+   * @param request
+   * @throws GenericServiceException
+   */
+  public void saveLoadingSequenceAndPlan(LoadingPlanSaveRequest request)
+      throws GenericServiceException {
     log.info(
         "Saving Loading plan and sequence of loading information {}", request.getLoadingInfoId());
 
@@ -176,15 +203,156 @@ public class LoadingPlanAlgoService {
           HttpStatusCode.BAD_REQUEST);
     }
 
+    List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences =
+        loadingSequenceRepository.findByLoadingInformationAndIsActive(loadingInfoOpt.get(), true);
+    // Saving Loading Sequence
     request.getLoadingSequencesList().stream()
         .forEach(
             sequence -> {
               saveLoadingSequence(sequence, loadingInfoOpt.get());
             });
+
+    log.info("Deleting Loading Sequence of LoadingInformation {}", request.getLoadingInfoId());
+    deleteLoadingSequences(oldLoadingSequences);
+
+    List<PortLoadingPlanStabilityParameters> oldStabilityParams =
+        portStabilityParamsRepository.findByLoadingInformationAndIsActive(
+            loadingInfoOpt.get(), true);
+    List<PortLoadingPlanStowageDetails> oldStowageDetails =
+        portStowageDetailsRepository.findByLoadingInformationAndIsActive(
+            loadingInfoOpt.get(), true);
+    List<PortLoadingPlanBallastDetails> oldBallastDetails =
+        portBallastDetailsRepository.findByLoadingInformationAndIsActive(
+            loadingInfoOpt.get(), true);
+    List<PortLoadingPlanRobDetails> oldRobDetails =
+        portRobDetailsRepository.findByLoadingInformationAndIsActive(loadingInfoOpt.get(), true);
+    // Saving Loading Plan
+    saveLoadingPlan(request, loadingInfoOpt.get());
+
+    log.info("Deleting Loading Plan of LoadingInformation {}", request.getLoadingInfoId());
+    deleteLoadingPlan(oldStowageDetails, oldBallastDetails, oldRobDetails, oldStabilityParams);
   }
 
+  private void deleteLoadingPlan(
+      List<PortLoadingPlanStowageDetails> oldStowageDetails,
+      List<PortLoadingPlanBallastDetails> oldBallastDetails,
+      List<PortLoadingPlanRobDetails> oldRobDetails,
+      List<PortLoadingPlanStabilityParameters> oldStabilityParams) {
+
+    oldBallastDetails.forEach(
+        ballast -> {
+          log.info("Deleting Port Loading Plan Ballast {}", ballast.getId());
+          portBallastDetailsRepository.deleteById(ballast.getId());
+        });
+
+    oldRobDetails.forEach(
+        rob -> {
+          log.info("Deleting Port Loading Plan ROB {}", rob.getId());
+          portRobDetailsRepository.deleteById(rob.getId());
+        });
+
+    oldStabilityParams.forEach(
+        params -> {
+          log.info("Deleting Port Loading Plan Stability Params {}", params.getId());
+          portStabilityParamsRepository.deleteById(params.getId());
+        });
+
+    oldStowageDetails.forEach(
+        stowage -> {
+          log.info("Deleting Port Loading Plan Stowage {}", stowage.getId());
+          portStowageDetailsRepository.deleteById(stowage.getId());
+        });
+  }
+
+  private void deleteLoadingSequences(
+      List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences) {
+    oldLoadingSequences.forEach(
+        loadingSequence -> {
+          log.info("Deleting Loading Sequence {}", loadingSequence.getId());
+          loadingSequenceRepository.deleteById(loadingSequence.getId());
+        });
+  }
+
+  private void saveLoadingPlan(
+      LoadingPlanSaveRequest request, LoadingInformation loadingInformation) {
+    savePortBallastDetails(loadingInformation, request.getPortLoadingPlanBallastDetailsList());
+    savePortRobDetails(loadingInformation, request.getPortLoadingPlanRobDetailsList());
+    savePortStabilityParams(
+        loadingInformation, request.getPortLoadingPlanStabilityParametersList());
+    savePortStowageDetails(loadingInformation, request.getPortLoadingPlanStowageDetailsList());
+  }
+
+  private void savePortStowageDetails(
+      LoadingInformation loadingInformation,
+      List<LoadingPlanTankDetails> portLoadingPlanStowageDetailsList) {
+    log.info(
+        "Saving Loading Plan Stowage Details for LoadingInformation {}, PortRotation",
+        loadingInformation.getId(),
+        loadingInformation.getPortRotationXId());
+    portLoadingPlanStowageDetailsList.forEach(
+        stowage -> {
+          PortLoadingPlanStowageDetails stowageDetails = new PortLoadingPlanStowageDetails();
+          loadingPlanBuilderService.buildPortStowage(loadingInformation, stowageDetails, stowage);
+          portStowageDetailsRepository.save(stowageDetails);
+        });
+  }
+
+  private void savePortStabilityParams(
+      LoadingInformation loadingInformation,
+      List<LoadingPlanStabilityParameters> portLoadingPlanStabilityParametersList) {
+    log.info(
+        "Saving Loading Plan Stability Parameters for LoadingInformation {}, PortRotation",
+        loadingInformation.getId(),
+        loadingInformation.getPortRotationXId());
+    portLoadingPlanStabilityParametersList.forEach(
+        params -> {
+          PortLoadingPlanStabilityParameters stabilityParams =
+              new PortLoadingPlanStabilityParameters();
+          loadingPlanBuilderService.buildPortStabilityParams(
+              loadingInformation, stabilityParams, params);
+          portStabilityParamsRepository.save(stabilityParams);
+        });
+  }
+
+  private void savePortRobDetails(
+      LoadingInformation loadingInformation,
+      List<LoadingPlanTankDetails> portLoadingPlanRobDetailsList) {
+    log.info(
+        "Saving Loading Plan ROB Details for LoadingInformation {}, PortRotation",
+        loadingInformation.getId(),
+        loadingInformation.getPortRotationXId());
+    portLoadingPlanRobDetailsList.forEach(
+        rob -> {
+          PortLoadingPlanRobDetails robDetails = new PortLoadingPlanRobDetails();
+          loadingPlanBuilderService.buildPortRob(loadingInformation, robDetails, rob);
+          portRobDetailsRepository.save(robDetails);
+        });
+  }
+
+  private void savePortBallastDetails(
+      LoadingInformation loadingInformation,
+      List<LoadingPlanTankDetails> portLoadingPlanBallastDetailsList) {
+    log.info(
+        "Saving Loading Plan Ballast Details for LoadingInformation {}, PortRotation",
+        loadingInformation.getId(),
+        loadingInformation.getPortRotationXId());
+    portLoadingPlanBallastDetailsList.forEach(
+        ballast -> {
+          PortLoadingPlanBallastDetails ballastDetails = new PortLoadingPlanBallastDetails();
+          loadingPlanBuilderService.buildPortBallast(loadingInformation, ballastDetails, ballast);
+          portBallastDetailsRepository.save(ballastDetails);
+        });
+  }
+
+  /**
+   * Saves loading sequence
+   *
+   * @param sequence
+   * @param loadingInformation
+   */
   private void saveLoadingSequence(
       LoadingSequence sequence, LoadingInformation loadingInformation) {
+    log.info("Saving Loading sequence of loading information {}", loadingInformation.getId());
     com.cpdss.loadingplan.entity.LoadingSequence loadingSequence =
         new com.cpdss.loadingplan.entity.LoadingSequence();
     loadingPlanBuilderService.buildLoadingSequence(loadingSequence, sequence, loadingInformation);
@@ -196,12 +364,27 @@ public class LoadingPlanAlgoService {
     saveDeBallastingRates(savedLoadingSequence, sequence.getDeBallastingRatesList());
     saveLoadingPlanPortWiseDetails(
         savedLoadingSequence, sequence.getLoadingPlanPortWiseDetailsList());
-    sequence.getLoadingRatesList();
+    saveCargoLoadingRates(savedLoadingSequence, sequence.getLoadingRatesList());
+  }
+
+  private void saveCargoLoadingRates(
+      com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
+      List<LoadingRate> loadingRatesList) {
+    log.info("Saving Cargo Loading Rates for Loading Sequence {}", loadingSequence.getId());
+    loadingRatesList.forEach(
+        loadingRate -> {
+          CargoLoadingRate cargoLoadingRate = new CargoLoadingRate();
+          loadingPlanBuilderService.buildCargoLoadingRate(
+              loadingSequence, cargoLoadingRate, loadingRate);
+          cargoLoadingRateRepository.save(cargoLoadingRate);
+        });
   }
 
   private void saveLoadingPlanPortWiseDetails(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
       List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList) {
+    log.info(
+        "Saving Loading Plan PortWise Details for Loading Sequence {}", loadingSequence.getId());
     loadingPlanPortWiseDetailsList.forEach(
         details -> {
           com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails portWiseDetails =
@@ -216,12 +399,30 @@ public class LoadingPlanAlgoService {
           saveLoadingPlanRobDetails(savedPortWiseDetails, details.getLoadingPlanRobDetailsList());
           saveLoadingPlanStowageDetails(
               savedPortWiseDetails, details.getLoadingPlanStowageDetailsList());
+          saveLoadingPlanStabilityParameters(
+              savedPortWiseDetails, details.getLoadingPlanStabilityParameters());
         });
+  }
+
+  private void saveLoadingPlanStabilityParameters(
+      com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails loadingPlanPortWiseDetails,
+      LoadingPlanStabilityParameters loadingPlanStabilityParameters) {
+    log.info(
+        "Saving Stability Parameters for LoadingPlanPortWiseDetails {}",
+        loadingPlanPortWiseDetails.getId());
+    com.cpdss.loadingplan.entity.LoadingPlanStabilityParameters parameters =
+        new com.cpdss.loadingplan.entity.LoadingPlanStabilityParameters();
+    loadingPlanBuilderService.buildStabilityParameters(
+        loadingPlanPortWiseDetails, parameters, loadingPlanStabilityParameters);
+    loadingPlanStabilityParametersRepository.save(parameters);
   }
 
   private void saveLoadingPlanStowageDetails(
       com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails loadingPlanPortWiseDetails,
-      List<LoadingPlanStowageDetails> loadingPlanStowageDetailsList) {
+      List<LoadingPlanTankDetails> loadingPlanStowageDetailsList) {
+    log.info(
+        "Saving Loading Plan Stowage Details for LoadingPlanPortWiseDetails {}",
+        loadingPlanPortWiseDetails.getId());
     loadingPlanStowageDetailsList.forEach(
         stowage -> {
           com.cpdss.loadingplan.entity.LoadingPlanStowageDetails stowageDetails =
@@ -235,6 +436,9 @@ public class LoadingPlanAlgoService {
   private void saveLoadingPlanRobDetails(
       com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails loadingPlanPortWiseDetails,
       List<LoadingPlanTankDetails> loadingPlanRobDetailsList) {
+    log.info(
+        "Saving Loading Plan ROB Details for LoadingPlanPortWiseDetails {}",
+        loadingPlanPortWiseDetails.getId());
     loadingPlanRobDetailsList.forEach(
         rob -> {
           LoadingPlanRobDetails robDetails = new LoadingPlanRobDetails();
@@ -247,6 +451,9 @@ public class LoadingPlanAlgoService {
   private void saveLoadingPlanBallastDetails(
       com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails loadingPlanPortWiseDetails,
       List<LoadingPlanTankDetails> loadingPlanBallastDetailsList) {
+    log.info(
+        "Saving Loading Plan Ballast Details for LoadingPlanPortWiseDetails {}",
+        loadingPlanPortWiseDetails.getId());
     loadingPlanBallastDetailsList.forEach(
         ballast -> {
           LoadingPlanBallastDetails ballastDetails = new LoadingPlanBallastDetails();
@@ -259,6 +466,9 @@ public class LoadingPlanAlgoService {
   private void saveDeBallastingRates(
       com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails loadingPlanPortWiseDetails,
       List<DeBallastingRate> deballastingRatesList) {
+    log.info(
+        "Saving DeBallastingRates for LoadingPlanPortWiseDetails {}",
+        loadingPlanPortWiseDetails.getId());
     deballastingRatesList.forEach(
         rate -> {
           DeballastingRate deballastingRate = new DeballastingRate();
@@ -271,6 +481,7 @@ public class LoadingPlanAlgoService {
   private void saveDeBallastingRates(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
       List<DeBallastingRate> deBallastingRatesList) {
+    log.info("Saving DeBallastingRates for LoadingSequence {}", loadingSequence.getId());
     deBallastingRatesList.forEach(
         rate -> {
           DeballastingRate deballastingRate = new DeballastingRate();
@@ -281,6 +492,7 @@ public class LoadingPlanAlgoService {
 
   private void saveCargoValves(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence, List<Valve> cargoValvesList) {
+    log.info("Saving CargoValves for LoadingSequence {}", loadingSequence.getId());
     cargoValvesList.forEach(
         valve -> {
           CargoValve cargoValve = new CargoValve();
@@ -291,6 +503,7 @@ public class LoadingPlanAlgoService {
 
   private void saveBallastValves(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence, List<Valve> ballastValvesList) {
+    log.info("Saving BallastValves for LoadingSequence {}", loadingSequence.getId());
     ballastValvesList.forEach(
         valve -> {
           BallastValve ballastValve = new BallastValve();

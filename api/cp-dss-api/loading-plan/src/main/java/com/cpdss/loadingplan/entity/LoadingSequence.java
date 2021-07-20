@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +29,7 @@ public class LoadingSequence extends EntityDoc {
   private Long portXId;
 
   @Column(name = "cargo_nomination_xid")
-  private Long cargoNominationId;
+  private Long cargoNominationXId;
 
   @Column(name = "sequence_number")
   private Integer sequenceNumber;
@@ -66,4 +67,10 @@ public class LoadingSequence extends EntityDoc {
 
   @OneToMany(mappedBy = "loadingSequence")
   private Set<DeballastingRate> deballastingRates;
+
+  @Column(name = "cargo_loading_rate_1")
+  private BigDecimal cargoLoadingRate1;
+
+  @Column(name = "cargo_loading_rate_2")
+  private BigDecimal cargoLoadingRate2;
 }

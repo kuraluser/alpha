@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -13,34 +14,34 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "ballast_valves")
+@Table(name = "ballast_operation")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BallastValve extends EntityDoc {
+public class BallastOperation extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
   @ManyToOne
-  @JoinColumn(name = "loading_sequence_xid", referencedColumnName = "id")
+  @JoinColumn(name = "loading_sequences_xid", referencedColumnName = "id", nullable = true)
   private LoadingSequence loadingSequence;
 
-  @Column(name = "time")
-  private Integer time;
+  @Column(name = "time_start")
+  private Integer startTime;
 
-  @Column(name = "operation")
-  private String operation;
+  @Column(name = "time_end")
+  private Integer endTime;
 
-  @Column(name = "valve_code")
-  private String valveCode;
+  @Column(name = "pump_xid")
+  private Long pumpXId;
 
-  @Column(name = "valve_xid")
-  private Long valveXId;
+  @Column(name = "pump_name")
+  private String pumpName;
 
-  @Column(name = "valve_type")
-  private String valveType;
+  @Column(name = "rate_m3_hr")
+  private BigDecimal rate;
 
-  @Column(name = "is_active")
-  private Boolean isActive;
+  @Column(name = "quantity_m3")
+  private BigDecimal volume;
 }

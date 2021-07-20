@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -33,7 +34,13 @@ public class LoadingPlanBallastDetails extends EntityDoc {
   private Long tankXId;
 
   @Column(name = "quantity")
-  private String quantity;
+  private BigDecimal quantity;
+
+  @Column(name = "sounding")
+  private BigDecimal sounding;
+
+  @Column(name = "quantity_m3")
+  private BigDecimal quantityM3;
 
   @Column(name = "is_active")
   private Boolean isActive;

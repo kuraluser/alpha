@@ -38,7 +38,7 @@ public class CargoValve extends EntityDoc {
   @Column(name = "valve_xid")
   private Long valveXId;
 
-  @Column(name = "valve_typ")
+  @Column(name = "valve_type")
   private String valveType;
 
   @Column(name = "is_active")
