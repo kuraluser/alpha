@@ -43,15 +43,17 @@ public final class LoadingPlanServiceOuterClass {
           + "us\022\022.AlgoStatusRequest\032\020.AlgoStatusReply"
           + "\"\000\022A\n\023GenerateLoadingPlan\022\027.LoadingInfoA"
           + "lgoRequest\032\017.ResponseStatus\"\0002\033\n\031Loading"
-          + "InstructionService2\376\001\n\022LoadingPlanServic"
+          + "InstructionService2\307\002\n\022LoadingPlanServic"
           + "e\022N\n\032LoadingPlanSynchronization\022\027.Loadin"
           + "gPlanSyncDetails\032\025.LoadingPlanSyncReply\""
           + "\000\022F\n\017SaveLoadingPlan\022\027.LoadingPlanSaveRe"
           + "quest\032\030.LoadingPlanSaveResponse\"\000\022P\n\034Get"
           + "OrSaveRulesForLoadingPlan\022\027.LoadingPlanR"
-          + "uleRequest\032\025.LoadingPlanRuleReply\"\000B+\n\'c"
-          + "om.cpdss.common.generated.loading_planP\000"
-          + "b\006proto3"
+          + "uleRequest\032\025.LoadingPlanRuleReply\"\000\022G\n\023G"
+          + "etLoadingSequences\022\027.LoadingSequenceRequ"
+          + "est\032\025.LoadingSequenceReply\"\000B+\n\'com.cpds"
+          + "s.common.generated.loading_planP\000b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

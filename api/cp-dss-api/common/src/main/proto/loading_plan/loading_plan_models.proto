@@ -452,7 +452,7 @@ message LoadingPlanTankDetails {
 }
 
 message DeBallastingRate {
-  string loadingRate = 1;
+  string deBallastingRate = 1;
   int64 tankId = 2;
   int32 time = 3;
 }
@@ -474,3 +474,11 @@ message LoadingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
 }
 
+message LoadingSequenceRequest {
+  int64 loadingInfoId = 1;
+}
+
+message LoadingSequenceReply {
+  repeated LoadingSequence loadingSequences = 1;
+  ResponseStatus responseStatus = 2;
+}

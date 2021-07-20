@@ -64801,17 +64801,17 @@ public final class LoadingPlanModels {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string loadingRate = 1;</code>
+     * <code>string deBallastingRate = 1;</code>
      *
-     * @return The loadingRate.
+     * @return The deBallastingRate.
      */
-    java.lang.String getLoadingRate();
+    java.lang.String getDeBallastingRate();
     /**
-     * <code>string loadingRate = 1;</code>
+     * <code>string deBallastingRate = 1;</code>
      *
-     * @return The bytes for loadingRate.
+     * @return The bytes for deBallastingRate.
      */
-    com.google.protobuf.ByteString getLoadingRateBytes();
+    com.google.protobuf.ByteString getDeBallastingRateBytes();
 
     /**
      * <code>int64 tankId = 2;</code>
@@ -64839,7 +64839,7 @@ public final class LoadingPlanModels {
     }
 
     private DeBallastingRate() {
-      loadingRate_ = "";
+      deBallastingRate_ = "";
     }
 
     @java.lang.Override
@@ -64875,7 +64875,7 @@ public final class LoadingPlanModels {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                loadingRate_ = s;
+                deBallastingRate_ = s;
                 break;
               }
             case 16:
@@ -64923,35 +64923,35 @@ public final class LoadingPlanModels {
                   .class);
     }
 
-    public static final int LOADINGRATE_FIELD_NUMBER = 1;
-    private volatile java.lang.Object loadingRate_;
+    public static final int DEBALLASTINGRATE_FIELD_NUMBER = 1;
+    private volatile java.lang.Object deBallastingRate_;
     /**
-     * <code>string loadingRate = 1;</code>
+     * <code>string deBallastingRate = 1;</code>
      *
-     * @return The loadingRate.
+     * @return The deBallastingRate.
      */
-    public java.lang.String getLoadingRate() {
-      java.lang.Object ref = loadingRate_;
+    public java.lang.String getDeBallastingRate() {
+      java.lang.Object ref = deBallastingRate_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        loadingRate_ = s;
+        deBallastingRate_ = s;
         return s;
       }
     }
     /**
-     * <code>string loadingRate = 1;</code>
+     * <code>string deBallastingRate = 1;</code>
      *
-     * @return The bytes for loadingRate.
+     * @return The bytes for deBallastingRate.
      */
-    public com.google.protobuf.ByteString getLoadingRateBytes() {
-      java.lang.Object ref = loadingRate_;
+    public com.google.protobuf.ByteString getDeBallastingRateBytes() {
+      java.lang.Object ref = deBallastingRate_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        loadingRate_ = b;
+        deBallastingRate_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -64994,8 +64994,8 @@ public final class LoadingPlanModels {
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-      if (!getLoadingRateBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, loadingRate_);
+      if (!getDeBallastingRateBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, deBallastingRate_);
       }
       if (tankId_ != 0L) {
         output.writeInt64(2, tankId_);
@@ -65012,8 +65012,8 @@ public final class LoadingPlanModels {
       if (size != -1) return size;
 
       size = 0;
-      if (!getLoadingRateBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, loadingRate_);
+      if (!getDeBallastingRateBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, deBallastingRate_);
       }
       if (tankId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, tankId_);
@@ -65038,7 +65038,7 @@ public final class LoadingPlanModels {
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate other =
           (com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate) obj;
 
-      if (!getLoadingRate().equals(other.getLoadingRate())) return false;
+      if (!getDeBallastingRate().equals(other.getDeBallastingRate())) return false;
       if (getTankId() != other.getTankId()) return false;
       if (getTime() != other.getTime()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
@@ -65052,8 +65052,8 @@ public final class LoadingPlanModels {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + LOADINGRATE_FIELD_NUMBER;
-      hash = (53 * hash) + getLoadingRate().hashCode();
+      hash = (37 * hash) + DEBALLASTINGRATE_FIELD_NUMBER;
+      hash = (53 * hash) + getDeBallastingRate().hashCode();
       hash = (37 * hash) + TANKID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankId());
       hash = (37 * hash) + TIME_FIELD_NUMBER;
@@ -65206,7 +65206,7 @@ public final class LoadingPlanModels {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        loadingRate_ = "";
+        deBallastingRate_ = "";
 
         tankId_ = 0L;
 
@@ -65243,7 +65243,7 @@ public final class LoadingPlanModels {
           buildPartial() {
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate result =
             new com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate(this);
-        result.loadingRate_ = loadingRate_;
+        result.deBallastingRate_ = deBallastingRate_;
         result.tankId_ = tankId_;
         result.time_ = time_;
         onBuilt();
@@ -65302,8 +65302,8 @@ public final class LoadingPlanModels {
         if (other
             == com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate
                 .getDefaultInstance()) return this;
-        if (!other.getLoadingRate().isEmpty()) {
-          loadingRate_ = other.loadingRate_;
+        if (!other.getDeBallastingRate().isEmpty()) {
+          deBallastingRate_ = other.deBallastingRate_;
           onChanged();
         }
         if (other.getTankId() != 0L) {
@@ -65344,78 +65344,78 @@ public final class LoadingPlanModels {
         return this;
       }
 
-      private java.lang.Object loadingRate_ = "";
+      private java.lang.Object deBallastingRate_ = "";
       /**
-       * <code>string loadingRate = 1;</code>
+       * <code>string deBallastingRate = 1;</code>
        *
-       * @return The loadingRate.
+       * @return The deBallastingRate.
        */
-      public java.lang.String getLoadingRate() {
-        java.lang.Object ref = loadingRate_;
+      public java.lang.String getDeBallastingRate() {
+        java.lang.Object ref = deBallastingRate_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          loadingRate_ = s;
+          deBallastingRate_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string loadingRate = 1;</code>
+       * <code>string deBallastingRate = 1;</code>
        *
-       * @return The bytes for loadingRate.
+       * @return The bytes for deBallastingRate.
        */
-      public com.google.protobuf.ByteString getLoadingRateBytes() {
-        java.lang.Object ref = loadingRate_;
+      public com.google.protobuf.ByteString getDeBallastingRateBytes() {
+        java.lang.Object ref = deBallastingRate_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          loadingRate_ = b;
+          deBallastingRate_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string loadingRate = 1;</code>
+       * <code>string deBallastingRate = 1;</code>
        *
-       * @param value The loadingRate to set.
+       * @param value The deBallastingRate to set.
        * @return This builder for chaining.
        */
-      public Builder setLoadingRate(java.lang.String value) {
+      public Builder setDeBallastingRate(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        loadingRate_ = value;
+        deBallastingRate_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string loadingRate = 1;</code>
+       * <code>string deBallastingRate = 1;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearLoadingRate() {
+      public Builder clearDeBallastingRate() {
 
-        loadingRate_ = getDefaultInstance().getLoadingRate();
+        deBallastingRate_ = getDefaultInstance().getDeBallastingRate();
         onChanged();
         return this;
       }
       /**
-       * <code>string loadingRate = 1;</code>
+       * <code>string deBallastingRate = 1;</code>
        *
-       * @param value The bytes for loadingRate to set.
+       * @param value The bytes for deBallastingRate to set.
        * @return This builder for chaining.
        */
-      public Builder setLoadingRateBytes(com.google.protobuf.ByteString value) {
+      public Builder setDeBallastingRateBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        loadingRate_ = value;
+        deBallastingRate_ = value;
         onChanged();
         return this;
       }
@@ -67906,6 +67906,1581 @@ public final class LoadingPlanModels {
     }
   }
 
+  public interface LoadingSequenceRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:LoadingSequenceRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadingInfoId = 1;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    long getLoadingInfoId();
+  }
+  /** Protobuf type {@code LoadingSequenceRequest} */
+  public static final class LoadingSequenceRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:LoadingSequenceRequest)
+      LoadingSequenceRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use LoadingSequenceRequest.newBuilder() to construct.
+    private LoadingSequenceRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private LoadingSequenceRequest() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new LoadingSequenceRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private LoadingSequenceRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadingInfoId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_LoadingSequenceRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_LoadingSequenceRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                  .class,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                  .Builder.class);
+    }
+
+    public static final int LOADINGINFOID_FIELD_NUMBER = 1;
+    private long loadingInfoId_;
+    /**
+     * <code>int64 loadingInfoId = 1;</code>
+     *
+     * @return The loadingInfoId.
+     */
+    public long getLoadingInfoId() {
+      return loadingInfoId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadingInfoId_ != 0L) {
+        output.writeInt64(1, loadingInfoId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadingInfoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadingInfoId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest other =
+          (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest) obj;
+
+      if (getLoadingInfoId() != other.getLoadingInfoId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADINGINFOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadingInfoId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+            prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code LoadingSequenceRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:LoadingSequenceRequest)
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingSequenceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingSequenceRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                    .class,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                    .Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadingInfoId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingSequenceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+          build() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+          buildPartial() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest result =
+            new com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest(
+                this);
+        result.loadingInfoId_ = loadingInfoId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest) {
+          return mergeFrom(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest other) {
+        if (other
+            == com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                .getDefaultInstance()) return this;
+        if (other.getLoadingInfoId() != 0L) {
+          setLoadingInfoId(other.getLoadingInfoId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadingInfoId_;
+      /**
+       * <code>int64 loadingInfoId = 1;</code>
+       *
+       * @return The loadingInfoId.
+       */
+      public long getLoadingInfoId() {
+        return loadingInfoId_;
+      }
+      /**
+       * <code>int64 loadingInfoId = 1;</code>
+       *
+       * @param value The loadingInfoId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingInfoId(long value) {
+
+        loadingInfoId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadingInfoId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingInfoId() {
+
+        loadingInfoId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:LoadingSequenceRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadingSequenceRequest)
+    private static final com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .LoadingSequenceRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest();
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadingSequenceRequest> PARSER =
+        new com.google.protobuf.AbstractParser<LoadingSequenceRequest>() {
+          @java.lang.Override
+          public LoadingSequenceRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new LoadingSequenceRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<LoadingSequenceRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadingSequenceRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface LoadingSequenceReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:LoadingSequenceReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
+        getLoadingSequencesList();
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence getLoadingSequences(
+        int index);
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    int getLoadingSequencesCount();
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder>
+        getLoadingSequencesOrBuilderList();
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder
+        getLoadingSequencesOrBuilder(int index);
+
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /** Protobuf type {@code LoadingSequenceReply} */
+  public static final class LoadingSequenceReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:LoadingSequenceReply)
+      LoadingSequenceReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use LoadingSequenceReply.newBuilder() to construct.
+    private LoadingSequenceReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private LoadingSequenceReply() {
+      loadingSequences_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new LoadingSequenceReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private LoadingSequenceReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  loadingSequences_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingSequence>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                loadingSequences_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
+                            .parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 18:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          loadingSequences_ = java.util.Collections.unmodifiableList(loadingSequences_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_LoadingSequenceReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_LoadingSequenceReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply.class,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply.Builder
+                  .class);
+    }
+
+    public static final int LOADINGSEQUENCES_FIELD_NUMBER = 1;
+    private java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
+        loadingSequences_;
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
+        getLoadingSequencesList() {
+      return loadingSequences_;
+    }
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder>
+        getLoadingSequencesOrBuilderList() {
+      return loadingSequences_;
+    }
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    public int getLoadingSequencesCount() {
+      return loadingSequences_.size();
+    }
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
+        getLoadingSequences(int index) {
+      return loadingSequences_.get(index);
+    }
+    /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder
+        getLoadingSequencesOrBuilder(int index) {
+      return loadingSequences_.get(index);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 2;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      for (int i = 0; i < loadingSequences_.size(); i++) {
+        output.writeMessage(1, loadingSequences_.get(i));
+      }
+      if (responseStatus_ != null) {
+        output.writeMessage(2, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < loadingSequences_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(1, loadingSequences_.get(i));
+      }
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply other =
+          (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply) obj;
+
+      if (!getLoadingSequencesList().equals(other.getLoadingSequencesList())) return false;
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getLoadingSequencesCount() > 0) {
+        hash = (37 * hash) + LOADINGSEQUENCES_FIELD_NUMBER;
+        hash = (53 * hash) + getLoadingSequencesList().hashCode();
+      }
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code LoadingSequenceReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:LoadingSequenceReply)
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingSequenceReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingSequenceReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+                    .class,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+                    .Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getLoadingSequencesFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (loadingSequencesBuilder_ == null) {
+          loadingSequences_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          loadingSequencesBuilder_.clear();
+        }
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_LoadingSequenceReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+          build() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+          buildPartial() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply result =
+            new com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply(
+                this);
+        int from_bitField0_ = bitField0_;
+        if (loadingSequencesBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            loadingSequences_ = java.util.Collections.unmodifiableList(loadingSequences_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.loadingSequences_ = loadingSequences_;
+        } else {
+          result.loadingSequences_ = loadingSequencesBuilder_.build();
+        }
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply) {
+          return mergeFrom(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply other) {
+        if (other
+            == com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+                .getDefaultInstance()) return this;
+        if (loadingSequencesBuilder_ == null) {
+          if (!other.loadingSequences_.isEmpty()) {
+            if (loadingSequences_.isEmpty()) {
+              loadingSequences_ = other.loadingSequences_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureLoadingSequencesIsMutable();
+              loadingSequences_.addAll(other.loadingSequences_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.loadingSequences_.isEmpty()) {
+            if (loadingSequencesBuilder_.isEmpty()) {
+              loadingSequencesBuilder_.dispose();
+              loadingSequencesBuilder_ = null;
+              loadingSequences_ = other.loadingSequences_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              loadingSequencesBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getLoadingSequencesFieldBuilder()
+                      : null;
+            } else {
+              loadingSequencesBuilder_.addAllMessages(other.loadingSequences_);
+            }
+          }
+        }
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
+          loadingSequences_ = java.util.Collections.emptyList();
+
+      private void ensureLoadingSequencesIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          loadingSequences_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>(
+                  loadingSequences_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder>
+          loadingSequencesBuilder_;
+
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
+          getLoadingSequencesList() {
+        if (loadingSequencesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(loadingSequences_);
+        } else {
+          return loadingSequencesBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public int getLoadingSequencesCount() {
+        if (loadingSequencesBuilder_ == null) {
+          return loadingSequences_.size();
+        } else {
+          return loadingSequencesBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
+          getLoadingSequences(int index) {
+        if (loadingSequencesBuilder_ == null) {
+          return loadingSequences_.get(index);
+        } else {
+          return loadingSequencesBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder setLoadingSequences(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence value) {
+        if (loadingSequencesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadingSequencesIsMutable();
+          loadingSequences_.set(index, value);
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder setLoadingSequences(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+              builderForValue) {
+        if (loadingSequencesBuilder_ == null) {
+          ensureLoadingSequencesIsMutable();
+          loadingSequences_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder addLoadingSequences(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence value) {
+        if (loadingSequencesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadingSequencesIsMutable();
+          loadingSequences_.add(value);
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder addLoadingSequences(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence value) {
+        if (loadingSequencesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadingSequencesIsMutable();
+          loadingSequences_.add(index, value);
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder addLoadingSequences(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+              builderForValue) {
+        if (loadingSequencesBuilder_ == null) {
+          ensureLoadingSequencesIsMutable();
+          loadingSequences_.add(builderForValue.build());
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder addLoadingSequences(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+              builderForValue) {
+        if (loadingSequencesBuilder_ == null) {
+          ensureLoadingSequencesIsMutable();
+          loadingSequences_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder addAllLoadingSequences(
+          java.lang.Iterable<
+                  ? extends
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
+              values) {
+        if (loadingSequencesBuilder_ == null) {
+          ensureLoadingSequencesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, loadingSequences_);
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder clearLoadingSequences() {
+        if (loadingSequencesBuilder_ == null) {
+          loadingSequences_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public Builder removeLoadingSequences(int index) {
+        if (loadingSequencesBuilder_ == null) {
+          ensureLoadingSequencesIsMutable();
+          loadingSequences_.remove(index);
+          onChanged();
+        } else {
+          loadingSequencesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+          getLoadingSequencesBuilder(int index) {
+        return getLoadingSequencesFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder
+          getLoadingSequencesOrBuilder(int index) {
+        if (loadingSequencesBuilder_ == null) {
+          return loadingSequences_.get(index);
+        } else {
+          return loadingSequencesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingSequenceOrBuilder>
+          getLoadingSequencesOrBuilderList() {
+        if (loadingSequencesBuilder_ != null) {
+          return loadingSequencesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(loadingSequences_);
+        }
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+          addLoadingSequencesBuilder() {
+        return getLoadingSequencesFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+          addLoadingSequencesBuilder(int index) {
+        return getLoadingSequencesFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadingSequence loadingSequences = 1;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder>
+          getLoadingSequencesBuilderList() {
+        return getLoadingSequencesFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder>
+          getLoadingSequencesFieldBuilder() {
+        if (loadingSequencesBuilder_ == null) {
+          loadingSequencesBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence,
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder,
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingSequenceOrBuilder>(
+                  loadingSequences_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          loadingSequences_ = null;
+        }
+        return loadingSequencesBuilder_;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 2;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 2;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:LoadingSequenceReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadingSequenceReply)
+    private static final com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .LoadingSequenceReply
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply();
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadingSequenceReply> PARSER =
+        new com.google.protobuf.AbstractParser<LoadingSequenceReply>() {
+          @java.lang.Override
+          public LoadingSequenceReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new LoadingSequenceReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<LoadingSequenceReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadingSequenceReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadingInformationRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -68069,6 +69644,14 @@ public final class LoadingPlanModels {
       internal_static_LoadingPlanSaveResponse_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadingPlanSaveResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_LoadingSequenceRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadingSequenceRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_LoadingSequenceReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadingSequenceReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -68300,16 +69883,20 @@ public final class LoadingPlanModels {
           + "nId\030\002 \001(\003\022\020\n\010quantity\030\003 \001(\t\022\016\n\006tankId\030\004 "
           + "\001(\003\022\023\n\013temperature\030\005 \001(\t\022\016\n\006ullage\030\006 \001(\t"
           + "\022\022\n\nquantityM3\030\007 \001(\t\022\020\n\010sounding\030\010 \001(\t\022\025"
-          + "\n\rconditionType\030\t \001(\005\"E\n\020DeBallastingRat"
-          + "e\022\023\n\013loadingRate\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\014"
-          + "\n\004time\030\003 \001(\005\"2\n\013LoadingRate\022\023\n\013loadingRa"
-          + "te\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\"_\n\005Valve\022\021\n\tope"
-          + "ration\030\001 \001(\t\022\014\n\004time\030\002 \001(\005\022\021\n\tvalveCode\030"
-          + "\003 \001(\t\022\021\n\tvalveType\030\004 \001(\t\022\017\n\007valveId\030\005 \001("
-          + "\003\"B\n\027LoadingPlanSaveResponse\022\'\n\016response"
-          + "Status\030\001 \001(\0132\017.ResponseStatusB+\n\'com.cpd"
-          + "ss.common.generated.loading_planP\000b\006prot"
-          + "o3"
+          + "\n\rconditionType\030\t \001(\005\"J\n\020DeBallastingRat"
+          + "e\022\030\n\020deBallastingRate\030\001 \001(\t\022\016\n\006tankId\030\002 "
+          + "\001(\003\022\014\n\004time\030\003 \001(\005\"2\n\013LoadingRate\022\023\n\013load"
+          + "ingRate\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\"_\n\005Valve\022\021"
+          + "\n\toperation\030\001 \001(\t\022\014\n\004time\030\002 \001(\005\022\021\n\tvalve"
+          + "Code\030\003 \001(\t\022\021\n\tvalveType\030\004 \001(\t\022\017\n\007valveId"
+          + "\030\005 \001(\003\"B\n\027LoadingPlanSaveResponse\022\'\n\016res"
+          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\"/\n\026Lo"
+          + "adingSequenceRequest\022\025\n\rloadingInfoId\030\001 "
+          + "\001(\003\"k\n\024LoadingSequenceReply\022*\n\020loadingSe"
+          + "quences\030\001 \003(\0132\020.LoadingSequence\022\'\n\016respo"
+          + "nseStatus\030\002 \001(\0132\017.ResponseStatusB+\n\'com."
+          + "cpdss.common.generated.loading_planP\000b\006p"
+          + "roto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -68843,7 +70430,7 @@ public final class LoadingPlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DeBallastingRate_descriptor,
             new java.lang.String[] {
-              "LoadingRate", "TankId", "Time",
+              "DeBallastingRate", "TankId", "Time",
             });
     internal_static_LoadingRate_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_LoadingRate_fieldAccessorTable =
@@ -68865,6 +70452,20 @@ public final class LoadingPlanModels {
             internal_static_LoadingPlanSaveResponse_descriptor,
             new java.lang.String[] {
               "ResponseStatus",
+            });
+    internal_static_LoadingSequenceRequest_descriptor = getDescriptor().getMessageTypes().get(41);
+    internal_static_LoadingSequenceRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_LoadingSequenceRequest_descriptor,
+            new java.lang.String[] {
+              "LoadingInfoId",
+            });
+    internal_static_LoadingSequenceReply_descriptor = getDescriptor().getMessageTypes().get(42);
+    internal_static_LoadingSequenceReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_LoadingSequenceReply_descriptor,
+            new java.lang.String[] {
+              "LoadingSequences", "ResponseStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.LoadableStudy.getDescriptor();

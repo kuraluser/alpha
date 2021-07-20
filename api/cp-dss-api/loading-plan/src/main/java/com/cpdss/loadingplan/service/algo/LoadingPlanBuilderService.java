@@ -75,8 +75,10 @@ public class LoadingPlanBuilderService {
   private void populateDeBallastingRate(DeballastingRate deballastingRate, DeBallastingRate rate) {
     deballastingRate.setIsActive(true);
     deballastingRate.setTankXId(rate.getTankId());
-    deballastingRate.setLoadingRate(
-        StringUtils.isEmpty(rate.getLoadingRate()) ? null : new BigDecimal(rate.getLoadingRate()));
+    deballastingRate.setDeBallastingRate(
+        StringUtils.isEmpty(rate.getDeBallastingRate())
+            ? null
+            : new BigDecimal(rate.getDeBallastingRate()));
     deballastingRate.setTime(rate.getTime());
   }
 
@@ -254,6 +256,7 @@ public class LoadingPlanBuilderService {
     stowageDetails.setApi(
         StringUtils.isEmpty(stowage.getApi()) ? null : new BigDecimal(stowage.getApi()));
     stowageDetails.setConditionType(stowage.getConditionType());
+    stowageDetails.setCargoNominationXId(stowage.getCargoNominationId());
     stowageDetails.setUllage(
         StringUtils.isEmpty(stowage.getUllage()) ? null : new BigDecimal(stowage.getUllage()));
     stowageDetails.setIsActive(true);

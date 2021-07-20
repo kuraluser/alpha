@@ -39,7 +39,7 @@ public class LoadingPlanStowageDetails extends EntityDoc {
   @Column(name = "quantity")
   private BigDecimal quantity;
 
-  @Column(name = "sounding")
+  @Column(name = "ullage")
   private BigDecimal ullage;
 
   @Column(name = "quantity_m3")

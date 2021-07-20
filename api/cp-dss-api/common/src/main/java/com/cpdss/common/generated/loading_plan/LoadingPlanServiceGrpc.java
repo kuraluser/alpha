@@ -184,6 +184,60 @@ public final class LoadingPlanServiceGrpc {
     return getGetOrSaveRulesForLoadingPlanMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply>
+      getGetLoadingSequencesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadingSequences",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply>
+      getGetLoadingSequencesMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply>
+        getGetLoadingSequencesMethod;
+    if ((getGetLoadingSequencesMethod = LoadingPlanServiceGrpc.getGetLoadingSequencesMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getGetLoadingSequencesMethod = LoadingPlanServiceGrpc.getGetLoadingSequencesMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getGetLoadingSequencesMethod =
+              getGetLoadingSequencesMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingSequenceRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingSequenceReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadingSequences"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingSequenceRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingSequenceReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier("GetLoadingSequences"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadingSequencesMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -255,6 +309,15 @@ public final class LoadingPlanServiceGrpc {
       asyncUnimplementedUnaryCall(getGetOrSaveRulesForLoadingPlanMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadingSequences(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadingSequencesMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -283,6 +346,14 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingPlanRuleReply>(
                       this, METHODID_GET_OR_SAVE_RULES_FOR_LOADING_PLAN)))
+          .addMethod(
+              getGetLoadingSequencesMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingSequenceRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingSequenceReply>(this, METHODID_GET_LOADING_SEQUENCES)))
           .build();
     }
   }
@@ -335,6 +406,18 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadingSequences(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadingSequencesMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -375,6 +458,15 @@ public final class LoadingPlanServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetOrSaveRulesForLoadingPlanMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply
+        getLoadingSequences(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadingSequencesMethod(), getCallOptions(), request);
     }
   }
 
@@ -420,11 +512,22 @@ public final class LoadingPlanServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetOrSaveRulesForLoadingPlanMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply>
+        getLoadingSequences(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadingSequencesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
   private static final int METHODID_SAVE_LOADING_PLAN = 1;
   private static final int METHODID_GET_OR_SAVE_RULES_FOR_LOADING_PLAN = 2;
+  private static final int METHODID_GET_LOADING_SEQUENCES = 3;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -468,6 +571,15 @@ public final class LoadingPlanServiceGrpc {
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingPlanRuleReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_LOADING_SEQUENCES:
+          serviceImpl.getLoadingSequences(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingSequenceReply>)
                   responseObserver);
           break;
         default:
@@ -537,6 +649,7 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getLoadingPlanSynchronizationMethod())
                       .addMethod(getSaveLoadingPlanMethod())
                       .addMethod(getGetOrSaveRulesForLoadingPlanMethod())
+                      .addMethod(getGetLoadingSequencesMethod())
                       .build();
         }
       }
