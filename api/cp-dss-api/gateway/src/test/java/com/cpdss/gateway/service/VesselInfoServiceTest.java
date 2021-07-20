@@ -84,11 +84,11 @@ public class VesselInfoServiceTest {
         CalculationSheetTankGroup.newBuilder();
     StationValues.Builder stationValueBuilder = StationValues.newBuilder();
     InnerBulkHeadSF.Builder innerBulkHeadSFBuilder = InnerBulkHeadSF.newBuilder();
-    bMAndSFBuilder.addBendingMoment(bendingMomentBuilder);
-    bMAndSFBuilder.addShearingForce(shearingForceBuilder.build());
+    bMAndSFBuilder.addBendingMomentType1(bendingMomentBuilder);
+    bMAndSFBuilder.addShearingForceType1(shearingForceBuilder.build());
     bMAndSFBuilder.addBendingMomentType2(bendingMomentBuilder2);
     bMAndSFBuilder.addBendingMomentType4(bendingMomentBuilder4);
-    bMAndSFBuilder.addShearingForce(shearingForceBuilder.build());
+    bMAndSFBuilder.addShearingForceType1(shearingForceBuilder.build());
     bMAndSFBuilder.addShearingForceType2(shearingForceBuilder2.build());
     bMAndSFBuilder.addShearingForceType4(shearingForceBuilder4.build());
 
