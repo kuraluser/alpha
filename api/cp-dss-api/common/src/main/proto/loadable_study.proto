@@ -192,12 +192,15 @@ service LoadableStudyService {
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
+
+	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
 }
 
 service DischargeStudyOperationService {
   rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
   rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){}
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
+  rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
 }
 
 service PortInstructionService {
@@ -1426,4 +1429,39 @@ message LoadablePatternPortWiseDetailsJson {
 	string loadablePatternDetails = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadableStudyId = 3;
+}
+
+
+message LoadableStudyShoreResponse{
+		repeated LoadableStudyShore shoreList = 1;
+	  ResponseStatus responseStatus = 2;
+}
+
+message LoadableStudyShoreRequest{
+	int64 vesselId = 1;
+}
+
+message	LoadableStudyShore{
+	int64 id = 1;
+	string vesselName = 2;
+	int64 imoNo = 3;
+	string flagName = 4;
+	string atd = 5;
+	string eta = 6;
+	string voyageName = 7;
+	repeated VoyagePorts voyagePorts = 8;
+}
+
+message	VoyagePorts{
+	string portName =1;
+	string portType =2;
+	string portOrder =3;
+	string anchorage =4;
+	string iconUrl =5;
+	string ata =6;
+	string atd =7;
+	string etd =8;
+	string eta =9;
+	string lat =10;
+	string lon =11;
 }

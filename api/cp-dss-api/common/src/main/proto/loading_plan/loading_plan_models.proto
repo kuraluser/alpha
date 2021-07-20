@@ -139,6 +139,7 @@ message LoadingDelays{
   string duration = 4;
   int64 cargoId = 5;
   string quantity = 6; // was added in gateway
+  int64 cargoNominationId = 7;
 }
 
 // pure cargo details based on the port rotation
@@ -383,6 +384,18 @@ message LoadingInfoSaveResponse {
   ResponseStatus responseStatus = 6;
 }
 
+message LoadingPlanRuleRequest{
+  int64 vesselId = 1;
+  int64 sectionId = 2;
+  repeated RulePlans rulePlan = 3;
+  int64 loadingInfoId = 4;
+  bool isNoDefaultRule = 5;
+}
+
+message LoadingPlanRuleReply{
+  ResponseStatus responseStatus = 1;
+  repeated RulePlans rulePlan = 2;
+}
 message LoadingPlanSaveRequest {
   int64 loadingInfoId = 1;
   repeated LoadingSequence loadingSequences = 2;
@@ -460,3 +473,4 @@ message Valve {
 message LoadingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
 }
+

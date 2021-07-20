@@ -1,19 +1,56 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VOYAGE_STATUS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CLOSE_VOYAGE_STATUS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPEN_VOYAGE_STATUS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.START_VOYAGE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.STATUS_ACTIVE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.STATUS_CLOSE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.STATUS_CONFIRMED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VOYAGE_EXISTS;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.CargoInfo;
+import com.cpdss.common.generated.CargoInfoServiceGrpc;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoHistory;
-import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.entity.ApiTempHistory;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageHistory;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
+import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -215,12 +252,13 @@ public class VoyageService {
         .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
             request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
         .isEmpty()) {
-      builder.setResponseStatus(
-          LoadableStudy.StatusReply.newBuilder()
-              .setStatus(SUCCESS)
-              .setMessage(SUCCESS)
-              .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS)
-              .build());
+      builder
+          .setResponseStatus(
+              LoadableStudy.StatusReply.newBuilder()
+                  .setStatus(FAILED)
+                  .setMessage(VOYAGE_EXISTS)
+                  .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS))
+          .build();
     } else {
 
       Voyage voyage = new Voyage();

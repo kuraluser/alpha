@@ -2571,7 +2571,7 @@ statu: boolean;
       ],
       "stabilityConditions": {
         "list": 0,
-        "hogSag": 0,
+        "deflection": 0,
         "finalDraftFwd": 0,
         "finalDraftAft": 0,
         "finalDraftMid": 0,

@@ -152,7 +152,7 @@ export interface IBallastQuantities {
  */
 export interface IDraftCondition {
     list: number;
-    hogSag: number;
+    deflection: number;
     finalDraftFwd: number;
     finalDraftAft: number;
     finalDraftMid: number;

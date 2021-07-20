@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class CargoMachineryInUse {
 
-  private List<PumpType> pumpTypes;
-  private List<VesselPump> vesselPumps;
+  // private List<PumpType> pumpTypes;
+  // private List<VesselPump> vesselPumps;
   private List<LoadingMachinesInUse> loadingMachinesInUses;
 }

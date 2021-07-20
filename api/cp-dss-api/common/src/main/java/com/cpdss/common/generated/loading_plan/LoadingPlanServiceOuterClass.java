@@ -20,33 +20,38 @@ public final class LoadingPlanServiceOuterClass {
     java.lang.String[] descriptorData = {
       "\n\'loading_plan/loading_plan_service.prot"
           + "o\032\014common.proto\032&loading_plan/loading_pl"
-          + "an_models.proto2\240\006\n\031LoadingInformationSe"
-          + "rvice\022J\n\025GetLoadingInformation\022\032.Loading"
-          + "InformationRequest\032\023.LoadingInformation\""
-          + "\000\022I\n\026SaveLoadingInformation\022\023.LoadingInf"
-          + "ormation\032\030.LoadingInfoSaveResponse\"\000\022G\n\024"
-          + "SaveLoadingInfoRates\022\023.LoadingInformatio"
-          + "n\032\030.LoadingInfoSaveResponse\"\000\022H\n\025SaveLoa"
-          + "dingInfoBerths\022\023.LoadingInformation\032\030.Lo"
-          + "adingInfoSaveResponse\"\000\022K\n\030SaveLoadingIn"
-          + "foMachinery\022\023.LoadingInformation\032\030.Loadi"
-          + "ngInfoSaveResponse\"\000\022H\n\025SaveLoadingInfoD"
-          + "elays\022\023.LoadingInformation\032\030.LoadingInfo"
-          + "SaveResponse\"\000\022H\n\025SaveLoadingInfoStages\022"
-          + "\023.LoadingInformation\032\030.LoadingInfoSaveRe"
-          + "sponse\"\000\022j\n\034GetLoadigInformationByVoyage"
-          + "\022$.LoadingInformationSynopticalRequest\032\""
-          + ".LoadingInformationSynopticalReply\"\000\022I\n\014"
-          + "UpdateUllage\022\033.UpdateUllageLoadingReques"
-          + "t\032\032.UpdateUllageLoadingReplay\"\000\022A\n\023Gener"
-          + "ateLoadingPlan\022\027.LoadingInfoAlgoRequest\032"
-          + "\017.ResponseStatus\"\0002\033\n\031LoadingInstruction"
-          + "Service2\254\001\n\022LoadingPlanService\022N\n\032Loadin"
-          + "gPlanSynchronization\022\027.LoadingPlanSyncDe"
-          + "tails\032\025.LoadingPlanSyncReply\"\000\022F\n\017SaveLo"
-          + "adingPlan\022\027.LoadingPlanSaveRequest\032\030.Loa"
-          + "dingPlanSaveResponse\"\000B+\n\'com.cpdss.comm"
-          + "on.generated.loading_planP\000b\006proto3"
+          + "an_models.proto\032\024loadable_study.proto2\345\006"
+          + "\n\031LoadingInformationService\022J\n\025GetLoadin"
+          + "gInformation\022\032.LoadingInformationRequest"
+          + "\032\023.LoadingInformation\"\000\022I\n\026SaveLoadingIn"
+          + "formation\022\023.LoadingInformation\032\030.Loading"
+          + "InfoSaveResponse\"\000\022G\n\024SaveLoadingInfoRat"
+          + "es\022\023.LoadingInformation\032\030.LoadingInfoSav"
+          + "eResponse\"\000\022H\n\025SaveLoadingInfoBerths\022\023.L"
+          + "oadingInformation\032\030.LoadingInfoSaveRespo"
+          + "nse\"\000\022K\n\030SaveLoadingInfoMachinery\022\023.Load"
+          + "ingInformation\032\030.LoadingInfoSaveResponse"
+          + "\"\000\022H\n\025SaveLoadingInfoDelays\022\023.LoadingInf"
+          + "ormation\032\030.LoadingInfoSaveResponse\"\000\022H\n\025"
+          + "SaveLoadingInfoStages\022\023.LoadingInformati"
+          + "on\032\030.LoadingInfoSaveResponse\"\000\022j\n\034GetLoa"
+          + "digInformationByVoyage\022$.LoadingInformat"
+          + "ionSynopticalRequest\032\".LoadingInformatio"
+          + "nSynopticalReply\"\000\022I\n\014UpdateUllage\022\033.Upd"
+          + "ateUllageLoadingRequest\032\032.UpdateUllageLo"
+          + "adingReplay\"\000\022C\n\031SaveAlgoLoadingPlanStat"
+          + "us\022\022.AlgoStatusRequest\032\020.AlgoStatusReply"
+          + "\"\000\022A\n\023GenerateLoadingPlan\022\027.LoadingInfoA"
+          + "lgoRequest\032\017.ResponseStatus\"\0002\033\n\031Loading"
+          + "InstructionService2\376\001\n\022LoadingPlanServic"
+          + "e\022N\n\032LoadingPlanSynchronization\022\027.Loadin"
+          + "gPlanSyncDetails\032\025.LoadingPlanSyncReply\""
+          + "\000\022F\n\017SaveLoadingPlan\022\027.LoadingPlanSaveRe"
+          + "quest\032\030.LoadingPlanSaveResponse\"\000\022P\n\034Get"
+          + "OrSaveRulesForLoadingPlan\022\027.LoadingPlanR"
+          + "uleRequest\032\025.LoadingPlanRuleReply\"\000B+\n\'c"
+          + "om.cpdss.common.generated.loading_planP\000"
+          + "b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -54,9 +59,11 @@ public final class LoadingPlanServiceOuterClass {
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor(),
+              com.cpdss.common.generated.LoadableStudy.getDescriptor(),
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();
+    com.cpdss.common.generated.LoadableStudy.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

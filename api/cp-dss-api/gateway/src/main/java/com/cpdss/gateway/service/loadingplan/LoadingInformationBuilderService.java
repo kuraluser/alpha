@@ -244,6 +244,8 @@ public class LoadingInformationBuilderService {
           Optional.ofNullable(delay.getQuantity())
               .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
           Optional.ofNullable(delay.getReasonForDelayId()).ifPresent(builder::setReasonForDelayId);
+          Optional.ofNullable(delay.getCargoNominationId())
+              .ifPresent(builder::setCargoNominationId);
           delayList.add(builder.build());
         });
     return delayList;

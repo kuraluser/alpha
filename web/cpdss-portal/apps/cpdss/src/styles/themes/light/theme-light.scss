@@ -1405,3 +1405,6 @@ header{
 .sub-head-color{
   color: $text-secondary;
 }
+.p-checkbox-icon.pi-check:before{
+  border: solid $radio-btn;
+}

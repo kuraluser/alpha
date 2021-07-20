@@ -6,6 +6,8 @@ import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
@@ -366,6 +368,44 @@ public class LoadingInformationGrpcService
               .build());
     } catch (Exception e) {
       e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveAlgoLoadingPlanStatus(
+      AlgoStatusRequest request, StreamObserver<AlgoStatusReply> responseObserver) {
+    log.info("Inside saveAlgoLoadingPlanStatus in LP MS");
+    AlgoStatusReply.Builder builder = AlgoStatusReply.newBuilder();
+    try {
+
+      this.loadingPlanAlgoService.saveAlgoLoadingPlanStatus(request);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saveAlgoLoadingPlanStatus")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setStatus(FAILED)

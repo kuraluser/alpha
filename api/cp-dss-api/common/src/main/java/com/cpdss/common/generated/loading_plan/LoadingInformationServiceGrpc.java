@@ -536,6 +536,59 @@ public final class LoadingInformationServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+      getSaveAlgoLoadingPlanStatusMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveAlgoLoadingPlanStatus",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoStatusReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+      getSaveAlgoLoadingPlanStatusMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+        getSaveAlgoLoadingPlanStatusMethod;
+    if ((getSaveAlgoLoadingPlanStatusMethod =
+            LoadingInformationServiceGrpc.getSaveAlgoLoadingPlanStatusMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getSaveAlgoLoadingPlanStatusMethod =
+                LoadingInformationServiceGrpc.getSaveAlgoLoadingPlanStatusMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getSaveAlgoLoadingPlanStatusMethod =
+              getSaveAlgoLoadingPlanStatusMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveAlgoLoadingPlanStatus"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoStatusReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "SaveAlgoLoadingPlanStatus"))
+                      .build();
+        }
+      }
+    }
+    return getSaveAlgoLoadingPlanStatusMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest,
           com.cpdss.common.generated.Common.ResponseStatus>
       getGenerateLoadingPlanMethod;
@@ -757,6 +810,14 @@ public final class LoadingInformationServiceGrpc {
     }
 
     /** */
+    public void saveAlgoLoadingPlanStatus(
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveAlgoLoadingPlanStatusMethod(), responseObserver);
+    }
+
+    /** */
     public void generateLoadingPlan(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
@@ -834,6 +895,13 @@ public final class LoadingInformationServiceGrpc {
                           .UpdateUllageLoadingRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .UpdateUllageLoadingReplay>(this, METHODID_UPDATE_ULLAGE)))
+          .addMethod(
+              getSaveAlgoLoadingPlanStatusMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>(
+                      this, METHODID_SAVE_ALGO_LOADING_PLAN_STATUS)))
           .addMethod(
               getGenerateLoadingPlanMethod(),
               asyncUnaryCall(
@@ -1010,6 +1078,17 @@ public final class LoadingInformationServiceGrpc {
     }
 
     /** */
+    public void saveAlgoLoadingPlanStatus(
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveAlgoLoadingPlanStatusMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void generateLoadingPlan(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
@@ -1146,6 +1225,13 @@ public final class LoadingInformationServiceGrpc {
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageLoadingRequest
                 request) {
       return blockingUnaryCall(getChannel(), getUpdateUllageMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoStatusReply saveAlgoLoadingPlanStatus(
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveAlgoLoadingPlanStatusMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -1295,6 +1381,15 @@ public final class LoadingInformationServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+        saveAlgoLoadingPlanStatus(
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveAlgoLoadingPlanStatusMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.Common.ResponseStatus>
         generateLoadingPlan(
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest
@@ -1313,7 +1408,8 @@ public final class LoadingInformationServiceGrpc {
   private static final int METHODID_SAVE_LOADING_INFO_STAGES = 6;
   private static final int METHODID_GET_LOADIG_INFORMATION_BY_VOYAGE = 7;
   private static final int METHODID_UPDATE_ULLAGE = 8;
-  private static final int METHODID_GENERATE_LOADING_PLAN = 9;
+  private static final int METHODID_SAVE_ALGO_LOADING_PLAN_STATUS = 9;
+  private static final int METHODID_GENERATE_LOADING_PLAN = 10;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1413,6 +1509,13 @@ public final class LoadingInformationServiceGrpc {
                           .UpdateUllageLoadingReplay>)
                   responseObserver);
           break;
+        case METHODID_SAVE_ALGO_LOADING_PLAN_STATUS:
+          serviceImpl.saveAlgoLoadingPlanStatus(
+              (com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>)
+                  responseObserver);
+          break;
         case METHODID_GENERATE_LOADING_PLAN:
           serviceImpl.generateLoadingPlan(
               (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest)
@@ -1493,6 +1596,7 @@ public final class LoadingInformationServiceGrpc {
                       .addMethod(getSaveLoadingInfoStagesMethod())
                       .addMethod(getGetLoadigInformationByVoyageMethod())
                       .addMethod(getUpdateUllageMethod())
+                      .addMethod(getSaveAlgoLoadingPlanStatusMethod())
                       .addMethod(getGenerateLoadingPlanMethod())
                       .build();
         }

@@ -1483,12 +1483,13 @@ public class LoadablePlanService {
             operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
             break;
         }
+
         XSSFCellStyle cellStyle =
             getCellStyle(
                 spreadsheet,
                 TableCellStyle.PORT_OPERATIONS_VALUES,
                 Optional.empty(),
-                Optional.empty());
+                Optional.of(portOperationsTableTitle.getFormat()));
         operationsValueCell.setCellStyle(cellStyle);
         portColumnIndex++;
       }

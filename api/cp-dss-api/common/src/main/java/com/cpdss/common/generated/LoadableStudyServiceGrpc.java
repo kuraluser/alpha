@@ -3323,6 +3323,57 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadableCommingleByPatternIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+      getGetLoadableStudyShoreMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadableStudyShore",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+      getGetLoadableStudyShoreMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+        getGetLoadableStudyShoreMethod;
+    if ((getGetLoadableStudyShoreMethod = LoadableStudyServiceGrpc.getGetLoadableStudyShoreMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadableStudyShoreMethod =
+                LoadableStudyServiceGrpc.getGetLoadableStudyShoreMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadableStudyShoreMethod =
+              getGetLoadableStudyShoreMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadableStudyShore"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetLoadableStudyShore"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadableStudyShoreMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3907,6 +3958,15 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadableCommingleByPatternIdMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadableStudyShore(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadableStudyShoreMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4367,6 +4427,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>(
                       this, METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID)))
+          .addMethod(
+              getGetLoadableStudyShoreMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>(
+                      this, METHODID_GET_LOADABLE_STUDY_SHORE)))
           .build();
     }
   }
@@ -5110,6 +5177,18 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadableStudyShore(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadableStudyShoreMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -5594,6 +5673,14 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableCommingleByPatternIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse
+        getLoadableStudyShore(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadableStudyShoreMethod(), getCallOptions(), request);
     }
   }
 
@@ -6176,6 +6263,15 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+        getLoadableStudyShore(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadableStudyShoreMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6243,6 +6339,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_PATTERN_BY_VOYAGE_AND_STATUS = 62;
   private static final int METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID = 63;
   private static final int METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID = 64;
+  private static final int METHODID_GET_LOADABLE_STUDY_SHORE = 65;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -6706,6 +6803,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_STUDY_SHORE:
+          serviceImpl.getLoadableStudyShore(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -6835,6 +6939,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadablePatternByVoyageAndStatusMethod())
                       .addMethod(getGetCargoNominationByCargoNominationIdMethod())
                       .addMethod(getGetLoadableCommingleByPatternIdMethod())
+                      .addMethod(getGetLoadableStudyShoreMethod())
                       .build();
         }
       }

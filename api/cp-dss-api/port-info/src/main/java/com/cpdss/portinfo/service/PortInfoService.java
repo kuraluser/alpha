@@ -3,6 +3,7 @@ package com.cpdss.portinfo.service;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
@@ -14,6 +15,7 @@ import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.entity.BerthInfo;
 import com.cpdss.portinfo.entity.BerthManifold;
+import com.cpdss.portinfo.entity.CargoPortMapping;
 import com.cpdss.portinfo.entity.PortInfo;
 import com.cpdss.portinfo.entity.Timezone;
 import com.cpdss.portinfo.repository.*;
@@ -361,5 +363,40 @@ public class PortInfoService extends PortInfoServiceImplBase {
       log.error("Failed to get manifold data for berth Id {}, {}", berth.getId(), e.getMessage());
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public void getCargoInfoByPortIds(
+      GetPortInfoByPortIdsRequest request, StreamObserver<CargoInfos> responseObserver) {
+
+    CargoInfos.Builder replyBuilder = CargoInfos.newBuilder();
+    try {
+      if (request.getIdList() == null || request.getIdList().isEmpty()) {
+        throw new GenericServiceException(
+            INVALID_PORTID, CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      List<CargoPortMapping> cargoIds =
+          this.cargoPortMappingRepository.findByportInfo_idIn(request.getIdList());
+      cargoIds.forEach(
+          cargo -> {
+            com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder mapping =
+                com.cpdss.common.generated.PortInfo.CargoPortMapping.newBuilder();
+            mapping.setCargoId(cargo.getCargoXId());
+            mapping.setPortId(cargo.getPortInfo().getId());
+            replyBuilder.addCargoPorts(mapping.build());
+          });
+
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      replyBuilder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getPortInfoByCargoId method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

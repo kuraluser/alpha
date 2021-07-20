@@ -2835,4 +2835,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public PortInfo.PortReply GetPortInfo(PortInfo.PortRequest build) {
     return portInfoGrpcService.getPortInfo(build);
   }
+
+  @Override
+  public void getLoadableStudyShore(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+          responseObserver) {
+
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.newBuilder();
+
+    try {
+      loadableStudyPortRotationService.getLoadableStudyShore(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

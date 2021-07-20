@@ -44,7 +44,7 @@ export class DraftConditionComponent implements OnInit {
    */
   setConditions() {
     this.value = [
-      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - this.draftCondition?.hogSag , mid: this.draftCondition?.finalDraftMid - this.draftCondition?.hogSag, fore: this.draftCondition?.finalDraftFwd - this.draftCondition?.hogSag},
+      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - this.draftCondition?.deflection , mid: this.draftCondition?.finalDraftMid - this.draftCondition?.deflection, fore: this.draftCondition?.finalDraftFwd - this.draftCondition?.deflection},
       { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CORRECTED', aft: this.draftCondition?.finalDraftAft, mid: this.draftCondition?.finalDraftMid, fore: this.draftCondition?.finalDraftFwd }
     ]
   }

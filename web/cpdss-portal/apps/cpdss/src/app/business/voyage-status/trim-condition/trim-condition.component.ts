@@ -15,7 +15,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class TrimConditionComponent implements OnInit {
 
   @Input() trim: number;
-  @Input() hogSag: number;
+  @Input() deflection: number;
 
   constructor() { }
 
