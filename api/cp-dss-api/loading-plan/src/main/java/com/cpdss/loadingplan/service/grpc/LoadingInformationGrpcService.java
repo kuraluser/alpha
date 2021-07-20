@@ -19,7 +19,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.loadingplan.service.*;
-import com.cpdss.loadingplan.service.algo.LoadingInformationAlgoService;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingInformationDischargeService;
 import io.grpc.stub.StreamObserver;
 import java.util.Optional;
@@ -41,7 +41,7 @@ public class LoadingInformationGrpcService
   @Autowired LoadingInformationService loadingInformationService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
   @Autowired LoadingInformationDischargeService loadingInfoService;
-  @Autowired LoadingInformationAlgoService loadingInfoAlgoService;
+  @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
 
   @Autowired LoadingMachineryInUseService loadingMachineryInUseService;
 
@@ -387,7 +387,7 @@ public class LoadingInformationGrpcService
     AlgoStatusReply.Builder builder = AlgoStatusReply.newBuilder();
     try {
 
-      this.loadingInfoAlgoService.saveAlgoLoadingPlanStatus(request);
+      this.loadingPlanAlgoService.saveAlgoLoadingPlanStatus(request);
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
@@ -424,7 +424,7 @@ public class LoadingInformationGrpcService
     log.info("Inside generateLoadingPlan in LP MS");
     ResponseStatus.Builder builder = ResponseStatus.newBuilder();
     try {
-      this.loadingInfoAlgoService.generateLoadingPlan(request);
+      this.loadingPlanAlgoService.generateLoadingPlan(request);
       builder.setStatus(SUCCESS);
     } catch (GenericServiceException e) {
       log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);

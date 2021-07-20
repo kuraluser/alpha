@@ -19,4 +19,12 @@ public final class LoadingPlanConstants {
 
   // Loading Information Status IDs
   public static final Long LOADING_INFORMATION_PROCESSING_STARTED_ID = 3L;
+
+  // Loading Plan Conditions
+  public static final Integer LOADING_PLAN_ARRIVAL_CONDITION_VALUE = 1;
+  public static final Integer LOADING_PLAN_DEPARTURE_CONDITION_VALUE = 2;
+
+  // Loading Plan Value Types
+  public static final Integer LOADING_PLAN_ACTUAL_TYPE_VALUE = 1;
+  public static final Integer LOADING_PLAN_PLANNED_TYPE_VALUE = 2;
 }
