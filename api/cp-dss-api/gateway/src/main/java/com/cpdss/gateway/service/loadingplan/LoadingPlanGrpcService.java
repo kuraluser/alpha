@@ -47,6 +47,6 @@ public interface LoadingPlanGrpcService {
 
   ResponseStatus generateLoadingPlan(Long loadingInfoId);
 
-  RuleResponse getLoadingPlanRules(Long vesselId, Long loadingInfoId)
+  RuleResponse saveOrGetLoadingPlanRules(LoadingPlanModels.LoadingPlanRuleRequest.Builder builder)
       throws GenericServiceException;
 }

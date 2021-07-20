@@ -11,8 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface LoadingRuleRepository extends CommonCrudRepository<LoadingRule, Long> {
 
-  List<LoadingRule> findByLoadingXidAndVesselXidAndIsActiveAndVesselRuleXidInOrderById(
-      Long loadingInformationId, long vesselId, boolean b, List<Long> ruleListId);
+  List<LoadingRule> findByLoadingXidAndVesselXidAndIsActiveTrueAndVesselRuleXidInOrderById(
+      Long loadingInformationId, Long vesselId, List<Long> vesselRuleXid);
 
   @Modifying
   @Query("UPDATE LoadingRule SET displayInSettings = (:var1) WHERE vesselRuleXid IN (:var2)")

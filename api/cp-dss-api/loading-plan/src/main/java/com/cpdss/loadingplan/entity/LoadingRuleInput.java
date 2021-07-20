@@ -42,6 +42,6 @@ public class LoadingRuleInput extends EntityDoc {
 
   // bi-directional many-to-one association to LoadingRule
   @ManyToOne
-  @JoinColumn(name = "loading_rule_xid")
+  @JoinColumn(name = "loading_rule_xid", referencedColumnName = "id")
   private LoadingRule loadingRule;
 }

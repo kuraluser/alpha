@@ -6,6 +6,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CLOSE_VOY
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPEN_VOYAGE_STATUS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.START_VOYAGE;
@@ -15,6 +16,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.STATUS_CO
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VOYAGE_EXISTS;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -250,12 +252,13 @@ public class VoyageService {
         .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
             request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
         .isEmpty()) {
-      builder.setResponseStatus(
-          LoadableStudy.StatusReply.newBuilder()
-              .setStatus(SUCCESS)
-              .setMessage(SUCCESS)
-              .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS)
-              .build());
+      builder
+          .setResponseStatus(
+              LoadableStudy.StatusReply.newBuilder()
+                  .setStatus(FAILED)
+                  .setMessage(VOYAGE_EXISTS)
+                  .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS))
+          .build();
     } else {
 
       Voyage voyage = new Voyage();

@@ -56,6 +56,6 @@ public class LoadingRule extends EntityDoc {
   private Long vesselXid;
 
   // bi-directional many-to-one association to LoadingRuleInput
-  @OneToMany(mappedBy = "loadingRule")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "loadingRule", cascade = CascadeType.ALL)
   private List<LoadingRuleInput> loadingRuleInputs;
 }

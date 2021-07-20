@@ -12,5 +12,6 @@ public class LoadingDelays {
   private Long reasonForDelayId;
   private BigDecimal duration;
   private Long cargoId;
+  private Long cargoNominationId;
   private BigDecimal quantity;
 }

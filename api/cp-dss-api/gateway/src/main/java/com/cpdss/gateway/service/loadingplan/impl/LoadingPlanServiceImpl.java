@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
+import static com.cpdss.gateway.common.GatewayConstants.LOADING_RULE_MASTER_ID;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -9,6 +11,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
@@ -16,6 +19,7 @@ import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import com.cpdss.gateway.utility.Utility;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +75,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         loadingPlanGrpcServiceImpl.saveLoadingInfoStatus(requestBuilder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "Failed to save on board quantities",
+          "Failed to saveLoadingInfoStatus",
           reply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
@@ -210,6 +214,27 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @Override
   public RuleResponse getLoadingPlanRules(Long vesselId, Long voyageId, Long loadingInfoId)
       throws GenericServiceException {
-    return this.loadingPlanGrpcService.getLoadingPlanRules(vesselId, loadingInfoId);
+    LoadingPlanModels.LoadingPlanRuleRequest.Builder builder =
+        LoadingPlanModels.LoadingPlanRuleRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    builder.setSectionId(LOADING_RULE_MASTER_ID);
+    builder.setLoadingInfoId(loadingInfoId);
+    RuleResponse ruleResponse = this.loadingPlanGrpcService.saveOrGetLoadingPlanRules(builder);
+    log.info("Loading Info Rule Fetch for Vessel Id {}, info Id {}", vesselId, loadingInfoId);
+    return ruleResponse;
+  }
+
+  @Override
+  public RuleResponse saveLoadingPlanRules(
+      Long vesselId, Long voyageId, Long loadingInfoId, RuleRequest ruleRequest)
+      throws GenericServiceException {
+    LoadingPlanModels.LoadingPlanRuleRequest.Builder builder =
+        LoadingPlanModels.LoadingPlanRuleRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    builder.setSectionId(LOADING_RULE_MASTER_ID);
+    builder.setLoadingInfoId(loadingInfoId);
+    Utility.buildRuleListForSave(ruleRequest, null, null, builder, false, true);
+    RuleResponse ruleResponse = this.loadingPlanGrpcService.saveOrGetLoadingPlanRules(builder);
+    return ruleResponse;
   }
 }
