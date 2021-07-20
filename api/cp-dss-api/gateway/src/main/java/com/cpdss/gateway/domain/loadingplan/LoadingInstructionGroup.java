@@ -8,8 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class LoadingInstructionGroup {
-	 
-	private Long groupId;
-	private String groupName;
-  
+
+  private Long groupId;
+  private String groupName;
 }

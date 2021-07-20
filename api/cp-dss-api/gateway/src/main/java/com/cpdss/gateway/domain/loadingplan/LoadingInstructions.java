@@ -14,5 +14,5 @@ public class LoadingInstructions {
   private Long instructionId;
   private String instruction;
   private Boolean isChecked;
-  
+  private Boolean isEditable;
 }

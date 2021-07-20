@@ -26,6 +26,7 @@ service LoadingInstructionService {
 	rpc AddLoadingInstruction(LoadingInstructionsSave) returns (ResponseStatus) {}
 	rpc UpdateLoadingInstructions(LoadingInstructionsUpdate) returns (ResponseStatus) {}
 	rpc DeleteLoadingInstructions(LoadingInstructionStatus) returns (ResponseStatus) {}
+	rpc EditInstructions(LoadingInstructionStatus) returns (ResponseStatus) {}
 }
 
 service LoadingPlanService {

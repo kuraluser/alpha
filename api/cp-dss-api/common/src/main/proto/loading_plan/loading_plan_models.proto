@@ -442,4 +442,5 @@ message LoadingInstructionsUpdate{
 message LoadingInstructionStatus{
   int64 instructionId = 1;
   bool isChecked = 2;
+  string instruction =3;
 }

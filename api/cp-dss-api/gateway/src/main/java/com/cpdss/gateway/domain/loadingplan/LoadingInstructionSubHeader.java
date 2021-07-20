@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain.loadingplan;
 
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -16,6 +15,7 @@ public class LoadingInstructionSubHeader {
   private Long subHeaderId;
   private String subHeaderName;
   private Boolean isChecked;
+  private Boolean isEditable;
+  private Boolean isSingleHeader;
   private List<LoadingInstructions> loadingInstructionsList;
-  
 }

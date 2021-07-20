@@ -10,7 +10,7 @@ import lombok.Data;
 @JsonInclude(Include.NON_NULL)
 public class LoadingNewInstructionRequest {
 
-	private Long subHeaderId;
-	private String newInstruction;
-	private Boolean isChecked;
+  private Long subHeaderId;
+  private String newInstruction;
+  private Boolean isChecked;
 }
