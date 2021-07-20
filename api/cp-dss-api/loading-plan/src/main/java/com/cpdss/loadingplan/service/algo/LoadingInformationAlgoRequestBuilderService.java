@@ -421,7 +421,8 @@ public class LoadingInformationAlgoRequestBuilderService {
           loadingMachine.setId(machine.getId());
           loadingMachine.setIsUsing(machine.getIsUsing());
           loadingMachine.setLoadingInfoId(machine.getLoadingInfoId());
-          loadingMachine.setPumpId(machine.getPumpId());
+          loadingMachine.setMachineId(machine.getMachineId());
+          loadingMachine.setMachineTypeId(machine.getMachineType().getNumber());
           machineList.add(loadingMachine);
         });
     cargoMachineryInUse.setLoadingMachinesInUses(machineList);

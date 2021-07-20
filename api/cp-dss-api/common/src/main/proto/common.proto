@@ -16,6 +16,15 @@ enum PLANNING_TYPE {
 		DISCHARGE_STUDY = 2;
 }
 
+// In loading information, machine in use
+enum MachineType {
+	  EMPTY = 0;
+		VESSEL_PUMP = 1;
+		MANIFOLD = 2;
+		BOTTOM_LINE = 3;
+}
+
+
 message BillOfLadding{
   int64 id = 1;
   int64 portId = 2;

@@ -107,7 +107,12 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
       Optional.ofNullable(var1.getLoadingInformation().getId())
           .ifPresent(builder::setLoadingInfoId);
-      Optional.ofNullable(var1.getPumpXId()).ifPresent(builder::setPumpId);
+      Optional.ofNullable(var1.getMachineXId()).ifPresent(builder::setMachineId);
+      Optional.ofNullable(var1.getMachineTypeXid())
+          .ifPresent(
+              v -> {
+                builder.setMachineTypeValue(v);
+              });
       Optional.ofNullable(var1.getCapacity())
           .ifPresent(value -> builder.setCapacity(value.toString()));
       machinery.add(builder.build());

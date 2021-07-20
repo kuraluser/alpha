@@ -5,10 +5,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.vesselinfo.entity.*;
-import com.cpdss.vesselinfo.repository.PumpTypeRepository;
-import com.cpdss.vesselinfo.repository.VesselPumpRepository;
-import com.cpdss.vesselinfo.repository.VesselRepository;
-import com.cpdss.vesselinfo.repository.VesselValveSequenceRepository;
+import com.cpdss.vesselinfo.repository.*;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +25,12 @@ public class VesselPumpService {
 
   @Autowired PumpTypeRepository pumpTypeRepository;
 
+  @Autowired TankTypeRepository tankTypeRepository;
+
+  @Autowired VesselManifoldRepository vesselManifoldRepository;
+
+  @Autowired VesselBottomLineRepository vesselBottomLineRepository;
+
   @Autowired VesselValveSequenceRepository vesselValveSequenceRepository;
 
   public VesselInfo.VesselPumpsResponse getVesselPumpsAndTypes(
@@ -40,9 +43,15 @@ public class VesselPumpService {
       Page<PumpType> pumpTypes = pumpTypeRepository.findAll(defaultPage);
       Page<VesselPumps> vesselPumps =
           vesselPumpRepository.findAllByVesselAndIsActiveTrue(vessel, defaultPage);
+      Page<TankType> tankTypes = tankTypeRepository.findAll(defaultPage);
+      Page<VesselManifold> vesselManifolds = vesselManifoldRepository.findAll(defaultPage);
+      Page<VesselBottomLine> vesselBottomLines = vesselBottomLineRepository.findAll(defaultPage);
       this.buildPumpTypeGrpcBuilder(pumpTypes.toList(), builder);
       this.buildVesselPumpGrpcBuilder(vesselPumps.toList(), builder);
       this.buildVesselDetails(vessel, builder);
+      this.buildVesselTankDetails(tankTypes.toList(), builder);
+      this.buildVesselManifolds(vesselManifolds.toList(), builder);
+      this.buildVesselBottomLine(vesselBottomLines.toList(), builder);
       builder1.setStatus("SUCCESS");
       builder.setResponseStatus(builder1);
       log.info(
@@ -52,6 +61,42 @@ public class VesselPumpService {
           pumpTypes.getTotalElements());
     }
     return builder.build();
+  }
+
+  private void buildVesselBottomLine(
+      List<VesselBottomLine> toList, VesselInfo.VesselPumpsResponse.Builder builder) {
+    for (VesselBottomLine bl : toList) {
+      VesselInfo.VesselComponent.Builder builder1 = VesselInfo.VesselComponent.newBuilder();
+      Optional.ofNullable(bl.getId()).ifPresent(builder1::setId);
+      Optional.ofNullable(bl.getBottomLineName()).ifPresent(builder1::setComponentName);
+      Optional.ofNullable(bl.getBottomLineCode()).ifPresent(builder1::setComponentCode);
+      Optional.ofNullable(bl.getVesselXid()).ifPresent(builder1::setVesselId);
+      builder1.setComponentType(-1L);
+      builder.addVesselBottomLine(builder1.build());
+    }
+  }
+
+  private void buildVesselManifolds(
+      List<VesselManifold> toList, VesselInfo.VesselPumpsResponse.Builder builder) {
+    for (VesselManifold bl : toList) {
+      VesselInfo.VesselComponent.Builder builder1 = VesselInfo.VesselComponent.newBuilder();
+      Optional.ofNullable(bl.getId()).ifPresent(builder1::setId);
+      Optional.ofNullable(bl.getManifoldName()).ifPresent(builder1::setComponentName);
+      Optional.ofNullable(bl.getManifoldCode()).ifPresent(builder1::setComponentCode);
+      Optional.ofNullable(bl.getVesselXid()).ifPresent(builder1::setVesselId);
+      Optional.ofNullable(bl.getTankType().getId()).ifPresent(builder1::setComponentType);
+      builder.addVesselManifold(builder1.build());
+    }
+  }
+
+  private void buildVesselTankDetails(
+      List<TankType> tankTypes, VesselInfo.VesselPumpsResponse.Builder builder) {
+    for (TankType ty : tankTypes) {
+      VesselInfo.TankType.Builder builder1 = VesselInfo.TankType.newBuilder();
+      Optional.ofNullable(ty.getId()).ifPresent(builder1::setId);
+      Optional.ofNullable(ty.getTypeName()).ifPresent(builder1::setTypeName);
+      builder.addTankType(builder1.build());
+    }
   }
 
   private void buildVesselDetails(Vessel vessel, VesselInfo.VesselPumpsResponse.Builder builder) {

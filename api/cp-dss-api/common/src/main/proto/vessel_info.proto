@@ -431,7 +431,24 @@ message BendingMomentType1 {
 		ResponseStatus responseStatus = 1;
 		repeated PumpType pumpType = 2;
 		repeated VesselPump vesselPump = 3;
+		repeated TankType tankType = 5;
 		VesselDetail vesselDetails = 4;
+
+		repeated VesselComponent vesselManifold = 6;
+		repeated VesselComponent vesselBottomLine = 7;
+	}
+
+	message VesselComponent {
+		int64 id = 1;
+		int64 vesselId = 2;
+		string componentName = 3;
+		string componentCode = 4;
+		int64 componentType = 5;
+	}
+
+	message TankType {
+	int64 id = 1;
+	string typeName = 2;
 	}
 
 	message PumpType{
