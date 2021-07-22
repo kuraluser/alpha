@@ -32,11 +32,32 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischa
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.entity.BackLoading;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
+import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -140,6 +161,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           createDischargeSynoptical(synopticalData, savedDischargeport));
       this.onHandQuantityRepository.saveAll(
           createDischargeOnHandQuantity(onhandQuantity, savedDischargeport));
+      DischargeStudyCowDetail dischargeStudyCowDetail = new DischargeStudyCowDetail();
+      dischargeStudyCowDetail.setCowType(1L);
+      dischargeStudyCowDetail.setPercentage(25L);
+      cowDetailService.saveAll(Arrays.asList(dischargeStudyCowDetail));
       builder.setId(savedDischargeStudy.getId());
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 
@@ -602,6 +627,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   } else {
                     CargoNomination cargoNomination = new CargoNomination();
                     cargoNomination.setLoadableStudyXId(dischargestudyId);
+                    cargoNomination.setPriority(1L);
                     updateCargoNominationToSave(
                         cargoRequest, cargoNomination, cargoNominationsToSave);
                   }
@@ -823,10 +849,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     dischargeStudyCowDetail.setCowType(portDetail.getCowId());
     if (portDetail.getCowId() == 1) {
       dischargeStudyCowDetail.setPercentage(portDetail.getPercentage());
+      dischargeStudyCowDetail.setTankIds("");
     } else if (portDetail.getCowId() == 2) {
       String numberString =
           portDetail.getTanksList().stream().map(String::valueOf).collect(Collectors.joining(","));
       dischargeStudyCowDetail.setTankIds(numberString);
+      dischargeStudyCowDetail.setPercentage(null);
     }
     cowDetailsToSave.add(dischargeStudyCowDetail);
   }
