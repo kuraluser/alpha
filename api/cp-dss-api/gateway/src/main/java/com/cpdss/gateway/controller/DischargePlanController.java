@@ -81,6 +81,44 @@ public class DischargePlanController {
   }
 
   /**
+   * Save and update discharge study with back loading if there is any
+   *
+   * @param vesselId - the vessel id for which discharge study is created
+   * @param voyageId - the voyage id for which discharge study is created
+   * @param request - the request body {@link DischargeStudyRequest}
+   * @param headers - the http request header
+   * @return {@link LoadableStudyResponse}
+   * @throws CommonRestException
+   */
+  @PostMapping(value = "/discharge-studies")
+  public LoadableStudyResponse saveDischargeStudyWithBackloading(
+      @RequestBody final DischargeStudyCargoResponse request, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      if (request.getDischargeStudyId() == null || request.getDischargeStudyId() == 0) {
+        throw new GenericServiceException(
+            "No DischargeStudy found",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      log.info("saveDischargeStudy: {}", getClientIp());
+      return this.dischargeStudyService.saveDischargeStudyWithBackloaing(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving discharge study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when saving discharge study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
    * Save discharge study
    *
    * @param vesselId - the vessel id for which discharge study is created

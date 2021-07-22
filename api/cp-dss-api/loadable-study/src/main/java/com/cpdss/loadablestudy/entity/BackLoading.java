@@ -49,5 +49,5 @@ public class BackLoading extends EntityDoc {
   private BigDecimal quantity;
 
   @Column(name = "is_active")
-  private boolean is_active;
+  private boolean isActive;
 }
