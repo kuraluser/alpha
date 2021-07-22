@@ -14,7 +14,15 @@ service CargoInfoService {
 
 	rpc GetCargoInfoById (CargoRequest) returns (CargoDetailReply) {
 	}
+	
+	rpc GetCargoInfosByCargoIds (CargoListRequest) returns (CargoReply) {
+	}
+	
 }
+message CargoListRequest{
+	repeated int64 id = 1;
+}
+
 message CargoDetailReply{
 	CargoDetail cargoDetail = 1;
 	ResponseStatus responseStatus = 2;

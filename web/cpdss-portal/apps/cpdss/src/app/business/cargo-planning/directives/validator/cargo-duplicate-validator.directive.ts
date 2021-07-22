@@ -9,9 +9,9 @@ export function CargoDuplicateValidator(field, dependentField): ValidatorFn {
         if (!control.root || !control.parent) {
             return null;
         }
-        const dataTableArray =control.root.value.dataTable;
+        const dataTableArray = control.root.value.dataTable;
         const index = control.parent.value.sl;
-        if(control?.value && control?.parent?.value[dependentField]){
+        if (control?.value && control?.parent?.value[dependentField]) {
             const data = control?.parent?.value;
             data[field] = control.value;
             const found = dataTableArray.filter
@@ -22,14 +22,16 @@ export function CargoDuplicateValidator(field, dependentField): ValidatorFn {
                                 && cargoData?.cargo2?.cargoId === data?.cargo2?.cargoId && cargoData?.cargo2?.color === data?.cargo2?.color) ||
                             (cargoData?.cargo2?.cargoId === data?.cargo1?.cargoId && cargoData?.cargo2?.color === data?.cargo1?.color && cargoData?.cargo1?.cargoId === data?.cargo2?.cargoId && cargoData?.cargo1?.color === data?.cargo2?.color)))
                 });
-            if(found.length > 0){
+            if (dataTableArray[index]?.cargo1?.cargoId === dataTableArray[index]?.cargo2?.cargoId && dataTableArray[index]?.cargo1?.color === dataTableArray[index]?.cargo2?.color) {
+                return { similarCargo: true }
+            } else if (found.length > 0) {
                 return { duplicate: true };
-            }else{
+            } else {
                 return null;
             }
-        }else{
+        } else {
             return null;
         }
-      
+
     }
 };

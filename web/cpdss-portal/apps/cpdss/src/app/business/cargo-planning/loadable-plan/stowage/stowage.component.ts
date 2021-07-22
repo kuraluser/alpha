@@ -400,12 +400,20 @@ export class StowageComponent implements OnInit {
           sg: '',
           isCommingle: event?.data?.isCommingle
         }
-        const translationKeys = await this.translateService.get(['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS']).toPromise();
+        const translationKeys = await this.translateService.get(['LOADABLE_PLAN_RDG_ULLAGE_ERROR','LOADABLE_PLAN_RDG_ULLAGE','LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS']).toPromise();
         try {
         const result: IUpdatedUllageResponse = await this.loadablePlanApiService.updateUllage(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, data).toPromise();
           if (result.responseStatus.status === '200') {
+            if(result.fillingRatio?.toString()?.trim() === '') {
+              this.cargoTankDetails[event.index].rdgUllage['_value'] = this.initialCargoTankDetails[event.index].rdgUllage['_value'];
+              this.updateField(event.index, 'rdgUllage', Number(this.cargoTankDetails[event.index].rdgUllage['_value']), 'cargoTanks');
+              this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_RDG_ULLAGE_ERROR'], detail: translationKeys['LOADABLE_PLAN_RDG_ULLAGE'] });
+              this.ngxSpinnerService.hide();
+              return;
+            }
             this.stowageDataEditStatus = false;
             this.ullageUpdate.emit(true);
+            result.quantityMt =  result.quantityMt ?? ''; 
             const unitConvertedTankDetails = {
               observedM3: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSKL, event.data.api['_value'], event.data.temperature['_value']),
               observedBarrelsAt60: this.quantityPipe.transform(result.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, event.data.api['_value'], event.data.temperature['_value']),
@@ -415,17 +423,16 @@ export class StowageComponent implements OnInit {
             this.updateField(event.index, 'fillingRatio', this.cargoTankDetails[event.index]['fillingRatio'].value, 'cargoTanks');
             this.updateField(event.index, 'correctionFactor', Number(result.correctionFactor), 'cargoTanks');
             this.updateField(event.index, 'correctedUllage', Number(result.correctedUllage), 'cargoTanks');
-            this.updateField(event.index, 'weight', Number(result.quantityMt), 'cargoTanks');
+            this.updateField(event.index, 'weight', result.quantityMt ? Number(result.quantityMt) : null, 'cargoTanks');
             this.updateField(event.index, 'observedM3', unitConvertedTankDetails.observedM3, 'cargoTanks');
             this.updateField(event.index, 'observedBarrelsAt60', unitConvertedTankDetails.observedBarrelsAt60, 'cargoTanks');
             this.updateField(event.index, 'observedBarrels', unitConvertedTankDetails.observedBarrels, 'cargoTanks');
             this.updateField(event.index, 'rdgUllage', Number(event.data.rdgUllage['_value']), 'cargoTanks');
 
 
-
             this.cargoTankDetails[event.index]['correctionFactor'].value = Number(result.correctionFactor);
             this.cargoTankDetails[event.index]['correctedUllage'].value = Number(result.correctedUllage);
-            this.cargoTankDetails[event.index]['weight'].value = Number(result.quantityMt);
+            this.cargoTankDetails[event.index]['weight'].value = result.quantityMt ? Number(result.quantityMt) : null;
             this.cargoTankDetails[event.index]['observedM3'].value = unitConvertedTankDetails.observedM3;
             this.cargoTankDetails[event.index]['observedBarrelsAt60'].value = unitConvertedTankDetails.observedBarrelsAt60;
             this.cargoTankDetails[event.index]['observedBarrels'].value = unitConvertedTankDetails.observedBarrels;
@@ -444,6 +451,9 @@ export class StowageComponent implements OnInit {
             this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS'], detail: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS'] });
             this.ngxSpinnerService.hide();
           }
+        }
+        if (this.field(event.index, 'weight', 'cargoTanks').value === null) {
+          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_RDG_VALUE'], life: 7000 });
         }
       }
     } else {
@@ -477,10 +487,17 @@ export class StowageComponent implements OnInit {
         temperature: "",
         sg: event.data.sg['_value']
       }
-      const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS']).toPromise();
+      const translationKeys = await this.translateService.get(['LOADABLE_PLAN_RDG_ULLAGE_ERROR','LOADABLE_PLAN_RDG_ULLAGE','LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_INVALID_RDG_VALUE']).toPromise();
       try {
       const result: IUpdatedUllageResponse = await this.loadablePlanApiService.updateUllage(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, data).toPromise();
         if (result.responseStatus.status === '200') {
+          if(result.fillingRatio?.toString()?.trim() === '') {
+            this.ballastTankDetails[event.index].rdgLevel['_value'] = this.initBallastTankDetails[event.index].rdgLevel['_value'];
+            this.updateField(event.index, 'rdgLevel', Number(this.ballastTankDetails[event.index].rdgLevel['_value']), 'ballastTanks');
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_RDG_ULLAGE_ERROR'], detail: translationKeys['LOADABLE_PLAN_RDG_ULLAGE'] });
+            this.ngxSpinnerService.hide();
+            return;
+          }
           ref.stowageDataEditStatus = false;
           this.ullageUpdate.emit(true);
           this.ballastTankDetails[event.index]['correctedLevel'].value = result.correctedUllage;
@@ -489,7 +506,7 @@ export class StowageComponent implements OnInit {
           this.ballastTankDetails[event.index]['percentage'].value = result.fillingRatio + '';
           this.updateField(event.index, 'percentage', this.ballastTankDetails[event.index]['percentage'].value, 'ballastTanks');
           const unitConvertedTankDetails = {
-            observedM3: (Number(this.ballastTankDetails[event.index]['metricTon'].value) / Number(this.ballastTankDetails[event.index]['sg'].value)).toString()
+            observedM3: (this.ballastTankDetails[event.index]['metricTon'].value && this.ballastTankDetails[event.index]['sg'].value) ?  (Number(this.ballastTankDetails[event.index]['metricTon'].value) / Number(this.ballastTankDetails[event.index]['sg'].value)).toString() : ''
           };
           this.ballastTankDetails[event.index]['cubicMeter'].value = unitConvertedTankDetails.observedM3;
           this.updateField(event.index, 'cubicMeter', this.ballastTankDetails[event.index]['cubicMeter'].value, 'ballastTanks');
@@ -497,6 +514,7 @@ export class StowageComponent implements OnInit {
           this.updateField(event.index, 'rdgLevel', this.ballastTankDetails[event.index]['rdgLevel'].value, 'ballastTanks');
           this.loadablePlanForm.updateValueAndValidity();
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS'] });
+          this.initBallastTankDetails = JSON.parse(JSON.stringify(this.ballastTankDetails));
           this.ngxSpinnerService.hide();
         }
       } catch (error) {
@@ -506,6 +524,9 @@ export class StowageComponent implements OnInit {
           this.updateField(event.index, event.field, this.ballastTankDetails[event.index][event.field].value, 'ballastTanks');
           this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS'], detail: translationKeys['LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS'] });
         }
+      }
+      if (this.field(event.index, 'cubicMeter', 'ballastTanks').value === '') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_RDG_VALUE'], life: 7000 });
       }
     }
   }
@@ -662,7 +683,7 @@ export class StowageComponent implements OnInit {
     return this.fb.group({
       id: this.fb.control(ballast?.id),
       cubicMeter: this.fb.control(ballast.cubicMeter.value),
-      rdgLevel: this.fb.control(ballast?.rdgLevel?.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator('cubicMeter', ballast.fullCapacityCubm, 'rdgLevel','percentage')]),
+      rdgLevel: this.fb.control(ballast?.rdgLevel?.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator('cubicMeter', ballast.fullCapacityCubm, 'rdgLevel','percentage', 100)]),
       percentage: this.fb.control(ballast?.percentage)
     });
   }

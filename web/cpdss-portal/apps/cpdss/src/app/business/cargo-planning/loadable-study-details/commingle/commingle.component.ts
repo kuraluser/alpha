@@ -257,11 +257,7 @@ export class CommingleComponent implements OnInit {
 
           const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
           if (result.responseStatus.status === '200') {
-            if (this.commingleForm.value.cargo1 && this.commingleForm.value.cargo2) {
-              this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_VOL_MAX_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
-            } else {
-              this.messageService.add({ severity: 'warn', summary: translationKeys['COMMINGLE_MANUAL_SAVE_WARNING'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
-            }
+            this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_VOL_MAX_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
             this.close();
           }
 
@@ -302,13 +298,11 @@ export class CommingleComponent implements OnInit {
     this.cargoFieldsUpdateValue();
     const form = this.row(event.index);
     if (event.field === 'cargo1') {
-      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.data.cargo1.value.id);
       this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color;
       // this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
     if (event.field === 'cargo2') {
-      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.data.cargo2.value.id);
       this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color;
       // this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
       form.controls.quantity.updateValueAndValidity();
@@ -497,8 +491,51 @@ export class CommingleComponent implements OnInit {
   /**
    * Checking case for saving Commingle
    */
-  saveCommingle() {
-    this.isVolumeMaximum ? this.saveVolumeMaximisation() : this.saveManuals();
+  async saveCommingle() {
+    const translationKeys = await this.translateService.get(['COMMINGLE_CARGO_SAVE_LABEL', 'COMMINGLE_CARGO_SAVE_CONFIRM', 'COMMINGLE_CARGO_DELETE_CONFIRM_LABEL', 'COMMINGLE_CARGO_DELETE_REJECT_LABEL']).toPromise();
+    if(this.isVolumeMaximum) {
+      if(this.commingleForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !(this.commingleForm.value.cargo1 && this.commingleForm.value.cargo2))){
+        this.confirmationService.confirm({
+          key: 'confirmation-alert',
+          header: translationKeys['COMMINGLE_CARGO_SAVE_LABEL'],
+          message: translationKeys['COMMINGLE_CARGO_SAVE_CONFIRM'],
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: translationKeys['COMMINGLE_CARGO_DELETE_CONFIRM_LABEL'],
+          acceptIcon: 'pi',
+          acceptButtonStyleClass: 'btn btn-main mr-5',
+          rejectVisible: true,
+          rejectLabel: translationKeys['COMMINGLE_CARGO_DELETE_REJECT_LABEL'],
+          rejectIcon: 'pi',
+          rejectButtonStyleClass: 'btn btn-main',
+          accept: () => {
+            this.saveVolumeMaximisation()
+          }
+        });
+      } else {
+        this.saveVolumeMaximisation()
+      }
+    } else {
+      if(this.commingleManualForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !this.manualCommingleList?.length)){
+        this.confirmationService.confirm({
+          key: 'confirmation-alert',
+          header: translationKeys['COMMINGLE_CARGO_SAVE_LABEL'],
+          message: translationKeys['COMMINGLE_CARGO_SAVE_CONFIRM'],
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: translationKeys['COMMINGLE_CARGO_DELETE_CONFIRM_LABEL'],
+          acceptIcon: 'pi',
+          acceptButtonStyleClass: 'btn btn-main mr-5',
+          rejectVisible: true,
+          rejectLabel: translationKeys['COMMINGLE_CARGO_DELETE_REJECT_LABEL'],
+          rejectIcon: 'pi',
+          rejectButtonStyleClass: 'btn btn-main',
+          accept: () => {
+            this.saveManuals();
+          }
+        });
+      } else {
+        this.saveManuals()
+      }
+    }
   }
 
   /**
@@ -533,11 +570,7 @@ export class CommingleComponent implements OnInit {
       try {
           const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
           if (result.responseStatus.status === '200') {
-            if (this.manualCommingleList?.length) {
-              this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_MANUAL_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
-            } else {
-              this.messageService.add({ severity: 'warn', summary: translationKeys['COMMINGLE_MANUAL_SAVE_WARNING'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
-            }
+            this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_MANUAL_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
           }
           this.close();
       } catch (errorResponse) {

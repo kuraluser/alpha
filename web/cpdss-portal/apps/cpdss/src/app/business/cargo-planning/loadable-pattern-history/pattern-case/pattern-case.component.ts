@@ -45,7 +45,7 @@ export class PatternCaseComponent implements OnInit {
   tableCol: IDataTableColumn[];
   loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatioOrginal', weightField: 'weightOrginal', commodityNameField: 'cargoAbbreviation', ullageField: 'correctedUllageOrginal', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatioOrginal', weightField: 'quantity', commodityNameField: 'cargoAbbreviation', ullageField: 'correctedUllageOrginal', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api' }
 
   readonly VALIDATION_AND_SAVE_STATUS = VALIDATION_AND_SAVE_STATUS;
   readonly LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;

@@ -5,19 +5,23 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
+import com.cpdss.gateway.domain.RuleRequest;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
+import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsStatus;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsUpdateRequest;
-import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
-import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
-import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
@@ -32,8 +36,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping({"/api/cloud", "/api/ship"})
 public class LoadingPlanController {
 
-  @Autowired private LoadingPlanService loadingPlanService;
-  @Autowired private LoadingInformationService loadingInformationService;
+  @Autowired LoadingPlanService loadingPlanService;
+  @Autowired LoadingInformationService loadingInformationService;
+  @Autowired LoadingPlanServiceImpl loadingPlanServiceImpl;
   @Autowired private LoadingInstructionService loadingInstructionService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
@@ -172,6 +177,43 @@ public class LoadingPlanController {
   }
 
   /**
+   * loadingInfoStatus API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param request
+   * @return
+   * @throws CommonRestException LoadingInfoAlgoResponse
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-info-status")
+  public LoadingInfoAlgoResponse loadingInfoStatus(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @RequestBody AlgoStatusRequest request)
+      throws CommonRestException {
+    try {
+      log.info("update loading info status api for vessel {}", vesselId);
+      return loadingPlanServiceImpl.saveLoadingInfoStatus(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in loadingInfoStatus ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in loadingInfoStatus ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
    * Generate Loading Plan API
    *
    * @param headers
@@ -202,6 +244,69 @@ public class LoadingPlanController {
           e);
     }
   }
+
+  /**
+   * To get rule against the Loading Information.
+   *
+   * @param headers
+   * @param vesselId Long Id
+   * @param voyageId Long Id
+   * @param infoId Long Id
+   * @return RuleResponse
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/rules")
+  public RuleResponse getLoadingPlanRules(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      return loadingPlanService.getLoadingPlanRules(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save Rule from Loading Information Page
+   *
+   * @param headers HttpHeaders
+   * @param vesselId Long Id
+   * @param voyageId Long Id
+   * @param infoId Long Id
+   * @param loadingPlanRule RuleRequest
+   * @return RuleResponse
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/rules")
+  public RuleResponse saveLoadingPlanRule(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @RequestBody RuleRequest loadingPlanRule)
+      throws CommonRestException {
+    try {
+      return loadingPlanService.saveLoadingPlanRules(vesselId, voyageId, infoId, loadingPlanRule);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  
 
   /**
    * Save new Loading Instruction
@@ -410,4 +515,5 @@ public class LoadingPlanController {
           e);
     }
   }
+  
 }

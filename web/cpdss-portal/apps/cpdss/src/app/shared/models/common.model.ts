@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import { IPort } from '../../business/core/models/common.model';
 
 /**
  * Class for converting values to value object with additional status like modified, visible, edited etc
@@ -180,32 +181,6 @@ export enum QUANTITY_UNIT {
 }
 
 /**
- * Interface for port
- *
- * @export
- * @interface IPort
- */
-export interface IPort {
-    id: number;
-    name: string;
-    code: string;
-    maxAirDraft: number;
-    maxDraft: number;
-    waterDensity: number;
-}
-
-/**
- * Interface for port api response
- *
- * @export
- * @interface IPortsResponse
- */
-export interface IPortsResponse {
-    responseStatus: IResponseStatus;
-    ports: IPort[];
-}
-
-/**
  * Interface for Operations
  *
  * @export
@@ -274,25 +249,11 @@ export interface IFuelType {
 /**
  * Interface for cargo response
  * @export
- * @interface 
+ * @interface
  */
 export interface ICargoResponseModel {
     cargos: ICargo[],
     responseStatus: IResponseStatus;
-}
-
-/**
- * Interface for cargo
- *
- * @export
- * @interface ICargo
- */
-export interface ICargo {
-    id: number;
-    name?: string;
-    abbreviation?: string;
-    api?: number;
-    ports?: IPort[];
 }
 
 /**
@@ -459,16 +420,6 @@ export interface ISubTotal {
 }
 
 
-/**
- * Interface for instruction
- *
- * @export
- * @interface IInstruction
- */
-export interface IInstruction {
-    value: string;
-}
-
 
 /**
  * Interface for percentage
@@ -477,19 +428,10 @@ export interface IInstruction {
  * @interface IPercentage
  */
  export interface IPercentage {
-    value: string;
+    value: number;
     name: string;
 }
 
-export interface ITankDetails {
-    displayOrder: number,
-    group: number,
-    id: number,
-    name: string,
-    order: number,
-    shortName: string,
-    slopTank: boolean,
-}
 
 /**
  * Interface for cargo
@@ -497,14 +439,29 @@ export interface ITankDetails {
  * @export
  * @interface ICargo
  */
- export interface ICargo {
-    id: number;
-    companyId: number;
-    actualWeight: string;
-    plannedWeight: string;
-    name?: string;
-    abbreviation?: string;
-    api?: number;
-    ports?: IPort[];
-    temp: string;
+export interface ICargo {
+  id: number;
+  companyId?: number;
+  actualWeight?: string;
+  plannedWeight?: string;
+  name?: string;
+  abbreviation?: string;
+  api?: number;
+  ports?: IPort[];
+  temp: string;
+  type?: string;
+  assay_date?: string;
+  countries?: ICountry[];
+}
+
+/**
+ * Interface for country
+ *
+ * @export
+ * @interface ICountry
+ */
+export interface ICountry {
+  id: number;
+  name: string;
+  code: string;
 }

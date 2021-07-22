@@ -76,6 +76,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     com.cpdss.common.generated.Loadicator.LoadicatorReply.Builder replyBuilder =
         LoadicatorReply.newBuilder();
     try {
+      log.info("inside saveLoadicatorInfo");
       AtomicLong cargoId = new AtomicLong(0L);
       List<StowagePlan> stowagePlanList = new ArrayList<>();
       for (com.cpdss.common.generated.Loadicator.StowagePlan plan :
@@ -600,7 +601,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         .ifPresent(item -> ldTrim.setErrorDetails(String.valueOf(item)));
     Optional.ofNullable(trim.getMessageText())
         .ifPresent(item -> ldTrim.setMessageText(String.valueOf(item)));
-    Optional.ofNullable(trim.getHogSag()).ifPresent(item -> ldTrim.setHogSag(String.valueOf(item)));
+    Optional.ofNullable(trim.getDeflection())
+        .ifPresent(item -> ldTrim.setDeflection(String.valueOf(item)));
     return ldTrim;
   }
 

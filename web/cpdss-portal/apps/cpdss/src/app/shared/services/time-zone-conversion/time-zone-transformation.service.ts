@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CommonApiService } from '../common/common-api.service';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
-import { IDateTimeFormatOptions, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
+import { ICountry, IDateTimeFormatOptions, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
 import * as moment from 'moment';
 
 /**
@@ -21,11 +21,11 @@ export class TimeZoneTransformationService {
   private momentInputStringFormat = 'DD-MM-YYYY HH:mm';
   private dateTimeFormatArray = [
     {
-      dateFormat:'DD/MMM/YYYY HH:mm',
+      dateFormat: 'DD/MMM/YYYY HH:mm',
       calenderFormat: 'dd/M/yy'
     },
     {
-      dateFormat:'DD-MMM-YYYY HH:mm',
+      dateFormat: 'DD-MMM-YYYY HH:mm',
       calenderFormat: 'dd-M-yy'
     }
   ];
@@ -146,17 +146,36 @@ export class TimeZoneTransformationService {
     const dateTimeWithAbbr = [addedPortTZ, abbreviation, convertedPortTZ.slice(dateTimeSplitIndex)].join('');
     return dateTimeWithAbbr;
   }
-  
+
   /**
-   * Function to map the configuration dateformat with calender format 
-   * 
+   * Function to map the configuration dateformat with calender format
+   *
    * @param {string} dateTimeFormat
-   * @return {*} 
+   * @return {*}
    * @memberof TimeZoneTransformationService
    */
   getMappedConfigurationDateFormat(dateTimeFormat: string): string {
     const mappedFormat = [...this.dateTimeFormatArray].find(format => (format.dateFormat === dateTimeFormat));
     return mappedFormat.calenderFormat;
+  }
+
+  /**
+   * Fetch country list
+   *
+   * @return {*}  {ICountry[]}
+   * @memberof TimeZoneTransformationService
+   */
+  getCountries(): Observable<ICountry[]> {
+    return of([{
+      id: 1,
+      name: "India",
+      code: "IND"
+    },
+    {
+      id: 2,
+      name: "Australia",
+      code: "AUS"
+    }])
   }
 
 }

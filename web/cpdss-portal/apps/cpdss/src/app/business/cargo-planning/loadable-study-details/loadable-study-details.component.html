@@ -91,7 +91,7 @@
                 <div class="pr-20 inline-block">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit +
                     ')'}}
                     <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
-                        (click)="showLoadableQuantityPopup()" [disabled]="showLoadableQuantityButton || !loadableQuantityPermission?.view">{{loadableQuantityNew | number :
+                        (click)="showLoadableQuantityPopup()" [disabled]="showLoadableQuantityButton || !loadableQuantityPermission?.view || !cargoNominationTabPermission?.view">{{loadableQuantityNew | number :
                         '1.2-2' }}</button>
                 </div>
 
@@ -124,6 +124,7 @@
         </div> -->
         
         <div class="pr-15">
+            <button id="rulesButton" [disabled]="isPatternGenerated || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING " class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !loadableStudies?.length || !cargoNominationTabPermission?.add || !cargoNominationTabPermission?.add === undefined}"
@@ -131,6 +132,7 @@
             </ng-container>
         </div>
         <div class="pr-15">
+           
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                 <a id="add_port_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !loadableStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
@@ -138,9 +140,9 @@
                     translate}}</a>
             </ng-container>
         </div>
-        <button id="rulesButton" [disabled]="isPatternGenerated" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button>
+        
         <div>
-            <cpdss-portal-rules *ngIf="isRuleModalVisible" [selectedLoadableStudyId]="selectedLoadableStudy.id" [visible]="isRuleModalVisible" [isPatternGenerated] = "isPatternGenerated"  (popUpClosed)="closeModal($event)"></cpdss-portal-rules>
+            <cpdss-portal-rules *ngIf="isRuleModalVisible" [selectedLoadableStudyId]="selectedLoadableStudy.id" [visible]="isRuleModalVisible"   (popUpClosed)="closeModal($event)"></cpdss-portal-rules>
         </div>
     </div>
     <div class="content-outer" *ngIf="voyages" [ngClass]="{'sidebar-collapsed': !openSidePane}">
@@ -177,17 +179,25 @@
                     [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
 
+                <div class="row" *ngIf="selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length">
+                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+                        <p class="text-uppercase text-center text-danger">{{'DISCHARGE_PORTS_NOT_SELECTED' | translate}}</p>
+                    </div>
+                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ">
+                        <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OHQ' | translate}}</p>
+                    </div>
+                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ">
+                        <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OBQ' | translate}}</p>
+                    </div>
+                </div>
 
                 <div class="row"
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
                     <div class="col-sm-12" *ngIf="loadableStudies?.length">
                         <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && cargoNominationTabPermission?.view">
                             <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
-                            <p-multiSelect id="discharge_ports" [ngModel]="dischargingPorts" [options]="ports"
-                                optionLabel="name" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
-                                (onChange)="onDischargePortChange($event)" [selectionLimit]="5" resetFilterOnHide="true"
-                                [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
-                            </p-multiSelect>
+                            <p-dropdown [options]="ports" [filter]="true" (onChange)="onDischargePortChange($event)" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}" optionLabel="name" [(ngModel)]="dischargingPortData" optionLabel="name" resetFilterOnHide="true"
+                            [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)"></p-dropdown>
                             <span class="col error-column" *ngIf="!isSelectedDischargePort">
                                 <cpdss-portal-validation-error [errors]="fieldError()"
                                     [errorMessages]="errorMesages.dischargePort"></cpdss-portal-validation-error>

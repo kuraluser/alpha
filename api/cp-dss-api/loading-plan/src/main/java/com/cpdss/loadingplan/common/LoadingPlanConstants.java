@@ -11,8 +11,20 @@ public final class LoadingPlanConstants {
 
   public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
-  public static final Long LOADING_INFORMATION_REQUEST_ID = 9L;
+  // JSON types
+  public static final Long LOADING_INFORMATION_REQUEST_JSON_TYPE_ID = 9L;
 
   public static final Integer DEFAULT_STAGE_OFFSET_VALUE = 4;
   public static final Integer DEFAULT_STAGE_DURATION_VALUE = 4;
+
+  // Loading Information Status IDs
+  public static final Long LOADING_INFORMATION_PROCESSING_STARTED_ID = 3L;
+
+  // Loading Plan Conditions
+  public static final Integer LOADING_PLAN_ARRIVAL_CONDITION_VALUE = 1;
+  public static final Integer LOADING_PLAN_DEPARTURE_CONDITION_VALUE = 2;
+
+  // Loading Plan Value Types
+  public static final Integer LOADING_PLAN_ACTUAL_TYPE_VALUE = 1;
+  public static final Integer LOADING_PLAN_PLANNED_TYPE_VALUE = 2;
 }

@@ -28,8 +28,8 @@ public class LoadingMachineryInUse extends EntityDoc {
   @JoinColumn(name = "loading_xid", referencedColumnName = "id")
   private LoadingInformation loadingInformation;
 
-  @Column(name = "pump_xid")
-  private Long pumpXId;
+  @Column(name = "machine_xid")
+  private Long machineXId;
 
   @Column(name = "is_using")
   private Boolean isUsing;
@@ -39,4 +39,7 @@ public class LoadingMachineryInUse extends EntityDoc {
 
   @Column(name = "capacity")
   private BigDecimal capacity;
+
+  @Column(name = "machine_type_xid")
+  private Integer machineTypeXid;
 }

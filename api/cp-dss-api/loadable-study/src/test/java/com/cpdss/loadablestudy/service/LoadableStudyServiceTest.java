@@ -2111,7 +2111,7 @@ class LoadableStudyServiceTest {
     return loadableQuantities;
   }
 
-  /** @return List<LoadableStudyPortRotation> */
+  /** @return List<LoadableStudyPortRotationService> */
   private List<LoadableStudyPortRotation> prepareLoadableStudyPortRotationDetails() {
     List<LoadableStudyPortRotation> loadableStudyPortRotations =
         new ArrayList<LoadableStudyPortRotation>();
@@ -4093,13 +4093,13 @@ class LoadableStudyServiceTest {
               .build());
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
           com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder()
-              .setHogSag(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setDeflection(i == 1 ? "" : NUMERICAL_TEST_VALUE)
               .setCalculatedDraftFwdActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
               .setCalculatedDraftAftActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
               .setCalculatedDraftMidActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
               .setCalculatedTrimActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
               .setBlindSector(i == 1 ? "" : NUMERICAL_TEST_VALUE)
-              .setHogSag(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setDeflection(i == 1 ? "" : NUMERICAL_TEST_VALUE)
               .build();
       recordBuilder.setLoadicatorData(data);
       requestBuilder.addSynopticalRecord(recordBuilder.build());

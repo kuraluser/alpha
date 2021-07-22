@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated.loadableStudy";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+ message DischargeStudyRequest{
+	int64 dischargeStudyId = 1;
+}
+
+message DischargeStudyDetail{
+	string name = 1;
+	string enquiryDetails = 2;
+	int64 vesselId = 3;
+	int64 voyageId = 4;
+	int64 dischargeStudyId = 5;
+}
+message UpdateDischargeStudyReply{
+	ResponseStatus responseStatus = 1;
+	UpdateDischargeStudyDetail dischargeStudy = 2;
+}
+
+message UpdateDischargeStudyDetail{
+	string name = 1;
+	string enquiryDetails = 2;
+	int64 id = 3;
+}
+
+message DischargeStudyReply{
+	ResponseStatus responseStatus = 1;
+	DischargeStudyDetail dischargeStudy = 2;
+	int64 id = 3;
+}
+
+
+message BackLoading{
+	int64 id=1;
+	string colour=2;
+	int64 cargoId=3;
+	string api=4;
+	string temperature=5;
+	string abbreviation = 6;
+	string quantity=7;
+}
+
+message InstructionReply{
+	repeated InstructionDetail instructionDetails =1;
+	ResponseStatus responseStatus = 2;
+}
+message InstructionDetail{
+	int64 id=1;
+	string instruction=2;
+}
+
+
+message EmptyRequest{
+}
+
+message DishargeStudyCargoDetail {
+	int64 id = 1;
+	string crudeType = 2;
+	string abbreviation = 3;
+	string api = 4;
+	bool isCondensateCargo = 5;
+	bool isHrvpCargo = 6;
+}
+message DishargeStudyPortCargoMapping{
+	int64 portId=1;
+	repeated DishargeStudyCargoDetail cargos = 2;
+}
+message DishargeStudyCargoReply {
+	ResponseStatus responseStatus = 1;
+	repeated DishargeStudyPortCargoMapping portCargos= 2;
+}

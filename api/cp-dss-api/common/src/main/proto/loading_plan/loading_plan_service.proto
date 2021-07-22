@@ -6,16 +6,36 @@ option java_package = "com.cpdss.common.generated.loading_plan";
 import "common.proto";
 // Messages for the Service related to Loading Plan
 import "loading_plan/loading_plan_models.proto";
+import "loadable_study.proto";
 
 service LoadingInformationService {
 
   rpc GetLoadingInformation(LoadingInformationRequest) returns (LoadingInformation) {}
-  
+
+  // refactoring single api to 5 grpc, Reason, please see the gateway Doc for why this split
+  // Case 1, Loading Details
   rpc SaveLoadingInformation(LoadingInformation) returns (LoadingInfoSaveResponse) {}
+
+  // Case 2, Only Loading Rate data
+  rpc SaveLoadingInfoRates(LoadingInformation) returns (LoadingInfoSaveResponse) {}
+
+  // Case 3, Adding Or Removing Berth Data
+  rpc SaveLoadingInfoBerths(LoadingInformation) returns (LoadingInfoSaveResponse) {}
+
+  // Case 4, Machines in Use data
+  rpc SaveLoadingInfoMachinery(LoadingInformation) returns (LoadingInfoSaveResponse) {}
+
+  // Case 5, reason for delay
+  rpc SaveLoadingInfoDelays(LoadingInformation) returns (LoadingInfoSaveResponse) {}
+
+  // Case 6, Stages and track status
+  rpc SaveLoadingInfoStages(LoadingInformation) returns (LoadingInfoSaveResponse) {}
 
   rpc GetLoadigInformationByVoyage(LoadingInformationSynopticalRequest) returns (LoadingInformationSynopticalReply) {}
 
   rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}
+  
+  rpc SaveAlgoLoadingPlanStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
   
   rpc GenerateLoadingPlan(LoadingInfoAlgoRequest) returns (ResponseStatus) {}
 }
@@ -32,5 +52,10 @@ service LoadingInstructionService {
 service LoadingPlanService {
 
   rpc LoadingPlanSynchronization(LoadingPlanSyncDetails) returns (LoadingPlanSyncReply) {}
+
+  
+  rpc SaveLoadingPlan(LoadingPlanSaveRequest) returns (LoadingPlanSaveResponse) {}
+
+  rpc GetOrSaveRulesForLoadingPlan (LoadingPlanRuleRequest) returns (LoadingPlanRuleReply) {}
 
 }

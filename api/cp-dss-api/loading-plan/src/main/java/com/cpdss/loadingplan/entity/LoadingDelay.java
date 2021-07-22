@@ -43,4 +43,7 @@ public class LoadingDelay extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "cargo_nomination_xid")
+  private Long cargoNominationId;
 }

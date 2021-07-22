@@ -366,6 +366,19 @@ export interface IPortOHQResponse {
 }
 
 /**
+ * Interface for discharge study port ohq details api
+ *
+ * @export
+ * @interface IDischargeStudyPortOHQResponse
+ */
+ export interface IDischargeStudyPortOHQResponse {
+    responseStatus: IResponse;
+    onHandQuantities: IDischargeStudyPortOHQTankDetail[];
+    tanks: ITank[][];
+    rearTanks: ITank[][];
+}
+
+/**
  * Enum for ohq voyage mode
  *
  * @export
@@ -398,6 +411,64 @@ export interface IPortOHQTankDetail {
     vesselId: number;
     voyageId: number;
     loadableStudyId: number;
+    colorCode: string;
+    fuelTypeShortName: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
+    isPortRotationOhqComplete: boolean;
+}
+
+/**
+ * Interface for details discharge study ohq details of specific port
+ *
+ * @export
+ * @interface IDischargeStudyPortOHQTankDetail
+ */
+ export interface IDischargeStudyPortOHQTankDetail {
+    id: number;
+    fuelTypeId: number;
+    fuelTypeName: string;
+    tankId: number;
+    tankName: string;
+    density: number;
+    arrivalQuantity: number;
+    departureQuantity: number;
+    arrivalVolume: number;
+    departureVolume: number;
+    portRotationId: number;
+    storeKey: number;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
+    colorCode: string;
+    fuelTypeShortName: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
+    isPortRotationOhqComplete: boolean;
+}
+
+/**
+ * Interface for details discharge ohq details of specific port
+ *
+ * @export
+ * @interface IDischargeStudyPortOHQTankDetail
+ */
+ export interface IDischargeStudyPortOHQTankDetail {
+    id: number;
+    fuelTypeId: number;
+    fuelTypeName: string;
+    tankId: number;
+    tankName: string;
+    density: number;
+    arrivalQuantity: number;
+    departureQuantity: number;
+    arrivalVolume: number;
+    departureVolume: number;
+    portRotationId: number;
+    storeKey: number;
+    vesselId: number;
+    voyageId: number;
+    dischargeStudyId: number;
     colorCode: string;
     fuelTypeShortName: string;
     fullCapacityCubm: number;
@@ -510,7 +581,7 @@ export class OHQDB extends CPDSSDB {
  * @extends {CPDSSDB}
  */
 export class DischargeOHQDB extends CPDSSDB {
-    dischargeOhq!: Dexie.Table<IPortOHQTankDetail, number>;
+    dischargeOhq!: Dexie.Table<IDischargeStudyPortOHQTankDetail, number>;
     constructor() {
         super();
     }
@@ -925,5 +996,6 @@ export interface ICargoHistoryDetails {
     ballastPlanned: number;
     sf: number;
     bm: number;
+    list: number;
     constantPlanned: number;
 }

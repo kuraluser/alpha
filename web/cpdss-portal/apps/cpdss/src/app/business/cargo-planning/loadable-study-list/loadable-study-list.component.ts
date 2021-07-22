@@ -45,13 +45,13 @@ export class LoadableStudyListComponent implements OnInit {
   addLSBtnPermissionContext: IPermissionContext;
   VOYAGE_STATUS = VOYAGE_STATUS;
 
-  get selectedVoyage(): Voyage{
+  get selectedVoyage(): Voyage {
     return this._selectedVoyage;
   }
 
-  set selectedVoyage(voyage: Voyage){
+  set selectedVoyage(voyage: Voyage) {
     this._selectedVoyage = voyage;
-    localStorage.setItem("voyageId",voyage?.id.toString())
+    localStorage.setItem("voyageId", voyage?.id.toString())
     localStorage.removeItem("loadableStudyId")
     localStorage.removeItem("loadablePatternId")
   }
@@ -72,23 +72,33 @@ export class LoadableStudyListComponent implements OnInit {
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
       this.vesselDetails = res[0] ?? <IVessel>{};
-      localStorage.setItem("vesselId",this.vesselDetails?.id.toString())
+      localStorage.setItem("vesselId", this.vesselDetails?.id.toString())
       this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
       this.ngxSpinnerService.hide();
       this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);
-      this.selectedVoyage = this.voyages[0];
+      const voyageId = localStorage.getItem("voyageId");
+      if (voyageId) {
+        const checkVoyage = this.voyages.find(voyage => voyage.id === Number(voyageId));
+        if (checkVoyage) {
+          this.selectedVoyage = checkVoyage;
+        } else {
+          this.selectedVoyage = this.voyages[0];
+        }
+      } else {
+        this.selectedVoyage = this.voyages[0];
+      }
       this.showLoadableStudyList();
     });
-    
+
     this.loading = false;
 
   }
 
-    /**
-  * Get page permission
-  *
-  * @memberof LoadableStudyListComponent
-  */
+  /**
+* Get page permission
+*
+* @memberof LoadableStudyListComponent
+*/
   getPagePermission() {
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], true);
     this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewLoadableStudy'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.VIEW] };

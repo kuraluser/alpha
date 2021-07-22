@@ -109,6 +109,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   errorMessage: IAlgoError[];
   isServiceWorkerCallActive = false;
   isRuleModalVisible:boolean = false;
+  dischargingPortData: any = [];
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -284,6 +285,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     if (!this.dischargingPorts) {
       this.dischargingPorts = [];
+      this.dischargingPortData = null;
+    } else {
+      this.dischargingPortData = this.dischargingPorts[0];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
 
@@ -542,7 +546,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           loadableStudy.isDeletable = false;
           loadableStudy.isActionsEnabled = true;
         }
-        else if ([6, 1].includes(statusId)) {
+        else if ([6, 1, 11].includes(statusId)) {
           loadableStudy.isActionsEnabled = true;
           if (this.loadableStudyId === loadableStudyId) {
             this.selectedLoadableStudy = JSON.parse(JSON.stringify(loadableStudy));
@@ -576,15 +580,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async onDischargePortChange(event) {
-    let isPortSelected;
-    this.dischargingPorts.map((dischargingPort, index) => { if (dischargingPort.id === event.itemValue.id) { isPortSelected = index } });
-    if (isPortSelected >= 0) {
-      this.dischargingPorts.splice(isPortSelected, 1);
-      this.updatingDischargingPort();
-    } else if (this.dischargingPorts.length < 5) {
-      this.dischargingPorts.push(event.itemValue);
-      this.updatingDischargingPort();
-    }
+    this.dischargingPorts = [event?.value];
+    this.updatingDischargingPort();
     this.loadableStudyDetailsTransformationService.setPortValidity(false);
   }
 
@@ -800,12 +797,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts = [];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
-    if (this.selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length) {
-      this.messageService.clear();
-      const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
-      this.isSelectedDischargePort = false;
-      this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS'] });
-    }
   }
 
   /**
@@ -831,9 +822,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.dischargeCargos.push(_cargo);
       }
     });
-    if (this.selectedDischargeCargo) {
-      this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
-    }
+      this.selectedDischargeCargo = this.dischargeCargos?.find(cargo => cargo?.id === this.selectedLoadableStudy?.dischargingCargoId)
   }
 
 
@@ -910,8 +899,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
       subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
       return this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
-    }
-    else {
+    } else {
       const dwt = (Number(loadableQuantity.displacmentDraftRestriction) - Number(loadableQuantity.vesselLightWeight))?.toString();
       const data: ISubTotal = {
         dwt: dwt,
@@ -969,7 +957,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.hide();
       let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
       let databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
-      if (calculatedTotQty === databaseTotQty) {
+      if (Number(calculatedTotQty) === Number(databaseTotQty)) {
         this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
       } else {
         this.messageService.clear();
@@ -1036,6 +1024,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     catch (errorResponse) {
+      this.selectedLoadableStudy.statusId = 11;
+      this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR;
       this.selectedLoadableStudy.isActionsEnabled = true;
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();

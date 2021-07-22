@@ -152,7 +152,7 @@ export class LoadableQuantityComponent implements OnInit {
       });
 
       if (this.caseNo === 1) {
-        this.loadableQuantityForm.addControl('distanceInSummerzone', this.fb.control('', [Validators.required, numberValidator(2, 2), Validators.min(0)]));
+        this.loadableQuantityForm.addControl('distanceInSummerzone', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('speedInSz', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0.01)]));
         this.loadableQuantityForm.addControl('runningHours', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('runningDays', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
@@ -249,7 +249,7 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantity = {
           portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
-          portId: this.loadableQuantityForm.controls.portName.value.id,
+          portId: this.loadableQuantityForm.controls.portName.value.portId,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
           vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,
@@ -281,7 +281,7 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantity = {
           portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
-          portId: this.loadableQuantityForm.controls.portName.value.id,
+          portId: this.loadableQuantityForm.controls.portName.value.portId,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
           vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,
@@ -305,7 +305,7 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantity = {
           portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
-          portId: this.loadableQuantityForm.controls.portName.value.id,
+          portId: this.loadableQuantityForm.controls.portName.value.portId,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
           vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,

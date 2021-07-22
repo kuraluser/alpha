@@ -20,7 +20,7 @@
             </ng-container>
             <ng-container>
                 <cpdss-portal-validation-error [errors]="berth.controls.name.errors"
-                [errorMessages]="errorMesages.berth"></cpdss-portal-validation-error>
+                    [errorMessages]="errorMesages.berth"></cpdss-portal-validation-error>
             </ng-container>
             <ng-container *ngIf="!berth.controls.edit.value">
                 <div class="bg-highlight mr-15" (click)="selectBerth(berth, i)">
@@ -55,14 +55,9 @@
                                     class="form-control" id="berth-name" formControlName="berthName"
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_NAME_PLACE_HOLDER' | translate}}"
                                     (change)="change('berthName')">
-                                <ng-template #berthName><span>{{berthDetailsFormComtrol?.berthName?.value}}</span>
+                                <ng-template #berthName><div class="text-right">{{berthDetailsFormComtrol?.berthName?.value}}</div>
                                 </ng-template>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
                         </div>
                         <div class="row form-group">
                             <label for="berth-depth"
@@ -73,33 +68,25 @@
                                     id="berth-depth" *ngIf="editMode;else maxShipDepth" formControlName="maxShipDepth"
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_DEPTH_PLACE_HOLDER' | translate}}"
                                     (change)="change('maxShipDepth')" [readonly]="false">
-                                <ng-template #maxShipDepth><span>{{berthDetailsFormComtrol?.maxShipDepth?.value}}</span>
+                                <ng-template #maxShipDepth><div class="text-right">{{berthDetailsFormComtrol?.maxShipDepth?.value}}</div>
                                 </ng-template>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
                         </div>
                         <div class="row form-group">
                             <label for="berth-slong-hose"
                                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_ALONG_HOSE_LABEL' |
                                 translate}}</label>
-                            <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="berth-slong-hose" *ngIf="editMode;else hoseConnections"
-                                    formControlName="hoseConnections"
+                            <div class="col error-icon-wrapper">
+                                <textarea type="text" class="form-control" id="berth-slong-hose"
+                                    *ngIf="editMode;else hoseConnections" formControlName="hoseConnections"
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_ALONG_HOSE_PLACE_HOLDER' | translate}}"
-                                    (change)="change('hoseConnections')" [readonly]="false">
+                                    (change)="change('hoseConnections')" [readonly]="false"></textarea>
                                 <ng-template #hoseConnections>
-                                    <span>{{berthDetailsFormComtrol?.hoseConnections?.value}}</span></ng-template>
+                                    <div class="text-right">{{berthDetailsFormComtrol?.hoseConnections?.value}}</div>
+                                </ng-template>
+                                <cpdss-portal-validation-error [errors]="fieldError('hoseConnections')"
+                                    [errorMessages]="errorMesages.hoseConnections"></cpdss-portal-validation-error>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
                         </div>
                         <div class="row form-group">
                             <label for="berth-sea-draft"
@@ -112,13 +99,9 @@
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_SEA_DRAFT_PLACE_HOLDER' | translate}}"
                                     (change)="change('seaDraftLimitation')" [readonly]="false">
                                 <ng-template #seaDraftLimitation>
-                                    <span>{{berthDetailsFormComtrol?.seaDraftLimitation?.value}}</span></ng-template>
+                                    <div class="text-right">{{berthDetailsFormComtrol?.seaDraftLimitation?.value}}</div>
+                                </ng-template>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
                         </div>
                         <div class="row form-group">
                             <label for="berth-air-draft"
@@ -131,13 +114,9 @@
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_AIR_DRAFT_PLACE_HOLDER' | translate}}"
                                     (change)="change('airDraftLimitation')" [readonly]="false">
                                 <ng-template #airDraftLimitation>
-                                    <span>{{berthDetailsFormComtrol?.airDraftLimitation?.value}}</span></ng-template>
+                                    <div class="text-right">{{berthDetailsFormComtrol?.airDraftLimitation?.value}}</div>
+                                </ng-template>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
                         </div>
                         <div class="row form-group">
                             <label for="berth-manofold-height"
@@ -150,53 +129,61 @@
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_MANIFOLD_HEIGHT_PLACE_HOLDER' | translate}}"
                                     (change)="change('maxManifoldHeight')" [readonly]="false">
                                 <ng-template #maxManifoldHeight>
-                                    <span>{{berthDetailsFormComtrol?.maxManifoldHeight?.value}}</span></ng-template>
+                                    <div class="text-right">{{berthDetailsFormComtrol?.maxManifoldHeight?.value}}</div>
+                                </ng-template>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
+                        </div>
+                        <div class="row form-group">
+                            <label for="berth-manofold-height"
+                                class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_LINE_DISPLACEMENT_LABEL'
+                                | translate}}</label>
+                            <div class="col error-icon-wrapper">
+                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                    id="berth-line -displacement" *ngIf="editMode;else lineDisplacement"
+                                    formControlName="lineDisplacement"
+                                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_LINE_DISPLACEMENT_PLACE_HOLDER' | translate}}"
+                                    (change)="change('lineDisplacement')" [readonly]="false">
+                                <ng-template #lineDisplacement>
+                                    <div class="text-right">{{berthDetailsFormComtrol?.lineDisplacement?.value}}</div>
+                                </ng-template>
+                                <cpdss-portal-validation-error [errors]="fieldError('lineDisplacement')"
+                                [errorMessages]="errorMesages.lineDisplacement"></cpdss-portal-validation-error>
+                            </div>
                         </div>
                         <div class="row form-group">
                             <label for="berth-regulation-restriction"
                                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_LABEL'
                                 | translate}}</label>
-                            <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="berth-regulation-restriction" *ngIf="editMode;else regulationAndRestriction"
+                            <div class="col error-icon-wrapper">
+                                <textarea type="text" class="form-control" id="berth-regulation-restriction"
+                                    *ngIf="editMode;else regulationAndRestriction"
                                     formControlName="regulationAndRestriction"
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_PLACE_HOLDER' | translate}}"
-                                    (change)="change('regulationAndRestriction')" [readonly]="false">
+                                    (change)="change('regulationAndRestriction')" [readonly]="false"></textarea>
                                 <ng-template #regulationAndRestriction>
-                                    <span>{{berthDetailsFormComtrol?.regulationAndRestriction?.value}}</span>
+                                    <div class="text-right">{{berthDetailsFormComtrol?.regulationAndRestriction?.value}}</div>
                                 </ng-template>
+                                <cpdss-portal-validation-error [errors]="fieldError('regulationAndRestriction')"
+                                    [errorMessages]="errorMesages.regulationAndRestriction">
+                                </cpdss-portal-validation-error>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
                         </div>
 
                         <div class="row form-group">
                             <label for="berth-regulation-restriction"
                                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_ITEMS_TO_BE_AGREED_WITH_LABEL'
                                 | translate}}</label>
-                            <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                    id="berth-itemsToBeAgreedWith" *ngIf="editMode;else itemsToBeAgreedWith"
-                                    formControlName="itemsToBeAgreedWith"
+                            <div class="col  error-icon-wrapper">
+                                <textarea type="text" class="form-control" id="berth-itemsToBeAgreedWith"
+                                    *ngIf="editMode;else itemsToBeAgreedWith" formControlName="itemsToBeAgreedWith"
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_ITEMS_TO_BE_AGREED_WITH_PLACE_HOLDER' | translate}}"
-                                    (change)="change('itemsToBeAgreedWith')" [readonly]="false">
+                                    (change)="change('itemsToBeAgreedWith')" [readonly]="false"></textarea>
                                 <ng-template #itemsToBeAgreedWith>
-                                    <span>{{berthDetailsFormComtrol?.itemsToBeAgreedWith?.value}}</span></ng-template>
+                                    <div class="text-right">{{berthDetailsFormComtrol?.itemsToBeAgreedWith?.value}}</div>
+                                </ng-template>
+                                <cpdss-portal-validation-error [errors]="fieldError('itemsToBeAgreedWith')"
+                                    [errorMessages]="errorMesages.itemsToBeAgreedWith"></cpdss-portal-validation-error>
                             </div>
-                            <!-- TODO add validators for each items -->
-                            <!-- <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
-                        </div> -->
                         </div>
 
                     </div>

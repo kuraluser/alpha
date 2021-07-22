@@ -38,7 +38,11 @@
                         resetFilterOnHide="true">
                     </p-dropdown>
                 </ng-container>
-               
+            </div>
+            <div>
+                <ng-container *ngIf="synopticalService.selectedLoadableStudy">
+                    <button class="btn btn-main mr-10"  (click)="navigateToLoadableStudy()">{{'SYNOPTICAL_LOADABLE_PATTERN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' | translate}}</button>
+                </ng-container>
             </div>
             <div class="ml-auto pr-15" *ngIf="synopticalService.showActions && synopticalService.synopticalRecords?.length">
                 <ng-container *ngIf="isEditable()">

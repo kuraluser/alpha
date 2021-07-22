@@ -9,6 +9,7 @@ import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselResponse;
+import com.cpdss.gateway.domain.VesselTankResponse;
 import com.cpdss.gateway.service.VesselInfoService;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -48,6 +49,32 @@ public class VesselInfoController {
       final Long companyId = 1L;
       return this.vesselInfoService.getVesselsByCompany(
           companyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching vessels", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching vessels", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  /**
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(value = "/vessel/{vesselId}/cargo-tanks", produces = MediaType.APPLICATION_JSON_VALUE)
+  public VesselTankResponse getVesselTanks(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.vesselInfoService.getCargoVesselTanks(
+          vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching vessels", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

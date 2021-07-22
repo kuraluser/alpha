@@ -2,16 +2,17 @@
 package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
@@ -48,8 +49,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
 
-  private final Long LOADING_RULE_MASTER_ID = 2l;
-
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired PortInfoService portInfoService;
@@ -82,7 +81,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         // RPC call to vessel info, Get Rules (default value for Loading Info)
         RuleResponse ruleResponse =
             vesselInfoService.getRulesByVesselIdAndSectionId(
-                vesselId, LOADING_RULE_MASTER_ID, null, null);
+                vesselId, GatewayConstants.LOADING_RULE_MASTER_ID, null, null);
         AdminRuleValueExtract extract =
             AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
 
@@ -164,7 +163,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // RPC call to vessel info, Get Rules (default value for Loading Info)
       RuleResponse ruleResponse =
           vesselInfoService.getRulesByVesselIdAndSectionId(
-              vesselId, LOADING_RULE_MASTER_ID, null, null);
+              vesselId, GatewayConstants.LOADING_RULE_MASTER_ID, null, null);
 
       // RPC call to vessel info, Get Vessel Details
       VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);
@@ -262,6 +261,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 : new BigDecimal(rateFromLoading.getLineContentRemaining()));
       }
 
+      // Shore Loading Rate
+      loadingRates.setShoreLoadingRate(
+          rateFromLoading.getShoreLoadingRate().isEmpty()
+              ? BigDecimal.ZERO
+              : new BigDecimal(rateFromLoading.getShoreLoadingRate()));
+
       // Set Loading Info Id
       loadingRates.setId(rateFromLoading.getId());
       log.info("Loading Rates added from Loading plan Service");
@@ -300,7 +305,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           dto.setAirDraftLimitation(
               bd.getAirDraftLimitation().isEmpty()
                   ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getSeaDraftLimitation()));
+                  : new BigDecimal(bd.getAirDraftLimitation()));
           dto.setMaxManifoldHeight(
               bd.getMaxManifoldHeight().isEmpty()
                   ? BigDecimal.ZERO
@@ -347,8 +352,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           lb.getMaxManifoldHeight().isEmpty()
               ? BigDecimal.ZERO
               : new BigDecimal(lb.getMaxManifoldHeight()));
-      var2.setRegulationAndRestriction(lb.getDepth());
+      var2.setRegulationAndRestriction(lb.getSpecialRegulationRestriction());
+      var2.setItemsToBeAgreedWith(lb.getItemsToBeAgreedWith());
       var2.setHoseConnections(lb.getHoseConnections());
+      var2.setLineDisplacement(lb.getLineDisplacement());
       list.add(var2);
     }
     log.info("Loading Plan Berth data added Size {}", var1.size());
@@ -361,6 +368,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     VesselInfo.VesselPumpsResponse grpcReply =
         vesselInfoService.getVesselPumpsFromVesselInfo(vesselId);
     CargoMachineryInUse machineryInUse = new CargoMachineryInUse();
+
+    // Setting master data
     if (grpcReply != null) {
       try {
         List<PumpType> pumpTypes = new ArrayList<>();
@@ -376,11 +385,54 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           for (VesselInfo.VesselPump vp : grpcReply.getVesselPumpList()) {
             VesselPump pump = new VesselPump();
             BeanUtils.copyProperties(vp, pump);
+            pump.setMachineType(Common.MachineType.VESSEL_PUMP_VALUE);
             vesselPumps.add(pump);
           }
         }
         machineryInUse.setPumpTypes(pumpTypes);
         machineryInUse.setVesselPumps(vesselPumps);
+
+        if (!grpcReply.getVesselManifoldList().isEmpty()) {
+          List<VesselComponent> list1 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselManifoldList()) {
+            VesselComponent vcDto = new VesselComponent();
+            vcDto.setId(vc.getId());
+            vcDto.setComponentCode(vc.getComponentCode());
+            vcDto.setComponentName(vc.getComponentName());
+            vcDto.setVesselId(vc.getVesselId());
+            vcDto.setComponentType(vc.getComponentType());
+            vcDto.setMachineTypeId(Common.MachineType.MANIFOLD_VALUE);
+            list1.add(vcDto);
+          }
+          machineryInUse.setVesselManifold(list1);
+        }
+
+        if (!grpcReply.getVesselBottomLineList().isEmpty()) {
+          List<VesselComponent> list2 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselBottomLineList()) {
+            VesselComponent vcDto = new VesselComponent();
+            vcDto.setId(vc.getId());
+            vcDto.setComponentCode(vc.getComponentCode());
+            vcDto.setComponentName(vc.getComponentName());
+            vcDto.setVesselId(vc.getVesselId());
+            vcDto.setComponentType(vc.getComponentType());
+            vcDto.setMachineTypeId(Common.MachineType.BOTTOM_LINE_VALUE);
+            list2.add(vcDto);
+          }
+          machineryInUse.setVesselBottomLine(list2);
+        }
+
+        if (!grpcReply.getTankTypeList().isEmpty()) {
+          List<PumpType> tankTypes = new ArrayList<>();
+          for (VesselInfo.TankType type : grpcReply.getTankTypeList()) {
+            PumpType type1 = new PumpType();
+            type1.setId(type.getId());
+            type1.setName(type.getTypeName());
+            tankTypes.add(type1);
+          }
+          machineryInUse.setTankTypes(tankTypes);
+        }
+
         log.info(
             "Get loading info, Cargo machines Pump List Size {}, Type Size {} from Vessel Info",
             vesselPumps.size(),
@@ -391,13 +443,15 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       }
     }
 
+    // Setting Loading info Data
     if (!var1.isEmpty()) {
       List<LoadingMachinesInUse> list2 = new ArrayList<>();
       for (LoadingPlanModels.LoadingMachinesInUse lm : var1) {
         LoadingMachinesInUse var2 = new LoadingMachinesInUse();
         var2.setId(lm.getId());
-        var2.setPumpId(lm.getPumpId());
+        var2.setMachineId(lm.getMachineId());
         var2.setLoadingInfoId(lm.getLoadingInfoId());
+        var2.setMachineTypeId(lm.getMachineType().getNumber());
         var2.setCapacity(
             lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
         list2.add(var2);
@@ -589,21 +643,19 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
-      LoadingInformation loadingInformation =
-          loadingInfoBuilderService.buildLoadingInformation(request);
-      LoadingInfoSaveResponse response =
-          this.loadingPlanGrpcService.saveLoadingInformation(loadingInformation);
-      if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
-        // Updating synoptical table
-        this.updateSynopticalTable(request.getLoadingDetails(), response.getSynopticalTableId());
-        return buildLoadingInformationResponse(response, correlationId);
-      } else {
-        log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
+      LoadingPlanModels.LoadingInfoSaveResponse response =
+          loadingInfoBuilderService.saveDataAsync(request);
+      if (request.getLoadingDetails() != null) {
+        // Updating synoptic table (time)
+        this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
+      }
+      if (response == null) {
         throw new GenericServiceException(
             "Failed to save Loading Information",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      return buildLoadingInformationResponse(response, correlationId);
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getLoadingInfoId());
       e.printStackTrace();

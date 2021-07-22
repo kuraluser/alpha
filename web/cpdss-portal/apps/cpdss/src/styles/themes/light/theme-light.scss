@@ -427,7 +427,7 @@ hr{
 
 .form-control:disabled, .form-control[readonly]{
   background: $text-area-bg;
-  color: $muted;
+  color: $text-secondary;
 }
 
 textarea.form-control:disabled, textarea.form-control[readonly]{
@@ -1400,4 +1400,11 @@ header{
 
 .download-icon{
   background: url($images-theme + 'download-icon.png') no-repeat center center;
+}
+
+.sub-head-color{
+  color: $text-secondary;
+}
+.p-checkbox-icon.pi-check:before{
+  border: solid $radio-btn;
 }

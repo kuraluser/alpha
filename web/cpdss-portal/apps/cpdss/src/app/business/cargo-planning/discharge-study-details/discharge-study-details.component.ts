@@ -1,6 +1,6 @@
-import { Component, OnInit , OnDestroy } from '@angular/core';
+import { Component, OnInit , OnDestroy , HostListener , ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject , Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -8,18 +8,18 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { Voyage, IPort, VOYAGE_STATUS  , DISCHARGE_STUDY_STATUS } from '../../core/models/common.model';
 
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ISubTotal } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ICargo } from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { ICargo, DISCHARGE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
+import { DISCHARGE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
 import {  IDischargeStudy } from '../models/discharge-study-list.model';
 import { DischargeStudyDetailsApiService } from '../services/discharge-study-details-api.service';
 import { DischargeStudyListApiService } from '../services/discharge-study-list-api.service';
 import { DischargeStudyDetailsTransformationService } from '../services/discharge-study-details-transformation.service';
-
+import { UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
 /**
  *
  * Component class for DischargeStudyDetailsComponent
@@ -34,6 +34,8 @@ import { DischargeStudyDetailsTransformationService } from '../services/discharg
 })
 export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
   
+  @ViewChild('dischargeStudy') dischargeStudyRef;
+
   get selectedDischargeStudy(): IDischargeStudy {
     return this._selectedDischargeStudy;
   } 
@@ -68,6 +70,16 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
   portsComplete: boolean;
   ohqComplete: boolean;
   dischargeStudyComplete: boolean;
+  dischargeStudyTabPermissionContext:IPermissionContext;
+  dischargeStudyTabPermission: IPermission;
+  dischargeStudyViewPlanPermission: IPermission;
+  dischargeStudyGeneratePermission: IPermission;
+  cargos: ICargo[];
+
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> | boolean {
+    return !(this.dischargeStudyRef?.dischargeStudyForm?.dirty);
+  }
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -76,6 +88,7 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
     private ngxSpinnerService: NgxSpinnerService,
     private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
+    private unsavedChangesGuard: UnsavedChangesGuard,
     private dischargeStudyDetailsApiService: DischargeStudyDetailsApiService,
     private dischargeStudyListApiService: DischargeStudyListApiService,
     private dischargeStudyDetailsTransformationService: DischargeStudyDetailsTransformationService
@@ -87,8 +100,8 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
    * @memberof DischargeStudyComponent
    */
   ngOnInit(): void {
-    this.selectedTab = DISCHARGE_STUDY_DETAILS_TABS.CARGONOMINATION;
     this.initSubsciptions();
+    this.setPagePermissionContext();
     this.activatedRoute.paramMap
     .pipe(takeUntil(this.ngUnsubscribe))
     .subscribe(params => {
@@ -105,7 +118,7 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       this.tabPermission();
       this.getDischargeStudies(this.vesselId, this.voyageId, this.dischargeStudyId);
     });
-    this.setPagePermissionContext();
+    
   }
 
     /**
@@ -126,16 +139,21 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
     setPagePermissionContext() {
   
   
-      this.cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
-      this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW] };
+      this.cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyCargoNominationComponentTab'], false);
+      this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyCargoNominationComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
   
-      this.portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortsComponent'], false);
-      this.portsTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW] };
+      this.portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyPortsComponentTab'], false);
+      this.portsTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyPortsComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
   
-      this.ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], false);
-      this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
+      this.ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyOnHandQuantityComponentTab'], false);
+      this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyOnHandQuantityComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
   
-  
+      this.dischargeStudyTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyComponentTab'], false);
+      this.dischargeStudyTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
+
+      this.dischargeStudyViewPlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyViewPlan'], false);
+      this.dischargeStudyGeneratePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyGeneratePlan'], false);
+      
       this.tabPermission();
     }
 
@@ -170,16 +188,20 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
       this.vesselInfo = res[0] ?? <IVessel>{};
       this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
-      this.ports = await this.getPorts();
       const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
-      const dischargeStudies = result?.loadableStudies ?? [];
+      const dischargeStudies = result?.dischargeStudies ?? [];
       if (dischargeStudies.length) {
-        this.setProcessingLoadableStudyActions(0, 0, dischargeStudies);
-        this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(loadableStudy => loadableStudy.id === dischargeStudyId) : this.dischargeStudies[0];
+        this.dischargeStudies = dischargeStudies;
+        this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId) : this.dischargeStudies[0];
+        this.dischargeStudyId = this.selectedDischargeStudy.id;
         this.dischargeStudyDetailsTransformationService.setOHQValidity(this.selectedDischargeStudy?.ohqPorts ?? []);
       } else {
+        this.selectedDischargeStudy = null;
         this.dischargeStudies = [];
       }
+      this.ports = await this.getPorts();
+      const cargos = await this.dischargeStudyDetailsApiService.getCargoDetails().toPromise();
+      this.cargos = cargos.cargos;
       this.ngxSpinnerService.hide();
     }
 
@@ -248,7 +270,13 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
  */
   onVoyageChange(event: any) {
     this.voyageId = event?.value?.id;
+    this.dischargeStudies = null;
+    this.dischargeStudyId = 0;
+    this.dischargeStudyDetailsTransformationService.setPortValidity(false);
     this.dischargeStudyDetailsTransformationService.setOHQValidity([]);
+    this.tabPermission();
+    this.selectedDischargeStudy = null;
+    this.initSubsciptions();
     this.router.navigate([`business/cargo-planning/discharge-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
 
@@ -259,6 +287,8 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
    * @memberof DischargeStudyDetailsComponent
   */
   async onTabClick(selectedTab: string) {
+    const value = await this.unsavedChangesGuard.canDeactivate(this);
+    if(!value) { return };
     this.selectedTab = selectedTab;
   }
 
@@ -287,6 +317,16 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
   */
   addPort() {
     this.dischargeStudyDetailsTransformationService.addPort();
+  }
+
+  /**
+  * Method to change discharge study
+  *
+  * @memberof DischargeStudyDetailsComponent
+  */
+  onDischargeStudyChange(event) {
+    const dischargeStudyId = event.value.id;
+    this.router.navigate([`business/cargo-planning/discharge-study-details/${this.vesselId}/${this.voyageId}/${dischargeStudyId}`]);
   }
 
 }

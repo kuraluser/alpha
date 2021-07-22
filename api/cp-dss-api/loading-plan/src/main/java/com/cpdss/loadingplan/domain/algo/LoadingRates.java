@@ -8,7 +8,6 @@ import lombok.Data;
 public class LoadingRates {
 
   private Long Id;
-  private BigDecimal initialLoadingRate;
   private BigDecimal maxLoadingRate;
   private BigDecimal reducedLoadingRate;
   private BigDecimal minDeBallastingRate;

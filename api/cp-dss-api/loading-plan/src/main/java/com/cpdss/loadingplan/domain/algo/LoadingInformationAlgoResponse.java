@@ -1,4 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.domain.algo;
 
-public class LoadingInformationAlgoResponse {}
+import lombok.Data;
+
+@Data
+public class LoadingInformationAlgoResponse {
+
+  private String processId;
+}

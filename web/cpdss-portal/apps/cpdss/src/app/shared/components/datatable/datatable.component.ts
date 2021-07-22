@@ -291,9 +291,12 @@ export class DatatableComponent implements OnInit {
     }
     colEditable = col?.editable
     if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
-      const control = this.field(event.index, event.field);
-      if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE) {
-        event.data[event.field].isEditMode = control?.invalid;
+      for(let i= event.index; i >= 0; i--){
+        const control = this.field(i, event.field);
+        if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE && event.data[event.field].value) {
+          event.data[event.field].isEditMode = control?.invalid;
+          control.updateValueAndValidity();
+        }
       }
     }
   }
@@ -350,9 +353,9 @@ export class DatatableComponent implements OnInit {
    * @param col
    * @param colIndex
    */
-  onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
+  onKeyChange(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
-    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
+    if ((code === 9 || code === 13) && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
       const prevField = this.columns[colIndex - 1].field;
       if (prevField && rowData[prevField]) {
         const control = this.field(rowIndex, prevField);
@@ -372,7 +375,7 @@ export class DatatableComponent implements OnInit {
    */
   onFocusKeyDown(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const nextField = this.columns[colIndex + 1];
-    if(event.keyCode === 9 && !event.shiftKey && nextField.fieldType === 'DATETIME') {
+    if((event.keyCode === 9 || event.keyCode === 13) && !event.shiftKey && nextField.fieldType === 'DATETIME') {
       const id = `${nextField.field}_${rowIndex}input`;
       setTimeout(() => {
         if(document.getElementById(id) !== document.activeElement && this.value[rowIndex][nextField.field].isEditMode) {
@@ -841,7 +844,6 @@ export class DatatableComponent implements OnInit {
   disabledField(formGroupIndex: number, formControlName: string) {
     const formControl = this.field(formGroupIndex, formControlName);
     return formControl.disabled;
-
   }
 
   /**

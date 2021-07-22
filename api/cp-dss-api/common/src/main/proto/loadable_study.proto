@@ -5,6 +5,7 @@ option java_package = "com.cpdss.common.generated";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "loadable_study/loadable_study_models.proto";
 
 service LoadableStudyService {
 	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
@@ -191,38 +192,24 @@ service LoadableStudyService {
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
-	rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){
-	}
-	rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){
-	}
+
+	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
 }
+
+service DischargeStudyOperationService {
+  rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
+  rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){}
+  rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
+  rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
+}
+
+service PortInstructionService {
+    rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
+}
+
 message CargoNominationDetailReply{
 	CargoNominationDetail cargoNominationdetail = 1;
 	ResponseStatus responseStatus = 2;
-}
-
-message DischargeStudyDetail{
-	string name = 1;
-	string enquiryDetails = 2;
-	int64 vesselId = 3;
-	int64 voyageId = 4;
-	int64 dischargeStudyId = 5;
-}
-message UpdateDischargeStudyReply{
-	ResponseStatus responseStatus = 1;
-	UpdateDischargeStudyDetail dischargeStudy = 2;
-}
-
-message UpdateDischargeStudyDetail{
-	string name = 1;
-	string enquiryDetails = 2;
-	int64 id = 3;
-}
-
-message DischargeStudyReply{
-	ResponseStatus responseStatus = 1;
-	DischargeStudyDetail dischargeStudy = 2;
-	int64 id = 3;
 }
 
 message  LoadablePatternConfirmedReply{
@@ -271,7 +258,7 @@ message LoadicatorPatternDetailsResults {
 
 message LodicatorResultDetails {
 	int64 portId = 1;
-	string hog = 2;
+	string deflection = 2;
 	string calculatedDraftFwdPlanned = 3;
 	string calculatedDraftMidPlanned = 4;
 	string calculatedDraftAftPlanned = 5;
@@ -324,7 +311,7 @@ message LDtrim {
    int64 portId = 21;
    int64 stowagePlanId = 22;
    int64 synopticalId = 23;
-   string hogSag = 24;
+   string deflection = 24;
 }
 
 message LDStrength{
@@ -816,7 +803,9 @@ message CargoNominationDetail {
 	int64 segregationId = 13;
 	bool isCargoNominationComplete=14;
 	string cargoName = 16;
-
+	string api = 17;
+	string temperature = 18;
+	int64 mode = 19;
 }
 
 message CargoNominationRequest {
@@ -869,6 +858,13 @@ message PortRotationDetail{
 	int64 portTimezoneId = 19;
 	bool isLandingPage=20;
 	string operationType=21;
+	bool isBackLoadingEnabled = 22;
+	repeated BackLoading backLoading = 23;
+	repeated int64 instructionId = 24;
+	int64 cowId = 25;
+	int64 percentage = 26;
+	repeated int64 tanks = 27;
+	
 }
 
 message Operation{
@@ -1218,7 +1214,7 @@ message SynopticalTableReply{
 }
 
 message SynopticalTableLoadicatorData{
-	string hogSag = 1;
+	string deflection = 1;
 	string finalDraftFwd = 2;
 	string finalDraftAft = 3;
 	string finalDraftMid = 4;
@@ -1433,4 +1429,39 @@ message LoadablePatternPortWiseDetailsJson {
 	string loadablePatternDetails = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadableStudyId = 3;
+}
+
+
+message LoadableStudyShoreResponse{
+		repeated LoadableStudyShore shoreList = 1;
+	  ResponseStatus responseStatus = 2;
+}
+
+message LoadableStudyShoreRequest{
+	int64 vesselId = 1;
+}
+
+message	LoadableStudyShore{
+	int64 id = 1;
+	string vesselName = 2;
+	int64 imoNo = 3;
+	string flagName = 4;
+	string atd = 5;
+	string eta = 6;
+	string voyageName = 7;
+	repeated VoyagePorts voyagePorts = 8;
+}
+
+message	VoyagePorts{
+	string portName =1;
+	string portType =2;
+	string portOrder =3;
+	string anchorage =4;
+	string iconUrl =5;
+	string ata =6;
+	string atd =7;
+	string etd =8;
+	string eta =9;
+	string lat =10;
+	string lon =11;
 }

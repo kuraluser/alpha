@@ -1,0 +1,9 @@
+.content-outer-instruction {
+    height: calc(100vh - 370px);
+    display: grid;
+    width: 100%;
+    grid-template-columns: 330px calc(100% - 330px);
+    .sidebar-content{
+        height: calc(100vh - 370px);
+    }
+}
