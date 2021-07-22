@@ -79,17 +79,6 @@ export class VoyageStatusComponent implements OnInit {
   }
 
   /**
-   * Get page permission
-   *
-   * @memberof VoyageStatusComponent
-   */
-    getPagePermission() {
-      this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']);
-      this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
-      this.editPortRotationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['StatusEditPortRotation'], actions: [PERMISSION_ACTION.VIEW] };
-    }
-
-  /**
    * Get vessel details
    *
    * @memberof VoyageStatusComponent
