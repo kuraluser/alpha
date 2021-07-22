@@ -290,6 +290,67 @@ public final class DischargeStudyOperationServiceGrpc {
     return getGetDischargeStudyPortWiseCargosMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>
+      getSaveDischargeStudyBackLoadingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveDischargeStudyBackLoading",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest.class,
+      responseType =
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>
+      getSaveDischargeStudyBackLoadingMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest,
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>
+        getSaveDischargeStudyBackLoadingMethod;
+    if ((getSaveDischargeStudyBackLoadingMethod =
+            DischargeStudyOperationServiceGrpc.getSaveDischargeStudyBackLoadingMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getSaveDischargeStudyBackLoadingMethod =
+                DischargeStudyOperationServiceGrpc.getSaveDischargeStudyBackLoadingMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getSaveDischargeStudyBackLoadingMethod =
+              getSaveDischargeStudyBackLoadingMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .DishargeStudyBackLoadingSaveRequest,
+                          com.cpdss
+                              .common
+                              .generated
+                              .loadableStudy
+                              .LoadableStudyModels
+                              .DischargeStudyReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveDischargeStudyBackLoading"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .DishargeStudyBackLoadingSaveRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                                  .DischargeStudyReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "SaveDischargeStudyBackLoading"))
+                      .build();
+        }
+      }
+    }
+    return getSaveDischargeStudyBackLoadingMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -382,6 +443,15 @@ public final class DischargeStudyOperationServiceGrpc {
       asyncUnimplementedUnaryCall(getGetDischargeStudyPortWiseCargosMethod(), responseObserver);
     }
 
+    /** */
+    public void saveDischargeStudyBackLoading(
+        com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveDischargeStudyBackLoadingMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -450,6 +520,17 @@ public final class DischargeStudyOperationServiceGrpc {
                           .LoadableStudyModels
                           .DishargeStudyCargoReply>(
                       this, METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS)))
+          .addMethod(
+              getSaveDischargeStudyBackLoadingMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest,
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DischargeStudyReply>(this, METHODID_SAVE_DISCHARGE_STUDY_BACK_LOADING)))
           .build();
     }
   }
@@ -525,6 +606,18 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveDischargeStudyBackLoading(
+        com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveDischargeStudyBackLoadingMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -575,6 +668,14 @@ public final class DischargeStudyOperationServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetDischargeStudyPortWiseCargosMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply
+        saveDischargeStudyBackLoading(
+            com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveDischargeStudyBackLoadingMethod(), getCallOptions(), request);
     }
   }
 
@@ -632,12 +733,23 @@ public final class DischargeStudyOperationServiceGrpc {
           getChannel().newCall(getGetDischargeStudyPortWiseCargosMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>
+        saveDischargeStudyBackLoading(
+            com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveDischargeStudyBackLoadingMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
   private static final int METHODID_SAVE_DISCHARGE_STUDY = 1;
   private static final int METHODID_UPDATE_DISCHARGE_STUDY = 2;
   private static final int METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS = 3;
+  private static final int METHODID_SAVE_DISCHARGE_STUDY_BACK_LOADING = 4;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -706,6 +818,19 @@ public final class DischargeStudyOperationServiceGrpc {
                           .loadableStudy
                           .LoadableStudyModels
                           .DishargeStudyCargoReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_DISCHARGE_STUDY_BACK_LOADING:
+          serviceImpl.saveDischargeStudyBackLoading(
+              (com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DischargeStudyReply>)
                   responseObserver);
           break;
         default:
@@ -777,6 +902,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getSaveDischargeStudyMethod())
                       .addMethod(getUpdateDischargeStudyMethod())
                       .addMethod(getGetDischargeStudyPortWiseCargosMethod())
+                      .addMethod(getSaveDischargeStudyBackLoadingMethod())
                       .build();
         }
       }

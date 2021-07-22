@@ -14,6 +14,10 @@ import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceImplBase;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
+import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.CargoPortMapping;
@@ -62,6 +66,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private CargoOperationRepository cargoOperationRepository;
   @Autowired private SynopticService synopticService;
+  @Autowired private CowDetailService cowDetailService;
+  @Autowired private PortInstructionService portInstructionService;
+  @Autowired private BackLoadingService backLoadingService;
 
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
@@ -515,6 +522,313 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
    */
   public PortInfo.PortReply getPortInfo(PortInfo.GetPortInfoByPortIdsRequest build) {
     return portInfoGrpcService.getPortInfoByPortIds(build);
+  }
+
+  @Override
+  public void saveDischargeStudyBackLoading(
+      DishargeStudyBackLoadingSaveRequest request,
+      StreamObserver<DischargeStudyReply> responseObserver) {
+    DischargeStudyReply.Builder builder = DischargeStudyReply.newBuilder();
+    try {
+      long dischargestudyId = request.getDischargeStudyId();
+      Optional<LoadableStudy> dischargeStudy = dischargeStudyRepository.findById(dischargestudyId);
+      if (!dischargeStudy.isPresent()) {
+        throw new GenericServiceException(
+            "No discharge study found",
+            CommonErrorCodes.E_CPDSS_NO_DISCHARGE_STUDY_FOUND,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      List<DishargeStudyBackLoadingDetail> portCargos = request.getDsBackLoadingList();
+      List<LoadableStudyPortRotation> portRotations =
+          loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+              dischargeStudy.get(), true);
+      List<Long> portRotationIds =
+          portRotations.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList());
+
+      Map<Long, DischargeStudyCowDetail> cowDetailForThePort =
+          cowDetailService.getCowDetailForThePort(dischargestudyId, portRotationIds);
+      Map<Long, List<DischargeStudyPortInstruction>> portWiseInstructions =
+          portInstructionService.getPortWiseInstructions(dischargestudyId, portRotationIds);
+      List<CargoNomination> dbCargos =
+          cargoNominationService.getCargoNominationByLoadableStudyId(dischargestudyId);
+      Map<Long, List<BackLoading>> backloadingData =
+          backLoadingService.getBackloadingDataByportIds(dischargestudyId, portRotationIds);
+      List<DischargeStudyCowDetail> cowDetailsToSave = new ArrayList<>();
+      List<DischargeStudyPortInstruction> portInstructionsToSave = new ArrayList<>();
+      List<BackLoading> backLoadingToSave = new ArrayList<>();
+      List<CargoNomination> cargoNominationsToSave = new ArrayList<>();
+
+      portCargos.forEach(
+          cargo -> {
+            PortRotationDetail portRequestDetail = cargo.getPortDetails();
+            List<CargoNominationDetail> cargoNominations = cargo.getPortCargoDetailsList();
+            long portCargoId = portRequestDetail.getId();
+            portRotations.forEach(
+                portRotation -> {
+                  Long portId = portRotation.getId();
+                  if (portCargoId == portId) {
+                    portRotation.setMaxDraft(new BigDecimal(portRequestDetail.getMaxDraft()));
+                  }
+                });
+            updateCowDetails(cowDetailForThePort, cowDetailsToSave, portRequestDetail, portCargoId);
+            updateInsrtuctions(
+                dischargestudyId,
+                portWiseInstructions,
+                portInstructionsToSave,
+                portRequestDetail,
+                portCargoId);
+
+            createBackLoading(
+                backloadingData,
+                backLoadingToSave,
+                portRequestDetail,
+                portCargoId,
+                dischargestudyId);
+
+            cargoNominations.forEach(
+                cargoRequest -> {
+                  if (cargoRequest.getId() != -1) {
+                    Optional<CargoNomination> optionalCargoNomination =
+                        dbCargos
+                            .parallelStream()
+                            .filter(
+                                cargoNomination -> cargoNomination.getId() == cargoRequest.getId())
+                            .findFirst();
+                    if (!optionalCargoNomination.isPresent()) {
+                      return;
+                    }
+                    updateCargoNominationToSave(
+                        cargoRequest, optionalCargoNomination.get(), cargoNominationsToSave);
+                  } else {
+                    CargoNomination cargoNomination = new CargoNomination();
+                    cargoNomination.setLoadableStudyXId(dischargestudyId);
+                    updateCargoNominationToSave(
+                        cargoRequest, cargoNomination, cargoNominationsToSave);
+                  }
+                });
+            /** delete existing cargo nomination */
+            List<Long> requestIds =
+                cargoNominations.stream()
+                    .map(CargoNominationDetail::getId)
+                    .collect(Collectors.toList());
+            List<CargoNomination> cargosToDisable =
+                dbCargos.stream()
+                    .filter(dbId -> !requestIds.contains(dbId.getId()))
+                    .collect(Collectors.toList());
+            cargosToDisable.forEach(
+                cargoToDisable -> {
+                  cargoToDisable.setIsActive(false);
+                  cargoNominationsToSave.add(cargoToDisable);
+                });
+            if (cargoNominations.isEmpty() && !dbCargos.isEmpty()) {
+              dbCargos.forEach(
+                  dbCargo -> {
+                    dbCargo.setIsActive(false);
+                  });
+            }
+          });
+      cowDetailService.saveAll(cowDetailsToSave);
+      portInstructionService.saveAll(portInstructionsToSave);
+      backLoadingService.saveAll(backLoadingToSave);
+      loadableStudyPortRotationRepository.saveAll(portRotations);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      builder.setId(dischargestudyId);
+    } catch (GenericServiceException e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
+    } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void updateCargoNominationToSave(
+      CargoNominationDetail cargoRequest,
+      CargoNomination cargoNomination,
+      List<CargoNomination> cargoNominationsToSave) {
+    cargoNomination.setQuantity(new BigDecimal(cargoRequest.getQuantity()));
+    cargoNomination.setMode(cargoRequest.getMode());
+    cargoNomination.setCargoXId(cargoRequest.getCargoId());
+    cargoNomination.setAbbreviation(cargoRequest.getAbbreviation());
+    cargoNomination.setColor(cargoRequest.getColor());
+    cargoNominationsToSave.add(cargoNomination);
+  }
+
+  private void updateInsrtuctions(
+      long dischargestudyId,
+      Map<Long, List<DischargeStudyPortInstruction>> portWiseInstructions,
+      List<DischargeStudyPortInstruction> portInstructionsToSave,
+      PortRotationDetail portRequestDetail,
+      long portCargoId) {
+    if (portWiseInstructions.containsKey(portCargoId)) {
+      List<Long> requestInstructions = portRequestDetail.getInstructionIdList();
+      List<Long> dbInstructionIds =
+          portWiseInstructions.get(portCargoId).stream()
+              .map(DischargeStudyPortInstruction::getPortInstructionId)
+              .collect(Collectors.toList());
+      requestInstructions.forEach(
+          portRequestInstructionId -> {
+            if (!dbInstructionIds.contains(portRequestInstructionId)) {
+              createPortInstructionToSave(
+                  dischargestudyId, portInstructionsToSave, portCargoId, portRequestInstructionId);
+            }
+          });
+      /**
+       * if the instruction is a list and removed anything already assigned then need to disable
+       * that instruction
+       */
+      List<DischargeStudyPortInstruction> intructionsToDisable =
+          portWiseInstructions.get(portCargoId).stream()
+              .filter(dbId -> !requestInstructions.contains(dbId.getPortInstructionId()))
+              .collect(Collectors.toList());
+      intructionsToDisable.forEach(
+          instruction -> {
+            instruction.setIsActive(false);
+            portInstructionsToSave.add(instruction);
+          });
+    } else {
+      portRequestDetail
+          .getInstructionIdList()
+          .forEach(
+              portRequestInstructionId -> {
+                createPortInstructionToSave(
+                    dischargestudyId,
+                    portInstructionsToSave,
+                    portCargoId,
+                    portRequestInstructionId);
+              });
+    }
+  }
+
+  /**
+   * creating/updating back loading for the port rotation
+   *
+   * @param backloadingData
+   * @param backLoadingToSave
+   * @param portRequestDetail
+   * @param portCargoId
+   * @param dischargestudyId
+   */
+  private void createBackLoading(
+      Map<Long, List<BackLoading>> backloadingData,
+      List<BackLoading> backLoadingToSave,
+      PortRotationDetail portRequestDetail,
+      long portCargoId,
+      long dischargestudyId) {
+    if (backloadingData.containsKey(portCargoId)) {
+      List<BackLoading> dbBackLoadings = backloadingData.get(portCargoId);
+      portRequestDetail
+          .getBackLoadingList()
+          .forEach(
+              backLoadingRequest -> {
+                if (backLoadingRequest.getId() != -1) {
+                  Optional<BackLoading> backLoading =
+                      dbBackLoadings
+                          .parallelStream()
+                          .filter(backloading -> backloading.getId() == backLoadingRequest.getId())
+                          .findFirst();
+                  if (!backLoading.isPresent()) {
+                    return;
+                  }
+                  updateBackLoadingToSave(backLoadingRequest, backLoading.get(), backLoadingToSave);
+                } else {
+                  updateBackLoadingToSave(backLoadingRequest, new BackLoading(), backLoadingToSave);
+                }
+              });
+
+      /** delete existing back loading */
+      List<Long> requestIds =
+          portRequestDetail.getBackLoadingList().stream()
+              .map(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading::getId)
+              .collect(Collectors.toList());
+      List<BackLoading> backLoadingToDisable =
+          backloadingData.get(portCargoId).stream()
+              .filter(dbId -> !requestIds.contains(dbId.getId()))
+              .collect(Collectors.toList());
+      backLoadingToDisable.forEach(
+          backLoading -> {
+            backLoading.setActive(false);
+            backLoadingToSave.add(backLoading);
+          });
+    } else {
+      /** delete existing back loading */
+      backloadingData
+          .get(portCargoId)
+          .forEach(
+              backLoading -> {
+                backLoading.setActive(false);
+                backLoadingToSave.add(backLoading);
+              });
+      portRequestDetail
+          .getBackLoadingList()
+          .forEach(
+              backLoadingRequest -> {
+                BackLoading newBackLoading = new BackLoading();
+                newBackLoading.setPortId(portCargoId);
+                newBackLoading.setDischargeStudyId(dischargestudyId);
+                updateBackLoadingToSave(backLoadingRequest, newBackLoading, backLoadingToSave);
+              });
+    }
+  }
+
+  private void updateBackLoadingToSave(
+      com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading backLoadingRequest,
+      BackLoading backLoading,
+      List<BackLoading> backLoadingToSave) {
+    backLoading.setAbbreviation(backLoadingRequest.getAbbreviation());
+    backLoading.setActive(true);
+    backLoading.setApi(new BigDecimal(backLoadingRequest.getApi()));
+    backLoading.setCargoId(backLoadingRequest.getCargoId());
+    backLoading.setColour(backLoadingRequest.getColour());
+    backLoading.setQuantity(new BigDecimal(backLoadingRequest.getQuantity()));
+    backLoading.setTemperature(new BigDecimal(backLoadingRequest.getTemperature()));
+    backLoadingToSave.add(backLoading);
+  }
+
+  private void createPortInstructionToSave(
+      long dischargestudyId,
+      List<DischargeStudyPortInstruction> portInstructionsToSave,
+      long portCargoId,
+      Long portRequestInstructionId) {
+    DischargeStudyPortInstruction newInstruction = new DischargeStudyPortInstruction();
+    newInstruction.setDischargeStudyId(dischargestudyId);
+    newInstruction.setPortId(portCargoId);
+    newInstruction.setPortInstructionId(portRequestInstructionId);
+    newInstruction.setIsActive(true);
+    portInstructionsToSave.add(newInstruction);
+  }
+
+  private void updateCowDetails(
+      Map<Long, DischargeStudyCowDetail> cowDetailForThePort,
+      List<DischargeStudyCowDetail> cowDetailsToSave,
+      PortRotationDetail portDetail,
+      long portCargoId) {
+    DischargeStudyCowDetail dischargeStudyCowDetail = null;
+    if (cowDetailForThePort.containsKey(portCargoId)) {
+      dischargeStudyCowDetail = cowDetailForThePort.get(portCargoId);
+    } else {
+      dischargeStudyCowDetail = new DischargeStudyCowDetail();
+    }
+    dischargeStudyCowDetail.setCowType(portDetail.getCowId());
+    if (portDetail.getCowId() == 1) {
+      dischargeStudyCowDetail.setPercentage(portDetail.getPercentage());
+    } else if (portDetail.getCowId() == 2) {
+      String numberString =
+          portDetail.getTanksList().stream().map(String::valueOf).collect(Collectors.joining(","));
+      dischargeStudyCowDetail.setTankIds(numberString);
+    }
+    cowDetailsToSave.add(dischargeStudyCowDetail);
   }
 
   @Override

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.Data;
 
@@ -63,7 +64,7 @@ public class PortRotation {
 
   private Boolean isBackLoadingEnabled;
 
-  private List<BackLoading> backLoading = new ArrayList<>();
+  private List<BackLoading> backLoading = new ArrayList<>(Arrays.asList(new BackLoading()));
 
   private Long cowId;
 
