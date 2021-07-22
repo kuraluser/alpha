@@ -6,8 +6,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { Voyage , ITankDetails , IInstruction } from '../../../core/models/common.model';
-import { QUANTITY_UNIT, IPercentage , IMode, ICargo } from '../../../../shared/models/common.model';
+import { Voyage , ITankDetails , IInstruction, ICargo } from '../../../core/models/common.model';
+import { QUANTITY_UNIT, IPercentage , IMode } from '../../../../shared/models/common.model';
 
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { DischargeStudyViewPlanTransformationService } from '../../services/discharge-study-view-plan-transformation.service';
@@ -314,7 +314,7 @@ export class ViewPlanComponent implements OnInit {
   }
 
   /**
-  * Method for back loading 
+  * Method for back loading
   *
   * @private
   * @param {*} backLoading

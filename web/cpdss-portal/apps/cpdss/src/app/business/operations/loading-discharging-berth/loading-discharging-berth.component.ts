@@ -92,7 +92,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   /**
  * Return the form controlls of the berth details form
  */
-  get berthDetailsFormComtrol() {
+  get berthDetailsFormControl() {
     return this.berthDetailsForm.controls;
   }
 

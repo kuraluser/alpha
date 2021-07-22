@@ -1,3 +1,11 @@
+<div class="row">
+    <div class="col text-right">
+      <button class="btn btn-main mr-10" id="save_loading_information" 
+        (click)="saveLoadingInformationData()">
+        {{'LOADING_INFORMATION_SAVE_BUTTON_LABEL' |translate}}
+      </button>
+    </div>
+  </div>
 <div class="row pt-15" *ngIf="loadingInformationData">
     <div class="col sidebar-loading-and-discharging">
         <div class="row ">
@@ -114,7 +122,8 @@
             [loadingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
             (updateLoadingDelays)="onUpdateLoadingDelays($event)">
         </cpdss-portal-loading-discharging-manage-sequence>
-
+        
+        <!-- TODO : Comment the code as per user story DSS-3373
         <div class="row pt-30">
             <div class="col">
                 <h5 class="text-uppercase heading-border">{{'LOADING_INFORMATION_TOPPING_OFF_SEQUENCE_HEADER' |
@@ -130,6 +139,6 @@
                 </cpdss-portal-topping-off-tank-table>
 
             </div>
-        </div>
+        </div> -->
     </div>
 </div>

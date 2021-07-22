@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ValueObject } from 'apps/cpdss/src/app/shared/models/common.model';
+import { ValueObject } from '../../../../shared/models/common.model';
 import { DATATABLE_BUTTON, DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { ILoadableQuantityCargo } from '../../../core/models/common.model';
 import { ILoadingDelays, IReasonForDelays } from '../../models/loading-information.model';
@@ -34,18 +34,22 @@ export class LoadingDischargingManageSequenceTransformationService {
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_SELCT_CARGO',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED',
-          'quantityExceeds': 'LOADING_MANAGE_SEQUENCE_QUANTITY_EXCEEDS'
+          'quantityExceeds': 'LOADING_MANAGE_SEQUENCE_QUANTITY_EXCEEDS',
+          'duplicateCargo': 'LOADING_MANAGE_SEQUENCE_CARGO_DUPLICATE'
         }
+      },
+      {
+        field: 'colorCode',
+        header: '',
+        fieldHeaderClass: 'column-cargo-sequence-color',
+        fieldClass: 'manage-sequence-cargo-color',
+        fieldType: DATATABLE_FIELD_TYPE.COLOR,
+
       },
       {
         field: 'quantity',
         header: 'QUANTITY',
-        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_ENTER_QUANTITY',
-        errorMessages: {
-          'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED',
-          'quantityExceeds': 'LOADING_MANAGE_SEQUENCE_QUANTITY_EXCEEDS'
-        }
+        numberFormat: '1.2-2'
       },
       {
         field: 'reasonForDelay',
@@ -100,7 +104,8 @@ export class LoadingDischargingManageSequenceTransformationService {
     hourDuration = Number(hourDuration) < 10 ? ('0' + hourDuration) : hourDuration
     const minuteDuration = loadingDelay.duration % 60;
     _loadingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
-    _loadingDelay.quantity = new ValueObject<number>(loadingDelay.quantity, true, isEditable ? isNewValue : false, false, isEditable);
+    _loadingDelay.quantity = loadingDelay.quantity;
+    _loadingDelay.colorCode = cargoObj?.colorCode;
     _loadingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable ? isNewValue : false, false, isEditable);
     _loadingDelay.reasonForDelay = new ValueObject<IReasonForDelays>(reasonDelayObj, true, isNewValue, false, true);
     _loadingDelay.isAdd = isNewValue;
@@ -123,7 +128,7 @@ export class LoadingDischargingManageSequenceTransformationService {
       _loadingDelays.loadingInfoId = loadingInfoId;
       _loadingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDelays.reasonForDelayId = loadingValueObject?.reasonForDelay?.value?.id;
-      _loadingDelays.quantity = loadingValueObject?.quantity?.value;
+      _loadingDelays.quantity = loadingValueObject?.quantity;
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
       _loadingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);
       loadingDelays.push(_loadingDelays);

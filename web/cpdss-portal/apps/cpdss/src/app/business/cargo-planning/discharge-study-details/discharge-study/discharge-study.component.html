@@ -9,13 +9,14 @@
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}</div>
     <div class="sub-head-color  pr-15">{{portDetail.port?.name}}</div>
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }}</div>
-    <div class="col-3"><p-dropdown id="instruction_dropdown" styleClass="form-control" [options]="instructions"
+    <div class="col-3">
+        <p-dropdown id="instruction_dropdown" styleClass="form-control" [options]="instructions"
         formControlName="instruction" filter="true" optionLabel="instruction"
-        resetFilterOnHide="true"></p-dropdown></div>
+        resetFilterOnHide="true" [readonly]="!editMode" (onChange)="onChange($event,'instruction',portIndex)"></p-dropdown></div>
         <div class=" pr-15">
             {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION' | translate }}
         </div>
-        <div class="error-icon-wrapper"> <input type="text" class="form-control" formControlName="maxDraft" id="maxDraft"/>
+        <div class="error-icon-wrapper"> <input type="text" class="form-control" formControlName="maxDraft" id="maxDraft" [disabled]="!editMode" (change)="onChange($event,'maxDraft',portIndex)"/>
             <cpdss-portal-validation-error
                 [errors]="fieldError(portIndex,'maxDraft')"
                 [errorMessages]="errorMessages.maxDraft">
@@ -32,27 +33,32 @@
                 <div class="pl-15">
                 <p-dropdown id="cow_dropdown" styleClass="form-control" [options]="mode"
                     formControlName="cow" filter="true" optionLabel="name"
-                    resetFilterOnHide="true" (onChange)="onChangeCow($event,portIndex)"></p-dropdown>
+                    resetFilterOnHide="true" (onChange)="onChange($event,'cow',portIndex)" [readonly]="!editMode"></p-dropdown>
                 </div>
                 <ng-container *ngIf="getFeild(portIndex,'cow').value?.id === 1">
                     <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_PERCENTAGE' | translate }}</label>
                     <div class="pl-15">
                     <p-dropdown id="percentage_dropdown" styleClass="form-control" [options]="percentageList"
                         formControlName="percentage" filter="true" optionLabel="name"
-                        resetFilterOnHide="true"></p-dropdown>
+                        resetFilterOnHide="true" (onChange)="onChange($event,'percentage',portIndex)"></p-dropdown>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="getFeild(portIndex,'cow').value?.id === 2">
                     <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_TANK' | translate }}</label>
                     <div>
-                    <p-dropdown id="tank_dropdown" styleClass="form-control" [options]="tank"
-                        formControlName="tank" filter="true" optionLabel="name"
-                        resetFilterOnHide="true"  placeholder="Select tank"></p-dropdown>
+                    <p-multiSelect id="tank_dropdown" styleClass="form-control" [options]="tank"
+                        formControlName="tank"  optionLabel="name"
+                        resetFilterOnHide="true"  defaultLabel="DISCHARGE_STUDY_TANK_PLACEHOLDER | translate" [readonly]="!editMode" [filter]="true"
+                        (onChange)="onChange($event,'tank',portIndex)"></p-multiSelect>
                     </div>
+                    <cpdss-portal-validation-error
+                        [errors]="fieldError(portIndex,'tank')"
+                        [errorMessages]="errorMessages.tank">
+                    </cpdss-portal-validation-error>
                 </ng-container>
                 <ng-container *ngIf="!last">
                     <label class="checkbox-custom mb-0 ml-15">{{ 'DISCHARGE_STUDY_ENABLE_BACK_LOADING' | translate }}
-                        <input type="checkbox" id="enable_back_loading" styleClass="form-control" [attr.disabled]="last ? 'disabled' : null" formControlName="enableBackToLoading"
+                        <input type="checkbox" id="enable_back_loading" styleClass="form-control" [attr.disabled]="!editMode ? 'disabled' : null" formControlName="enableBackToLoading"
                     (change)="resetBackLoading($event,portIndex)"/>
 
                         <span class="checkmark"></span>

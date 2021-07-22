@@ -11,6 +11,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
+import { ApiTemperatureHistoryPopupComponent } from './api-temperature-history-popup/api-temperature-history-popup.component';
+import { DialogModule } from 'primeng/dialog';
 
 /**
  * Module for cargo master
@@ -19,7 +21,7 @@ import { DropdownModule } from 'primeng/dropdown';
  * @class CargoMasterModule
  */
 @NgModule({
-  declarations: [CargoMasterComponent, CargoDetailsComponent],
+  declarations: [CargoMasterComponent, CargoDetailsComponent, ApiTemperatureHistoryPopupComponent],
   imports: [
     CommonModule,
     CargoMasterRoutingModule,
@@ -30,7 +32,8 @@ import { DropdownModule } from 'primeng/dropdown';
     ReactiveFormsModule,
     ValidationErrorModule,
     TableModule,
-    DropdownModule
+    DropdownModule,
+    DialogModule
   ]
 })
 export class CargoMasterModule { }

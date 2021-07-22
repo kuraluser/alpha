@@ -1,10 +1,10 @@
-import { IResponse , ValueObject , IMode  , IPercentage , ICargo } from '../../../shared/models/common.model';
-import { DISCHARGE_STUDY_STATUS , ITankDetails } from '../../core/models/common.model';
+import { IResponse , ValueObject , IMode  , IPercentage } from '../../../shared/models/common.model';
+import { DISCHARGE_STUDY_STATUS , ICargo, ITankDetails } from '../../core/models/common.model';
 import { IPort, IPortList , IDischargeStudyPortList , IInstruction } from '../../core/models/common.model';
 
 
 /**
- * Model for discharge study list 
+ * Model for discharge study list
  */
 export class IDischargeStudy {
     id?: number;
@@ -35,7 +35,7 @@ export class IDischargeStudy {
     isOhqComplete?: boolean;
     isObqComplete?: boolean;
     isDischargingPortComplete?: boolean;
-    ohqPorts?: IDischargeOHQStatus[];  
+    ohqPorts?: IDischargeOHQStatus[];
 }
 
 /**
@@ -180,7 +180,6 @@ export interface IDischargeStudyAttachment {
  */
  export interface IDischargeAllDropdownData {
     cargoList: ICargo[];
-    
 }
 
 
@@ -194,7 +193,7 @@ export interface IDischargeStudyAttachment {
 export interface IPortDetailValueObject {
     id: number;
     port: IPort;
-    instruction: IInstruction[];
+    instruction: IInstruction;
     portTimezoneId: number;
     maxDraft: number;
     cargoDetail: IPortCargo[];
@@ -208,6 +207,7 @@ export interface IPortDetailValueObject {
 export interface IBackLoadingDetails {
     cargo: ValueObject<ICargo>;
     mt: ValueObject<number>;
+    id: ValueObject<number>;
     kl: ValueObject<number>;
     bbls: ValueObject<number>;
     color: ValueObject<string>;
@@ -226,6 +226,7 @@ export interface IBackLoadingDetails {
  * @interface IPortCargo
  */
 export interface IPortCargo {
+    id: ValueObject<string>;
     color: ValueObject<string>;
     cargo: ValueObject<ICargo>;
     bbls: ValueObject<string>;
@@ -276,7 +277,7 @@ export interface IPortCargo {
  */
 export interface IDischargeStudiesResponse {
     responseStatus: IResponse;
-    dischargeStudies: IDischargeStudy[];   
+    dischargeStudies: IDischargeStudy[];
 }
 
 /**
@@ -342,7 +343,7 @@ export interface IDischargeStudyPortListDetails {
  * @interface IDischargeStudyBackLoadingDetails
  */
 export interface IDischargeStudyBackLoadingDetails {
-    id: number;
+    id: number | string;
     color: string;
     cargoId: number;
     api: number;
@@ -358,7 +359,7 @@ export interface IDischargeStudyBackLoadingDetails {
  * @interface IDischargeStudyCargoNominationList
  */
 export interface IDischargeStudyCargoNominationList {
-    id: number;
+    id: number | string;
     priority: number;
     color: string;
     cargoId: number;
@@ -381,7 +382,7 @@ export interface IDischargeStudyCargoNominationList {
 }
 
 /**
- * Interface for port cargo details 
+ * Interface for port cargo details
  *
  * @export
  * @interface IPortCargoDetails

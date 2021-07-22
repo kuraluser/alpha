@@ -6,9 +6,9 @@ import { takeUntil } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { IVessel } from '../../core/models/vessel-details.model';
-import { Voyage, IPort, VOYAGE_STATUS  , DISCHARGE_STUDY_STATUS } from '../../core/models/common.model';
+import { Voyage, IPort, VOYAGE_STATUS  , DISCHARGE_STUDY_STATUS, ICargo } from '../../core/models/common.model';
 
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ICargo } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { VoyageService } from '../../core/services/voyage.service';
@@ -33,13 +33,12 @@ import { UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-dat
   styleUrls: ['./discharge-study-details.component.scss']
 })
 export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
-  
   @ViewChild('dischargeStudy') dischargeStudyRef;
 
   get selectedDischargeStudy(): IDischargeStudy {
     return this._selectedDischargeStudy;
-  } 
-  
+  }
+
   set selectedDischargeStudy(selectedDischargeStudy: IDischargeStudy) {
     this._selectedDischargeStudy  = selectedDischargeStudy;
   }
@@ -50,7 +49,6 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
   private _selectedDischargeStudy: IDischargeStudy;
-  
   voyageId: number;
   vesselId: number;
   dischargeStudyId: number;
@@ -118,7 +116,6 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       this.tabPermission();
       this.getDischargeStudies(this.vesselId, this.voyageId, this.dischargeStudyId);
     });
-    
   }
 
     /**
@@ -130,30 +127,28 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       this.ngUnsubscribe.next();
       this.ngUnsubscribe.complete();
     }
-  
     /**
      * Set page permission
      *
      * @memberof DischargeStudyDetailsComponent
      */
     setPagePermissionContext() {
-  
-  
+
+
       this.cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyCargoNominationComponentTab'], false);
       this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyCargoNominationComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
-  
+
       this.portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyPortsComponentTab'], false);
       this.portsTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyPortsComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
-  
+
       this.ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyOnHandQuantityComponentTab'], false);
       this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyOnHandQuantityComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
-  
+
       this.dischargeStudyTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyComponentTab'], false);
       this.dischargeStudyTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyComponentTab'], actions: [PERMISSION_ACTION.VIEW] };
 
       this.dischargeStudyViewPlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyViewPlan'], false);
       this.dischargeStudyGeneratePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyGeneratePlan'], false);
-      
       this.tabPermission();
     }
 
@@ -176,7 +171,7 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
   }
 
     /**
-   * Method to fetch all discharge 
+   * Method to fetch all discharge
    *
    * @param {number} vesselId
    * @param {number} voyageId
@@ -250,7 +245,6 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
     return voyages;
   }
 
-  
   /**
    * Method for fetching all ports from master
    *

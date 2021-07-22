@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { PortMasterTransformationService } from '../../services/port-master-transformation.service';
