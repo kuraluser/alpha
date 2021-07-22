@@ -13,8 +13,14 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsStatus;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsUpdateRequest;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -33,6 +39,7 @@ public class LoadingPlanController {
   @Autowired LoadingPlanService loadingPlanService;
   @Autowired LoadingInformationService loadingInformationService;
   @Autowired LoadingPlanServiceImpl loadingPlanServiceImpl;
+  @Autowired private LoadingInstructionService loadingInstructionService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
@@ -295,6 +302,214 @@ public class LoadingPlanController {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save new Loading Instruction
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/new-instruction/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
+  public LoadingInstructionsSaveResponse addLoadingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody LoadingInstructionsSaveRequest request)
+      throws CommonRestException {
+    try {
+      log.info("Adding new Loading instruction");
+      return loadingInstructionService.addLoadingInstruction(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Adding new Loading Instruction failed");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Adding new Loading instruction");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Update Loading Instruction status
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/update-instruction/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
+  public LoadingInstructionsSaveResponse updateLoadingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody LoadingInstructionsUpdateRequest request)
+      throws CommonRestException {
+    try {
+      log.info("Updating Loading instruction status for {}", vesselId);
+      return loadingInstructionService.updateLoadingInstructions(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Updating Loading instruction status for {} failed", vesselId);
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Updating Loading instruction status for {} ", vesselId);
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Delete Loading Instruction
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/delete-instruction/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
+  public LoadingInstructionsSaveResponse deleteLoadingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody LoadingInstructionsStatus request)
+      throws CommonRestException {
+    try {
+      log.info("Deleting Loading instruction , id{}", request.getInstructionId());
+      return loadingInstructionService.deleteLoadingInstructions(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Deleting Loading instruction failed");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Deleting Loading instruction");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Delete Loading Instruction
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/edit-instruction/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
+  public LoadingInstructionsSaveResponse editLoadingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody LoadingInstructionsStatus request)
+      throws CommonRestException {
+    try {
+      log.info("Editing Loading instruction , id{}", request.getInstructionId());
+      return loadingInstructionService.editLoadingInstructions(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Editing Loading instruction failed");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Editing Loading instruction");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Retrieve all loading Instructions
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}")
+  public LoadingInstructionResponse getAllLoadingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Getting all Loading instructions of vesselID: {} on port: {}", vesselId, portRotationId);
+      return loadingInstructionService.getLoadingInstructions(vesselId, infoId, portRotationId);
+
+    } catch (GenericServiceException e) {
+      log.error("Getting all Loading instructions Failed error");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Getting all Loading instructions");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
           e.getMessage(),
           e);
     }
