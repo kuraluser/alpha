@@ -39,7 +39,7 @@ public class LoadingInstructionService {
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
 
-  @GrpcClient("loadingInstructionService")
+  @GrpcClient("loadingInformationService")
   private LoadingInstructionServiceBlockingStub loadingInstructionServiceBlockingStub;
 
   public LoadingInstructionResponse getLoadingInstructions(
