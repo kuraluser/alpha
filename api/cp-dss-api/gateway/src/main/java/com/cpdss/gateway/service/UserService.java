@@ -625,7 +625,8 @@ public class UserService {
             }
 
             Optional<RoleUserMapping> roleUserOpt =
-                this.roleUserRepository.findByUsersAndIsActive(user.getId(), true);
+                this.roleUserRepository.findByUsersAndIsActive(
+                    user.getId(), true, role.get().getId());
             RoleUserMapping roleUser = null;
             if (!roleUserOpt.isPresent()) {
               roleUser = new RoleUserMapping();
