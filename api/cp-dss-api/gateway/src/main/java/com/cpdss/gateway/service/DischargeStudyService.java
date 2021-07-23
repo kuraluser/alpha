@@ -582,6 +582,8 @@ public class DischargeStudyService {
           cargoNomination.setAbbreviation(cargo.getAbbreviation());
           cargoNomination.setColor(cargo.getColor());
           cargoNomination.setCargoId(cargo.getCargoId());
+          cargoNomination.setApi(cargo.getApi().toString());
+          cargoNomination.setTemperature(cargo.getTemperature().toString());
           cargoList.add(cargoNomination.build());
         });
 
