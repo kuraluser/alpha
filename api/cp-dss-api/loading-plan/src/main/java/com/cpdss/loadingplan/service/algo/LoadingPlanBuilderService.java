@@ -5,8 +5,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.entity.BallastOperation;
 import com.cpdss.loadingplan.entity.BallastValve;
 import com.cpdss.loadingplan.entity.CargoLoadingRate;
 import com.cpdss.loadingplan.entity.CargoValve;
@@ -275,5 +277,24 @@ public class LoadingPlanBuilderService {
             ? null
             : new BigDecimal(stowage.getTemperature()));
     stowageDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+  }
+
+  public void buildBallastOperation(
+      LoadingSequence loadingSequence,
+      BallastOperation ballastOperation,
+      PumpOperation pumpOperation) {
+    ballastOperation.setEndTime(pumpOperation.getEndTime());
+    ballastOperation.setLoadingSequence(loadingSequence);
+    ballastOperation.setPumpName(pumpOperation.getPumpName());
+    ballastOperation.setPumpXId(pumpOperation.getPumpXId());
+    ballastOperation.setQuantityM3(
+        StringUtils.isEmpty(pumpOperation.getQuantityM3())
+            ? null
+            : new BigDecimal(pumpOperation.getQuantityM3()));
+    ballastOperation.setRate(
+        StringUtils.isEmpty(pumpOperation.getRate())
+            ? null
+            : new BigDecimal(pumpOperation.getRate()));
+    ballastOperation.setStartTime(pumpOperation.getStartTime());
   }
 }

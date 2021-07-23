@@ -194,6 +194,8 @@ service LoadableStudyService {
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
 
 	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
+	
+	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 }
 
 service DischargeStudyOperationService {
@@ -1464,4 +1466,9 @@ message	VoyagePorts{
 	string eta =9;
 	string lat =10;
 	string lon =11;
+}
+
+message PortRotationDetailReply {
+  PortRotationDetail portRotationDetail = 1;
+  ResponseStatus responseStatus = 2;
 }

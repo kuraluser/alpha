@@ -16,6 +16,9 @@ public interface LoadingSequenceRepository extends CommonCrudRepository<LoadingS
   public List<LoadingSequence> findByLoadingInformationAndIsActive(
       LoadingInformation loadingInformation, Boolean isActive);
 
+  public List<LoadingSequence> findByLoadingInformationAndIsActiveOrderBySequenceNumber(
+      LoadingInformation loadingInformation, Boolean isActive);
+
   @Modifying
   @Transactional
   @Query("UPDATE LoadingSequence SET isActive = false WHERE id = ?1")

@@ -13,6 +13,7 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
@@ -290,6 +291,42 @@ public class LoadingPlanController {
     try {
       return loadingPlanService.saveLoadingPlanRules(vesselId, voyageId, infoId, loadingPlanRule);
     } catch (GenericServiceException e) {
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get Loading Sequence API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-sequence")
+  public LoadingSequenceResponse getLoadingSequence(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Loading Sequence api for vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return loadingPlanService.getLoadingSequence(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      log.error("Exception in Get Loading Sequence API");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

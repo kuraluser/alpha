@@ -13,12 +13,14 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStab
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
+import com.cpdss.loadingplan.entity.BallastOperation;
 import com.cpdss.loadingplan.entity.BallastValve;
 import com.cpdss.loadingplan.entity.CargoLoadingRate;
 import com.cpdss.loadingplan.entity.CargoValve;
@@ -32,6 +34,7 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
+import com.cpdss.loadingplan.repository.BallastOperationRepository;
 import com.cpdss.loadingplan.repository.BallastValveRepository;
 import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
 import com.cpdss.loadingplan.repository.CargoValveRepository;
@@ -89,6 +92,7 @@ public class LoadingPlanAlgoService {
   @Autowired PortLoadingPlanRobDetailsRepository portRobDetailsRepository;
   @Autowired PortLoadingPlanStabilityParametersRepository portStabilityParamsRepository;
   @Autowired PortLoadingPlanStowageDetailsRepository portStowageDetailsRepository;
+  @Autowired BallastOperationRepository ballastOperationRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
@@ -381,6 +385,20 @@ public class LoadingPlanAlgoService {
     saveLoadingPlanPortWiseDetails(
         savedLoadingSequence, sequence.getLoadingPlanPortWiseDetailsList());
     saveCargoLoadingRates(savedLoadingSequence, sequence.getLoadingRatesList());
+    saveBallastPumps(savedLoadingSequence, sequence.getBallastOperationsList());
+  }
+
+  private void saveBallastPumps(
+      com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
+      List<PumpOperation> ballastOperationsList) {
+    log.info("Saving Ballast Pumps for Loading Sequence {}", loadingSequence.getId());
+    ballastOperationsList.forEach(
+        pumpOperation -> {
+          BallastOperation ballastOperation = new BallastOperation();
+          loadingPlanBuilderService.buildBallastOperation(
+              loadingSequence, ballastOperation, pumpOperation);
+          ballastOperationRepository.save(ballastOperation);
+        });
   }
 
   private void saveCargoLoadingRates(

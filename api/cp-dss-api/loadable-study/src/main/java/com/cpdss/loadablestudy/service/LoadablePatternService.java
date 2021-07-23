@@ -208,10 +208,13 @@ public class LoadablePatternService {
       loadablePlanService.buildLoadablePlanPortWiseDetails(
           loadablePatternOpt.get(), loadabalePatternValidateRequest);
       ObjectMapper mapper = new ObjectMapper();
-      mapper.setDefaultPropertyInclusion(Include.NON_NULL);
-      builder.setLoadablePatternDetails(
-          mapper.writeValueAsString(
-              loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+      mapper.setSerializationInclusion(Include.NON_EMPTY);
+      mapper.setDefaultPropertyInclusion(Include.NON_EMPTY);
+//      builder.setLoadablePatternDetails(
+//          mapper.writeValueAsString(
+//              loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+      System.out.println(mapper.writeValueAsString(
+    		  loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
       builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
       builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } else throw new Exception("Cannot find loadable pattern");

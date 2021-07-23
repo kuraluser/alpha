@@ -43,5 +43,8 @@ public class BallastOperation extends EntityDoc {
   private BigDecimal rate;
 
   @Column(name = "quantity_m3")
-  private BigDecimal volume;
+  private BigDecimal quantityM3;
+
+  @Column(name = "is_active")
+  private Boolean isActive;
 }

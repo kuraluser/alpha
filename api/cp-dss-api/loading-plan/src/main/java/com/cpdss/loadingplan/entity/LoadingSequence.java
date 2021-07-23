@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -53,20 +54,23 @@ public class LoadingSequence extends EntityDoc {
   @JoinColumn(name = "loading_information_xid", referencedColumnName = "id")
   private LoadingInformation loadingInformation;
 
-  @OneToMany(mappedBy = "loadingSequence")
+  @OneToMany(mappedBy = "loadingSequence", fetch = FetchType.LAZY)
   private Set<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails;
 
-  @OneToMany(mappedBy = "loadingSequence")
+  @OneToMany(mappedBy = "loadingSequence", fetch = FetchType.LAZY)
   private Set<CargoLoadingRate> cargoLoadingRates;
 
-  @OneToMany(mappedBy = "loadingSequence")
+  @OneToMany(mappedBy = "loadingSequence", fetch = FetchType.LAZY)
   private Set<CargoValve> cargoValves;
 
-  @OneToMany(mappedBy = "loadingSequence")
+  @OneToMany(mappedBy = "loadingSequence", fetch = FetchType.LAZY)
   private Set<BallastValve> ballastValves;
 
-  @OneToMany(mappedBy = "loadingSequence")
+  @OneToMany(mappedBy = "loadingSequence", fetch = FetchType.LAZY)
   private Set<DeballastingRate> deballastingRates;
+
+  @OneToMany(mappedBy = "loadingSequence", fetch = FetchType.LAZY)
+  private Set<BallastOperation> ballastOperations;
 
   @Column(name = "cargo_loading_rate_1")
   private BigDecimal cargoLoadingRate1;

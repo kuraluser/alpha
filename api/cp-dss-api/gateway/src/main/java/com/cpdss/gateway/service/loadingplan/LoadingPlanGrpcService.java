@@ -8,6 +8,8 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest.Builder;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
@@ -49,4 +51,6 @@ public interface LoadingPlanGrpcService {
 
   RuleResponse saveOrGetLoadingPlanRules(LoadingPlanModels.LoadingPlanRuleRequest.Builder builder)
       throws GenericServiceException;
+
+  LoadingSequenceReply getLoadingSequence(Builder builder) throws GenericServiceException;
 }

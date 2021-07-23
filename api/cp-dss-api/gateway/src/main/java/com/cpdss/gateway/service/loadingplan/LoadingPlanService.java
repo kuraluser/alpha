@@ -7,6 +7,7 @@ import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 
 public interface LoadingPlanService {
 
@@ -23,5 +24,8 @@ public interface LoadingPlanService {
 
   RuleResponse saveLoadingPlanRules(
       Long vesselId, Long voyageId, Long loadingInfoId, RuleRequest ruleRequest)
+      throws GenericServiceException;
+
+  LoadingSequenceResponse getLoadingSequence(Long vesselId, Long voyageId, Long infoId)
       throws GenericServiceException;
 }

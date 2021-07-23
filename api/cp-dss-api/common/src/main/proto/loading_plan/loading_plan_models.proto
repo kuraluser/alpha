@@ -420,6 +420,7 @@ message LoadingSequence {
   repeated LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;
   string cargoLoadingRate1 = 13;
   string cargoLoadingRate2 = 14;
+  repeated PumpOperation ballastOperations = 15;
 }
 
 message LoadingPlanPortWiseDetails {
@@ -460,6 +461,8 @@ message DeBallastingRate {
 message LoadingRate {
   string loadingRate = 1;
   int64 tankId = 2;
+  int32 startTime = 3;
+  int32 endTime = 4;
 }
 
 message Valve {
@@ -468,6 +471,15 @@ message Valve {
   string valveCode = 3;
   string valveType = 4;
   int64 valveId = 5;
+}
+
+message PumpOperation {
+  int32 endTime = 1; 
+  string pumpName = 2;
+  int64 pumpXId = 3;
+  string rate = 4;
+  int32 startTime = 5;
+  string quantityM3 = 6;
 }
 
 message LoadingPlanSaveResponse {
@@ -479,6 +491,7 @@ message LoadingSequenceRequest {
 }
 
 message LoadingSequenceReply {
-  repeated LoadingSequence loadingSequences = 1;
-  ResponseStatus responseStatus = 2;
+  string startDate = 1;
+  repeated LoadingSequence loadingSequences = 2;
+  ResponseStatus responseStatus = 3;
 }

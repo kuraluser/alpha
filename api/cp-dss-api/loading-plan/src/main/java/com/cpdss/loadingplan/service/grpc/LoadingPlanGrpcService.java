@@ -113,7 +113,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       builder.setResponseStatus(
           ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
-      log.error("Exception when saveLoadingPlan microservice is called", e);
+      log.error("Exception when getLoadingSequence is called", e);
+      e.printStackTrace();
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
