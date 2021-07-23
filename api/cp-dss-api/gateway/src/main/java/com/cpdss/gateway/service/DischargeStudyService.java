@@ -8,19 +8,44 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
+import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.domain.DischargeStudy.*;
+import com.cpdss.gateway.domain.BackLoading;
+import com.cpdss.gateway.domain.BillOfLadding;
+import com.cpdss.gateway.domain.Cargo;
+import com.cpdss.gateway.domain.CargoNomination;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
+import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
+import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
+import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.PortWiseCargo;
+import com.cpdss.gateway.domain.PortWiseCargoResponse;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -389,7 +414,12 @@ public class DischargeStudyService {
                   (isEmpty(port.getMaxDraft()) || port.getMaxDraft().equals("null"))
                       ? null
                       : new BigDecimal(port.getMaxDraft()));
-              portRotation.setCargoNominationList(new ArrayList<>());
+              portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
+              portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
+              portRotation.setCowId(port.getCowId());
+              portRotation.setPercentage(port.getPercentage());
+              portRotation.setTanks(port.getTanksList());
+              portRotation.setInstructionId(port.getInstructionIdList());
               if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
                 List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
                     portIdsToCargoNominationMap.get(port.getPortId());
@@ -399,9 +429,30 @@ public class DischargeStudyService {
             });
   }
 
+  private List<BackLoading> buildBackLoading(
+      List<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading>
+          backLoadingList) {
+    List<BackLoading> backloadingList = new ArrayList<>();
+    backLoadingList.forEach(
+        loading -> {
+          BackLoading backLoading = new BackLoading();
+          backLoading.setAbbreviation(loading.getAbbreviation());
+          backLoading.setApi(new BigDecimal(loading.getApi()));
+          backLoading.setCargoId(loading.getCargoId());
+          backLoading.setColor(loading.getColour());
+          backLoading.setId(loading.getId());
+          backLoading.setQuantity(new BigDecimal(loading.getQuantity()));
+          backLoading.setTemperature(new BigDecimal(loading.getTemperature()));
+          backloadingList.add(backLoading);
+        });
+
+    return backloadingList;
+  }
+
   private void buildCargoNomination(
       List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList,
       PortRotation portRotation) {
+    List<CargoNomination> cargoNominations = new ArrayList<>();
     cargoNominationDetailList.stream()
         .forEach(
             cargoNominationDetail -> {
@@ -412,7 +463,153 @@ public class DischargeStudyService {
               cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
               cargoNomination.setAbbreviation(cargoNominationDetail.getAbbreviation());
               cargoNomination.setQuantity(new BigDecimal(cargoNominationDetail.getQuantity()));
-              portRotation.getCargoNominationList().add(cargoNomination);
+              cargoNomination.setApi(new BigDecimal(cargoNominationDetail.getApi()));
+              cargoNomination.setTemperature(
+                  new BigDecimal(cargoNominationDetail.getTemperature()));
+              cargoNomination.setMode(cargoNominationDetail.getMode());
+              cargoNominations.add(cargoNomination);
             });
+    portRotation.setCargoNominationList(cargoNominations);
+  }
+
+  public PortWiseCargoResponse getCargosByPorts(Long dischargeStudyId, HttpHeaders headers)
+      throws GenericServiceException {
+    com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest.Builder
+        request =
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
+                .newBuilder();
+    request.setDischargeStudyId(dischargeStudyId);
+    DishargeStudyCargoReply dischargeStudyPortWiseCargos =
+        dischargeStudyOperationServiceBlockingStub.getDischargeStudyPortWiseCargos(request.build());
+    if (!SUCCESS.equals(dischargeStudyPortWiseCargos.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Port Rotation",
+          dischargeStudyPortWiseCargos.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(dischargeStudyPortWiseCargos.getResponseStatus().getCode())));
+    }
+    List<PortWiseCargo> portWiseCargos = new ArrayList<>();
+
+    dischargeStudyPortWiseCargos.getPortCargosList().stream()
+        .forEach(
+            portCargo -> {
+              PortWiseCargo response = new PortWiseCargo();
+              List<Cargo> cargos = new ArrayList<>();
+              List<DishargeStudyCargoDetail> cargosList = portCargo.getCargosList();
+              response.setPortId(portCargo.getPortId());
+              cargosList.forEach(
+                  detail -> {
+                    Cargo portWisecargo = new Cargo();
+                    portWisecargo.setAbbreviation(detail.getAbbreviation());
+                    portWisecargo.setId(detail.getId());
+                    portWisecargo.setName(detail.getCrudeType());
+                    cargos.add(portWisecargo);
+                  });
+              response.setCargos(cargos);
+              portWiseCargos.add(response);
+            });
+    PortWiseCargoResponse response = new PortWiseCargoResponse();
+    response.setPortWiseCorges(portWiseCargos);
+    response.setResponseStatus(
+        new CommonSuccessResponse(
+            valueOf(HttpStatus.OK.value()), headers.getFirst("correlationId")));
+    return response;
+  }
+
+  public LoadableStudyResponse saveDischargeStudyWithBackloaing(
+      DischargeStudyCargoResponse request, String correlationId) throws GenericServiceException {
+    DishargeStudyBackLoadingSaveRequest.Builder builder =
+        DishargeStudyBackLoadingSaveRequest.newBuilder();
+    builder.setDischargeStudyId(request.getDischargeStudyId());
+    request
+        .getPortList()
+        .forEach(
+            portCargo -> {
+              createPortCargoRequest(portCargo, builder);
+            });
+    DischargeStudyReply reply =
+        this.dischargeStudyOperationServiceBlockingStub.saveDischargeStudyBackLoading(
+            builder.build());
+
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save loadable studies",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+    }
+    LoadableStudyResponse response = new LoadableStudyResponse();
+    response.setDischargeStudyId(reply.getId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private void createPortCargoRequest(
+      PortRotation portCargo,
+      com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest.Builder
+          builder) {
+    DishargeStudyBackLoadingDetail.Builder dsBackLoadingDetail =
+        DishargeStudyBackLoadingDetail.newBuilder();
+    PortRotationDetail.Builder portDetails = PortRotationDetail.newBuilder();
+    portDetails.setId(portCargo.getId());
+    portDetails.setMaxDraft(
+        (portCargo.getMaxDraft() == null) ? null : portCargo.getMaxDraft().toString());
+    portDetails.setIsBackLoadingEnabled(portCargo.getIsBackLoadingEnabled());
+    if (portCargo.getIsBackLoadingEnabled()) {
+      portDetails.addAllBackLoading(createBackLoading(portCargo.getBackLoading()));
+    }
+    portDetails.setCowId(portCargo.getCowId());
+    portDetails.setPercentage(portCargo.getPercentage());
+    if (portCargo.getCowId() == 2) {
+      portDetails.addAllTanks(portCargo.getTanks());
+    }
+    portDetails.addAllInstructionId(portCargo.getInstructionId());
+    dsBackLoadingDetail.setPortDetails(portDetails.build());
+    dsBackLoadingDetail.addAllPortCargoDetails(
+        createPortWiseCargoNoination(portCargo.getCargoNominationList()));
+    builder.addDsBackLoading(dsBackLoadingDetail.build());
+  }
+
+  private List<CargoNominationDetail> createPortWiseCargoNoination(
+      List<CargoNomination> cargoNominationList) {
+    List<CargoNominationDetail> cargoList = new ArrayList<>();
+    cargoNominationList.forEach(
+        cargo -> {
+          CargoNominationDetail.Builder cargoNomination = CargoNominationDetail.newBuilder();
+          cargoNomination.setId(cargo.getId() == null ? -1 : cargo.getId());
+          cargoNomination.setQuantity(cargo.getQuantity().toString());
+          cargoNomination.setMode(cargo.getMode());
+          cargoNomination.setAbbreviation(cargo.getAbbreviation());
+          cargoNomination.setColor(cargo.getColor());
+          cargoNomination.setCargoId(cargo.getCargoId());
+          cargoNomination.setApi(cargo.getApi().toString());
+          cargoNomination.setTemperature(cargo.getTemperature().toString());
+          cargoList.add(cargoNomination.build());
+        });
+
+    return cargoList;
+  }
+
+  private List<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading>
+      createBackLoading(List<BackLoading> backLoading) {
+    List<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading> backLoadingList =
+        new ArrayList<>();
+    backLoading.forEach(
+        backLoad -> {
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading.Builder
+              backLoadRequest =
+                  com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading
+                      .newBuilder();
+          backLoadRequest.setId(backLoad.getId() == null ? -1 : backLoad.getId());
+          backLoadRequest.setApi(backLoad.getApi().toString());
+          backLoadRequest.setCargoId(backLoad.getCargoId());
+          backLoadRequest.setQuantity(backLoad.getQuantity().toString());
+          backLoadRequest.setColour(backLoad.getColor());
+          backLoadRequest.setAbbreviation(backLoad.getAbbreviation());
+          backLoadRequest.setTemperature(backLoad.getTemperature().toString());
+          backLoadingList.add(backLoadRequest.build());
+        });
+
+    return backLoadingList;
   }
 }

@@ -14,7 +14,7 @@ import { PermissionsService } from '../../shared/services/permissions/permission
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { IPermission } from '../../shared/models/user-profile.model';
-import { ICargoConditions, IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT  } from '../../shared/models/common.model';
+import { ICargoConditions, IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../shared/models/common.model';
 
 /**
  * Component for voyage status
@@ -48,9 +48,6 @@ export class VoyageStatusComponent implements OnInit {
 
   set selectedVoyage(voyage: Voyage) {
     this._selectedVoyage = voyage;
-    localStorage.setItem("voyageId", voyage?.id.toString())
-    localStorage.removeItem("loadableStudyId")
-    localStorage.removeItem("loadablePatternId")
   }
 
   constructor(private vesselsApiService: VesselsApiService,
@@ -75,11 +72,11 @@ export class VoyageStatusComponent implements OnInit {
    *
    * @memberof VoyageStatusComponent
    */
-    getPagePermission() {
-      this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']);
-      this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
-      this.editPortRotationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['StatusEditPortRotation'], actions: [PERMISSION_ACTION.VIEW] };
-    }
+  getPagePermission() {
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']);
+    this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
+    this.editPortRotationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['StatusEditPortRotation'], actions: [PERMISSION_ACTION.VIEW] };
+  }
 
   /**
    * Get vessel details
@@ -131,7 +128,18 @@ export class VoyageStatusComponent implements OnInit {
   async getVoyageInfo(vesselId: number) {
     const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
     this.voyageInfo = this.getSelectedVoyages(voyages);
-    this.selectedVoyage = this.voyageInfo[0];
+    const voyageId = localStorage.getItem("voyageId");
+    if (voyageId) {
+      const checkVoyage = this.voyageInfo.find(voyage => voyage.id === Number(voyageId));
+      if (checkVoyage) {
+        this.selectedVoyage = checkVoyage;
+      } else {
+        this.selectedVoyage = this.voyageInfo[0];
+      }
+    } else {
+      this.selectedVoyage = this.voyageInfo[0];
+    }
+    localStorage.setItem("voyageId", this.selectedVoyage?.id.toString());
     const alertForVoyageEnd = localStorage.getItem('alertForVoyageEnd');
     if (alertForVoyageEnd !== 'true') {
       this.alertForEnd()
@@ -220,6 +228,16 @@ export class VoyageStatusComponent implements OnInit {
         this.messageService.add({ severity: 'warn', summary: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING'], detail: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST'] + " " + activeVoyage?.endDate?.split(' ')[0] + ". " + translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND'], sticky: true });
       }
     }
+  }
+
+      
+  /**
+  * Show loadable study list based on selected voyage id
+  */
+   onVoyageSelected() {
+    localStorage.setItem("voyageId", this.selectedVoyage?.id.toString())
+    localStorage.removeItem("loadableStudyId")
+    localStorage.removeItem("loadablePatternId")
   }
 
 }

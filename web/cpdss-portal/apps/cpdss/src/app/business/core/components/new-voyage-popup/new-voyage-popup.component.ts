@@ -100,6 +100,7 @@ export class NewVoyagePopupComponent implements OnInit {
       const res = await this.voyageApiService.saveNewVoyageData(this.newVoyageModel, vesselId).toPromise();
       if (res.responseStatus.status === "200") {
         this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_CREATE_SUCCESS'], detail: translationKeys['VOYAGE_CREATED_SUCCESSFULLY'] });
+        localStorage.setItem("voyageId", res.voyageId.toString())
         this.router.navigate(['business/cargo-planning/loadable-study-list', res.voyageId]);
         this.ngxSpinnerService.hide();
       }

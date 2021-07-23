@@ -353,9 +353,9 @@ export class DatatableComponent implements OnInit {
    * @param col
    * @param colIndex
    */
-  onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
+  onKeyChange(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
-    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
+    if ((code === 9 || code === 13) && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
       const prevField = this.columns[colIndex - 1].field;
       if (prevField && rowData[prevField]) {
         const control = this.field(rowIndex, prevField);
@@ -375,7 +375,7 @@ export class DatatableComponent implements OnInit {
    */
   onFocusKeyDown(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const nextField = this.columns[colIndex + 1];
-    if(event.keyCode === 9 && !event.shiftKey && nextField.fieldType === 'DATETIME') {
+    if((event.keyCode === 9 || event.keyCode === 13) && !event.shiftKey && nextField.fieldType === 'DATETIME') {
       const id = `${nextField.field}_${rowIndex}input`;
       setTimeout(() => {
         if(document.getElementById(id) !== document.activeElement && this.value[rowIndex][nextField.field].isEditMode) {

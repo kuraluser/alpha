@@ -47,4 +47,6 @@ public class CargoNomination {
   private Long segregationId;
 
   private Boolean isCargoNominationComplete;
+
+  private Long mode;
 }

@@ -175,8 +175,8 @@ export interface ILoadingStages {
     trackGradeSwitch: boolean;
     stageOffset: number;
     stageDuration: number;
-    stageOffsetList: IStageOffsetList[];
-    stageDurationList: IStageDurationList[];
+    stageOffsetList: IStageOffset[];
+    stageDurationList: IStageDuration[];
 }
 
 /**
@@ -185,7 +185,7 @@ export interface ILoadingStages {
 * @export
 * @interface IStageOffsetList
 */
-export interface IStageOffsetList {
+export interface IStageOffset {
     id: number;
     stageOffsetVal: number;
 }
@@ -196,7 +196,7 @@ export interface IStageOffsetList {
 * @export
 * @interface IStageDurationList
 */
-export interface IStageDurationList {
+export interface IStageDuration {
     id: number;
     duration: number;
 }
@@ -281,39 +281,47 @@ export interface ICargoVesselTankDetails {
 * Interface for loading information list
 *
 * @export
-* @interface ILoadingInformationList
+* @interface ILoadingInformation
 */
-export interface ILoadingInformationList {
+export interface ILoadingInformation {
     loadingInfoId: number;
     synopticalTableId: number;
     loadingDetails: ILoadingDetails;
     loadingRates: ILoadingRates;
     loadingBerths: IBerth[];
     loadingMachineries: ILoadingMachinesInUses[];
-    stageOffset: IStageOffsetList;
-    stageDuration: IStageDurationList;
+    loadingStages: ILoadingStagesDetails;
     loadingDelays: ILoadingDelays[];
     toppingOffSequence: IToppingOffSequence[];
-    trackStartEndStage: boolean;
-    trackGradeSwitch: boolean;
-    storeKey?: number;
     vesselId?: number;
     voyageId?: number;
 }
 
 /**
- * Class for loading Information Dexie db
+ * Interface for loading stages for save
  *
  * @export
- * @class LoadingInformationDB
- * @extends {CPDSSDB}
+ * @interface ILoadingStagesDetails
  */
-export class LoadingInformationDB extends CPDSSDB {
-    loadingInformations!: Dexie.Table<ILoadingInformationList, number>;
-
-    constructor() {
-        super();
-    }
-
+ export interface ILoadingStagesDetails {
+    trackStartEndStage: boolean;
+    trackGradeSwitch: boolean;
+    stageOffset: IStageOffset;
+    stageDuration: IStageDuration;
 }
 
+
+/**
+* Interface for loading information save response
+*
+* @export
+* @interface ILoadingInformationSaveResponse
+*/
+export interface ILoadingInformationSaveResponse {
+    loadingInfoId: number;
+    loadingInformation: ILoadingInformationResponse;
+    responseStatus: IResponse;
+    synopticalTableId: number;
+    vesseld: number;
+    voyageId: number;
+}

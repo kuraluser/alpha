@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,20 +112,13 @@ public class CargoNominationService {
     dischargeStudyCargo.setMaxTolerance(cargo.getMaxTolerance());
     dischargeStudyCargo.setMinTolerance(cargo.getMinTolerance());
     dischargeStudyCargo.setPriority(cargo.getPriority());
-    if (cargo.getCargoNominationPortDetails() == null
-        || cargo.getCargoNominationPortDetails().isEmpty()) {
-      dischargeStudyCargo.setQuantity(new BigDecimal(0));
-    } else {
-      dischargeStudyCargo.setQuantity(
-          cargo.getCargoNominationPortDetails().stream()
-              .map(CargoNominationPortDetails::getQuantity)
-              .reduce(BigDecimal.ZERO, BigDecimal::add));
-    }
+    dischargeStudyCargo.setQuantity(cargo.getQuantity());
     dischargeStudyCargo.setSegregationXId(cargo.getSegregationXId());
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setCargoNominationPortDetails(
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId));
+    dischargeStudyCargo.setMode(2L);
     return dischargeStudyCargo;
   }
 
@@ -533,7 +527,12 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
             ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
-            Optional.ofNullable(cargoNomination.getApi()).ifPresent(val -> String.valueOf(val));
+            ofNullable(cargoNomination.getMode()).ifPresent(builder::setMode);
+            Optional.ofNullable(cargoNomination.getApi())
+                .ifPresent(val -> builder.setApi(String.valueOf(val)));
+            Optional.ofNullable(cargoNomination.getTemperature())
+                .ifPresent(val -> builder.setTemperature(String.valueOf(val)));
+
             ofNullable(cargoNomination.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object
@@ -749,5 +748,99 @@ public class CargoNominationService {
   public com.cpdss.common.generated.CargoInfo.CargoDetailReply getCargoInfoById(
       CargoInfo.CargoRequest build) {
     return cargoInfoGrpcService.getCargoInfoById(build);
+  }
+
+  /** @param loadableStudy void */
+  public void validateLoadableStudyWithCommingle(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) throws GenericServiceException {
+    List<CargoNomination> cargoNominations =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudy.getId(), true);
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
+        commingleCargoRepository.findByLoadableStudyXIdAndPurposeXidAndIsActive(
+            loadableStudy.getId(), 2L, true);
+    if (!cargoNominations.isEmpty() && !commingleCargos.isEmpty()) {
+      BigDecimal cargoSum =
+          cargoNominations.stream().map(CargoNomination::getQuantity).reduce(BigDecimal::add).get();
+      BigDecimal commingleCargoSum =
+          commingleCargos.stream()
+              .map(com.cpdss.loadablestudy.entity.CommingleCargo::getQuantity)
+              .reduce(BigDecimal::add)
+              .get();
+      if (commingleCargoSum.compareTo(cargoSum) == 1) {
+        log.info("commingle quanity is gerater for LS - {}", loadableStudy.getId());
+        throw new GenericServiceException(
+            "Commingle quanity is gerater for LS - {}" + loadableStudy.getId(),
+            CommonErrorCodes.E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy void
+   * @param modelMapper
+   */
+  public void buildCargoNominationDetails(
+      long loadableStudyId,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+    List<CargoNomination> cargoNominations =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+
+    loadableStudy.setCargoNomination(new ArrayList<>());
+    cargoNominations.forEach(
+        cargoNomination -> {
+          com.cpdss.loadablestudy.domain.CargoNomination cargoNominationDto =
+              new com.cpdss.loadablestudy.domain.CargoNomination();
+          cargoNominationDto =
+              modelMapper.map(
+                  cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
+          CargoInfo.CargoRequest.Builder cargoReq = CargoInfo.CargoRequest.newBuilder();
+          cargoReq.setCargoId(cargoNomination.getCargoXId());
+          com.cpdss.common.generated.CargoInfo.CargoDetailReply cargoDetailReply =
+              this.getCargoInfoById(cargoReq.build());
+          if (cargoDetailReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+            log.info("Fetched cargo info of cargo with id {}", cargoNomination.getCargoXId());
+            cargoNominationDto.setIsCondensateCargo(
+                cargoDetailReply.getCargoDetail().getIsCondensateCargo());
+            cargoNominationDto.setIsHrvpCargo(cargoDetailReply.getCargoDetail().getIsHrvpCargo());
+          } else {
+            log.error(
+                "Could not fetch cargo info of cargo with id {}", cargoNomination.getCargoXId());
+          }
+          loadableStudy.getCargoNomination().add(cargoNominationDto);
+        });
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy void
+   */
+  public void buildCargoNominationPortDetails(
+      long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    List<CargoNomination> cargoNominations =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    loadableStudy.setCargoNominationOperationDetails(new ArrayList<>());
+    List<CargoNominationPortDetails> cargoNominationOperationDetails =
+        cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
+            cargoNominations, true);
+    cargoNominationOperationDetails.forEach(
+        cargoNominationOperationDetail -> {
+          com.cpdss.loadablestudy.domain.CargoNominationOperationDetails
+              cargoNominationOperationDetailDto =
+                  new com.cpdss.loadablestudy.domain.CargoNominationOperationDetails();
+          cargoNominationOperationDetailDto.setCargoNominationId(
+              cargoNominationOperationDetail.getCargoNomination().getId());
+          cargoNominationOperationDetailDto.setId(cargoNominationOperationDetail.getId());
+          cargoNominationOperationDetailDto.setPortId(cargoNominationOperationDetail.getPortId());
+          cargoNominationOperationDetailDto.setQuantity(
+              String.valueOf(cargoNominationOperationDetail.getQuantity()));
+          loadableStudy.getCargoNominationOperationDetails().add(cargoNominationOperationDetailDto);
+        });
+  }
+
+  public void saveAll(List<CargoNomination> entities) {
+    cargoNominationRepository.saveAll(entities);
   }
 }

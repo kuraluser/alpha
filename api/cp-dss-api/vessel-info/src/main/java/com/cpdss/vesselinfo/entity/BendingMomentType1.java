@@ -15,12 +15,12 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "bending_moment")
+@Table(name = "bending_moment_type1")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BendingMoment extends EntityDoc {
+public class BendingMomentType1 extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 

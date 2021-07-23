@@ -52,7 +52,7 @@ public class LoadableStudiesConstants {
   public static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
   public static final String SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE = "DEP";
   public static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
-  public static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
+  public static final String LAY_CAN_FORMAT = "dd-MMM-yyyy";
   public static final Long CARGO_TANK_CATEGORY_ID = 1L;
   public static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
   public static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;

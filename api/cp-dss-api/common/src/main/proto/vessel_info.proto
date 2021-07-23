@@ -199,7 +199,7 @@ message BendingMomentType4 {
 	string isActive = 10;
 }
 
-message ShearingForce {
+message ShearingForceType1 {
 	int64 id = 1;
 	string frameNumber = 2;
 	string baseDraft = 3;
@@ -294,8 +294,8 @@ message VesselTankTCG {
 }
 
 message BMAndSF {
-	repeated BendingMoment bendingMoment = 1;
-	repeated ShearingForce shearingForce = 2;
+	repeated BendingMomentType1 bendingMomentType1 = 1;
+	repeated ShearingForceType1 shearingForceType1 = 2;
 	repeated CalculationSheet calculationSheet = 3;
 	repeated CalculationSheetTankGroup calculationSheetTankGroup = 4;
 	repeated MinMaxValuesForBMAndSf minMaxValuesForBMAndSf = 5;
@@ -308,7 +308,7 @@ message BMAndSF {
 	repeated BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;
 }
 
-message BendingMoment {
+message BendingMomentType1 {
 	int64 id = 1;
 	string frameNumber = 2;
 	string baseDraft = 3;
@@ -431,7 +431,24 @@ message BendingMoment {
 		ResponseStatus responseStatus = 1;
 		repeated PumpType pumpType = 2;
 		repeated VesselPump vesselPump = 3;
+		repeated TankType tankType = 5;
 		VesselDetail vesselDetails = 4;
+
+		repeated VesselComponent vesselManifold = 6;
+		repeated VesselComponent vesselBottomLine = 7;
+	}
+
+	message VesselComponent {
+		int64 id = 1;
+		int64 vesselId = 2;
+		string componentName = 3;
+		string componentCode = 4;
+		int64 componentType = 5;
+	}
+
+	message TankType {
+	int64 id = 1;
+	string typeName = 2;
 	}
 
 	message PumpType{

@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IDateTimeFormatOptions} from '../../../shared/models/common.model';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { DATATABLE_ACTION, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { IDateTimeFormatOptions, IPermissionContext, PERMISSION_ACTION} from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -43,6 +46,7 @@ export class DischargeStudyListComponent implements OnInit {
   dischargeStudyList: any[]
   VOYAGE_STATUS = VOYAGE_STATUS;
   selectedDischargeStudy: any //ToDo - change the type to any to model type once actual api is availble.
+  addDSBtnPermissionContext: IPermissionContext
 
 
  /**
@@ -70,7 +74,10 @@ export class DischargeStudyListComponent implements OnInit {
     private timeZoneTransformationService: TimeZoneTransformationService,
     private ngxSpinnerService: NgxSpinnerService,
     private dischargeStudyListTransformationApiService: DischargeStudyListTransformationApiService,
-    private dischargeStudyListApiService: DischargeStudyListApiService
+    private dischargeStudyListApiService: DischargeStudyListApiService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private permissionsService: PermissionsService,
 
   ) { }
 
@@ -89,14 +96,25 @@ export class DischargeStudyListComponent implements OnInit {
       localStorage.setItem("vesselId", this.vesselDetails?.id.toString())
       const result = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
       this.voyages = result;
-       this.ngxSpinnerService.hide();
-      this.selectedVoyage = this.voyages[0];
-      this.showDischargeStudyList();
+      this.selectedVoyage = this.voyages.find(voy => voy.status === "Active")
+      this.getPagePermission();
+      this.showDischargeStudyList();    
+      this.ngxSpinnerService.hide();
 
     });
     this.loading = false;
   }
 
+  /**
+   * Method to get page permission
+   *
+   * @memberof DischargeStudyListComponent
+   */
+
+  getPagePermission() {
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyListing']);
+    this.addDSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['DischargeStudyListing'], actions: [PERMISSION_ACTION.ADD] };
+  }
 
 
   /**
@@ -121,6 +139,12 @@ export class DischargeStudyListComponent implements OnInit {
   showDischargeStudyList() {
     this.isVoyageIdSelected = true;
     this.columns = this.dischargeStudyListTransformationApiService.getDischargeStudyTableColumns();
+    if (this.permission.edit) {
+      this.columns[this.columns.length - 1]['actions'].push(DATATABLE_ACTION.EDIT);
+    }
+    if (this.permission.delete) {
+      this.columns[this.columns.length - 1]['actions'].push(DATATABLE_ACTION.DELETE);
+    }
     this.getDischargeStudyInfo(this.vesselDetails?.id, this.selectedVoyage.id);
   }
 
@@ -149,16 +173,21 @@ export class DischargeStudyListComponent implements OnInit {
    */
 
   onRowSelect(event: any) {
-    if (event.field == 'actions') {
-      this.callNewDischargeStudyPopup(true,event.data);      
-    }
-    else {
+    if (event?.field != "actions") {
       this.display = true;
       this.selectedDischargeStudy = null;
       this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
     }
   }
 
+  /**
+   * Method to call onedit
+   *
+   * @memberof DischargeStudyListComponent
+   */
+  onEditRow(event) {
+    this.callNewDischargeStudyPopup(true, event.data);
+  }
 
   /**
    * Method on new discharge study added
@@ -169,7 +198,48 @@ export class DischargeStudyListComponent implements OnInit {
   {
     this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${dischargeStudyLId}`]);
   }
+ 
+  /**
+   * Method on delete row
+   *
+   * @param {*} event
+   * @memberof DischargeStudyListComponent
+   */
 
+  async onDeletRow(event)
+  {
+   const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_DELETE_SUCCESS', 'DISCHARGE_STUDY_DELETE_SUCCESSFULLY', 'DISCHARGE_STUDY_DELETE_ERROR', 'DISCHARGE_STUDY_DELETE_STATUS_ERROR', 'DISCHARGE_STUDY_DELETE_SUMMARY', 'DISCHARGE_STUDY_DELETE_DETAILS', 'LOADABLE_STUDY_DELETE_CONFIRM_LABEL', 'DISCHARGE_STUDY_DELETE_REJECT_LABEL']).toPromise();
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['DISCHARGE_STUDY_DELETE_SUMMARY'],
+      message: translationKeys['DISCHARGE_STUDY_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['DISCHARGE_STUDY_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['DISCHARGE_STUDY_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
+        this.ngxSpinnerService.show();
+        try {
+          const res = await this.dischargeStudyListApiService.deleteDischargeStudy (event.data.id).toPromise();
+          if (res?.responseStatus?.status === "200") {
+            this.messageService.add({ severity: 'success', summary: translationKeys['DISCHARGE_STUDY_DELETE_SUCCESS'], detail: translationKeys['DISCHARGE_STUDY_DELETE_SUCCESSFULLY'] });
+            this.dischargeStudyList = this.dischargeStudyList.filter((item)=>item.id!=event.data.id);
+          }
+        } catch (errorResponse) {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_DELETE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_DELETE_STATUS_ERROR'], life: 10000 });
+          }
+        }
+        this.ngxSpinnerService.hide();
+      }
+    });
+ 
+  }
 
   /**
    * Method to get discharge study info

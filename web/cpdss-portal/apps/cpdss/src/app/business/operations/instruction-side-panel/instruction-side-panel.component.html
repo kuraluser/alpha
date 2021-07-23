@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
-        <ul class="list-group bg-transparent">
-            <li (click)="selectRow(row)" [ngClass]="{ 'active' : row.selected }" class="list-group-item bg-transparent" *ngFor="let row of panelList">{{row?.label}}</li>
+        <ul class="list-unstyled sidebar-menu">
+            <li (click)="selectRow(row)" [ngClass]="{ 'active' : row?.selected }"  *ngFor="let row of panelList"><a>{{row?.groupName}}</a></li>
         </ul>
     </div>
 </div>

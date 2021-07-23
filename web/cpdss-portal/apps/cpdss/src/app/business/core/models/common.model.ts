@@ -1,4 +1,4 @@
-import { IResponse, IResponseStatus } from '../../../shared/models/common.model';
+import { ICountry, IResponse, IResponseStatus } from '../../../shared/models/common.model';
 
 /**
  *  model for new-loadable-study-list-names
@@ -290,7 +290,7 @@ export interface IPortsDetailsResponse {
 /**
  * Interface for Ports api response
  *
- * @export 
+ * @export
  * @interface IDischargePortsDetailsResponse
  */
  export interface IDischargePortsDetailsResponse {
@@ -645,4 +645,131 @@ export interface ICargoQuantities {
     loadingPort?: string;
     cargoAbbreviation?: string;
     cargoNominationId? : number;
+    colorCode?: string;
+}
+
+/**
+ * Interface for port api response
+ *
+ * @export
+ * @interface IPortsResponse
+ */
+export interface IPortsResponse {
+  responseStatus: IResponseStatus;
+  ports: IPort[];
+}
+
+/**
+ * Interface for cargo
+ *
+ * @export
+ * @interface ICargo
+ */
+export interface ICargo {
+  id: number;
+  companyId?: number;
+  actualWeight?: string;
+  plannedWeight?: string;
+  name?: string;
+  abbreviation?: string;
+  api?: number;
+  ports?: IPort[];
+  temp: string;
+}
+
+/**
+ * Interface for fuel type
+ *
+ * @export
+ * @interface IFuelType
+ */
+export interface IFuelType {
+  id: number;
+  name: string;
+  colorCode: string;
+  shortName: string;
+}
+
+/**
+ * Interface for cargo response
+ * @export
+ * @interface
+ */
+export interface ICargoResponseModel {
+  cargos: ICargo[],
+  responseStatus: IResponseStatus;
+}
+
+/**
+ * Interface for get confirm status
+ *
+ * @export
+ * @interface IConfirmStatusResponse
+ */
+export interface IConfirmStatusResponse {
+  responseStatus: IResponse;
+  confirmed: boolean;
+  loadablePatternStatusId: number;
+  validated: boolean;
+}
+
+/**
+ * Interface for instruction
+ *
+ * @export
+ * @interface IInstruction
+ */
+ export interface IInstruction {
+    instruction: string;
+    id: number;
+}
+
+/**
+ * Interface for instruction api response
+ *
+ * @export
+ * @interface IInstructionResponse
+ */
+ export interface IInstructionResponse {
+    responseStatus: IResponseStatus;
+    instructions: IInstruction[];
+}
+
+/**
+ * Interface for instruction
+ *
+ * @export
+ * @interface ITankDetails
+ */
+export interface ITankDetails {
+    displayOrder: number,
+    group: number,
+    id: number,
+    name: string,
+    order: number,
+    shortName: string,
+    slopTank: boolean,
+}
+
+/**
+ * Interface for tank api response
+ *
+ * @export
+ * @interface ITankResponse
+ */
+ export interface ITankResponse {
+    responseStatus: IResponseStatus;
+    cargoVesselTanks: ITankDetails[];
+}
+
+
+/**
+ * Interface for port api response
+ *
+ * @export
+ * @interface IPortsResponse
+ */
+export interface IPortsResponse {
+  responseStatus: IResponseStatus;
+  ports: IPort[];
 }

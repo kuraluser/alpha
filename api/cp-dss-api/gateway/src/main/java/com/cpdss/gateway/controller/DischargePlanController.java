@@ -5,11 +5,16 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
+import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
+import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.PortWiseCargoResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -20,7 +25,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -58,6 +71,44 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when deleting port rotation", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save and update discharge study with back loading if there is any
+   *
+   * @param vesselId - the vessel id for which discharge study is created
+   * @param voyageId - the voyage id for which discharge study is created
+   * @param request - the request body {@link DischargeStudyRequest}
+   * @param headers - the http request header
+   * @return {@link LoadableStudyResponse}
+   * @throws CommonRestException
+   */
+  @PostMapping(value = "/discharge-studies")
+  public LoadableStudyResponse saveDischargeStudyWithBackloading(
+      @RequestBody final DischargeStudyCargoResponse request, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      if (request.getDischargeStudyId() == null || request.getDischargeStudyId() == 0) {
+        throw new GenericServiceException(
+            "No DischargeStudy found",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      log.info("saveDischargeStudy: {}", getClientIp());
+      return this.dischargeStudyService.saveDischargeStudyWithBackloaing(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving discharge study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when saving discharge study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
@@ -204,6 +255,33 @@ public class DischargePlanController {
           e.getMessage(),
           e);
     }
+  }
+
+  /**
+   * Retrieve cargos information from cargo master based on the ports
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/discharge-studies/{dischargeStudyId}/port-cargos")
+  public PortWiseCargoResponse getCargosByPorts(
+      @PathVariable Long dischargeStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    PortWiseCargoResponse response = null;
+    try {
+      log.info("getCargos: {}", getClientIp());
+      response = dischargeStudyService.getCargosByPorts(dischargeStudyId, headers);
+    } catch (Exception e) {
+      log.error("Error in getCargos ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
   }
 
   /**

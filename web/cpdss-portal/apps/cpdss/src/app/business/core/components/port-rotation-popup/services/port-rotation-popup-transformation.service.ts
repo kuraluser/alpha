@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from 'apps/cpdss/src/app/shared/components/datatable/datatable.model';
-import { IOperations, ValueObject } from 'apps/cpdss/src/app/shared/models/common.model';
+import { ValueObject } from '../../../../../shared/models/common.model';
 import { IPermission } from 'apps/cpdss/src/app/shared/models/user-profile.model';
 import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from 'apps/cpdss/src/app/shared/services/time-zone-conversion/time-zone-transformation.service';
 import { IPortAllDropdownData, OPERATIONS } from '../../../../cargo-planning/models/cargo-planning.model';
 import { IPortRotationValueObject } from '../port-rotation-popup.model';
-import { IPort, IPortList } from '../../../../core/models/common.model';
+import { IOperations, IPort, IPortList } from '../../../../core/models/common.model';
 import * as moment from 'moment';
 
 /**

@@ -831,7 +831,7 @@ tr{
   width: 50px!important;
 }
 .column-color{
-  width: 70px !important;
+  width: 60px !important;
 }
 .column-loader {
   width: 20px!important;
@@ -977,6 +977,7 @@ input[type=number] {
   height: calc(100vh - 220px);
   padding-right: 15px;
   margin-right: 2px;
+  padding-bottom: 30px;
 }
 
 .p-datatable-wrapper, .p-datatable-scrollable-wrapper{
@@ -1848,6 +1849,8 @@ th .p-button.p-button-icon-only.p-button-rounded{
     background: none;
     width: 14px;
     height: 14px;
+    position: relative;
+    border-radius: 2px;
   }
 }
 .p-checkbox .p-checkbox-box .p-checkbox-icon{
@@ -1995,20 +1998,23 @@ width: 50px !important;
 }
 }
 .column-priority{
-  width: 85px!important;
+  width: 87px!important;
 }
 .column-qty{
-  width: 120px!important;
+  width: 132px!important;
 }
 .column-api, .column-temp{
   width: 105px!important;
 }
 
 .column-max-tol, .column-min-tol{
-  width: 115px!important;
+  width: 84px!important;
 }
 .column-segregation{
-  width: 120px!important;
+  width: 115px!important;
+}
+.column-abbreviation{
+  width: 110px!important;
 }
 .column-fuel-type{
   width: 150px!important;
@@ -2511,7 +2517,7 @@ textarea{
 }
 
 .loadable-plan-ballast .tank-outer-pattern .tank-filling-percentage{
- max-width: none; 
+ max-width: none;
 }
 
 .sidebar-menu{
@@ -2743,4 +2749,40 @@ textarea{
 .content-wrapper{
   height: 98%;
   overflow-y: auto;
+}
+.p-checkbox-icon{
+  position: relative;
+
+}
+
+.p-checkbox-icon.pi-check:before{
+  content: ""!important;
+  border: solid #005397;
+  width: 4px;
+  height: 8px;
+  border-width: 0 2px 2px 0 !important;
+  transform: rotate(45deg);
+  position: absolute;
+  top: -4px;
+  right: -2px;
+}
+
+.check-list-table{
+  .p-treetable-header{
+    border-top: 0;
+  }
+}
+
+.sidebar-loading-and-discharging{
+  max-width: 455px;
+  width: 455px;
+}
+
+.item-row-wrapper{
+  .row{
+      margin-left: 0;
+      margin-right: 0;
+      margin-bottom: 0;
+      padding:2px 0;
+  }
 }

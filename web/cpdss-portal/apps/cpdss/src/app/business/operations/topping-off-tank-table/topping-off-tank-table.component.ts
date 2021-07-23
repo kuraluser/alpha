@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ICargo } from '../../../shared/models/common.model';
-import { IShipCargoTank } from '../../core/models/common.model';
+import { ICargo, IShipCargoTank } from '../../core/models/common.model';
 import { IToppingOffSequence } from '../models/loading-information.model';
 import { ToppingOffTankTableTransformationService } from './topping-off-tank-table-transformation.service';
 
@@ -18,9 +17,6 @@ import { ToppingOffTankTableTransformationService } from './topping-off-tank-tab
   styleUrls: ['./topping-off-tank-table.component.scss']
 })
 export class ToppingOffTankTableComponent implements OnInit {
-  @Input() voyageId: number;
-  @Input() vesselId: number;
-  @Input() portRotationId: number;
   @Input() cargoTanks: IShipCargoTank[][];
   @Input() get cargos(): ICargo[] {
     return this._cargos;
@@ -43,7 +39,6 @@ export class ToppingOffTankTableComponent implements OnInit {
     }
   }
 
-  @Output() updateToppingOff: EventEmitter<IToppingOffSequence[]> = new EventEmitter();
 
   private _toppingOffSequence: IToppingOffSequence[];
   private _cargos: ICargo[];

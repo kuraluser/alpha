@@ -10,6 +10,641 @@ public final class CargoInfo {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
 
+  public interface CargoListRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:CargoListRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated int64 id = 1;</code>
+     *
+     * @return A list containing the id.
+     */
+    java.util.List<java.lang.Long> getIdList();
+    /**
+     * <code>repeated int64 id = 1;</code>
+     *
+     * @return The count of id.
+     */
+    int getIdCount();
+    /**
+     * <code>repeated int64 id = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The id at the given index.
+     */
+    long getId(int index);
+  }
+  /** Protobuf type {@code CargoListRequest} */
+  public static final class CargoListRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:CargoListRequest)
+      CargoListRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use CargoListRequest.newBuilder() to construct.
+    private CargoListRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private CargoListRequest() {
+      id_ = emptyLongList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new CargoListRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private CargoListRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  id_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                id_.addLong(input.readInt64());
+                break;
+              }
+            case 10:
+              {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
+                  id_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  id_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          id_.makeImmutable(); // C
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.CargoInfo.internal_static_CargoListRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.CargoInfo
+          .internal_static_CargoListRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.CargoInfo.CargoListRequest.class,
+              com.cpdss.common.generated.CargoInfo.CargoListRequest.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private com.google.protobuf.Internal.LongList id_;
+    /**
+     * <code>repeated int64 id = 1;</code>
+     *
+     * @return A list containing the id.
+     */
+    public java.util.List<java.lang.Long> getIdList() {
+      return id_;
+    }
+    /**
+     * <code>repeated int64 id = 1;</code>
+     *
+     * @return The count of id.
+     */
+    public int getIdCount() {
+      return id_.size();
+    }
+    /**
+     * <code>repeated int64 id = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The id at the given index.
+     */
+    public long getId(int index) {
+      return id_.getLong(index);
+    }
+
+    private int idMemoizedSerializedSize = -1;
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      getSerializedSize();
+      if (getIdList().size() > 0) {
+        output.writeUInt32NoTag(10);
+        output.writeUInt32NoTag(idMemoizedSerializedSize);
+      }
+      for (int i = 0; i < id_.size(); i++) {
+        output.writeInt64NoTag(id_.getLong(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < id_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(id_.getLong(i));
+        }
+        size += dataSize;
+        if (!getIdList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        idMemoizedSerializedSize = dataSize;
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.CargoInfo.CargoListRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.CargoInfo.CargoListRequest other =
+          (com.cpdss.common.generated.CargoInfo.CargoListRequest) obj;
+
+      if (!getIdList().equals(other.getIdList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getIdCount() > 0) {
+        hash = (37 * hash) + ID_FIELD_NUMBER;
+        hash = (53 * hash) + getIdList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.CargoInfo.CargoListRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code CargoListRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:CargoListRequest)
+        com.cpdss.common.generated.CargoInfo.CargoListRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.CargoInfo.internal_static_CargoListRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.CargoInfo
+            .internal_static_CargoListRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.CargoInfo.CargoListRequest.class,
+                com.cpdss.common.generated.CargoInfo.CargoListRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.CargoInfo.CargoListRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.CargoInfo.internal_static_CargoListRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.CargoInfo.CargoListRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.CargoInfo.CargoListRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.CargoInfo.CargoListRequest build() {
+        com.cpdss.common.generated.CargoInfo.CargoListRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.CargoInfo.CargoListRequest buildPartial() {
+        com.cpdss.common.generated.CargoInfo.CargoListRequest result =
+            new com.cpdss.common.generated.CargoInfo.CargoListRequest(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          id_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.id_ = id_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.CargoInfo.CargoListRequest) {
+          return mergeFrom((com.cpdss.common.generated.CargoInfo.CargoListRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.CargoInfo.CargoListRequest other) {
+        if (other == com.cpdss.common.generated.CargoInfo.CargoListRequest.getDefaultInstance())
+          return this;
+        if (!other.id_.isEmpty()) {
+          if (id_.isEmpty()) {
+            id_ = other.id_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureIdIsMutable();
+            id_.addAll(other.id_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.CargoInfo.CargoListRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.CargoInfo.CargoListRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.google.protobuf.Internal.LongList id_ = emptyLongList();
+
+      private void ensureIdIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          id_ = mutableCopy(id_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+      /**
+       * <code>repeated int64 id = 1;</code>
+       *
+       * @return A list containing the id.
+       */
+      public java.util.List<java.lang.Long> getIdList() {
+        return ((bitField0_ & 0x00000001) != 0) ? java.util.Collections.unmodifiableList(id_) : id_;
+      }
+      /**
+       * <code>repeated int64 id = 1;</code>
+       *
+       * @return The count of id.
+       */
+      public int getIdCount() {
+        return id_.size();
+      }
+      /**
+       * <code>repeated int64 id = 1;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The id at the given index.
+       */
+      public long getId(int index) {
+        return id_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 id = 1;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(int index, long value) {
+        ensureIdIsMutable();
+        id_.setLong(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 id = 1;</code>
+       *
+       * @param value The id to add.
+       * @return This builder for chaining.
+       */
+      public Builder addId(long value) {
+        ensureIdIsMutable();
+        id_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 id = 1;</code>
+       *
+       * @param values The id to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllId(java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureIdIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, id_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        id_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:CargoListRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:CargoListRequest)
+    private static final com.cpdss.common.generated.CargoInfo.CargoListRequest DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.CargoInfo.CargoListRequest();
+    }
+
+    public static com.cpdss.common.generated.CargoInfo.CargoListRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CargoListRequest> PARSER =
+        new com.google.protobuf.AbstractParser<CargoListRequest>() {
+          @java.lang.Override
+          public CargoListRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CargoListRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<CargoListRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CargoListRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.CargoInfo.CargoListRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface CargoDetailReplyOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:CargoDetailReply)
@@ -4241,6 +4876,10 @@ public final class CargoInfo {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_CargoListRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CargoListRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_CargoDetailReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_CargoDetailReply_fieldAccessorTable;
@@ -4269,25 +4908,27 @@ public final class CargoInfo {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\020cargo_info.proto\032\014common.proto\"^\n\020Carg"
-          + "oDetailReply\022!\n\013cargoDetail\030\001 \001(\0132\014.Carg"
-          + "oDetail\022\'\n\016responseStatus\030\002 \001(\0132\017.Respon"
-          + "seStatus\"o\n\014CargoRequest\022\021\n\tcompanyId\030\001 "
-          + "\001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022"
-          + "\027\n\017loadableStudyId\030\004 \001(\003\022\017\n\007cargoId\030\005 \001("
-          + "\003\"7\n\026CargoRequestWithPaging\022\016\n\006offset\030\001 "
-          + "\001(\003\022\r\n\005limit\030\002 \001(\003\"\177\n\013CargoDetail\022\n\n\002id\030"
-          + "\001 \001(\003\022\021\n\tcrudeType\030\002 \001(\t\022\024\n\014abbreviation"
-          + "\030\003 \001(\t\022\013\n\003api\030\004 \001(\t\022\031\n\021isCondensateCargo"
-          + "\030\005 \001(\010\022\023\n\013isHrvpCargo\030\006 \001(\010\"S\n\nCargoRepl"
-          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
-          + "us\022\034\n\006cargos\030\002 \003(\0132\014.CargoDetail2\270\001\n\020Car"
-          + "goInfoService\022,\n\014GetCargoInfo\022\r.CargoReq"
-          + "uest\032\013.CargoReply\"\000\022>\n\024GetCargoInfoByPag"
-          + "ing\022\027.CargoRequestWithPaging\032\013.CargoRepl"
-          + "y\"\000\0226\n\020GetCargoInfoById\022\r.CargoRequest\032\021"
-          + ".CargoDetailReply\"\000B\036\n\032com.cpdss.common."
-          + "generatedP\000b\006proto3"
+      "\n\020cargo_info.proto\032\014common.proto\"\036\n\020Carg"
+          + "oListRequest\022\n\n\002id\030\001 \003(\003\"^\n\020CargoDetailR"
+          + "eply\022!\n\013cargoDetail\030\001 \001(\0132\014.CargoDetail\022"
+          + "\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStatus"
+          + "\"o\n\014CargoRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010v"
+          + "esselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loada"
+          + "bleStudyId\030\004 \001(\003\022\017\n\007cargoId\030\005 \001(\003\"7\n\026Car"
+          + "goRequestWithPaging\022\016\n\006offset\030\001 \001(\003\022\r\n\005l"
+          + "imit\030\002 \001(\003\"\177\n\013CargoDetail\022\n\n\002id\030\001 \001(\003\022\021\n"
+          + "\tcrudeType\030\002 \001(\t\022\024\n\014abbreviation\030\003 \001(\t\022\013"
+          + "\n\003api\030\004 \001(\t\022\031\n\021isCondensateCargo\030\005 \001(\010\022\023"
+          + "\n\013isHrvpCargo\030\006 \001(\010\"S\n\nCargoReply\022\'\n\016res"
+          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006ca"
+          + "rgos\030\002 \003(\0132\014.CargoDetail2\365\001\n\020CargoInfoSe"
+          + "rvice\022,\n\014GetCargoInfo\022\r.CargoRequest\032\013.C"
+          + "argoReply\"\000\022>\n\024GetCargoInfoByPaging\022\027.Ca"
+          + "rgoRequestWithPaging\032\013.CargoReply\"\000\0226\n\020G"
+          + "etCargoInfoById\022\r.CargoRequest\032\021.CargoDe"
+          + "tailReply\"\000\022;\n\027GetCargoInfosByCargoIds\022\021"
+          + ".CargoListRequest\032\013.CargoReply\"\000B\036\n\032com."
+          + "cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -4295,35 +4936,42 @@ public final class CargoInfo {
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
             });
-    internal_static_CargoDetailReply_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_CargoListRequest_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_CargoListRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_CargoListRequest_descriptor,
+            new java.lang.String[] {
+              "Id",
+            });
+    internal_static_CargoDetailReply_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_CargoDetailReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoDetailReply_descriptor,
             new java.lang.String[] {
               "CargoDetail", "ResponseStatus",
             });
-    internal_static_CargoRequest_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_CargoRequest_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_CargoRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "VoyageId", "LoadableStudyId", "CargoId",
             });
-    internal_static_CargoRequestWithPaging_descriptor = getDescriptor().getMessageTypes().get(2);
+    internal_static_CargoRequestWithPaging_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_CargoRequestWithPaging_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoRequestWithPaging_descriptor,
             new java.lang.String[] {
               "Offset", "Limit",
             });
-    internal_static_CargoDetail_descriptor = getDescriptor().getMessageTypes().get(3);
+    internal_static_CargoDetail_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_CargoDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoDetail_descriptor,
             new java.lang.String[] {
               "Id", "CrudeType", "Abbreviation", "Api", "IsCondensateCargo", "IsHrvpCargo",
             });
-    internal_static_CargoReply_descriptor = getDescriptor().getMessageTypes().get(4);
+    internal_static_CargoReply_descriptor = getDescriptor().getMessageTypes().get(5);
     internal_static_CargoReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoReply_descriptor,

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DepartureConditionTransformationService } from './departure-condition-transformation.service';
 import { ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
 import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
-import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
@@ -3343,7 +3343,7 @@ export class DepartureConditionComponent implements OnInit {
         ],
         "stabilityConditions": {
           "list": 0,
-          "hogSag": 0,
+          "deflection": 0,
           "finalDraftFwd": 0,
           "finalDraftAft": 0,
           "finalDraftMid": 0,

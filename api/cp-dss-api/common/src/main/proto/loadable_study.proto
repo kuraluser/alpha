@@ -192,12 +192,20 @@ service LoadableStudyService {
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
+
+	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
 }
 
 service DischargeStudyOperationService {
   rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
   rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){}
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
+  rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
+  rpc SaveDischargeStudyBackLoading (DishargeStudyBackLoadingSaveRequest) returns (DischargeStudyReply){}
+}
+
+service PortInstructionService {
+    rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
 }
 
 message CargoNominationDetailReply{
@@ -796,7 +804,9 @@ message CargoNominationDetail {
 	int64 segregationId = 13;
 	bool isCargoNominationComplete=14;
 	string cargoName = 16;
-
+	string api = 17;
+	string temperature = 18;
+	int64 mode = 19;
 }
 
 message CargoNominationRequest {
@@ -849,6 +859,13 @@ message PortRotationDetail{
 	int64 portTimezoneId = 19;
 	bool isLandingPage=20;
 	string operationType=21;
+	bool isBackLoadingEnabled = 22;
+	repeated BackLoading backLoading = 23;
+	repeated int64 instructionId = 24;
+	int64 cowId = 25;
+	int64 percentage = 26;
+	repeated int64 tanks = 27;
+	
 }
 
 message Operation{
@@ -1413,4 +1430,48 @@ message LoadablePatternPortWiseDetailsJson {
 	string loadablePatternDetails = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadableStudyId = 3;
+}
+
+
+message LoadableStudyShoreResponse{
+		repeated LoadableStudyShore shoreList = 1;
+	  ResponseStatus responseStatus = 2;
+}
+
+message LoadableStudyShoreRequest{
+	int64 vesselId = 1;
+}
+
+message	LoadableStudyShore{
+	int64 id = 1;
+	string vesselName = 2;
+	int64 imoNo = 3;
+	string flagName = 4;
+	string atd = 5;
+	string eta = 6;
+	string voyageName = 7;
+	repeated VoyagePorts voyagePorts = 8;
+}
+
+message	VoyagePorts{
+	string portName =1;
+	string portType =2;
+	string portOrder =3;
+	string anchorage =4;
+	string iconUrl =5;
+	string ata =6;
+	string atd =7;
+	string etd =8;
+	string eta =9;
+	string lat =10;
+	string lon =11;
+}
+
+message DishargeStudyBackLoadingSaveRequest {
+	repeated DishargeStudyBackLoadingDetail dsBackLoading= 1;
+	int64 dischargeStudyId = 2;
+}
+message DishargeStudyBackLoadingDetail {
+	PortRotationDetail portDetails=1;
+	repeated CargoNominationDetail portCargoDetails= 2;
 }

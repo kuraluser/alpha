@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -18,6 +18,7 @@ export class OperationsComponent implements OnInit {
   vessel: IVessel;
   voyages: Voyage[];
   showAddPortPopup = false;
+  isRuleModalVisible = false;
   get selectedVoyage(): Voyage {
     return this._selectedVoyage;
   }
@@ -39,6 +40,7 @@ export class OperationsComponent implements OnInit {
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
     private loadingTransformationService: LoadingTransformationService) { }
+
 
   ngOnInit(): void {
     this.getVesselInfo();
@@ -154,6 +156,16 @@ export class OperationsComponent implements OnInit {
   */
      onUnitChange() {
        this.loadingTransformationService.setUnitChanged(true);
+     }
+
+     /**
+      * Method to close the modal.
+      *
+      * @memberof OperationsComponent
+      */
+      onRulesPopUpClose(event)
+     {
+      this.isRuleModalVisible = event;
      }
 
 }

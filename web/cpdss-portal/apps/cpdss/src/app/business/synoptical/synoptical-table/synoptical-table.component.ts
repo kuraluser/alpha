@@ -213,7 +213,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             this.cols.splice(indexBefore, 0, {
               header: "Hogging/Sagging (cm)",
               fields: [
-                { key: "hogSag" }
+                { key: "deflection" }
               ],
             });
           }
@@ -473,7 +473,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       {
         header: "Hogging/Sagging (cm)",
         fields: [
-          { key: "hogSag" }
+          { key: "deflection" }
         ],
       },
       {
@@ -613,13 +613,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           }
         ]
       },
-      {
-        header: "Blind Sector (m)",
-        fields: [{
-          key: "blindSector"
-        }],
-        editable: false,
-      },
+      // {  // Temporarily hiding hence the value cannot be provided from ALGO
+      //   header: "Blind Sector (m)",
+      //   fields: [{
+      //     key: "blindSector"
+      //   }],
+      //   editable: false,
+      // },
       {
         header: 'Cargo (MT)',
         dynamicKey: 'cargos',
@@ -698,27 +698,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               {
                 header: 'Actual',
                 fields: [{ key: 'actualFWTotal', numberType: 'quantity', unit: 'MT' }],
-              },
-            ]
-          }
-        ],
-        expandedFields: []
-      },
-      {
-        header: 'Lube Oil Total (MT)',
-        dynamicKey: 'lubeList',
-        expandable: true,
-        subHeaders: [
-          {
-            header: "",
-            subHeaders: [
-              {
-                header: 'Plan',
-                fields: [{ key: 'plannedLubeTotal', numberType: 'quantity', unit: 'MT' }],
-              },
-              {
-                header: 'Actual',
-                fields: [{ key: 'actualLubeTotal', numberType: 'quantity', unit: 'MT' }],
               },
             ]
           }
@@ -1642,15 +1621,15 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }
         break;
       case 'calculatedDraftAftPlanned': case 'calculatedDraftAftActual':
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] = fc.value + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] = fc.value + this.synopticalService.synopticalRecords[colIndex]['deflection'];
         break;
 
       case 'calculatedDraftFwdPlanned': case 'calculatedDraftFwdActual':
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['deflection'];
         break;
 
       case 'calculatedDraftMidPlanned': case 'calculatedDraftMidActual':
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['hogSag'];
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + this.synopticalService.synopticalRecords[colIndex]['deflection'];
         break;
 
       default:

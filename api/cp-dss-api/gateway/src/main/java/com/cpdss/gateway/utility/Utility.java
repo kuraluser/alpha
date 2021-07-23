@@ -3,6 +3,7 @@ package com.cpdss.gateway.utility;
 
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.*;
 import java.util.*;
 import org.springframework.util.CollectionUtils;
@@ -12,6 +13,23 @@ public class Utility {
   public static List<RulePlans> buildAdminRulePlan(VesselInfo.VesselRuleReply vesselRuleReply) {
     List<RulePlans> rulePlans = new ArrayList<>();
     vesselRuleReply
+        .getRulePlanList()
+        .forEach(
+            rulePlanList -> {
+              RulePlans rulePlan = new RulePlans();
+              Optional.of(rulePlanList.getHeader()).ifPresent(rulePlan::setHeader);
+              if (!CollectionUtils.isEmpty(rulePlanList.getRulesList())) {
+                rulePlan.setRules(buildRules(rulePlanList.getRulesList()));
+              }
+              rulePlans.add(rulePlan);
+            });
+    return rulePlans;
+  }
+
+  public static List<RulePlans> buildLoadingPlanRule(
+      LoadingPlanModels.LoadingPlanRuleReply ruleReply) {
+    List<RulePlans> rulePlans = new ArrayList<>();
+    ruleReply
         .getRulePlanList()
         .forEach(
             rulePlanList -> {
@@ -125,7 +143,9 @@ public class Utility {
       com.cpdss.gateway.domain.RuleRequest vesselRuleRequest,
       VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder,
       LoadableStudy.LoadableRuleRequest.Builder loadableRuleRequestBuilder,
-      boolean isAdminRule) {
+      LoadingPlanModels.LoadingPlanRuleRequest.Builder planBuilder,
+      boolean isAdminRule,
+      boolean isLoadingPlan) {
 
     if (vesselRuleRequest != null && !CollectionUtils.isEmpty(vesselRuleRequest.getPlan())) {
       vesselRuleRequest
@@ -192,6 +212,8 @@ public class Utility {
                           });
                   if ((isAdminRule)) {
                     vesselRuleBuilder.addRulePlan(rulePlanBuilder);
+                  } else if (isLoadingPlan) {
+                    planBuilder.addRulePlan(rulePlanBuilder);
                   } else {
                     loadableRuleRequestBuilder.addRulePlan(rulePlanBuilder);
                   }

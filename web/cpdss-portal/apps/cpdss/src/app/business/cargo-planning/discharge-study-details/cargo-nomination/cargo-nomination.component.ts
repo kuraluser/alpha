@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
-import { Voyage } from '../../../core/models/common.model';
+import { Voyage , IPort } from '../../../core/models/common.model';
 import { ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, IBillingFigValueObject, IBillingOfLaddings } from '../../models/discharge-study-list.model';
 import { DischargeStudyDetailsTransformationService } from '../../services/discharge-study-details-transformation.service';
 import { DischargeStudyDetailsApiService } from '../../services/discharge-study-details-api.service';
@@ -39,7 +39,7 @@ export class CargoNominationComponent implements OnInit {
 
 
   @Input() vesselId: number;
-  @Input() ports: number;
+  @Input() ports: IPort[];
 
   loadableQuantityCargoObjectValue: ICommingleCargoDispaly[];
 
