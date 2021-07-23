@@ -1,4 +1,4 @@
-import { IResponse, IResponseStatus } from '../../../shared/models/common.model';
+import { ICountry, IResponse, IResponseStatus } from '../../../shared/models/common.model';
 
 /**
  *  model for new-loadable-study-list-names
@@ -645,8 +645,73 @@ export interface ICargoQuantities {
     loadingPort?: string;
     cargoAbbreviation?: string;
     cargoNominationId? : number;
+    colorCode?: string;
 }
 
+/**
+ * Interface for port api response
+ *
+ * @export
+ * @interface IPortsResponse
+ */
+export interface IPortsResponse {
+  responseStatus: IResponseStatus;
+  ports: IPort[];
+}
+
+/**
+ * Interface for cargo
+ *
+ * @export
+ * @interface ICargo
+ */
+export interface ICargo {
+  id: number;
+  companyId?: number;
+  actualWeight?: string;
+  plannedWeight?: string;
+  name?: string;
+  abbreviation?: string;
+  api?: number;
+  ports?: IPort[];
+  temp: string;
+}
+
+/**
+ * Interface for fuel type
+ *
+ * @export
+ * @interface IFuelType
+ */
+export interface IFuelType {
+  id: number;
+  name: string;
+  colorCode: string;
+  shortName: string;
+}
+
+/**
+ * Interface for cargo response
+ * @export
+ * @interface
+ */
+export interface ICargoResponseModel {
+  cargos: ICargo[],
+  responseStatus: IResponseStatus;
+}
+
+/**
+ * Interface for get confirm status
+ *
+ * @export
+ * @interface IConfirmStatusResponse
+ */
+export interface IConfirmStatusResponse {
+  responseStatus: IResponse;
+  confirmed: boolean;
+  loadablePatternStatusId: number;
+  validated: boolean;
+}
 
 /**
  * Interface for instruction
@@ -671,7 +736,7 @@ export interface ICargoQuantities {
 }
 
 /**
- * Interface for instruction 
+ * Interface for instruction
  *
  * @export
  * @interface ITankDetails

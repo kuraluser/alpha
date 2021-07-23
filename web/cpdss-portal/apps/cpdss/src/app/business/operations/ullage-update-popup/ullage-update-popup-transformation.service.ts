@@ -5,8 +5,8 @@ import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/commo
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
-import { ICargoDetail , ICargoDetailValueObject } from '../models/ullage-update-popup.model';
+import { DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
+import { ICargoDetail, ICargoDetailValueObject } from '../models/ullage-update-popup.model';
 import { ValueObject } from '../../../shared/models/common.model';
 
 /**
@@ -127,12 +127,12 @@ export class UllageUpdatePopupTransformationService {
    * @returns {IDataTableColumn}
    * @memberof UllageUpdatePopupTransformationService
    */
-  getCargoTableColumn(){
+  getCargoTableColumn() {
 
     const columns: IDataTableColumn[] = [
       {
         field: 'tankName',
-        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_TANK_NAME',        
+        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_TANK_NAME',
       },
       {
         field: 'correctedUllage',
@@ -163,7 +163,7 @@ export class UllageUpdatePopupTransformationService {
    * @returns {IDataTableColumn}
    * @memberof UllageUpdatePopupTransformationService
    */
-  getBallastTankColumns(){
+  getBallastTankColumns() {
     const columns: IDataTableColumn[] = [
       {
         field: 'tankName',
@@ -209,7 +209,7 @@ export class UllageUpdatePopupTransformationService {
    * @returns {IDataTableColumn}
    * @memberof UllageUpdatePopupTransformationService
    */
-  getBunkerTankColumns(){
+  getBunkerTankColumns() {
     const columns: IDataTableColumn[] = [
       {
         field: 'shortName',
@@ -255,7 +255,7 @@ export class UllageUpdatePopupTransformationService {
    * @returns {IDataTableColumn}
    * @memberof UllageUpdatePopupTransformationService
    */
-   getBLFigureColumns():IDataTableColumn[] {
+  getBLFigureColumns(): IDataTableColumn[] {
     return [
       {
         field: 'cargoName',
@@ -340,28 +340,28 @@ export class UllageUpdatePopupTransformationService {
     ]
   }
 
-    /**
-  * Method to convert loadable plan tank details to value object
-  *
-  * @param {ICargoDetail} cargoTankDetail
-  * @param {boolean} [isEditMode=true]
-  * @param {boolean} [isAdd=true]
-  * @returns {ICargoDetailValueObject}
-  * @memberof UllageUpdatePopupTransformationService
-  */
-  getFormatedCargoDetails(cargoTankDetail: ICargoDetail , isEditMode = true , isAdd = true) {
-      const _cargoDetail = <ICargoDetailValueObject>{};
-      _cargoDetail.blRefNo = new ValueObject<string>(cargoTankDetail.blRefNo , true , isEditMode);
-      _cargoDetail.bbl = new ValueObject<number>(cargoTankDetail.bbl , true , isEditMode);
-      _cargoDetail.lt = new ValueObject<number>(cargoTankDetail.lt , true , isEditMode);
-      _cargoDetail.mt = new ValueObject<number>(cargoTankDetail.mt , true , isEditMode);
-      _cargoDetail.kl = new ValueObject<number>(cargoTankDetail.kl , true , isEditMode);
-      _cargoDetail.api = new ValueObject<number>(cargoTankDetail.api , true , isEditMode);
-      _cargoDetail.temp = new ValueObject<number>(cargoTankDetail.temp , true , isEditMode);
-      _cargoDetail.cargoName = cargoTankDetail.cargoName;
-      _cargoDetail.isAdd = isAdd;
-      return _cargoDetail;
-    }
+  /**
+* Method to convert loadable plan tank details to value object
+*
+* @param {ICargoDetail} cargoTankDetail
+* @param {boolean} [isEditMode=true]
+* @param {boolean} [isAdd=true]
+* @returns {ICargoDetailValueObject}
+* @memberof UllageUpdatePopupTransformationService
+*/
+  getFormatedCargoDetails(cargoTankDetail: ICargoDetail, isEditMode = true, isAdd = true) {
+    const _cargoDetail = <ICargoDetailValueObject>{};
+    _cargoDetail.blRefNo = new ValueObject<string>(cargoTankDetail.blRefNo, true, isEditMode);
+    _cargoDetail.bbl = new ValueObject<number>(cargoTankDetail.bbl, true, isEditMode);
+    _cargoDetail.lt = new ValueObject<number>(cargoTankDetail.lt, true, isEditMode);
+    _cargoDetail.mt = new ValueObject<number>(cargoTankDetail.mt, true, isEditMode);
+    _cargoDetail.kl = new ValueObject<number>(cargoTankDetail.kl, true, isEditMode);
+    _cargoDetail.api = new ValueObject<number>(cargoTankDetail.api, true, isEditMode);
+    _cargoDetail.temp = new ValueObject<number>(cargoTankDetail.temp, true, isEditMode);
+    _cargoDetail.cargoName = cargoTankDetail.cargoName;
+    _cargoDetail.isAdd = isAdd;
+    return _cargoDetail;
+  }
 }
 
 

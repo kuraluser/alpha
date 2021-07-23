@@ -115,6 +115,7 @@ public class LoadingInformationBuilderService {
               });
       Optional.ofNullable(var1.getCapacity())
           .ifPresent(value -> builder.setCapacity(value.toString()));
+      Optional.ofNullable(var1.getIsUsing()).ifPresent(builder::setIsUsing);
       machinery.add(builder.build());
     }
     return machinery;

@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { IPort, IDischargeStudyPortList , IDischargePortsDetailsResponse , IPortsResponse , IInstructionResponse , ITankResponse  } from '../../core/models/common.model';
+import { IPort, IDischargeStudyPortList , IDischargePortsDetailsResponse , IPortsResponse , IInstructionResponse , ITankResponse, ICargoResponseModel  } from '../../core/models/common.model';
 
 import { DischargePortsDB , IOHQPortRotationResponse, IDischargeStudyPortOHQResponse, IDischargeStudyPortOHQTankDetail , DischargeOHQDB  } from '../models/cargo-planning.model';
-import { ICargoResponseModel } from '../../../shared/models/common.model';
+import { IResponse } from '../../../shared/models/common.model';
 
-import { ICargoNominationDetailsResponse , IDischargeStudyDetailsResponse , IPortCargoResponse , ICargoHistoryDetails } from '../models/discharge-study-list.model'
+import { ICargoNominationDetailsResponse , IDischargeStudyDetailsResponse , IPortCargoResponse , ICargoHistoryDetails  } from '../models/discharge-study-list.model'
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 
 
@@ -25,10 +25,10 @@ export class DischargeStudyDetailsApiService {
   private _ports: IPort[];
   private _ohqDb: DischargeOHQDB;
   private _portsDb: DischargePortsDB;
-  
+
   constructor(
     private commonApiService: CommonApiService,
-  ) { 
+  ) {
     this._portsDb = new DischargePortsDB();
     this._ohqDb = new DischargeOHQDB();
   }
@@ -99,7 +99,6 @@ export class DischargeStudyDetailsApiService {
       getOHQPortRotation(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IOHQPortRotationResponse> {
         return this.commonApiService.get<IOHQPortRotationResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/port-rotation`);
       }
-  
       /**
        * Method for fetching port specific ohq
        *
@@ -113,7 +112,6 @@ export class DischargeStudyDetailsApiService {
       getPortOHQDetails(vesselId: number, voyageId: number, dischargeStudyId: number, portId: number): Observable<IDischargeStudyPortOHQResponse> {
           return this.commonApiService.get<IDischargeStudyPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/port-rotation/${portId}/on-hand-quantities`);
       }
-  
       /**
        * Method to set ohq
        *
@@ -131,7 +129,6 @@ export class DischargeStudyDetailsApiService {
           ohqTankDetails.isPortRotationOhqComplete = isPortRotationOhqComplete;
           return this._ohqDb.dischargeOhq.add(ohqTankDetails);
       }
-  
       /**
        * Get count of pending updates in ohq db
        *
@@ -145,7 +142,7 @@ export class DischargeStudyDetailsApiService {
           return this._ohqDb.dischargeOhq.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'dischargeStudyId': dischargeStudyId }).count();
       }
       /**
-       * Get cargonomination details 
+       * Get cargonomination details
        *
        * @param {number} vesselId
        * @param {number} voyageId
@@ -210,7 +207,6 @@ export class DischargeStudyDetailsApiService {
         return this.commonApiService.get<ICargoResponseModel>(`cargos`);
       }
 
-      
       /**
        * Get cargo history details
        *
@@ -224,10 +220,10 @@ export class DischargeStudyDetailsApiService {
       /**
        * Method to save discharge study
        *
-       * @returns {Promise<IInstructionResponse>}
+       * @returns {Promise<IDischargeStudySaveResponse>}
        * @memberof DischargeStudyDetailsApiService
       */
-       saveDischargeStudy(dischargeStudy: any): Observable<IOHQPortRotationResponse> {
-        return this.commonApiService.get<IOHQPortRotationResponse>(`cargo-history`);
-      }
+      saveDischargeStudy(dischargeStudy: any): Observable<IResponse> {
+        return this.commonApiService.post<any, IResponse>(`discharge-studies`, dischargeStudy);
+    }
 }

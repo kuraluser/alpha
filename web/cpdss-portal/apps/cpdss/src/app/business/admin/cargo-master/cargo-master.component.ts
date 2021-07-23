@@ -89,7 +89,18 @@ export class CargoMasterComponent implements OnInit {
         name: "Australia",
         code: "Aus"
       }
-      ]
+      ],
+      reid_vapour_pressure: null,
+      gas: null,
+      total_wax: null,
+      pour_point: null,
+      cloud_point: null,
+      viscosity: null,
+      cow_codes: null,
+      hydrogen_sulfide_oil: null,
+      hydrogen_sulfide_vapour: null,
+      benzene: null,
+      special_instrictions_remark: null
     },
     {
       id: 2,
@@ -129,7 +140,18 @@ export class CargoMasterComponent implements OnInit {
         id: 2,
         name: "Australia",
         code: "AUS"
-      }]
+      }],
+      reid_vapour_pressure: null,
+      gas: null,
+      total_wax: null,
+      pour_point: null,
+      cloud_point: null,
+      viscosity: null,
+      cow_codes: null,
+      hydrogen_sulfide_oil: null,
+      hydrogen_sulfide_vapour: null,
+      benzene: null,
+      special_instrictions_remark: null
     }];
   }
 

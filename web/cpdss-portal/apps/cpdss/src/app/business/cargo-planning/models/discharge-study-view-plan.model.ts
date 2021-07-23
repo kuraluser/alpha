@@ -1,5 +1,5 @@
-import { IResponse , ValueObject , IMode  , IPercentage  , ICargo } from '../../../shared/models/common.model';
-import { IInstruction , ITankDetails } from '../../core/models/common.model';
+import { IResponse , ValueObject , IMode  , IPercentage } from '../../../shared/models/common.model';
+import { ICargo, IInstruction , ITankDetails } from '../../core/models/common.model';
 
 
 /**
@@ -32,7 +32,7 @@ import { IInstruction , ITankDetails } from '../../core/models/common.model';
     backLoadingDetails: IBackLoadingDetails[];
 }
 /**
- * 
+ *
  * Interface for back loading details
  *
  * @export

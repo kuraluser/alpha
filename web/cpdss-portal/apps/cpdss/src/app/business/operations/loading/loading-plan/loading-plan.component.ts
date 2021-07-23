@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ICargo } from 'apps/cpdss/src/app/shared/models/common.model';
-import { ILoadableQuantityCargo, IShipCargoTank } from '../../../core/models/common.model';
+import { ICargo, ILoadableQuantityCargo, IShipCargoTank } from '../../../core/models/common.model';
 import { ILoadingSequences, IToppingOffSequence } from '../../models/loading-information.model';
 
 @Component({

@@ -454,6 +454,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         var2.setMachineTypeId(lm.getMachineType().getNumber());
         var2.setCapacity(
             lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
+        var2.setIsUsing(lm.getIsUsing());
         list2.add(var2);
       }
       log.info("Loading plan machine in use added, Size {}", var1.size());

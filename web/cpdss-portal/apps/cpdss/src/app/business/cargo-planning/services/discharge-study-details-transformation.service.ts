@@ -10,14 +10,14 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 
 
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject , OPERATIONS } from '../models/cargo-planning.model';
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode , ICargo } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode } from '../../../shared/models/common.model';
 import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails  } from '../models/discharge-study-list.model';
-import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS } from '../../core/models/common.model';
+import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo } from '../../core/models/common.model';
 
 
 
@@ -50,7 +50,6 @@ export class DischargeStudyDetailsTransformationService {
   dischargeStudyValiditySource$ = this._dischargeStudyValiditySource.asObservable();
   addPort$ = this._addPortSource.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
-   
     /**
   *
   * Get Billing Figure table header
@@ -409,7 +408,7 @@ export class DischargeStudyDetailsTransformationService {
       ]
       columns = [...columns, ...etaEtd];
     }
-    // Note:- Permission is not implemented in port tab. 
+    // Note:- Permission is not implemented in port tab.
     if (permission && [VOYAGE_STATUS.ACTIVE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
@@ -429,7 +428,6 @@ export class DischargeStudyDetailsTransformationService {
     }
     return columns;
   }
-  
     /**
  * Method for formating cargo nomination data
  *
@@ -493,7 +491,6 @@ export class DischargeStudyDetailsTransformationService {
         (!isAdd && (portEtaEtdPermission?.edit || portEtaEtdPermission?.edit === undefined))
       ) ? true : false;
   }
-  
     /**
    * Method for converting ports data to value object model
    *
@@ -509,7 +506,6 @@ export class DischargeStudyDetailsTransformationService {
       const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
       const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
       const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING || operationObj.id === OPERATIONS.DISCHARGING) : true;
-      
       _port.id = port.id;
       _port.portOrder = port.portOrder;
       _port.portTimezoneId = port.portTimezoneId;
@@ -642,7 +638,6 @@ export class DischargeStudyDetailsTransformationService {
         }
       ]
     }
-  
   /**
    * Method to convert ohq tank details to value object
    *
@@ -982,13 +977,13 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
         }
       })
       if(portDetail.instructionId?.length) {
-        _portDetail.instruction = listData.instructions.filter((instruction) => {
+        _portDetail.instruction = listData.instructions.find((instruction) => {
           return portDetail.instructionId.some((instructionId) => {
             return instructionId === instruction.id;
           })
         })
       } else {
-        _portDetail.instruction = [listData.instructions[0]];
+        _portDetail.instruction = listData.instructions[0];
       }
       _portDetail.maxDraft = portDetail.maxDraft;
       _portDetail.cargoDetail  = portDetail.cargoNominationList.map((cargoDetail) => {
@@ -996,11 +991,16 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
         return this.getCargoDetailsAsValueObject(cargoDetail,listData,storedKey,true);
       })
       _portDetail.cow = listData.mode.find(modeDetails => modeDetails.id === portDetail.cowId);
+      if(!_portDetail.cow) {
+        _portDetail.cow = listData.mode[0];
+      }
       if(portDetail.cowId === 1) {
         _portDetail.percentage = listData.percentageList.find((item) => {
           return item.value === portDetail.percentage;
         })
+        _portDetail.tank = [];
       } else {
+        _portDetail.percentage = null;
         _portDetail.tank = listData?.tank.filter((tankDetail) => {
           portDetail.tanks.map((items) => {
             return items === tankDetail.id
@@ -1058,6 +1058,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? unitConversion.bbls+'' : '-', true , false);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
       _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? unitConversion.kl+'' : '-', true , false , false , isKlEditable);
+      _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
+
       //Note:- need to remove 25000 when actual value comes from BE.
       _cargoDetailValuObject.maxKl = new ValueObject<number>(25000, false , false);
       _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
@@ -1077,21 +1079,21 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    * @memberof DischargeStudyDetailsTransformationService
    */
     setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode) : IPortCargo {
-      return { 
+      return {
+        id: new ValueObject<string>(backLoadingDetails.id.value),
         storedKey: new ValueObject<string>(backLoadingDetails.storedKey.value),
         maxKl: new ValueObject<number>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
         abbreviation: new ValueObject<string>(backLoadingDetails.abbreviation.value, true , false),
         color: new ValueObject<string>(backLoadingDetails.color.value, true , false),
-        bbls: new ValueObject<string>(backLoadingDetails.bbls.value, true , false), 
+        bbls: new ValueObject<string>(backLoadingDetails.bbls.value, true , false),
         kl: new ValueObject<string>(backLoadingDetails.kl.value, true , false),
-        mt: new ValueObject<string>(backLoadingDetails.mt.value, true , false), 
+        mt: new ValueObject<string>(backLoadingDetails.mt.value, true , false),
         cargo: new ValueObject<ICargo>(backLoadingDetails.cargo.value, true , false),
         mode: new ValueObject<IMode>(mode , true , false),
         api: new ValueObject<number>(backLoadingDetails.api.value, true , false),
         temp: new ValueObject<number>(backLoadingDetails.temp.value, true , false),
       }
     }
-  
    /**
    * Method to convert loadable plan tank details to value object
    *
@@ -1118,6 +1120,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _backLoadingDetailDetail.isDelete = true;
       _backLoadingDetailDetail.isAdd = isNewValue;
       _backLoadingDetailDetail.storedKey = new ValueObject<string>(storedKey),
+      _backLoadingDetailDetail.id = new ValueObject<number>(Number(backLoadingDetail.id)),
       _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation);
       return _backLoadingDetailDetail;
     }
@@ -1125,7 +1128,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
   /**
    *
    * Method to set validation message for add berth page.
-   * @return {*} 
+   * @return {*}
    * @memberof DischargeStudyDetailsTransformationService
    */
 
@@ -1133,6 +1136,9 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
     return {
       maxDraft: {
         'whitespace': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+      },
+      tank: {
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
       }
     }
   }
@@ -1157,36 +1163,33 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
   getDischargeStudyAsValue(portItems: IPortDetailValueObject) {
     const _portDetails = <IDischargeStudyPortListDetails>{};
     for (const key in portItems) {
-      if (Object.prototype.hasOwnProperty.call(portItems, key)) { 
+      if (Object.prototype.hasOwnProperty.call(portItems, key)) {
         switch(key) {
-          case 'id': 
+          case 'id':
             _portDetails.id = portItems.id;
             break;
-          case 'port': 
-            _portDetails.portId = portItems.port.id;
-            break;
-          case 'maxDraft': 
+          case 'maxDraft':
             _portDetails.maxDraft = portItems.maxDraft;
             break;
-          case 'cowId': 
+          case 'cow':
             _portDetails.cowId = portItems.cow.id;
             break;
-          case 'percentage': 
-            _portDetails.percentage = portItems.percentage.value;
+          case 'percentage':
+            _portDetails.percentage = portItems.percentage?.value ? portItems.percentage?.value : 0;
             break;
-          case 'instructionId': 
-            _portDetails.instructionId = portItems.instruction.map((item) => item.id);
+          case 'tank':
+            _portDetails.tanks = portItems.tank?.length ? portItems.tank.map(tankItem =>  tankItem.id) : [];
             break;
-          case 'isBackLoadingEnabled': 
+          case 'instruction':
+            _portDetails.instructionId = [portItems.instruction.id];
+            break;
+          case 'enableBackToLoading':
             _portDetails.isBackLoadingEnabled = portItems.enableBackToLoading;
             break;
-          case 'portTimezoneId': 
-            _portDetails.portTimezoneId = portItems.portTimezoneId;
-            break;
-          case 'cargoDetail': 
+          case 'cargoDetail':
             _portDetails.cargoNominationList = portItems.cargoDetail.map(item =>  this.getCargoNominationList(item));
             break;
-          case 'backLoadingDetails': 
+          case 'backLoadingDetails':
             _portDetails.backLoading = portItems.backLoadingDetails.map(item =>  this.getbackLoading(item));
             break;
         }
@@ -1205,14 +1208,31 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
   getCargoNominationList(cargoDetails: IPortCargo) {
     const _cargoDetails = <IDischargeStudyCargoNominationList>{};
     for (const key in cargoDetails) {
-      if (Object.prototype.hasOwnProperty.call(cargoDetails, key)) { 
+      if (Object.prototype.hasOwnProperty.call(cargoDetails, key)) {
         switch(key) {
-          case 'quantity': 
-            _cargoDetails.quantity = +cargoDetails.mt.value;
+          case 'mt':
+            _cargoDetails.quantity = cargoDetails.mode.value.id === 1  ? 0 : +cargoDetails.mt.value;
             break;
-          case 'mode': 
+          case 'mode':
             _cargoDetails.mode = cargoDetails.mode.value.id;
             break;
+          case 'id':
+            _cargoDetails.id = cargoDetails.id.value ? cargoDetails.id.value : '';
+            break;
+          case 'color':
+            _cargoDetails.color = cargoDetails.color.value;
+            break;
+          case 'cargo':
+            _cargoDetails.cargoId = cargoDetails.cargo.value.id;
+            break;
+          case 'abbreviation':
+            _cargoDetails.abbreviation = cargoDetails.abbreviation.value;
+            break;
+          case 'api':
+            _cargoDetails.api = cargoDetails.api.value;
+            break;
+          case 'temp':
+            _cargoDetails.temperature = cargoDetails.temp.value;
         }
       }
     }
@@ -1229,26 +1249,28 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
   getbackLoading(backLoading: IBackLoadingDetails) {
     const _backLoading = <IDischargeStudyBackLoadingDetails>{};
     for (const key in backLoading) {
-      if (Object.prototype.hasOwnProperty.call(backLoading, key)) { 
+      if (Object.prototype.hasOwnProperty.call(backLoading, key)) {
         switch(key) {
-          case 'quantity': 
+          case 'mt':
             _backLoading.quantity = +backLoading.mt.value;
             break;
-          case 'color': 
+          case 'color':
             _backLoading.color = backLoading.color.value;
             break;
-          case 'color': 
+          case 'cargo':
             _backLoading.cargoId = backLoading.cargo.value.id;
             break;
-          case 'abbreviation': 
+          case 'abbreviation':
             _backLoading.abbreviation = backLoading.abbreviation.value;
             break;
-          case 'api': 
+          case 'api':
             _backLoading.api = backLoading.api.value;
             break;
-          case 'temperature': 
+          case 'temp':
             _backLoading.temperature = backLoading.temp.value;
             break;
+          case 'id':
+            _backLoading.id = backLoading.id.value ? backLoading.id.value : '';
         }
       }
     }

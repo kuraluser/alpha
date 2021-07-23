@@ -181,95 +181,6 @@ export enum QUANTITY_UNIT {
 }
 
 /**
- * Interface for Operations
- *
- * @export
- * @interface IOperations
- */
-export interface IOperations {
-    id: number;
-    operationName: string;
-}
-/**
- * Interface for Ports api response
- *
- * @export
- * @interface IPortsDetailsResponse
- */
-export interface IPortsDetailsResponse {
-    responseStatus: IResponseStatus;
-    portList: IPortList[];
-    operations: IOperations[];
-    portId?: number;
-}
-
-/**
- * Interface for port
- *
- * @export
- * @interface IPortList
- */
-export interface IPortList {
-    id: number;
-    portOrder: number;
-    loadableStudyId: number;
-    portId: number;
-    operationId: number;
-    seaWaterDensity: number;
-    distanceBetweenPorts: number;
-    timeOfStay: number;
-    maxDraft: number;
-    maxAirDraft: number;
-    eta: string;
-    etd: string;
-    layCanFrom: string;
-    layCanTo: string;
-    isDelete?: boolean;
-    isAdd?: boolean;
-    storeKey?: number;
-    vesselId?: number;
-    voyageId?: number;
-    etaActual?: string;
-    etdActual?: string;
-}
-
-/**
- * Interface for fuel type
- *
- * @export
- * @interface IFuelType
- */
-export interface IFuelType {
-    id: number;
-    name: string;
-    colorCode: string;
-    shortName: string;
-}
-
-/**
- * Interface for cargo response
- * @export
- * @interface
- */
-export interface ICargoResponseModel {
-    cargos: ICargo[],
-    responseStatus: IResponseStatus;
-}
-
-/**
- * Interface for get confirm status
- *
- * @export
- * @interface IConfirmStatusResponse
- */
- export interface IConfirmStatusResponse {
-    responseStatus: IResponse;
-    confirmed: boolean;
-    loadablePatternStatusId: number;
-    validated: boolean;
-}
-
-/**
  * Interface for time zone API response
  *
  * @export
@@ -434,27 +345,6 @@ export interface ISubTotal {
 
 
 /**
- * Interface for cargo
- *
- * @export
- * @interface ICargo
- */
-export interface ICargo {
-  id: number;
-  companyId?: number;
-  actualWeight?: string;
-  plannedWeight?: string;
-  name?: string;
-  abbreviation?: string;
-  api?: number;
-  ports?: IPort[];
-  temp: string;
-  type?: string;
-  assay_date?: string;
-  countries?: ICountry[];
-}
-
-/**
  * Interface for country
  *
  * @export
@@ -464,4 +354,15 @@ export interface ICountry {
   id: number;
   name: string;
   code: string;
+}
+
+/**
+ * Interface for list months.
+ *
+ * @export
+ * @interface IMonth
+ */
+export interface IMonth {
+  id: number;
+  month: string;
 }

@@ -6,12 +6,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { v4 as uuid4 } from 'uuid';
 
 
-import { IDischargeStudy, IDischargeStudyDropdownData  , IDischargeStudyBackLoadingDetails , IPortCargoDetails , IPortDetailValueObject } from '../../models/discharge-study-list.model';
+import { IDischargeStudy, IDischargeStudyDropdownData  , IDischargeStudyBackLoadingDetails , IPortCargoDetails , IPortDetailValueObject  } from '../../models/discharge-study-list.model';
 
 import { DATATABLE_EDITMODE, IDataTableColumn} from '../../../../shared/components/datatable/datatable.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { Voyage , IPort  , IInstruction , ITankDetails } from '../../../core/models/common.model';
-import { QUANTITY_UNIT , IPercentage , IMode  , ICargo } from '../../../../shared/models/common.model';
+import { Voyage , IPort  , IInstruction , ITankDetails, ICargo } from '../../../core/models/common.model';
+import { QUANTITY_UNIT , IPercentage , IMode, IResponse } from '../../../../shared/models/common.model';
 
 import { DischargeStudyDetailsTransformationService } from '../../services/discharge-study-details-transformation.service';
 import { DischargeStudyDetailsApiService } from '../../services/discharge-study-details-api.service';
@@ -45,7 +45,6 @@ export class DischargeStudyComponent implements OnInit {
   @Input() permission: IPermission;
   @Input() ports: IPort[];
   @Input() cargos: ICargo[];
-  
 
   @Input()
   get dischargeStudy() {
@@ -110,8 +109,8 @@ export class DischargeStudyComponent implements OnInit {
     const instruction = await this.dischargeStudyDetailsApiService.getInstructionDetails().toPromise();
     const tankList = await this.dischargeStudyDetailsApiService.getTankDetails(this.vesselId).toPromise();
     const portCargoDetails = await this.dischargeStudyDetailsApiService.getPortCargoDetails(this.dischargeStudyId).toPromise();
-    
-    
+
+
     this.instructions = instruction.instructions;
     this.tank = tankList.cargoVesselTanks;
     this.portCargoList = portCargoDetails.portWiseCorges;
@@ -125,7 +124,6 @@ export class DischargeStudyComponent implements OnInit {
       percentageList: this.percentageList
     }
     const result = await this.dischargeStudyDetailsApiService.getDischargeStudyDetails(this.vesselId, this.voyageId,this.dischargeStudyId).toPromise();
-    
     if(result.responseStatus.status === '200') {
       const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
       const portList = result.portList;
@@ -192,6 +190,8 @@ export class DischargeStudyComponent implements OnInit {
  * @memberof DischargeStudyComponent
  */
   private initDischargeStudyFormGroup(portDetail: any): FormGroup {
+    //Note: - For now tank is not required , need confirm
+    // const isTankRequired  = portDetail?.cow?.id === 2 ? [Validators.required] : [];
     return this.fb.group({
       port: this.fb.control(portDetail?.port),
       instruction: this.fb.control(portDetail?.instruction),
@@ -199,7 +199,7 @@ export class DischargeStudyComponent implements OnInit {
       cargoDetail: this.fb.group({ dataTable: this.fb.array(this.dischargeCargoFormGroup(portDetail)) }),
       cow: this.fb.control(portDetail?.cow, [Validators.required]),
       percentage: this.fb.control(portDetail?.percentage),
-      tank: this.fb.control(portDetail?.tank),
+      tank: this.fb.control(portDetail?.tank, []),
       enableBackToLoading: this.fb.control(portDetail?.enableBackToLoading),
       backLoadingDetails: this.fb.group({ dataTable: this.fb.array(this.initBackLoadingFormGroup(portDetail)) })
     });
@@ -220,7 +220,7 @@ export class DischargeStudyComponent implements OnInit {
   }
 
   /**
-  * Method for back loading 
+  * Method for back loading
   *
   * @private
   * @param {*} backLoading
@@ -523,7 +523,7 @@ export class DischargeStudyComponent implements OnInit {
   }
 
   /**
-  * Method for updating quantity in ports in cargo 
+  * Method for updating quantity in ports in cargo
   *
   * @private
   * @param {*} cargo
@@ -601,7 +601,7 @@ export class DischargeStudyComponent implements OnInit {
   }
 
   /**
-  * Method for updating quantity in ports in cargo 
+  * Method for updating quantity in ports in cargo
   *
   * @private
   * @param {*} cargo
@@ -685,7 +685,6 @@ export class DischargeStudyComponent implements OnInit {
         portDetails = this.onQuantityEditComplete(event, portDetails, selectedPortCargo);
       }
     };
-    
     const formGroup = this.getBackLoadingDetails(event.index, index, 'backLoadingDetails');
     if (formGroup.valid) {
       selectedPortCargo = this.unitConversion(selectedPortCargo, event, index, 'backLoadingDetails');
@@ -726,7 +725,6 @@ export class DischargeStudyComponent implements OnInit {
       }
     }
   }
-  
   /**
   * Method for converting unit
   *
@@ -812,6 +810,7 @@ export class DischargeStudyComponent implements OnInit {
     const initPortDetails = this.portDetails;
     const portDetailsFormArray = this.dischargeStudyForm.get('portDetails') as FormArray;
     const enableBackLoading = portDetailsFormArray.at(index).get('enableBackToLoading').value;
+    initPortDetails[index]['enableBackToLoading'] = enableBackLoading;
     if (!enableBackLoading) {
       if (initPortDetails[index]['backLoadingDetails']?.length) {
         const backLoadingDetails = initPortDetails[index]['backLoadingDetails'];
@@ -852,7 +851,6 @@ export class DischargeStudyComponent implements OnInit {
     const formControl = this.getFeild(index, formControlName);
     return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
-  
   /**
    * Method to save discharge study
    *
@@ -864,15 +862,19 @@ export class DischargeStudyComponent implements OnInit {
     this.dischargeStudyForm.markAllAsTouched();
     this.dischargeStudyForm.markAsDirty();
     if(this.dischargeStudyForm.valid) {
+      this.ngxSpinnerService.show();
       const dichargeStudyDetails = this.portDetails.map((portItems) => {
         return  this.dischargeStudyDetailsTransformationService.getDischargeStudyAsValue(portItems);
       })
-      const result = await this.dischargeStudyDetailsApiService.saveDischargeStudy(dichargeStudyDetails);
-      if(result) {
+      const obj = { dischargeStudyId: this.dischargeStudyId , portList: dichargeStudyDetails};
+
+      const result: IResponse = await this.dischargeStudyDetailsApiService.saveDischargeStudy(obj).toPromise();
+      if(result.status === '200') {
         this.dischargeStudyForm.reset();
+        this.ngxSpinnerService.hide();
       }
     }
-    
+
   }
 
   /**
@@ -882,20 +884,36 @@ export class DischargeStudyComponent implements OnInit {
    * @param {number} index
    * @memberof DischargeStudyComponent
   */
-  onChangeCow(event: any, index: number) {
+  onChange(event: any, field: string , index: number) {
     const portDetails = [...this.portDetails];
-    if(event.value.id === 1) {
-      portDetails[index].tank = [];
-      this.getFeild(index, 'tank').setValue(null);
-      portDetails[index].percentage = { value: 25, name: '25%' };
-      this.getFeild(index, 'tank').setValue({ value: 25, name: '25%' });
+    if(field === 'cow') {
+      portDetails[index].cow =  event.value;
+      if(event.value.id === 1) {
+        portDetails[index].tank = [];
+        const tankControl = this.getFeild(index, 'tank');
+        tankControl.setValue(null);
+        //Note: - For now tank is not required , need confirm
+        // tankControl.setValidators([]);
+        tankControl.updateValueAndValidity();
+        portDetails[index].percentage = { value: 25, name: '25%' };
+        this.getFeild(index, 'percentage').setValue({ value: 25, name: '25%' });
+      } else {
+        portDetails[index].tank = [];
+        const tankControl = this.getFeild(index, 'tank');
+        tankControl.setValue(null);
+        //Note: - For now tank is not required , need confirm
+        // tankControl.setValidators([Validators.required]);
+        tankControl.updateValueAndValidity();
+
+        portDetails[index].percentage = null;
+        const control = this.getFeild(index, 'percentage');
+        control.setValue(null);
+      }
     } else {
-      portDetails[index].tank = [];
-      this.getFeild(index, 'tank').setValue(null);
-      portDetails[index].percentage = null;
-      const control = this.getFeild(index, 'percentage');
-      control.setValue(null);
+      const tankControl = this.getFeild(index, field);
+      portDetails[index][field] = tankControl.value;
     }
+
     this.portDetails = [...portDetails];
   }
 }

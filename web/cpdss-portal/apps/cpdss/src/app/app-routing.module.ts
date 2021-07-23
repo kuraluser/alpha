@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: '', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: authGuard },
   { path: 'business', loadChildren: () => import('./business/business.module').then(m => m.BusinessModule), canActivate: canActivateGuard },
   { path: 'access-denied', loadChildren: () => import('./access-denied/access-denied.module').then(m => m.AccessDeniedModule) },
+  { path: 'logout', loadChildren: () => import('./logout/logout.module').then(m => m.LogoutModule) },
   { path: '**', component: PageNotFoundComponent }
 ];
 

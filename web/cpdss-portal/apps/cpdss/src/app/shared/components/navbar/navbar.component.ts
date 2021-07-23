@@ -289,19 +289,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @memberof NavbarComponent
    */
   logout() {
-    try {
-      const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
-      SecurityService.userLogoutAction();
-      if (environment.name === 'shore') {
-        this.keycloakService.logout(redirectUrl);
-      } else {
-        window.location.href = redirectUrl;
-      }
-
-    }
-    catch {
-      console.error('Something went wrong');
-    }
+    this.router.navigate(['logout']);
   }
 
   /**

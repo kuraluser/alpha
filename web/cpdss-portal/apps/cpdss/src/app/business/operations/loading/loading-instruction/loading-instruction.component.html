@@ -6,6 +6,6 @@
         </div>
     </div>
     <div class="pl-30">
-        <cpdss-portal-instruction-check-list [instructionList]="instructionList"></cpdss-portal-instruction-check-list>
+        <cpdss-portal-instruction-check-list #instructionCheckList (tabStatus)="setTabStatus($event)" (updateData)="updateData()" [vesselId]="vesselId" [voyageId]="voyageId" [portRotationId]="portRotationId" [groupId]="groupId" [instructionList]="instructionList" [loadingInfoId]="loadingInfoId"></cpdss-portal-instruction-check-list>
     </div>
 </div>

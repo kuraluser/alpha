@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormBuilder  } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormBuilder } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
 import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
 import { UllageUpdatePopupTransformationService } from './ullage-update-popup-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
-import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
-import { ICargoDetail , ICargoDetailValueObject } from '../models/ullage-update-popup.model';
+import { ICargoDetail, ICargoDetailValueObject } from '../models/ullage-update-popup.model';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBlFigureTotal } from '../models/operations.model';
 
@@ -52,7 +52,7 @@ export class UllageUpdatePopupComponent implements OnInit {
   blFigureColumns: IDataTableColumn[];
   cargoQuantities: ICargoQuantities[];
   ballastQuantities: IBallastQuantities[];
-  fuelTypes:any=[];
+  fuelTypes: any = [];
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   loadablePatternCargoDetails: any[];
   selectedCargo: any;
@@ -63,9 +63,9 @@ export class UllageUpdatePopupComponent implements OnInit {
   public editMode = true;
   public blFigureTotal: IBlFigureTotal;
 
-statu: boolean;
+  statu: boolean;
 
-  display:boolean;
+  display: boolean;
   @Output() closePopup = new EventEmitter();
   constructor(
     private ullageUpdatePopupTransformationService: UllageUpdatePopupTransformationService,
@@ -2592,63 +2592,66 @@ statu: boolean;
       }
     };
     this.loadablePatternCargoDetails = [
-      {"priority":1,"cargoAbbreviation":"AEL","cargoColor":"#b82121","quantity":"105000.0","isCommingle":false,"loadablePatternCommingleDetailsId":0,"orderedQuantity":"100000.0000","loadingOrder":1,"api":"40.0000","tankName":"","tankId":null,"fillingRatio":null,"temperature":"102.0000",
-      "cargo": [
-        {
-          cargoName: 'KU',
-          cargoDetails: [
-            {
-              blRefNo: null,
-              cargoName: 'KU',
-              bbl: 5000,
-              lt: 100000,
-              mt: 100000,
-              kl: 100000,
-              api: 30.00,
-              temp: 31.9
-            },
-            {
-              blRefNo: null,
-              cargoName: 'KU',
-              bbl: 5000,
-              lt: 29000,
-              mt: 31954,
-              kl: 58988,
-              api: 8.60,
-              temp: 56.0
-            }
-          ]
-        },
-      ]
+      {
+        "priority": 1, "cargoAbbreviation": "AEL", "cargoColor": "#b82121", "quantity": "105000.0", "isCommingle": false, "loadablePatternCommingleDetailsId": 0, "orderedQuantity": "100000.0000", "loadingOrder": 1, "api": "40.0000", "tankName": "", "tankId": null, "fillingRatio": null, "temperature": "102.0000",
+        "cargo": [
+          {
+            cargoName: 'KU',
+            cargoDetails: [
+              {
+                blRefNo: null,
+                cargoName: 'KU',
+                bbl: 5000,
+                lt: 100000,
+                mt: 100000,
+                kl: 100000,
+                api: 30.00,
+                temp: 31.9
+              },
+              {
+                blRefNo: null,
+                cargoName: 'KU',
+                bbl: 5000,
+                lt: 29000,
+                mt: 31954,
+                kl: 58988,
+                api: 8.60,
+                temp: 56.0
+              }
+            ]
+          },
+        ]
       },
-      {"priority":1,"cargoAbbreviation":"KWE","cargoColor":"#2158b8","quantity":"105000.0","isCommingle":false,"loadablePatternCommingleDetailsId":0,"orderedQuantity":"100000.0000","loadingOrder":2,"api":"30.0000","tankName":"","tankId":null,"fillingRatio":null,"temperature":"102.0000",
-      "cargo": [
-        {
-          cargoName: 'KU',
-          cargoDetails: [
-            {
-              blRefNo: null,
-              bbl: 5000,
-              lt: 100000,
-              mt: 100000,
-              kl: 100000,
-              api: 30.00,
-              temp: 31.9,
-              cargoName: 'KU',
-            },
-            {
-              blRefNo: null,
-              bbl: 5000,
-              lt: 29000,
-              mt: 31954,
-              kl: 58988,
-              api: 8.60,
-              temp: 56.0,
-              cargoName: 'KU',
-            }
-          ]
-        },
-      ]}
+      {
+        "priority": 1, "cargoAbbreviation": "KWE", "cargoColor": "#2158b8", "quantity": "105000.0", "isCommingle": false, "loadablePatternCommingleDetailsId": 0, "orderedQuantity": "100000.0000", "loadingOrder": 2, "api": "30.0000", "tankName": "", "tankId": null, "fillingRatio": null, "temperature": "102.0000",
+        "cargo": [
+          {
+            cargoName: 'KU',
+            cargoDetails: [
+              {
+                blRefNo: null,
+                bbl: 5000,
+                lt: 100000,
+                mt: 100000,
+                kl: 100000,
+                api: 30.00,
+                temp: 31.9,
+                cargoName: 'KU',
+              },
+              {
+                blRefNo: null,
+                bbl: 5000,
+                lt: 29000,
+                mt: 31954,
+                kl: 58988,
+                api: 8.60,
+                temp: 56.0,
+                cargoName: 'KU',
+              }
+            ]
+          },
+        ]
+      }
     ]
     this.cargoColumns = this.ullageUpdatePopupTransformationService.getCargoTableColumn();
     this.ballastColumns = this.ullageUpdatePopupTransformationService.getBallastTankColumns();
@@ -2812,7 +2815,7 @@ statu: boolean;
    * @memberof UllageUpdatePopupComponent
    */
   isCellVisable(index: number, col: any, rowData) {
-    if(index !== 0 && col.field === 'cargoName') {
+    if (index !== 0 && col.field === 'cargoName') {
       return false;
     }
     return true
@@ -2825,8 +2828,8 @@ statu: boolean;
    * @param {number} rowIndex
    * @memberof UllageUpdatePopupComponent
    */
-  calculateRowSpan(index: number,colIndex: number, rowIndex: number) {
-    if(index === 0 && colIndex === 0) {
+  calculateRowSpan(index: number, colIndex: number, rowIndex: number) {
+    if (index === 0 && colIndex === 0) {
       return this.blFigure.items[rowIndex].length;
     }
   }
@@ -2839,7 +2842,7 @@ statu: boolean;
   * @returns {AbstractControl}
   * @memberof UllageUpdatePopupComponent
   */
-  getControl(rowIndex: number,colIndex: number, key: string): AbstractControl {
+  getControl(rowIndex: number, colIndex: number, key: string): AbstractControl {
     return this.getCargoItems(rowIndex).at(colIndex).get(key);
   }
 
@@ -2851,8 +2854,8 @@ statu: boolean;
    * @returns {ValidationErrors}
    * @memberof UllageUpdatePopupComponent
   */
-  fieldError(rowIndex: number,colIndex: number, key: string): ValidationErrors {
-    const formControl = this.getControl(rowIndex,colIndex,key);
+  fieldError(rowIndex: number, colIndex: number, key: string): ValidationErrors {
+    const formControl = this.getControl(rowIndex, colIndex, key);
     return formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl.errors : null;
   }
 
@@ -2873,19 +2876,19 @@ statu: boolean;
   */
   blFigGrid() {
     this.blFigure['items'] = [];
-   this.loadablePatternCargoDetails.forEach((cargoDetails) => {
-    const cargos = cargoDetails.cargo;
-    let cargoItem = [];
-    cargos.map((cargo) => {
-      const cargoInfo = cargo.cargoDetails;
-      cargoItem = cargoInfo.map((cargoDetail) => {
-        return {'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(cargoDetail, false)};
+    this.loadablePatternCargoDetails.forEach((cargoDetails) => {
+      const cargos = cargoDetails.cargo;
+      let cargoItem = [];
+      cargos.map((cargo) => {
+        const cargoInfo = cargo.cargoDetails;
+        cargoItem = cargoInfo.map((cargoDetail) => {
+          return { 'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(cargoDetail, false) };
+        })
       })
-    })
-    this.blFigure['items'].push(cargoItem)
+      this.blFigure['items'].push(cargoItem)
     })
     this.blFigure.items.forEach((blItems, blRowIndex) => {
-      const  items = this.tableForm.get('items') as FormArray;
+      const items = this.tableForm.get('items') as FormArray;
       items.push(this.initItems())
       blItems.forEach((cargoDetails, index) => {
         this.addCargoItems(blRowIndex, cargoDetails.cargo);
@@ -2908,9 +2911,9 @@ statu: boolean;
    * @param {number} colIndex
    * @memberof UllageUpdatePopupComponent
   */
-  newCargo(rowIndex: number,colIndex: number) {
-    this.blFigure.items[rowIndex].push({ cargo : this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{}, true , false)});
-    this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length-1].cargo));
+  newCargo(rowIndex: number, colIndex: number) {
+    this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{}, true, false) });
+    this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
   }
 
   /**
@@ -2920,7 +2923,7 @@ statu: boolean;
    * @memberof UllageUpdatePopupComponent
   */
   deleteCargo(rowIndex: number, colIndex: number) {
-    this.blFigure.items[rowIndex].splice(colIndex,1)
+    this.blFigure.items[rowIndex].splice(colIndex, 1)
     this.getCargoItems(rowIndex).removeAt(colIndex);
     this.calculateTotal();
   }
@@ -2941,7 +2944,7 @@ statu: boolean;
    * @param {number} cargoIndex
    * @memberof UllageUpdatePopupComponent
   */
-  addCargoItems(cargoIndex: number,cargo) {
+  addCargoItems(cargoIndex: number, cargo) {
     this.getCargoItems(cargoIndex).push(this.initCargoDetails(cargo));
   }
 
@@ -2967,8 +2970,8 @@ statu: boolean;
       lt: this.fb.control(cargo.lt.value, [Validators.required]),
       mt: this.fb.control(cargo.mt.value, [Validators.required]),
       kl: this.fb.control(cargo.kl.value, [Validators.required]),
-      api: this.fb.control(cargo.api.value, [Validators.required, Validators.min(0) , numberValidator(2, 3)]),
-      temp: this.fb.control(cargo.temp.value, [Validators.required , numberValidator(2, 3)])
+      api: this.fb.control(cargo.api.value, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
+      temp: this.fb.control(cargo.temp.value, [Validators.required, numberValidator(2, 3)])
     });
   }
 
@@ -2977,28 +2980,28 @@ statu: boolean;
    * @memberof UllageUpdatePopupComponent
   */
   calculateTotal() {
-    this.blFigureTotal = <IBlFigureTotal>{ lt: 0, mt: 0,api: 0, kl: 0, bbl: 0};
+    this.blFigureTotal = <IBlFigureTotal>{ lt: 0, mt: 0, api: 0, kl: 0, bbl: 0 };
     this.blFigure.items.forEach((blItems, blRowIndex) => {
       blItems.forEach((cargoDetails, index) => {
         this.blFigureTotal.lt += cargoDetails.cargo.lt.value ? Number(cargoDetails.cargo.lt.value) : 0;
         this.blFigureTotal.mt += cargoDetails.cargo.mt.value ? Number(cargoDetails.cargo.mt.value) : 0;
         this.blFigureTotal.kl += cargoDetails.cargo.kl.value ? Number(cargoDetails.cargo.kl.value) : 0;
-        this.blFigureTotal.bbl += cargoDetails.cargo.bbl.value ? Number(cargoDetails.cargo.bbl.value): 0;
+        this.blFigureTotal.bbl += cargoDetails.cargo.bbl.value ? Number(cargoDetails.cargo.bbl.value) : 0;
         this.blFigureTotal.api += cargoDetails.cargo.api.value ? Number(cargoDetails.cargo.api.value) : 0;
       });
     })
   }
 
-    /**
-  * Handler for cell on click event
-  * @param event
-  * @param rowData
-  * @param rowIndex
-  * @param col
-  * @param colIndex
-  */
+  /**
+* Handler for cell on click event
+* @param event
+* @param rowData
+* @param rowIndex
+* @param col
+* @param colIndex
+*/
   onClick(event, rowData, rowIndex, col: IDataTableColumn) {
-    if (rowData[col.field]?.isEditable &&  this.editMode && (col.editable === undefined || col.editable)) {
+    if (rowData[col.field]?.isEditable && this.editMode && (col.editable === undefined || col.editable)) {
       rowData[col.field].isEditMode = true;
     }
   }
@@ -3011,10 +3014,10 @@ statu: boolean;
   * @param col
   * @param colIndex
   */
-  onEditComplete(event:any, rowData: any, key: string, rowIndex: number,index: number) {
+  onEditComplete(event: any, rowData: any, key: string, rowIndex: number, index: number) {
     rowData[key]['value'] = event.target.value;
-    const control = this.getControl(rowIndex,index,key);
-    if(control.valid && rowData['isAdd']) {
+    const control = this.getControl(rowIndex, index, key);
+    if (control.valid && rowData['isAdd']) {
       rowData[key].isEditMode = false;
     }
     this.calculateTotal();

@@ -166,4 +166,33 @@ export class CargoMasterTransformationService {
 
     return cargo;
   }
+
+  /**
+   * Method for api & Temp history grid
+   *
+   * @return {*}  {IDataTableColumn[]}
+   * @memberof CargoMasterTransformationService
+   */
+  getCargoNominationApiTempHistoryColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'loadingPortName',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_PORT',
+      },
+      {
+        field: 'loadedDate',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_DATE',
+      },
+      {
+        field: 'api',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API',
+        numberFormat: '1.2-2'
+      },
+      {
+        field: 'temperature',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
+        numberFormat: '1.2-2'
+      }
+    ]
+  }
 }

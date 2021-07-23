@@ -27,7 +27,7 @@ export function RulesValidator(key, rowIndex, inputIndex, max = null, min = null
       }
     }
 
-    else if (min != null) {
+    if (min != null) {
       {
         if (Number(control.value) < Number(min) && Boolean(control.value)) {
           return { [minkey]: true }

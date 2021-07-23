@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IResponse, IConfirmStatusResponse, ICargoResponseModel } from '../../../shared/models/common.model';
+import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { ICargoResponseModel, IConfirmStatusResponse } from '../../core/models/common.model';
 import { ICommingleCargoDetailsResponse } from '../models/cargo-planning.model';
 import { ILoadablePatternResponse } from '../models/loadable-pattern.model';
 
@@ -76,7 +77,7 @@ export class LoadablePatternHistoryApiService {
   }
 
    /**
-  * 
+  *
   * Get api for cargo details
   */
     getCargos(): Observable<ICargoResponseModel> {
