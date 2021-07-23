@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <cpdss-portal-loading-information [cargos]="cargos" [vesselId]="vesselId"
+  <cpdss-portal-loading-information (loadingInformationId)="setLoadingInfoId($event)" [cargos]="cargos" [vesselId]="vesselId"
     *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId" [portRotationId]="portRotationId">
   </cpdss-portal-loading-information>
 

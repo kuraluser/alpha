@@ -69,9 +69,54 @@ export interface IBerthDetails {
  * @interface IMachineryInUses
  */
 export interface IMachineryInUses {
+    machineTypes: IMachineTypes;
+    tankTypes: IMachineTankTypes[];
+    vesselBottomLine: IVesselManifoldBottomLine[];
+    vesselManifold: IVesselManifoldBottomLine[];
     pumpTypes: IPumpTypes[];
     vesselPumps: IVesselPumps[];
     loadingMachinesInUses: ILoadingMachinesInUses[];
+}
+
+/**
+ * Interface for machine vessel manifold and bottom line
+ *
+ * @export
+ * @interface IVesselManifoldBottomLine
+ */
+ export interface IVesselManifoldBottomLine {
+    componentCode: string;
+    componentName: string;
+    componentType: number;
+    id: number;
+    machineTypeId: number;
+    vesselId: number;
+    isUsing?: boolean;
+ }
+
+
+
+/**
+ * Interface for machine tank types
+ *
+ * @export
+ * @interface IMachineTankTypes
+ */
+ export interface IMachineTankTypes {
+    id: number;
+    name: string;
+ }
+
+/**
+ * Interface for machine types
+ *
+ * @export
+ * @interface IMachineTypes
+ */
+ export interface IMachineTypes {
+    BOTTOM_LINE: number;
+    MANIFOLD: number;
+    VESSEL_PUMP: number;
 }
 
 /**
@@ -94,13 +139,12 @@ export interface IPumpTypes {
 export interface IVesselPumps {
     id: number;
     vesselId: number;
-    pumpTypeId: number;
+    machineType: number;
     pumpName: string;
     pumpCode: string;
     pumpCapacity: number;
     capacity?: number;
     isUsing?: boolean;
-    machineId?: number;
 }
 
 /**
@@ -112,7 +156,8 @@ export interface IVesselPumps {
 export interface ILoadingMachinesInUses {
     id: number;
     loadingInfoId: number;
-    pumpId: number;
+    machineId: number;
+    machineTypeId: number;
     capacity: number;
     isUsing?: boolean;
 }

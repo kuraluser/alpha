@@ -211,8 +211,8 @@ export interface IBackLoadingDetails {
     kl: ValueObject<number>;
     bbls: ValueObject<number>;
     color: ValueObject<string>;
-    api: ValueObject<number>;
-    temp: ValueObject<number>
+    api: ValueObject<string>;
+    temp: ValueObject<string>;
     isDelete: boolean;
     isAdd: boolean;
     abbreviation: ValueObject<string>;
